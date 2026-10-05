@@ -730,5 +730,8 @@
   "mtuprobe": "启用 MTU Probing",
   "mtuprobe_desc": "MTU probing（Packetization Layer Path MTU Discovery）是一种自动化网络技术，用于查找能够通过网络路径而不被分片或丢弃的最大数据包大小。启用它可以解决一些游戏问题，尤其是 Ubisoft 游戏的问题。",
   "app_page_screenshot_zoom_hint": "点击或按 Esc 返回",
-  "app_page_screenshot_zoom": "点击放大"
+  "app_page_screenshot_zoom": "点击放大",
+  "dependency_block_title": "移除已被阻止",
+  "dependency_block_message": "已安装的软件仍依赖“{name}”。请先将其移除：\n\n{blockers}",
+  "dependency_block_button_tooltip": "移除已被阻止：已安装的软件仍依赖此功能"
 }

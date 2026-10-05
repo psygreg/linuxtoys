@@ -726,5 +726,8 @@
   "mtuprobe": "Washa MTU Probing",
   "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) ni mbinu ya mtandao ya kiotomatiki inayotumika kupata ukubwa mkubwa zaidi wa pakiti unaoweza kupita kwenye njia ya mtandao bila kugawanywa au kupotezwa. Kuiwasha hurekebisha baadhi ya matatizo ya michezo, hasa michezo kutoka Ubisoft.",
   "app_page_screenshot_zoom_hint": "Bofya au bonyeza Esc ili kurudi",
-  "app_page_screenshot_zoom": "Bofya ili kukuza"
+  "app_page_screenshot_zoom": "Bofya ili kukuza",
+  "dependency_block_title": "Uondoaji umezuiwa",
+  "dependency_block_message": "Programu iliyosakinishwa bado inategemea '{name}'. Iondoe kwanza:\n\n{blockers}",
+  "dependency_block_button_tooltip": "Uondoaji umezuiwa: programu iliyosakinishwa bado inategemea kipengele hiki"
 }

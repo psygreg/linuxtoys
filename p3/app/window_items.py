@@ -579,6 +579,14 @@ class ItemWidgetFactory:
             return False
 
         removable = bool(removable)
+        # Dependency protection overlay: provider features stay recognized as
+        # installed (installed-card styling), but the removal control is
+        # switched off while dependents exist.
+        blockers = installed_packages.dependency_blockers(
+            getattr(event_box, "info", None) or {}
+        )
+        blocked = removable and bool(blockers)
+
         row = remove_btn.get_parent()
         if row is not None:
             style = row.get_style_context()
@@ -598,9 +606,21 @@ class ItemWidgetFactory:
         if removable:
             remove_btn.set_no_show_all(False)
             remove_btn.show()
+            remove_btn.set_sensitive(not blocked)
+            if blocked:
+                remove_btn.set_tooltip_text(
+                    self.translations.get(
+                        "dependency_block_button_tooltip",
+                        "Removal blocked: installed software still depends "
+                        "on this feature",
+                    )
+                )
+            else:
+                remove_btn.set_tooltip_text(None)
         else:
             remove_btn.hide()
             remove_btn.set_no_show_all(True)
+            remove_btn.set_tooltip_text(None)
 
         return True
 
@@ -623,6 +643,31 @@ class ItemWidgetFactory:
         if self.reboot_required:
             if not self._show_reboot_warning_dialog():
                 return
+
+        # Provider features (Homebrew, Flathub, Snapcraft, Paru, Gear Lever)
+        # stay listed as installed, but their removal is blocked while
+        # anything installed through them still exists.
+        blockers = installed_packages.dependency_blockers(item_info)
+        if blockers:
+            run_message_dialog(
+                self,
+                title=self.translations.get(
+                    "dependency_block_title", "Removal Blocked"
+                ),
+                secondary_text=self.translations.get(
+                    "dependency_block_message",
+                    "Installed software still depends on '{name}'. "
+                    "Remove it first:\n\n{blockers}",
+                ).format(
+                    name=item_info.get("name", "This feature"),
+                    blockers="\n".join(
+                        f"• {blocker}" for blocker in blockers
+                    ),
+                ),
+                message_type=Gtk.MessageType.WARNING,
+                buttons=[("OK", Gtk.ResponseType.OK)],
+            )
+            return
 
         # AppStream removals use the same persistent hidden PTY as installs.
         # Keep every other removal on the existing terminal-view path.

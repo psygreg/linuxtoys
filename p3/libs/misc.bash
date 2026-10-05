@@ -27,6 +27,37 @@ swapfile_created () {
     _append_transmap "swapfile $*"
 }
 
+# Mounted storage units beyond the OS-critical mounts: filesystems backed by
+# real block devices, excluding squashfs images and the root/home/boot/EFI
+# mounts. Optional arguments are extra mount trees to exclude (prefix match).
+# Prints one decoded mount point per line.
+list_storage_drives() {
+    local -a excludes=("/" "/home" "/boot")
+    local -a efi_prefixes=("/boot/efi" "/efi")
+    local target source fstype exclude skip
+
+    while read -r target source fstype; do
+        [[ "$target" == /* ]] || continue
+        [[ "$source" == /dev/* ]] || continue
+        [[ "$fstype" == "squashfs" ]] && continue
+
+        # findmnt --raw hex-escapes unsafe characters (spaces, backslashes).
+        target="$(printf '%b' "$target")"
+
+        skip=0
+        for exclude in "${excludes[@]}"; do
+            [[ "$target" == "$exclude" ]] && { skip=1; break; }
+        done
+        (( skip )) && continue
+        for exclude in "${efi_prefixes[@]}" "$@"; do
+            [[ "$target" == "$exclude" || "$target" == "$exclude/"* ]] && { skip=1; break; }
+        done
+        (( skip )) && continue
+
+        printf '%s\n' "$target"
+    done < <(findmnt -rn --raw -o TARGET,SOURCE,FSTYPE)
+}
+
 # flatpak overrides
 flatpak_override () {
     local scope pretype type setting target

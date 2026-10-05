@@ -17,6 +17,7 @@ from .manifest_helper import (
 from .library_loader import script_command, script_preamble
 from .dev_mode import is_dev_mode_enabled
 from .compat import get_system_compat_keys, get_linuxtoys_cache_dir
+from . import installed_packages
 from .revert_helper import build_auto_revert_script_entry, build_uninstall_script_entry
 from .repo_parser import materialize_repo_script
 
@@ -486,6 +487,16 @@ def scripts_install(args: list, skip_confirmation, translations):
 
 def _run_uninstall_entry(script_info, translations):
     """Build and execute the registry-based uninstall entry for one script."""
+    # Provider features (Homebrew, Flathub, Snapcraft, Paru, Gear Lever)
+    # cannot be removed while anything installed through them remains.
+    blockers = installed_packages.dependency_blockers(script_info)
+    if blockers:
+        name = script_info.get("name", "unknown")
+        print(f"✗ Cannot remove '{name}' yet — installed software still depends on it:")
+        for blocker in blockers:
+            print(f"   • {blocker}")
+        return 1
+
     uninstall_entry = build_uninstall_script_entry(script_info, translations)
     if not uninstall_entry:
         print(f"✗ No removable registry entry found for '{script_info.get('name', 'unknown')}'.")

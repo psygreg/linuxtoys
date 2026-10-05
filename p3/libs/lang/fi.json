@@ -728,5 +728,8 @@
   "mtuprobe": "Ota MTU Probing käyttöön",
   "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) on automaattinen verkkotekniikka, jolla selvitetään suurin pakettikoko, joka voi kulkea verkkoreitin läpi pirstoutumatta tai putoamatta. Sen käyttöönotto korjaa joitakin pelien ongelmia, erityisesti Ubisoftin peleissä.",
   "app_page_screenshot_zoom_hint": "Palaa napsauttamalla tai painamalla Esc",
-  "app_page_screenshot_zoom": "Napsauta suurentaaksesi"
+  "app_page_screenshot_zoom": "Napsauta suurentaaksesi",
+  "dependency_block_title": "Poistaminen estetty",
+  "dependency_block_message": "Asennettu ohjelmisto on edelleen riippuvainen ominaisuudesta '{name}'. Poista se ensin:\n\n{blockers}",
+  "dependency_block_button_tooltip": "Poistaminen estetty: asennettu ohjelmisto on edelleen riippuvainen tästä ominaisuudesta"
 }

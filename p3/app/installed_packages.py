@@ -9,10 +9,12 @@ import shlex
 import subprocess
 import tempfile
 import threading
+import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from . import homebrew_catalog
+from . import registry_utils
 from .compat import get_system_compat_keys, is_containerized
 
 CACHE_ROOT = Path(os.path.expanduser("~/.cache/linuxtoys"))
@@ -231,6 +233,261 @@ def match(info):
             if installed:
                 return {"source": "native", "packages": installed, "manager": _STATE["manager"]}
     return None
+
+
+# --- Provider dependency protection -----------------------------------------
+#
+# Some features install OTHER software the user may keep around: Homebrew
+# (brew.sh), the Flathub remote (flathub.sh), Snapcraft (snap.sh), the Paru AUR
+# helper (sys/sysadm/paru.sh) and Gear Lever (AppStream, used for AppImage
+# integration on systemd systems). Such a feature is still tracked as installed
+# as usual, but its removal is blocked while anything installed through it
+# remains.
+
+_PROVIDER_DEPENDENCIES = {
+    "brew": "homebrew",
+    "homebrew": "homebrew",
+    "flathub": "flatpak",
+    "snap": "snap",
+    "snapcraft": "snap",
+    "paru": "aur",
+    "it.mijorus.gearlever": "appimage",
+    "gear lever": "appimage",
+}
+
+
+def _provider_identity_candidates(script_info):
+    """All identity strings a provider feature may be registered under."""
+    candidates = (
+        script_info.get("registry_name"),
+        script_info.get("appstream_id"),
+        script_info.get("name"),
+        os.path.splitext(os.path.basename(str(script_info.get("path", "") or "")))[0],
+    )
+    return {
+        str(candidate or "").strip().casefold()
+        for candidate in candidates
+        if str(candidate or "").strip()
+    }
+
+
+def _provider_kind(script_info):
+    """Map one script/appstream identity onto its provider dependency kind."""
+    for identity in _provider_identity_candidates(script_info or {}):
+        if identity in _PROVIDER_DEPENDENCIES:
+            return _PROVIDER_DEPENDENCIES[identity]
+    return None
+
+
+def _registry_dependent_counts():
+    """Count AUR packages and AppImages known to the Action Registry."""
+    counts = {"aur": 0, "appimage": 0}
+    for name, executions in registry_utils.parse_registry_file().items():
+        if not executions:
+            continue
+        if name.startswith("AUR: "):
+            counts["aur"] += 1
+            continue
+        # Removal/auto-revert transactions describe uninstalls, not installs.
+        if name.startswith(("Remove: ", "Auto-revert: ")):
+            continue
+        for operation in executions[-1][1]:
+            text = str(operation)
+            if text.startswith("appimage ") and not text.startswith("appimage rm "):
+                counts["appimage"] += 1
+    return counts
+
+
+def _plural(count, singular, plural):
+    return f"{count} {singular}" if count == 1 else f"{count} {plural}"
+
+
+_CALL_SCRIPT_RE = re.compile(r"\bcall_script\s+([A-Za-z0-9_.:-]+)")
+_DEPENDENCY_GRAPH_TTL_SECONDS = 30.0
+_DEPENDENCY_GRAPH = {"built": None, "callers": {}, "declarers": {}}
+
+
+def _dependency_graph():
+    """Static relations between catalog features (cached briefly).
+
+    callers:    call_script argument -> identity keys of scripts invoking it
+    declarers:  declared listing dependency package -> feature identity keys
+
+    A broken catalog must never block removals, so any failure keeps whatever
+    partial graph was gathered.
+    """
+    now = time.monotonic()
+    if (
+        _DEPENDENCY_GRAPH["built"] is not None
+        and now - _DEPENDENCY_GRAPH["built"] < _DEPENDENCY_GRAPH_TTL_SECONDS
+    ):
+        return _DEPENDENCY_GRAPH
+
+    callers = {}
+    declarers = {}
+    try:
+        from . import parser, repo_parser
+        from .compat import get_script_file_data
+
+        paths = list(parser._get_script_tree_index().get("all_scripts") or ())
+        for path in paths:
+            path = str(path)
+            stem = os.path.splitext(os.path.basename(path))[0].casefold()
+            try:
+                with open(path, "r", encoding="utf-8", errors="replace") as handle:
+                    text = handle.read()
+            except OSError:
+                continue
+            parent_keys = {stem}
+            try:
+                display = get_script_file_data(path)["headers"].get("name")
+            except Exception:
+                display = None
+            if str(display or "").strip():
+                parent_keys.add(str(display).strip().casefold())
+            for match in _CALL_SCRIPT_RE.finditer(text):
+                child = match.group(1).strip().casefold()
+                if child:
+                    callers.setdefault(child, set()).update(parent_keys)
+
+        for entry in repo_parser.load_repo_entries(None) or ():
+            if not isinstance(entry, dict):
+                continue
+            feature_keys = _provider_identity_candidates(entry)
+            if not feature_keys:
+                continue
+            for dependency in entry.get("dependencies") or []:
+                if not isinstance(dependency, dict):
+                    continue
+                spec = dependency.get("package-name")
+                if isinstance(spec, dict):
+                    packages = [
+                        str(value).strip()
+                        for value in spec.values()
+                        if str(value or "").strip()
+                    ]
+                else:
+                    try:
+                        packages = repo_parser._normalize_package_names(spec)
+                    except Exception:
+                        packages = []
+                for package in packages:
+                    key = str(package or "").strip().casefold()
+                    if key:
+                        declarers.setdefault(key, set()).update(feature_keys)
+    except Exception:
+        pass
+
+    _DEPENDENCY_GRAPH.update(built=now, callers=callers, declarers=declarers)
+    return _DEPENDENCY_GRAPH
+
+
+def provider_has_transaction(script_info):
+    """Whether a provider feature was ever executed through LinuxToys.
+
+    Some providers legitimately record no reversible operations (Flathub only
+    adds a remote), so their transactions may carry no ops at all; such a
+    transaction must still count as installed on the removability side.
+    """
+    if _provider_kind(script_info or {}) is None:
+        return False
+    registered = {
+        str(name or "").strip().casefold()
+        for name in registry_utils.parse_registry_file()
+    }
+    return any(
+        identity in registered
+        for identity in _provider_identity_candidates(script_info or {})
+    )
+
+
+def dependency_blockers(script_info):
+    """Return human-readable reasons blocking removal of a feature.
+
+    The empty list means removal is safe. Blockers are computed from the live
+    installed-packages snapshot plus the Action Registry, so they reflect both
+    installs made through LinuxToys and observed ones.
+    """
+    blockers = []
+
+    provider = _provider_kind(script_info or {})
+    if provider is not None:
+        state = snapshot()
+        registry_counts = _registry_dependent_counts()
+        counts = {
+            "homebrew": len(state.get("homebrew") or ()),
+            "flatpak": len(state.get("flatpak") or {}),
+            "snap": len(state.get("snap") or ()),
+            "aur": registry_counts["aur"],
+            "appimage": registry_counts["appimage"],
+        }
+
+        total = counts.get(provider, 0)
+        if total > 0:
+            labels = {
+                "homebrew": _plural(total, "installed Homebrew package",
+                                    "installed Homebrew packages"),
+                "flatpak": _plural(total, "installed Flatpak app",
+                                   "installed Flatpak apps"),
+                "snap": _plural(total, "installed Snap", "installed Snaps"),
+                "aur": _plural(total, "installed AUR package",
+                               "installed AUR packages"),
+                "appimage": _plural(total, "installed AppImage",
+                                    "installed AppImages"),
+            }
+            blockers.append(labels[provider])
+
+    registry_names = {
+        str(name or "").strip().casefold()
+        for name in registry_utils.parse_registry_file()
+    }
+    blockers.extend(_installed_dependent_blockers(script_info, registry_names))
+    return blockers
+
+
+def _installed_dependent_blockers(script_info, registry_names):
+    """Blockers for components other installed features rely on.
+
+    - A script called via ``call_script`` by MORE THAN ONE installed feature is
+      blocked: with a single parent the parent's own revert also reverts the
+      component, so removal stays safe.
+    - A package declared as a listing dependency is blocked while any installed
+      feature that declares it remains.
+    """
+    blockers = []
+    graph = _dependency_graph()
+    identity_keys = _provider_identity_candidates(script_info or {})
+    if not identity_keys:
+        return blockers
+
+    installed_callers = set()
+    installed_declarers = set()
+    for child_key in identity_keys:
+        for parent_key in graph["callers"].get(child_key, ()):
+            if parent_key in registry_names:
+                installed_callers.add(parent_key)
+        for declarer_key in graph["declarers"].get(child_key, ()):
+            if declarer_key in registry_names:
+                installed_declarers.add(declarer_key)
+
+    if len(installed_callers) > 1:
+        blockers.append(_plural(
+            len(installed_callers),
+            "installed feature depends on it",
+            "installed features depend on it",
+        ))
+    if installed_declarers:
+        blockers.append(_plural(
+            len(installed_declarers),
+            "installed feature declares it as a dependency",
+            "installed features declare it as a dependency",
+        ))
+    return blockers
+
+
+def removal_blocked(script_info):
+    """Whether dependency protection currently switches removal off."""
+    return bool(dependency_blockers(script_info))
 
 
 def build_external_removal(info, installed_match, translations=None):

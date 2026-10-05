@@ -728,5 +728,8 @@
   "mtuprobe": "I-enable ang MTU Probing",
   "mtuprobe_desc": "Ang MTU probing (Packetization Layer Path MTU Discovery) ay isang awtomatikong networking technique na ginagamit upang mahanap ang pinakamalaking packet size na maaaring dumaan sa isang network path nang hindi naha-fragment o nada-drop. Ang pag-enable nito ay nag-aayos ng ilang problema sa mga laro, lalo na sa mga laro mula sa Ubisoft.",
   "app_page_screenshot_zoom_hint": "Mag-click o pindutin ang Esc para bumalik",
-  "app_page_screenshot_zoom": "Mag-click para mag-zoom"
+  "app_page_screenshot_zoom": "Mag-click para mag-zoom",
+  "dependency_block_title": "Naka-block ang pag-alis",
+  "dependency_block_message": "May naka-install na software na umaasa pa rin sa '{name}'. Alisin muna ito:\n\n{blockers}",
+  "dependency_block_button_tooltip": "Naka-block ang pag-alis: may naka-install na software na umaasa pa rin sa feature na ito"
 }

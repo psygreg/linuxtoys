@@ -221,7 +221,14 @@ class ScriptCache:
 
         for script_info in self.scripts:
             script_path = script_info.get("path", "")
-            registered = self._is_registered(script_info, executed_names)
+            # Provider features (Homebrew, Flathub, Snapcraft, Paru, Gear
+            # Lever) count as installed with ANY registry transaction, even
+            # one without recorded operations (e.g. Flathub only adds a
+            # remote); the dependency gate overlays the removal block.
+            registered = (
+                self._is_registered(script_info, executed_names)
+                or installed_packages.provider_has_transaction(script_info)
+            )
 
             if script_info.get("appstream_source") == "homebrew":
                 self._removable_cache[script_path] = installed_packages.match(script_info) is not None
@@ -287,7 +294,10 @@ class ScriptCache:
             return self._removable_cache[script_path]
 
         executed_names = _get_executed_script_names()
-        registered = self._is_registered(script_info, executed_names)
+        registered = (
+            self._is_registered(script_info, executed_names)
+            or installed_packages.provider_has_transaction(script_info)
+        )
 
         if script_info.get("is_appstream_entry"):
             return (

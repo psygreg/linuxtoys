@@ -728,5 +728,8 @@
   "mtuprobe": "Luba MTU Probing",
   "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) on automatiseeritud võrgutehnika, mida kasutatakse suurima paketisuuruse leidmiseks, mis saab läbida võrgutee ilma killustumise või kadumiseta. Selle lubamine lahendab mõningaid mängudega seotud probleeme, eriti Ubisofti mängudes.",
   "app_page_screenshot_zoom_hint": "Tagasipöördumiseks klõpsake või vajutage Esc",
-  "app_page_screenshot_zoom": "Suurendamiseks klõpsake"
+  "app_page_screenshot_zoom": "Suurendamiseks klõpsake",
+  "dependency_block_title": "Eemaldamine on blokeeritud",
+  "dependency_block_message": "Installitud tarkvara sõltub endiselt funktsioonist „{name}“. Eemaldage see kõigepealt:\n\n{blockers}",
+  "dependency_block_button_tooltip": "Eemaldamine on blokeeritud: installitud tarkvara sõltub endiselt sellest funktsioonist"
 }

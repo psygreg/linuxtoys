@@ -728,5 +728,8 @@
   "mtuprobe": "Povolit MTU Probing",
   "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) je automatizovaná síťová technika používaná ke zjištění největší velikosti paketu, který může projít síťovou cestou bez fragmentace nebo zahození. Její povolení řeší některé problémy s hrami, zejména od Ubisoftu.",
   "app_page_screenshot_zoom_hint": "Kliknutím nebo stisknutím Esc se vrátíte",
-  "app_page_screenshot_zoom": "Kliknutím zvětšíte"
+  "app_page_screenshot_zoom": "Kliknutím zvětšíte",
+  "dependency_block_title": "Odstranění je zablokováno",
+  "dependency_block_message": "Nainstalovaný software stále závisí na „{name}“. Nejprve jej odstraňte:\n\n{blockers}",
+  "dependency_block_button_tooltip": "Odstranění je zablokováno: nainstalovaný software stále závisí na této funkci"
 }

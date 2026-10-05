@@ -728,5 +728,8 @@
   "mtuprobe": "MTU Probing ကို ဖွင့်ရန်",
   "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) သည် network လမ်းကြောင်းတစ်လျှောက် fragment ဖြစ်ခြင်း သို့မဟုတ် drop ဖြစ်ခြင်းမရှိဘဲ ဖြတ်သန်းနိုင်သည့် အကြီးဆုံး packet size ကို ရှာဖွေရန် အသုံးပြုသော အလိုအလျောက် networking နည်းပညာဖြစ်သည်။ ၎င်းကို ဖွင့်ခြင်းဖြင့် အထူးသဖြင့် Ubisoft ဂိမ်းများတွင် ဖြစ်ပေါ်သော ပြဿနာအချို့ကို ဖြေရှင်းပေးနိုင်သည်။",
   "app_page_screenshot_zoom_hint": "ပြန်သွားရန် နှိပ်ပါ သို့မဟုတ် Esc ကို နှိပ်ပါ",
-  "app_page_screenshot_zoom": "ချဲ့ကြည့်ရန် နှိပ်ပါ"
+  "app_page_screenshot_zoom": "ချဲ့ကြည့်ရန် နှိပ်ပါ",
+  "dependency_block_title": "ဖယ်ရှားခြင်းကို ပိတ်ဆို့ထားသည်",
+  "dependency_block_message": "ထည့်သွင်းထားသော ဆော့ဖ်ဝဲသည် '{name}' ကို မှီခိုနေဆဲဖြစ်သည်။ ၎င်းကို ဦးစွာ ဖယ်ရှားပါ:\n\n{blockers}",
+  "dependency_block_button_tooltip": "ဖယ်ရှားခြင်းကို ပိတ်ဆို့ထားသည်: ထည့်သွင်းထားသော ဆော့ဖ်ဝဲသည် ဤလုပ်ဆောင်ချက်ကို မှီခိုနေဆဲဖြစ်သည်"
 }

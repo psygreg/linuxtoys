@@ -728,5 +728,8 @@
   "mtuprobe": "Активиране на MTU Probing",
   "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) е автоматизирана мрежова техника за намиране на най-големия размер на пакет, който може да премине по мрежов път, без да бъде фрагментиран или отхвърлен. Активирането ѝ отстранява някои проблеми с игри, особено такива от Ubisoft.",
   "app_page_screenshot_zoom_hint": "Щракнете или натиснете Esc, за да се върнете",
-  "app_page_screenshot_zoom": "Щракнете за увеличаване"
+  "app_page_screenshot_zoom": "Щракнете за увеличаване",
+  "dependency_block_title": "Премахването е блокирано",
+  "dependency_block_message": "Инсталиран софтуер все още зависи от „{name}“. Първо го премахнете:\n\n{blockers}",
+  "dependency_block_button_tooltip": "Премахването е блокирано: инсталиран софтуер все още зависи от тази функция"
 }

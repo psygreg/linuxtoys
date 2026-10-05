@@ -728,5 +728,8 @@
   "mtuprobe": "تمكين استكشاف MTU",
   "mtuprobe_desc": "MTU probing ‏(Packetization Layer Path MTU Discovery) هي تقنية شبكات آلية تُستخدم للعثور على أكبر حجم للحزمة يمكنه الانتقال عبر مسار الشبكة دون تجزئة أو إسقاط. يؤدي تمكينها إلى إصلاح بعض المشكلات في الألعاب، خاصة ألعاب Ubisoft.",
   "app_page_screenshot_zoom_hint": "انقر أو اضغط على Esc للعودة",
-  "app_page_screenshot_zoom": "انقر للتكبير"
+  "app_page_screenshot_zoom": "انقر للتكبير",
+  "dependency_block_title": "تم حظر الإزالة",
+  "dependency_block_message": "لا تزال برامج مثبتة تعتمد على '{name}'. أزلها أولًا:\n\n{blockers}",
+  "dependency_block_button_tooltip": "الإزالة محظورة: لا تزال برامج مثبتة تعتمد على هذه الميزة"
 }

@@ -728,5 +728,8 @@
   "mtuprobe": "Միացնել MTU Probing-ը",
   "mtuprobe_desc": "MTU probing-ը (Packetization Layer Path MTU Discovery) ավտոմատացված ցանցային տեխնիկա է, որն օգտագործվում է ցանցային ուղով առանց մասնատման կամ կորստի անցնող փաթեթի առավելագույն չափը գտնելու համար։ Այն միացնելը լուծում է խաղերի, հատկապես Ubisoft-ի խաղերի հետ կապված որոշ խնդիրներ։",
   "app_page_screenshot_zoom_hint": "Վերադառնալու համար սեղմեք կամ սեղմեք Esc",
-  "app_page_screenshot_zoom": "Սեղմեք՝ մեծացնելու համար"
+  "app_page_screenshot_zoom": "Սեղմեք՝ մեծացնելու համար",
+  "dependency_block_title": "Հեռացումն արգելափակված է",
+  "dependency_block_message": "Տեղադրված ծրագրակազմը դեռ կախված է '{name}'-ից։ Նախ հեռացրեք այն՝\n\n{blockers}",
+  "dependency_block_button_tooltip": "Հեռացումն արգելափակված է․ տեղադրված ծրագրակազմը դեռ կախված է այս հնարավորությունից"
 }

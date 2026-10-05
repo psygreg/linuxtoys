@@ -728,5 +728,8 @@
   "mtuprobe": "Įjungti MTU Probing",
   "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) yra automatizuotas tinklo metodas, naudojamas didžiausiam paketo dydžiui, galinčiam keliauti tinklo keliu be fragmentavimo ar atmetimo, nustatyti. Jo įjungimas išsprendžia kai kurias žaidimų problemas, ypač Ubisoft žaidimuose.",
   "app_page_screenshot_zoom_hint": "Spustelėkite arba paspauskite Esc, kad grįžtumėte",
-  "app_page_screenshot_zoom": "Spustelėkite, kad padidintumėte"
+  "app_page_screenshot_zoom": "Spustelėkite, kad padidintumėte",
+  "dependency_block_title": "Šalinimas užblokuotas",
+  "dependency_block_message": "Įdiegta programinė įranga vis dar priklauso nuo „{name}“. Pirmiausia ją pašalinkite:\n\n{blockers}",
+  "dependency_block_button_tooltip": "Šalinimas užblokuotas: įdiegta programinė įranga vis dar priklauso nuo šios funkcijos"
 }

@@ -728,5 +728,8 @@
   "mtuprobe": "Iespējot MTU Probing",
   "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) ir automatizēta tīkla metode, ko izmanto, lai noteiktu lielāko pakotnes izmēru, kas var šķērsot tīkla ceļu bez fragmentēšanas vai nomešanas. Tās iespējošana novērš dažas problēmas ar spēlēm, īpaši Ubisoft spēlēm.",
   "app_page_screenshot_zoom_hint": "Noklikšķiniet vai nospiediet Esc, lai atgrieztos",
-  "app_page_screenshot_zoom": "Noklikšķiniet, lai palielinātu"
+  "app_page_screenshot_zoom": "Noklikšķiniet, lai palielinātu",
+  "dependency_block_title": "Noņemšana bloķēta",
+  "dependency_block_message": "Instalētā programmatūra joprojām ir atkarīga no „{name}“. Vispirms noņemiet to:\n\n{blockers}",
+  "dependency_block_button_tooltip": "Noņemšana bloķēta: instalētā programmatūra joprojām ir atkarīga no šīs funkcijas"
 }

@@ -1,5 +1,5 @@
 import os
-from . import reboot_helper
+from . import installed_packages, reboot_helper
 from .compat import should_enable_manual_revert, get_revert_capability
 from .gtk_common import Gdk, GLib, Gtk, Vte
 from .gtk_dialogs import run_message_dialog
@@ -27,6 +27,11 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
         self.removable_script_manual_revert_enabled = False
         self.removable_script_has_registry_entry = False
         self.removable_script_revert_disabled = False
+        self._removal_blockers = (
+            installed_packages.dependency_blockers(self.removable_script_info)
+            if self.removable_script_info
+            else []
+        )
         self._flatpak_installed_detected = False  # Track if flatpak was installed during script execution
         self._self_update = False
         self._cleanup_script_path = None
@@ -111,6 +116,10 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
         #    - OR manual revert is enabled AND there's a registry entry (script was previously installed)
         is_internal_revert = self.removable_script_revert_capability == "internal"
         revert_available = is_internal_revert or (self.removable_script_manual_revert_enabled and self.removable_script_has_registry_entry)
+        # Dependency protection overlay: the feature stays listed as installed,
+        # but its removal control is switched off while dependents exist.
+        if self._removal_blockers:
+            revert_available = False
         if self.removable_script_info and self.total_scripts == 1 and revert_available and not self.removable_script_revert_disabled:
             self.vbox_main.button_remove.set_no_show_all(False)
             self.vbox_main.button_remove.show()
@@ -176,6 +185,29 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
         )
         return response == Gtk.ResponseType.OK
 
+    def _show_remove_not_available_dialog_with_reasons(self, blockers):
+        """Dependency-protected removal: explain what still needs the feature."""
+        response = run_message_dialog(
+            self,
+            title=self.translations.get(
+                "dependency_block_title",
+                "Removal Blocked",
+            ),
+            secondary_text=self.translations.get(
+                "dependency_block_message",
+                "Installed software still depends on '{name}'. "
+                "Remove it first:\n\n{blockers}",
+            ).format(
+                name=self.removable_script_info.get("name", "This feature"),
+                blockers="\n".join(f"• {blocker}" for blocker in blockers),
+            ),
+            message_type=Gtk.MessageType.WARNING,
+            buttons=[
+                ("OK", Gtk.ResponseType.OK),
+            ],
+        )
+        return response == Gtk.ResponseType.OK
+
     def _show_internal_revert_confirmation_dialog(self, script_name):
         response = run_message_dialog(
             self,
@@ -204,6 +236,15 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
 
     def on_button_remove_clicked(self, widget):
         if not self.removable_script_info or self.parent._script_running:
+            return
+
+        # Provider features (Homebrew, Flathub, Snapcraft, Paru, Gear Lever)
+        # cannot be removed while anything installed through them remains.
+        blockers = installed_packages.dependency_blockers(
+            self.removable_script_info
+        )
+        if blockers:
+            self._show_remove_not_available_dialog_with_reasons(blockers)
             return
 
         script_name = self.removable_script_info.get("name", "Script")

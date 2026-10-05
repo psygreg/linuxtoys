@@ -728,5 +728,8 @@
   "mtuprobe": "MTU Probing'i etkinleştir",
   "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery), bir ağ yolu boyunca parçalanmadan veya düşürülmeden iletilebilecek en büyük paket boyutunu bulmak için kullanılan otomatik bir ağ tekniğidir. Etkinleştirilmesi, özellikle Ubisoft oyunlarında görülen bazı sorunları giderir.",
   "app_page_screenshot_zoom_hint": "Geri dönmek için tıklayın veya Esc tuşuna basın",
-  "app_page_screenshot_zoom": "Yakınlaştırmak için tıklayın"
+  "app_page_screenshot_zoom": "Yakınlaştırmak için tıklayın",
+  "dependency_block_title": "Kaldırma engellendi",
+  "dependency_block_message": "Yüklü yazılım hâlâ '{name}' özelliğine bağımlı. Önce onu kaldırın:\n\n{blockers}",
+  "dependency_block_button_tooltip": "Kaldırma engellendi: yüklü yazılım hâlâ bu özelliğe bağımlı"
 }

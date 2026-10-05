@@ -728,5 +728,8 @@
   "mtuprobe": "הפעלת MTU Probing",
   "mtuprobe_desc": "MTU probing ‏(Packetization Layer Path MTU Discovery) היא טכניקת רשת אוטומטית המשמשת למציאת גודל החבילה המרבי שיכול לעבור בנתיב רשת מבלי להתפצל או להיזרק. הפעלתה פותרת בעיות מסוימות במשחקים, במיוחד במשחקים של Ubisoft.",
   "app_page_screenshot_zoom_hint": "לחצו או הקישו על Esc כדי לחזור",
-  "app_page_screenshot_zoom": "לחצו להגדלה"
+  "app_page_screenshot_zoom": "לחצו להגדלה",
+  "dependency_block_title": "ההסרה נחסמה",
+  "dependency_block_message": "תוכנה מותקנת עדיין תלויה ב-'{name}'. יש להסיר אותה תחילה:\n\n{blockers}",
+  "dependency_block_button_tooltip": "ההסרה נחסמה: תוכנה מותקנת עדיין תלויה בתכונה זו"
 }

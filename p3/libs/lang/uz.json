@@ -727,5 +727,8 @@
   "mtuprobe": "MTU Probing-ni yoqish",
   "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) tarmoq yo'li bo'ylab qismlarga ajratilmasdan yoki tashlab yuborilmasdan o'tishi mumkin bo'lgan eng katta paket hajmini aniqlash uchun ishlatiladigan avtomatlashtirilgan tarmoq usulidir. Uni yoqish o'yinlar, ayniqsa Ubisoft o'yinlari bilan bog'liq ayrim muammolarni hal qiladi.",
   "app_page_screenshot_zoom_hint": "Qaytish uchun bosing yoki Esc tugmasini bosing",
-  "app_page_screenshot_zoom": "Kattalashtirish uchun bosing"
+  "app_page_screenshot_zoom": "Kattalashtirish uchun bosing",
+  "dependency_block_title": "Olib tashlash bloklangan",
+  "dependency_block_message": "O'rnatilgan dasturiy ta'minot hali ham '{name}' ga bog'liq. Avval uni olib tashlang:\n\n{blockers}",
+  "dependency_block_button_tooltip": "Olib tashlash bloklangan: o'rnatilgan dasturiy ta'minot hali ham bu xususiyatga bog'liq"
 }

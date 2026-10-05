@@ -728,5 +728,8 @@
   "mtuprobe": "MTU Probing engedélyezése",
   "mtuprobe_desc": "Az MTU probing (Packetization Layer Path MTU Discovery) egy automatizált hálózati technika, amely meghatározza azt a legnagyobb csomagméretet, amely töredezés vagy eldobás nélkül képes végighaladni egy hálózati útvonalon. Engedélyezése megold bizonyos játékokkal kapcsolatos problémákat, különösen a Ubisoft játékainál.",
   "app_page_screenshot_zoom_hint": "Kattintson vagy nyomja meg az Esc billentyűt a visszatéréshez",
-  "app_page_screenshot_zoom": "Kattintson a nagyításhoz"
+  "app_page_screenshot_zoom": "Kattintson a nagyításhoz",
+  "dependency_block_title": "Eltávolítás blokkolva",
+  "dependency_block_message": "Telepített szoftver továbbra is függ a(z) „{name}” elemtől. Először távolítsa el:\n\n{blockers}",
+  "dependency_block_button_tooltip": "Eltávolítás blokkolva: telepített szoftver továbbra is függ ettől a funkciótól"
 }

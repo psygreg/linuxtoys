@@ -728,5 +728,8 @@
   "mtuprobe": "Cumasaigh MTU Probing",
   "mtuprobe_desc": "Is teicníc líonraithe uathoibrithe é MTU probing (Packetization Layer Path MTU Discovery) a úsáidtear chun an méid paicéid is mó atá in ann taisteal thar chonair líonra gan a bheith ilroinnte ná caillte a aimsiú. Réitíonn a chumasú roinnt fadhbanna le cluichí, go háirithe cluichí ó Ubisoft.",
   "app_page_screenshot_zoom_hint": "Cliceáil nó brúigh Esc chun filleadh",
-  "app_page_screenshot_zoom": "Cliceáil chun zúmáil"
+  "app_page_screenshot_zoom": "Cliceáil chun zúmáil",
+  "dependency_block_title": "Baineadh bac den bhaint",
+  "dependency_block_message": "Tá bogearraí suiteáilte fós ag brath ar '{name}'. Bain iad ar dtús:\n\n{blockers}",
+  "dependency_block_button_tooltip": "Baineadh bac den bhaint: tá bogearraí suiteáilte fós ag brath ar an ngné seo"
 }

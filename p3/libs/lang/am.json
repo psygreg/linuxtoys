@@ -728,5 +728,8 @@
   "mtuprobe": "MTU Probingን አንቃ",
   "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) በኔትወርክ መንገድ ላይ ሳይከፋፈል ወይም ሳይጣል ሊጓዝ የሚችለውን ትልቁን የፓኬት መጠን ለማግኘት የሚያገለግል ራስ-ሰር የኔትወርክ ቴክኒክ ነው። ማንቃቱ በተለይ ከUbisoft ጨዋታዎች ጋር የሚከሰቱ አንዳንድ ችግሮችን ያስተካክላል።",
   "app_page_screenshot_zoom_hint": "ለመመለስ ጠቅ ያድርጉ ወይም Escን ይጫኑ",
-  "app_page_screenshot_zoom": "ለማጉላት ጠቅ ያድርጉ"
+  "app_page_screenshot_zoom": "ለማጉላት ጠቅ ያድርጉ",
+  "dependency_block_title": "ማስወገድ ታግዷል",
+  "dependency_block_message": "የተጫነ ሶፍትዌር አሁንም በ'{name}' ላይ ይመሰረታል። መጀመሪያ ይህን ያስወግዱ፦\n\n{blockers}",
+  "dependency_block_button_tooltip": "ማስወገድ ታግዷል፦ የተጫነ ሶፍትዌር አሁንም በዚህ ባህሪ ላይ ይመሰረታል"
 }

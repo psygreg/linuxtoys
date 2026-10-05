@@ -14,7 +14,14 @@ from urllib.error import HTTPError, URLError
 
 from .gtk_common import Gdk, Gtk, GdkPixbuf, Pango, GLib
 from .term_header import InfosHead
-from . import get_icon_path, appstream_cache, appstream_extensions, gui_rs, _catalog_rs
+from . import (
+    get_icon_path,
+    appstream_cache,
+    appstream_extensions,
+    gui_rs,
+    installed_packages,
+    _catalog_rs,
+)
 from .lang_utils import detect_system_language
 
 
@@ -225,7 +232,7 @@ class AppPageView(Gtk.Box):
                 GLib.markup_escape_text(
                     self.translations.get(
                         "app_page_screenshot_zoom_hint",
-                        "Click or press Esc to close",
+                        "Click or press Esc to return",
                     )
                 )
             )
@@ -1932,7 +1939,21 @@ class AppPageView(Gtk.Box):
         if state == "installed":
             label = self.translations.get("skills_remove_label", "Remove")
             icon = "edit-delete-symbolic"
-            sensitive = True
+            # Dependency protection overlay: the app stays recognized as
+            # installed, but its removal is switched off while dependents exist.
+            blockers = installed_packages.dependency_blockers(
+                self._selected_install_info
+            )
+            sensitive = not blockers
+            button.set_tooltip_text(
+                self.translations.get(
+                    "dependency_block_button_tooltip",
+                    "Removal blocked: installed software still depends "
+                    "on this feature",
+                )
+                if blockers
+                else None
+            )
             context.add_class("destructive-action")
         elif state == "removing":
             label = self.translations.get("skills_removing", "Removing…")

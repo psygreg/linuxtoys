@@ -728,5 +728,8 @@
   "mtuprobe": "Dayakan MTU Probing",
   "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) ialah teknik rangkaian automatik yang digunakan untuk mencari saiz paket terbesar yang boleh melalui laluan rangkaian tanpa dipecahkan atau digugurkan. Mendayakannya membaiki beberapa masalah dengan permainan, terutamanya permainan daripada Ubisoft.",
   "app_page_screenshot_zoom_hint": "Klik atau tekan Esc untuk kembali",
-  "app_page_screenshot_zoom": "Klik untuk zum"
+  "app_page_screenshot_zoom": "Klik untuk zum",
+  "dependency_block_title": "Pembuangan disekat",
+  "dependency_block_message": "Perisian yang dipasang masih bergantung pada '{name}'. Buangnya terlebih dahulu:\n\n{blockers}",
+  "dependency_block_button_tooltip": "Pembuangan disekat: perisian yang dipasang masih bergantung pada ciri ini"
 }

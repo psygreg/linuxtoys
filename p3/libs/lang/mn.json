@@ -727,5 +727,8 @@
   "mtuprobe": "MTU Probing-г идэвхжүүлэх",
   "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) нь сүлжээний замаар хуваагдах эсвэл хаягдахгүйгээр дамжих боломжтой хамгийн том пакетын хэмжээг олох автомат сүлжээний арга юм. Үүнийг идэвхжүүлснээр тоглоом, ялангуяа Ubisoft-ын тоглоомуудтай холбоотой зарим асуудлыг засдаг.",
   "app_page_screenshot_zoom_hint": "Буцахын тулд товших эсвэл Esc дарна уу",
-  "app_page_screenshot_zoom": "Томруулахын тулд товшино уу"
+  "app_page_screenshot_zoom": "Томруулахын тулд товшино уу",
+  "dependency_block_title": "Устгах үйлдэл хаагдсан",
+  "dependency_block_message": "Суулгасан програм хангамж '{name}'-ээс хамааралтай хэвээр байна. Эхлээд үүнийг устгана уу:\n\n{blockers}",
+  "dependency_block_button_tooltip": "Устгах үйлдэл хаагдсан: суулгасан програм хангамж энэ функцээс хамааралтай хэвээр байна"
 }

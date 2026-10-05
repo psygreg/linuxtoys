@@ -127,6 +127,18 @@ class InstalledFeaturesView(Gtk.ScrolledWindow):
             launch.connect("clicked", self._launch, info)
         action = gui_rs.card_child(row, "linuxtoys-list-row-action")
         if action is not None:
+            # Dependency protection overlay: the row stays listed as installed,
+            # but removal is switched off while dependents exist.
+            blockers = installed_packages.dependency_blockers(info)
+            action.set_sensitive(not blockers)
+            if blockers:
+                action.set_tooltip_text(
+                    self.parent_window.translations.get(
+                        "dependency_block_button_tooltip",
+                        "Removal blocked: installed software still depends "
+                        "on this feature",
+                    )
+                )
             action.connect("clicked", self._remove, info)
 
     def _row_spec(self, info, key):
