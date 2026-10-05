@@ -1,0 +1,10 @@
+[
+  {
+      "appstream-name": "com.valvesoftware.Steam",
+      "overrides": {
+          "post": {
+              "script": "./obs-post.sh"
+          }
+      }
+  }
+]
