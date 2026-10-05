@@ -726,5 +726,7 @@
   "homebrew_catalog_unavailable": "A Homebrew metaadatai nem érhetők el. Próbálja újra később.",
   "homebrew_category_desc": "Böngésszen a Homebrew csomagjai között.",
   "mtuprobe": "MTU Probing engedélyezése",
-  "mtuprobe_desc": "Az MTU probing (Packetization Layer Path MTU Discovery) egy automatizált hálózati technika, amely meghatározza azt a legnagyobb csomagméretet, amely töredezés vagy eldobás nélkül képes végighaladni egy hálózati útvonalon. Engedélyezése megold bizonyos játékokkal kapcsolatos problémákat, különösen a Ubisoft játékainál."
+  "mtuprobe_desc": "Az MTU probing (Packetization Layer Path MTU Discovery) egy automatizált hálózati technika, amely meghatározza azt a legnagyobb csomagméretet, amely töredezés vagy eldobás nélkül képes végighaladni egy hálózati útvonalon. Engedélyezése megold bizonyos játékokkal kapcsolatos problémákat, különösen a Ubisoft játékainál.",
+  "app_page_screenshot_zoom_hint": "Kattintson vagy nyomja meg az Esc billentyűt a visszatéréshez",
+  "app_page_screenshot_zoom": "Kattintson a nagyításhoz"
 }

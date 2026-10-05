@@ -726,5 +726,7 @@
   "homebrew_catalog_unavailable": "מטא-נתוני Homebrew אינם זמינים. נסו שוב מאוחר יותר.",
   "homebrew_category_desc": "עיינו בחבילות מ-Homebrew.",
   "mtuprobe": "הפעלת MTU Probing",
-  "mtuprobe_desc": "MTU probing ‏(Packetization Layer Path MTU Discovery) היא טכניקת רשת אוטומטית המשמשת למציאת גודל החבילה המרבי שיכול לעבור בנתיב רשת מבלי להתפצל או להיזרק. הפעלתה פותרת בעיות מסוימות במשחקים, במיוחד במשחקים של Ubisoft."
+  "mtuprobe_desc": "MTU probing ‏(Packetization Layer Path MTU Discovery) היא טכניקת רשת אוטומטית המשמשת למציאת גודל החבילה המרבי שיכול לעבור בנתיב רשת מבלי להתפצל או להיזרק. הפעלתה פותרת בעיות מסוימות במשחקים, במיוחד במשחקים של Ubisoft.",
+  "app_page_screenshot_zoom_hint": "לחצו או הקישו על Esc כדי לחזור",
+  "app_page_screenshot_zoom": "לחצו להגדלה"
 }

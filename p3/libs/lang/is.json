@@ -726,5 +726,7 @@
   "homebrew_catalog_unavailable": "Homebrew-lýsigögn eru ekki tiltæk. Reyndu aftur síðar.",
   "homebrew_category_desc": "Skoðaðu pakka frá Homebrew.",
   "mtuprobe": "Virkja MTU Probing",
-  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) er sjálfvirk nettækni sem er notuð til að finna stærstu pakkastærð sem getur farið um netslóð án þess að brotna upp eða falla niður. Virkjun þess lagar sum vandamál með leiki, sérstaklega leiki frá Ubisoft."
+  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) er sjálfvirk nettækni sem er notuð til að finna stærstu pakkastærð sem getur farið um netslóð án þess að brotna upp eða falla niður. Virkjun þess lagar sum vandamál með leiki, sérstaklega leiki frá Ubisoft.",
+  "app_page_screenshot_zoom_hint": "Smelltu eða ýttu á Esc til að fara til baka",
+  "app_page_screenshot_zoom": "Smelltu til að stækka"
 }

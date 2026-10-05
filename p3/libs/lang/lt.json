@@ -726,5 +726,7 @@
   "homebrew_catalog_unavailable": "Homebrew metaduomenys nepasiekiami. Bandykite dar kartą vėliau.",
   "homebrew_category_desc": "Naršykite Homebrew paketus.",
   "mtuprobe": "Įjungti MTU Probing",
-  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) yra automatizuotas tinklo metodas, naudojamas didžiausiam paketo dydžiui, galinčiam keliauti tinklo keliu be fragmentavimo ar atmetimo, nustatyti. Jo įjungimas išsprendžia kai kurias žaidimų problemas, ypač Ubisoft žaidimuose."
+  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) yra automatizuotas tinklo metodas, naudojamas didžiausiam paketo dydžiui, galinčiam keliauti tinklo keliu be fragmentavimo ar atmetimo, nustatyti. Jo įjungimas išsprendžia kai kurias žaidimų problemas, ypač Ubisoft žaidimuose.",
+  "app_page_screenshot_zoom_hint": "Spustelėkite arba paspauskite Esc, kad grįžtumėte",
+  "app_page_screenshot_zoom": "Spustelėkite, kad padidintumėte"
 }

@@ -726,5 +726,7 @@
   "homebrew_catalog_unavailable": "Homebrew のメタデータを利用できません。後でもう一度お試しください。",
   "homebrew_category_desc": "Homebrew のパッケージを閲覧します。",
   "mtuprobe": "MTU Probing を有効にする",
-  "mtuprobe_desc": "MTU probing（Packetization Layer Path MTU Discovery）は、断片化や破棄を発生させずにネットワーク経路を通過できる最大のパケットサイズを検出する自動ネットワーク技術です。有効にすると、特に Ubisoft のゲームで発生する一部の問題を解決できます。"
+  "mtuprobe_desc": "MTU probing（Packetization Layer Path MTU Discovery）は、断片化や破棄を発生させずにネットワーク経路を通過できる最大のパケットサイズを検出する自動ネットワーク技術です。有効にすると、特に Ubisoft のゲームで発生する一部の問題を解決できます。",
+  "app_page_screenshot_zoom_hint": "クリックするか Esc キーを押して戻ります",
+  "app_page_screenshot_zoom": "クリックして拡大"
 }

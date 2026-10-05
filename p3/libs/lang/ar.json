@@ -726,5 +726,7 @@
   "homebrew_catalog_unavailable": "بيانات Homebrew الوصفية غير متاحة. حاول مرة أخرى لاحقًا.",
   "homebrew_category_desc": "تصفح الحزم من Homebrew.",
   "mtuprobe": "تمكين استكشاف MTU",
-  "mtuprobe_desc": "MTU probing ‏(Packetization Layer Path MTU Discovery) هي تقنية شبكات آلية تُستخدم للعثور على أكبر حجم للحزمة يمكنه الانتقال عبر مسار الشبكة دون تجزئة أو إسقاط. يؤدي تمكينها إلى إصلاح بعض المشكلات في الألعاب، خاصة ألعاب Ubisoft."
+  "mtuprobe_desc": "MTU probing ‏(Packetization Layer Path MTU Discovery) هي تقنية شبكات آلية تُستخدم للعثور على أكبر حجم للحزمة يمكنه الانتقال عبر مسار الشبكة دون تجزئة أو إسقاط. يؤدي تمكينها إلى إصلاح بعض المشكلات في الألعاب، خاصة ألعاب Ubisoft.",
+  "app_page_screenshot_zoom_hint": "انقر أو اضغط على Esc للعودة",
+  "app_page_screenshot_zoom": "انقر للتكبير"
 }

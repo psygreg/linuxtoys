@@ -724,5 +724,7 @@
   "homebrew_catalog_unavailable": "Metadata ya Homebrew haipatikani. Jaribu tena baadaye.",
   "homebrew_category_desc": "Vinjari vifurushi kutoka Homebrew.",
   "mtuprobe": "Washa MTU Probing",
-  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) ni mbinu ya mtandao ya kiotomatiki inayotumika kupata ukubwa mkubwa zaidi wa pakiti unaoweza kupita kwenye njia ya mtandao bila kugawanywa au kupotezwa. Kuiwasha hurekebisha baadhi ya matatizo ya michezo, hasa michezo kutoka Ubisoft."
+  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) ni mbinu ya mtandao ya kiotomatiki inayotumika kupata ukubwa mkubwa zaidi wa pakiti unaoweza kupita kwenye njia ya mtandao bila kugawanywa au kupotezwa. Kuiwasha hurekebisha baadhi ya matatizo ya michezo, hasa michezo kutoka Ubisoft.",
+  "app_page_screenshot_zoom_hint": "Bofya au bonyeza Esc ili kurudi",
+  "app_page_screenshot_zoom": "Bofya ili kukuza"
 }

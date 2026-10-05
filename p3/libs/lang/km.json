@@ -726,5 +726,7 @@
   "homebrew_catalog_unavailable": "ទិន្នន័យមេតា Homebrew មិនអាចប្រើបានទេ។ សូមព្យាយាមម្តងទៀតនៅពេលក្រោយ។",
   "homebrew_category_desc": "រកមើលកញ្ចប់ពី Homebrew។",
   "mtuprobe": "បើក MTU Probing",
-  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) គឺជាបច្ចេកទេសបណ្តាញស្វ័យប្រវត្តិដែលប្រើដើម្បីស្វែងរកទំហំកញ្ចប់ធំបំផុតដែលអាចឆ្លងកាត់ផ្លូវបណ្តាញដោយមិនត្រូវបានបំបែក ឬបោះចោល។ ការបើកវាអាចដោះស្រាយបញ្ហាមួយចំនួនជាមួយហ្គេម ជាពិសេសហ្គេមពី Ubisoft។"
+  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) គឺជាបច្ចេកទេសបណ្តាញស្វ័យប្រវត្តិដែលប្រើដើម្បីស្វែងរកទំហំកញ្ចប់ធំបំផុតដែលអាចឆ្លងកាត់ផ្លូវបណ្តាញដោយមិនត្រូវបានបំបែក ឬបោះចោល។ ការបើកវាអាចដោះស្រាយបញ្ហាមួយចំនួនជាមួយហ្គេម ជាពិសេសហ្គេមពី Ubisoft។",
+  "app_page_screenshot_zoom_hint": "ចុច ឬចុចគ្រាប់ចុច Esc ដើម្បីត្រឡប់",
+  "app_page_screenshot_zoom": "ចុចដើម្បីពង្រីក"
 }

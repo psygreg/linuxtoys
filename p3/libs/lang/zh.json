@@ -728,5 +728,7 @@
   "homebrew_catalog_unavailable": "Homebrew 元数据不可用。请稍后重试。",
   "homebrew_category_desc": "浏览 Homebrew 中的软件包。",
   "mtuprobe": "启用 MTU Probing",
-  "mtuprobe_desc": "MTU probing（Packetization Layer Path MTU Discovery）是一种自动化网络技术，用于查找能够通过网络路径而不被分片或丢弃的最大数据包大小。启用它可以解决一些游戏问题，尤其是 Ubisoft 游戏的问题。"
+  "mtuprobe_desc": "MTU probing（Packetization Layer Path MTU Discovery）是一种自动化网络技术，用于查找能够通过网络路径而不被分片或丢弃的最大数据包大小。启用它可以解决一些游戏问题，尤其是 Ubisoft 游戏的问题。",
+  "app_page_screenshot_zoom_hint": "点击或按 Esc 返回",
+  "app_page_screenshot_zoom": "点击放大"
 }

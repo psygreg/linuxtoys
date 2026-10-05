@@ -726,5 +726,7 @@
   "homebrew_catalog_unavailable": "Níl meiteashonraí Homebrew ar fáil. Bain triail eile as ar ball.",
   "homebrew_category_desc": "Brabhsáil pacáistí ó Homebrew.",
   "mtuprobe": "Cumasaigh MTU Probing",
-  "mtuprobe_desc": "Is teicníc líonraithe uathoibrithe é MTU probing (Packetization Layer Path MTU Discovery) a úsáidtear chun an méid paicéid is mó atá in ann taisteal thar chonair líonra gan a bheith ilroinnte ná caillte a aimsiú. Réitíonn a chumasú roinnt fadhbanna le cluichí, go háirithe cluichí ó Ubisoft."
+  "mtuprobe_desc": "Is teicníc líonraithe uathoibrithe é MTU probing (Packetization Layer Path MTU Discovery) a úsáidtear chun an méid paicéid is mó atá in ann taisteal thar chonair líonra gan a bheith ilroinnte ná caillte a aimsiú. Réitíonn a chumasú roinnt fadhbanna le cluichí, go háirithe cluichí ó Ubisoft.",
+  "app_page_screenshot_zoom_hint": "Cliceáil nó brúigh Esc chun filleadh",
+  "app_page_screenshot_zoom": "Cliceáil chun zúmáil"
 }

@@ -726,5 +726,7 @@
   "homebrew_catalog_unavailable": "Homebrew մետատվյալները հասանելի չեն։ Կրկին փորձեք ավելի ուշ։",
   "homebrew_category_desc": "Դիտեք Homebrew-ի փաթեթները։",
   "mtuprobe": "Միացնել MTU Probing-ը",
-  "mtuprobe_desc": "MTU probing-ը (Packetization Layer Path MTU Discovery) ավտոմատացված ցանցային տեխնիկա է, որն օգտագործվում է ցանցային ուղով առանց մասնատման կամ կորստի անցնող փաթեթի առավելագույն չափը գտնելու համար։ Այն միացնելը լուծում է խաղերի, հատկապես Ubisoft-ի խաղերի հետ կապված որոշ խնդիրներ։"
+  "mtuprobe_desc": "MTU probing-ը (Packetization Layer Path MTU Discovery) ավտոմատացված ցանցային տեխնիկա է, որն օգտագործվում է ցանցային ուղով առանց մասնատման կամ կորստի անցնող փաթեթի առավելագույն չափը գտնելու համար։ Այն միացնելը լուծում է խաղերի, հատկապես Ubisoft-ի խաղերի հետ կապված որոշ խնդիրներ։",
+  "app_page_screenshot_zoom_hint": "Վերադառնալու համար սեղմեք կամ սեղմեք Esc",
+  "app_page_screenshot_zoom": "Սեղմեք՝ մեծացնելու համար"
 }

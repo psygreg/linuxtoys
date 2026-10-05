@@ -726,5 +726,7 @@
   "homebrew_catalog_unavailable": "Hindi available ang Homebrew metadata. Subukan ulit mamaya.",
   "homebrew_category_desc": "Mag-browse ng mga package mula sa Homebrew.",
   "mtuprobe": "I-enable ang MTU Probing",
-  "mtuprobe_desc": "Ang MTU probing (Packetization Layer Path MTU Discovery) ay isang awtomatikong networking technique na ginagamit upang mahanap ang pinakamalaking packet size na maaaring dumaan sa isang network path nang hindi naha-fragment o nada-drop. Ang pag-enable nito ay nag-aayos ng ilang problema sa mga laro, lalo na sa mga laro mula sa Ubisoft."
+  "mtuprobe_desc": "Ang MTU probing (Packetization Layer Path MTU Discovery) ay isang awtomatikong networking technique na ginagamit upang mahanap ang pinakamalaking packet size na maaaring dumaan sa isang network path nang hindi naha-fragment o nada-drop. Ang pag-enable nito ay nag-aayos ng ilang problema sa mga laro, lalo na sa mga laro mula sa Ubisoft.",
+  "app_page_screenshot_zoom_hint": "Mag-click o pindutin ang Esc para bumalik",
+  "app_page_screenshot_zoom": "Mag-click para mag-zoom"
 }

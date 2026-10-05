@@ -726,5 +726,7 @@
   "homebrew_catalog_unavailable": "ຂໍ້ມູນເມຕາ Homebrew ບໍ່ພ້ອມໃຊ້ງານ. ລອງໃໝ່ພາຍຫຼັງ.",
   "homebrew_category_desc": "ເບິ່ງແພັກເກດຈາກ Homebrew.",
   "mtuprobe": "ເປີດໃຊ້ MTU Probing",
-  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) ແມ່ນເຕັກນິກເຄືອຂ່າຍອັດຕະໂນມັດທີ່ໃຊ້ຊອກຫາຂະໜາດແພັກເກດທີ່ໃຫຍ່ທີ່ສຸດທີ່ສາມາດເດີນທາງຜ່ານເສັ້ນທາງເຄືອຂ່າຍໂດຍບໍ່ຖືກແບ່ງ ຫຼື ຖືກຖິ້ມ. ການເປີດໃຊ້ຊ່ວຍແກ້ໄຂບາງບັນຫາກັບເກມ, ໂດຍສະເພາະເກມຈາກ Ubisoft."
+  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) ແມ່ນເຕັກນິກເຄືອຂ່າຍອັດຕະໂນມັດທີ່ໃຊ້ຊອກຫາຂະໜາດແພັກເກດທີ່ໃຫຍ່ທີ່ສຸດທີ່ສາມາດເດີນທາງຜ່ານເສັ້ນທາງເຄືອຂ່າຍໂດຍບໍ່ຖືກແບ່ງ ຫຼື ຖືກຖິ້ມ. ການເປີດໃຊ້ຊ່ວຍແກ້ໄຂບາງບັນຫາກັບເກມ, ໂດຍສະເພາະເກມຈາກ Ubisoft.",
+  "app_page_screenshot_zoom_hint": "ຄລິກ ຫຼື ກົດ Esc ເພື່ອກັບຄືນ",
+  "app_page_screenshot_zoom": "ຄລິກເພື່ອຂະຫຍາຍ"
 }

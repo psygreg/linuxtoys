@@ -726,5 +726,7 @@
   "homebrew_catalog_unavailable": "የHomebrew ሜታዳታ አይገኝም። ቆይተው እንደገና ይሞክሩ።",
   "homebrew_category_desc": "ከHomebrew ጥቅሎችን ያስሱ።",
   "mtuprobe": "MTU Probingን አንቃ",
-  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) በኔትወርክ መንገድ ላይ ሳይከፋፈል ወይም ሳይጣል ሊጓዝ የሚችለውን ትልቁን የፓኬት መጠን ለማግኘት የሚያገለግል ራስ-ሰር የኔትወርክ ቴክኒክ ነው። ማንቃቱ በተለይ ከUbisoft ጨዋታዎች ጋር የሚከሰቱ አንዳንድ ችግሮችን ያስተካክላል።"
+  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) በኔትወርክ መንገድ ላይ ሳይከፋፈል ወይም ሳይጣል ሊጓዝ የሚችለውን ትልቁን የፓኬት መጠን ለማግኘት የሚያገለግል ራስ-ሰር የኔትወርክ ቴክኒክ ነው። ማንቃቱ በተለይ ከUbisoft ጨዋታዎች ጋር የሚከሰቱ አንዳንድ ችግሮችን ያስተካክላል።",
+  "app_page_screenshot_zoom_hint": "ለመመለስ ጠቅ ያድርጉ ወይም Escን ይጫኑ",
+  "app_page_screenshot_zoom": "ለማጉላት ጠቅ ያድርጉ"
 }

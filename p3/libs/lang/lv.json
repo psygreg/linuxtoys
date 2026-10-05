@@ -726,5 +726,7 @@
   "homebrew_catalog_unavailable": "Homebrew metadati nav pieejami. Mēģiniet vēlreiz vēlāk.",
   "homebrew_category_desc": "Pārlūkojiet Homebrew pakotnes.",
   "mtuprobe": "Iespējot MTU Probing",
-  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) ir automatizēta tīkla metode, ko izmanto, lai noteiktu lielāko pakotnes izmēru, kas var šķērsot tīkla ceļu bez fragmentēšanas vai nomešanas. Tās iespējošana novērš dažas problēmas ar spēlēm, īpaši Ubisoft spēlēm."
+  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) ir automatizēta tīkla metode, ko izmanto, lai noteiktu lielāko pakotnes izmēru, kas var šķērsot tīkla ceļu bez fragmentēšanas vai nomešanas. Tās iespējošana novērš dažas problēmas ar spēlēm, īpaši Ubisoft spēlēm.",
+  "app_page_screenshot_zoom_hint": "Noklikšķiniet vai nospiediet Esc, lai atgrieztos",
+  "app_page_screenshot_zoom": "Noklikšķiniet, lai palielinātu"
 }

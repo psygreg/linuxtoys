@@ -725,5 +725,7 @@
   "homebrew_catalog_unavailable": "Homebrew мета өгөгдөл боломжгүй байна. Дараа дахин оролдоно уу.",
   "homebrew_category_desc": "Homebrew дахь багцуудыг үзэх.",
   "mtuprobe": "MTU Probing-г идэвхжүүлэх",
-  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) нь сүлжээний замаар хуваагдах эсвэл хаягдахгүйгээр дамжих боломжтой хамгийн том пакетын хэмжээг олох автомат сүлжээний арга юм. Үүнийг идэвхжүүлснээр тоглоом, ялангуяа Ubisoft-ын тоглоомуудтай холбоотой зарим асуудлыг засдаг."
+  "mtuprobe_desc": "MTU probing (Packetization Layer Path MTU Discovery) нь сүлжээний замаар хуваагдах эсвэл хаягдахгүйгээр дамжих боломжтой хамгийн том пакетын хэмжээг олох автомат сүлжээний арга юм. Үүнийг идэвхжүүлснээр тоглоом, ялангуяа Ubisoft-ын тоглоомуудтай холбоотой зарим асуудлыг засдаг.",
+  "app_page_screenshot_zoom_hint": "Буцахын тулд товших эсвэл Esc дарна уу",
+  "app_page_screenshot_zoom": "Томруулахын тулд товшино уу"
 }
