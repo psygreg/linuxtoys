@@ -1,0 +1,10 @@
+[
+  {
+      "appstream-name": "org.localsend.localsend_app",
+      "overrides": {
+          "post": {
+              "script": "./localsend.sh"
+          }
+      }
+  }
+]
