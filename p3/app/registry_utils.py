@@ -104,6 +104,44 @@ def get_local_package_entries(registry_data=None):
     return local_packages
 
 
+_ENTRY_HEADER_RE = re.compile(
+    r'\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[^\]]*\] Script: '
+)
+
+
+def normalize_registry_content(content):
+    """
+    Rebuild raw registry text into the canonical entry layout.
+
+    Legacy writers appended entries without a trailing newline (or joined
+    stripped entries with "---"), gluing entry headers and separators onto the
+    previous entry's last operation line. Regex-based consumers still found
+    those headers, but line-based consumers (revert, removability) require
+    every header to start its own line. This rebuilds one entry per header
+    match, drops any non-entry prefix bytes, and repairs separator glue, so it
+    is safe to apply to already-canonical content as well (idempotent).
+    """
+    matches = list(_ENTRY_HEADER_RE.finditer(content))
+    if not matches:
+        return content
+
+    entries = []
+    for index, match in enumerate(matches):
+        start = match.start()
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(content)
+        entry_text = content[start:end].strip()
+        # Repair the separator glued to the entry's last operation line.
+        if entry_text.endswith("---"):
+            entry_text = entry_text[:-3].rstrip()
+        if entry_text:
+            entries.append(entry_text)
+
+    if not entries:
+        return content
+
+    return "\n---\n\n".join(entries) + "\n---\n\n"
+
+
 def search_registry_entries(registry_data, query):
     """
     Search registry entries by script name, timestamp, or operation text.

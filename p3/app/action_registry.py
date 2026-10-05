@@ -8,7 +8,7 @@ from gi.repository import GLib
 from .gtk_common import Gtk
 from .gtk_dialogs import run_message_dialog
 from .lang_utils import create_translator, load_translations
-from .registry_utils import parse_registry_file, search_registry_entries
+from .registry_utils import normalize_registry_content, parse_registry_file, search_registry_entries
 from .manifest_helper import export_registered_manifest
 from .parser import get_display_name
 from .compat import get_linuxtoys_cache_dir
@@ -69,6 +69,10 @@ def _remove_script_from_registry(script_name):
     except Exception:
         return False
 
+    # Normalize first so legacy glued (missing-newline) entries are still
+    # split into one entry per header.
+    content = normalize_registry_content(content)
+
     # Split by registry entries
     entries = content.split("---\n")
 
@@ -94,8 +98,10 @@ def _remove_script_from_registry(script_name):
     if not found:
         return False
 
-    # Reconstruct the registry file
-    new_content = "---\n".join(filtered_entries)
+    # Reconstruct the registry file in the canonical layout. The previous
+    # "---\n".join() here glued entries together and left the file without a
+    # trailing newline, corrupting every entry appended afterwards.
+    new_content = "\n---\n\n".join(filtered_entries) + "\n---\n\n"
 
     try:
         with open(registry_file, "w") as f:

@@ -5,12 +5,12 @@ import os
 
 if __package__:
     from .revert_helper import build_auto_revert_script_entry
-    from .registry_utils import parse_registry_file
+    from .registry_utils import normalize_registry_content, parse_registry_file
     from .compat import get_linuxtoys_cache_dir
 else:
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-    from registry_utils import parse_registry_file
+    from registry_utils import normalize_registry_content, parse_registry_file
     from compat import get_linuxtoys_cache_dir
     build_auto_revert_script_entry = None
 
@@ -86,7 +86,11 @@ class ExecutionRegistry:
                 # All entries were for this script, clear the file
                 new_content = ""
             else:
-                new_content = "".join(content[start:end] for start, end in ranges_to_keep)
+                # Normalizing here also heals legacy glued (missing-newline)
+                # entries on the next registry write.
+                new_content = normalize_registry_content(
+                    "".join(content[start:end] for start, end in ranges_to_keep)
+                )
             
             with open(registry_file, "w") as f:
                 f.write(new_content)
@@ -133,6 +137,19 @@ class ExecutionRegistry:
                 entry += "Changes: (none)\n"
             entry += "---\n\n"
             
+            # A legacy writer could leave the file without a trailing newline;
+            # appending after that would glue this entry's header onto the
+            # previous entry's last line and hide it from line-based parsing.
+            try:
+                if os.path.exists(registry_file) and os.path.getsize(registry_file) > 0:
+                    with open(registry_file, "rb") as handle:
+                        handle.seek(-1, os.SEEK_END)
+                        if handle.read(1) != b"\n":
+                            with open(registry_file, "a") as fixup:
+                                fixup.write("\n")
+            except OSError:
+                pass
+
             # Append to registry file
             with open(registry_file, "a") as f:
                 f.write(entry)

@@ -119,6 +119,19 @@ def _save_script_to_registry(script_name, transmap_path):
             entry += "Changes: (none)\n"
         entry += "---\n\n"
         
+        # A legacy writer could leave the file without a trailing newline;
+        # appending after that would glue this entry's header onto the
+        # previous entry's last line and hide it from line-based parsing.
+        try:
+            if os.path.exists(registry_file) and os.path.getsize(registry_file) > 0:
+                with open(registry_file, "rb") as handle:
+                    handle.seek(-1, os.SEEK_END)
+                    if handle.read(1) != b"\n":
+                        with open(registry_file, "a") as fixup:
+                            fixup.write("\n")
+        except OSError:
+            pass
+
         # Append to registry file
         with open(registry_file, "a") as f:
             f.write(entry)
