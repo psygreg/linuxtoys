@@ -140,3 +140,8 @@ button.queue-remove:hover {
 .category-footer-tabs button:checked {
     border-radius: 0;
 }
+
+/* Screenshot lightbox overlay: dims the app page underneath the zoomed shot. */
+.linuxtoys-screenshot-lightbox {
+    background-color: rgba(0, 0, 0, 0.78);
+}

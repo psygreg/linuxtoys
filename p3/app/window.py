@@ -2002,6 +2002,17 @@ class AppWindow(
         current_view = self.main_stack.get_visible_child_name()
         if current_view == "app_page":
             page = self.main_stack.get_child_by_name("app_page")
+            # While the screenshot lightbox is open it owns these keys: Escape
+            # closes the zoom instead of leaving the page, and navigation
+            # keeps cycling the carousel (the lightbox follows along).
+            if page is not None and page.is_screenshot_zoomed():
+                if keyval == Gdk.KEY_Escape:
+                    page.close_screenshot_lightbox()
+                    return True
+                if keyval in (Gdk.KEY_Left, Gdk.KEY_Right):
+                    page.cycle_screenshot(-1 if keyval == Gdk.KEY_Left else 1)
+                    return True
+                return False
             if keyval == Gdk.KEY_Escape:
                 self.on_back_button_clicked(None)
                 return True

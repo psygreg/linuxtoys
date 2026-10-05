@@ -182,7 +182,71 @@ class AppPageView(Gtk.Box):
         self._body_holder = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         self.pack_start(self._body_holder, True, True, 0)
         self._sync_extensions_tabs()
-        self.set_border_width(12)
+
+        # Screenshot lightbox: the whole page becomes a Gtk.Overlay so a zoomed
+        # screenshot can cover the darkened page without leaving the app page.
+        self._lightbox_pixbuf = None
+        self._lightbox_scaled = None
+        self._lightbox_scaled_key = None
+        self._lightbox_frame = None
+        self._lightbox_request_id = 0
+        self._screenshot_lightbox = Gtk.EventBox()
+        self._screenshot_lightbox.set_no_show_all(True)
+        self._screenshot_lightbox.set_can_focus(True)
+        # The backdrop shade comes from the .linuxtoys-screenshot-lightbox CSS
+        # class (style.css) — no Python draw handlers needed.
+        self._screenshot_lightbox.get_style_context().add_class(
+            "linuxtoys-screenshot-lightbox"
+        )
+        self._screenshot_lightbox.connect(
+            "realize", self._on_screenshot_lightbox_realize
+        )
+        self._screenshot_lightbox.connect(
+            "button-press-event", self._on_lightbox_clicked
+        )
+        self._screenshot_lightbox.connect(
+            "key-press-event", self._on_lightbox_key_press
+        )
+        lightbox_content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self._lightbox_image = Gtk.Image()
+        self._lightbox_image.set_hexpand(True)
+        self._lightbox_image.set_vexpand(True)
+        self._lightbox_image.set_margin_start(48)
+        self._lightbox_image.set_margin_end(48)
+        self._lightbox_image.set_margin_top(32)
+        self._lightbox_image.set_margin_bottom(32)
+        self._lightbox_image.connect(
+            "size-allocate", self._on_lightbox_image_allocate
+        )
+        lightbox_content.pack_start(self._lightbox_image, True, True, 0)
+        zoom_hint = Gtk.Label()
+        zoom_hint.set_markup(
+            "<span foreground='#CCCCCC' size='small'>{}</span>".format(
+                GLib.markup_escape_text(
+                    self.translations.get(
+                        "app_page_screenshot_zoom_hint",
+                        "Click or press Esc to close",
+                    )
+                )
+            )
+        )
+        zoom_hint.set_halign(Gtk.Align.CENTER)
+        zoom_hint.set_margin_bottom(12)
+        lightbox_content.pack_start(zoom_hint, False, False, 0)
+        self._screenshot_lightbox.add(lightbox_content)
+
+        self._page_overlay = Gtk.Overlay()
+        page_content = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        page_content.set_border_width(12)
+        for child in self.get_children():
+            expand, fill, padding, _pack_type = self.query_child_packing(child)
+            self.remove(child)
+            page_content.pack_start(child, expand, fill, padding)
+        self._page_overlay.add(page_content)
+        self._page_overlay.add_overlay(self._screenshot_lightbox)
+        # Container.add() on a Gtk.Box packs non-expanding: the overlay must
+        # take the whole remaining page area, not just its natural size.
+        self.pack_start(self._page_overlay, True, True, 0)
 
         # Re-evaluate only after GTK has wrapped/measured the real page contents.
         # Do not schedule Featured from every intermediate GTK allocation.
@@ -2374,7 +2438,16 @@ class AppPageView(Gtk.Box):
             if not self._request_screenshot_variant(frame, variant, initial=True):
                 continue
 
-            self.screenshot_stack.add_named(frame, f"shot_{valid_count}")
+            click_box = Gtk.EventBox()
+            click_box.add(frame)
+            click_box.set_tooltip_text(self.translations.get(
+                "app_page_screenshot_zoom", "Click to zoom"
+            ))
+            click_box.connect(
+                "button-press-event", self._on_screenshot_clicked, frame
+            )
+            click_box.connect("realize", self._on_screenshot_frame_realize)
+            self.screenshot_stack.add_named(click_box, f"shot_{valid_count}")
             valid_count += 1
 
         if not valid_count:
@@ -2453,15 +2526,20 @@ class AppPageView(Gtk.Box):
         except Exception:
             return False
 
-    def _load_remote_screenshot_async(self, url, frame, spinner, variant, request_id, *, initial=False):
-        """Fetch only the selected AppStream screenshot variant without blocking GTK."""
+    @staticmethod
+    def _screenshot_cache_target(url):
+        """Disk cache location for one screenshot URL (shared with the lightbox)."""
         cache_dir = Path(os.path.expanduser("~/.cache/linuxtoys/appstream/screenshots"))
         digest = hashlib.sha256(url.encode("utf-8")).hexdigest()
-        target = cache_dir / f"{digest}.img"
+        return cache_dir / f"{digest}.img"
+
+    def _load_remote_screenshot_async(self, url, frame, spinner, variant, request_id, *, initial=False):
+        """Fetch only the selected AppStream screenshot variant without blocking GTK."""
+        target = self._screenshot_cache_target(url)
 
         def worker():
             try:
-                cache_dir.mkdir(parents=True, exist_ok=True)
+                target.parent.mkdir(parents=True, exist_ok=True)
                 if not target.is_file():
                     request = Request(url, headers={"User-Agent": "LinuxToys AppStream"})
                     with urlopen(request, timeout=20) as response:
@@ -2603,12 +2681,220 @@ class AppPageView(Gtk.Box):
             f"shot_{self.screenshot_index}"
         )
         self._update_screenshot_counter()
+        self._sync_lightbox_to_visible_frame()
 
     def _update_screenshot_counter(self):
         if self.screenshot_counter is not None:
             self.screenshot_counter.set_text(
                 f"{self.screenshot_index + 1} / {self._screenshot_count}"
             )
+
+    # --- Screenshot lightbox -------------------------------------------------
+
+    def _visible_screenshot_frame(self):
+        """Return the frame currently displayed in the carousel, if any."""
+        child = (
+            self.screenshot_stack.get_visible_child()
+            if self.screenshot_stack
+            else None
+        )
+        if child is None:
+            return None
+        return child.get_child() if isinstance(child, Gtk.EventBox) else child
+
+    def is_screenshot_zoomed(self):
+        """Whether the screenshot lightbox overlay is currently visible."""
+        return (
+            self._screenshot_lightbox is not None
+            and self._screenshot_lightbox.get_visible()
+        )
+
+    def close_screenshot_lightbox(self):
+        """Leave the zoomed screenshot view (Esc / click anywhere)."""
+        if self._screenshot_lightbox is not None:
+            self._screenshot_lightbox.hide()
+        # Invalidate any full-resolution load still in flight.
+        self._lightbox_request_id += 1
+        self._lightbox_pixbuf = None
+        self._lightbox_scaled = None
+        self._lightbox_frame = None
+
+    def _on_screenshot_frame_realize(self, event_box):
+        """Show a zoom-in cursor while hovering a clickable screenshot."""
+        window = event_box.get_window()
+        if window is None:
+            return
+        try:
+            window.set_cursor(
+                Gdk.Cursor.new_from_name(window.get_display(), "zoom-in")
+            )
+        except Exception:
+            pass
+
+    def _on_screenshot_clicked(self, _event_box, event, frame):
+        if (
+            event.button == Gdk.BUTTON_PRIMARY
+            and event.type == Gdk.EventType.BUTTON_PRESS
+        ):
+            self._open_screenshot_lightbox(frame)
+            return True
+        return False
+
+    def _open_screenshot_lightbox(self, frame):
+        master = getattr(frame, "_linuxtoys_screenshot_master_pixbuf", None)
+        if master is None or self._destroyed:
+            return
+
+        # Autoplay would rotate the carousel behind the zoomed image.
+        self._stop_screenshot_autoplay()
+        self._lightbox_frame = frame
+        self._lightbox_pixbuf = master
+        self._lightbox_scaled = None
+        self._lightbox_request_id += 1
+        self._screenshot_lightbox.show()
+        # no_show_all makes show_all() a no-op on the lightbox itself, so the
+        # subtree is shown explicitly here (never via ancestors' show_all).
+        for lightbox_child in self._screenshot_lightbox.get_children():
+            lightbox_child.show_all()
+        self._screenshot_lightbox.grab_focus()
+        self._refresh_lightbox_image()
+        self._queue_lightbox_fullres(frame)
+
+    def _queue_lightbox_fullres(self, frame):
+        """Load the largest variant at native resolution for the zoomed view.
+
+        The carousel masters are capped at the 760x430 presentation envelope;
+        the lightbox has far more room, so swap in the biggest source once it
+        is available. Downloads reuse the shared screenshot cache.
+        """
+        variants = getattr(frame, "_linuxtoys_screenshot_variants", []) or []
+        if not variants:
+            return
+        largest = variants[-1]  # sorted ascending by width
+        url = str(largest.get("url", "") or "").strip()
+        if not url:
+            return
+
+        self._lightbox_request_id += 1
+        request_id = self._lightbox_request_id
+
+        if not url.startswith(("https://", "http://")):
+            # Local path: full-resolution load is synchronous and cheap.
+            self._finish_lightbox_load(Path(url), request_id)
+            return
+
+        target = self._screenshot_cache_target(url)
+
+        def worker():
+            try:
+                target.parent.mkdir(parents=True, exist_ok=True)
+                if not target.is_file():
+                    request = Request(url, headers={"User-Agent": "LinuxToys AppStream"})
+                    with urlopen(request, timeout=20) as response:
+                        data = response.read(12 * 1024 * 1024 + 1)
+                    if len(data) > 12 * 1024 * 1024:
+                        raise ValueError("screenshot exceeds size limit")
+                    tmp = target.with_suffix(".tmp")
+                    tmp.write_bytes(data)
+                    os.replace(tmp, target)
+                if not self._destroyed:
+                    GLib.idle_add(self._finish_lightbox_load, target, request_id)
+            except Exception:
+                pass  # keep the presentation pixbuf
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _finish_lightbox_load(self, target, request_id):
+        if (
+            self._destroyed
+            or request_id != self._lightbox_request_id
+            or not self.is_screenshot_zoomed()
+        ):
+            return False
+        try:
+            pixbuf = GdkPixbuf.Pixbuf.new_from_file(str(target))
+        except Exception:
+            return False
+
+        current = self._lightbox_pixbuf
+        if (
+            current is not None
+            and pixbuf.get_width() * pixbuf.get_height()
+            <= current.get_width() * current.get_height()
+        ):
+            return False  # never replace a loaded source with a smaller one
+
+        self._lightbox_pixbuf = pixbuf
+        self._refresh_lightbox_image()
+        return False
+
+    def _sync_lightbox_to_visible_frame(self):
+        """Follow carousel navigation made while the lightbox is open."""
+        if not self.is_screenshot_zoomed():
+            return
+        frame = self._visible_screenshot_frame()
+        master = getattr(frame, "_linuxtoys_screenshot_master_pixbuf", None)
+        if frame is None or master is None:
+            return
+        self._lightbox_frame = frame
+        self._lightbox_pixbuf = master
+        self._lightbox_request_id += 1
+        self._refresh_lightbox_image()
+        self._queue_lightbox_fullres(frame)
+
+    def _on_screenshot_lightbox_realize(self, widget):
+        # The CSS backdrop is translucent, so the lightbox window itself must
+        # start fully transparent to let the dimmed page show through.
+        window = widget.get_window()
+        if window is not None:
+            window.set_background_rgba(Gdk.RGBA(0.0, 0.0, 0.0, 0.0))
+
+    def _on_lightbox_image_allocate(self, image, allocation):
+        """Scale the zoomed screenshot to the lightbox's current allocation."""
+        pixbuf = self._lightbox_pixbuf
+        if pixbuf is None or allocation.width <= 64 or allocation.height <= 64:
+            return
+
+        source_w = max(1, pixbuf.get_width())
+        source_h = max(1, pixbuf.get_height())
+        avail_w = max(1, allocation.width)
+        avail_h = max(1, allocation.height)
+        # Fill the lightbox as far as possible; cap upscaling so an undersized
+        # source never degenerates into a blur until its larger variant lands.
+        scale = min(avail_w / source_w, avail_h / source_h, 2.0)
+        target_w = max(1, int(source_w * scale))
+        target_h = max(1, int(source_h * scale))
+
+        key = (id(pixbuf), target_w, target_h)
+        if self._lightbox_scaled_key == key and self._lightbox_scaled is not None:
+            return
+        scaled = pixbuf.scale_simple(
+            target_w, target_h, GdkPixbuf.InterpType.BILINEAR
+        )
+        if scaled is None:
+            return
+        self._lightbox_scaled = scaled
+        self._lightbox_scaled_key = key
+        image.set_from_pixbuf(scaled)
+
+    def _refresh_lightbox_image(self):
+        self._lightbox_scaled = None
+        self._lightbox_scaled_key = None
+        self._on_lightbox_image_allocate(
+            self._lightbox_image, self._lightbox_image.get_allocation()
+        )
+        self._lightbox_image.queue_draw()
+
+    def _on_lightbox_clicked(self, _widget, _event):
+        self.close_screenshot_lightbox()
+        return True
+
+    def _on_lightbox_key_press(self, _widget, event):
+        if event.keyval == Gdk.KEY_Escape:
+            self.close_screenshot_lightbox()
+            return True
+        return False
+
 
     def _on_open_clicked(self, _button):
         launcher = getattr(self.parent, "_launch_appstream_app", None)
