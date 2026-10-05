@@ -1467,6 +1467,7 @@ class AppWindow(
 
         def worker():
             try:
+                self._prune_registry_removals()
                 installed_packages.refresh()
             except Exception as exc:
                 logger.warning("Installed package refresh failed: %s", exc)
@@ -1482,6 +1483,27 @@ class AppWindow(
             target=worker, daemon=True, name="linuxtoys-installed-packages"
         ).start()
         return False
+
+    def _prune_registry_removals(self):
+        """Prune removal/auto-revert registry entries older than a week.
+
+        Runs inside the installed-packages worker thread: removal transactions
+        are only useful shortly after they happen, while installation entries
+        must stay tracked for possible future removals. Legacy entries written
+        with an already-localized pattern are matched through the current
+        translation templates.
+        """
+        try:
+            from .term_registry import ExecutionRegistry
+
+            removed = ExecutionRegistry.prune_expired_removal_entries(
+                max_age_days=7,
+                extra_prefixes=ExecutionRegistry.localized_removal_prefixes(self.translations),
+            )
+            if removed:
+                logger.info("Pruned %d expired removal registry entries", removed)
+        except Exception as exc:
+            logger.warning("Registry prune failed: %s", exc)
 
     def _refresh_installed_features_view(self):
         # Hidden Installed Features views can be expensive to rebuild and GTK will

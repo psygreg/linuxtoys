@@ -314,10 +314,18 @@ def easy_cli_run_script(script_info):
         run_info["path"] = temp_file_path
         code = _run_script_with_registry_name(run_info)
 
+        # Scripts with `# registry: no` never track their own transaction
+        # (e.g. sysup.sh only updates the system); call_script children keep
+        # registering independently.
+        registry_disabled = str(
+            script_info.get("registry", "") or ""
+        ).strip().lower() == "no"
+
         # Save to registry and wipe transmap file if script executed successfully
         if code == 0:
             transmap_path = "/tmp/linuxtoys/transmap"
-            _save_script_to_registry(registry_name, transmap_path)
+            if not registry_disabled:
+                _save_script_to_registry(registry_name, transmap_path)
             # Clean up any temp directories created by prep_tmp_noram before removing transmap
             _cleanup_tmp_noram_dirs(transmap_path)
             try:

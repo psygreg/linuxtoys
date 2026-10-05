@@ -261,7 +261,11 @@ def build_external_removal(info, installed_match, translations=None):
     os.chmod(temp_path, 0o700)
     name = info.get("name", "Application")
     label = (translations or {}).get("remove_action_name", "Remove {name}").format(name=name)
+    # Stable, untranslated registry identity — the appstream_id is language-
+    # independent, unlike the display name (see get_display_name).
+    stable_identity = str(info.get("appstream_id") or name).strip()
     return {"icon": info.get("icon", "application-x-executable"), "name": label,
+            "registry_name": f"Remove: {stable_identity}",
             "description": "Remove an installed AppStream package.", "repo": info.get("repo", ""),
             "path": temp_path, "is_script": True, "cleanup_path": temp_path}
 

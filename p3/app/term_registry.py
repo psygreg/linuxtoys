@@ -2,6 +2,7 @@ import re
 import shutil
 import sys
 import os
+import datetime
 
 if __package__:
     from .revert_helper import build_auto_revert_script_entry
@@ -172,6 +173,93 @@ class ExecutionRegistry:
             return True
         except Exception:
             return False
+
+    @staticmethod
+    def localized_removal_prefixes(translations=None):
+        """
+        Localized name patterns that identified removal/auto-revert entries in
+        registry versions written before the stable "Remove: "/"Auto-revert: "
+        prefixes existed. Used as extra prune prefixes so those legacy entries
+        still age out under the user's current language.
+        """
+        prefixes = []
+        for key in ("remove_action_name", "auto_revert_action_name"):
+            template = str((translations or {}).get(key, "") or "")
+            if "{name}" in template:
+                prefix = template.split("{name}", 1)[0].strip()
+                if prefix:
+                    prefixes.append(prefix + " ")
+        return tuple(prefixes)
+
+    @staticmethod
+    def prune_expired_removal_entries(max_age_days=7, extra_prefixes=()):
+        """
+        Remove removal/auto-revert registry entries older than max_age_days.
+
+        Installation entries must persist (removability and revert flows depend
+        on them), but removal and auto-revert transactions are only useful for
+        a short while afterwards. Entries are matched by the stable stored
+        prefix ("Remove: ", "Auto-revert: "); extra_prefixes additionally
+        covers legacy entries written with an already-localized pattern.
+
+        Returns the number of pruned entries (0 also on any read/write error).
+        """
+        registry_file = os.path.join(get_linuxtoys_cache_dir(), "registry")
+
+        if not os.path.exists(registry_file):
+            return 0
+
+        try:
+            with open(registry_file, "r") as f:
+                content = f.read()
+        except Exception:
+            return 0
+
+        normalized = normalize_registry_content(content)
+        if not normalized.strip():
+            return 0
+
+        cutoff = datetime.datetime.now() - datetime.timedelta(days=max_age_days)
+        prefixes = ("Remove: ", "Auto-revert: ") + tuple(
+            prefix for prefix in extra_prefixes if prefix
+        )
+        header_re = re.compile(
+            r'\[(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[^\]]*)\] Script: (.+)'
+        )
+
+        kept = []
+        pruned = 0
+        for entry in normalized.split("\n---\n\n"):
+            entry = entry.strip()
+            if not entry:
+                continue
+
+            match = header_re.match(entry)
+            if match and match.group(2).strip().startswith(prefixes):
+                try:
+                    timestamp = datetime.datetime.fromisoformat(match.group(1))
+                except ValueError:
+                    timestamp = None
+                # Undated removal entries cannot be aged; keep them.
+                if timestamp is None or timestamp < cutoff:
+                    pruned += 1
+                    continue
+
+            kept.append(entry)
+
+        if not pruned:
+            return 0
+
+        try:
+            new_content = "\n---\n\n".join(kept) + "\n---\n\n" if kept else ""
+            if new_content:
+                with open(registry_file, "w") as f:
+                    f.write(new_content)
+            else:
+                os.remove(registry_file)
+        except Exception:
+            return 0
+        return pruned
 
     @staticmethod
     def _get_last_registry_execution(script_name) -> str:

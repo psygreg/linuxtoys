@@ -86,6 +86,12 @@ class TerminalRunner:
         registry_name = current_script.get("registry_name", script_name)
         self._current_script_name = registry_name  # Stable identity used by the registry
         self._current_script_display_name = script_name
+        # Scripts with `# registry: no` never track their own transaction
+        # (e.g. sysup.sh only updates the system); call_script children keep
+        # registering independently.
+        self._current_script_registry_disabled = (
+            str(current_script.get("registry", "") or "").strip().lower() == "no"
+        )
         self.executed_scripts.append(current_script)
         antenna.add_script_to_history(script_name)
 
@@ -173,7 +179,8 @@ class TerminalRunner:
             if exit_code == 0:
                 # Success - save to registry and wipe transmap
                 script_name = getattr(self, "_current_script_name", "unknown")
-                ExecutionRegistry._save_to_registry(script_name, transmap_path)
+                if not getattr(self, "_current_script_registry_disabled", False):
+                    ExecutionRegistry._save_to_registry(script_name, transmap_path)
 
                 # Check if flatpak was installed during this script before transmap is deleted
                 if not getattr(self, "_flatpak_installed_detected", False):
@@ -208,7 +215,8 @@ class TerminalRunner:
             # Only auto-handle for regular scripts, not removal operations
             # Save the error to registry before attempting auto-revert
             script_name = getattr(self, "_current_script_name", "unknown")
-            ExecutionRegistry._save_to_registry(script_name, transmap_path)
+            if not getattr(self, "_current_script_registry_disabled", False):
+                ExecutionRegistry._save_to_registry(script_name, transmap_path)
 
             auto_reports_enabled = getattr(self.parent, 'auto_error_reports_enabled', False)
 

@@ -1194,8 +1194,14 @@ def build_uninstall_script_entry(script_info, translations=None):
     lines.append("        text = content[start:end].strip()")
     lines.append("        if text.endswith('---'):")
     lines.append("            text = text[:-3].rstrip()")
-    lines.append("        if text:")
-    lines.append("            entries.append(text)")
+    lines.append("        if not text:")
+    lines.append("            continue")
+    lines.append("        # Skip noise transactions so indices stay aligned with the")
+    lines.append("        # normalized readers (registry_utils.REGISTRY_DROPPED_NAMES).")
+    lines.append("        name = text[len(match.group(0)):].split('\\n', 1)[0].strip()")
+    lines.append("        if name.strip().casefold() in ('sysup',):")
+    lines.append("            continue")
+    lines.append("        entries.append(text)")
     lines.append("")
     lines.append("    kept_entries = [")
     lines.append("        text for index, text in enumerate(entries)")
@@ -1232,9 +1238,17 @@ def build_uninstall_script_entry(script_info, translations=None):
         else "Remove {name}"
     ).format(name=script_name_display)
 
+    # The registry identity keeps a stable, untranslated prefix so removal
+    # entries stay pattern-matchable (expiry pruning) in every language; the
+    # localized "Remove {name}" is presentation-only (see get_display_name).
+    registry_identity = str(
+        script_info.get("registry_name") or script_name_display
+    ).strip()
+
     return {
         "icon": script_info.get("icon", "application-x-executable"),
         "name": remove_name,
+        "registry_name": f"Remove: {registry_identity}",
         "description": translations.get(
             "remove_action_desc",
             "Automatically removes components installed by this script using the registry.",
@@ -1332,8 +1346,14 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
     lines.append("        text = content[start:end].strip()")
     lines.append("        if text.endswith('---'):")
     lines.append("            text = text[:-3].rstrip()")
-    lines.append("        if text:")
-    lines.append("            entries.append(text)")
+    lines.append("        if not text:")
+    lines.append("            continue")
+    lines.append("        # Skip noise transactions so indices stay aligned with the")
+    lines.append("        # normalized readers (registry_utils.REGISTRY_DROPPED_NAMES).")
+    lines.append("        name = text[len(match.group(0)):].split('\\n', 1)[0].strip()")
+    lines.append("        if name.strip().casefold() in ('sysup',):")
+    lines.append("            continue")
+    lines.append("        entries.append(text)")
     lines.append("")
     lines.append("    kept_entries = [")
     lines.append("        text for index, text in enumerate(entries)")
@@ -1370,9 +1390,15 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
         else "Auto-revert {name}"
     ).format(name=script_name_display)
 
+    # Stable, untranslated registry identity — see build_uninstall_script_entry.
+    registry_identity = str(
+        script_info.get("registry_name") or script_name_display
+    ).strip()
+
     return {
         "icon": script_info.get("icon", "application-x-executable"),
         "name": revert_name,
+        "registry_name": f"Auto-revert: {registry_identity}",
         "description": translations.get(
             "auto_revert_action_desc",
             "Automatically reverts components installed by this script before it failed.",

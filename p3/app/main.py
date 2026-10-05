@@ -101,6 +101,20 @@ _ = create_translator()  # Create translator function from lang_utils
 
 def run():
 
+    # CLI/UPD_SERVICE modes prune expired removal registry entries just like
+    # the GUI does at startup (removal/auto-revert entries older than a week).
+    if os.environ.get('UPD_SERVICE') == '1' or os.environ.get('EASY_CLI') == '1':
+        try:
+            from .term_registry import ExecutionRegistry
+            pruned = ExecutionRegistry.prune_expired_removal_entries(
+                max_age_days=7,
+                extra_prefixes=ExecutionRegistry.localized_removal_prefixes(translations),
+            )
+            if pruned:
+                print(f"Pruned {pruned} expired removal registry entries")
+        except Exception as e:
+            print(f"Registry prune failed: {e}")
+
     # Check for UPD_SERVICE mode - runs sysup.sh in CLI mode with UPD_SERVICE passed to the script
     if os.environ.get('UPD_SERVICE') == '1':
         # Set EASY_CLI mode for the script execution

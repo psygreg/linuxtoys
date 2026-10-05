@@ -3,6 +3,7 @@
 # description: sysup_desc
 # icon: topgrade.svg
 # revert: no
+# registry: no
 # compat: !ostree, !ublue, !steamos
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

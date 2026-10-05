@@ -33,6 +33,10 @@ def parse_registry_file():
         script_name = match.group(1).strip()
         if not script_name:
             continue
+        # Keep noise transactions (sysup system-update runs) out of every
+        # registry view, consistent with normalize_registry_content().
+        if script_name.casefold() in REGISTRY_DROPPED_NAMES:
+            continue
 
         entry_start = match.start()
         entry_end = (
@@ -104,6 +108,12 @@ def get_local_package_entries(registry_data=None):
     return local_packages
 
 
+# Transactions that are pure maintenance noise and never denote anything the
+# user could remove. sysup.sh (system update) now opts out via `# registry: no`;
+# entries written before that opt-out existed are dropped by the healing step
+# so existing users' registries come clean once they receive the update.
+REGISTRY_DROPPED_NAMES = frozenset({"sysup"})
+
 _ENTRY_HEADER_RE = re.compile(
     r'\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[^\]]*\] Script: '
 )
@@ -118,8 +128,13 @@ def normalize_registry_content(content):
     previous entry's last operation line. Regex-based consumers still found
     those headers, but line-based consumers (revert, removability) require
     every header to start its own line. This rebuilds one entry per header
-    match, drops any non-entry prefix bytes, and repairs separator glue, so it
-    is safe to apply to already-canonical content as well (idempotent).
+    match, drops any non-entry prefix bytes, repairs separator glue, and drops
+    REGISTRY_DROPPED_NAMES transactions (sysup system-update noise written
+    before the `# registry: no` opt-out existed), so it is safe to apply to
+    already-canonical content as well (idempotent).
+
+    Consumers that derive entry INDICES must skip the exact same names — the
+    generated revert/cleanup blocks in revert_helper embed this rule.
     """
     matches = list(_ENTRY_HEADER_RE.finditer(content))
     if not matches:
@@ -133,8 +148,14 @@ def normalize_registry_content(content):
         # Repair the separator glued to the entry's last operation line.
         if entry_text.endswith("---"):
             entry_text = entry_text[:-3].rstrip()
-        if entry_text:
-            entries.append(entry_text)
+        if not entry_text:
+            continue
+        # Drop noise transactions (kept in sync with the generated cleanup
+        # blocks so entry indices stay aligned everywhere).
+        entry_name = entry_text[len(match.group(0)):].split("\n", 1)[0].strip()
+        if entry_name.casefold() in REGISTRY_DROPPED_NAMES:
+            continue
+        entries.append(entry_text)
 
     if not entries:
         return content

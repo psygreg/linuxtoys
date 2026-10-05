@@ -406,6 +406,7 @@ call_script () {
     local found_script=""
     local script_display_name=""
     local script_registry_name=""
+    local script_registry_disabled=""
     local repo_app_id=""
     local repo_url=""
 
@@ -423,6 +424,12 @@ call_script () {
             head -n1
         )
         [[ -n "$script_display_name" ]] || script_display_name="$script_name"
+
+        script_registry_disabled=$(
+            sed -n 's/^# registry:[[:space:]]*//p' "$found_script" |
+            head -n1 |
+            tr '[:upper:]' '[:lower:]'
+        )
 
         # Preserve pretty names for ordinary scripts, but use the internal file ID
         # when the # name header is a localization key.
@@ -499,11 +506,14 @@ PY
     local status=$?
 
     if [[ $status -eq 0 ]]; then
-        # Commit the called script's transaction independently.
+        # Commit the called script's transaction independently, unless the
+        # script opted out of registry tracking via `# registry: no`.
         if [[ -s "$child_transmap" ]]; then
-            python3 "$SCRIPT_DIR/app/term_registry.py" \
-                save "$script_registry_name" "$child_transmap" ||
-                die "Failed to save transaction for $script_display_name"
+            if [[ "$script_registry_disabled" != "no" ]]; then
+                python3 "$SCRIPT_DIR/app/term_registry.py" \
+                    save "$script_registry_name" "$child_transmap" ||
+                    die "Failed to save transaction for $script_display_name"
+            fi
             _append_transmap "called $script_registry_name"
         fi
         rm -f "$child_transmap"
