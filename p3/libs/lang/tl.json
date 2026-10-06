@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Mag-click para mag-zoom",
   "dependency_block_title": "Naka-block ang pag-alis",
   "dependency_block_message": "May naka-install na software na umaasa pa rin sa '{name}'. Alisin muna ito:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Naka-block ang pag-alis: may naka-install na software na umaasa pa rin sa feature na ito"
+  "dependency_block_button_tooltip": "Naka-block ang pag-alis: may naka-install na software na umaasa pa rin sa feature na ito",
+  "sidebar_expand": "Palawakin",
+  "sidebar_collapse": "I-tipon",
+  "sidebar_toggle": "I-toggle ang sidebar ng kategorya",
+  "main_menu": "Pangunahing menu"
 }

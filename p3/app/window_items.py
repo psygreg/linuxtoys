@@ -794,6 +794,18 @@ class ItemWidgetFactory:
         else:
             self.on_category_clicked(widget, event)
 
+    def _activate_category_info(self, info):
+        """Activate a category/subcategory without a source card (sidebar rows)."""
+        if info.get("is_homebrew_category"):
+            self._activate_homebrew_category(None, None)
+        elif info.get("is_aur_category"):
+            self._activate_aur_category(info)
+        else:
+            # Mirror on_category_clicked's reboot gate for plain categories.
+            if self.reboot_required and not self._show_reboot_warning_dialog():
+                return
+            self._open_category_browser(info)
+
     def _show_context_menu(self, widget, event):
         """Show context menu for right-click on items."""
         info = widget.info

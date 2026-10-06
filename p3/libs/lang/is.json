@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Smelltu til að stækka",
   "dependency_block_title": "Fjarlæging útilokuð",
   "dependency_block_message": "Uppsettur hugbúnaður er enn háður '{name}'. Fjarlægðu hann fyrst:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Fjarlæging útilokuð: uppsettur hugbúnaður er enn háður þessum eiginleika"
+  "dependency_block_button_tooltip": "Fjarlæging útilokuð: uppsettur hugbúnaður er enn háður þessum eiginleika",
+  "sidebar_expand": "Stækka",
+  "sidebar_collapse": "Fella saman",
+  "sidebar_toggle": "Víxla hliðarstiku flokka",
+  "main_menu": "Aðalvalmynd"
 }

@@ -730,5 +730,9 @@
   "app_page_screenshot_zoom": "জুম করতে ক্লিক করুন",
   "dependency_block_title": "অপসারণ ব্লক করা হয়েছে",
   "dependency_block_message": "ইনস্টল করা সফটওয়্যার এখনও '{name}'-এর উপর নির্ভর করে। প্রথমে এটি সরান:\n\n{blockers}",
-  "dependency_block_button_tooltip": "অপসারণ ব্লক করা হয়েছে: ইনস্টল করা সফটওয়্যার এখনও এই বৈশিষ্ট্যের উপর নির্ভর করে"
+  "dependency_block_button_tooltip": "অপসারণ ব্লক করা হয়েছে: ইনস্টল করা সফটওয়্যার এখনও এই বৈশিষ্ট্যের উপর নির্ভর করে",
+  "sidebar_expand": "প্রসারিত করুন",
+  "sidebar_collapse": "সংকুচিত করুন",
+  "sidebar_toggle": "বিভাগের সাইডবার টগল করুন",
+  "main_menu": "প্রধান মেনু"
 }

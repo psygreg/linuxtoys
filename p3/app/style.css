@@ -145,3 +145,36 @@ button.queue-remove:hover {
 .linuxtoys-screenshot-lightbox {
     background-color: rgba(0, 0, 0, 0.78);
 }
+
+/* Retractable category sidebar. */
+.linuxtoys-sidebar {
+    background-color: rgba(0, 0, 0, 0.14);
+}
+
+button.linuxtoys-sidebar-row {
+    padding: 4px 8px;
+}
+
+button.linuxtoys-sidebar-row:hover,
+button.linuxtoys-sidebar-row:active {
+    background-color: rgba(128, 128, 128, 0.22);
+}
+
+button.linuxtoys-sidebar-row-top > box > label {
+    font-weight: bold;
+}
+
+/* Disclosure chevron on sidebar categories that have subcategories. */
+button.linuxtoys-sidebar-toggle {
+    min-width: 28px;
+    min-height: 32px;
+    padding: 0 6px;
+    margin: 0;
+}
+
+/* Current category in the retractable sidebar. */
+button.linuxtoys-sidebar-row-current,
+button.linuxtoys-sidebar-row-current:hover,
+button.linuxtoys-sidebar-row-current:active {
+    background-color: rgba(128, 128, 128, 0.30);
+}

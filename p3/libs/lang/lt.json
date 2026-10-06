@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Spustelėkite, kad padidintumėte",
   "dependency_block_title": "Šalinimas užblokuotas",
   "dependency_block_message": "Įdiegta programinė įranga vis dar priklauso nuo „{name}“. Pirmiausia ją pašalinkite:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Šalinimas užblokuotas: įdiegta programinė įranga vis dar priklauso nuo šios funkcijos"
+  "dependency_block_button_tooltip": "Šalinimas užblokuotas: įdiegta programinė įranga vis dar priklauso nuo šios funkcijos",
+  "sidebar_expand": "Išskleisti",
+  "sidebar_collapse": "Suskleisti",
+  "sidebar_toggle": "Perjungti kategorijų šoninį skydą",
+  "main_menu": "Pagrindinis meniu"
 }

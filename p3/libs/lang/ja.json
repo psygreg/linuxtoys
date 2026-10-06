@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "クリックして拡大",
   "dependency_block_title": "削除がブロックされました",
   "dependency_block_message": "インストール済みのソフトウェアがまだ「{name}」に依存しています。先に削除してください：\n\n{blockers}",
-  "dependency_block_button_tooltip": "削除がブロックされています：インストール済みのソフトウェアがまだこの機能に依存しています"
+  "dependency_block_button_tooltip": "削除がブロックされています：インストール済みのソフトウェアがまだこの機能に依存しています",
+  "sidebar_expand": "展開",
+  "sidebar_collapse": "折りたたむ",
+  "sidebar_toggle": "カテゴリーサイドバーの切り替え",
+  "main_menu": "メインメニュー"
 }

@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Cliceáil chun zúmáil",
   "dependency_block_title": "Baineadh bac den bhaint",
   "dependency_block_message": "Tá bogearraí suiteáilte fós ag brath ar '{name}'. Bain iad ar dtús:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Baineadh bac den bhaint: tá bogearraí suiteáilte fós ag brath ar an ngné seo"
+  "dependency_block_button_tooltip": "Baineadh bac den bhaint: tá bogearraí suiteáilte fós ag brath ar an ngné seo",
+  "sidebar_expand": "Leathnaigh",
+  "sidebar_collapse": "Fill",
+  "sidebar_toggle": "Scoránraigh an barra taoibh catagóirí",
+  "main_menu": "Príomh-roghchlár"
 }

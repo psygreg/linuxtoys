@@ -730,5 +730,9 @@
   "app_page_screenshot_zoom": "Kliknite za uvećanje",
   "dependency_block_title": "Uklanjanje je blokirano",
   "dependency_block_message": "Instalirani softver još uvijek zavisi od '{name}'. Prvo ga uklonite:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Uklanjanje je blokirano: instalirani softver još uvijek zavisi od ove funkcije"
+  "dependency_block_button_tooltip": "Uklanjanje je blokirano: instalirani softver još uvijek zavisi od ove funkcije",
+  "sidebar_expand": "Proširi",
+  "sidebar_collapse": "Skupi",
+  "sidebar_toggle": "Prebaci bočnu traku kategorija",
+  "main_menu": "Glavni meni"
 }

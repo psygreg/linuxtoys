@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Нажмите для увеличения",
   "dependency_block_title": "Удаление заблокировано",
   "dependency_block_message": "Установленное ПО всё ещё зависит от «{name}». Сначала удалите его:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Удаление заблокировано: установленное ПО всё ещё зависит от этой функции"
+  "dependency_block_button_tooltip": "Удаление заблокировано: установленное ПО всё ещё зависит от этой функции",
+  "sidebar_expand": "Развернуть",
+  "sidebar_collapse": "Свернуть",
+  "sidebar_toggle": "Показать или скрыть боковую панель категорий",
+  "main_menu": "Главное меню"
 }

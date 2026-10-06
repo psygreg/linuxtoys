@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Zum Vergrößern klicken",
   "dependency_block_title": "Entfernen blockiert",
   "dependency_block_message": "Installierte Software ist weiterhin von „{name}“ abhängig. Entfernen Sie sie zuerst:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Entfernen blockiert: Installierte Software ist weiterhin von dieser Funktion abhängig"
+  "dependency_block_button_tooltip": "Entfernen blockiert: Installierte Software ist weiterhin von dieser Funktion abhängig",
+  "sidebar_expand": "Ausklappen",
+  "sidebar_collapse": "Einklappen",
+  "sidebar_toggle": "Kategorien-Seitenleiste umschalten",
+  "main_menu": "Hauptmenü"
 }

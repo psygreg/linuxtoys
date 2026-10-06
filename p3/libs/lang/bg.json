@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Щракнете за увеличаване",
   "dependency_block_title": "Премахването е блокирано",
   "dependency_block_message": "Инсталиран софтуер все още зависи от „{name}“. Първо го премахнете:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Премахването е блокирано: инсталиран софтуер все още зависи от тази функция"
+  "dependency_block_button_tooltip": "Премахването е блокирано: инсталиран софтуер все още зависи от тази функция",
+  "sidebar_expand": "Разгъване",
+  "sidebar_collapse": "Свиване",
+  "sidebar_toggle": "Превключване на страничната лента с категории",
+  "main_menu": "Главно меню"
 }

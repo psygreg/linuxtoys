@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "คลิกเพื่อขยาย",
   "dependency_block_title": "การนำออกถูกบล็อก",
   "dependency_block_message": "ซอฟต์แวร์ที่ติดตั้งอยู่ยังคงต้องใช้ '{name}' โปรดนำซอฟต์แวร์นั้นออกก่อน:\n\n{blockers}",
-  "dependency_block_button_tooltip": "การนำออกถูกบล็อก: ซอฟต์แวร์ที่ติดตั้งอยู่ยังคงต้องใช้คุณสมบัตินี้"
+  "dependency_block_button_tooltip": "การนำออกถูกบล็อก: ซอฟต์แวร์ที่ติดตั้งอยู่ยังคงต้องใช้คุณสมบัตินี้",
+  "sidebar_expand": "ขยาย",
+  "sidebar_collapse": "ย่อ",
+  "sidebar_toggle": "สลับแถบข้างหมวดหมู่",
+  "main_menu": "เมนูหลัก"
 }

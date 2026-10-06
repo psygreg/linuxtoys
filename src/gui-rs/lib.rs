@@ -717,7 +717,7 @@ pub unsafe extern "C" fn lt_gui_stack_remove_child_after_transition(
 }
 
 #[no_mangle]
-pub extern "C" fn lt_gui_abi_version() -> u32 { 19 }
+pub extern "C" fn lt_gui_abi_version() -> u32 { 20 }
 
 fn command_stdout(program: &str, args: &[&str]) -> Option<String> {
     let output = Command::new(program).args(args).output().ok()?;
@@ -2385,6 +2385,104 @@ fn list_state_widget(container: &gtk::Box, state_kind: u8, empty_text: &str) {
         }
         _ => {}
     }
+}
+
+#[repr(C)]
+pub struct LtGuiSidebarEntrySpec {
+    key: *const c_char,
+    label: *const c_char,
+    icon_path: *const c_char,
+    icon_name: *const c_char,
+    depth: u32,
+    has_children: bool,
+    expanded: bool,
+}
+
+/// Build the retractable category sidebar rows in one native call.
+///
+/// Returns the number of rows created. Rows are named
+/// "linuxtoys-sidebar-row-<key>" so the Python side can wire click handlers
+/// after the batch construction.
+#[no_mangle]
+pub unsafe extern "C" fn lt_gui_build_sidebar(
+    container: *mut gtk::ffi::GtkWidget,
+    specs: *const LtGuiSidebarEntrySpec,
+    count: usize,
+) -> usize {
+    ensure_gtk_initialized();
+    if container.is_null() || (specs.is_null() && count > 0) {
+        return 0;
+    }
+    let container_w: gtk::Widget = from_glib_none(container);
+    let container = match container_w.downcast::<gtk::Box>() {
+        Ok(v) => v,
+        Err(_) => return 0,
+    };
+
+    let mut built = 0usize;
+    for index in 0..count {
+        let spec = &*specs.add(index);
+        let key = cstr(spec.key);
+        let label_text = cstr(spec.label);
+        let icon_path = cstr(spec.icon_path);
+        let icon_name = cstr(spec.icon_name);
+
+        // The row itself is a Box.  Action and disclosure are sibling buttons:
+        // GTK buttons must not be nested if they are expected to activate
+        // independently.
+        let row = gtk::Box::new(gtk::Orientation::Horizontal, 0);
+        row.set_widget_name(&format!("linuxtoys-sidebar-row-{key}"));
+        row.set_halign(gtk::Align::Fill);
+        row.set_margin_start(6 + 14 * spec.depth as i32);
+
+        let action = gtk::Button::new();
+        action.set_widget_name(&format!("linuxtoys-sidebar-action-{key}"));
+        action.set_relief(gtk::ReliefStyle::None);
+        action.set_halign(gtk::Align::Fill);
+        action.set_hexpand(true);
+        let style = action.style_context();
+        style.add_class("linuxtoys-sidebar-row");
+        if spec.depth == 0 {
+            style.add_class("linuxtoys-sidebar-row-top");
+        }
+
+        let inner = gtk::Box::new(gtk::Orientation::Horizontal, 10);
+        inner.set_valign(gtk::Align::Center);
+        let icon = image(&icon_path, &icon_name, 18);
+        icon.set_valign(gtk::Align::Center);
+        inner.pack_start(&icon, false, false, 0);
+        let label = gtk::Label::new(Some(&label_text));
+        label.set_halign(gtk::Align::Start);
+        label.set_hexpand(true);
+        label.set_ellipsize(gtk::pango::EllipsizeMode::End);
+        label.set_max_width_chars(22);
+        inner.pack_start(&label, true, true, 0);
+        action.add(&inner);
+        row.pack_start(&action, true, true, 0);
+
+        if spec.has_children {
+            let toggle = gtk::Button::new();
+            toggle.set_widget_name(&format!("linuxtoys-sidebar-toggle-{key}"));
+            toggle.set_relief(gtk::ReliefStyle::None);
+            toggle.set_valign(gtk::Align::Fill);
+            toggle.style_context().add_class("linuxtoys-sidebar-toggle");
+            let arrow = gtk::Image::from_icon_name(
+                Some(if spec.expanded {
+                    "pan-down-symbolic"
+                } else {
+                    "pan-end-symbolic"
+                }),
+                gtk::IconSize::Menu,
+            );
+            toggle.set_image(Some(&arrow));
+            row.pack_end(&toggle, false, false, 0);
+        }
+
+        container.pack_start(&row, false, false, 0);
+        row.show_all();
+        built += 1;
+    }
+    built
 }
 
 #[no_mangle]

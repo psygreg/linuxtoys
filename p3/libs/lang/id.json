@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Klik untuk memperbesar",
   "dependency_block_title": "Penghapusan diblokir",
   "dependency_block_message": "Perangkat lunak yang terinstal masih bergantung pada '{name}'. Hapus terlebih dahulu:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Penghapusan diblokir: perangkat lunak yang terinstal masih bergantung pada fitur ini"
+  "dependency_block_button_tooltip": "Penghapusan diblokir: perangkat lunak yang terinstal masih bergantung pada fitur ini",
+  "sidebar_expand": "Bentangkan",
+  "sidebar_collapse": "Lipatkan",
+  "sidebar_toggle": "Alih bilah samping kategori",
+  "main_menu": "Menu utama"
 }

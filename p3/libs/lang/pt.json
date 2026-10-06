@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Clique para ampliar",
   "dependency_block_title": "Remoção bloqueada",
   "dependency_block_message": "Um software instalado ainda depende de '{name}'. Remova-o primeiro:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Remoção bloqueada: um software instalado ainda depende deste recurso"
+  "dependency_block_button_tooltip": "Remoção bloqueada: um software instalado ainda depende deste recurso",
+  "sidebar_expand": "Expandir",
+  "sidebar_collapse": "Recolher",
+  "sidebar_toggle": "Alternar barra lateral de categorias",
+  "main_menu": "Menu principal"
 }

@@ -730,5 +730,9 @@
   "app_page_screenshot_zoom": "Kattalashtirish uchun bosing",
   "dependency_block_title": "Olib tashlash bloklangan",
   "dependency_block_message": "O'rnatilgan dasturiy ta'minot hali ham '{name}' ga bog'liq. Avval uni olib tashlang:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Olib tashlash bloklangan: o'rnatilgan dasturiy ta'minot hali ham bu xususiyatga bog'liq"
+  "dependency_block_button_tooltip": "Olib tashlash bloklangan: o'rnatilgan dasturiy ta'minot hali ham bu xususiyatga bog'liq",
+  "sidebar_expand": "Yoyish",
+  "sidebar_collapse": "Yig'ish",
+  "sidebar_toggle": "Kategoriya yon panelini almashtirish",
+  "main_menu": "Asosiy menyu"
 }

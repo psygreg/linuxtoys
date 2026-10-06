@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Noklikšķiniet, lai palielinātu",
   "dependency_block_title": "Noņemšana bloķēta",
   "dependency_block_message": "Instalētā programmatūra joprojām ir atkarīga no „{name}“. Vispirms noņemiet to:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Noņemšana bloķēta: instalētā programmatūra joprojām ir atkarīga no šīs funkcijas"
+  "dependency_block_button_tooltip": "Noņemšana bloķēta: instalētā programmatūra joprojām ir atkarīga no šīs funkcijas",
+  "sidebar_expand": "Izvērst",
+  "sidebar_collapse": "Sakļaut",
+  "sidebar_toggle": "Pārslēgt kategoriju sānu joslu",
+  "main_menu": "Galvenā izvēlne"
 }

@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Yakınlaştırmak için tıklayın",
   "dependency_block_title": "Kaldırma engellendi",
   "dependency_block_message": "Yüklü yazılım hâlâ '{name}' özelliğine bağımlı. Önce onu kaldırın:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Kaldırma engellendi: yüklü yazılım hâlâ bu özelliğe bağımlı"
+  "dependency_block_button_tooltip": "Kaldırma engellendi: yüklü yazılım hâlâ bu özelliğe bağımlı",
+  "sidebar_expand": "Genişlet",
+  "sidebar_collapse": "Daralt",
+  "sidebar_toggle": "Kategori kenar çubuğunu aç/kapat",
+  "main_menu": "Ana menü"
 }

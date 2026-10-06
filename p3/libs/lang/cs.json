@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Kliknutím zvětšíte",
   "dependency_block_title": "Odstranění je zablokováno",
   "dependency_block_message": "Nainstalovaný software stále závisí na „{name}“. Nejprve jej odstraňte:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Odstranění je zablokováno: nainstalovaný software stále závisí na této funkci"
+  "dependency_block_button_tooltip": "Odstranění je zablokováno: nainstalovaný software stále závisí na této funkci",
+  "sidebar_expand": "Rozbalit",
+  "sidebar_collapse": "Sbalit",
+  "sidebar_toggle": "Přepnout postranní panel kategorií",
+  "main_menu": "Hlavní nabídka"
 }

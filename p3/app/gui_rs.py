@@ -72,6 +72,18 @@ class _ScreenshotChromeSpec(ctypes.Structure):
     _fields_ = [("previous_tooltip", ctypes.c_char_p), ("next_tooltip", ctypes.c_char_p)]
 
 
+class _SidebarEntrySpec(ctypes.Structure):
+    _fields_ = [
+        ("key", ctypes.c_char_p),
+        ("label", ctypes.c_char_p),
+        ("icon_path", ctypes.c_char_p),
+        ("icon_name", ctypes.c_char_p),
+        ("depth", ctypes.c_uint32),
+        ("has_children", ctypes.c_bool),
+        ("expanded", ctypes.c_bool),
+    ]
+
+
 class _ListRowSpec(ctypes.Structure):
     _fields_ = [
         ("key", ctypes.c_char_p),
@@ -125,8 +137,8 @@ def _load():
         if path.is_file():
             lib = ctypes.CDLL(str(path))
             lib.lt_gui_abi_version.restype = ctypes.c_uint32
-            if lib.lt_gui_abi_version() != 19:
-                raise RuntimeError("Unsupported LinuxToys GUI Rust ABI (expected ABI 19)")
+            if lib.lt_gui_abi_version() != 20:
+                raise RuntimeError("Unsupported LinuxToys GUI Rust ABI (expected ABI 20)")
             lib.lt_gui_inspect_local_package.argtypes = [ctypes.c_char_p, ctypes.c_void_p, ctypes.c_size_t]
             lib.lt_gui_inspect_local_package.restype = ctypes.c_bool
             lib.lt_gui_stack_add_scrolled_flowbox.argtypes = [
@@ -222,6 +234,12 @@ def _load():
             lib.lt_gui_add_app_page_action_button.restype = ctypes.c_bool
             lib.lt_gui_populate_screenshot_chrome.argtypes = [ctypes.c_void_p, ctypes.c_void_p, ctypes.POINTER(_ScreenshotChromeSpec)]
             lib.lt_gui_populate_screenshot_chrome.restype = ctypes.c_bool
+            lib.lt_gui_build_sidebar.argtypes = [
+                ctypes.c_void_p,
+                ctypes.POINTER(_SidebarEntrySpec),
+                ctypes.c_size_t,
+            ]
+            lib.lt_gui_build_sidebar.restype = ctypes.c_size_t
             _LIB = lib
             return lib
     return None
@@ -731,6 +749,55 @@ def reconcile_list_rows(container, specs=(), state="content", empty_text=""):
     expected = {str(spec.get("key", "")) for spec in specs}
     if set(rows) != expected:
         raise RuntimeError("Native GTK list reconciliation returned an inconsistent row set")
+    return rows
+
+
+def build_sidebar(container, entries):
+    """Build the retractable category sidebar rows in one native call.
+
+    entries: ordered dicts with ``key``, ``label``, ``icon`` (file path or
+    icon name), ``depth``, and the ``has_children``/``expanded`` disclosure
+    flags. Returns ``{key: row_widget}`` so the caller can wire clicked
+    handlers per category.
+    """
+    lib = _load()
+    if lib is None or container is None:
+        raise RuntimeError("LinuxToys GUI Rust library is unavailable")
+
+    entries = list(entries)
+    native_specs = []
+    for entry in entries:
+        native_specs.append(_SidebarEntrySpec(
+            str(entry.get("key", "")).encode("utf-8"),
+            str(entry.get("label", "")).encode("utf-8"),
+            str(entry.get("icon_path", "")).encode("utf-8"),
+            str(entry.get("icon_name", "")).encode("utf-8"),
+            int(entry.get("depth", 0)),
+            bool(entry.get("has_children", False)),
+            bool(entry.get("expanded", False)),
+        ))
+
+    native_array = None
+    native_ptr = None
+    if native_specs:
+        array_type = _SidebarEntrySpec * len(native_specs)
+        native_array = array_type(*native_specs)
+        native_ptr = native_array
+
+    built = int(lib.lt_gui_build_sidebar(_pointer(container), native_ptr, len(native_specs)))
+    if built != len(native_specs):
+        raise RuntimeError(
+            f"Native GTK sidebar build returned {built}/{len(native_specs)} rows"
+        )
+
+    rows = {}
+    prefix = "linuxtoys-sidebar-row-"
+    for child in container.get_children():
+        name = child.get_name()
+        if name and name.startswith(prefix):
+            rows[name[len(prefix):]] = child
+    if set(rows) != {str(entry.get("key", "")) for entry in entries}:
+        raise RuntimeError("Native GTK sidebar build returned an inconsistent row set")
     return rows
 
 

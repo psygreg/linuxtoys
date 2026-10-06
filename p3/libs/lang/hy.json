@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Սեղմեք՝ մեծացնելու համար",
   "dependency_block_title": "Հեռացումն արգելափակված է",
   "dependency_block_message": "Տեղադրված ծրագրակազմը դեռ կախված է '{name}'-ից։ Նախ հեռացրեք այն՝\n\n{blockers}",
-  "dependency_block_button_tooltip": "Հեռացումն արգելափակված է․ տեղադրված ծրագրակազմը դեռ կախված է այս հնարավորությունից"
+  "dependency_block_button_tooltip": "Հեռացումն արգելափակված է․ տեղադրված ծրագրակազմը դեռ կախված է այս հնարավորությունից",
+  "sidebar_expand": "Ընդլայնել",
+  "sidebar_collapse": "Ծալել",
+  "sidebar_toggle": "Միացնել կամ անջատել կատեգորիաների կողային վահանակը",
+  "main_menu": "Գլխավոր ընտրացանկ"
 }

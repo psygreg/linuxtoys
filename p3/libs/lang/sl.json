@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Kliknite za povečavo",
   "dependency_block_title": "Odstranitev je blokirana",
   "dependency_block_message": "Nameščena programska oprema je še vedno odvisna od »{name}«. Najprej jo odstranite:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Odstranitev je blokirana: nameščena programska oprema je še vedno odvisna od te funkcije"
+  "dependency_block_button_tooltip": "Odstranitev je blokirana: nameščena programska oprema je še vedno odvisna od te funkcije",
+  "sidebar_expand": "Razširi",
+  "sidebar_collapse": "Strni",
+  "sidebar_toggle": "Preklopi stransko vrstico kategorij",
+  "main_menu": "Glavni meni"
 }

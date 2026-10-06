@@ -44,6 +44,7 @@ from gi.repository import Gio
 from .window_items import ItemWidgetFactory
 from .window_search import SearchCtl
 from .window_nav import NavCtl
+from .window_sidebar import SidebarCtl
 from .featured_scripts import FeaturedCtl
 from .local_scripts import LocalScriptsCtl
 from .updater.update_dialog import UpdateDialog
@@ -56,6 +57,7 @@ logger = logging.getLogger(__name__)
 class AppWindow(
     SearchCtl,
     NavCtl,
+    SidebarCtl,
     FeaturedCtl,
     LocalScriptsCtl,
     ItemWidgetFactory,
@@ -64,6 +66,11 @@ class AppWindow(
     def __init__(self, application, translations, *args, **kwargs):
         super().__init__(application=application, *args, **kwargs)
         self.translations = translations
+
+        # Sidebar preference; the stored value is restored with the window state.
+        self._sidebar_preferred = False
+        self._sidebar_updating = False
+        self._sidebar_width_ok_last = None
 
         self.set_title("LinuxToys")
         self._default_window_size = self._calculate_default_window_size()
@@ -195,7 +202,11 @@ class AppWindow(
         self.add(main_vbox)
 
         self.header_widget = header.create_header(self.translations)
-        main_vbox.pack_start(self.header_widget, False, False, 8)
+        # The root header is intentionally invisible. Protect it from the
+        # recursive self.show_all() used later during window initialization.
+        self.header_widget.set_no_show_all(True)
+        self.header_widget.hide()
+        main_vbox.pack_start(self.header_widget, False, False, 0)
 
         # HeaderBar setup with Hyprland/Wayland compatibility
         self.header_bar = Gtk.HeaderBar()
@@ -219,6 +230,24 @@ class AppWindow(
             print(f"Warning: Could not detect display backend: {e}")
 
         self.set_titlebar(self.header_bar)
+
+        # Retractable sidebar toggle. Kept leftmost so it sits to the left of
+        # the back button and the search box.
+        self.sidebar_toggle_button = Gtk.ToggleButton()
+        sidebar_icon_name = "view-sidebar-symbolic"
+        if not Gtk.IconTheme.get_default().has_icon(sidebar_icon_name):
+            sidebar_icon_name = "open-menu-symbolic"
+        self.sidebar_toggle_button.set_image(
+            Gtk.Image.new_from_icon_name(sidebar_icon_name, Gtk.IconSize.BUTTON)
+        )
+        self.sidebar_toggle_button.set_relief(Gtk.ReliefStyle.NONE)
+        self.sidebar_toggle_button.set_tooltip_text(
+            self.translations.get("sidebar_toggle", "Toggle category sidebar")
+        )
+        self.sidebar_toggle_button.connect(
+            "toggled", self._on_sidebar_toggle_clicked
+        )
+        self.header_bar.pack_start(self.sidebar_toggle_button)
 
         self.back_button = Gtk.Button.new_from_icon_name(
             "go-previous-symbolic", Gtk.IconSize.BUTTON
@@ -273,7 +302,21 @@ class AppWindow(
         self.main_stack.set_transition_duration(
             200
         )  # Set a reasonable transition duration
-        main_vbox.pack_start(self.main_stack, True, True, 0)
+
+        # Retractable category sidebar: an overlay DRAWER above the content.
+        # It is deliberately NOT a layout column of the window body — overlay
+        # children never reserve layout space, so a closed sidebar cannot leave
+        # a dead strip behind and open/close never re-negotiates the stack.
+        self._build_sidebar()
+        self._window_overlay = Gtk.Overlay()
+        self._window_overlay.add(self.main_stack)
+        self._window_overlay.add_overlay(self._sidebar_revealer)
+        main_vbox.pack_start(self._window_overlay, True, True, 0)
+
+        self.main_stack.connect(
+            "notify::visible-child-name", self._on_main_stack_view_changed
+        )
+        self.connect("size-allocate", self._on_window_size_for_sidebar)
 
         # Create categories view with random scripts section. Keep the complete
         # menu anchored to the top of the viewport: its natural content height is
@@ -3796,6 +3839,9 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         except (OSError, ValueError, TypeError):
             state = {}
 
+        # Sidebar preference rides along with the window geometry state.
+        self._sidebar_preferred = bool(state.get("sidebar_visible", False))
+
         if state.get("maximized") is True:
             self.maximize()
             return
@@ -4032,6 +4078,7 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
             "width": int(width),
             "height": int(height),
             "maximized": maximized,
+            "sidebar_visible": bool(getattr(self, "_sidebar_preferred", False)),
         }
 
         state_path = self._window_state_path()

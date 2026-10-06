@@ -730,5 +730,9 @@
   "app_page_screenshot_zoom": "Томруулахын тулд товшино уу",
   "dependency_block_title": "Устгах үйлдэл хаагдсан",
   "dependency_block_message": "Суулгасан програм хангамж '{name}'-ээс хамааралтай хэвээр байна. Эхлээд үүнийг устгана уу:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Устгах үйлдэл хаагдсан: суулгасан програм хангамж энэ функцээс хамааралтай хэвээр байна"
+  "dependency_block_button_tooltip": "Устгах үйлдэл хаагдсан: суулгасан програм хангамж энэ функцээс хамааралтай хэвээр байна",
+  "sidebar_expand": "Дэлгэх",
+  "sidebar_collapse": "Хумих",
+  "sidebar_toggle": "Ангиллын хажуугийн самбар солих",
+  "main_menu": "Үндсэн цэс"
 }

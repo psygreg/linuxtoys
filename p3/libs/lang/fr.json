@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Cliquez pour agrandir",
   "dependency_block_title": "Suppression bloquée",
   "dependency_block_message": "Un logiciel installé dépend toujours de « {name} ». Supprimez-le d’abord :\n\n{blockers}",
-  "dependency_block_button_tooltip": "Suppression bloquée : un logiciel installé dépend toujours de cette fonctionnalité"
+  "dependency_block_button_tooltip": "Suppression bloquée : un logiciel installé dépend toujours de cette fonctionnalité",
+  "sidebar_expand": "Déplier",
+  "sidebar_collapse": "Replier",
+  "sidebar_toggle": "Afficher ou masquer le panneau des catégories",
+  "main_menu": "Menu principal"
 }

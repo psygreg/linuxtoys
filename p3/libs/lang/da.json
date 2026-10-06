@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Klik for at zoome",
   "dependency_block_title": "Fjernelse blokeret",
   "dependency_block_message": "Installeret software afhænger stadig af '{name}'. Fjern det først:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Fjernelse blokeret: installeret software afhænger stadig af denne funktion"
+  "dependency_block_button_tooltip": "Fjernelse blokeret: installeret software afhænger stadig af denne funktion",
+  "sidebar_expand": "Udvid",
+  "sidebar_collapse": "Sammenfold",
+  "sidebar_toggle": "Skift kategorisidebjælke",
+  "main_menu": "Hovedmenu"
 }

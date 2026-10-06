@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "जुम गर्न क्लिक गर्नुहोस्",
   "dependency_block_title": "हटाउने कार्य रोकिएको छ",
   "dependency_block_message": "स्थापित सफ्टवेयर अझै पनि '{name}' मा निर्भर छ। पहिले यसलाई हटाउनुहोस्:\n\n{blockers}",
-  "dependency_block_button_tooltip": "हटाउने कार्य रोकिएको छ: स्थापित सफ्टवेयर अझै पनि यो सुविधामा निर्भर छ"
+  "dependency_block_button_tooltip": "हटाउने कार्य रोकिएको छ: स्थापित सफ्टवेयर अझै पनि यो सुविधामा निर्भर छ",
+  "sidebar_expand": "विस्तार गर्नुहोस्",
+  "sidebar_collapse": "संकुचित गर्नुहोस्",
+  "sidebar_toggle": "वर्ग साइडबार टगल गर्नुहोस्",
+  "main_menu": "मुख्य मेनु"
 }

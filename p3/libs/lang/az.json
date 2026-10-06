@@ -730,5 +730,9 @@
   "app_page_screenshot_zoom": "Böyütmək üçün klikləyin",
   "dependency_block_title": "Silmə bloklanıb",
   "dependency_block_message": "Quraşdırılmış proqram təminatı hələ də '{name}'-dən asılıdır. Əvvəlcə onu silin:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Silmə bloklanıb: quraşdırılmış proqram təminatı hələ də bu funksiyadan asılıdır"
+  "dependency_block_button_tooltip": "Silmə bloklanıb: quraşdırılmış proqram təminatı hələ də bu funksiyadan asılıdır",
+  "sidebar_expand": "Genişləndir",
+  "sidebar_collapse": "Yığ",
+  "sidebar_toggle": "Kateqoriya yan panelini çevir",
+  "main_menu": "Əsas menyu"
 }

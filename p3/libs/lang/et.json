@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Suurendamiseks klõpsake",
   "dependency_block_title": "Eemaldamine on blokeeritud",
   "dependency_block_message": "Installitud tarkvara sõltub endiselt funktsioonist „{name}“. Eemaldage see kõigepealt:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Eemaldamine on blokeeritud: installitud tarkvara sõltub endiselt sellest funktsioonist"
+  "dependency_block_button_tooltip": "Eemaldamine on blokeeritud: installitud tarkvara sõltub endiselt sellest funktsioonist",
+  "sidebar_expand": "Laienda",
+  "sidebar_collapse": "Ahenda",
+  "sidebar_toggle": "Lülita kategooriate külgriba sisse/välja",
+  "main_menu": "Peamenüü"
 }

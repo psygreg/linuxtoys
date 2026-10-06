@@ -729,5 +729,9 @@
   "app_page_screenshot_zoom": "Bofya ili kukuza",
   "dependency_block_title": "Uondoaji umezuiwa",
   "dependency_block_message": "Programu iliyosakinishwa bado inategemea '{name}'. Iondoe kwanza:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Uondoaji umezuiwa: programu iliyosakinishwa bado inategemea kipengele hiki"
+  "dependency_block_button_tooltip": "Uondoaji umezuiwa: programu iliyosakinishwa bado inategemea kipengele hiki",
+  "sidebar_expand": "Panua",
+  "sidebar_collapse": "Kunja",
+  "sidebar_toggle": "Badilisha upau wa pembeni wa kategoria",
+  "main_menu": "Menyu kuu"
 }

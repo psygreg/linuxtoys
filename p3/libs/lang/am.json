@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "ለማጉላት ጠቅ ያድርጉ",
   "dependency_block_title": "ማስወገድ ታግዷል",
   "dependency_block_message": "የተጫነ ሶፍትዌር አሁንም በ'{name}' ላይ ይመሰረታል። መጀመሪያ ይህን ያስወግዱ፦\n\n{blockers}",
-  "dependency_block_button_tooltip": "ማስወገድ ታግዷል፦ የተጫነ ሶፍትዌር አሁንም በዚህ ባህሪ ላይ ይመሰረታል"
+  "dependency_block_button_tooltip": "ማስወገድ ታግዷል፦ የተጫነ ሶፍትዌር አሁንም በዚህ ባህሪ ላይ ይመሰረታል",
+  "sidebar_expand": "መስፋት",
+  "sidebar_collapse": "መጠቅለል",
+  "sidebar_toggle": "የጎን ምናሌን ቀያይር",
+  "main_menu": "ዋና ምናሌ"
 }

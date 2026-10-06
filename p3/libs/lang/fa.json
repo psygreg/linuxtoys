@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "برای بزرگ‌نمایی کلیک کنید",
   "dependency_block_title": "حذف مسدود شده است",
   "dependency_block_message": "نرم‌افزار نصب‌شده همچنان به '{name}' وابسته است. ابتدا آن را حذف کنید:\n\n{blockers}",
-  "dependency_block_button_tooltip": "حذف مسدود شده است: نرم‌افزار نصب‌شده همچنان به این قابلیت وابسته است"
+  "dependency_block_button_tooltip": "حذف مسدود شده است: نرم‌افزار نصب‌شده همچنان به این قابلیت وابسته است",
+  "sidebar_expand": "گسترش",
+  "sidebar_collapse": "جمع کردن",
+  "sidebar_toggle": "نمایش یا پنهان کردن نوار کناری دسته‌ها",
+  "main_menu": "منوی اصلی"
 }

@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "زوم کرنے کے لیے کلک کریں",
   "dependency_block_title": "ہٹانا مسدود ہے",
   "dependency_block_message": "انسٹال شدہ سافٹ ویئر اب بھی '{name}' پر منحصر ہے۔ پہلے اسے ہٹائیں:\n\n{blockers}",
-  "dependency_block_button_tooltip": "ہٹانا مسدود ہے: انسٹال شدہ سافٹ ویئر اب بھی اس خصوصیت پر منحصر ہے"
+  "dependency_block_button_tooltip": "ہٹانا مسدود ہے: انسٹال شدہ سافٹ ویئر اب بھی اس خصوصیت پر منحصر ہے",
+  "sidebar_expand": "پھیلائیں",
+  "sidebar_collapse": "سکیڑیں",
+  "sidebar_toggle": "زمرہ سائیڈبار ٹوگل کریں",
+  "main_menu": "مرکزی مینو"
 }

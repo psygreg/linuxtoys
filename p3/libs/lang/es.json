@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Haz clic para ampliar",
   "dependency_block_title": "Eliminación bloqueada",
   "dependency_block_message": "El software instalado todavía depende de '{name}'. Elimínalo primero:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Eliminación bloqueada: el software instalado todavía depende de esta función"
+  "dependency_block_button_tooltip": "Eliminación bloqueada: el software instalado todavía depende de esta función",
+  "sidebar_expand": "Expandir",
+  "sidebar_collapse": "Contraer",
+  "sidebar_toggle": "Alternar barra lateral de categorías",
+  "main_menu": "Menú principal"
 }

@@ -711,5 +711,9 @@
   "app_page_screenshot_zoom": "ज़ूम करने के लिए क्लिक करें",
   "dependency_block_title": "हटाना अवरुद्ध है",
   "dependency_block_message": "इंस्टॉल किया गया सॉफ़्टवेयर अभी भी '{name}' पर निर्भर है। पहले इसे हटाएँ:\n\n{blockers}",
-  "dependency_block_button_tooltip": "हटाना अवरुद्ध है: इंस्टॉल किया गया सॉफ़्टवेयर अभी भी इस सुविधा पर निर्भर है"
+  "dependency_block_button_tooltip": "हटाना अवरुद्ध है: इंस्टॉल किया गया सॉफ़्टवेयर अभी भी इस सुविधा पर निर्भर है",
+  "sidebar_expand": "विस्तारित करें",
+  "sidebar_collapse": "संकुचित करें",
+  "sidebar_toggle": "श्रेणी साइडबार टॉगल करें",
+  "main_menu": "मुख्य मेनू"
 }

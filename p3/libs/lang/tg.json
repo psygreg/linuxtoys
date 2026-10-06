@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Барои калон кардан клик кунед",
   "dependency_block_title": "Несткунӣ манъ шудааст",
   "dependency_block_message": "Нармафзори насбшуда то ҳол аз '{name}' вобаста аст. Аввал онро нест кунед:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Несткунӣ манъ шудааст: нармафзори насбшуда то ҳол аз ин хусусият вобаста аст"
+  "dependency_block_button_tooltip": "Несткунӣ манъ шудааст: нармафзори насбшуда то ҳол аз ин хусусият вобаста аст",
+  "sidebar_expand": "Кушодан",
+  "sidebar_collapse": "Пӯшидан",
+  "sidebar_toggle": "Тағйир додани навори тарафи категорияҳо",
+  "main_menu": "Менюи асосӣ"
 }

@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Кликните за увећање",
   "dependency_block_title": "Уклањање је блокирано",
   "dependency_block_message": "Инсталирани софтвер и даље зависи од „{name}“. Прво га уклоните:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Уклањање је блокирано: инсталирани софтвер и даље зависи од ове функције"
+  "dependency_block_button_tooltip": "Уклањање је блокирано: инсталирани софтвер и даље зависи од ове функције",
+  "sidebar_expand": "Развиј",
+  "sidebar_collapse": "Скупи",
+  "sidebar_toggle": "Преклопи бочну траку категорија",
+  "main_menu": "Главни мени"
 }

@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Click to zoom",
   "dependency_block_title": "Removal Blocked",
   "dependency_block_message": "Installed software still depends on '{name}'. Remove it first:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Removal blocked: installed software still depends on this feature"
+  "dependency_block_button_tooltip": "Removal blocked: installed software still depends on this feature",
+  "sidebar_expand": "Expand",
+  "sidebar_collapse": "Collapse",
+  "sidebar_toggle": "Toggle category sidebar",
+  "main_menu": "Main Menu"
 }

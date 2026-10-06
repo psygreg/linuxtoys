@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "ចុចដើម្បីពង្រីក",
   "dependency_block_title": "ការលុបត្រូវបានរារាំង",
   "dependency_block_message": "កម្មវិធីដែលបានដំឡើងនៅតែពឹងផ្អែកលើ '{name}'។ សូមលុបវាជាមុនសិន៖\n\n{blockers}",
-  "dependency_block_button_tooltip": "ការលុបត្រូវបានរារាំង៖ កម្មវិធីដែលបានដំឡើងនៅតែពឹងផ្អែកលើមុខងារនេះ"
+  "dependency_block_button_tooltip": "ការលុបត្រូវបានរារាំង៖ កម្មវិធីដែលបានដំឡើងនៅតែពឹងផ្អែកលើមុខងារនេះ",
+  "sidebar_expand": "ពង្រីក",
+  "sidebar_collapse": "បង្រួម",
+  "sidebar_toggle": "បើក ឬ បិទរបារចំហៀងក្រុម",
+  "main_menu": "ម៉ឺនុយមេ"
 }

@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Fai clic per ingrandire",
   "dependency_block_title": "Rimozione bloccata",
   "dependency_block_message": "Il software installato dipende ancora da '{name}'. Rimuovilo prima:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Rimozione bloccata: il software installato dipende ancora da questa funzionalità"
+  "dependency_block_button_tooltip": "Rimozione bloccata: il software installato dipende ancora da questa funzionalità",
+  "sidebar_expand": "Espandi",
+  "sidebar_collapse": "Comprimi",
+  "sidebar_toggle": "Mostra o nascondi la barra laterale delle categorie",
+  "main_menu": "Menu principale"
 }

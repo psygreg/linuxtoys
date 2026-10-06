@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Faceți clic pentru mărire",
   "dependency_block_title": "Eliminare blocată",
   "dependency_block_message": "Software-ul instalat depinde în continuare de „{name}”. Eliminați-l mai întâi:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Eliminare blocată: software-ul instalat depinde în continuare de această funcție"
+  "dependency_block_button_tooltip": "Eliminare blocată: software-ul instalat depinde în continuare de această funcție",
+  "sidebar_expand": "Extinde",
+  "sidebar_collapse": "Restrânge",
+  "sidebar_toggle": "Comută bara laterală de categorii",
+  "main_menu": "Meniu principal"
 }

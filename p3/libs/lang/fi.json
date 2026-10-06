@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Napsauta suurentaaksesi",
   "dependency_block_title": "Poistaminen estetty",
   "dependency_block_message": "Asennettu ohjelmisto on edelleen riippuvainen ominaisuudesta '{name}'. Poista se ensin:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Poistaminen estetty: asennettu ohjelmisto on edelleen riippuvainen tästä ominaisuudesta"
+  "dependency_block_button_tooltip": "Poistaminen estetty: asennettu ohjelmisto on edelleen riippuvainen tästä ominaisuudesta",
+  "sidebar_expand": "Laajenna",
+  "sidebar_collapse": "Tiivistä",
+  "sidebar_toggle": "Vaihda luokkien sivupalkki",
+  "main_menu": "Päävalikko"
 }

@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Kliknij, aby powiększyć",
   "dependency_block_title": "Usuwanie zablokowane",
   "dependency_block_message": "Zainstalowane oprogramowanie nadal zależy od „{name}”. Najpierw je usuń:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Usuwanie zablokowane: zainstalowane oprogramowanie nadal zależy od tej funkcji"
+  "dependency_block_button_tooltip": "Usuwanie zablokowane: zainstalowane oprogramowanie nadal zależy od tej funkcji",
+  "sidebar_expand": "Rozwiń",
+  "sidebar_collapse": "Zwiń",
+  "sidebar_toggle": "Przełącz panel boczny kategorii",
+  "main_menu": "Menu główne"
 }

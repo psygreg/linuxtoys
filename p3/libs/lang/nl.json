@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Klik om te vergroten",
   "dependency_block_title": "Verwijderen geblokkeerd",
   "dependency_block_message": "Geïnstalleerde software is nog steeds afhankelijk van '{name}'. Verwijder deze eerst:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Verwijderen geblokkeerd: geïnstalleerde software is nog steeds afhankelijk van deze functie"
+  "dependency_block_button_tooltip": "Verwijderen geblokkeerd: geïnstalleerde software is nog steeds afhankelijk van deze functie",
+  "sidebar_expand": "Uitklappen",
+  "sidebar_collapse": "Inklappen",
+  "sidebar_toggle": "Categoriezijbalk in- of uitschakelen",
+  "main_menu": "Hoofdmenu"
 }

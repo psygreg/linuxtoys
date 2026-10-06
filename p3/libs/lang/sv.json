@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Klicka för att zooma",
   "dependency_block_title": "Borttagning blockerad",
   "dependency_block_message": "Installerad programvara är fortfarande beroende av '{name}'. Ta bort den först:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Borttagning blockerad: installerad programvara är fortfarande beroende av den här funktionen"
+  "dependency_block_button_tooltip": "Borttagning blockerad: installerad programvara är fortfarande beroende av den här funktionen",
+  "sidebar_expand": "Fäll ut",
+  "sidebar_collapse": "Fäll ihop",
+  "sidebar_toggle": "Växla kategorisidopanelen",
+  "main_menu": "Huvudmeny"
 }

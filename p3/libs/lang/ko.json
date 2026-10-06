@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "클릭하여 확대",
   "dependency_block_title": "제거가 차단됨",
   "dependency_block_message": "설치된 소프트웨어가 여전히 '{name}'에 의존합니다. 먼저 제거하세요:\n\n{blockers}",
-  "dependency_block_button_tooltip": "제거가 차단됨: 설치된 소프트웨어가 여전히 이 기능에 의존합니다"
+  "dependency_block_button_tooltip": "제거가 차단됨: 설치된 소프트웨어가 여전히 이 기능에 의존합니다",
+  "sidebar_expand": "펼치기",
+  "sidebar_collapse": "접기",
+  "sidebar_toggle": "카테고리 사이드바 전환",
+  "main_menu": "메인 메뉴"
 }

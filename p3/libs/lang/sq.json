@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Klikoni për të zmadhuar",
   "dependency_block_title": "Heqja është bllokuar",
   "dependency_block_message": "Softueri i instaluar varet ende nga '{name}'. Hiqeni atë më parë:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Heqja është bllokuar: softueri i instaluar varet ende nga kjo veçori"
+  "dependency_block_button_tooltip": "Heqja është bllokuar: softueri i instaluar varet ende nga kjo veçori",
+  "sidebar_expand": "Zgjero",
+  "sidebar_collapse": "Pallos",
+  "sidebar_toggle": "Aktivizo ose çaktivizo anëshirën e kategorive",
+  "main_menu": "Menyja kryesore"
 }

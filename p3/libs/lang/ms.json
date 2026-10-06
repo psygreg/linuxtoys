@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Klik untuk zum",
   "dependency_block_title": "Pembuangan disekat",
   "dependency_block_message": "Perisian yang dipasang masih bergantung pada '{name}'. Buangnya terlebih dahulu:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Pembuangan disekat: perisian yang dipasang masih bergantung pada ciri ini"
+  "dependency_block_button_tooltip": "Pembuangan disekat: perisian yang dipasang masih bergantung pada ciri ini",
+  "sidebar_expand": "Kembangkan",
+  "sidebar_collapse": "Lipat",
+  "sidebar_toggle": "Tukar bar sisi kategori",
+  "main_menu": "Menu utama"
 }

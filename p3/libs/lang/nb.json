@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Klikk for å zoome",
   "dependency_block_title": "Fjerning blokkert",
   "dependency_block_message": "Installert programvare er fortsatt avhengig av '{name}'. Fjern den først:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Fjerning blokkert: installert programvare er fortsatt avhengig av denne funksjonen"
+  "dependency_block_button_tooltip": "Fjerning blokkert: installert programvare er fortsatt avhengig av denne funksjonen",
+  "sidebar_expand": "Utvid",
+  "sidebar_collapse": "Slå sammen",
+  "sidebar_toggle": "Vis eller skjul kategorisidelinjen",
+  "main_menu": "Hovedmeny"
 }

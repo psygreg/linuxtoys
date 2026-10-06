@@ -731,5 +731,9 @@
   "app_page_screenshot_zoom": "Nhấp để phóng to",
   "dependency_block_title": "Đã chặn việc gỡ bỏ",
   "dependency_block_message": "Phần mềm đã cài đặt vẫn phụ thuộc vào '{name}'. Hãy gỡ phần mềm đó trước:\n\n{blockers}",
-  "dependency_block_button_tooltip": "Đã chặn việc gỡ bỏ: phần mềm đã cài đặt vẫn phụ thuộc vào tính năng này"
+  "dependency_block_button_tooltip": "Đã chặn việc gỡ bỏ: phần mềm đã cài đặt vẫn phụ thuộc vào tính năng này",
+  "sidebar_expand": "Mở rộng",
+  "sidebar_collapse": "Thu gọn",
+  "sidebar_toggle": "Bật hoặc tắt thanh bên danh mục",
+  "main_menu": "Menu chính"
 }
