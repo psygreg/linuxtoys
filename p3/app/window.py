@@ -4527,6 +4527,12 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         # their translated strings; it is not a structural category publication.
         self._refresh_root_category_translations_in_place()
 
+        # The sidebar is persistent overlay UI built from self.translations.
+        # Refresh it before the per-view returns below so its rows, toggle
+        # tooltip and Main Menu shortcut follow the new locale regardless of
+        # which view is visible during the switch.
+        self._refresh_sidebar_translations()
+
         # Refresh footer translations
         self.reveal.update_translations(self.translations)
 

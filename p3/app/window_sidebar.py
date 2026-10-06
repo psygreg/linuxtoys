@@ -352,6 +352,22 @@ class SidebarCtl:
             self._sidebar_deferred_collapses.discard(key)
         self._refresh_sidebar_rows()
 
+    def _refresh_sidebar_translations(self):
+        """Re-translate persistent sidebar strings after a locale switch.
+
+        Rows are rebuilt from fresh parser state: the language transaction
+        swaps category_cache for an empty instance before this runs, so
+        _sidebar_entries() falls back to parser.get_categories with the new
+        translations. Expansion and selection survive the rebuild because
+        row keys are stable identities.
+        """
+        if getattr(self, "_sidebar_revealer", None) is None:
+            return
+        self.sidebar_toggle_button.set_tooltip_text(
+            self.translations.get("sidebar_toggle", "Toggle category sidebar")
+        )
+        self._refresh_sidebar_rows()
+
     # ---- visibility state ------------------------------------------------
 
     def _main_stack_view_excluded(self):
