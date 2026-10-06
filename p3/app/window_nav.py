@@ -226,6 +226,59 @@ class NavCtl:
         GLib.idle_add(start_next_job, priority=GLib.PRIORITY_LOW)
         return False
 
+    def _refresh_category_tab_translations(self, view):
+        """Re-translate a category browser's Available/Installed footer tabs.
+
+        Tab labels are GtkStack page titles captured at build time; the
+        StackSwitcher buttons bind their labels to those titles, so updating
+        the two page titles re-translates the footer in place. Views without
+        a tab stack (checklist mode, plain scrolled views) are ignored.
+        """
+        if view is None:
+            return
+        tabs = getattr(view, "_linuxtoys_category_tabs", None)
+        if tabs is None:
+            return
+        for name, key, fallback in (
+            ("available", "category_available", "Available"),
+            ("installed", "app_page_installed", "Installed"),
+        ):
+            child = tabs.get_child_by_name(name)
+            if child is not None:
+                tabs.child_set_property(
+                    child, "title", self.translations.get(key, fallback)
+                )
+
+    def _reload_category_view_cards(self, view, defer_initial=True):
+        """Reload a category browser's card lists with current state.
+
+        Used when a hidden category view needs its cards refreshed (the
+        language transaction flags the Back origin, and the visible browser
+        when its warm parse has landed). defer_initial matches
+        _open_category_browser's visible-destination population; the
+        hidden-phase swap passes False so cards land before the reveal.
+        """
+        if view is None or self.current_category_info is None:
+            return
+        available_flowbox = getattr(view, "_linuxtoys_available_flowbox", None)
+        if available_flowbox is None and self.scripts_view is view:
+            available_flowbox = getattr(self, "scripts_flowbox", None)
+        installed_flowbox = getattr(view, "_linuxtoys_installed_flowbox", None)
+        if available_flowbox is not None:
+            self._load_scripts_into_flowbox(
+                available_flowbox,
+                self.current_category_info,
+                defer_initial=defer_initial,
+                animate_initial=False,
+            )
+        if installed_flowbox is not None:
+            self._load_scripts_into_flowbox(
+                installed_flowbox,
+                self.current_category_info,
+                defer_initial=defer_initial,
+                animate_initial=False,
+            )
+
     def _create_category_browser_view(self, category_info, view_name):
         """Create one complete animated category page: header plus browser content."""
         available_flowbox = self.create_flowbox()
@@ -669,6 +722,16 @@ class NavCtl:
                     self._enable_drag_and_drop()
                 else:
                     self._disable_drag_and_drop()
+
+                # The language transaction flagged this origin's cards while the
+                # view was hidden. Reload now that it is visible and has a real
+                # allocation, mirroring how _open_category_browser populates a
+                # destination after starting its transition.
+                if getattr(
+                    prev["child"], "_linuxtoys_language_cards_pending", False
+                ):
+                    prev["child"]._linuxtoys_language_cards_pending = False
+                    self._reload_category_view_cards(prev["child"])
             elif self.current_category_info and self.scripts_view is not None:
                 # Defensive fallback for app pages created before origin state was
                 # captured or for callers that deliberately omit it.

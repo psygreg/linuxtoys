@@ -353,20 +353,103 @@ class SidebarCtl:
         self._refresh_sidebar_rows()
 
     def _refresh_sidebar_translations(self):
-        """Re-translate persistent sidebar strings after a locale switch.
+        """Re-translate visible sidebar rows in place after a locale switch.
 
-        Rows are rebuilt from fresh parser state: the language transaction
-        swaps category_cache for an empty instance before this runs, so
-        _sidebar_entries() falls back to parser.get_categories with the new
-        translations. Expansion and selection survive the rebuild because
-        row keys are stable identities.
+        A full _refresh_sidebar_rows() rebuild would synchronously reparse
+        every root category's subcategory files on the UI thread and stalled
+        the language transaction. A locale switch never changes category
+        structure, so only translated strings are touched: root names come
+        from one parser pass (the same cost the root menu refresh already
+        pays) and only expanded branches are reparsed for descendants, since
+        collapsed branches render no rows.
         """
         if getattr(self, "_sidebar_revealer", None) is None:
             return
         self.sidebar_toggle_button.set_tooltip_text(
             self.translations.get("sidebar_toggle", "Toggle category sidebar")
         )
-        self._refresh_sidebar_rows()
+        names = self._sidebar_translated_names()
+        prefix = "linuxtoys-sidebar-row-"
+        for child in self._sidebar_box.get_children():
+            name = child.get_name() or ""
+            if not name.startswith(prefix):
+                continue
+            key = name[len(prefix):]
+            label = self._sidebar_row_label(child)
+            if label is not None:
+                text = names.get(key)
+                if text:
+                    label.set_text(text)
+            toggle = self._sidebar_row_toggle(child, key)
+            if toggle is not None:
+                expanded = key in self._sidebar_expanded_keys
+                toggle.set_tooltip_text(
+                    self.translations.get(
+                        "sidebar_collapse" if expanded else "sidebar_expand",
+                        "Collapse" if expanded else "Expand",
+                    )
+                )
+
+    def _sidebar_translated_names(self):
+        """Fresh-locale row names keyed by row identity.
+
+        Only covers rows that can currently exist: roots always, descendants
+        solely within expanded branches — reparsing collapsed branches would
+        pay synchronous parser work for rows that are not rendered.
+        """
+        names = {
+            "synthetic:sidebar-main-menu": str(
+                self.translations.get("main_menu", "Main Menu")
+            ),
+        }
+
+        def absorb(info, depth, parse_children):
+            key = self._sidebar_entry_key(info)
+            names[key] = str(info.get("name", "") or "")
+            if not parse_children or depth >= SIDEBAR_MAX_DEPTH:
+                return
+            for subcategory in self._sidebar_subcategories(info, depth):
+                absorb(
+                    subcategory,
+                    depth + 1,
+                    self._sidebar_entry_key(subcategory)
+                    in self._sidebar_expanded_keys,
+                )
+
+        for category in parser.get_categories(self.translations):
+            if category.get("is_script") or category.get("is_create_script"):
+                continue
+            if category.get("is_homebrew_category"):
+                continue  # appended separately while Homebrew is applicable
+            absorb(
+                category,
+                0,
+                self._sidebar_entry_key(category) in self._sidebar_expanded_keys,
+            )
+        if homebrew_catalog.enabled():
+            info = self._homebrew_category_info()
+            names[self._sidebar_entry_key(info)] = str(info.get("name", "") or "")
+        return names
+
+    @classmethod
+    def _sidebar_row_label(cls, row):
+        """The name label inside a row's action button."""
+        action = None
+        for child in row.get_children():
+            name = child.get_name() or ""
+            if name.startswith("linuxtoys-sidebar-action-"):
+                action = child
+                break
+        if action is None:
+            return None
+        stack = [action]
+        while stack:
+            widget = stack.pop()
+            if isinstance(widget, Gtk.Label):
+                return widget
+            if isinstance(widget, Gtk.Container):
+                stack.extend(widget.get_children())
+        return None
 
     # ---- visibility state ------------------------------------------------
 

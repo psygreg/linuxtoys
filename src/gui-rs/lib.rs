@@ -553,6 +553,7 @@ pub unsafe extern "C" fn lt_gui_stack_add_scrolled_flowbox(
     flowbox: *mut gtk::ffi::GtkWidget,
     name: *const c_char,
 ) -> bool {
+    ensure_gtk_initialized();
     if stack.is_null() || flowbox.is_null() || name.is_null() {
         return false;
     }
@@ -580,6 +581,7 @@ pub unsafe extern "C" fn lt_gui_stack_add_category_browser(
     available_label: *const c_char,
     installed_label: *const c_char,
 ) -> bool {
+    ensure_gtk_initialized();
     if stack.is_null() || available_flowbox.is_null() || installed_flowbox.is_null()
         || name.is_null() || available_label.is_null() || installed_label.is_null()
     {
@@ -652,6 +654,7 @@ pub unsafe extern "C" fn lt_gui_stack_attach_child(
     name: *const c_char,
     make_visible: u8,
 ) -> bool {
+    ensure_gtk_initialized();
     if stack.is_null() || child.is_null() || name.is_null() {
         return false;
     }
@@ -677,6 +680,7 @@ pub unsafe extern "C" fn lt_gui_stack_remove_child(
     child: *mut gtk::ffi::GtkWidget,
     destroy: u8,
 ) -> bool {
+    ensure_gtk_initialized();
     if stack.is_null() || child.is_null() {
         return false;
     }
@@ -692,6 +696,7 @@ pub unsafe extern "C" fn lt_gui_stack_remove_child_after_transition(
     destroy: u8,
     extra_delay_ms: u32,
 ) -> bool {
+    ensure_gtk_initialized();
     if stack.is_null() || child.is_null() {
         return false;
     }
@@ -1152,6 +1157,7 @@ pub unsafe extern "C" fn lt_gui_inspect_local_package(
     output: *mut c_char,
     output_len: usize,
 ) -> bool {
+    ensure_gtk_initialized();
     if path.is_null() || output.is_null() || output_len < 2 { return false; }
     let path = cstr(path);
     if path.is_empty() || !Path::new(&path).is_file() { return false; }

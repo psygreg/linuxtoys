@@ -636,6 +636,17 @@ class FeaturedCtl:
             if cached_source is self.all_scripts:
                 return cached_items
 
+        eligible = self._compute_eligible_featured_scripts(self.all_scripts)
+        self._featured_eligibility_cache = (self.all_scripts, eligible)
+        return eligible
+
+    def _compute_eligible_featured_scripts(self, scripts_pool):
+        """Eligibility scan for one candidate pool.
+
+        Pure data work (registry names, installed-state lookups, rating
+        weights) with no GTK access, so a parser worker can pre-warm the
+        cache and the main thread never pays the full-pool scan.
+        """
         # Registry and installed-package state are shared by the entire candidate
         # pool. Read each once instead of making every AppStream descriptor repeat
         # the same registry parse / installed-state lookup.
@@ -684,7 +695,7 @@ class FeaturedCtl:
             return False
 
         eligible = []
-        for script in self.all_scripts:
+        for script in scripts_pool:
             if script.get("appstream_source") == "homebrew":
                 continue
             if script.get("is_appstream_entry"):
@@ -697,7 +708,6 @@ class FeaturedCtl:
             if not removable and self._featured_rating_weight(script) > 0:
                 eligible.append(script)
 
-        self._featured_eligibility_cache = (self.all_scripts, eligible)
         return eligible
 
     @staticmethod
@@ -1454,7 +1464,13 @@ class FeaturedCtl:
         ):
             return False
 
-        self._refresh_random_scripts_display(force=False)
+        # A language change made on another view leaves Featured pending; the
+        # menu return is the moment its cards can be rebuilt with real geometry.
+        if getattr(self, "_language_featured_refresh_pending", False):
+            self._language_featured_refresh_pending = False
+            self._refresh_random_scripts_display(force=True)
+        else:
+            self._refresh_random_scripts_display(force=False)
 
         # A navigation return is complete only after a fresh allocation has been
         # observed. Start the periodic rotation from this settled state rather than
