@@ -28,6 +28,9 @@ SIDEBAR_MIN_CONTENT_WIDTH = 400
 SIDEBAR_MIN_WINDOW_WIDTH = SIDEBAR_WIDTH + SIDEBAR_MIN_CONTENT_WIDTH
 SIDEBAR_TRANSITION_MS = 180
 SIDEBAR_MAX_DEPTH = 3
+# Extra wait on top of the stack transition before margins frozen for an
+# exit slide are released (covers late first frames).
+SIDEBAR_FROZEN_RELEASE_SLACK_MS = 40
 
 
 class SidebarCtl:
@@ -361,13 +364,63 @@ class SidebarCtl:
         """Current window width; overridable for tests."""
         return self.get_allocated_width()
 
-    def _set_sidebar_content_offset(self, reserved):
-        """Reserve drawer width without making the sidebar a layout sibling."""
+    @staticmethod
+    def _stack_child_view_name(child):
+        """Stack page name of a child (widget name as fallback)."""
+        try:
+            name = child.get_parent().child_get(child, "name")
+        except Exception:
+            name = None
+        if isinstance(name, (list, tuple)):  # PyGObject child_get quirk
+            name = name[0] if name else None
+        return name or child.get_name() or ""
+
+    def _sidebar_offset_children(self):
+        """Sidebar-capable stack children: the per-child inverse of
+        _main_stack_view_excluded(), so offsetting stays consistent with the
+        view-driven visibility rule from one single list."""
+        for child in self.main_stack.get_children():
+            name = self._stack_child_view_name(child)
+            if name in SIDEBAR_EXCLUDED_VIEWS or name.startswith(
+                "app_page_refresh_"
+            ):
+                continue
+            yield child
+
+    def _set_sidebar_content_offset(self, reserved, freeze_open_views=False):
+        """Reserve drawer width on capable views, never as a layout sibling.
+
+        The offset margin lives on each capable child instead of the stack:
+        a view-driven close then freezes the open-era views at drawer width
+        (freeze_open_views) so the outgoing page keeps its layout for the
+        whole exit slide, while the excluded destination — which never
+        carries a margin — renders full width from its first frame.
+        """
         offset = SIDEBAR_WIDTH if reserved else 0
-        if self.main_stack.get_margin_start() == offset:
-            return
-        self.main_stack.set_margin_start(offset)
-        self.main_stack.queue_resize()
+        changed = False
+        for child in self._sidebar_offset_children():
+            if freeze_open_views and child.get_margin_start() == SIDEBAR_WIDTH:
+                continue
+            if child.get_margin_start() != offset:
+                child.set_margin_start(offset)
+                changed = True
+        if changed:
+            self.main_stack.queue_resize()
+
+    def _cancel_frozen_offset_release(self):
+        source = getattr(self, "_sidebar_offset_release_id", None)
+        if source is not None:
+            GLib.source_remove(source)
+            self._sidebar_offset_release_id = None
+
+    def _release_frozen_offsets(self):
+        """Release the drawer-width margins kept for an exit slide."""
+        self._sidebar_offset_release_id = None
+        # A quick reopen may have happened meanwhile. Never release reserved
+        # space underneath an open/reopening drawer.
+        if not self._sidebar_revealer.get_reveal_child():
+            self._set_sidebar_content_offset(False)
+        return False
 
     def _cancel_sidebar_release(self):
         source = getattr(self, "_sidebar_release_timer", None)
@@ -383,25 +436,47 @@ class SidebarCtl:
             self._set_sidebar_content_offset(False)
         return False
 
-    def _set_sidebar_open(self, open_):
+    def _set_sidebar_open(self, open_, release_immediately=False):
         """Change drawer visibility with one content reflow per operation."""
         self._cancel_sidebar_release()
+        self._cancel_frozen_offset_release()
         if open_:
-            # Shrink the content once, then animate the overlay into the space.
+            # Shrink the capable content once, then animate the overlay into
+            # the space.
             self._set_sidebar_content_offset(True)
             self._sidebar_revealer.set_reveal_child(True)
             return
 
-        # Keep the content reserved while the drawer slides away. Expanding it
-        # only after the transition avoids walking responsive layouts through
-        # intermediate widths during the animation.
         self._sidebar_revealer.set_reveal_child(False)
+        if release_immediately:
+            # View-driven close (navigation into a sidebar-excluded view).
+            # The destination never carries the offset margin, so it lays
+            # out full width for its entire stack slide; the open-era views
+            # keep their margin frozen so the outgoing page does not reflow
+            # under the retracting sidebar while it animates out. Frozen
+            # margins are released once the stack transition is over.
+            self._set_sidebar_content_offset(False, freeze_open_views=True)
+            self._sidebar_offset_release_id = GLib.timeout_add(
+                self.main_stack.get_transition_duration()
+                + SIDEBAR_FROZEN_RELEASE_SLACK_MS,
+                self._release_frozen_offsets,
+            )
+            return
+
+        # Toggle-driven close: keep the content reserved while the drawer
+        # slides away. Expanding it only after the transition avoids walking
+        # responsive layouts through intermediate widths during the animation.
         self._sidebar_release_timer = GLib.timeout_add(
             SIDEBAR_TRANSITION_MS, self._finish_sidebar_hide
         )
 
-    def _apply_sidebar_state(self):
-        """Apply preference + view context + width guard to the sidebar."""
+    def _apply_sidebar_state(self, view_driven=False):
+        """Apply preference + view context + width guard to the sidebar.
+
+        view_driven marks syncs triggered by main_stack navigation; those
+        releases must not wait for the drawer animation (see
+        _set_sidebar_open).
+        """
         width = self._sidebar_window_width()
         width_ok = width == 0 or width >= SIDEBAR_MIN_WINDOW_WIDTH
         excluded = self._main_stack_view_excluded()
@@ -411,7 +486,10 @@ class SidebarCtl:
         # programmatic state write never overwrites the stored preference.
         self._sidebar_updating = True
         try:
-            self._set_sidebar_open(open_allowed)
+            self._set_sidebar_open(
+                open_allowed,
+                release_immediately=view_driven and not open_allowed,
+            )
             self.sidebar_toggle_button.set_active(open_allowed)
             # Width-driven hide only. Deliberately NOT view-driven: flipping
             # header-bar children during stack transitions interfered with
@@ -428,7 +506,10 @@ class SidebarCtl:
         self._apply_sidebar_state()
 
     def _on_main_stack_view_changed(self, *_args):
-        self._apply_sidebar_state()
+        # The visible-child notify fires before the stack transition's first
+        # frame, so a view-driven release lets the destination ignore the
+        # drawer for layout from the very start of the slide.
+        self._apply_sidebar_state(view_driven=True)
         # current_category_info is updated by navigation before the destination
         # becomes visible. Besides expansion changes, crossing the root/category
         # boundary changes the row set itself because Main Menu is contextual.

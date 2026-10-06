@@ -146,9 +146,12 @@ button.queue-remove:hover {
     background-color: rgba(0, 0, 0, 0.78);
 }
 
-/* Retractable category sidebar. */
+/* Retractable category sidebar. Opaque drawer surface: the settled look of
+   the old 14% black veil over the theme background, composited into one
+   solid color so page content no longer shows through while the drawer
+   slides over it. */
 .linuxtoys-sidebar {
-    background-color: rgba(0, 0, 0, 0.14);
+    background-color: mix(@theme_bg_color, rgb(0, 0, 0), 0.14);
 }
 
 button.linuxtoys-sidebar-row {
