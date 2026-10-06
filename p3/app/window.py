@@ -30,6 +30,7 @@ from . import (
     parser,
     reboot_helper,
     revealer,
+    revert_helper,
     search_helper,
     skills_view,
     repo_parser,
@@ -1193,6 +1194,32 @@ class AppWindow(
                 )
 
                 script_cache.populate_from_category_cache(category_cache)
+
+                # Warm the Installed-Features data path so the first open of
+                # the view skips the AppStream materialization cost, and
+                # pre-resolve the row icons (get_icon_path decodes each image
+                # once to validate it; warmed here instead of on the UI
+                # thread when the view first opens).
+                try:
+                    installed_snapshot = installed_packages.snapshot()
+                    installed_entries = parser.get_installed_appstream_entries(
+                        installed_snapshot.get("native", ()),
+                        installed_snapshot.get("flatpak", {}).keys(),
+                        executed_names=revert_helper._get_executed_script_names(),
+                        translations=translations,
+                    )
+                    for info in (
+                        *script_cache.get_all_scripts(),
+                        *installed_entries,
+                    ):
+                        icon_value = str(info.get("icon") or "")
+                        if (
+                            "/" not in icon_value
+                            and icon_value.lower().endswith((".png", ".svg", ".webp"))
+                        ):
+                            get_icon_path(icon_value)
+                except Exception as error:
+                    print(f"Error warming installed entries: {error}")
 
                 # Warm Featured eligibility off the UI thread and publish the
                 # pool together with it. The scan is a full-pool pass that

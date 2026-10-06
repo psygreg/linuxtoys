@@ -575,9 +575,31 @@ def get_appstream_entries_for_category(category_path, translations=None):
     )
 
 
+_installed_appstream_entries_cache = None
+
+
 def get_installed_appstream_entries(native_packages, flatpak_ids, executed_names=(), translations=None):
-    """Materialize only AppStream entries matching the current installed snapshot."""
-    return appstream_parser.get_installed_entries(
+    """Materialize only AppStream entries matching the current installed snapshot.
+
+    Memoized on the exact installed-state inputs plus the translations object
+    (held by reference so its id cannot be recycled while cached): the
+    materialization is expensive (~150 ms) and installed state only changes
+    when the snapshot or the registry does, so repeat views hit the cache.
+    The returned list must be treated as read-only by callers.
+    """
+    global _installed_appstream_entries_cache
+    key = (
+        SCRIPTS_DIR,
+        tuple(sorted(str(value) for value in (native_packages or ()))),
+        tuple(sorted(str(value) for value in (flatpak_ids or ()))),
+        tuple(sorted(str(value) for value in (executed_names or ()))),
+        id(translations),
+    )
+    cached = _installed_appstream_entries_cache
+    if cached is not None and cached[0] == key and cached[2] is translations:
+        return cached[1]
+
+    entries = appstream_parser.get_installed_entries(
         SCRIPTS_DIR,
         native_packages,
         flatpak_ids,
@@ -585,6 +607,8 @@ def get_installed_appstream_entries(native_packages, flatpak_ids, executed_names
         curated_entries=_get_appstream_curated_entries(translations),
         category_paths=_indexed_category_paths(),
     )
+    _installed_appstream_entries_cache = (key, entries, translations)
+    return entries
 
 
 def search_appstream_entries(query, translations=None, translated_new="new", translated_official="official"):
