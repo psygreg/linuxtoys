@@ -234,7 +234,9 @@ class AppWindow(
         # Retractable sidebar toggle. Kept leftmost so it sits to the left of
         # the back button and the search box.
         self.sidebar_toggle_button = Gtk.ToggleButton()
-        sidebar_icon_name = "view-sidebar-symbolic"
+        sidebar_icon_name = "sidebar-show-symbolic"
+        if not Gtk.IconTheme.get_default().has_icon(sidebar_icon_name):
+            sidebar_icon_name = "view-sidebar-symbolic"
         if not Gtk.IconTheme.get_default().has_icon(sidebar_icon_name):
             sidebar_icon_name = "open-menu-symbolic"
         self.sidebar_toggle_button.set_image(
