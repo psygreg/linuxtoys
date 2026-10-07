@@ -145,3 +145,4 @@ gearlevermsg="Gear Lever è necessario affinché LinuxToys possa gestire i pacch
 libvirtdnsmasq="È stato rilevato dnsmasq. Se lo utilizzi come cache DNS, libvirt potrebbe causare problemi e impedire alla tua connessione di risolvere le richieste DNS. Procedere comunque?"
 defaultpwr="Predefinito"
 highperfpwr="AMD Prestazioni elevate"
+msg306="GIMP è attualmente in esecuzione. Chiudilo ed esegui di nuovo questa patch."

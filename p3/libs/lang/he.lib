@@ -147,3 +147,4 @@ gearlevermsg="Gear Lever נדרש כדי ש-LinuxToys יוכל לטפל בחבי
 libvirtdnsmasq="זוהה dnsmasq. אם נעשה בו שימוש כמטמון DNS, ‏libvirt עלול לגרום לבעיות ולמנוע מהחיבור שלך לפתור בקשות DNS. להמשיך בכל זאת?"
 defaultpwr="ברירת מחדל"
 highperfpwr="AMD ביצועים גבוהים"
+msg306="GIMP פועל כרגע. נא לסגור אותו ולהריץ את התיקון שוב."

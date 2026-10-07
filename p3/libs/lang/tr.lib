@@ -146,3 +146,4 @@ gearlevermsg="LinuxToys'un AppImage paketlerini yönetebilmesi için Gear Lever 
 libvirtdnsmasq="dnsmasq algılandı. DNS önbelleği olarak kullanıyorsanız libvirt sorunlara yol açabilir ve bağlantınızın DNS isteklerini çözümleyememesine neden olabilir. Yine de devam edilsin mi?"
 defaultpwr="Varsayılan"
 highperfpwr="AMD Yüksek Performans"
+msg306="GIMP şu anda çalışıyor. Lütfen kapatın ve bu yamayı yeniden çalıştırın."

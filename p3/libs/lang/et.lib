@@ -147,3 +147,4 @@ gearlevermsg="LinuxToys vajab AppImage-pakettide haldamiseks Gear Leverit. See p
 libvirtdnsmasq="Tuvastati dnsmasq. Kui kasutate seda DNS-i vahemäluna, võib libvirt põhjustada probleeme ja takistada teie ühendusel DNS-päringute lahendamist. Kas jätkata ikkagi?"
 defaultpwr="Vaikimisi"
 highperfpwr="AMD Suur jõudlus"
+msg306="GIMP on praegu käimas. Sulgege see ja käivitage see parandus uuesti."

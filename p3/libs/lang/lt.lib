@@ -147,3 +147,4 @@ gearlevermsg="LinuxToys reikalingas Gear Lever AppImage paketams tvarkyti. Jis b
 libvirtdnsmasq="Aptiktas dnsmasq. Jei naudojate jį kaip DNS podėlį, libvirt gali sukelti problemų ir neleisti jūsų ryšiui išspręsti DNS užklausų. Vis tiek tęsti?"
 defaultpwr="Numatytasis"
 highperfpwr="AMD Didelis našumas"
+msg306="Šiuo metu veikia GIMP. Uždarykite jį ir vėl paleiskite šį pataisymą."

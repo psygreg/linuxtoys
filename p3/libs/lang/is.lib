@@ -146,3 +146,4 @@ gearlevermsg="Gear Lever er nauðsynlegt svo LinuxToys geti meðhöndlað AppIma
 libvirtdnsmasq="dnsmasq fannst. Ef þú notar það sem DNS-skyndiminni getur libvirt valdið vandamálum og komið í veg fyrir að tengingin þín geti leyst DNS-beiðnir. Halda samt áfram?"
 defaultpwr="Sjálfgefið"
 highperfpwr="AMD Mikil afköst"
+msg306="GIMP er í gangi núna. Lokaðu honum og keyrðu þetta viðgerð aftur."

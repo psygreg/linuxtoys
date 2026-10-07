@@ -147,3 +147,4 @@ gearlevermsg="Gear Lever je potreben, da lahko LinuxToys upravlja pakete AppImag
 libvirtdnsmasq="Zaznan je bil dnsmasq. Če ga uporabljate kot predpomnilnik DNS, lahko libvirt povzroči težave in vaši povezavi onemogoči razreševanje zahtev DNS. Vseeno nadaljujem?"
 defaultpwr="Privzeto"
 highperfpwr="AMD Visoka zmogljivost"
+msg306="GIMP se trenutno izvaja. Zaprite ga in znova zaženite ta popravek."

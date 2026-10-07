@@ -147,3 +147,4 @@ gearlevermsg="Gear Lever kërkohet që LinuxToys të mund të menaxhojë paketat
 libvirtdnsmasq="U zbulua dnsmasq. Nëse po e përdorni si cache DNS, libvirt mund të shkaktojë probleme dhe ta bëjë lidhjen tuaj të paaftë për të zgjidhur kërkesat DNS. Të vazhdohet gjithsesi?"
 defaultpwr="Parazgjedhur"
 highperfpwr="AMD Performancë e lartë"
+msg306="GIMP është aktualisht në punë. Mbylle atë dhe ekzekuto përsëri këtë patch."

@@ -147,3 +147,4 @@ gearlevermsg="Tá Gear Lever riachtanach chun go mbeidh LinuxToys in ann pacáis
 libvirtdnsmasq="Braitheadh dnsmasq. Má tá tú á úsáid mar thaisce DNS, d’fhéadfadh libvirt fadhbanna a chruthú agus cosc a chur ar do cheangal iarratais DNS a réiteach. Lean ar aghaidh mar sin féin?"
 defaultpwr="Réamhshocrú"
 highperfpwr="AMD Ardfheidhmíocht"
+msg306="Tá GIMP ag rith faoi láthair. Dún é agus rith an paiste seo arís."

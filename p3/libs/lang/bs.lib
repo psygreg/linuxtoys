@@ -147,3 +147,4 @@ gearlevermsg="Gear Lever je potreban da bi LinuxToys mogao upravljati AppImage p
 libvirtdnsmasq="Otkriven je dnsmasq. Ako ga koristite kao DNS keš, libvirt može uzrokovati probleme i onemogućiti vašoj vezi razrješavanje DNS zahtjeva. Ipak nastaviti?"
 defaultpwr="Zadano"
 highperfpwr="AMD Visoke performanse"
+msg306="GIMP je trenutno pokrenut. Zatvorite ga i pokrenite ovaj patch ponovo."

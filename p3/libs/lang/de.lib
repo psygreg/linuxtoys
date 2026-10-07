@@ -147,3 +147,4 @@ gearlevermsg="Gear Lever wird benötigt, damit LinuxToys AppImage-Pakete verwalt
 libvirtdnsmasq="dnsmasq wurde erkannt. Wenn Sie es als DNS-Cache verwenden, kann libvirt Probleme verursachen und dazu führen, dass Ihre Verbindung keine DNS-Anfragen mehr auflösen kann. Trotzdem fortfahren?"
 defaultpwr="Standard"
 highperfpwr="AMD Hohe Leistung"
+msg306="GIMP wird derzeit ausgeführt. Bitte schließen Sie es und führen Sie diesen Patch erneut aus."

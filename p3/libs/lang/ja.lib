@@ -147,3 +147,4 @@ gearlevermsg="LinuxToys で AppImage パッケージを処理するには Gear L
 libvirtdnsmasq="dnsmasq が検出されました。DNS キャッシュとして使用している場合、libvirt が問題を引き起こし、接続で DNS リクエストを解決できなくなる可能性があります。それでも続行しますか？"
 defaultpwr="デフォルト"
 highperfpwr="AMD 高パフォーマンス"
+msg306="GIMPが実行中です。閉じてからこのパッチをもう一度実行してください。"

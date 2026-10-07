@@ -147,3 +147,4 @@ gearlevermsg="A LinuxToys számára a Gear Lever szükséges az AppImage-csomago
 libvirtdnsmasq="A rendszer dnsmasq szolgáltatást észlelt. Ha DNS-gyorsítótárként használja, a libvirt problémákat okozhat, és megakadályozhatja, hogy a kapcsolat DNS-kéréseket oldjon fel. Mindenképpen folytatja?"
 defaultpwr="Alapértelmezett"
 highperfpwr="AMD Nagy teljesítmény"
+msg306="A GIMP jelenleg fut. Zárja be, majd futtassa újra ezt a javítást."

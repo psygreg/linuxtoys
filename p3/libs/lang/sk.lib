@@ -145,3 +145,4 @@ gearlevermsg="Gear Lever je potrebný, aby LinuxToys mohol pracovať s balíkmi 
 libvirtdnsmasq="Bol zistený dnsmasq. Ak ho používate ako vyrovnávaciu pamäť DNS, libvirt môže spôsobiť problémy a zabrániť vášmu pripojeniu v preklade DNS požiadaviek. Napriek tomu pokračovať?"
 defaultpwr="Predvolené"
 highperfpwr="AMD Vysoký výkon"
+msg306="GIMP práve beží. Zatvorte ho a spustite tento patch znova."

@@ -147,3 +147,4 @@ gearlevermsg="LinuxToys ir nepieciešams Gear Lever, lai apstrādātu AppImage p
 libvirtdnsmasq="Tika konstatēts dnsmasq. Ja izmantojat to kā DNS kešatmiņu, libvirt var radīt problēmas un neļaut savienojumam atrisināt DNS pieprasījumus. Vai tomēr turpināt?"
 defaultpwr="Noklusējums"
 highperfpwr="AMD Augsta veiktspēja"
+msg306="GIMP pašlaik darbojas. Aizveriet to un vēlreiz palaidiet šo ielāpu."

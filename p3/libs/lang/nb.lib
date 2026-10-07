@@ -147,3 +147,4 @@ gearlevermsg="Gear Lever kreves for at LinuxToys skal kunne håndtere AppImage-p
 libvirtdnsmasq="dnsmasq ble oppdaget. Hvis du bruker den som DNS-hurtigbuffer, kan libvirt forårsake problemer og gjøre at tilkoblingen din ikke kan løse DNS-forespørsler. Fortsette likevel?"
 defaultpwr="Standard"
 highperfpwr="AMD Høy ytelse"
+msg306="GIMP kjører for øyeblikket. Lukk den og kjør denne oppdateringen igjen."

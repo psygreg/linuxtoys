@@ -147,3 +147,4 @@ gearlevermsg="LinuxToys የAppImage ጥቅሎችን ለማስተዳደር Gear L
 libvirtdnsmasq="dnsmasq ተገኝቷል። እንደ DNS መሸጎጫ እየተጠቀሙበት ከሆነ፣ libvirt ችግር ሊፈጥር እና ግንኙነትዎ የDNS ጥያቄዎችን መፍታት እንዳይችል ሊያደርግ ይችላል። ለማንኛውም ይቀጥሉ?"
 defaultpwr="ነባሪ"
 highperfpwr="AMD ከፍተኛ አፈጻጸም"
+msg306="GIMP በአሁኑ ጊዜ ክፍት ነው። እባክዎ ይዝጉት እና ፓቹን እንደገና ያሂዱ።"

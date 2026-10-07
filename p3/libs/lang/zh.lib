@@ -146,3 +146,4 @@ gearlevermsg="LinuxToys 需要 Gear Lever 来处理 AppImage 软件包。现在�
 libvirtdnsmasq="检测到 dnsmasq。如果您将其用作 DNS 缓存，libvirt 可能会引发问题，导致您的连接无法解析 DNS 请求。仍要继续吗？"
 defaultpwr="默认"
 highperfpwr="AMD 高性能"
+msg306="GIMP 正在运行中。请关闭它并再次运行此补丁。"

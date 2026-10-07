@@ -146,3 +146,4 @@ gearlevermsg="LinuxToys cần Gear Lever để xử lý các gói AppImage. Gear
 libvirtdnsmasq="Đã phát hiện dnsmasq. Nếu bạn đang sử dụng nó làm bộ nhớ đệm DNS, libvirt có thể gây ra sự cố và khiến kết nối của bạn không thể phân giải các yêu cầu DNS. Vẫn tiếp tục?"
 defaultpwr="Mặc định"
 highperfpwr="AMD Hiệu năng cao"
+msg306="GIMP đang chạy. Vui lòng đóng nó và chạy bản vá này một lần nữa."

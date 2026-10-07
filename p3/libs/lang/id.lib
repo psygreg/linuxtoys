@@ -147,3 +147,4 @@ gearlevermsg="Gear Lever diperlukan agar LinuxToys dapat menangani paket AppImag
 libvirtdnsmasq="dnsmasq terdeteksi. Jika Anda menggunakannya sebagai cache DNS, libvirt dapat menyebabkan masalah dan membuat koneksi Anda tidak dapat meresolusi permintaan DNS. Tetap lanjutkan?"
 defaultpwr="Bawaan"
 highperfpwr="AMD Performa Tinggi"
+msg306="GIMP sedang berjalan. Silakan tutup dan jalankan patch ini lagi."

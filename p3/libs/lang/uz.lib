@@ -146,3 +146,4 @@ gearlevermsg="LinuxToys AppImage paketlarini boshqarishi uchun Gear Lever talab 
 libvirtdnsmasq="dnsmasq aniqlandi. Agar undan DNS keshi sifatida foydalanayotgan bo‘lsangiz, libvirt muammolarga sabab bo‘lishi va ulanishingiz DNS so‘rovlarini hal qila olmay qolishiga olib kelishi mumkin. Shunga qaramay davom etilsinmi?"
 defaultpwr="Standart"
 highperfpwr="AMD Yuqori unumdorlik"
+msg306="GIMP hozir ishlamoqda. Iltimos, uni yoping va bu yamani qayta ishga tushiring."
