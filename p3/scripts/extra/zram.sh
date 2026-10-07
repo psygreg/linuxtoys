@@ -2,7 +2,7 @@
 # name: ZRAM/ZSWAP
 # description: zram_desc
 # icon: preload.svg
-# compat: ubuntu, debian, arch, fedora, ostree, rhel, cachy
+# compat: ubuntu, debian, arch, fedora, ostree, rhel, cachy, suse
 # nocontainer
 # new
 # systemd: yes
@@ -38,6 +38,9 @@ PERCENT=50
 EOF
         sysd_stop zramswap
         sysd_start zramswap
+    elif is_suse; then
+        pkg_install systemd-zram-service
+        sudo_ zramswapon
     else
         zenwrn "$msg234"
         exit 100
@@ -52,6 +55,9 @@ setup_zswap() {
         { dpkg -s zram-config &>/dev/null; } && pkg_remove zram-config
     elif is_arch; then
         { pacman -Qi zram-generator &>/dev/null; } && pkg_remove zram-generator
+    elif is_suse; then
+        { rpm -qi zram-generator &>/dev/null; } && pkg_remove zram-generator
+        { { rpm -qi systemd-zram-service &>/dev/null; } && pkg_remove systemd-zram-service; } && sudo_ zramswapoff
     fi
 
     if grep -q "zswap.enabled=1" /proc/cmdline 2>/dev/null; then
@@ -87,7 +93,7 @@ EOF
 askpass
 
 _total_ram_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
-if [ "$_total_ram_kb" -gt 32000000 ] && ! is_rhel && ! is_cachy; then
+if [ "$_total_ram_kb" -gt 32000000 ] && { { ! is_rhel && ! is_cachy; } || { is_suse && [ -z "$suse_leap" ]; }; }; then
     choice=$(radioselect "ZRAM" "ZSWAP" "$cancelmsg")
     case $choice in
         ZRAM) setup_zram ;;
