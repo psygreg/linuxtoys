@@ -57,7 +57,8 @@ askpass() {
     local mode="${1:-sudo}"
     shift || true
 
-    local title="${1:-LinuxToys}"
+    local title="LinuxToys"
+    [[ "$mode" == "command" ]] || title="${1:-LinuxToys}"
     local _pass=""
     local max_attempts=3
     local attempts=0
@@ -161,6 +162,61 @@ askpass() {
             fi
 
             return 0
+            ;;
+
+        command)
+            # Isolate helper state and traps from the calling script.
+            (
+                (( $# > 0 )) || {
+                    printf 'askpass command: command not provided\n' >&2
+                    exit 2
+                }
+                local askpass_dir askpass_fifo askpass_request askpass_helper feeder_pid=""
+                local command_status
+                askpass_dir=$(mktemp -d "${TMPDIR:-/tmp}/linuxtoys-askpass.XXXXXX") || exit 1
+                trap '
+                    if [[ -n "$feeder_pid" ]]; then
+                        kill "$feeder_pid" 2>/dev/null || true
+                        wait "$feeder_pid" 2>/dev/null || true
+                    fi
+                    unset _pass
+                    rm -rf -- "$askpass_dir"
+                ' EXIT
+                trap 'exit 129' HUP
+                trap 'exit 130' INT
+                trap 'exit 143' TERM
+
+                _pass=$(askpass password "$title") || exit 1
+                chmod 700 "$askpass_dir" || exit 1
+                askpass_fifo="$askpass_dir/password"
+                askpass_request="$askpass_dir/request"
+                askpass_helper="$askpass_dir/askpass"
+                mkfifo -m 600 "$askpass_fifo" "$askpass_request" || exit 1
+                # Quote the FIFO path as Bash syntax, including unusual TMPDIRs.
+                {
+                    printf '#!/usr/bin/env bash\n'
+                    printf 'printf '\''request\n'\'' > %q || exit 1\n' "$askpass_request"
+                    printf 'IFS= read -r password < %q || exit 1\n' "$askpass_fifo"
+                    printf 'printf '\''%%s\n'\'' "$password"\nunset password\n'
+                } > "$askpass_helper" || exit 1
+                chmod 700 "$askpass_helper" || exit 1
+                (
+                    trap - EXIT HUP INT TERM
+                    while IFS= read -r request < "$askpass_request"; do
+                        printf '%s\n' "$_pass" > "$askpass_fifo" || exit 0
+                    done
+                ) &
+                feeder_pid=$!
+                unset _pass
+                # An explicit conditional permits cleanup even under set -e.
+                if SUDO_ASKPASS="$askpass_helper" "$@"; then
+                    command_status=0
+                else
+                    command_status=$?
+                fi
+                exit "$command_status"
+            )
+            return $?
             ;;
 
         *)

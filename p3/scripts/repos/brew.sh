@@ -5,12 +5,12 @@
 # repo: https://brew.sh/
 
 if ! brew_bin=$(_brew_executable); then
-    askpass || exit 1
     brew_installer=$(mktemp) || exit 1
     trap 'rm -f "$brew_installer"' EXIT
     curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o "$brew_installer" \
         || die "Failed to download the Homebrew installer"
-    NONINTERACTIVE=1 source "$brew_installer" || die "Failed to install Homebrew"
+    askpass command env NONINTERACTIVE=1 /bin/bash "$brew_installer" \
+        || die "Failed to install Homebrew"
     brew_bin=$(_brew_executable) || die "Homebrew is unavailable after installation"
     brew_prefix=$("$brew_bin" --prefix) || die "Unable to determine Homebrew prefix"
     brew_prefix64=$(printf '%s' "$brew_prefix" | base64 | tr -d '\n')
