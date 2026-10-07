@@ -27,7 +27,7 @@ from . import _catalog_rs as _catalog_rs
 from .compat import get_linuxtoys_cache_dir
 
 
-CACHE_SCHEMA = 20
+CACHE_SCHEMA = 21
 CACHE_MAX_AGE = 14 * 24 * 60 * 60
 CHECKPOINT_EVERY = 100
 
@@ -133,6 +133,7 @@ def _icon_value(component) -> str:
     cached_roots = (
         "/usr/share/swcatalog/icons",
         "/var/cache/swcatalog/icons",
+        "/var/lib/swcatalog/icons",
         "/usr/share/app-info/icons",
         "/var/cache/app-info/icons",
         "/var/lib/app-info/icons",
@@ -611,8 +612,47 @@ def _native_appstream_supported_host() -> bool:
         return True
 
 
+# Match the system catalog layouts used by GNOME Software. Modern locations
+# take precedence over legacy ones; resolve symlinks to avoid reading twice.
+_NATIVE_CATALOG_ROOTS = ("/usr/share", "/var/cache", "/var/lib")
+_NATIVE_CATALOG_LAYOUTS = (
+    ("app-info", "xml"), ("app-info", "xmls"), ("app-info", "yaml"),
+    ("swcatalog", "xml"), ("swcatalog", "yaml"),
+)
+_NATIVE_CATALOG_SUFFIXES = (".xml", ".xml.gz", ".xml.xz", ".xml.zst",
+                            ".yml", ".yml.gz", ".yaml", ".yaml.gz")
+
+
+def _native_catalog_dirs():
+    directories = []
+    seen = set()
+    for root in _NATIVE_CATALOG_ROOTS:
+        for layout, subdir in _NATIVE_CATALOG_LAYOUTS:
+            directory = Path(root) / layout / subdir
+            if not directory.is_dir():
+                continue
+            resolved = directory.resolve()
+            if resolved in seen:
+                continue
+            seen.add(resolved)
+            directories.append(directory)
+    return directories
+
+
+def _native_component_usable(component):
+    # Match the required fields in Rust's normalize_native_payload_rs without
+    # resolving icons or building the expensive full payload here.
+    for method in ("get_id", "get_name", "get_summary"):
+        if not str(_safe_call(component, method, "") or "").strip():
+            return False
+    return all(
+        any(str(value).strip() for value in _as_list(_safe_call(component, method, [])))
+        for method in ("get_pkgnames", "get_categories")
+    )
+
+
 def _load_appstream_pool_components():
-    """Load the OS catalog through libappstream's os-release auto-detection."""
+    """Load native metadata with explicit current and legacy catalog locations."""
     import gi
 
     gi.require_version("AppStream", "1.0")
@@ -621,25 +661,28 @@ def _load_appstream_pool_components():
     pool = AppStream.Pool()
     set_flags = getattr(pool, "set_flags", None)
     if set_flags is not None:
-        # Native catalog only for the first integration milestone. Flatpak will
-        # become its own independently refreshable source later.
-        flags = AppStream.PoolFlags.LOAD_OS_CATALOG | AppStream.PoolFlags.LOAD_OS_METAINFO
-        set_flags(flags)
+        set_flags(AppStream.PoolFlags.LOAD_OS_CATALOG | AppStream.PoolFlags.LOAD_OS_METAINFO)
+    add_location = getattr(pool, "add_extra_data_location", None)
+    if add_location is not None:
+        for directory in _native_catalog_dirs():
+            try:
+                add_location(os.fspath(directory), AppStream.FormatStyle.CATALOG)
+            except Exception as error:
+                logging.debug("Cannot register native catalog directory %s: %s", directory, error)
     pool.load()
     return _as_list(pool.get_components())
-
-
-# AppStream repository layouts scanned when libappstream's os-release-based
-# auto-detection comes back empty.
-_APPSTREAM_FALLBACK_DIRS = ("/usr/share/app-info", "/var/cache/app-info")
 
 
 def _load_appstream_components():
     if not _native_appstream_supported_host():
         return []
 
-    components = _load_appstream_pool_components()
-    if components:
+    try:
+        components = _load_appstream_pool_components()
+    except Exception as error:
+        logging.warning("Native AppStream pool failed; trying catalog files: %s", error)
+        components = []
+    if any(_native_component_usable(component) for component in components):
         return components
 
     import gi
@@ -647,50 +690,57 @@ def _load_appstream_components():
     gi.require_version("AppStream", "1.0")
     from gi.repository import AppStream, Gio
 
-    # Some distributions publish their AppStream catalog under a name that
-    # does not match what libappstream derives from os-release, so the
-    # auto-detected OS catalog comes back empty (openSUSE Slowroll, for one,
-    # reports an opensuse-tumbleweed-style identity while publishing an
-    # opensuse-slowroll.xml catalog). Parse every catalog file that actually
-    # exists in the local AppStream repository layouts instead. Raw-parsed
-    # components keep their icon names; _icon_value still resolves them
-    # against the distro icon cache.
-    components = []
-    seen_ids = set()
-    for directory in _APPSTREAM_FALLBACK_DIRS:
-        xmls_dir = Path(directory) / "xmls"
-        if not xmls_dir.is_dir():
+    # Last resort for unavailable pool discovery/merging. Keep package-backed
+    # catalog entries ahead of installed metainfo, and read every location.
+    catalog_components = {}
+    seen_files = set()
+    catalog_files = 0
+    for directory in _native_catalog_dirs():
+        try:
+            catalog_paths = sorted(directory.iterdir())
+        except OSError as error:
+            logging.warning("Cannot read native AppStream directory %s: %s", directory, error)
             continue
-        for xml_path in sorted(xmls_dir.glob("*.xml*")):
+        for catalog_path in catalog_paths:
+            if not catalog_path.is_file() or not catalog_path.name.endswith(_NATIVE_CATALOG_SUFFIXES):
+                continue
+            resolved = catalog_path.resolve()
+            if resolved in seen_files:
+                continue
+            seen_files.add(resolved)
+            catalog_files += 1
             try:
                 metadata = AppStream.Metadata()
-                set_style = getattr(metadata, "set_format_style", None)
-                if set_style is not None:
-                    style = getattr(AppStream.FormatStyle, "CATALOG", None)
-                    if style is not None:
-                        set_style(style)
-                parse_file = metadata.parse_file
-                unknown_kind = getattr(AppStream.FormatKind, "UNKNOWN", None)
-                try:
-                    # libappstream 1.x signature (Gio.File + format kind,
-                    # UNKNOWN auto-detects XML/YAML and handles gzip).
-                    parse_file(
-                        Gio.File.new_for_path(os.fspath(xml_path)),
-                        unknown_kind,
-                    )
-                except TypeError:
-                    # libappstream 0.x signature (plain path, auto-detect).
-                    parse_file(os.fspath(xml_path))
+                metadata.set_format_style(AppStream.FormatStyle.CATALOG)
+                metadata.parse_file(Gio.File.new_for_path(os.fspath(catalog_path)),
+                                    AppStream.FormatKind.UNKNOWN)
                 for component in _as_list(metadata.get_components()):
-                    component_id = str(component.get_id() or "")
-                    if component_id and component_id in seen_ids:
+                    if not _native_component_usable(component):
                         continue
-                    seen_ids.add(component_id)
-                    components.append(component)
-            except Exception:
-                continue
-        if components:
-            break
+                    # Data IDs preserve distinct repository origins. Later
+                    # modern locations replace duplicate legacy data.
+                    key = str(_safe_call(component, "get_data_id", "") or "")
+                    if not key:
+                        key = (str(component.get_id()),
+                               str(_safe_call(component, "get_origin", "") or ""))
+                    catalog_components[key] = component
+            except Exception as error:
+                logging.warning("Cannot parse native AppStream catalog %s: %s", catalog_path, error)
+    if catalog_components:
+        return list(catalog_components.values())
+
+    logging.warning("No usable native AppStream repository catalog (%d local catalog files)", catalog_files)
+    try:
+        from .compat import get_system_compat_keys
+        if "suse" in get_system_compat_keys():
+            provider = Path("/usr/lib/zypp/plugins/appdata/InstallAppdata")
+            logging.warning(
+                "openSUSE AppStream provider %s. Check libzypp-plugin-appdata, "
+                "repository metadata with zypper refresh, and appstreamcli status.",
+                "present" if provider.is_file() else "missing",
+            )
+    except (ImportError, AttributeError):
+        pass
     return components
 
 
@@ -1061,14 +1111,11 @@ def _native_source_fingerprint(inventory=None):
         "/etc/pacman.d",
         "/etc/eopkg",
     )
-    appstream_locations = (
-        "/usr/share/app-info",
-        "/usr/share/appdata",
-        "/usr/share/metainfo",
-        "/var/cache/app-info",
-        "/var/lib/app-info",
-        "/var/cache/swcatalog",
-    )
+    appstream_locations = tuple(
+        os.fspath(Path(root) / layout)
+        for root in _NATIVE_CATALOG_ROOTS
+        for layout in ("app-info", "swcatalog")
+    ) + ("/usr/share/appdata", "/usr/share/metainfo")
 
     roots = [(location, False) for location in repo_locations]
     roots.extend((location, True) for location in appstream_locations)
