@@ -3,7 +3,7 @@
 # version: 1.0
 # description: swapfile_desc
 # icon: swapfile.svg
-# compat: ubuntu, debian, arch, fedora, rhel
+# compat: ubuntu, debian, arch, fedora, rhel, suse
 # noconfirm: yes
 # nocontainer
 # new
@@ -13,7 +13,7 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 
 fix_selinux_context () {
     local swapfile_path=$1
-    
+
     # Check if semanage is available and SELinux is enabled
     if command -v semanage &> /dev/null && getenforce &> /dev/null; then
         if [ "$(getenforce)" != "Disabled" ]; then
@@ -28,7 +28,7 @@ create_swap () {
     local location=$1
     # Remove trailing slash to avoid double slashes in paths
     location="${location%/}"
-    
+
     if [ "$(findmnt -n -o FSTYPE "$location")" = "btrfs" ]; then
         sudo_rq
         sudo btrfs subvolume create "$location/swap"
@@ -76,7 +76,7 @@ else
         case $CHOICE in
         "/ (root)") create_swap "/" && break;;
         "/home (home)") create_swap "/home" && break;;
-        "Custom path...") 
+        "Custom path...")
             CUSTOM_PATH=$(zenity --entry --title "Swapfile Creator" --text "Enter the mount point path for swapfile:\n(e.g., /var, /opt, or any other mount point)")
             if [ $? -eq 0 ] && [ -n "$CUSTOM_PATH" ]; then
                 if [ "$CUSTOM_PATH" = "/tmp" ] || [[ "$CUSTOM_PATH" == /tmp/* ]]; then
@@ -93,4 +93,3 @@ else
         esac
     done
 fi
-    
