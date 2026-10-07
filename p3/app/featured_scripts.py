@@ -7,7 +7,6 @@ from .gtk_common import Gdk, GLib
 from . import parser, popularity, category_affinity, installed_packages, _catalog_rs
 from .revert_helper import _get_executed_script_names
 
-
 class FeaturedCtl:
     FEATURED_REFRESH_MIN_SECONDS = 8
     FEATURED_REFRESH_MAX_SECONDS = 15
@@ -517,6 +516,12 @@ class FeaturedCtl:
             max_rows,
             max(1, (eligible_count + columns - 1) // columns),
         )
+        # A geometry reconcile that measured the settled section taller than
+        # its viewport budget clamps the plan here so rotations keep the
+        # fitted row count instead of re-inflating it every rotation.
+        row_budget_override = getattr(self, "_featured_row_budget_override", None)
+        if row_budget_override is not None:
+            rows = min(rows, max(1, int(row_budget_override)))
         for _ in range(4):
             large_count = self._calculate_featured_large_count(
                 rows, columns, eligible_count
@@ -1327,7 +1332,56 @@ class FeaturedCtl:
             self.featured_scripts_revealer.set_reveal_child(True)
             self.random_scripts_revealer.set_reveal_child(True)
 
+        self._schedule_featured_geometry_reconcile()
+
         return False
+
+    def _schedule_featured_geometry_reconcile(self):
+        """Re-check Featured fit after the main menu settles.
+
+        Two things can leave the spawned section taller than the viewport
+        (stray gaps plus scrolling even though the card count is adequate):
+        the first capacity pass may measure the main menu mid-population, and
+        large cards render taller than the per-row metric the slot planner
+        counts. Deferred passes compare the settled section's preferred
+        height with the space actually left below the menu and shave one
+        planned row per pass while it overflows; the clamp persists so
+        rotations keep the fitted plan, and a settled window resize clears it
+        for a fresh measurement.
+        """
+        self._featured_reconcile_generation = (
+            getattr(self, "_featured_reconcile_generation", 0) + 1
+        )
+        generation = self._featured_reconcile_generation
+
+        def _reconcile_pass():
+            if getattr(self, "_featured_reconcile_generation", 0) != generation:
+                return False  # a newer populate owns reconciliation
+            if (
+                getattr(self, "_language_transition_active", False)
+                or self.main_stack.get_visible_child_name() != "categories"
+            ):
+                return False
+            view_height = self.categories_view.get_allocated_height()
+            menu_height = self.categories_flowbox.get_allocated_height()
+            if view_height <= 1 or menu_height <= 1:
+                return False
+            budget = view_height - menu_height
+            container_height = (
+                self.featured_scripts_container.get_preferred_height()[1]
+            )
+            if container_height <= budget:
+                return False
+            metrics = getattr(self, "_featured_layout_metrics", None) or {}
+            rows = int(metrics.get("rows", 0))
+            if rows <= 1:
+                return False
+            self._featured_row_budget_override = rows - 1
+            self._refresh_random_scripts_display(force=False)
+            return False
+
+        for delay_ms in (350, 900, 1800):
+            GLib.timeout_add(delay_ms, _reconcile_pass)
 
     def _refresh_random_scripts_display(self, force=False):
         """
@@ -1336,6 +1390,11 @@ class FeaturedCtl:
         The first set reveals the whole section. Later replacements fade the cards
         out, swap them while hidden, then fade the replacement set in.
         """
+        if not getattr(self, "_featured_pool_complete", False):
+            # The bootstrap pool is structural-only (LinuxToys-exclusive
+            # entries): spawning from it rolls an appless Featured section.
+            # publish_full_featured triggers the spawn with the full pool.
+            return False
         on_categories_view = (
             self.current_category_info is None
             and self.main_stack.get_visible_child_name() == "categories"
@@ -1456,6 +1515,10 @@ class FeaturedCtl:
 
         if getattr(self, "_language_transition_active", False):
             return False
+
+        # New geometry gets a fresh measurement; the geometry reconcile
+        # scheduled by the next populate re-clamps if it still overflows.
+        self._featured_row_budget_override = None
 
         if not (
             self.should_start_random_timer

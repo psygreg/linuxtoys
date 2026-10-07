@@ -190,6 +190,7 @@ class AppWindow(
         self._language_categories_expected_children = 0
         self._language_categories_allocation_complete = False
         self._language_featured_refresh_pending = False
+        self._featured_pool_complete = False
         self._language_search_loading_active = False
         self._language_search_transition_owned = False
         self._language_search_loading_fade_source = None
@@ -561,6 +562,7 @@ class AppWindow(
         GLib.idle_add(self._start_file_watcher)
         GLib.idle_add(self._check_deepin_immutability_on_startup)
         GLib.idle_add(self._start_startup_recommendation_check)
+
 
 
 
@@ -1076,6 +1078,8 @@ class AppWindow(
                 self._render_categories(categories)
                 self._hide_categories_loading_indicator()
                 self.all_scripts = featured
+                # Structural-only bootstrap pool: never spawn Featured from it.
+                self._featured_pool_complete = False
                 self._invalidate_featured_eligibility_cache()
                 if (
                     self.should_start_random_timer
@@ -1117,6 +1121,7 @@ class AppWindow(
             if self.category_cache is not category_cache:
                 return False
             self.all_scripts = featured
+            self._featured_pool_complete = True
             # The parser worker pre-warms the eligibility cache for exactly
             # this pool; only invalidate when it does not match, so the
             # post-language Featured refresh never pays a main-thread scan.
@@ -4413,6 +4418,7 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         self.category_cache = search_helper.CategoryCache()
         self.search_engine.set_cache(self.script_cache)
         self.all_scripts = []
+        self._featured_pool_complete = False
 
         # Warm the visible category's cold parse on a worker right away: with
         # the fresh (empty) caches, _category_items_for_display falls back to
