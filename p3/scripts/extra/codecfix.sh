@@ -3,7 +3,7 @@
 # version: 1.0
 # description: codecfix_desc
 # icon: codec.svg
-# compat: suse, fedora, ostree, rhel
+# compat: fedora, ostree, rhel
 # revert: no
 
 # --- Start of the script code ---
@@ -11,6 +11,7 @@ source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 sudo_rq
 if is_suse; then
+    # disabled due to persistent issues with packman mesa updates
     pkg_install opi
     sudo opi codecs
     zeninf "$msg018"
