@@ -4,7 +4,7 @@
 # description: openlinkhub_desc
 # icon: corsair.svg
 # repo: https://github.com/jurkovic-nikola/OpenLinkHub
-# compat: ubuntu, debian, fedora, ostree, ublue, arch, cachy, rhel
+# compat: ubuntu, debian, fedora, ostree, ublue, arch, cachy, rhel, suse
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
