@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        7.5.4
+Version:        7.6
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -81,6 +81,6 @@ test -f %{buildroot}/usr/share/linuxtoys/app/liblinuxtoys_gui.so
 /usr/share/metainfo/toys.linux.LinuxToys.metainfo.xml
 
 %changelog
-* Mon Oct 05 2026 Victor Gregory <psygreg@pm.me> - 7.5.4
+* Tue Oct 06 2026 Victor Gregory <psygreg@pm.me> - 7.6
 - Added proper file permissions for all scripts
 - Updated dependencies for current requirements
