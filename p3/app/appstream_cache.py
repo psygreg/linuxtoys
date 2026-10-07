@@ -1255,14 +1255,34 @@ def cache_needs_refresh(now=None) -> bool:
 def _build_starter_catalog(status_callback=None):
     """Publish one usable local generation; leave enrichment due for refresh.
 
-    Called under _LOCK by refresh_cache(). No network refresh, ratings, metrics
-    or source fingerprinting belongs in this cold-start path.
+    Called under _LOCK by refresh_cache(). No network refresh, metrics or
+    source fingerprinting belongs in this cold-start path — with one bounded
+    exception: the ODRS ratings fetch runs alongside the component load so
+    the starter catalog carries review ratings for Featured (featured
+    candidates require a rating). A slow or failed fetch publishes unrated
+    and the enrichment rebuild upgrades the catalog afterwards.
     """
     from .compat import get_system_compat_keys
 
     keys = get_system_compat_keys()
     flatpak_primary = bool({"ostree", "ublue", "steamos", "dakota", "gnomeos", "kde-linux"}.intersection(keys))
     generation = _catalog_rs.AppStreamGeneration(os.fspath(CATALOG_PATH))
+
+    ratings_box = {"value": None, "done": False}
+
+    def fetch_ratings():
+        try:
+            ratings_box["value"] = _fetch_odrs_ratings()
+        finally:
+            ratings_box["done"] = True
+
+    ratings_thread = threading.Thread(
+        target=fetch_ratings,
+        name="linuxtoys-appstream-odrs-starter",
+        daemon=True,
+    )
+    ratings_thread.start()
+
     if flatpak_primary:
         _load_flatpak_components(generation, starter=True)
     else:
@@ -1272,6 +1292,19 @@ def _build_starter_catalog(status_callback=None):
                 _native_component_payload(component)
                 for component in components[start:start + CHECKPOINT_EVERY]
             ])
+
+    # Give the ratings fetch a short window — it usually completes during the
+    # component load. The starter must never wait on the network, so a slow
+    # fetch publishes unrated and the enrichment rebuild upgrades later.
+    ratings_thread.join(3.0)
+    ratings = ratings_box["value"]
+    if ratings is not None:
+        generation.apply_review_summaries(
+            json.dumps(ratings, ensure_ascii=False, separators=(",", ":")),
+            json.dumps({}, ensure_ascii=False, separators=(",", ":")),
+            True,
+            False,
+        )
 
     generation.publish_extensions(os.fspath(EXTENSIONS_PATH))
     changed, count = generation.publish(os.fspath(CATALOG_PATH), False)
