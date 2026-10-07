@@ -13,9 +13,12 @@ if question "PhotoGIMP" "$msg253"; then
     # while the instance is still alive), so kill it explicitly and wait
     # until the instance is really gone before patching.
     timeout 15 flatpak run org.gimp.GIMP
-    flatpak kill org.gimp.GIMP 2>/dev/null
+    # GIMP's first start can leave more than one window/instance behind (the
+    # main window plus a startup helper), so keep killing every org.gimp.GIMP
+    # instance until flatpak ps lists none of them.
     for _ in $(seq 1 30); do
         flatpak ps --columns=application 2>/dev/null | grep -q "org.gimp.GIMP" || break
+        flatpak kill org.gimp.GIMP 2>/dev/null
         sleep 1
     done
     flatpak ps --columns=application 2>/dev/null | grep -q "org.gimp.GIMP" && { warn "$msg306" && exit 100; }
