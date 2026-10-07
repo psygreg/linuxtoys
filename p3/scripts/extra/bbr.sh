@@ -6,7 +6,7 @@
 # nocontainer
 # systemd: yes
 
-{ modinfo tcp_bbr &>/dev/null && sudo_ modprobe tcp_bbr; } || { warn "tcp_bbr module not found." && exit 100; }
+{ modinfo tcp_bbr &>/dev/null && sudo_ modprobe tcp_bbr; } || { { [ -z "$CALLED_SCRIPT" ] && warn "tcp_bbr module not found."; } || echo "tcp_bbr module not found."; } && exit 100
 
 prep_edit /etc/modules-load.d/modules.conf
 echo 'tcp_bbr' | sudo_ tee -a /etc/modules-load.d/modules.conf
