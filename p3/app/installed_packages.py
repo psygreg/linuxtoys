@@ -10,7 +10,6 @@ import subprocess
 import tempfile
 import threading
 import time
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from . import homebrew_catalog
@@ -118,6 +117,33 @@ def shutil_which(command):
     return which(command)
 
 
+_ZYPPER_PACKAGE_NAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._+~-]*$")
+
+
+def _parse_zypper_userinstalled(output):
+    """Extract package names from zypper's `packages --userinstalled` listing.
+
+    That command has no machine-readable output: even under --xmlout the
+    listing arrives as a plain `S | Repository | Name | Version | Arch` table
+    inside the XML stream (unlike `search`, which emits <solvable> elements).
+    Rows are therefore recognized structurally: five pipe-separated fields
+    whose first one is an installed status marker. That excludes the header
+    ("S"), the column separators and the localized zypper messages.
+    """
+    packages = set()
+    for line in output.splitlines():
+        fields = [field.strip() for field in line.split("|")]
+        if len(fields) != 5:
+            continue
+        status, _repository, name, version, _arch = fields
+        if not status.startswith(("i", "v")):
+            continue
+        if not _ZYPPER_PACKAGE_NAME.fullmatch(name) or not version:
+            continue
+        packages.add(name)
+    return packages
+
+
 def _collect_native(manager):
     if manager == "pacman":
         return {line.split()[0] for line in _run(["pacman", "-Qe"]).splitlines() if line.strip()}
@@ -137,17 +163,7 @@ def _collect_native(manager):
             "zypper", "--xmlout", "--non-interactive", "--disable-repositories",
             "packages", "--userinstalled",
         ])
-        if not output.strip():
-            return set()
-        try:
-            root = ET.fromstring(output)
-        except ET.ParseError:
-            return set()
-        return {
-            node.get("name", "").strip()
-            for node in root.iter("solvable")
-            if node.get("name", "").strip()
-        }
+        return _parse_zypper_userinstalled(output)
     if manager == "rpm-ostree":
         packages = set()
         collecting = False

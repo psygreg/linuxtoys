@@ -15,6 +15,7 @@ import os
 import re
 import shutil
 import subprocess
+import tarfile
 import threading
 import time
 from urllib.request import Request, urlopen
@@ -32,6 +33,7 @@ CACHE_MAX_AGE = 14 * 24 * 60 * 60
 CHECKPOINT_EVERY = 100
 
 CACHE_DIR = Path(get_linuxtoys_cache_dir()) / "appstream"
+ICONS_CACHE_DIR = Path(get_linuxtoys_cache_dir()) / "appstream-icons"
 STATE_PATH = CACHE_DIR / "state.json"
 CATALOG_PATH = CACHE_DIR / "catalog.json"
 EXTENSIONS_PATH = CACHE_DIR / "extensions.json"
@@ -130,14 +132,22 @@ def _icon_value(component) -> str:
     # Arch-style catalogs, for example, keep them below /usr/share/swcatalog/icons
     # and may expose only the cached icon name plus its size.
     icons = _as_list(_safe_call(component, "get_icons", []))
-    cached_roots = (
+    cached_roots = [
         "/usr/share/swcatalog/icons",
         "/var/cache/swcatalog/icons",
         "/var/lib/swcatalog/icons",
         "/usr/share/app-info/icons",
         "/var/cache/app-info/icons",
         "/var/lib/app-info/icons",
-    )
+    ]
+
+    # Icons extracted from repository icon tarballs (see _extract_zypp_icon_tarballs)
+    # live per repository origin, mirroring the system swcatalog layout; try the
+    # component's origin directly, then keep a cross-origin fallback for the glob.
+    origin = str(_safe_call(component, "get_origin", "") or "").strip()
+    if origin and "/" not in origin and origin not in (".", ".."):
+        cached_roots.insert(0, str(ICONS_CACHE_DIR / origin))
+    cached_roots.append(str(ICONS_CACHE_DIR))
 
     for icon in icons:
         for method in ("get_filename", "get_name"):
@@ -639,6 +649,147 @@ def _native_catalog_dirs():
     return directories
 
 
+def _zypp_enabled_repo_aliases():
+    """Aliases currently enabled in /etc/zypp/repos.d, or None when unreadable.
+
+    None keeps every cached repository so an unusual zypp setup still yields a
+    catalog; a readable repos.d filters out stale disabled repositories.
+    """
+    repos_d = Path("/etc/zypp/repos.d")
+    try:
+        repo_files = sorted(repos_d.glob("*.repo"))
+    except OSError:
+        return None
+    if not repo_files:
+        return None
+
+    import configparser
+
+    parser = configparser.ConfigParser()
+    try:
+        parser.read(repo_files, encoding="utf-8")
+    except Exception:
+        return None
+    aliases = set()
+    for section in parser.sections():
+        try:
+            if parser.getboolean(section, "enabled", fallback=False):
+                aliases.add(section)
+        except (ValueError, TypeError):
+            continue
+    return aliases
+
+
+def _zypp_raw_appdata_catalogs():
+    """(path, origin) pairs for AppStream catalogs inside libzypp's raw repo cache.
+
+    openSUSE ships one AppStream catalog per repository (`*-appdata.xml.gz` in
+    rpm-md repodata, `appdata.xml.gz` in YaST2 descr). The merged system cache
+    (/var/cache/swcatalog) is only written by libzypp-plugin-appdata — at boot
+    via appstream-sync-cache.service or through `zypper appstream-cache` — and
+    is frequently absent, so consume the repository copies directly. That needs
+    no privileges, no commit and no download: the files are already local.
+    """
+    enabled = _zypp_enabled_repo_aliases()
+    catalogs = []
+    raw_root = Path("/var/cache/zypp/raw")
+    try:
+        repo_dirs = sorted(entry for entry in raw_root.iterdir() if entry.is_dir())
+    except OSError:
+        return catalogs
+    for repo_dir in repo_dirs:
+        if enabled is not None and repo_dir.name not in enabled:
+            continue
+        matches = [
+            repo_dir / "repodata",
+            repo_dir / "suse" / "setup" / "descr",
+        ]
+        origin = repo_dir.name.replace(":", "_")
+        for directory in matches:
+            try:
+                found = sorted(directory.glob("*-appdata.xml.gz"))
+            except OSError:
+                continue
+            for catalog in found:
+                if catalog.is_file():
+                    catalogs.append((catalog, origin))
+    return catalogs
+
+
+def _extract_zypp_icon_tarballs():
+    """Unpack repository icon tarballs into the LinuxToys icons cache.
+
+    openSUSE's per-repository AppStream catalogs reference `cached` icons that
+    live in a sibling `*-appdata-icons.tar.gz`. The system cache normally
+    holding them (/var/cache/swcatalog/icons) is frequently absent, so unpack
+    the tarballs into ICONS_CACHE_DIR/<origin> — the same <origin>/<size>/<name>
+    layout `appstream-util install-origin` produces system-wide. Already
+    extracted tarballs are recognized by a source signature marker.
+    """
+    for catalog, origin in _zypp_raw_appdata_catalogs():
+        if not origin:
+            continue
+        destination = ICONS_CACHE_DIR / origin
+        try:
+            for tarball in sorted(catalog.parent.glob("*-appdata-icons.tar.gz")):
+                stat = tarball.stat()
+                signature = f"{stat.st_mtime_ns}:{stat.st_size}"
+                marker = destination / ".source"
+                try:
+                    if marker.is_file() and marker.read_text(encoding="utf-8").strip() == signature:
+                        continue
+                except OSError:
+                    pass
+
+                staging = ICONS_CACHE_DIR / f".{origin}.staging"
+                shutil.rmtree(staging, ignore_errors=True)
+                staging.mkdir(parents=True)
+                with tarfile.open(tarball, "r:gz") as archive:
+                    try:
+                        archive.extractall(staging, filter="data")
+                    except TypeError:  # pre-3.12 runtimes without extraction filters
+                        archive.extractall(staging)
+                shutil.rmtree(destination, ignore_errors=True)
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                staging.rename(destination)
+                marker.write_text(f"{signature}\n", encoding="utf-8")
+        except Exception as error:
+            logging.debug("Cannot extract AppStream icons for %s: %s", origin, error)
+
+
+def _native_catalog_files():
+    """(path, origin) pairs for every readable native catalog source.
+
+    Standard system layouts take precedence; libzypp repository catalogs
+    follow. Origin is empty for system catalogs (they carry their own) and the
+    repository alias for libzypp ones, mirroring install-origin.
+    """
+    files = []
+    for directory in _native_catalog_dirs():
+        try:
+            entries = sorted(directory.iterdir())
+        except OSError as error:
+            logging.warning("Cannot read native AppStream directory %s: %s", directory, error)
+            continue
+        for entry in entries:
+            if entry.is_file() and entry.name.endswith(_NATIVE_CATALOG_SUFFIXES):
+                files.append((entry, ""))
+    files.extend(_zypp_raw_appdata_catalogs())
+    return files
+
+
+def _apply_catalog_origin(component, origin):
+    """Tag components from libzypp catalogs so each repository stays distinct."""
+    if not origin:
+        return
+    set_origin = getattr(component, "set_origin", None)
+    if set_origin is not None:
+        try:
+            set_origin(origin)
+        except Exception:
+            pass
+
+
 def _native_component_usable(component):
     # Match the required fields in Rust's normalize_native_payload_rs without
     # resolving icons or building the expensive full payload here.
@@ -692,40 +843,34 @@ def _load_appstream_components():
 
     # Last resort for unavailable pool discovery/merging. Keep package-backed
     # catalog entries ahead of installed metainfo, and read every location.
+    _extract_zypp_icon_tarballs()
     catalog_components = {}
     seen_files = set()
     catalog_files = 0
-    for directory in _native_catalog_dirs():
-        try:
-            catalog_paths = sorted(directory.iterdir())
-        except OSError as error:
-            logging.warning("Cannot read native AppStream directory %s: %s", directory, error)
+    for catalog_path, catalog_origin in _native_catalog_files():
+        resolved = catalog_path.resolve()
+        if resolved in seen_files:
             continue
-        for catalog_path in catalog_paths:
-            if not catalog_path.is_file() or not catalog_path.name.endswith(_NATIVE_CATALOG_SUFFIXES):
-                continue
-            resolved = catalog_path.resolve()
-            if resolved in seen_files:
-                continue
-            seen_files.add(resolved)
-            catalog_files += 1
-            try:
-                metadata = AppStream.Metadata()
-                metadata.set_format_style(AppStream.FormatStyle.CATALOG)
-                metadata.parse_file(Gio.File.new_for_path(os.fspath(catalog_path)),
-                                    AppStream.FormatKind.UNKNOWN)
-                for component in _as_list(metadata.get_components()):
-                    if not _native_component_usable(component):
-                        continue
-                    # Data IDs preserve distinct repository origins. Later
-                    # modern locations replace duplicate legacy data.
-                    key = str(_safe_call(component, "get_data_id", "") or "")
-                    if not key:
-                        key = (str(component.get_id()),
-                               str(_safe_call(component, "get_origin", "") or ""))
-                    catalog_components[key] = component
-            except Exception as error:
-                logging.warning("Cannot parse native AppStream catalog %s: %s", catalog_path, error)
+        seen_files.add(resolved)
+        catalog_files += 1
+        try:
+            metadata = AppStream.Metadata()
+            metadata.set_format_style(AppStream.FormatStyle.CATALOG)
+            metadata.parse_file(Gio.File.new_for_path(os.fspath(catalog_path)),
+                                AppStream.FormatKind.UNKNOWN)
+            for component in _as_list(metadata.get_components()):
+                if not _native_component_usable(component):
+                    continue
+                # Data IDs preserve distinct repository origins. Later
+                # modern locations replace duplicate legacy data.
+                _apply_catalog_origin(component, catalog_origin)
+                key = str(_safe_call(component, "get_data_id", "") or "")
+                if not key:
+                    key = (str(component.get_id()),
+                           str(_safe_call(component, "get_origin", "") or ""))
+                catalog_components[key] = component
+        except Exception as error:
+            logging.warning("Cannot parse native AppStream catalog %s: %s", catalog_path, error)
     if catalog_components:
         return list(catalog_components.values())
 
