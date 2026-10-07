@@ -5,7 +5,6 @@
 # icon: grubtrfs.svg
 # compat: ostree, ublue
 # nocontainer
-# optimized-only: yes
 # systemd: yes
 
 # --- Start of the script code ---

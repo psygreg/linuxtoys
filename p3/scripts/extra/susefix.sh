@@ -4,7 +4,6 @@
 # description: susefix_desc
 # icon: suse.svg
 # compat: suse
-# optimized-only: yes
 # revert: no
 
 # --- Start of the script code ---

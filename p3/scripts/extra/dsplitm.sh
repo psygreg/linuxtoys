@@ -6,7 +6,6 @@
 # compat: ubuntu, debian, suse, fedora, arch, cachy, rhel, ostree
 # reboot: yes
 # nocontainer
-# optimized-only: yes
 
 # --- Start of the script code ---
 askpass

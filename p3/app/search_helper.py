@@ -20,7 +20,6 @@ from .compat import (
     script_is_localized,
     is_containerized,
     script_is_container_compatible,
-    should_show_optimization_script,
     get_revert_capability,
     should_enable_manual_revert,
 )
@@ -159,10 +158,6 @@ class ScriptCache:
                 # Filter by container compatibility
                 if self.is_containerized and not script_is_container_compatible(item_path):
                     continue
-                # Filter optimization scripts based on installation state
-                if not should_show_optimization_script(item_path):
-                    continue
-
                 # Parse script metadata
                 defaults = {
                     'name': 'No Name',

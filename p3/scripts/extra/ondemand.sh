@@ -6,7 +6,6 @@
 # compat: ubuntu, debian, fedora, suse, arch, ostree, ublue, rhel
 # reboot: yes
 # nocontainer
-# optimized-only: yes
 # systemd: yes
 # cpu: amd
 

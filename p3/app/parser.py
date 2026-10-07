@@ -7,8 +7,6 @@ from .compat import (
     script_is_localized,
     is_containerized,
     script_is_container_compatible,
-    should_show_optimization_script,
-    are_optimizations_installed,
     get_script_file_data,
     clear_script_file_cache,
     seed_script_file_cache,
@@ -355,7 +353,6 @@ def _get_resolved_script_catalog(translations=None):
         os.environ.get("COMPAT", ""),
         os.environ.get("CONTAINER", ""),
         os.environ.get("OPTIMIZER", ""),
-        are_optimizations_installed(),
     )
 
     with _SCRIPT_TREE_LOCK:
@@ -399,9 +396,6 @@ def _get_resolved_script_catalog(translations=None):
                 continue
             if containerized and not script_is_container_compatible(file_path):
                 continue
-            if not should_show_optimization_script(file_path):
-                continue
-
             defaults = {
                 "name": "No Name",
                 "version": "N/A",
@@ -818,9 +812,6 @@ def get_scripts_for_category(category_path, translations=None, include_appstream
                 continue
             if is_containerized() and not script_is_container_compatible(file_path):
                 continue
-            if not should_show_optimization_script(file_path):
-                continue
-
             defaults = {
                 "name": "No Name", "version": "N/A",
                 "description": "",
@@ -889,8 +880,6 @@ def get_all_scripts_recursive(directory_path, translations=None):
             if not script_is_localized(item_path, current_locale):
                 continue
             if is_containerized() and not script_is_container_compatible(item_path):
-                continue
-            if not should_show_optimization_script(item_path):
                 continue
             defaults = {
                 "name": "No Name", "version": "N/A", "description": "",

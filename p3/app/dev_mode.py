@@ -9,13 +9,10 @@ Environment Variables:
 - LT_DEBUG=1: Show git scripts repository synchronization messages
 - COMPAT=<key>: Simulate a specific system (e.g., COMPAT=fedora, COMPAT=arch)
 - CONTAINER=1: Simulate container environment (applies container checks)
-- OPTIMIZER=1: Simulate optimized system (affects # optimized-only: header visibility)
-- OPTIMIZER=0: Simulate unoptimized system (affects # optimized-only: header visibility)
 
 Features:
 - Compatibility override and system simulation
 - Container environment simulation and override
-- Optimizer state simulation (affects # optimized-only: header scripts)
 - Dry-run script validation (checks parsing and library sourcing)
 
 Usage:
@@ -24,9 +21,7 @@ Usage:
     DEV_MODE=1 python3 linuxtoys.py                           # Show all scripts, ignore all checks
     DEV_MODE=1 COMPAT=fedora python3 linuxtoys.py             # Simulate Fedora system
     DEV_MODE=1 CONTAINER=1 python3 linuxtoys.py               # Simulate container environment
-    DEV_MODE=1 OPTIMIZER=1 python3 linuxtoys.py               # Simulate optimized system
-    DEV_MODE=1 OPTIMIZER=0 python3 linuxtoys.py               # Simulate unoptimized system
-    DEV_MODE=1 COMPAT=arch CONTAINER=1 OPTIMIZER=1 python3 linuxtoys.py # Full simulation
+          DEV_MODE=1 COMPAT=arch CONTAINER=1 python3 linuxtoys.py # Full simulation
 """
 
 import os
@@ -65,17 +60,6 @@ def get_dev_container_override():
                      or None if not set
     """
     return os.environ.get('CONTAINER')
-
-
-def get_dev_optimizer_override():
-    """
-    Get the optimizer state override from OPTIMIZER environment variable.
-    
-    Returns:
-        str or None: The optimizer simulation setting ('1' to simulate optimized, 
-                     '0' to simulate unoptimized), or None if not set
-    """
-    return os.environ.get('OPTIMIZER')
 
 
 def get_simulated_compat_keys():
@@ -156,49 +140,6 @@ def should_simulate_container():
         bool: True if DEV_MODE=1 and CONTAINER=1 (simulate container environment)
     """
     return is_dev_mode_enabled() and get_dev_container_override() == '1'
-
-
-def should_override_optimizer_checks():
-    """
-    Check if optimizer state checks should be overridden.
-    
-    In developer mode:
-    - Without OPTIMIZER set: override optimizer checks (show all scripts)
-    - With OPTIMIZER=1 or OPTIMIZER=0: apply optimizer simulation logic for # optimized-only: headers
-    
-    Returns:
-        bool: True if optimizer checks should be overridden (ignored)
-    """
-    if not is_dev_mode_enabled():
-        return False
-    
-    # If OPTIMIZER is set, don't override - simulate optimizer behavior
-    optimizer_override = get_dev_optimizer_override()
-    if optimizer_override in ['0', '1']:
-        return False
-    
-    # Default in dev mode: override (ignore) optimizer checks
-    return True
-
-
-def should_simulate_optimizations_installed():
-    """
-    Check if optimized system should be simulated.
-    
-    Returns:
-        bool: True if DEV_MODE=1 and OPTIMIZER=1 (simulate optimized system)
-    """
-    return is_dev_mode_enabled() and get_dev_optimizer_override() == '1'
-
-
-def should_simulate_optimizations_not_installed():
-    """
-    Check if unoptimized system should be simulated.
-    
-    Returns:
-        bool: True if DEV_MODE=1 and OPTIMIZER=0 (simulate unoptimized system)
-    """
-    return is_dev_mode_enabled() and get_dev_optimizer_override() == '0'
 
 
 def get_effective_compat_keys():
@@ -282,7 +223,6 @@ def get_dev_mode_status():
     
     compat_override = get_dev_compat_override()
     container_override = get_dev_container_override()
-    optimizer_override = get_dev_optimizer_override()
     
     if compat_override:
         status_parts.append(f"simulating {compat_override}, keys: {sorted(get_effective_compat_keys())}")
@@ -293,13 +233,6 @@ def get_dev_mode_status():
         status_parts.append("simulating container environment")
     else:
         status_parts.append("ignoring container checks")
-    
-    if optimizer_override == '1':
-        status_parts.append("simulating optimized system")
-    elif optimizer_override == '0':
-        status_parts.append("simulating unoptimized system")
-    else:
-        status_parts.append("ignoring optimizer state")
     
     return f"{status_parts[0]} ({', '.join(status_parts[1:])})"
 
@@ -1003,7 +936,6 @@ def print_dev_mode_banner():
         
         compat_override = get_dev_compat_override()
         container_override = get_dev_container_override()
-        optimizer_override = get_dev_optimizer_override()
         
         if compat_override:
             print(f"📋 Simulating system: {compat_override}")
@@ -1019,15 +951,6 @@ def print_dev_mode_banner():
             print("📦 Container simulation: DISABLED (ignoring container checks)")
             print("   Use CONTAINER=1 to simulate container environment")
         
-        if optimizer_override == '1':
-            print("⚡ Optimizer simulation: OPTIMIZED")
-            print("   System appears to have optimizations installed (affects # optimized-only: scripts)")
-        elif optimizer_override == '0':
-            print("⚡ Optimizer simulation: UNOPTIMIZED")
-            print("   System appears to have no optimizations (affects # optimized-only: scripts)")
-        else:
-            print("⚡ Optimizer simulation: DISABLED (ignoring optimization state)")
-            print("   Use OPTIMIZER=1 for optimized, OPTIMIZER=0 for unoptimized")
         
         print("🧪 Script execution: DRY-RUN mode (validation only)")
         print("   Scripts will be validated but not executed")

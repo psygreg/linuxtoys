@@ -4,7 +4,6 @@
 # description: minfreefix_desc
 # icon: preload.svg
 # compat: ubuntu, debian, fedora, suse, arch, cachy, rhel
-# optimized-only: yes
 # systemd: yes
 # reboot: yes
 

@@ -6,7 +6,6 @@
 # reboot: yes
 # nocontainer
 # repo: https://thealexdev23.github.io/power-options/
-# optimized-only: yes
 # compat: fedora, rhel, ubuntu, debian, arch
 # systemd: yes
 

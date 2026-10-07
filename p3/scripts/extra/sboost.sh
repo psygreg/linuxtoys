@@ -5,7 +5,6 @@
 # icon: gaming.svg
 # reboot: yes
 # nocontainer
-# optimized-only: yes
 # compat: !steamos
 
 # --- Start of the script code ---
