@@ -7,7 +7,6 @@
 # reboot: yes
 # nocontainer
 # repo: https://github.com/CachyOS/CachyOS-Settings
-# optimized-only: yes
 # systemd: yes
 
 # --- Start of the script code ---
