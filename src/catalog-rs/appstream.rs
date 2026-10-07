@@ -244,8 +244,14 @@ fn with_source_options_rs(selected:&serde_json::Map<String,Value>,group:&[serde_
     let mut seen=std::collections::HashSet::new();candidates.retain(|m|seen.insert(source_option_key_rs(m)));if candidates.len()<2{return selected.clone()}
     let sk=source_option_key_rs(selected);let alts:Vec<Value>=candidates.into_iter().filter(|m|source_option_key_rs(m)!=sk).map(|m|Value::Object(m.clone())).collect();let mut r=selected.clone();if !alts.is_empty(){r.insert("_source_alternatives".into(),Value::Array(alts));r.insert("_source_recommended".into(),Value::String(sk));}r
 }
-fn group_prefers_dev_native_rs(group:&[serde_json::Map<String,Value>],paths:&[String],cfg:&Value,steamos:bool)->bool{
-    !steamos&&group.iter().any(|m|resolve_component_category_rs(m,paths,cfg).is_some_and(|c|matches!(c.rsplit('/').next(),Some("devs"|"ides"|"txt"|"browsers"))))
+fn group_prefers_dev_native_rs(group:&[serde_json::Map<String,Value>],paths:&[String],cfg:&Value,steamos:bool,suse:bool)->bool{
+    !steamos&&group.iter().any(|m|resolve_component_category_rs(m,paths,cfg).is_some_and(|c|match c.rsplit('/').next(){
+        // openSUSE native browser packages are managed by the distro update
+        // stack; prefer their Flatpak/Snap sources there instead.
+        Some("browsers")=>!suse,
+        Some("devs"|"ides"|"txt")=>true,
+        _=>false,
+    }))
 }
 fn preference_value_rs(v:&Value,host_os:&std::collections::HashSet<String>)->Option<String>{
     if let Some(s)=v.as_str(){return matches!(s,"native"|"flatpak").then(||s.to_string())}
@@ -271,7 +277,7 @@ fn explicit_group_preference_rs(group:&[serde_json::Map<String,Value>],prefs:&Va
 fn preference_rs(item:&serde_json::Map<String,Value>,prefs:&Value,host_os:&std::collections::HashSet<String>)->String{
     explicit_preference_rs(item,prefs,host_os).unwrap_or_else(||prefs.as_object().and_then(|o|o.get("default")).and_then(Value::as_str).filter(|s|matches!(*s,"native"|"flatpak")).unwrap_or("flatpak").to_string())
 }
-fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths:&[String],cfg:&Value,prefs:&Value,locks:&std::collections::HashSet<String>,host_os:&std::collections::HashSet<String>,prefer_native_host:bool,steamos:bool,by_name_pass:bool)->Vec<serde_json::Map<String,Value>>{
+fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths:&[String],cfg:&Value,prefs:&Value,locks:&std::collections::HashSet<String>,host_os:&std::collections::HashSet<String>,prefer_native_host:bool,steamos:bool,suse:bool,by_name_pass:bool)->Vec<serde_json::Map<String,Value>>{
     let mut groups:std::collections::BTreeMap<String,Vec<serde_json::Map<String,Value>>>=std::collections::BTreeMap::new();let mut pass=Vec::new();
     for m in components {if m.get("source").and_then(Value::as_str)==Some("homebrew"){pass.push(m);continue}let(id,name)=component_identity_rs(&m);let key=if by_name_pass{if name.is_empty(){None}else{Some(name)}}else if !id.is_empty(){Some(format!("id:{id}"))}else if !name.is_empty(){Some(format!("name:{name}"))}else{None};if let Some(k)=key{groups.entry(k).or_default().push(m)}else{pass.push(m)}}
     let mut out=pass;
@@ -282,7 +288,7 @@ fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths
         // Whole-category native policy is a default-source decision and outranks
         // Flatpak verification. Explicit per-app preferences above still win, and
         // with_source_options_rs keeps Flatpak/Snap available for manual switching.
-        let category_prefers_native=!natives.is_empty()&&group_prefers_dev_native_rs(&group,paths,cfg,steamos);
+        let category_prefers_native=!natives.is_empty()&&group_prefers_dev_native_rs(&group,paths,cfg,steamos,suse);
         if category_prefers_native{out.extend(natives.iter().map(|m|with_source_options_rs(m,&group)));continue}
         if let Some(v)=flat.iter().find(|m|is_verified_flatpak_rs(m)){out.push(with_source_options_rs(v,&group));continue}if prefer_native_host&&!natives.is_empty(){out.extend(natives.iter().map(|m|with_source_options_rs(m,&group)));continue}
         let pref=preference_rs(&group[0],prefs,host_os);let mut selected:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")==pref).cloned().collect();if selected.is_empty(){selected=natives.clone()}if selected.is_empty(){selected=flat.clone()}if selected.is_empty(){selected=snaps.clone()}if selected.first().and_then(|m|m.get("source")).and_then(Value::as_str)==Some("flatpak"){selected.truncate(1)}if selected.first().and_then(|m|m.get("source")).and_then(Value::as_str)==Some("snap"){selected.truncate(1)}out.extend(selected.iter().map(|m|with_source_options_rs(m,&group)));
@@ -1264,8 +1270,9 @@ pub(crate) fn build_appstream_catalog(
     let compat:std::collections::HashSet<String>=compat_keys.into_iter().map(|s|s.to_lowercase()).collect();
     let prefer_native=compat.iter().any(|s|matches!(s.as_str(),"arch"|"cachy"|"solus"|"fedora"));
     let steamos=compat.iter().any(|key| matches!(key.as_str(), "steamos"|"dakota"|"gnomeos"|"kde-linux"));
-    let first=collapse_source_groups_rs(vals,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,steamos,false);
-    let selected=collapse_source_groups_rs(first,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,steamos,true);
+    let suse=compat.iter().any(|key| key.as_str()=="suse");
+    let first=collapse_source_groups_rs(vals,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,steamos,suse,false);
+    let selected=collapse_source_groups_rs(first,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,steamos,suse,true);
     let result = adapt_appstream_maps_values(selected,category_paths,category_config_json,lang,curated_ids,curated_packages,curated_names,overlays_json,native_badge);
     result.iter().map(|value| json_to_py(py, value)).collect()
 }
@@ -1793,8 +1800,9 @@ pub(crate) fn build_appstream_catalog_index(
     let compat:std::collections::HashSet<String>=compat_keys.into_iter().map(|s|s.to_lowercase()).collect();
     let prefer_native=compat.iter().any(|s|matches!(s.as_str(),"arch"|"cachy"|"solus"|"fedora"));
     let steamos=compat.iter().any(|key| matches!(key.as_str(), "steamos"|"dakota"|"gnomeos"|"kde-linux"));
-    let first=collapse_source_groups_rs(vals,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,steamos,false);
-    let selected=collapse_source_groups_rs(first,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,steamos,true);
+    let suse=compat.iter().any(|key| key.as_str()=="suse");
+    let first=collapse_source_groups_rs(vals,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,steamos,suse,false);
+    let selected=collapse_source_groups_rs(first,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,steamos,suse,true);
     let entries=adapt_appstream_maps_values(selected,category_paths,category_config_json,lang,curated_ids,curated_packages,curated_names,overlays_json,native_badge);
 
     let runtime_entries: Vec<RuntimeAppStreamEntry> = entries.into_iter().filter_map(RuntimeAppStreamEntry::from_value).collect();
