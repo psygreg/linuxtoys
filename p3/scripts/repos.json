@@ -24,16 +24,6 @@
         "icon": "audacity.svg"
     },
     {
-        "name": "Add Water",
-        "description": "Utility to automatically install the Firefox GNOME theme and keep it up to date automatically, as well as easily configure the theme to your liking.",
-        "description_tag": "addwater_desc",
-        "repo": "https://github.com/largestgithubuseronearth/addwater",
-        "category": "theming",
-        "icon": "addwater.svg",
-        "type": "flathub",
-        "package-name": "dev.qwery.AddWater"
-    },
-    {
         "name": "OpenLogi",
         "description": "A native, local-first alternative to Logitech Options+, written in Rust.",
         "description_tag": "openlogi_desc",
@@ -214,19 +204,6 @@
         "icon": "helium.png"
     },
     {
-        "name": "VLC",
-        "description": "Open source, fully-featured media player. Includes codecs for proprietary media formats for Fedora and OpenSUSE.",
-        "description_tag": "vlc_desc",
-        "repo": "https://lutris.net",
-        "category": "players",
-        "icon": "vlc.svg",
-        "type": "native",
-        "package-name": "vlc",
-        "overrides": {
-            "pre": "{ { is_fedora || is_rhel || is_ostree || is_suse; } && call_script codecfix; } || true"
-        }
-    },
-    {
         "name": "QtScrcpy",
         "description": "Mirror and control Android devices via USB or WiFi network.",
         "description_tag": "qtscrcpy_desc",
@@ -246,37 +223,6 @@
         "overrides": {
             "post": "info \"$msg287\" && xdg-open https://fight-flash-fraud.readthedocs.io/en/latest/introduction.html#examples-1 || true"
         }
-    },
-    {
-        "name": "Extension Manager",
-        "description": "Search, download and manage GNOME extensions easily.",
-        "description_tag": "extman_desc",
-        "repo": "https://github.com/mjakeman/extension-manager",
-        "category": "theming",
-        "icon": "extensions.svg",
-        "type": "flathub",
-        "package-name": "com.mattjakeman.ExtensionManager"
-    },
-    {
-        "name": "Rewaita",
-        "description": "Change the look of GNOME's shell, GTK4 and GTK3 apps without the hassle. Several color schemes to pick from, and you can even create your own!",
-        "description_tag": "rewaita_desc",
-        "repo": "https://github.com/swordpuffin/Rewaita",
-        "category": "theming",
-        "icon": "rewaita.svg",
-        "type": "flathub",
-        "package-name": "io.github.swordpuffin.rewaita"
-    },
-    {
-        "name": "Gnome Tweaks",
-        "description": "Change settings related to GTK3 apps and GNOME Shell from themes to font rendering.",
-        "description_tag": "tweaks_desc",
-        "repo": "https://github.com/GNOME/gnome-tweaks",
-        "category": "theming",
-        "icon": "tweaks.svg",
-        "type": "native",
-        "package-name": "gnome-tweaks",
-        "desktop": "gnome"
     },
     {
         "name": "Nala",

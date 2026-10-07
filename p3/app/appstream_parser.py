@@ -57,7 +57,11 @@ APPSTREAM_SOURCE_PREFERENCE = {
 APPSTREAM_CATEGORY_OVERRIDE = {
     "com.valvesoftware.Steam": "game",
     "com.obsproject.Studio": "media",
-    "com.dec05eba.gpu_screen_recorder": "media"
+    "com.dec05eba.gpu_screen_recorder": "media",
+    "dev.qwery.AddWater": "theming",
+    "com.mattjakeman.ExtensionManager": "theming",
+    "io.github.swordpuffin.rewaita": "theming",
+    "gnome-tweaks": "theming"
 }
 
 # Developer-facing hard lock for applications that must use the system Flathub
