@@ -390,6 +390,9 @@ fn runtime_compatible_rs(entry:&serde_json::Map<String,Value>, keys:&[String], t
         if matches!(k,"flatpak"|"snap")&&!compat_has(keys,"systemd"){return false}
         if k=="snap" && (compat_has(keys,"ostree") || compat_has(keys,"steamos")) { return false; }
     }
+    // flathub/native resolve package-name per OS at install time; an entry
+    // whose mapping has no key for this system would only ever fail there.
+    if matches!(ty,"flathub"|"native") && resolve_package_names_rs(entry,keys).is_none() { return false; }
     if let Some(h)=entry.get("hardware") { if !h.is_null() { let Some(m)=h.as_object() else{return false}; for kind in ["gpu","cpu"] { if let Some(vals)=string_list(m.get(kind)) { let required:Vec<String>=vals.into_iter().filter(|v|!v.is_empty()&&v!="all").map(|v|if v.starts_with(&format!("{kind}-")){v}else{format!("{kind}-{v}")}).collect(); if !required.is_empty()&&!required.iter().any(|k|compat_has(keys,k)){return false} } } } }
     if let Some(deps)=entry.get("dependencies").and_then(Value::as_array) { for d in deps { let Some(dm)=d.as_object() else{return false}; match dm.get("type").and_then(Value::as_str){Some("flathub")|Some("snap") if !compat_has(keys,"systemd")=>return false,Some("native")=>{ let depkeys:Vec<String>=if compat_has(keys,"steamos")&&ty=="make"&&!make_uses_sudo_rs(entry){vec!["arch".into()]}else{keys.to_vec()}; if resolve_package_names_rs(dm,&depkeys).is_none(){return false}},_=>{}} } }
     true
@@ -623,4 +626,77 @@ fn resolve_screenshots_rs(entry:&serde_json::Map<String,Value>,scripts_dir:&Path
     let mut out=Vec::new(); let mut seen=std::collections::HashSet::new();
     for v in vals { let Some(p)=safe_list_path_rs(entry,scripts_dir,&v) else{continue}; if p.is_dir(){ let Ok(rd)=fs::read_dir(&p) else{continue}; let mut files:Vec<PathBuf>=rd.filter_map(Result::ok).map(|e|e.path()).filter(|x|x.is_file()).collect(); files.sort_by_key(|x|x.file_name().and_then(|s|s.to_str()).unwrap_or("").to_ascii_lowercase()); for f in files { let l=f.to_string_lossy().to_ascii_lowercase(); if [".png",".jpg",".jpeg",".webp",".svg"].iter().any(|e|l.ends_with(e)){let s=f.to_string_lossy().into_owned();if seen.insert(s.clone()){out.push(s)}} } } else if p.is_file(){let l=p.to_string_lossy().to_ascii_lowercase();if [".png",".jpg",".jpeg",".webp",".svg"].iter().any(|e|l.ends_with(e)){let s=p.to_string_lossy().into_owned();if seen.insert(s.clone()){out.push(s)}}} }
     out
+}
+
+#[cfg(test)]
+mod runtime_compat_tests {
+    use super::*;
+
+    fn entry(json: Value) -> serde_json::Map<String, Value> {
+        json.as_object().unwrap().clone()
+    }
+
+    fn native_map_entry(mapping: Value) -> serde_json::Map<String, Value> {
+        entry(serde_json::json!({
+            "name": "Test App",
+            "repo": "https://example.com",
+            "category": "game",
+            "description": "Test",
+            "type": "native",
+            "package-name": mapping
+        }))
+    }
+
+    fn keys(values: &[&str]) -> Vec<String> {
+        values.iter().map(|s| s.to_string()).collect()
+    }
+
+    #[test]
+    fn native_per_os_mapping_without_system_key_is_rejected() {
+        let e = native_map_entry(serde_json::json!({
+            "ubuntu": ["pkg-host"],
+            "fedora": ["pkg-host"]
+        }));
+        // Mirrors the Punktfunk Host case: Solus has no mapping key, so the
+        // entry would only ever fail at install time and must not be listed.
+        assert!(!runtime_compatible_rs(&e, &keys(&["solus", "systemd"]), "native", false, false, false, false));
+    }
+
+    #[test]
+    fn native_per_os_mapping_with_system_key_is_accepted() {
+        let e = native_map_entry(serde_json::json!({
+            "ubuntu": ["pkg-host"],
+            "fedora": ["pkg-host"]
+        }));
+        assert!(runtime_compatible_rs(&e, &keys(&["ubuntu", "systemd"]), "native", false, false, false, false));
+        assert!(runtime_compatible_rs(&e, &keys(&["fedora", "systemd"]), "native", false, false, false, false));
+    }
+
+    #[test]
+    fn native_all_fallback_is_accepted_for_any_system() {
+        let e = native_map_entry(serde_json::json!({
+            "arch": ["pkg-host"],
+            "all": ["pkg-generic"]
+        }));
+        assert!(runtime_compatible_rs(&e, &keys(&["solus", "systemd"]), "native", false, false, false, false));
+    }
+
+    #[test]
+    fn native_direct_package_name_is_accepted_for_any_system() {
+        let e = native_map_entry(serde_json::json!("pkg-direct"));
+        assert!(runtime_compatible_rs(&e, &keys(&["solus", "systemd"]), "native", false, false, false, false));
+    }
+
+    #[test]
+    fn flathub_per_os_mapping_without_system_key_is_rejected() {
+        let e = entry(serde_json::json!({
+            "name": "Test Flatpak",
+            "repo": "https://example.com",
+            "category": "game",
+            "description": "Test",
+            "type": "flathub",
+            "package-name": {"arch": ["com.example.App"]}
+        }));
+        assert!(!runtime_compatible_rs(&e, &keys(&["solus", "systemd"]), "flathub", false, false, false, false));
+    }
 }
