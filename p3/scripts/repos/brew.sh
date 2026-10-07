@@ -10,7 +10,7 @@ if ! brew_bin=$(_brew_executable); then
     trap 'rm -f "$brew_installer"' EXIT
     curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o "$brew_installer" \
         || die "Failed to download the Homebrew installer"
-    NONINTERACTIVE=1 sudo_ /bin/bash "$brew_installer" || die "Failed to install Homebrew"
+    NONINTERACTIVE=1 source "$brew_installer" || die "Failed to install Homebrew"
     brew_bin=$(_brew_executable) || die "Homebrew is unavailable after installation"
     brew_prefix=$("$brew_bin" --prefix) || die "Unable to determine Homebrew prefix"
     brew_prefix64=$(printf '%s' "$brew_prefix" | base64 | tr -d '\n')
