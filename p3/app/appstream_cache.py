@@ -611,10 +611,8 @@ def _native_appstream_supported_host() -> bool:
         return True
 
 
-def _load_appstream_components():
-    if not _native_appstream_supported_host():
-        return []
-
+def _load_appstream_pool_components():
+    """Load the OS catalog through libappstream's os-release auto-detection."""
     import gi
 
     gi.require_version("AppStream", "1.0")
@@ -629,6 +627,71 @@ def _load_appstream_components():
         set_flags(flags)
     pool.load()
     return _as_list(pool.get_components())
+
+
+# AppStream repository layouts scanned when libappstream's os-release-based
+# auto-detection comes back empty.
+_APPSTREAM_FALLBACK_DIRS = ("/usr/share/app-info", "/var/cache/app-info")
+
+
+def _load_appstream_components():
+    if not _native_appstream_supported_host():
+        return []
+
+    components = _load_appstream_pool_components()
+    if components:
+        return components
+
+    import gi
+
+    gi.require_version("AppStream", "1.0")
+    from gi.repository import AppStream, Gio
+
+    # Some distributions publish their AppStream catalog under a name that
+    # does not match what libappstream derives from os-release, so the
+    # auto-detected OS catalog comes back empty (openSUSE Slowroll, for one,
+    # reports an opensuse-tumbleweed-style identity while publishing an
+    # opensuse-slowroll.xml catalog). Parse every catalog file that actually
+    # exists in the local AppStream repository layouts instead. Raw-parsed
+    # components keep their icon names; _icon_value still resolves them
+    # against the distro icon cache.
+    components = []
+    seen_ids = set()
+    for directory in _APPSTREAM_FALLBACK_DIRS:
+        xmls_dir = Path(directory) / "xmls"
+        if not xmls_dir.is_dir():
+            continue
+        for xml_path in sorted(xmls_dir.glob("*.xml*")):
+            try:
+                metadata = AppStream.Metadata()
+                set_style = getattr(metadata, "set_format_style", None)
+                if set_style is not None:
+                    style = getattr(AppStream.FormatStyle, "CATALOG", None)
+                    if style is not None:
+                        set_style(style)
+                parse_file = metadata.parse_file
+                unknown_kind = getattr(AppStream.FormatKind, "UNKNOWN", None)
+                try:
+                    # libappstream 1.x signature (Gio.File + format kind,
+                    # UNKNOWN auto-detects XML/YAML and handles gzip).
+                    parse_file(
+                        Gio.File.new_for_path(os.fspath(xml_path)),
+                        unknown_kind,
+                    )
+                except TypeError:
+                    # libappstream 0.x signature (plain path, auto-detect).
+                    parse_file(os.fspath(xml_path))
+                for component in _as_list(metadata.get_components()):
+                    component_id = str(component.get_id() or "")
+                    if component_id and component_id in seen_ids:
+                        continue
+                    seen_ids.add(component_id)
+                    components.append(component)
+            except Exception:
+                continue
+        if components:
+            break
+    return components
 
 
 def _flatpak_installations():
