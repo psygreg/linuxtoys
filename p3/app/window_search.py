@@ -105,13 +105,20 @@ class SearchCtl:
             if self._try_smart_search_navigation(query):
                 return
 
-    # Search results are grouped by category, so find the first
-    # actual SearchResult object from the first non-empty group.
+        # Pressing Enter in the search box must never start an installation:
+        # the results are already on screen, and auto-running the first match
+        # executed software the user never asked for. Mirror a click only
+        # where it navigates to a detail page; plain scripts stay click-to-run.
         for category_group in self.search_results:
             scripts = category_group.get("scripts", [])
-            if scripts:
-                self._activate_search_result(scripts[0])
-                return
+            if not scripts:
+                continue
+            info = scripts[0].item_info
+            if info.get("is_create_script"):
+                self._handle_create_new_script()
+            elif info.get("is_repo_entry") and info.get("has_app_page"):
+                self.open_app_page(info)
+            return
 
     def _on_search_key_press(self, widget, event):
         """Handle key presses in search entry."""
@@ -459,24 +466,6 @@ class SearchCtl:
         else:
             begin_population()
 
-
-    def _activate_search_result(self, search_result):
-        """Activate a specific search result (simulate click)."""
-        # This would be called when Enter is pressed or result is directly activated
-        item_info = search_result.item_info
-
-        # Check if this is the "Create New Script" option
-        if item_info.get("is_create_script"):
-            self._handle_create_new_script()
-            return
-
-        # Handle regular scripts
-        if self.reboot_required:
-            if not self._show_reboot_warning_dialog():
-                return
-
-        # Use VTE-based term_view for execution
-        self.open_term_view([item_info], removable_script_info=item_info, auto_run=True)
 
     def _clear_search_results(self):
         """Clear search results and return to previous view."""
