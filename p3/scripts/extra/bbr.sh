@@ -6,10 +6,19 @@
 # nocontainer
 # systemd: yes
 
-{ sudo_ modinfo tcp_bbr &>/dev/null && sudo_ modprobe tcp_bbr; } || { { [ -z "$CALLED_SCRIPT" ] && warn "tcp_bbr module not found."; } || echo "tcp_bbr module not found."; } && exit 100
-
-prep_edit /etc/modules-load.d/modules.conf
-echo 'tcp_bbr' | sudo_ tee -a /etc/modules-load.d/modules.conf
+if ! grep -qw bbr /proc/sys/net/ipv4/tcp_available_congestion_control; then
+    if ! { sudo_ modinfo tcp_bbr &>/dev/null && sudo_ modprobe tcp_bbr; }; then
+        if [ -z "$CALLED_SCRIPT" ]; then
+            warn "TCP BBR is not available on this kernel."
+        else
+            echo "TCP BBR is not available on this kernel."
+        fi
+        exit 100
+    else
+        prep_edit /etc/modules-load.d/modules.conf
+        echo 'tcp_bbr' | sudo_ tee -a /etc/modules-load.d/modules.conf
+    fi
+fi
 
 prep_create /usr/lib/sysctl.d/99-bbr.conf
 cat <<'EOF' | sudo_ tee /usr/lib/sysctl.d/99-bbr.conf >/dev/null
