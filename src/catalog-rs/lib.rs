@@ -13,6 +13,8 @@ mod aur;
 fn _catalog_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(repo::file_signature, m)?)?;
     m.add_function(wrap_pyfunction!(repo::repo_app_id, m)?)?;
+    m.add_function(wrap_pyfunction!(repo::normalize_git_repo_url, m)?)?;
+    m.add_function(wrap_pyfunction!(repo::git_asset_architectures, m)?)?;
     m.add_function(wrap_pyfunction!(repo::normalize_appstream_overlay_id, m)?)?;
     m.add_function(wrap_pyfunction!(repo::scan_repo_tree, m)?)?;
     m.add_function(wrap_pyfunction!(repo::load_json_entries, m)?)?;

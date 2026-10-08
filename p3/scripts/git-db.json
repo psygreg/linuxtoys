@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-13T03:32:53Z",
+  "generated_at": "2026-10-08T20:14:25Z",
   "repositories": {
     "https://github.com/AprilNEA/OpenLogi": {
       "assets": [
@@ -427,6 +427,63 @@
       "checked_at": "2026-09-11T02:29:39Z",
       "names": [
         "OpenBoardView"
+      ]
+    },
+    "https://github.com/Optiscaler-Client/Optiscaler-Client": {
+      "assets": [
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "tar",
+          "name": "OptiscalerClient-1.0.8-linux-arm64.tar.gz"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "OptiscalerClient-1.0.8-linux-arm64.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "OptiscalerClient-1.0.8-linux-x64.tar.gz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "OptiscalerClient-1.0.8-linux-x64.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "OptiscalerClient-1.0.8-win-x64.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "OptiscalerClient-1.0.8-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "flatpak",
+          "name": "OptiscalerClient-1.0.8-x86_64.flatpak"
+        }
+      ],
+      "checked_at": "2026-10-08T20:07:57Z",
+      "names": [
+        "Optiscaler Client"
       ]
     },
     "https://github.com/Wyze3306/BedrockOnLinux": {
@@ -1285,6 +1342,31 @@
       "checked_at": "2026-09-11T21:17:43Z",
       "names": [
         "Rclone UI"
+      ]
+    },
+    "https://github.com/utajum/g-helper-linux": {
+      "assets": [
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "90-ghelper.rules"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "ghelper"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "GHelper-x86_64.AppImage"
+        }
+      ],
+      "checked_at": "2026-10-08T20:07:57Z",
+      "names": [
+        "G-Helper"
       ]
     },
     "https://github.com/webadderallorg/Recordly": {

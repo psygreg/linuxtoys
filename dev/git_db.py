@@ -27,15 +27,14 @@ try:
 except ImportError as error:
     raise SystemExit(f"Unable to import p3/app/repo_parser.py: {error}") from error
 
-ARCH_ALIASES = repo_parser._GIT_ARCH_ALIASES
-ARCH_LABELS = sorted(
-    (label for aliases in ARCH_ALIASES.values() for label in aliases),
-    key=len,
-    reverse=True,
-)
-ARCH_RE = re.compile(
-    r"(?<![a-z0-9])(" + "|".join(map(re.escape, ARCH_LABELS)) + r")(?![a-z0-9])"
-)
+from app import _catalog_rs as _rs
+
+
+def _normalize_git_repo_url(value):
+    """Canonical supported git project URL via the shared Rust parser."""
+    if not isinstance(value, str):
+        return None
+    return _rs.normalize_git_repo_url(value)
 
 
 def _parse_args():
@@ -70,7 +69,7 @@ def _tracked_repositories():
         for entry in repo_parser._load_json_entries(path):
             if not _is_git_entry(entry):
                 continue
-            repo = repo_parser._normalize_git_repo_url(entry.get("repo"))
+            repo = _normalize_git_repo_url(entry.get("repo"))
             if not repo:
                 # Keep unsupported git URLs visible in the database as failures.
                 raw = entry.get("repo")
@@ -83,7 +82,7 @@ def _tracked_repositories():
 
 
 def _repository_api(repository):
-    canonical = repo_parser._normalize_git_repo_url(repository)
+    canonical = _normalize_git_repo_url(repository)
     if not canonical:
         raise ValueError("repository is not a supported GitHub, Codeberg, or GitLab project URL")
 
@@ -163,13 +162,7 @@ def _asset_kind(name):
 
 
 def _asset_architectures(name):
-    lower = name.lower()
-    detected = set(ARCH_RE.findall(lower))
-    canonical = []
-    for arch, aliases in ARCH_ALIASES.items():
-        if detected.intersection(aliases):
-            canonical.append(arch)
-    return canonical
+    return list(_rs.git_asset_architectures(name))
 
 
 def _build_record(repository, names):
