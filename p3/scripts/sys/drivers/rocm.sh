@@ -14,15 +14,16 @@ _lang_
 rocm_rpm () {
     if is_rocm_capable; then
         _packages=()
-        if [[ "$ID_LIKE" == *suse* ]]; then
-            if [ "$ID" = "opensuse-leap" ] || [[ "$VERSION_ID" =~ ^[0-9]+\.[0-9]+$ ]]; then
+        if is_suse; then
+            if [ -n "$suse_leap" ]; then
                 sudo zypper --non-interactive addrepo https://download.opensuse.org/repositories/devel:/languages:/perl/$releasever/
                 sudo zypper --non-interactive addrepo https://repo.radeon.com/rocm/zyp/latest/main/
                 sudo rpm --import https://repo.radeon.com/rocm/rocm.gpg.key
                 sudo zypper refresh
                 pkg_install rocm clinfo
             else
-                pkg_install rocm clinfo
+                sudo zypper ar -f https://download.opensuse.org/repositories/science:/GPU:/ROCm:/Work/openSUSE_Tumbleweed/science:GPU:ROCm:Work.repo
+                pkg_install rocm-core rocm-opencl rocm-smi rocm-opencl-runtime clinfo rocm-hip rocm-llvm rocm-device-libs rocminfo rocm-clang rocm-lld rocm-clinfo
             fi
         else
             pkg_install rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand rocm-opencl clinfo
