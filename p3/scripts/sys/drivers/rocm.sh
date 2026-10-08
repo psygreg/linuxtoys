@@ -23,7 +23,7 @@ rocm_rpm () {
                 pkg_install rocm clinfo
             else
                 sudo zypper ar -f https://download.opensuse.org/repositories/science:/GPU:/ROCm:/Work/openSUSE_Tumbleweed/science:GPU:ROCm:Work.repo
-                pkg_install rocm-core rocm-opencl rocm-smi rocm-opencl-runtime clinfo rocm-hip rocm-llvm rocm-device-libs rocminfo rocm-clang rocm-lld rocm-clinfo
+                pkg_install rocm-core rocm-opencl rocm-smi clinfo rocm-hip rocm-llvm rocm-device-libs rocminfo rocm-clang rocm-lld rocm-clinfo
             fi
         else
             pkg_install rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand rocm-opencl clinfo

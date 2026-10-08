@@ -4,7 +4,7 @@
 # description: resolvehw_desc
 # icon: resolve.svg
 # repo: https://github.com/EdvinNilsson/ffmpeg_encoder_plugin
-# compat: ubuntu, debian, fedora, arch, cachy, rhel
+# compat: ubuntu, debian, fedora, arch, cachy, rhel, suse
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"
@@ -25,6 +25,8 @@ install_nobox () {
     copy_ -r ffmpeg_encoder_plugin.dvcp.bundle /opt/resolve/IOPlugins/ || fatal "Failed to install plugin bundle."
     if is_fedora || is_rhel; then
         call_script codecfix
+    elif is_suse; then
+        pkg_brew ffmpeg-full
     elif is_ubuntu || is_debian; then
         pkg_install ffmpeg
     elif is_arch || is_cachy || is_manjaro; then
