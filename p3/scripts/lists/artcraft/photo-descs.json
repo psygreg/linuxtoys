@@ -1,0 +1,9 @@
+{
+  "description_tag": "photocraft_desc",
+  "long-description": "photo-md/en.md",
+  "description_long_tag": "photocraft_long",
+  "en": {
+    "photocraft_long": "photo-md/en.md",
+    "photocraft_desc": "Image editing; an open-source, clean-room reimplementation of Adobe Photoshop, rebuilt in pure Rust."
+  }
+}

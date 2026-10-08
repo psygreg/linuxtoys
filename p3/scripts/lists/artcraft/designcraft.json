@@ -1,0 +1,17 @@
+[
+    {
+        "name": "DesignCraft",
+        "description": "Page layout and publishing; an open-source, clean-room reimplementation of Adobe InDesign, rebuilt in pure Rust.",
+        "developer": "ArtCraft",
+        "repo": "https://github.com/storytold/designcraft",
+        "category": "draw",
+        "icon": "./designcraft.svg",
+        "license": "Apache-2.0 and MIT",
+        "descriptions": "design-descs.json",
+        "screenshots": "design-screens/",
+        "purchase": {
+          "url": "https://getartcraft.com/pricing",
+          "sub_price": 10.00
+        }
+    }
+]

@@ -1,0 +1,17 @@
+[
+    {
+        "name": "FilmCraft",
+        "description": "Video editing, color and sound; an open-source, clean-room reimplementation of Adobe Premiere Pro, rebuilt in pure Rust.",
+        "developer": "ArtCraft",
+        "repo": "https://github.com/storytold/filmcraft",
+        "category": "video",
+        "icon": "./filmcraft.svg",
+        "license": "Apache-2.0 and MIT",
+        "descriptions": "film-descs.json",
+        "screenshots": "film-screens/",
+        "purchase": {
+          "url": "https://getartcraft.com/pricing",
+          "sub_price": 10.00
+        }
+    }
+]

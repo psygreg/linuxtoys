@@ -1,0 +1,17 @@
+[
+    {
+        "name": "EffectCraft",
+        "description": "Motion graphics and visual effects; an open-source, clean-room reimplementation of Adobe After Effects, rebuilt in pure Rust.",
+        "developer": "ArtCraft",
+        "repo": "https://github.com/storytold/effectcraft",
+        "category": "video",
+        "icon": "./effectcraft.svg",
+        "license": "Apache-2.0 and MIT",
+        "descriptions": "effect-descs.json",
+        "screenshots": "effect-screens/",
+        "purchase": {
+          "url": "https://getartcraft.com/pricing",
+          "sub_price": 10.00
+        }
+    }
+]

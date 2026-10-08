@@ -1,0 +1,17 @@
+[
+    {
+        "name": "PdfCraft",
+        "description": "The PDF workbench; an open-source, clean-room reimplementation of Adobe Acrobat, rebuilt in pure Rust.",
+        "developer": "ArtCraft",
+        "repo": "https://github.com/storytold/pdfcraft",
+        "category": "document",
+        "icon": "./pdfcraft.svg",
+        "license": "Apache-2.0 and MIT",
+        "descriptions": "pdf-descs.json",
+        "screenshots": "pdf-screens/",
+        "purchase": {
+          "url": "https://getartcraft.com/pricing",
+          "sub_price": 10.00
+        }
+    }
+]

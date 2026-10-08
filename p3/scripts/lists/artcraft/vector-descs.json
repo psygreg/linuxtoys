@@ -1,0 +1,9 @@
+{
+  "description_tag": "vectorcraft_desc",
+  "long-description": "vector-md/en.md",
+  "description_long_tag": "vectorcraft_long",
+  "en": {
+    "vectorcraft_long": "vector-md/en.md",
+    "vectorcraft_desc": "Vector illustration; an open-source, clean-room reimplementation of Adobe Illustrator, rebuilt in pure Rust."
+  }
+}

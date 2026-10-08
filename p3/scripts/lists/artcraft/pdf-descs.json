@@ -1,0 +1,9 @@
+{
+  "description_tag": "pdfcraft_desc",
+  "long-description": "pdf-md/en.md",
+  "description_long_tag": "pdfcraft_long",
+  "en": {
+    "pdfcraft_long": "pdf-md/en.md",
+    "pdfcraft_desc": "The PDF workbench; an open-source, clean-room reimplementation of Adobe Acrobat, rebuilt in pure Rust."
+  }
+}

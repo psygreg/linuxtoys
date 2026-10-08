@@ -1,0 +1,9 @@
+{
+  "description_tag": "effectcraft_desc",
+  "long-description": "effect-md/en.md",
+  "description_long_tag": "effectcraft_long",
+  "en": {
+    "effectcraft_long": "effect-md/en.md",
+    "effectcraft_desc": "Motion graphics and visual effects; an open-source, clean-room reimplementation of Adobe After Effects, rebuilt in pure Rust."
+  }
+}

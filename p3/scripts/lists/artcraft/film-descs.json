@@ -1,0 +1,9 @@
+{
+  "description_tag": "filmcraft_desc",
+  "long-description": "film-md/en.md",
+  "description_long_tag": "filmcraft_long",
+  "en": {
+    "filmcraft_long": "film-md/en.md",
+    "filmcraft_desc": "Video editing, color and sound; an open-source, clean-room reimplementation of Adobe Premiere Pro, rebuilt in pure Rust."
+  }
+}

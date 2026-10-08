@@ -1,0 +1,9 @@
+{
+  "description_tag": "lightcraft_desc",
+  "long-description": "light-md/en.md",
+  "description_long_tag": "lightcraft_long",
+  "en": {
+    "lightcraft_long": "light-md/en.md",
+    "lightcraft_desc": "Photo library and raw development; an open-source, clean-room reimplementation of Adobe Lightroom, rebuilt in pure Rust."
+  }
+}

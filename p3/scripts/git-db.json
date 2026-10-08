@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-08T20:14:25Z",
+  "generated_at": "2026-10-08T20:49:43Z",
   "repositories": {
     "https://github.com/AprilNEA/OpenLogi": {
       "assets": [
@@ -1342,6 +1342,1133 @@
       "checked_at": "2026-09-11T21:17:43Z",
       "names": [
         "Rclone UI"
+      ]
+    },
+    "https://github.com/storytold/designcraft": {
+      "assets": [
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "designcraft-0.4.0-freebsd-x86_64.tar.gz"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "designcraft-0.4.0-linux-aarch64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "designcraft-0.4.0-linux-aarch64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "deb",
+          "name": "designcraft-0.4.0-linux-aarch64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "flatpak",
+          "name": "designcraft-0.4.0-linux-aarch64.flatpak"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "rpm",
+          "name": "designcraft-0.4.0-linux-aarch64.rpm"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "tar",
+          "name": "designcraft-0.4.0-linux-aarch64.tar.gz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "designcraft-0.4.0-linux-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "designcraft-0.4.0-linux-x86_64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "designcraft-0.4.0-linux-x86_64.deb"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "flatpak",
+          "name": "designcraft-0.4.0-linux-x86_64.flatpak"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "designcraft-0.4.0-linux-x86_64.rpm"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "designcraft-0.4.0-linux-x86_64.tar.gz"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "designcraft-0.4.0-macos-universal.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "designcraft-0.4.0-windows-arm64-portable.zip"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "designcraft-0.4.0-windows-arm64.msi"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "designcraft-0.4.0-windows-x64-portable.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "designcraft-0.4.0-windows-x64.msi"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "designcraft-0.4.0-windows-x86-portable.zip"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "designcraft-0.4.0-windows-x86.msi"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "designcraft-cli-0.4.0-macos-universal.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "designcraft-web-0.4.0.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "SHA256SUMS.txt"
+        }
+      ],
+      "checked_at": "2026-10-08T20:49:40Z",
+      "names": [
+        "DesignCraft"
+      ]
+    },
+    "https://github.com/storytold/effectcraft": {
+      "assets": [
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "effectcraft-0.6.0-freebsd-x86_64.tar.gz"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "effectcraft-0.6.0-linux-aarch64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "effectcraft-0.6.0-linux-aarch64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "deb",
+          "name": "effectcraft-0.6.0-linux-aarch64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "flatpak",
+          "name": "effectcraft-0.6.0-linux-aarch64.flatpak"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "rpm",
+          "name": "effectcraft-0.6.0-linux-aarch64.rpm"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "tar",
+          "name": "effectcraft-0.6.0-linux-aarch64.tar.gz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "effectcraft-0.6.0-linux-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "effectcraft-0.6.0-linux-x86_64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "effectcraft-0.6.0-linux-x86_64.deb"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "flatpak",
+          "name": "effectcraft-0.6.0-linux-x86_64.flatpak"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "effectcraft-0.6.0-linux-x86_64.rpm"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "effectcraft-0.6.0-linux-x86_64.tar.gz"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "effectcraft-0.6.0-macos-universal.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "effectcraft-0.6.0-windows-arm64-portable.zip"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "effectcraft-0.6.0-windows-arm64.msi"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "effectcraft-0.6.0-windows-x64-portable.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "effectcraft-0.6.0-windows-x64.msi"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "effectcraft-0.6.0-windows-x86-portable.zip"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "effectcraft-0.6.0-windows-x86.msi"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "effectcraft-cli-0.6.0-macos-universal.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "effectcraft-web-0.6.0.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "SHA256SUMS.txt"
+        }
+      ],
+      "checked_at": "2026-10-08T20:49:41Z",
+      "names": [
+        "EffectCraft"
+      ]
+    },
+    "https://github.com/storytold/filmcraft": {
+      "assets": [
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "filmcraft-0.4.0-freebsd-x86_64.tar.gz"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "filmcraft-0.4.0-linux-aarch64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "filmcraft-0.4.0-linux-aarch64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "deb",
+          "name": "filmcraft-0.4.0-linux-aarch64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "flatpak",
+          "name": "filmcraft-0.4.0-linux-aarch64.flatpak"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "rpm",
+          "name": "filmcraft-0.4.0-linux-aarch64.rpm"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "tar",
+          "name": "filmcraft-0.4.0-linux-aarch64.tar.gz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "filmcraft-0.4.0-linux-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "filmcraft-0.4.0-linux-x86_64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "filmcraft-0.4.0-linux-x86_64.deb"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "flatpak",
+          "name": "filmcraft-0.4.0-linux-x86_64.flatpak"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "filmcraft-0.4.0-linux-x86_64.rpm"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "filmcraft-0.4.0-linux-x86_64.tar.gz"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "filmcraft-0.4.0-macos-universal.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "filmcraft-0.4.0-windows-arm64-portable.zip"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "filmcraft-0.4.0-windows-arm64.msi"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "filmcraft-0.4.0-windows-x64-portable.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "filmcraft-0.4.0-windows-x64.msi"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "filmcraft-0.4.0-windows-x86-portable.zip"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "filmcraft-0.4.0-windows-x86.msi"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "filmcraft-cli-0.4.0-macos-universal.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "filmcraft-web-0.4.0.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "SHA256SUMS.txt"
+        }
+      ],
+      "checked_at": "2026-10-08T20:49:41Z",
+      "names": [
+        "FilmCraft"
+      ]
+    },
+    "https://github.com/storytold/lightcraft": {
+      "assets": [
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "lightcraft-0.4.0-freebsd-x86_64.tar.gz"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "lightcraft-0.4.0-linux-aarch64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "lightcraft-0.4.0-linux-aarch64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "deb",
+          "name": "lightcraft-0.4.0-linux-aarch64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "flatpak",
+          "name": "lightcraft-0.4.0-linux-aarch64.flatpak"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "rpm",
+          "name": "lightcraft-0.4.0-linux-aarch64.rpm"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "tar",
+          "name": "lightcraft-0.4.0-linux-aarch64.tar.gz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "lightcraft-0.4.0-linux-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "lightcraft-0.4.0-linux-x86_64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "lightcraft-0.4.0-linux-x86_64.deb"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "flatpak",
+          "name": "lightcraft-0.4.0-linux-x86_64.flatpak"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "lightcraft-0.4.0-linux-x86_64.rpm"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "lightcraft-0.4.0-linux-x86_64.tar.gz"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "lightcraft-0.4.0-macos-universal.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "lightcraft-0.4.0-windows-arm64-portable.zip"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "lightcraft-0.4.0-windows-arm64.msi"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "lightcraft-0.4.0-windows-x64-portable.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "lightcraft-0.4.0-windows-x64.msi"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "lightcraft-0.4.0-windows-x86-portable.zip"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "lightcraft-0.4.0-windows-x86.msi"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "lightcraft-cli-0.4.0-macos-universal.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "lightcraft-web-0.4.0.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "SHA256SUMS.txt"
+        }
+      ],
+      "checked_at": "2026-10-08T20:49:41Z",
+      "names": [
+        "LightCraft"
+      ]
+    },
+    "https://github.com/storytold/pdfcraft": {
+      "assets": [
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "pdfcraft-0.4.0-freebsd-x86_64.tar.gz"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "pdfcraft-0.4.0-linux-aarch64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "pdfcraft-0.4.0-linux-aarch64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "deb",
+          "name": "pdfcraft-0.4.0-linux-aarch64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "flatpak",
+          "name": "pdfcraft-0.4.0-linux-aarch64.flatpak"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "rpm",
+          "name": "pdfcraft-0.4.0-linux-aarch64.rpm"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "tar",
+          "name": "pdfcraft-0.4.0-linux-aarch64.tar.gz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "pdfcraft-0.4.0-linux-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "pdfcraft-0.4.0-linux-x86_64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "pdfcraft-0.4.0-linux-x86_64.deb"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "flatpak",
+          "name": "pdfcraft-0.4.0-linux-x86_64.flatpak"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "pdfcraft-0.4.0-linux-x86_64.rpm"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "pdfcraft-0.4.0-linux-x86_64.tar.gz"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "pdfcraft-0.4.0-macos-universal.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "pdfcraft-0.4.0-windows-arm64-portable.zip"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "pdfcraft-0.4.0-windows-arm64.msi"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "pdfcraft-0.4.0-windows-x64-portable.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "pdfcraft-0.4.0-windows-x64.msi"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "pdfcraft-0.4.0-windows-x86-portable.zip"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "pdfcraft-0.4.0-windows-x86.msi"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "pdfcraft-cli-0.4.0-macos-universal.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "pdfcraft-web-0.4.0.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "SHA256SUMS.txt"
+        }
+      ],
+      "checked_at": "2026-10-08T20:49:42Z",
+      "names": [
+        "PdfCraft"
+      ]
+    },
+    "https://github.com/storytold/photocraft": {
+      "assets": [
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "photocraft-0.5.0-freebsd-x86_64.tar.gz"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "photocraft-0.5.0-linux-aarch64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "photocraft-0.5.0-linux-aarch64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "deb",
+          "name": "photocraft-0.5.0-linux-aarch64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "flatpak",
+          "name": "photocraft-0.5.0-linux-aarch64.flatpak"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "rpm",
+          "name": "photocraft-0.5.0-linux-aarch64.rpm"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "tar",
+          "name": "photocraft-0.5.0-linux-aarch64.tar.gz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "photocraft-0.5.0-linux-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "photocraft-0.5.0-linux-x86_64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "photocraft-0.5.0-linux-x86_64.deb"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "flatpak",
+          "name": "photocraft-0.5.0-linux-x86_64.flatpak"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "photocraft-0.5.0-linux-x86_64.rpm"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "photocraft-0.5.0-linux-x86_64.tar.gz"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "photocraft-0.5.0-macos-universal.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "photocraft-0.5.0-windows-arm64-portable.zip"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "photocraft-0.5.0-windows-arm64.msi"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "photocraft-0.5.0-windows-x64-portable.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "photocraft-0.5.0-windows-x64.msi"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "photocraft-0.5.0-windows-x86-portable.zip"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "photocraft-0.5.0-windows-x86.msi"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "photocraft-cli-0.5.0-macos-universal.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "photocraft-web-0.5.0.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "SHA256SUMS.txt"
+        }
+      ],
+      "checked_at": "2026-10-08T20:49:42Z",
+      "names": [
+        "PhotoCraft"
+      ]
+    },
+    "https://github.com/storytold/vectorcraft": {
+      "assets": [
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "SHA256SUMS.txt"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "vectorcraft-0.7.0-freebsd-x86_64.tar.gz"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "vectorcraft-0.7.0-linux-aarch64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "vectorcraft-0.7.0-linux-aarch64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "deb",
+          "name": "vectorcraft-0.7.0-linux-aarch64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "flatpak",
+          "name": "vectorcraft-0.7.0-linux-aarch64.flatpak"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "rpm",
+          "name": "vectorcraft-0.7.0-linux-aarch64.rpm"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "tar",
+          "name": "vectorcraft-0.7.0-linux-aarch64.tar.gz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "vectorcraft-0.7.0-linux-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "vectorcraft-0.7.0-linux-x86_64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "vectorcraft-0.7.0-linux-x86_64.deb"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "flatpak",
+          "name": "vectorcraft-0.7.0-linux-x86_64.flatpak"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "vectorcraft-0.7.0-linux-x86_64.rpm"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "vectorcraft-0.7.0-linux-x86_64.tar.gz"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "vectorcraft-0.7.0-macos-universal.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "vectorcraft-0.7.0-windows-arm64-portable.zip"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "vectorcraft-0.7.0-windows-arm64.msi"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "vectorcraft-0.7.0-windows-x64-portable.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "vectorcraft-0.7.0-windows-x64.msi"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "vectorcraft-0.7.0-windows-x86-portable.zip"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "vectorcraft-0.7.0-windows-x86.msi"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "vectorcraft-cli-0.7.0-macos-universal.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "vectorcraft-web-0.7.0.zip"
+        }
+      ],
+      "checked_at": "2026-10-08T20:49:42Z",
+      "names": [
+        "VectorCraft"
       ]
     },
     "https://github.com/utajum/g-helper-linux": {

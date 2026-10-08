@@ -1,0 +1,9 @@
+{
+  "description_tag": "designcraft_desc",
+  "long-description": "design-md/en.md",
+  "description_long_tag": "designcraft_long",
+  "en": {
+    "designcraft_long": "design-md/en.md",
+    "designcraft_desc": "Page layout and publishing; an open-source, clean-room reimplementation of Adobe InDesign, rebuilt in pure Rust."
+  }
+}
