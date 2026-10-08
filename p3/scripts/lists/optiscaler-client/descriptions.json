@@ -1,0 +1,181 @@
+{
+  "description_tag": "opticlient_desc",
+  "long-description": "md/en.md",
+  "description_long_tag": "opticlient_long",
+  "en": {
+    "opticlient_long": "md/en.md",
+    "opticlient_desc": "Simplify the installation, management, and update of the OptiScaler mod across your entire game library."
+  },
+  "pt": {
+    "opticlient_long": "md/pt.md",
+    "opticlient_desc": "Simplifique a instalação, o gerenciamento e a atualização do mod OptiScaler em toda a sua biblioteca de jogos."
+  },
+  "am": {
+    "opticlient_desc": "የOptiScaler ሞድን በሁሉም ጨዋታዎችዎ ላይ መጫን፣ ማስተዳደር እና ማዘመንን ቀላል ያድርጉ።"
+  },
+  "ar": {
+    "opticlient_desc": "بسّط تثبيت تعديل OptiScaler وإدارته وتحديثه عبر مكتبة ألعابك بالكامل."
+  },
+  "az": {
+    "opticlient_desc": "OptiScaler modunun bütün oyun kitabxananızda quraşdırılmasını, idarə edilməsini və yenilənməsini asanlaşdırın."
+  },
+  "bg": {
+    "opticlient_desc": "Улеснете инсталирането, управлението и актуализирането на мода OptiScaler във всичките си игри."
+  },
+  "bn": {
+    "opticlient_desc": "আপনার সম্পূর্ণ গেম লাইব্রেরিতে OptiScaler মড ইনস্টল, পরিচালনা ও আপডেট করা সহজ করুন।"
+  },
+  "bs": {
+    "opticlient_desc": "Pojednostavite instalaciju, upravljanje i ažuriranje OptiScaler moda u cijeloj biblioteci igara."
+  },
+  "cs": {
+    "opticlient_desc": "Zjednodušte instalaci, správu a aktualizaci modu OptiScaler v celé své herní knihovně."
+  },
+  "da": {
+    "opticlient_desc": "Gør installation, administration og opdatering af OptiScaler-moddet nemmere i hele dit spilbibliotek."
+  },
+  "de": {
+    "opticlient_desc": "Vereinfache die Installation, Verwaltung und Aktualisierung der OptiScaler-Mod in deiner gesamten Spielebibliothek."
+  },
+  "el": {
+    "opticlient_desc": "Απλοποιήστε την εγκατάσταση, τη διαχείριση και την ενημέρωση του mod OptiScaler σε ολόκληρη τη βιβλιοθήκη παιχνιδιών σας."
+  },
+  "es": {
+    "opticlient_desc": "Simplifica la instalación, gestión y actualización del mod OptiScaler en toda tu biblioteca de juegos."
+  },
+  "et": {
+    "opticlient_desc": "Lihtsusta OptiScaleri modi paigaldamist, haldamist ja uuendamist kogu oma mängukogus."
+  },
+  "fa": {
+    "opticlient_desc": "نصب، مدیریت و به‌روزرسانی ماد OptiScaler را در سراسر کتابخانه بازی‌های خود آسان کنید."
+  },
+  "fi": {
+    "opticlient_desc": "Helpota OptiScaler-modin asentamista, hallintaa ja päivittämistä koko pelikirjastossasi."
+  },
+  "fr": {
+    "opticlient_desc": "Simplifiez l’installation, la gestion et la mise à jour du mod OptiScaler dans toute votre bibliothèque de jeux."
+  },
+  "ga": {
+    "opticlient_desc": "Simpligh suiteáil, bainistiú agus nuashonrú an mhod OptiScaler ar fud do leabharlainne cluichí."
+  },
+  "he": {
+    "opticlient_desc": "פשטו את ההתקנה, הניהול והעדכון של מוד OptiScaler בכל ספריית המשחקים שלכם."
+  },
+  "hi": {
+    "opticlient_desc": "अपनी पूरी गेम लाइब्रेरी में OptiScaler मॉड को इंस्टॉल, प्रबंधित और अपडेट करना आसान बनाएं।"
+  },
+  "hr": {
+    "opticlient_desc": "Pojednostavite instalaciju, upravljanje i ažuriranje moda OptiScaler u cijeloj biblioteci igara."
+  },
+  "hu": {
+    "opticlient_desc": "Egyszerűsítse az OptiScaler mod telepítését, kezelését és frissítését a teljes játékkönyvtárában."
+  },
+  "hy": {
+    "opticlient_desc": "Պարզեցրեք OptiScaler մոդի տեղադրումը, կառավարումը և թարմացումը ձեր ամբողջ խաղադարանում։"
+  },
+  "id": {
+    "opticlient_desc": "Permudah pemasangan, pengelolaan, dan pembaruan mod OptiScaler di seluruh pustaka game Anda."
+  },
+  "is": {
+    "opticlient_desc": "Einfaldaðu uppsetningu, stjórnun og uppfærslu OptiScaler-mótsins í öllu leikjasafninu þínu."
+  },
+  "it": {
+    "opticlient_desc": "Semplifica l’installazione, la gestione e l’aggiornamento della mod OptiScaler in tutta la tua libreria di giochi."
+  },
+  "ja": {
+    "opticlient_desc": "ゲームライブラリ全体でOptiScaler Modのインストール、管理、更新を簡単に行えます。"
+  },
+  "ka": {
+    "opticlient_desc": "გაამარტივეთ OptiScaler მოდის ინსტალაცია, მართვა და განახლება თქვენი თამაშების მთელ ბიბლიოთეკაში."
+  },
+  "km": {
+    "opticlient_desc": "ធ្វើឱ្យការដំឡើង ការគ្រប់គ្រង និងការធ្វើបច្ចុប្បន្នភាពម៉ូដ OptiScaler នៅក្នុងបណ្ណាល័យហ្គេមទាំងមូលរបស់អ្នកកាន់តែងាយស្រួល។"
+  },
+  "ko": {
+    "opticlient_desc": "전체 게임 라이브러리에서 OptiScaler 모드의 설치, 관리 및 업데이트를 간편하게 하세요."
+  },
+  "lo": {
+    "opticlient_desc": "ເຮັດໃຫ້ການຕິດຕັ້ງ ຈັດການ ແລະອັບເດດມອດ OptiScaler ໃນຄັງເກມທັງໝົດຂອງທ່ານງ່າຍຂຶ້ນ."
+  },
+  "lt": {
+    "opticlient_desc": "Supaprastinkite „OptiScaler“ modifikacijos diegimą, valdymą ir atnaujinimą visoje savo žaidimų bibliotekoje."
+  },
+  "lv": {
+    "opticlient_desc": "Vienkāršojiet OptiScaler modifikācijas instalēšanu, pārvaldību un atjaunināšanu visā spēļu bibliotēkā."
+  },
+  "mn": {
+    "opticlient_desc": "Тоглоомын сангийнхаа бүх тоглоомд OptiScaler модыг суулгах, удирдах, шинэчлэх үйлдлийг хялбарчлаарай."
+  },
+  "ms": {
+    "opticlient_desc": "Permudahkan pemasangan, pengurusan dan pengemaskinian mod OptiScaler di seluruh pustaka permainan anda."
+  },
+  "my": {
+    "opticlient_desc": "သင့်ဂိမ်းစာကြည့်တိုက်တစ်ခုလုံးတွင် OptiScaler mod ကို ထည့်သွင်းခြင်း၊ စီမံခန့်ခွဲခြင်းနှင့် အပ်ဒိတ်လုပ်ခြင်းတို့ကို လွယ်ကူစေပါ။"
+  },
+  "nb": {
+    "opticlient_desc": "Gjør det enklere å installere, administrere og oppdatere OptiScaler-modden i hele spillbiblioteket ditt."
+  },
+  "ne": {
+    "opticlient_desc": "आफ्नो सम्पूर्ण गेम लाइब्रेरीमा OptiScaler मोड स्थापना, व्यवस्थापन र अद्यावधिक गर्न सजिलो बनाउनुहोस्।"
+  },
+  "nl": {
+    "opticlient_desc": "Vereenvoudig de installatie, het beheer en het bijwerken van de OptiScaler-mod in je hele gamebibliotheek."
+  },
+  "pl": {
+    "opticlient_desc": "Uprość instalację, zarządzanie i aktualizację moda OptiScaler w całej bibliotece gier."
+  },
+  "ro": {
+    "opticlient_desc": "Simplificați instalarea, gestionarea și actualizarea modului OptiScaler în întreaga bibliotecă de jocuri."
+  },
+  "ru": {
+    "opticlient_desc": "Упростите установку, управление и обновление мода OptiScaler во всей вашей библиотеке игр."
+  },
+  "sk": {
+    "opticlient_desc": "Zjednodušte inštaláciu, správu a aktualizáciu modu OptiScaler v celej svojej knižnici hier."
+  },
+  "sl": {
+    "opticlient_desc": "Poenostavite namestitev, upravljanje in posodabljanje moda OptiScaler v celotni knjižnici iger."
+  },
+  "sq": {
+    "opticlient_desc": "Thjeshtoni instalimin, menaxhimin dhe përditësimin e modit OptiScaler në të gjithë bibliotekën tuaj të lojërave."
+  },
+  "sr": {
+    "opticlient_desc": "Поједноставите инсталацију, управљање и ажурирање мода OptiScaler у целој библиотеци игара."
+  },
+  "sv": {
+    "opticlient_desc": "Förenkla installation, hantering och uppdatering av OptiScaler-modden i hela ditt spelbibliotek."
+  },
+  "sw": {
+    "opticlient_desc": "Rahisisha usakinishaji, usimamizi na usasishaji wa mod ya OptiScaler katika maktaba yako yote ya michezo."
+  },
+  "ta": {
+    "opticlient_desc": "உங்கள் முழு கேம் நூலகத்திலும் OptiScaler மோடை நிறுவுதல், நிர்வகித்தல் மற்றும் புதுப்பித்தலை எளிதாக்குங்கள்."
+  },
+  "tg": {
+    "opticlient_desc": "Насб, идоракунӣ ва навсозии модули OptiScaler-ро дар тамоми китобхонаи бозиҳои худ осон кунед."
+  },
+  "th": {
+    "opticlient_desc": "ทำให้การติดตั้ง จัดการ และอัปเดตม็อด OptiScaler ในคลังเกมทั้งหมดของคุณง่ายขึ้น"
+  },
+  "tl": {
+    "opticlient_desc": "Padaliin ang pag-install, pamamahala, at pag-update ng OptiScaler mod sa buong library ng iyong mga laro."
+  },
+  "tr": {
+    "opticlient_desc": "OptiScaler modunun tüm oyun kütüphanenizde kurulumunu, yönetimini ve güncellenmesini kolaylaştırın."
+  },
+  "uk": {
+    "opticlient_desc": "Спростіть встановлення, керування й оновлення мода OptiScaler в усій вашій бібліотеці ігор."
+  },
+  "ur": {
+    "opticlient_desc": "اپنی پوری گیم لائبریری میں OptiScaler موڈ کی تنصیب، انتظام اور اپ ڈیٹ کو آسان بنائیں۔"
+  },
+  "uz": {
+    "opticlient_desc": "Butun oʻyin kutubxonangizda OptiScaler modini oʻrnatish, boshqarish va yangilashni osonlashtiring."
+  },
+  "vi": {
+    "opticlient_desc": "Đơn giản hóa việc cài đặt, quản lý và cập nhật bản mod OptiScaler trên toàn bộ thư viện trò chơi của bạn."
+  },
+  "zh": {
+    "opticlient_desc": "简化整个游戏库中 OptiScaler 模组的安装、管理和更新。"
+  }
+}

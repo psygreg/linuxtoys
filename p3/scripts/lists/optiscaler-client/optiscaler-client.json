@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Optiscaler Client",
+        "description": "Simplify the installation, management, and update of the OptiScaler mod across your entire game library.",
+        "developer": "Agustín Montaña",
+        "repo": "https://github.com/Optiscaler-Client/Optiscaler-Client",
+        "category": "game",
+        "icon": "./opticlient.webp",
+        "license": "GPLv3",
+        "descriptions": "descriptions.json",
+        "screenshots": "screenshots/",
+        "donate": "https://ko-fi.com/agustinm28"
+    }
+]
