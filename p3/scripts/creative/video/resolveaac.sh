@@ -4,7 +4,8 @@
 # description: resolveaac_desc
 # icon: resolve.svg
 # repo: https://github.com/GloriousEggroll/dvcp-aac
-# compat: ubuntu, debian, fedora, arch, cachy, rhel, suse
+# compat: none
+# suspended - change to ubuntu, debian, fedora, arch, cachy, rhel, suse once fixed upstream
 
 # --- Start of the script code ---
 

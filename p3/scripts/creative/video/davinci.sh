@@ -193,7 +193,7 @@ dv_rhel () {
 
         if [ "$_upkgname" = "davinci-resolve-studio" ]; then
             export AUTO_DVNAT=1
-            call_script resolveaac
+            # call_script resolveaac
             call_script resolvehw
         fi
 
@@ -265,7 +265,7 @@ davinciboxatom () {
 
         if [ "$_upkgname" = "davinci-resolve-studio" ]; then
             export AUTO_DVBOX=1
-            call_script resolveaac
+            # call_script resolveaac
             call_script resolvehw
         fi
 
