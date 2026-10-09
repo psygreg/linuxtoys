@@ -199,6 +199,7 @@ desktop_shortcut() {
     local app_name="${LINUXTOYS_APP_NAME:-}"
     local app_description="${LINUXTOYS_APP_DESCRIPTION:-}"
     local app_icon="${LINUXTOYS_APP_ICON:-}"
+    local applications_dir="$HOME/.local/share/applications"
     local safe_id desktop_file executable wmclass existing_desktop
 
     [ -n "$exec_line" ] || die "desktop_shortcut received an empty Exec value"
@@ -221,14 +222,16 @@ desktop_shortcut() {
     if [ -d "$applications_dir" ]; then
         for existing_desktop in "$applications_dir"/*.desktop; do
             [ -f "$existing_desktop" ] || continue
+
             if grep -Fxq "Name=$app_name" "$existing_desktop" \
                 && grep -Fxq "Exec=$exec_line" "$existing_desktop"; then
+                echo "Desktop shortcut already exists: $existing_desktop"
                 return 0
             fi
         done
     fi
 
-    safe_id=$(printf '%s' "$app_id" | tr -cs 'A-Za-z0-9._-' '-' | sed 's/^-*//; s/-*$//')
+    safe_id=$(printf '%s' "${app_id,,}" | tr -cs 'a-z0-9._-' '-' | sed 's/^-*//; s/-*$//')
     [ -n "$safe_id" ] || safe_id="application"
     desktop_file="$HOME/.local/share/applications/linuxtoys-${safe_id}.desktop"
 
