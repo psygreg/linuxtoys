@@ -44,10 +44,11 @@ offer_release_upgrade() {
     zenity --question --text="$sysup_available" --title="Release Upgrade" || return 1
 }
 
-if [ "$UPD_SERVICE" = "1" ] && [ "$USER" != "root" ]; then
-    flatpak uninstall --unused --delete-data -y
-    flatpak update -y
-    echo "$sysup_completed" && exit 0
+if [ "$UPD_SERVICE" = "1" ] && [ "$(id -u)" -ne 0 ]; then
+    flatpak uninstall --user --unused --delete-data -y || warn "Failed to remove orphaned user Flatpaks"
+    flatpak update --user -y || warn "Failed to upgrade user Flatpaks"
+    echo "$sysup_completed"
+    exit 0
 fi
 
 echo "$sysup_starting"
@@ -101,8 +102,16 @@ elif is_solus; then
 fi
 
 if command -v flatpak >/dev/null 2>&1; then
-    { [ "$UPD_SERVICE" = "1" ] && flatpak uninstall --system --unused --delete-data -y; } || flatpak uninstall --unused --delete-data -y || warn "Failed to remove orphaned flatpak packages"
-    { [ "$UPD_SERVICE" = "1" ] && flatpak update --system -y; } || flatpak update -y || warn "Failed to upgrade flatpak packages"
+    if [ "$UPD_SERVICE" = "1" ]; then
+        flatpak uninstall --system --unused --delete-data -y || warn "Failed to remove orphaned system Flatpaks"
+        flatpak update --system -y || warn "Failed to upgrade system Flatpaks"
+    else
+        flatpak uninstall --user --unused --delete-data -y || warn "Failed to remove orphaned user Flatpaks"
+        flatpak update --user -y || warn "Failed to upgrade user Flatpaks"
+
+        sudo_ flatpak uninstall --system --unused --delete-data -y || warn "Failed to remove orphaned system Flatpaks"
+        sudo_ flatpak update --system -y || warn "Failed to upgrade system Flatpaks"
+    fi
 fi
 if command -v snap >/dev/null 2>&1 && command -v snapd >/dev/null 2>&1; then
     { [ "$UPD_SERVICE" = "1" ] && snap refresh; } || sudo snap refresh || warn "Failed to upgrade snap packages"
