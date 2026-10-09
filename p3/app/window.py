@@ -152,6 +152,7 @@ class AppWindow(
         self._background_update_started = False
         self._update_state = "checking" if self.automatic_updates_enabled else "disabled"
         self._appstream_state = "hidden"
+        self._apt_appstream_refresh_enqueued = False
         # Only the bootstrap case blocks the main menu. Once both artifacts exist,
         # future AppStream refreshes remain fully background operations.
         self._appstream_pickle_missing_at_startup = (
@@ -874,12 +875,43 @@ class AppWindow(
         self._refresh_homebrew_catalog()
         return False
 
+    def _maybe_enqueue_apt_appstream_refresh(self):
+        """Bootstrap Debian-family AppStream metadata through the runner PTY.
+
+        Ubuntu/Debian only expose repository AppStream (DEP-11) data after an
+        apt update ran with the 'appstream' hook installed, so fresh systems
+        would otherwise keep an empty native catalog indefinitely. Attempt the
+        refresh once per session and rebuild the catalog when it succeeds.
+        """
+        if self._apt_appstream_refresh_enqueued:
+            return
+        self._apt_appstream_refresh_enqueued = True
+        try:
+            if shutil.which("apt-get") is None:
+                return
+            if not appstream_cache.debian_appstream_metadata_missing():
+                return
+        except Exception as error:
+            logger.warning("AppStream apt-refresh check failed: %s", error)
+            return
+        if not getattr(self, "_appstream_runner", None):
+            return
+
+        def reseed_catalog():
+            # apt update changed the native source fingerprint; run the normal
+            # refresh path again so the catalog picks the metadata up.
+            self._appstream_cache_started = False
+            GLib.idle_add(self._start_appstream_cache)
+
+        self._appstream_runner.enqueue_apt_refresh(on_complete=reseed_catalog)
+
     def _start_appstream_cache(self, *, force=False):
         """Refresh AppStream metadata on its background worker."""
         if self._appstream_cache_started:
             return False
         self._appstream_cache_started = True
         self._start_aur_refresh_if_enabled()
+        self._maybe_enqueue_apt_appstream_refresh()
 
         def report_state(state):
             GLib.idle_add(self._set_appstream_state, state)

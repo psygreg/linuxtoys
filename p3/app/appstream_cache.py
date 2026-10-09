@@ -646,6 +646,31 @@ def _native_appstream_supported_host() -> bool:
         return True
 
 
+def debian_appstream_metadata_missing() -> bool:
+    """Whether Debian-family repository AppStream (DEP-11) data is absent.
+
+    Ubuntu/Debian deliver repository AppStream metadata through the apt hook
+    shipped in the 'appstream' package: the YAML only appears under
+    /var/lib/app-info/yaml once an apt update runs with that hook installed,
+    so fresh minimal systems keep an empty native catalog until then.
+    """
+    try:
+        from .compat import get_system_compat_keys
+
+        if not {"ubuntu", "debian"} & get_system_compat_keys():
+            return False
+    except Exception:
+        return False
+
+    yaml_dir = Path("/var/lib/app-info/yaml")
+    try:
+        if not yaml_dir.is_dir():
+            return True
+        return next(yaml_dir.iterdir(), None) is None
+    except OSError:
+        return True
+
+
 # Match the system catalog layouts used by GNOME Software. Modern locations
 # take precedence over legacy ones; resolve symlinks to avoid reading twice.
 _NATIVE_CATALOG_ROOTS = ("/usr/share", "/var/cache", "/var/lib")

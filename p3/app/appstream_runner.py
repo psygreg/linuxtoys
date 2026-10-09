@@ -151,6 +151,38 @@ class AppStreamRunner:
         payload["is_flatpak_extension"] = True
         return self.enqueue([payload])
 
+    def enqueue_apt_refresh(self, on_complete=None):
+        """Queue one `apt-get update` through the persistent PTY.
+
+        Debian-family AppStream (DEP-11) metadata is fetched by the apt hook in
+        the 'appstream' package, so fresh systems only gain a native catalog
+        after an apt update ran at least once. Running it here gives the user
+        the same sudo/password flow as ordinary installations, and `on_complete`
+        lets the caller rebuild the catalog once the metadata exists.
+        """
+        label = "Refresh package metadata"
+        self._ensure_started()
+        record = {
+            "id": uuid.uuid4().hex,
+            "info": {
+                "name": label,
+                "icon": "view-refresh-symbolic",
+                "is_apt_refresh": True,
+            },
+            "name": label,
+            "icon": "view-refresh-symbolic",
+            "status": "queued",
+            "exit_code": None,
+            "action": "apt_refresh",
+            "on_complete": on_complete,
+        }
+        with self._condition:
+            self._records.append(record)
+            self._jobs.append(record)
+            self._condition.notify()
+        self._notify_changed()
+        return record["id"]
+
     def enqueue_extension_removal(self, info, record_id=None):
         """Queue removal of a Flatpak extension without Action Registry state."""
         self._ensure_started()
@@ -456,6 +488,8 @@ class AppStreamRunner:
                     exit_code = self._run_flatpak_extension(record["info"], remove=False)
                 elif record["info"].get("is_local_package"):
                     exit_code = self._run_local_package_job(record["info"])
+                elif record.get("action") == "apt_refresh":
+                    exit_code = self._run_apt_refresh_job()
                 else:
                     exit_code = self._run_job(record["info"])
 
@@ -500,6 +534,9 @@ class AppStreamRunner:
                 refresh = getattr(self.parent, "_refresh_installed_packages_async", None)
                 if refresh is not None:
                     GLib.idle_add(refresh, True)
+                on_complete = record.get("on_complete")
+                if callable(on_complete):
+                    GLib.idle_add(on_complete)
 
     def _run_aur_job(self, script_info):
         """Run an AUR install through normal pkg_install/registry machinery and capture PTY output."""
@@ -913,6 +950,25 @@ class AppStreamRunner:
             remote = str(info.get("flatpak_remote") or "flathub").strip() or "flathub"
             argv += ["install", "-y", remote, ref]
         return self._dispatch_argv(argv)
+
+    def _run_apt_refresh_job(self):
+        """Fetch Debian-family AppStream (DEP-11) metadata via apt update.
+
+        The non-interactive sudo probe avoids blocking the hidden PTY on a
+        password prompt when the session is already privileged or carries a
+        fresh sudo timestamp; otherwise the interactive sudo runs exactly like
+        an ordinary installation, so the user can authenticate in the terminal
+        surface that mirrors this PTY.
+        """
+        if self._process is None or self._process.poll() is not None:
+            self._close_pty()
+            self._spawn_shell()
+        if shutil.which("apt-get") is None:
+            return 127
+        return self._dispatch_argv([
+            "bash", "-c",
+            "sudo -n apt-get update 2>/dev/null || sudo apt-get update",
+        ])
 
     def _dispatch_argv(self, argv):
         token = uuid.uuid4().hex
