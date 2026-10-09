@@ -28,7 +28,7 @@ from . import _catalog_rs as _catalog_rs
 from .compat import get_linuxtoys_cache_dir
 
 
-CACHE_SCHEMA = 21
+CACHE_SCHEMA = 22
 CACHE_MAX_AGE = 14 * 24 * 60 * 60
 CHECKPOINT_EVERY = 100
 
@@ -173,16 +173,31 @@ def _icon_value(component) -> str:
                     root_path = Path(root)
                     if not root_path.is_dir():
                         continue
+                    # Some catalogs register cached icons without a file
+                    # extension; the cache always stores a real file name.
+                    candidates = (value,) if Path(value).suffix else tuple(
+                        f"{value}{extension}" for extension in (".png", ".svg", ".jxl")
+                    )
                     for size in sizes:
-                        direct = root_path / size / value
-                        if direct.is_file():
-                            return str(direct)
-                        try:
-                            match = next(root_path.glob(f"*/{size}/{value}"), None)
-                        except OSError:
-                            match = None
-                        if match is not None and match.is_file():
-                            return str(match)
+                        for candidate in candidates:
+                            direct = root_path / size / candidate
+                            if direct.is_file():
+                                return str(direct)
+                            try:
+                                match = next(root_path.glob(f"*/{size}/{candidate}"), None)
+                            except OSError:
+                                match = None
+                            if match is not None and match.is_file():
+                                return str(match)
+
+    # Remote icons carry real https URLs the native image loader can fetch.
+    # Ubuntu's DEP-11 catalogs rely on them: the apt bridge exposes the icon
+    # cache names even when no local icon files were downloaded. Relative
+    # file:// values from cached entries are useless and are skipped.
+    for icon in icons:
+        url = str(_safe_call(icon, "get_url", "") or "").strip()
+        if url.startswith(("https://", "http://")):
+            return url
 
     # A stock icon name is the best portable fallback and lets Gtk.IconTheme do
     # the resolution.
@@ -201,6 +216,15 @@ def _icon_value(component) -> str:
         value = str(_safe_call(icon, "get_name", "") or "").strip()
         if value and not os.path.isabs(value) and "/" not in value and not Path(value).suffix:
             return value
+
+    # Desktop-application components are ultimately identified by their desktop
+    # file, whose icon usually lives in the system icon theme once the app is
+    # installed (Debian/Ubuntu DEP-11 data often has no other usable icon).
+    component_id = str(_safe_call(component, "get_id", "") or "").strip()
+    if component_id.endswith(".desktop") and "/" not in component_id:
+        themed_id = component_id[:-len(".desktop")]
+        if themed_id and themed_id not in (".", ".."):
+            return themed_id
 
     return "application-x-executable"
 
@@ -877,12 +901,20 @@ def _load_appstream_components():
     logging.warning("No usable native AppStream repository catalog (%d local catalog files)", catalog_files)
     try:
         from .compat import get_system_compat_keys
-        if "suse" in get_system_compat_keys():
+        compat_keys = get_system_compat_keys()
+        if "suse" in compat_keys:
             provider = Path("/usr/lib/zypp/plugins/appdata/InstallAppdata")
             logging.warning(
                 "openSUSE AppStream provider %s. Check libzypp-plugin-appdata, "
                 "repository metadata with zypper refresh, and appstreamcli status.",
                 "present" if provider.is_file() else "missing",
+            )
+        elif {"ubuntu", "debian"} & compat_keys:
+            logging.warning(
+                "Debian-family AppStream metadata is fetched from the apt cache "
+                "into %s by the 'appstream' package. Install 'appstream' and "
+                "run 'sudo apt update' to populate it.",
+                "/var/lib/app-info/yaml",
             )
     except (ImportError, AttributeError):
         pass
