@@ -1610,9 +1610,9 @@ pkg_appimage () {
         # package exposed by the host repositories instead of keying off a codename.
         if dpkg -s libfuse2t64 >/dev/null 2>&1 || dpkg -s libfuse2 >/dev/null 2>&1; then
             :
-        elif apt-cache --no-all-versions show libfuse2t64 >/dev/null 2>&1; then
+        elif apt-cache policy libfuse2t64 | grep -Eq 'Candidate: [^ (]'; then
             pkg_install libfuse2t64
-        elif apt-cache --no-all-versions show libfuse2 >/dev/null 2>&1; then
+        elif apt-cache policy libfuse2 | grep -Eq 'Candidate: [^ (]'; then
             pkg_install libfuse2
         elif is_debian; then
             # Debian testing may temporarily lack a FUSE 2 compatibility package.
