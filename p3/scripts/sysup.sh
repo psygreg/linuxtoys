@@ -94,7 +94,7 @@ elif is_suse; then
     if (( ${#orphaned_packages[@]} )); then
         sudo_ zypper -n rm --clean-deps "${orphaned_packages[@]}" || die "Failed to remove orphaned packages"
     fi
-    sudo_ zypper dup -y || fatal "Failed to upgrade packages"
+    sudo_ zypper dup --no-recommends -y || fatal "Failed to upgrade packages"
 elif is_solus; then
     { [ "$UPD_SERVICE" = "1" ] && eopkg rmo -y; } || sudo eopkg rmo -y || fatal "Failed to remove orphaned packages"
     { [ "$UPD_SERVICE" = "1" ] && eopkg up -y; } || sudo eopkg up -y || fatal "Failed to upgrade packages"
