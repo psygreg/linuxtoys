@@ -471,7 +471,7 @@ def get_gpu_compat_keys():
 
     Returns:
            set: Set of GPU compatibility keys ('gpu', 'gpu-amd', 'gpu-intel',
-               'gpu-nvidia', 'gpu-rocm', 'gpu-xe', 'hybridgpu')
+               'gpu-nvidia', 'gpu-rocm', 'gpu-rusticl', 'gpu-xe', 'hybridgpu')
     """
     keys = set()
     try:
@@ -500,6 +500,8 @@ def get_gpu_compat_keys():
             keys.add("gpu-nvidia")
         if _is_rocm_capable():
             keys.add("gpu-rocm")
+        if _is_rusticl_capable():
+            keys.add("gpu-rusticl")
         if _is_icr_capable():
             keys.add("gpu-xe")
         if has_nvidia and (has_amd or has_intel):
@@ -509,11 +511,84 @@ def get_gpu_compat_keys():
     return keys
 
 
+# GCN/Polaris/Vega PCI IDs from Linux amdgpu_drv.c (2026-10-09).
+# https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+# LinuxToys policy, not an official ROCm support matrix. Keep both lists in sync.
+LEGACY_AMD_GPU_IDS = {
+    # TAHITI
+    0x6780, 0x6784, 0x6788, 0x678a, 0x6790, 0x6791, 0x6792, 0x6798,
+    0x6799, 0x679a, 0x679b, 0x679e, 0x679f,
+    # PITCAIRN
+    0x6800, 0x6801, 0x6802, 0x6806, 0x6808, 0x6809, 0x6810, 0x6811,
+    0x6816, 0x6817, 0x6818, 0x6819,
+    # OLAND
+    0x6600, 0x6601, 0x6602, 0x6603, 0x6604, 0x6605, 0x6606, 0x6607,
+    0x6608, 0x6610, 0x6611, 0x6613, 0x6617, 0x6620, 0x6621, 0x6623,
+    0x6631,
+    # VERDE
+    0x6820, 0x6821, 0x6822, 0x6823, 0x6824, 0x6825, 0x6826, 0x6827,
+    0x6828, 0x6829, 0x682a, 0x682b, 0x682c, 0x682d, 0x682f, 0x6830,
+    0x6831, 0x6835, 0x6837, 0x6838, 0x6839, 0x683b, 0x683d, 0x683f,
+    # HAINAN
+    0x6660, 0x6663, 0x6664, 0x6665, 0x6667, 0x666f,
+    # KAVERI
+    0x1304, 0x1305, 0x1306, 0x1307, 0x1309, 0x130a, 0x130b, 0x130c,
+    0x130d, 0x130e, 0x130f, 0x1310, 0x1311, 0x1312, 0x1313, 0x1315,
+    0x1316, 0x1317, 0x1318, 0x131b, 0x131c, 0x131d,
+    # BONAIRE
+    0x6640, 0x6641, 0x6646, 0x6647, 0x6649, 0x664d, 0x6650, 0x6651,
+    0x6658, 0x665c, 0x665d, 0x665f,
+    # HAWAII
+    0x67a0, 0x67a1, 0x67a2, 0x67a8, 0x67a9, 0x67aa, 0x67b0, 0x67b1,
+    0x67b8, 0x67b9, 0x67ba, 0x67be,
+    # KABINI
+    0x9830, 0x9831, 0x9832, 0x9833, 0x9834, 0x9835, 0x9836, 0x9837,
+    0x9838, 0x9839, 0x983a, 0x983b, 0x983c, 0x983d, 0x983e, 0x983f,
+    # MULLINS
+    0x9850, 0x9851, 0x9852, 0x9853, 0x9854, 0x9855, 0x9856, 0x9857,
+    0x9858, 0x9859, 0x985a, 0x985b, 0x985c, 0x985d, 0x985e, 0x985f,
+    # TOPAZ
+    0x6900, 0x6901, 0x6902, 0x6903, 0x6907,
+    # TONGA
+    0x6920, 0x6921, 0x6928, 0x6929, 0x692b, 0x692f, 0x6930, 0x6938,
+    0x6939, 0x693b,
+    # FIJI
+    0x7300, 0x730f,
+    # CARRIZO
+    0x9870, 0x9874, 0x9875, 0x9876, 0x9877,
+    # STONEY
+    0x98e4,
+    # POLARIS11
+    0x67e0, 0x67e3, 0x67e8, 0x67eb, 0x67ef, 0x67ff, 0x67e1, 0x67e7,
+    0x67e9,
+    # POLARIS10
+    0x67c0, 0x67c1, 0x67c2, 0x67c4, 0x67c7, 0x67d0, 0x67d4, 0x67df,
+    0x67c8, 0x67c9, 0x67ca, 0x67cc, 0x67cf, 0x6fdf,
+    # POLARIS12
+    0x6980, 0x6981, 0x6985, 0x6986, 0x6987, 0x698f, 0x6995, 0x6997,
+    0x699f,
+    # VEGAM
+    0x694c, 0x694e, 0x694f,
+    # VEGA10
+    0x6860, 0x6861, 0x6862, 0x6863, 0x6864, 0x6867, 0x6868, 0x6869,
+    0x686a, 0x686b, 0x686c, 0x686d, 0x686e, 0x686f, 0x687f,
+    # VEGA12
+    0x69a0, 0x69a1, 0x69a2, 0x69a3, 0x69af,
+    # VEGA20
+    0x66a0, 0x66a1, 0x66a2, 0x66a3, 0x66a4, 0x66a7, 0x66af,
+    # RAVEN
+    0x15dd, 0x15d8,
+    # RENOIR
+    0x15e7, 0x1636, 0x1638, 0x164c,
+}
+
+
 def _is_rocm_capable():
     """Mirror is_rocm_capable from the shell library."""
     import glob
     import re
 
+    eligible_amd_gpu = False
     for device in glob.glob("/sys/bus/pci/devices/*"):
         try:
             with open(f"{device}/vendor", encoding="utf-8") as f:
@@ -522,12 +597,20 @@ def _is_rocm_capable():
                 device_class = f.read().strip()
             if vendor != "0x1002" or not device_class.startswith("0x03"):
                 continue
+            with open(f"{device}/device", encoding="utf-8") as f:
+                device_id = int(f.read().strip(), 16)
+            if device_id in LEGACY_AMD_GPU_IDS:
+                continue
+            eligible_amd_gpu = True
             for vram_file in glob.glob(f"{device}/drm/card*/device/mem_info_vram_total"):
                 with open(vram_file, encoding="utf-8") as f:
                     if int(f.read().strip()) >= 2073741824:
                         return True
         except (OSError, ValueError):
             continue
+
+    if not eligible_amd_gpu:
+        return False
 
     try:
         with open("/proc/cpuinfo", encoding="utf-8") as f:
@@ -543,6 +626,39 @@ def _is_rocm_capable():
         return bool(match and int(match.group(1)) >= 8000 and ("U" in cpu_model or "H" in cpu_model))
     except OSError:
         return False
+
+
+# Polaris 10/11/12/22, Vega 10 (56/64), Vega 20 (Radeon VII); mirror sysinfo.bash.
+RUSTICL_AMD_GPU_IDS = {
+    0x67e0, 0x67e3, 0x67e8, 0x67eb, 0x67ef, 0x67ff, 0x67e1, 0x67e7,
+    0x67e9, 0x67c0, 0x67c1, 0x67c2, 0x67c4, 0x67c7, 0x67d0, 0x67d4,
+    0x67df, 0x67c8, 0x67c9, 0x67ca, 0x67cc, 0x67cf, 0x6fdf, 0x6980,
+    0x6981, 0x6985, 0x6986, 0x6987, 0x698f, 0x6995, 0x6997, 0x699f,
+    0x694c, 0x694e, 0x694f, 0x6860, 0x6861, 0x6862, 0x6863, 0x6864,
+    0x6867, 0x6868, 0x6869, 0x686a, 0x686b, 0x686c, 0x686d, 0x686e,
+    0x686f, 0x687f, 0x66a0, 0x66a1, 0x66a2, 0x66a3, 0x66a4, 0x66a7,
+    0x66af,
+}
+
+
+def _is_rusticl_capable():
+    """LinuxToys legacy Radeon exception; runtime availability is checked by the installer."""
+    import glob
+
+    for device in glob.glob("/sys/bus/pci/devices/*"):
+        try:
+            with open(f"{device}/vendor", encoding="utf-8") as f:
+                vendor = f.read().strip()
+            with open(f"{device}/class", encoding="utf-8") as f:
+                device_class = f.read().strip()
+            if vendor != "0x1002" or not device_class.startswith("0x03"):
+                continue
+            with open(f"{device}/device", encoding="utf-8") as f:
+                if int(f.read().strip(), 16) in RUSTICL_AMD_GPU_IDS:
+                    return True
+        except (OSError, ValueError):
+            continue
+    return False
 
 
 def _is_icr_capable():
@@ -897,26 +1013,32 @@ def script_is_compatible(script_path, compat_keys):
                     gpu_value = line[len("# gpu:") :].strip()
                     gpu_values = [v.strip() for v in gpu_value.split(",") if v.strip()]
                     gpu_script_keys = set()
+                    gpu_exclude_keys = set()
+                    gpu_key_map = {
+                        "amd": "gpu-amd",
+                        "intel": "gpu-intel",
+                        "nvidia": "gpu-nvidia",
+                        "rocm": "gpu-rocm",
+                        "rusticl": "gpu-rusticl",
+                        "xe": "gpu-xe",
+                    }
                     for v in gpu_values:
                         v_lower = v.lower()
-                        if v_lower == "amd":
-                            gpu_script_keys.add("gpu-amd")
-                        elif v_lower == "intel":
-                            gpu_script_keys.add("gpu-intel")
-                        elif v_lower == "nvidia":
-                            gpu_script_keys.add("gpu-nvidia")
-                        elif v_lower == "rocm":
-                            gpu_script_keys.add("gpu-rocm")
-                        elif v_lower == "xe":
-                            gpu_script_keys.add("gpu-xe")
+                        excluded = v_lower.startswith("!")
+                        name = v_lower[1:].strip() if excluded else v_lower
+                        key = gpu_key_map.get(name, "gpu")
+                        if excluded:
+                            gpu_exclude_keys.add(key)
                         else:
-                            # Unknown value, treat as general GPU
-                            gpu_script_keys.add("gpu")
+                            gpu_script_keys.add(key)
+                    # Positive entries are alternatives; any exclusion takes precedence.
                     if gpu_script_keys:
                         gpu_compatible = bool(compat_keys & gpu_script_keys)
                     else:
-                        # Empty header, treat as general GPU
                         gpu_compatible = "gpu" in compat_keys
+                    gpu_compatible = gpu_compatible and not bool(
+                        compat_keys & gpu_exclude_keys
+                    )
                 elif line.startswith("# desktop:"):
                     desktop_value = line[len("# desktop:") :].strip()
                     desktop_values = [

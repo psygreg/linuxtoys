@@ -4,7 +4,7 @@
 # description: davinci_desc
 # icon: resolve.svg
 # hybridgpu: !ostree, !solus
-# gpu: nvidia, rocm, xe
+# gpu: nvidia, rocm, rusticl, xe
 # compat: !steamos
 
 # functions
@@ -145,6 +145,18 @@ davincinatd () {
     fi
 }
 
+# Rusticl must be installed in the container, not only on its host.
+dv_rusticl_container() {
+    if is_rusticl_capable && ! is_rocm_capable; then
+        RUSTICL_CONTAINER=davincibox call_script rusticl || fatal "Failed to install Rusticl in DaVinciBox"
+        local desktop_file="$HOME/.local/share/applications/DaVinciResolve.desktop"
+        if [[ -f "$desktop_file" ]]; then
+            prep_edit "$desktop_file"
+            sed -i 's|^Exec=.*|Exec=distrobox-enter -n davincibox -- env RUSTICL_ENABLE=radeonsi /opt/resolve/bin/resolve|' "$desktop_file" || return 1
+        fi
+    fi
+}
+
 davinciboxd () {
     curl -L -o autodavincibox.sh "https://raw.githubusercontent.com/psygreg/autoresolvedeb/main/linuxtoys/autodavincibox.sh"
     chmod +x autodavincibox.sh
@@ -173,8 +185,11 @@ dv_rhel () {
 
         # resolve dependencies
         pkg_install qt5-qtbase-gui libxcb glib2 apr-util mesa-libGLU libxcrypt-compat zlib-ng zlib-ng-compat
-        { is_amd && pkg_install rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand rocm-opencl clinfo && sudo usermod -aG render,video "$USER"; } || true
-        { is_intel && pkg_install intel-compute-runtime; } || true
+        if is_rusticl_capable && ! is_rocm_capable; then
+            call_script rusticl || fatal "Failed to install Rusticl"
+        fi
+        { is_rocm_capable && pkg_install rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand rocm-opencl clinfo && sudo usermod -aG render,video "$USER"; } || true
+        { is_icr_capable && pkg_install intel-compute-runtime; } || true
         {( is_nvidia && ( rpm -qi "cuda" &>/dev/null || rpm -qi "cuda-drivers" &>/dev/null )) || fatal "Missing cuda drivers. Please install them from the Drivers menu according to your GPU."; } || true
 
         # install resolve
@@ -255,11 +270,12 @@ davinciboxatom () {
         fi
 	    zenity --info --title "AutoDaVinciBox" --text "Installation successful." --height=300 --width=300
         # set up ROCm inside davincibox for a sizable performance increase for AMD GPUs
-        if is_amd; then
+        if is_rocm_capable; then
             distrobox enter davincibox -- bash -c "sudo dnf install -y rocm-comgr rocm-runtime rccl rocalution rocblas rocfft rocm-smi rocsolver rocsparse rocm-device-libs rocminfo rocm-hip hiprand rocm-opencl clinfo && sudo usermod -aG render,video \$USER"
             # stop to ensure usermod takes effect before usage of the software
             distrobox stop davincibox
         fi
+        dv_rusticl_container
         cd $HOME
         sudo rm -rf davincibox #cleanup
 
