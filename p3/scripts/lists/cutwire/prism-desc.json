@@ -1,0 +1,9 @@
+{
+  "description_tag": "cwprism_desc",
+  "long-description": "prism-md/en.md",
+  "description_long_tag": "cwprism_long",
+  "en": {
+    "cwprism_long": "prism-md/en.md",
+    "cwprism_desc": "A beginner-friendly live media trigger and overlay tool built with Qt 6, FFmpeg, and OpenGL."
+  }
+}

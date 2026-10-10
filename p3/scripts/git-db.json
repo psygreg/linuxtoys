@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-08T20:49:43Z",
+  "generated_at": "2026-10-10T05:20:26Z",
   "repositories": {
     "https://github.com/AprilNEA/OpenLogi": {
       "assets": [
@@ -207,6 +207,121 @@
       "checked_at": "2026-09-11T02:29:38Z",
       "names": [
         "Amethyst Mod Manager"
+      ]
+    },
+    "https://github.com/CutWire-Studios/Drift": {
+      "assets": [
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "pacman",
+          "name": "drift-0.7.5-1-x86_64.pkg.tar.zst"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Drift-0.7.5-arm64-v8a.apk"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "Drift-0.7.5-arm64.dmg"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "Drift-0.7.5-armeabi-v7a.apk"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Drift-0.7.5-x86_64.apk"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "Drift-0.7.5-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Drift-0.7.5-x86_64.AppImage.zsync"
+        },
+        {
+          "architectures": [],
+          "kind": "flatpak",
+          "name": "Drift-0.7.5.flatpak"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Drift-Portable-0.7.5-x64.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Drift-Setup-0.7.5-x64.exe"
+        }
+      ],
+      "checked_at": "2026-10-10T05:20:25Z",
+      "names": [
+        "CutWire Drift"
+      ]
+    },
+    "https://github.com/CutWire-Studios/Prism": {
+      "assets": [
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "Prism-0.1.2-x86_64.AppImage"
+        },
+        {
+          "architectures": [],
+          "kind": "flatpak",
+          "name": "Prism-0.1.2.flatpak"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "prism-debug-r175.a054192-1-x86_64.pkg.tar.zst"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "pacman",
+          "name": "prism-r175.a054192-1-x86_64.pkg.tar.zst"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "Prism-Setup-0.1.2-x64.exe"
+        }
+      ],
+      "checked_at": "2026-10-10T05:20:25Z",
+      "names": [
+        "CutWire Prism"
       ]
     },
     "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher": {

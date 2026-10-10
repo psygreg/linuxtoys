@@ -1,0 +1,16 @@
+[
+    {
+        "name": "CutWire Prism",
+        "description": "A beginner-friendly live media trigger and overlay tool built with Qt 6, FFmpeg, and OpenGL.",
+        "developer": "CutWire Studios",
+        "repo": "https://github.com/CutWire-Studios/Prism",
+        "category": "video",
+        "icon": "./Prism_icon.webp",
+        "license": "GPLv3",
+        "descriptions": "prism-desc.json",
+        "screenshots": "prism-screens/",
+        "donate": {
+          "url": "https://cutwire.org/prism"
+        }
+    }
+]

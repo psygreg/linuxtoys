@@ -1,0 +1,9 @@
+{
+  "description_tag": "cwdrift_desc",
+  "long-description": "drift-md/en.md",
+  "description_long_tag": "cwdrift_long",
+  "en": {
+    "cwdrift_long": "drift-md/en.md",
+    "cwdrift_desc": "A desktop video editor for the edits people actually make from Reels and Shorts and game clips to product demos without living in a browser or paying a subscription."
+  }
+}
