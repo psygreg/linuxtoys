@@ -40,8 +40,9 @@ if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
         waydroid session stop
         sudo waydroid container stop
         prep_tmp_noram
-        git clone https://github.com/casualsnek/waydroid_script
-        cd waydroid_script
+        checkout_dir="waydroid_script_$$"
+        git clone --depth=1 https://github.com/casualsnek/waydroid_script "$checkout_dir" || fatal "waydroid_script repository fetching unsuccesful"
+        cd "$checkout_dir" || fatal "waydroid_script repository not found at expected location"
         call_script pip
         python3 -m venv venv
         venv/bin/pip install -r requirements.txt
