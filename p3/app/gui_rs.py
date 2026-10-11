@@ -186,6 +186,7 @@ def _load():
                 ctypes.POINTER(_ItemCardSpec),
                 ctypes.POINTER(_GridPosition),
                 ctypes.c_size_t,
+                ctypes.c_int32,
             ]
             lib.lt_gui_grid_attach_item_cards.restype = ctypes.c_size_t
             lib.lt_gui_grid_attach_featured_large_card.argtypes = [
@@ -476,8 +477,13 @@ def add_item_cards(flowbox, specs):
     return widgets
 
 
-def attach_item_cards_grid(grid, specs, positions):
-    """Create ordinary cards and attach them to explicit Gtk.Grid cells."""
+def attach_item_cards_grid(grid, specs, positions, card_height=0):
+    """Create ordinary cards and attach them to explicit Gtk.Grid cells.
+
+    ``card_height`` pins each card to the planner's row metric (Featured grid).
+    Content-driven minimum heights would otherwise stretch every homogeneous
+    row whenever a randomly picked card wraps its name.
+    """
     lib = _load()
     specs = list(specs)
     positions = [(int(column), int(row)) for column, row in positions]
@@ -502,7 +508,8 @@ def attach_item_cards_grid(grid, specs, positions):
 
     before = set(grid.get_children())
     created = lib.lt_gui_grid_attach_item_cards(
-        _pointer(grid), native_array, native_positions, len(native_specs)
+        _pointer(grid), native_array, native_positions, len(native_specs),
+        int(card_height or 0),
     )
     if created != len(native_specs):
         raise RuntimeError(

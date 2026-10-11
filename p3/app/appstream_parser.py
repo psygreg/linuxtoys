@@ -83,7 +83,9 @@ APPSTREAM_OMIT = {
     "virt-manager",
     "org.virt_manager.virt-manager",
     "com.heroicgameslauncher.hgl",
-    "code"
+    "code",
+    "org.cutwire.Drift",
+    "org.cutwire.Prism"
 }
 
 # AppStream uses the freedesktop.org Desktop Menu category registry. Keep Main

@@ -459,6 +459,7 @@ class FeaturedCtl:
         viewport_height = self.categories_view.get_allocated_height()
         categories_height = self.categories_flowbox.get_allocated_height()
 
+
         if viewport_height <= 1 or categories_height <= 1:
             self._featured_layout_metrics = None
             return 0
@@ -1012,6 +1013,45 @@ class FeaturedCtl:
         """Remove every currently displayed featured card."""
         for child in self.random_scripts_flowbox.get_children():
             child.destroy()
+        self.random_scripts_flowbox.set_opacity(1.0)
+
+    def _animate_featured_opacity(self, target, on_complete=None):
+        """Animate card opacity without changing the grid's GTK allocation."""
+        if getattr(self, "_featured_swap_timer", None):
+            GLib.source_remove(self._featured_swap_timer)
+            self._featured_swap_timer = None
+
+        grid = self.random_scripts_flowbox
+        start = float(grid.get_opacity())
+        target = float(target)
+        began = GLib.get_monotonic_time()
+        duration = max(1, int(self.FEATURED_SWAP_ANIMATION_MS)) * 1000
+
+        def frame():
+            progress = min(1.0, (GLib.get_monotonic_time() - began) / duration)
+            # Smoothstep eases both ends of the fade.
+            eased = progress * progress * (3.0 - 2.0 * progress)
+            grid.set_opacity(start + (target - start) * eased)
+            if progress < 1.0:
+                return True
+            self._featured_swap_timer = None
+            grid.set_opacity(target)
+            if on_complete is not None:
+                on_complete()
+            return False
+
+        self._featured_swap_timer = GLib.timeout_add(16, frame)
+
+    def _crossfade_featured_cards(self, scripts, count, layout):
+        """Fade old cards out, rebuild at zero opacity, then fade new cards in."""
+        def replace():
+            self._populate_random_scripts(scripts, count, layout)
+            # _populate_random_scripts restores opacity during its grid rebuild.
+            # Reset before the next GTK paint, then fade the replacement in.
+            self.random_scripts_flowbox.set_opacity(0.0)
+            self._animate_featured_opacity(1.0)
+
+        self._animate_featured_opacity(0.0, replace)
 
     def _hide_featured_section(self, discard=False):
         """Hide Featured Scripts without losing its current state by default."""
@@ -1019,7 +1059,8 @@ class FeaturedCtl:
             GLib.source_remove(self._featured_swap_timer)
             self._featured_swap_timer = None
 
-        self.random_scripts_revealer.set_reveal_child(False)
+        # The outer revealer owns section visibility; grid opacity owns card fades.
+        self.random_scripts_flowbox.set_opacity(1.0)
         self.featured_scripts_revealer.set_reveal_child(False)
 
         if discard:
@@ -1037,7 +1078,7 @@ class FeaturedCtl:
     def _prepare_featured_language_rebuild(self):
         """Reset Featured while the outer language cross-fade already hides the UI.
 
-        Unlike normal invalidation, keep both revealers logically open. Collapsing
+        Unlike normal invalidation, keep the section revealer logically open. Collapsing
         the SLIDE_DOWN revealer during a language transaction changes the main-menu
         requisition while category geometry is being measured, so repeated rebuilds
         can feed different transient heights back into Featured capacity.
@@ -1050,13 +1091,13 @@ class FeaturedCtl:
         self._featured_large_positions = set()
         self._featured_first_layout_committed = True
 
-        # main_stack is already fully transparent here. Keeping the revealers open
+        # main_stack is already fully transparent here. Keeping the revealer open
         # removes an unnecessary animated geometry transition from the hidden rebuild.
         self.featured_scripts_revealer.set_reveal_child(True)
-        self.random_scripts_revealer.set_reveal_child(True)
+        self.random_scripts_flowbox.set_opacity(1.0)
 
     def _reveal_initial_featured_layout(self):
-        """Reveal the first Featured set after GTK has negotiated its final size."""
+        """Reveal Featured after the first grid allocation has settled."""
         if (
             not self.all_scripts
             or self.current_category_info is not None
@@ -1065,8 +1106,17 @@ class FeaturedCtl:
         ):
             return False
 
+        grid = self.random_scripts_flowbox
+
+        if (
+            grid.get_preferred_height()[1] <= 0
+            or self.featured_scripts_container.get_preferred_height()[1] <= 0
+        ):
+            GLib.timeout_add(16, self._reveal_initial_featured_layout)
+            return False
+
         self.featured_scripts_revealer.set_reveal_child(True)
-        self.random_scripts_revealer.set_reveal_child(True)
+        grid.set_opacity(1.0)
         return False
 
     def _populate_random_scripts(self, scripts, count, layout):
@@ -1264,7 +1314,7 @@ class FeaturedCtl:
 
         if new_normals:
             native_widgets = self.create_native_featured_grid_batch(
-                self.random_scripts_flowbox, new_normals
+                self.random_scripts_flowbox, new_normals, card_height=card_height
             )
             if native_widgets is None:
                 native_widgets = []
@@ -1294,6 +1344,7 @@ class FeaturedCtl:
         self._featured_last_count = count
         self._featured_last_layout = new_signature
 
+
         displayed_keys = {
             self._featured_script_key(script_info)
             for script_info in scripts
@@ -1307,9 +1358,11 @@ class FeaturedCtl:
         # startup. Only cards attached after that point start hidden, so limit the
         # recursive show traversal to the grid instead of the whole revealer tree.
         self.random_scripts_flowbox.show_all()
+        # Force a preferred-size measurement after attaching all Featured cards.
+        self.random_scripts_flowbox.get_preferred_height()
 
         # On the very first Featured draw GTK may still be propagating the new
-        # Gtk.Grid requisition through the nested revealer/container hierarchy.
+        # Gtk.Grid requisition through the section container hierarchy.
         # This is especially easy to hit on the fast startup path where the
         # AppStream runtime pickle is already available. Revealing immediately
         # can therefore expose one transient allocation with excess space above
@@ -1321,7 +1374,7 @@ class FeaturedCtl:
         if not getattr(self, "_featured_first_layout_committed", False):
             self._featured_first_layout_committed = True
 
-            self.random_scripts_revealer.set_reveal_child(False)
+            self.random_scripts_flowbox.set_opacity(0.0)
             self.featured_scripts_revealer.set_reveal_child(False)
 
             # Attaching and showing the new grid children already invalidates GTK's
@@ -1330,7 +1383,7 @@ class FeaturedCtl:
             GLib.idle_add(self._reveal_initial_featured_layout)
         else:
             self.featured_scripts_revealer.set_reveal_child(True)
-            self.random_scripts_revealer.set_reveal_child(True)
+            self.random_scripts_flowbox.set_opacity(1.0)
 
         self._schedule_featured_geometry_reconcile()
 
@@ -1362,6 +1415,16 @@ class FeaturedCtl:
                 or self.main_stack.get_visible_child_name() != "categories"
             ):
                 return False
+            # A pending card swap or a running revealer transition reports
+            # transient heights. Measuring during one produced phantom overflow
+            # and shaved a planned row on every rotation.
+            if getattr(self, "_featured_swap_timer", None):
+                return False
+            for revealer in (self.featured_scripts_revealer,):
+                if (
+                    revealer.get_reveal_child() != revealer.get_child_revealed()
+                ):
+                    return False
             view_height = self.categories_view.get_allocated_height()
             menu_height = self.categories_flowbox.get_allocated_height()
             if view_height <= 1 or menu_height <= 1:
@@ -1371,11 +1434,27 @@ class FeaturedCtl:
                 self.featured_scripts_container.get_preferred_height()[1]
             )
             if container_height <= budget:
+                self._featured_overflow_pending = None
                 return False
             metrics = getattr(self, "_featured_layout_metrics", None) or {}
             rows = int(metrics.get("rows", 0))
             if rows <= 1:
                 return False
+
+            # Two consecutive identical sightings before shaving. A single
+            # transient allocation used to shave one row per rotation; requiring
+            # confirmation means only settled overflow clamps the plan.
+            state = (rows, container_height, budget)
+            if getattr(self, "_featured_overflow_pending", None) != state:
+                self._featured_overflow_pending = state
+                return False
+            # The row_budget_override already encodes this exact shave: the
+            # clamp is applied to every rotation, so re-shaving the same
+            # measured overflow would keep removing rows reroll after reroll.
+            if getattr(self, "_featured_last_shave_state", None) == state:
+                return False
+            self._featured_overflow_pending = None
+            self._featured_last_shave_state = state
             self._featured_row_budget_override = rows - 1
             self._refresh_random_scripts_display(force=False)
             return False
@@ -1425,14 +1504,12 @@ class FeaturedCtl:
             layout_signature != getattr(self, "_featured_last_layout", None)
         )
 
-        if (
-            not force
-            and not layout_changed
-            and current_children
-        ):
+        if not (force or layout_changed or not current_children):
+            # Same plan with cards already on screen: nothing to roll, just make
+            # sure the section is revealed.
             self.featured_scripts_revealer.show_all()
             self.featured_scripts_revealer.set_reveal_child(True)
-            self.random_scripts_revealer.set_reveal_child(True)
+            self.random_scripts_flowbox.set_opacity(1.0)
             return True
 
         scripts = self._select_random_scripts(count)
@@ -1444,16 +1521,12 @@ class FeaturedCtl:
         if current_children and not layout_changed:
             # Timed content rotations keep the cosmetic cross-fade. Their geometry
             # is unchanged, so hiding/revealing the inner revealer cannot disturb
-            # the section's vertical allocation.
+            # the section's vertical allocation. Forced rerolls (rotations and
+            # post-language/post-refresh rebuilds) with unchanged geometry follow
+            # the same path: tearing the grid down for a same-geometry reroll is
+            # what made catalog handoffs look like a glitchy rebuild.
             self._featured_swap_required_by_layout = False
-            self.random_scripts_revealer.set_reveal_child(False)
-            self._featured_swap_timer = GLib.timeout_add(
-                self.FEATURED_SWAP_ANIMATION_MS,
-                self._populate_random_scripts,
-                scripts,
-                count,
-                layout,
-            )
+            self._crossfade_featured_cards(scripts, count, layout)
         else:
             # A settled resize that changes rows/columns is structural, not a
             # cosmetic card swap. Rebuilding through a hidden Gtk.Revealer left its
@@ -1519,6 +1592,8 @@ class FeaturedCtl:
         # New geometry gets a fresh measurement; the geometry reconcile
         # scheduled by the next populate re-clamps if it still overflows.
         self._featured_row_budget_override = None
+        self._featured_overflow_pending = None
+        self._featured_last_shave_state = None
 
         if not (
             self.should_start_random_timer
@@ -1532,6 +1607,7 @@ class FeaturedCtl:
         if getattr(self, "_language_featured_refresh_pending", False):
             self._language_featured_refresh_pending = False
             self._refresh_random_scripts_display(force=True)
+            self._restart_random_scripts_refresh_timer()
         else:
             self._refresh_random_scripts_display(force=False)
 
@@ -1572,7 +1648,7 @@ class FeaturedCtl:
             GLib.source_remove(self._featured_swap_timer)
             self._featured_swap_timer = None
             self._featured_swap_required_by_layout = False
-            self.random_scripts_revealer.set_reveal_child(True)
+            self.random_scripts_flowbox.set_opacity(1.0)
 
         return False
 
@@ -1622,6 +1698,10 @@ class FeaturedCtl:
         """Rotate Featured once, then schedule the next dynamic interval."""
         self.random_scripts_refresh_timer = None
         if getattr(self, "_language_transition_active", False):
+            # Re-arm instead of dropping the beat: this timeout is one-shot, so
+            # returning here without rescheduling killed rerolls for the rest
+            # of the session whenever a rotation landed mid-transition.
+            self._restart_random_scripts_refresh_timer()
             return False
         self._refresh_random_scripts_display(force=True)
 
@@ -1701,7 +1781,7 @@ class FeaturedCtl:
         # visible child changes. The next size-allocate callback is the first safe
         # point at which to calculate rows/columns for the returned main menu.
         self._featured_waiting_for_allocation = True
-        self.random_scripts_revealer.set_reveal_child(False)
+        self.random_scripts_flowbox.set_opacity(1.0)
         self.featured_scripts_revealer.set_reveal_child(False)
 
         # Ensure GTK schedules a fresh allocation even when the window itself did

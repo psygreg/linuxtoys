@@ -388,15 +388,11 @@ class AppWindow(
         self.random_scripts_flowbox.set_column_spacing(20)
         self.random_scripts_flowbox.set_row_spacing(18)
 
-        self.random_scripts_revealer = Gtk.Revealer()
-        self.random_scripts_revealer.set_transition_type(
-            Gtk.RevealerTransitionType.CROSSFADE
-        )
-        self.random_scripts_revealer.set_transition_duration(180)
-        self.random_scripts_revealer.set_reveal_child(False)
-        self.random_scripts_revealer.add(self.random_scripts_flowbox)
+        # Grid opacity already animates card swaps. Avoid an extra revealer
+        # allocation layer, which can shift the title-to-card gap on redraw.
+        self.random_scripts_revealer = None
         self.featured_scripts_container.pack_start(
-            self.random_scripts_revealer, False, False, 0
+            self.random_scripts_flowbox, False, False, 0
         )
 
         self.featured_scripts_revealer.add(self.featured_scripts_container)
@@ -585,6 +581,10 @@ class AppWindow(
             return False  # publish_full_featured retries when the pool lands
         self._language_featured_refresh_pending = False
         self._refresh_random_scripts_display(force=True)
+        # publish_full_featured restarts rotation before the cards exist (the
+        # language rebuild clears them while the transition is still active),
+        # so re-arm here — otherwise rerolls stay dead until navigation.
+        self._restart_random_scripts_refresh_timer()
         return False
 
     def _startup_recommendations_suppressed(self):
@@ -1422,19 +1422,24 @@ class AppWindow(
         self.script_cache = search_helper.ScriptCache()
         self.category_cache = search_helper.CategoryCache()
         self.search_engine.set_cache(self.script_cache)
-        self.all_scripts = []
 
-        # Immediately rebuild the visible view directly from the new filesystem.
-        self.load_categories()
-        if self.current_category_info is not None:
-            fresh_info = self._get_fresh_category_info_with_translations()
-            if fresh_info:
-                self.current_category_info = fresh_info
-            self.load_scripts(self.current_category_info)
-            self._update_header(self.current_category_info)
+        if source_changed:
+            # Card paths identify the previous tree root: the visible menu must
+            # be rebuilt against the new filesystem immediately.
+            self.load_categories()
+            if self.current_category_info is not None:
+                fresh_info = self._get_fresh_category_info_with_translations()
+                if fresh_info:
+                    self.current_category_info = fresh_info
+                self.load_scripts(self.current_category_info)
+                self._update_header(self.current_category_info)
+        # A content-only sync (same tree root) leaves the rendered menu and its
+        # Featured cards valid; rebuild the backing parser/search/Featured data
+        # only. Rendering here — and again from publish_bootstrap — was the
+        # haphazard menu rebuild after the startup sync.
 
         # Repopulate all acceleration caches from the new source in one pass.
-        self._populate_runtime_caches()
+        self._populate_runtime_caches(catalog_refresh=True)
 
         # If a search is visible, rerun the query once the new search cache is ready.
         if self.main_stack.get_visible_child_name() == "search":

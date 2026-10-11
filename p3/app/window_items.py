@@ -314,7 +314,9 @@ class ItemWidgetFactory:
         ]
         return finished
 
-    def create_native_featured_grid_batch(self, grid, items_with_positions):
+    def create_native_featured_grid_batch(
+        self, grid, items_with_positions, card_height: int = 0
+    ):
         """Construct ordinary Featured cards directly in their Gtk.Grid cells."""
         items_with_positions = list(items_with_positions)
         if not items_with_positions:
@@ -327,7 +329,9 @@ class ItemWidgetFactory:
             return None
 
         try:
-            widgets = gui_rs.attach_item_cards_grid(grid, specs, positions)
+            widgets = gui_rs.attach_item_cards_grid(
+                grid, specs, positions, card_height=card_height
+            )
         except Exception as error:
             print(f"Warning: native Featured grid creation failed, using Python fallback: {error}")
             return None
