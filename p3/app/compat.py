@@ -284,12 +284,12 @@ def is_supported_system():
     # Block unsupported Ubuntu versions (only noble and resolute are supported)
     if id_val == "ubuntu":
         version_codename = os_release.get("VERSION_CODENAME", "").lower()
-        if version_codename not in ["noble", "resolute"]:
+        if version_codename not in ["noble", "resolute", "stonking"]:
             return False
     elif "ubuntu" in id_like:
         # For Ubuntu-based distros, check UBUNTU_CODENAME for supported versions
         ubuntu_codename = os_release.get("UBUNTU_CODENAME", "").lower()
-        if ubuntu_codename not in ["noble", "resolute"]:
+        if ubuntu_codename not in ["noble", "resolute", "stonking"]:
             return False
 
     # Get system compatibility keys
