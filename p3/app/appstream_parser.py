@@ -20,7 +20,7 @@ _DERIVED_REFRESHING = set()
 # Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
 # catalog.json remains authoritative; this file is disposable and regenerated
 # whenever any input represented by the runtime cache key changes.
-RUNTIME_CACHE_SCHEMA = 25
+RUNTIME_CACHE_SCHEMA = 26
 RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries-rs.bin"
 
 # Most recent inputs used to build the live runtime catalog. This is process-local
@@ -1068,14 +1068,35 @@ def search_homebrew_entries(query):
                 .search(str(query or ""), "new", "official", "homebrew"))
 
 
-def get_appimage_entries():
-    """Source-specific AppImage entries from the current Rust catalog generation."""
+def get_appimage_entries(relative_category=""):
+    """Source-specific AppImage entries under one relative category prefix."""
     with _CACHE_LOCK:
         context = _LAST_LOAD_CONTEXT
     if context is None:
         return []
     scripts_dir, curated_entries, category_paths = context
-    return list(_runtime_catalog(scripts_dir, curated_entries, category_paths).appimage_entries())
+    return list(_runtime_catalog(scripts_dir, curated_entries, category_paths)
+                .appimage_entries_for_category(
+                    str(relative_category or "").strip("/"),
+                    os.path.realpath(scripts_dir),
+                ))
+
+def get_appimage_subcategories(relative_category=""):
+    """Populated child AppImage category paths under one relative prefix.
+
+    Computed Rust-side from the compact entries: no payload decoding, so the
+    sidebar can rebuild the tree on every refresh.
+    """
+    with _CACHE_LOCK:
+        context = _LAST_LOAD_CONTEXT
+    if context is None:
+        return []
+    scripts_dir, curated_entries, category_paths = context
+    return list(_runtime_catalog(scripts_dir, curated_entries, category_paths)
+                .appimage_subcategory_paths(
+                    str(relative_category or "").strip("/"),
+                    os.path.realpath(scripts_dir),
+                ))
 
 def search_appimage_entries(query):
     """Search only AppImage offers, preserving the Rust ranking."""

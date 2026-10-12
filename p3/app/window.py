@@ -820,20 +820,19 @@ class AppWindow(
         }
 
     def _appimage_category_items(self, category_info):
-        """Mirror the LT directory hierarchy, retaining only populated branches."""
+        """Mirror the LT directory hierarchy, retaining only populated branches.
+
+        Categories are relativized against the scripts root Rust-side, so the
+        tree is machine-independent.
+        """
         prefix = str(category_info.get("appimage_relative_category") or "").strip("/")
-        entries = appstream_parser.get_appimage_entries()
-        selected = [item for item in entries if (str(item.get("category") or "").strip("/") == prefix)]
-        children = set()
-        for item in entries:
-            path = str(item.get("category") or "").strip("/")
-            if not path or (prefix and not path.startswith(prefix + "/")):
-                continue
-            remainder = path[len(prefix):].lstrip("/") if prefix else path
-            if "/" in remainder or (remainder and remainder != prefix):
-                first = remainder.split("/", 1)[0]
-                if first and (not prefix or path != prefix):
-                    children.add((prefix + "/" if prefix else "") + first)
+        children = appstream_parser.get_appimage_subcategories(prefix)
+        # The root level only ever holds subcategories: every catalog entry
+        # carries a resolved category, so materializing the whole pool here
+        # would decode every payload just to render subcategory cards.
+        selected = []
+        if not children or prefix:
+            selected = appstream_parser.get_appimage_entries(prefix)
         return [self._appimage_category_info(child) for child in sorted(children)] + sorted(
             selected, key=lambda item: str(item.get("name") or "").casefold())
 
