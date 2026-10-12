@@ -26,7 +26,7 @@ class NavCtl:
         if not path:
             return None
         import os
-        return os.path.abspath(path)
+        return path if "://" in path else os.path.abspath(path)
 
     def _retain_current_category_view(self):
         """Keep the current category view alive for zero-rebuild Back navigation."""

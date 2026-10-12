@@ -789,6 +789,54 @@ class AppWindow(
 
         GLib.timeout_add(100, finish_loading)
 
+    def _appimage_category_info(self, relative=""):
+        """Use the actual LT category metadata, including its declared icon.
+
+        Category names are not guaranteed to match icon filenames; in particular
+        nested directories often use a different icon specified in category-info.txt.
+        """
+        relative = str(relative or "").strip("/")
+        leaf = relative.rsplit("/", 1)[-1] if relative else ""
+        name = self.translations.get("appimage_category", "AppImages")
+        icon = "appimages.webp"
+        description = self.translations.get(
+            "appimage_category_desc", "Browse applications distributed as AppImages."
+        )
+        if leaf:
+            category_dir = os.path.join(parser.SCRIPTS_DIR, *relative.split("/"))
+            metadata = parser._parse_metadata_file(
+                os.path.join(category_dir, "category-info.txt"),
+                {"icon": "folder-open", "description": ""},
+                self.translations,
+            )
+            name = self.translations.get(leaf, leaf)
+            icon = metadata.get("icon") or "folder-open"
+            description = metadata.get("description") or ""
+        return {
+            "name": name, "description": description, "icon": icon,
+            "path": "appimages://" + (relative or "root"),
+            "type": "category", "is_script": False, "is_subcategory": bool(leaf),
+            "is_appimage_category": True, "appimage_relative_category": relative,
+        }
+
+    def _appimage_category_items(self, category_info):
+        """Mirror the LT directory hierarchy, retaining only populated branches."""
+        prefix = str(category_info.get("appimage_relative_category") or "").strip("/")
+        entries = appstream_parser.get_appimage_entries()
+        selected = [item for item in entries if (str(item.get("category") or "").strip("/") == prefix)]
+        children = set()
+        for item in entries:
+            path = str(item.get("category") or "").strip("/")
+            if not path or (prefix and not path.startswith(prefix + "/")):
+                continue
+            remainder = path[len(prefix):].lstrip("/") if prefix else path
+            if "/" in remainder or (remainder and remainder != prefix):
+                first = remainder.split("/", 1)[0]
+                if first and (not prefix or path != prefix):
+                    children.add((prefix + "/" if prefix else "") + first)
+        return [self._appimage_category_info(child) for child in sorted(children)] + sorted(
+            selected, key=lambda item: str(item.get("name") or "").casefold())
+
     def _homebrew_category_info(self):
         return {
             "name": "Homebrew",
@@ -1066,7 +1114,7 @@ class AppWindow(
             def add_items(items):
                 for item in items or ():
                     if (not item.get("is_script") or item.get("is_create_script")
-                            or item.get("appstream_source") == "homebrew"):
+                            or item.get("appstream_source") in ("homebrew", "appimage")):
                         continue
                     key = item.get("path") or (
                         item.get("name", ""),
@@ -2783,6 +2831,7 @@ class AppWindow(
         category_snapshot = [specials_category, *categories]
         if homebrew_catalog.enabled():
             category_snapshot.append(self._homebrew_category_info())
+        category_snapshot.append(self._appimage_category_info())
 
         # A language change only changes translated card metadata; the root category
         # structure and artwork normally remain identical. Rebind those native cards
@@ -2918,6 +2967,8 @@ class AppWindow(
     def _category_items_for_display(self, category_info):
         """Return the exact item list used by normal category browsing."""
         category_path = category_info["path"]
+        if category_info.get("is_appimage_category"):
+            return self._appimage_category_items(category_info)
         if category_info.get("is_homebrew_category"):
             return appstream_parser.get_homebrew_entries()
         if category_info.get("is_aur_category"):
@@ -2965,7 +3016,7 @@ class AppWindow(
         # Available/Installed split would enumerate the complete repository and
         # defeat paged browsing. Individual AUR cards still refresh their normal
         # installed/removable state after transactions.
-        if category_info.get("is_aur_category") or category_info.get("is_homebrew_category"):
+        if category_info.get("is_aur_category") or category_info.get("is_homebrew_category") or category_info.get("is_appimage_category"):
             return False
         if (
             category_info.get("is_linuxtoys_specials")
@@ -4888,6 +4939,9 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
                 }
             )
             return refreshed
+
+        if self.current_category_info.get("is_appimage_category"):
+            return self._appimage_category_info(self.current_category_info.get("appimage_relative_category", ""))
 
         if self.current_category_info.get("is_homebrew_category"):
             return self._homebrew_category_info() if homebrew_catalog.enabled() else None

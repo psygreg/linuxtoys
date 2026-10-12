@@ -1066,3 +1066,23 @@ def search_homebrew_entries(query):
     scripts_dir, curated_entries, category_paths = context
     return list(_runtime_catalog(scripts_dir, curated_entries, category_paths)
                 .search(str(query or ""), "new", "official", "homebrew"))
+
+
+def get_appimage_entries():
+    """Source-specific AppImage entries from the current Rust catalog generation."""
+    with _CACHE_LOCK:
+        context = _LAST_LOAD_CONTEXT
+    if context is None:
+        return []
+    scripts_dir, curated_entries, category_paths = context
+    return list(_runtime_catalog(scripts_dir, curated_entries, category_paths).appimage_entries())
+
+def search_appimage_entries(query):
+    """Search only AppImage offers, preserving the Rust ranking."""
+    with _CACHE_LOCK:
+        context = _LAST_LOAD_CONTEXT
+    if context is None:
+        return []
+    scripts_dir, curated_entries, category_paths = context
+    return list(_runtime_catalog(scripts_dir, curated_entries, category_paths)
+                .search(str(query or ""), "new", "official", "appimage"))

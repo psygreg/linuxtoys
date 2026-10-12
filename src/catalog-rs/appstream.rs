@@ -1582,6 +1582,12 @@ impl AppStreamCatalog {
         }
     }
 
+    fn appimage_entries(&self, py: Python<'_>) -> PyResult<Vec<Py<PyAny>>> {
+        let indices: Vec<usize> = self.entries.iter().enumerate()
+            .filter_map(|(i, entry)| (entry.source == "appimage").then_some(i)).collect();
+        self.materialize_indices(py, &indices)
+    }
+
     fn category_entry_count(&self, category: &str) -> usize {
         self.by_category.get(category.trim_matches('/')).map_or(0, Vec::len)
     }
@@ -1600,7 +1606,9 @@ impl AppStreamCatalog {
         }
         if let Some(indices) = self.by_category.get(category.trim_matches('/')) {
             for &index in indices {
-                if let Some(value) = self.entries.get(index).and_then(RuntimeAppStreamEntry::decode) { values.push(value); }
+                if let Some(value) = self.entries.get(index).and_then(RuntimeAppStreamEntry::decode) {
+                    if value.get("appstream_source").and_then(Value::as_str) != Some("appimage") { values.push(value); }
+                }
             }
         }
         rank_browse_values(&mut values, &known_popular);
