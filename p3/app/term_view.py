@@ -21,6 +21,7 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
         self.scripts_executed = 0
         self.auto_run = auto_run
         self.executed_scripts = []  # Track scripts that actually ran for cache updates
+        self._destroyed = False
 
         # Track revert capability of the removable script (if available)
         self.removable_script_revert_capability = None
@@ -98,6 +99,9 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
 
         # Connect key press event to handle Escape
         self.connect("key-press-event", self._on_key_press)
+        # If the view is ever torn down mid-session, hand the package managers
+        # back to the runner queue instead of holding it indefinitely.
+        self.connect("destroy", self._on_view_destroy)
 
         if self.script_queue:
             self.vbox_main._update_header_labels(self.script_queue[0])
@@ -106,8 +110,13 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
         if self.auto_run:
             GLib.idle_add(self.on_button_run_clicked, None)
 
-    def _set_remove_button_visibility(self):
-        # Button shown if ALL conditions are met:
+    def _on_view_destroy(self, *_args):
+        """Release the runner hold if the view dies before or during a session."""
+        self._destroyed = True
+        self._release_exclusive_hold()
+        return False
+
+    def _set_remove_button_visibility(self):        # Button shown if ALL conditions are met:
         # 1. There's a removable script
         # 2. Only one script in queue
         # 3. Revert is NOT explicitly disabled (# revert: no)

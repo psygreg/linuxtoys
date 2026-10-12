@@ -97,6 +97,36 @@ class AppStreamRunner:
         self._master_fd = None
         self._stopping = threading.Event()
         self._start_lock = threading.Lock()
+        # Serialization against terminal-viewer operations: _exclusive_hold is
+        # set while a terminal operation waits for/holds the package managers,
+        # and _job_active is True while one queued job executes.
+        self._exclusive_hold = False
+        self._job_active = False
+
+    def has_active_or_queued_jobs(self):
+        """Whether a job is executing or records are waiting in the queue."""
+        with self._condition:
+            return self._job_active or bool(self._jobs)
+
+    def request_exclusive_hold(self):
+        """Block until the runner is idle with the queue held for a caller.
+
+        Intended for terminal-viewer operations, which share the package
+        managers with queued jobs: the hold prevents the next queued record
+        from starting, and the wait ends as soon as the in-flight job does.
+        Returns False when the runner is shutting down.
+        """
+        with self._condition:
+            self._exclusive_hold = True
+            while not self._stopping.is_set() and self._job_active:
+                self._condition.wait(timeout=0.5)
+            return not self._stopping.is_set()
+
+    def release_exclusive_hold(self):
+        """Resume queue processing after a request_exclusive_hold() session."""
+        with self._condition:
+            self._exclusive_hold = False
+            self._condition.notify_all()
 
     def enqueue(self, scripts):
         if not scripts:
@@ -453,7 +483,10 @@ class AppStreamRunner:
     def _worker(self):
         while not self._stopping.is_set():
             with self._condition:
-                while not self._jobs and not self._stopping.is_set():
+                while (
+                    (not self._jobs or self._exclusive_hold)
+                    and not self._stopping.is_set()
+                ):
                     self._condition.wait(timeout=0.5)
                 if self._stopping.is_set():
                     break
@@ -463,6 +496,9 @@ class AppStreamRunner:
                 # This transition happens while holding the same lock used by
                 # cancel(), so a job can never be cancelled after it has started.
                 record["status"] = "running"
+                self._job_active = True
+                self._condition.notify_all()
+
             self._notify_changed()
 
             exit_code = None
@@ -531,6 +567,9 @@ class AppStreamRunner:
                     record["exit_code"] = -1
                     record["status"] = "failed"
                 print(f"AppStream background runner failed: {exc}", file=os.sys.stderr)
+            with self._condition:
+                self._job_active = False
+                self._condition.notify_all()
             self._notify_changed()
             if exit_code == 0:
                 refresh = getattr(self.parent, "_refresh_installed_packages_async", None)

@@ -134,11 +134,6 @@ class AppPageView(Gtk.Box):
         self._body_switcher = None
         self._extensions_view = None
         self.connect("destroy", self._on_destroy)
-        # Installs and removals run in the terminal view, so the page's
-        # Available/Installed state can change while the page is hidden behind
-        # it. Re-derive it every time the page is mapped back on screen.
-        self.connect("map", self._on_page_mapped)
-
         self.header = InfosHead(self.translations, show_terminal_controls=False)
         self.header._update_header_labels(script_info)
         app_icon = str(script_info.get("icon", "") or "").strip()
