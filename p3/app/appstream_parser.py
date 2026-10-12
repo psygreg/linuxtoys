@@ -20,7 +20,7 @@ _DERIVED_REFRESHING = set()
 # Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
 # catalog.json remains authoritative; this file is disposable and regenerated
 # whenever any input represented by the runtime cache key changes.
-RUNTIME_CACHE_SCHEMA = 24
+RUNTIME_CACHE_SCHEMA = 25
 RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries-rs.bin"
 
 # Most recent inputs used to build the live runtime catalog. This is process-local
@@ -109,6 +109,46 @@ MAIN_CATEGORY_CANDIDATES = {
     "Settings": ("sysadm", "system", "utils"),
     "System": ("sysadm", "system", "utils"),
     "Utility": ("utils", "utilities"),
+    # AppImage community feed vocabulary. Every feed entry must resolve to a
+    # destination, otherwise the app is silently dropped from the catalog.
+    # Keys that also exist in ADDITIONAL_CATEGORY_CANDIDATES are shadowed here
+    # on purpose: main_priority consults only cfg["main"], and some additional
+    # tuples point at leaves that do not exist (e.g. Qt -> misc).
+    "None": ("utils",),
+    "Application": ("utils",),
+    "X-Tool": ("utils",),
+    "X-Utilities": ("utils",),
+    "Qt": ("utils",),
+    "GNOME": ("utils",),
+    "GTK": ("utils",),
+    "KDE": ("utils",),
+    "HamRadio": ("chat", "network"),
+    "InstantMessaging": ("chat", "network"),
+    "VideoConference": ("chat", "network"),
+    "Chat": ("chat", "network"),
+    "News": ("browsers", "network"),
+    "Photography": ("photo", "graphics"),
+    "Music": ("audio",),
+    "Sequencer": ("audio",),
+    "Player": ("players", "media"),
+    "Viewer": ("viewer", "office"),
+    "TextEditor": ("txt", "devs"),
+    "TerminalEmulator": ("txt", "utils"),
+    "Security": ("sec", "utils"),
+    "Engineering": ("eng", "office"),
+    "Electronics": ("eng", "office"),
+    "Astronomy": ("nature", "edu"),
+    "ArtificialIntelligence": ("ai_agents", "devs"),
+    "WebDevelopment": ("devs", "development"),
+    "Database": ("utils",),
+    "Finance": ("fin", "office"),
+    "WordProcessor": ("document", "office"),
+    "ProjectManagement": ("planning", "office"),
+    "AdventureGame": ("game",),
+    "StrategyGame": ("game",),
+    "Sports": ("game",),
+    "ConsoleOnly": ("game",),
+    "Emulator": ("emu", "game"),
 }
 
 ADDITIONAL_CATEGORY_CANDIDATES = {
@@ -424,20 +464,59 @@ STANDALONE_PURPOSE_PRIORITY = (
 
 
 MAIN_CATEGORY_PRIORITY = (
+    # Consultation order: the first key present in a component's categories
+    # decides its destination. Toolkit/desktop tags ("Qt", "GNOME", "None"...)
+    # sit last so real categories always win; AppImage feed entries tagged only
+    # with them are parked in utils instead of being dropped.
     "Game",
+    "Sports",
+    "ConsoleOnly",
+    "AdventureGame",
+    "StrategyGame",
+    "Emulator",
     "Development",
+    "WebDevelopment",
     "Graphics",
     "AudioVideo",
     "Audio",
+    "Music",
+    "Sequencer",
     "Video",
+    "Photography",
+    "Viewer",
     "Office",
+    "Finance",
+    "WordProcessor",
+    "ProjectManagement",
     "Education",
     "Science",
+    "Astronomy",
     "HealthFitness",
     "Network",
+    "News",
+    "Chat",
+    "InstantMessaging",
+    "VideoConference",
+    "HamRadio",
     "Settings",
     "System",
+    "Security",
+    "TerminalEmulator",
+    "Engineering",
+    "Electronics",
+    "TextEditor",
+    "Database",
+    "ArtificialIntelligence",
+    "Player",
     "Utility",
+    "Qt",
+    "GNOME",
+    "GTK",
+    "KDE",
+    "Application",
+    "None",
+    "X-Tool",
+    "X-Utilities",
 )
 
 

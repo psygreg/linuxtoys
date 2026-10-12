@@ -23,12 +23,12 @@ from urllib.error import HTTPError, URLError
 from pathlib import Path
 
 from . import popularity
-from . import snap_catalog, homebrew_catalog
+from . import snap_catalog, homebrew_catalog, appimage_catalog
 from . import _catalog_rs as _catalog_rs
 from .compat import get_linuxtoys_cache_dir
 
 
-CACHE_SCHEMA = 22
+CACHE_SCHEMA = 24
 CACHE_MAX_AGE = 14 * 24 * 60 * 60
 CHECKPOINT_EVERY = 100
 
@@ -40,6 +40,7 @@ EXTENSIONS_PATH = CACHE_DIR / "extensions.json"
 PARTIAL_PATH = CACHE_DIR / "native.partial.json"
 FLATPAK_PARTIAL_PATH = CACHE_DIR / "flatpak.partial.json"
 SNAP_CATALOG_PATH = CACHE_DIR / "snap.json"
+APPIMAGE_CATALOG_PATH = CACHE_DIR / "appimage-feed.json"
 SOURCE_INVENTORY_PATH = CACHE_DIR / "source-inventory.json"
 ODRS_RATED_PATH = Path(os.path.expanduser("~/.config/linuxtoys/odrs-ratings.json"))
 ODRS_SUBMIT_URL = "https://odrs.gnome.org/1.0/reviews/api/submit"
@@ -1439,6 +1440,16 @@ def cache_needs_refresh(now=None) -> bool:
     if state.get("starter") or not state.get("complete") or not CATALOG_PATH.is_file() or not EXTENSIONS_PATH.is_file():
         return True
 
+    # The AppImage feed is an independently cached source. A missing or stale
+    # snapshot must schedule enrichment even when the main catalog is fresh.
+    # Otherwise removing appimage-feed.json never reaches load_or_refresh().
+    try:
+        feed_age = now - APPIMAGE_CATALOG_PATH.stat().st_mtime
+    except OSError:
+        return True
+    if feed_age >= appimage_catalog.REFRESH_SECONDS:
+        return True
+
     completed = float(state.get("last_completed") or 0)
     if completed <= 0 or now - completed >= CACHE_MAX_AGE:
         return True
@@ -1597,6 +1608,14 @@ def refresh_cache(force=False, status_callback=None, *, starter=False):
             # Snap Store metadata is normalized into the same source-neutral catalog.
             # A failed refresh retains the previous Snap snapshot and never blocks
             # native/Flatpak publication.
+            # AppImage community discovery is feed-only: no per-app release calls.
+            # A failed fetch uses the last valid snapshot and cannot block AppStream.
+            appimage_components = appimage_catalog.load_or_refresh(
+                APPIMAGE_CATALOG_PATH, force=force
+            )
+            if appimage_components:
+                generation.add_appimage(appimage_components)
+
             snap_components = []
             if _snap_supported_host():
                 snap_components = snap_catalog.load_or_refresh(

@@ -248,6 +248,15 @@ class ItemWidgetFactory:
         """Attach Python state/callbacks to a card already constructed by Rust."""
         event_box.info = item_info
 
+        # The native card constructor receives remote artwork as icon_name.
+        # Rebind its Gtk.Image through the same URL-aware loader used by app
+        # pages, rather than depending on icon-theme lookup of an HTTPS URL.
+        icon_url = str(item_info.get("icon") or "").strip()
+        if icon_url.startswith(("https://", "http://")):
+            native_icon = gui_rs.card_child(event_box, "linuxtoys-native-icon")
+            if isinstance(native_icon, Gtk.Image):
+                gui_rs.set_image_source(native_icon, icon_name=icon_url, size=48)
+
         # Match the Python card contract: hover styling belongs to the inset
         # painted surface, not the outer EventBox whose allocation also reserves
         # room for the edge badge.

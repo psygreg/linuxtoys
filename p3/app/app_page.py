@@ -1722,6 +1722,8 @@ class AppPageView(Gtk.Box):
             return "AUR"
         if source == "homebrew":
             return "Homebrew"
+        if source == "appimage":
+            return "AppImage"
         return source.capitalize() or self.translations.get("app_page_source_native", "Native")
 
     @staticmethod

@@ -16,7 +16,7 @@ import urllib.request
 import threading
 import uuid
 
-from . import homebrew_catalog
+from . import homebrew_catalog, appimage_catalog
 from .antenna import antenna
 from .gtk_common import GLib
 from .library_loader import script_command, script_environment
@@ -476,6 +476,8 @@ class AppStreamRunner:
                     exit_code, failure_output = self._run_aur_removal_job(record["remove_info"])
                 elif record.get("action") == "remove":
                     exit_code = self._run_removal_job(record["remove_info"])
+                elif record["info"].get("appstream_source") == "appimage":
+                    exit_code = self._run_appimage_job(record["info"])
                 elif record["info"].get("appstream_source") == "homebrew":
                     exit_code = self._run_homebrew_job(record["info"])
                 elif aur_job:
@@ -1015,6 +1017,24 @@ class AppStreamRunner:
                 os.remove(script_path)
             except OSError:
                 pass
+
+    def _run_appimage_job(self, script_info):
+        """Resolve and download an AppImage only when its queue job starts."""
+        try:
+            with appimage_catalog.download_for_install(script_info) as (path, release):
+                payload = dict(script_info)
+                payload["path"] = path
+                payload["appimage_release"] = release
+                return self._run_local_package_job({
+                    **payload,
+                    "is_local_package": True,
+                    "local_package_path": path,
+                    "local_package_kind": "appimage",
+                    "local_package_signature": appimage_catalog.file_signature(path),
+                })
+        except (OSError, ValueError, RuntimeError) as exc:
+            print(f"AppImage installation failed: {exc}", file=os.sys.stderr)
+            return 1
 
     def _run_homebrew_job(self, script_info):
         payload = homebrew_catalog.materialize_install(script_info)
