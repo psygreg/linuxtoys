@@ -147,3 +147,4 @@ libvirtdnsmasq="Natukoy ang dnsmasq. Kung ginagamit mo ito bilang DNS cache, maa
 defaultpwr="Default"
 highperfpwr="AMD Mataas na Pagganap"
 msg306="Kasalukuyang tumatakbo ang GIMP. Pakisara ito at patakbuhing muli ang patch na ito."
+noresolve="Hindi kasalukuyang naka-install ang DaVinci Resolve sa computer na ito. I-install ito at subukan ulit."

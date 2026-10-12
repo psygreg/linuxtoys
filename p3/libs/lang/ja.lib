@@ -148,3 +148,4 @@ libvirtdnsmasq="dnsmasq が検出されました。DNS キャッシュとして�
 defaultpwr="デフォルト"
 highperfpwr="AMD 高パフォーマンス"
 msg306="GIMPが実行中です。閉じてからこのパッチをもう一度実行してください。"
+noresolve="DaVinci Resolve は現在このコンピューターにインストールされていません。インストールしてから再試行してください。"

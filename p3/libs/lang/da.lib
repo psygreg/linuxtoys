@@ -148,3 +148,4 @@ libvirtdnsmasq="dnsmasq blev fundet. Hvis du bruger den som DNS-cache, kan libvi
 defaultpwr="Standard"
 highperfpwr="AMD Høj ydeevne"
 msg306="GIMP kører i øjeblikket. Luk den og kør denne patch igen."
+noresolve="DaVinci Resolve er ikke installeret på denne computer. Installer det, og prøv igen."

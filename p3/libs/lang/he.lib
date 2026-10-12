@@ -148,3 +148,4 @@ libvirtdnsmasq="זוהה dnsmasq. אם נעשה בו שימוש כמטמון DNS
 defaultpwr="ברירת מחדל"
 highperfpwr="AMD ביצועים גבוהים"
 msg306="GIMP פועל כרגע. נא לסגור אותו ולהריץ את התיקון שוב."
+noresolve="DaVinci Resolve אינו מותקן כרגע במחשב זה. התקינו אותו ונסו שוב."

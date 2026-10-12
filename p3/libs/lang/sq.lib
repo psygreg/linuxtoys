@@ -148,3 +148,4 @@ libvirtdnsmasq="U zbulua dnsmasq. Nëse po e përdorni si cache DNS, libvirt mun
 defaultpwr="Parazgjedhur"
 highperfpwr="AMD Performancë e lartë"
 msg306="GIMP është aktualisht në punë. Mbylle atë dhe ekzekuto përsëri këtë patch."
+noresolve="DaVinci Resolve nuk është aktualisht i instaluar në këtë kompjuter. Instalojeni dhe provoni përsëri."

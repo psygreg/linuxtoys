@@ -148,3 +148,4 @@ libvirtdnsmasq="Tuvastati dnsmasq. Kui kasutate seda DNS-i vahemäluna, võib li
 defaultpwr="Vaikimisi"
 highperfpwr="AMD Suur jõudlus"
 msg306="GIMP on praegu käimas. Sulgege see ja käivitage see parandus uuesti."
+noresolve="DaVinci Resolve pole praegu sellesse arvutisse paigaldatud. Paigaldage see ja proovige uuesti."

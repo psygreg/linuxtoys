@@ -147,3 +147,4 @@ libvirtdnsmasq="dnsmasq fannst. Ef þú notar það sem DNS-skyndiminni getur li
 defaultpwr="Sjálfgefið"
 highperfpwr="AMD Mikil afköst"
 msg306="GIMP er í gangi núna. Lokaðu honum og keyrðu þetta viðgerð aftur."
+noresolve="DaVinci Resolve er ekki uppsett á þessari tölvu eins og er. Settu það upp og reyndu aftur."

@@ -148,3 +148,4 @@ libvirtdnsmasq="dnsmasq aşkarlandı. Əgər onu DNS keşi kimi istifadə edirsi
 defaultpwr="Standart"
 highperfpwr="AMD Yüksək Performans"
 msg306="GIMP hal-hazırda işləyir. Zəhmət olmasa onu bağlayın və bu yamayı yenidən işə salın."
+noresolve="DaVinci Resolve hazırda bu kompüterdə quraşdırılmayıb. Onu quraşdırın və yenidən cəhd edin."

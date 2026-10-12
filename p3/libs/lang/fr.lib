@@ -148,3 +148,4 @@ libvirtdnsmasq="dnsmasq a été détecté. Si vous l’utilisez comme cache DNS,
 defaultpwr="Par défaut"
 highperfpwr="AMD Hautes performances"
 msg306="GIMP est actuellement en cours d'exécution. Veuillez le fermer et relancer ce patch."
+noresolve="DaVinci Resolve n’est actuellement pas installé sur cet ordinateur. Installez-le et réessayez."
