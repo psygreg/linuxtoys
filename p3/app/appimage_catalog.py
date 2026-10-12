@@ -55,22 +55,59 @@ def _feed_asset_url(value):
     return urlunsplit((parts.scheme, parts.netloc, quote(parts.path, safe="/%:@!$&'()*+,;=-._~"), parts.query, ""))
 
 
-def _feed_links(value):
-    """Read typed feed links, including repository slugs without a URL scheme."""
-    if not isinstance(value, list):
-        return _urls(value)
-    links = []
-    for item in value:
-        if not isinstance(item, dict):
-            links.extend(_urls(item))
+_FORGE_HOSTS = ("github.com", "www.github.com", "codeberg.org", "gitlab.com")
+
+
+def _link_pairs(item):
+    """(link type, raw url) pairs from the links/download fields."""
+    pairs = []
+    raw_links = item.get("links")
+    if isinstance(raw_links, list):
+        for link in raw_links:
+            if isinstance(link, dict):
+                pairs.append((str(link.get("type") or ""), str(link.get("url") or "").strip()))
+            elif isinstance(link, str) and link.strip():
+                pairs.append(("", link.strip()))
+    for url in _urls(item.get("download")):
+        pairs.append(("Download", url))
+    return pairs
+
+
+def _canonical_link(url):
+    """Full https URL for a feed link; expands the owner/repo shorthand."""
+    url = url.strip()
+    if "://" not in url:
+        if re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", url):
+            return "https://github.com/" + url
+        return ""
+    return url if url.startswith("https://") else ""
+
+
+def _is_repo_page(url):
+    parsed = urlparse(url)
+    parts = [p for p in parsed.path.split("/") if p]
+    return parsed.hostname in _FORGE_HOSTS and 2 <= len(parts) <= 3
+
+
+def _website_and_install_links(pairs):
+    """Return (website, install links) for one feed entry.
+
+    The website prefers the forge repository page (the app's canonical home);
+    install links keep every https URL resolve_download understands.
+    """
+    website = ""
+    install_links = []
+    for _link_type, raw in pairs:
+        url = _canonical_link(raw)
+        if not url or url in install_links:
             continue
-        kind = str(item.get("type") or "").casefold()
-        raw = str(item.get("url") or "").strip()
-        if kind in ("github", "codeberg") and re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", raw):
-            raw = f"https://{'github.com' if kind == 'github' else 'codeberg.org'}/{raw}"
-        if raw.startswith("https://") and raw not in links:
-            links.append(raw)
-    return links
+        install_links.append(url)
+        if not website and _is_repo_page(url):
+            website = url
+    if not website and install_links:
+        website = install_links[0]
+    return website, install_links
+
 
 def _split_description(text):
     """First sentence becomes the summary; the whole text stays the long one."""
@@ -149,7 +186,7 @@ def normalize(feed):
         name = str(item.get("name") or "").strip()
         if not name:
             continue
-        links = _feed_links(item.get("links")) + _urls(item.get("download"))
+        website, links = _website_and_install_links(_link_pairs(item))
         if not links:
             continue
         key = name.casefold()
@@ -193,6 +230,7 @@ def normalize(feed):
             "license": str(item.get("license") or ""),
             "developer": _developer_names(item.get("authors")),
             "description": summary,
+            "homepage": website,
             "categories": categories,
             "icon": icons[0] if icons else "",
             "screenshots": screenshots,
