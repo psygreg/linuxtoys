@@ -954,23 +954,33 @@ class AppStreamRunner:
         return self._dispatch_argv(argv)
 
     def _run_apt_refresh_job(self):
-        """Fetch Debian-family AppStream (DEP-11) metadata via apt update.
-
-        The non-interactive sudo probe avoids blocking the hidden PTY on a
-        password prompt when the session is already privileged or carries a
-        fresh sudo timestamp; otherwise the interactive sudo runs exactly like
-        an ordinary installation, so the user can authenticate in the terminal
-        surface that mirrors this PTY.
-        """
+        """Refresh APT metadata using the standard LinuxToys sudo_ helper."""
         if self._process is None or self._process.poll() is not None:
             self._close_pty()
             self._spawn_shell()
         if shutil.which("apt-get") is None:
             return 127
-        return self._dispatch_argv([
-            "bash", "-c",
-            "sudo -n apt-get update 2>/dev/null || sudo apt-get update",
-        ])
+
+        # Run through library_loader so the LinuxToys shell library is sourced.
+        # Direct sudo in the hidden PTY can wait forever for a password.
+        directory = "/tmp/linuxtoys/appstream-overrides"
+        os.makedirs(directory, mode=0o700, exist_ok=True)
+        fd, path = tempfile.mkstemp(
+            prefix="apt-refresh-", suffix=".sh", dir=directory, text=True
+        )
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                handle.write("#!/usr/bin/env bash\n")
+                handle.write("sudo_ apt-get update\n")
+            os.chmod(path, 0o700)
+            env = script_environment({"name": "Refresh package metadata"}, os.environ.copy())
+            env.pop("LINUXTOYS_RUNNER_STATE", None)
+            return self._dispatch_path(path, env)
+        finally:
+            try:
+                os.remove(path)
+            except OSError:
+                pass
 
     def _dispatch_argv(self, argv):
         token = uuid.uuid4().hex
