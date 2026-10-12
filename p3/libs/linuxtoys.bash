@@ -231,7 +231,15 @@ askpass() {
 # askpass directly: authentication is validated immediately before escalation.
 sudo_() {
     askpass sudo || return $?
-    command sudo "$@"
+    # Package scriptlets and status dialogs run GLib/libdbus clients that reach
+    # for the session bus; sudo's env_reset makes them autolaunch dbus-launch,
+    # which is missing on stock GNOME installs and fails elsewhere. Forward the
+    # desktop session bus when the script has one.
+    if [[ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]]; then
+        command sudo env DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" "$@"
+    else
+        command sudo "$@"
+    fi
 }
 
 # Unified message handler

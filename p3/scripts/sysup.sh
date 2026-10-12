@@ -12,7 +12,7 @@ _lang_
 
 needs_reboot() {
     if is_fedora || is_rhel; then
-        if ! { [ "$UPD_SERVICE" = "1" ] && dnf needs-restarting -r; } || sudo dnf needs-restarting -r 2>&1; then
+        if ! { [ "$UPD_SERVICE" = "1" ] && dnf needs-restarting -r; } || sudo_ dnf needs-restarting -r 2>&1; then
             return 1
         else
             return 0
@@ -22,7 +22,7 @@ needs_reboot() {
     elif is_arch || is_cachy || is_manjaro; then
         return 0 # no way of reliably checking for this on Arch-based distros, leave that to the user but always recommend it anyway
     elif is_suse; then
-        sudo zypper needs-rebooting
+        sudo_ zypper needs-rebooting
     elif is_solus; then
         return 0 # no way of reliably checking for this on Solus, leave that to the user but always recommend it anyway
     fi
@@ -54,35 +54,35 @@ fi
 echo "$sysup_starting"
 if is_fedora || is_rhel; then
     { { [ "$UPD_SERVICE" = "1" ] && dnf autoremove -y && dnf clean all && dnf -y makecache --refresh; } || \
-        { sudo dnf autoremove -y && sudo dnf clean all && sudo dnf -y makecache --refresh; }; } || die "Failed to remove orphaned packages"
-    { [ "$UPD_SERVICE" = "1" ] && dnf --refresh upgrade -y --setopt=throttle=2M; } || sudo dnf --refresh upgrade -y || fatal "Failed to upgrade packages"
+        { sudo_ dnf autoremove -y && sudo_ dnf clean all && sudo_ dnf -y makecache --refresh; }; } || die "Failed to remove orphaned packages"
+    { [ "$UPD_SERVICE" = "1" ] && dnf --refresh upgrade -y --setopt=throttle=2M; } || sudo_ dnf --refresh upgrade -y || fatal "Failed to upgrade packages"
     is_fedora && { release_upgrade &&
             if offer_release_upgrade; then
-                sudo dnf system-upgrade download --releasever=$fedora_version -y || fatal "Failed to download Fedora $fedora_version upgrade"
-                sudo dnf system-upgrade reboot || fatal "Failed to reboot for Fedora $fedora_version upgrade"
+                sudo_ dnf system-upgrade download --releasever=$fedora_version -y || fatal "Failed to download Fedora $fedora_version upgrade"
+                sudo_ dnf system-upgrade reboot || fatal "Failed to reboot for Fedora $fedora_version upgrade"
             fi
     }
 elif is_debian || is_ubuntu; then
     interrupted_apt_guard
-    if { [ "$UPD_SERVICE" = "1" ] && apt-get -s autoremove 2>/dev/null | grep -q '^Remv '; } || sudo apt-get -s autoremove 2>/dev/null | grep -q '^Remv '; then
-        { [ "$UPD_SERVICE" = "1" ] && apt-get autoremove -y; } || sudo apt-get autoremove -y || fatal "Failed to remove orphaned packages"
+    if { [ "$UPD_SERVICE" = "1" ] && apt-get -s autoremove 2>/dev/null | grep -q '^Remv '; } || sudo_ apt-get -s autoremove 2>/dev/null | grep -q '^Remv '; then
+        { [ "$UPD_SERVICE" = "1" ] && apt-get autoremove -y; } || sudo_ apt-get autoremove -y || fatal "Failed to remove orphaned packages"
     fi
-    { [ "$UPD_SERVICE" = "1" ] && apt-get upgrade -y --allow-downgrades -o Acquire::http::Dl-Limit=2048 -o Acquire::https::Dl-Limit=2048; } || sudo apt-get upgrade -y --allow-downgrades || fatal "Failed to upgrade packages"
+    { [ "$UPD_SERVICE" = "1" ] && apt-get upgrade -y --allow-downgrades -o Acquire::http::Dl-Limit=2048 -o Acquire::https::Dl-Limit=2048; } || sudo_ apt-get upgrade -y --allow-downgrades || fatal "Failed to upgrade packages"
     if is_ubuntu && [[ "$ID" == "ubuntu" ]] && release_upgrade; then
         if offer_release_upgrade; then
-            sudo do-release-upgrade || fatal "Failed to start Ubuntu release upgrade"
+            sudo_ do-release-upgrade || fatal "Failed to start Ubuntu release upgrade"
         fi
     fi
 elif { is_arch || is_cachy; } && ! is_manjaro; then
     pacman_lock_guard
     orphaned_packages=$(pacman -Qdtq 2>/dev/null || true)
     if [[ -n "$orphaned_packages" ]]; then
-        sudo pacman -Rns $orphaned_packages || fatal "Failed to remove orphaned packages"
+        sudo_ pacman -Rns $orphaned_packages || fatal "Failed to remove orphaned packages"
     fi
     if [ "$ID" = "omarchy" ]; then
         omarchy-update -y
     else
-        sudo pacman -Syu --noconfirm || fatal "Failed to upgrade packages"
+        sudo_ pacman -Syu --noconfirm || fatal "Failed to upgrade packages"
     fi
 elif is_manjaro; then
     pamac remove --orphans --no-confirm || fatal "Failed to remove orphaned packages"
@@ -97,8 +97,8 @@ elif is_suse; then
     fi
     sudo_ zypper dup --no-recommends -y || fatal "Failed to upgrade packages"
 elif is_solus; then
-    { [ "$UPD_SERVICE" = "1" ] && eopkg rmo -y; } || sudo eopkg rmo -y || fatal "Failed to remove orphaned packages"
-    { [ "$UPD_SERVICE" = "1" ] && eopkg up -y; } || sudo eopkg up -y || fatal "Failed to upgrade packages"
+    { [ "$UPD_SERVICE" = "1" ] && eopkg rmo -y; } || sudo_ eopkg rmo -y || fatal "Failed to remove orphaned packages"
+    { [ "$UPD_SERVICE" = "1" ] && eopkg up -y; } || sudo_ eopkg up -y || fatal "Failed to upgrade packages"
 fi
 
 if command -v flatpak >/dev/null 2>&1; then
@@ -114,7 +114,7 @@ if command -v flatpak >/dev/null 2>&1; then
     fi
 fi
 if command -v snap >/dev/null 2>&1 && command -v snapd >/dev/null 2>&1; then
-    { [ "$UPD_SERVICE" = "1" ] && snap refresh; } || sudo snap refresh || warn "Failed to upgrade snap packages"
+    { [ "$UPD_SERVICE" = "1" ] && snap refresh; } || sudo_ snap refresh || warn "Failed to upgrade snap packages"
 fi
 
 # Update applications installed directly from GitHub/Codeberg releases through
