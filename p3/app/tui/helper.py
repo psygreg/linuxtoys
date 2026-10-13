@@ -249,7 +249,10 @@ def search_homebrew_items(query: str) -> list[dict]:
     from app import appstream_parser
 
     ensure_homebrew_context()
-    return list(appstream_parser.search_homebrew_entries(query))
+    results = appstream_parser.search_homebrew_entries(query)
+    return [
+        entry[0] if isinstance(entry, tuple) else entry for entry in results
+    ]
 
 
 def get_specials_root_item(trans=None) -> dict:

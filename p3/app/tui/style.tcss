@@ -1,6 +1,7 @@
 Screen {
   align: center middle;
 }
+
 /* --------------------- HOME CSS -------------------------------*/
 #body-home {
   height: 1fr;

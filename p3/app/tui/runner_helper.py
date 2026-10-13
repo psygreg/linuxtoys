@@ -8,6 +8,7 @@ from functools import partial
 from typing import Any
 
 from textual.css.query import NoMatches
+from textual.widgets import Input
 
 from app import homebrew_catalog, installed_packages
 from app.compat import get_revert_capability, get_system_compat_keys
@@ -870,6 +871,10 @@ class ScriptRunnerMixin:
                 panel.border_title = f"{specials_label} > {current_name}"
             return
 
+        if is_homebrew_path(current_path):
+            panel.border_title = current_name or "Homebrew"
+            return
+
         crumbs = get_breadcrumb_path(current_path, translations)
         names = " › ".join(
             translations.get(c["name"], c["name"]) for c in crumbs
@@ -929,15 +934,12 @@ class ScriptRunnerMixin:
         )
 
     def _run_homebrew_search(self, query: str) -> None:
-        if (
-            not self._homebrew_view_active()
-        ):  # saiu da categoria durante o debounce
+        if not self._homebrew_view_active():
             return
         self.run_worker(
             self._homebrew_search_async(query),
             exclusive=True,
             group="homebrew-items",
-            exit_on_error=False,
         )
 
     async def _homebrew_search_async(self, query: str) -> None:
@@ -948,7 +950,6 @@ class ScriptRunnerMixin:
         try:
             results = await asyncio.to_thread(search_homebrew_items, query)
         except Exception:  # noqa: BLE001
-            logger.exception("Homebrew search failed")
             if self._homebrew_view_active():
                 await self._show_items_message(
                     translations.get(

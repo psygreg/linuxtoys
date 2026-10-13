@@ -111,7 +111,7 @@ class HomeScreen(
 
     def compose(self) -> ComposeResult:
         linuxtoys_art = load_ansi_art("linuxtoystui.ansi")
-        yield Header(icon="")
+        yield Header(id="lt-header")
 
         with Horizontal(id="body-home"):
             # left panel widgets
@@ -687,6 +687,7 @@ class SplashScreen(Screen):
 
 class LinuxToys(App):
     CSS_PATH = "style.tcss"
+    TITLE = "LinuxToys"
 
     def on_mount(self) -> None:
         self.push_screen(SplashScreen())
