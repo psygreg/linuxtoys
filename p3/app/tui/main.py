@@ -32,7 +32,6 @@ from .app_page_translate import (
 from .dialog_screen import ReportBugDialog
 from .helper import (
     get_categories,
-    get_script_info,
     get_specials_root_item,
     homebrew_category_info,
     is_registered_entry,
@@ -386,7 +385,7 @@ class HomeScreen(
             return
 
         if button.is_repo_entry and button.has_app_page:
-            info = get_script_info(script_name)
+            info = button.info
             if info is None:
                 self.notify(
                     f"app_page: sem info | label={button.label!r}",
