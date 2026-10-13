@@ -52,6 +52,32 @@ fn component_policy_keys_rs(item: &serde_json::Map<String, Value>) -> Vec<String
     keys
 }
 
+// APPSTREAM_OMIT-only identities for catalog-specific sources. These namespaced
+// forms exist purely for omission matching: preference, category overrides and
+// every other id-keyed mechanism keep using the entries' own ids, so adding a
+// key here can never change what an app resolves to or how it installs.
+fn omission_keys_rs(item: &serde_json::Map<String, Value>) -> Vec<String> {
+    let mut keys = component_policy_keys_rs(item);
+    let source = item.get("source").and_then(Value::as_str).unwrap_or("");
+    if source == "snap" {
+        if let Some(name) = item.get("snap_name").and_then(Value::as_str) {
+            let name = name.trim().to_lowercase();
+            if !name.is_empty() { keys.push(format!("io.snapcraft.{}", name)); }
+        }
+        if let Some(id) = item.get("snap_id").and_then(Value::as_str) {
+            let id = id.trim().to_lowercase();
+            if !id.is_empty() { keys.push(id); }
+        }
+    }
+    if source == "homebrew" {
+        if let Some(name) = item.get("name").and_then(Value::as_str) {
+            let name = name.trim().to_lowercase();
+            if !name.is_empty() { keys.push(format!("homebrew.{}", name)); }
+        }
+    }
+    keys
+}
+
 fn reconcile_snap_common_ids_rs(components: &mut [serde_json::Map<String, Value>]) {
     // Snap Store records can advertise several common IDs. snap_catalog.py keeps
     // all of them in snap_common_ids but uses only the first one as `id`.
@@ -259,10 +285,10 @@ fn group_prefers_dev_native_rs(group:&[serde_json::Map<String,Value>],paths:&[St
     }))
 }
 fn preference_value_rs(v:&Value,host_os:&std::collections::HashSet<String>)->Option<String>{
-    if let Some(s)=v.as_str(){return matches!(s,"native"|"flatpak").then(||s.to_string())}
+    if let Some(s)=v.as_str(){return matches!(s,"native"|"flatpak"|"appimage").then(||s.to_string())}
     if let Some(m)=v.as_object(){
-        for(k,v)in m{if k!="all"&&host_os.contains(&k.to_lowercase()){if let Some(s)=v.as_str(){if matches!(s,"native"|"flatpak"){return Some(s.into())}}}}
-        return m.get("all").and_then(Value::as_str).filter(|s|matches!(*s,"native"|"flatpak")).map(str::to_string)
+        for(k,v)in m{if k!="all"&&host_os.contains(&k.to_lowercase()){if let Some(s)=v.as_str(){if matches!(s,"native"|"flatpak"|"appimage"){return Some(s.into())}}}}
+        return m.get("all").and_then(Value::as_str).filter(|s|matches!(*s,"native"|"flatpak"|"appimage")).map(str::to_string)
     }
     None
 }
@@ -280,7 +306,7 @@ fn explicit_group_preference_rs(group:&[serde_json::Map<String,Value>],prefs:&Va
     group.iter().find_map(|item|explicit_preference_rs(item,prefs,host_os))
 }
 fn preference_rs(item:&serde_json::Map<String,Value>,prefs:&Value,host_os:&std::collections::HashSet<String>)->String{
-    explicit_preference_rs(item,prefs,host_os).unwrap_or_else(||prefs.as_object().and_then(|o|o.get("default")).and_then(Value::as_str).filter(|s|matches!(*s,"native"|"flatpak")).unwrap_or("flatpak").to_string())
+    explicit_preference_rs(item,prefs,host_os).unwrap_or_else(||prefs.as_object().and_then(|o|o.get("default")).and_then(Value::as_str).filter(|s|matches!(*s,"native"|"flatpak"|"appimage")).unwrap_or("flatpak").to_string())
 }
 fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths:&[String],cfg:&Value,prefs:&Value,locks:&std::collections::HashSet<String>,host_os:&std::collections::HashSet<String>,prefer_native_host:bool,steamos:bool,suse:bool,by_name_pass:bool)->Vec<serde_json::Map<String,Value>>{
     let mut groups:std::collections::BTreeMap<String,Vec<serde_json::Map<String,Value>>>=std::collections::BTreeMap::new();let mut pass=Vec::new();
@@ -1282,7 +1308,7 @@ pub(crate) fn build_appstream_catalog(
     // the same AppStream ID as the rest of the catalog while retaining snap_name.
     reconcile_snap_common_ids_rs(&mut vals);
     apply_snap_identity_overlays_rs(&mut vals,&overlay_map);
-    vals.retain(|m| (m.get("source").and_then(Value::as_str)!=Some("homebrew") || cfg.get("homebrew_enabled").and_then(Value::as_bool).unwrap_or(false)) && !component_policy_keys_rs(m).iter().any(|k|omit.contains(k)));
+    vals.retain(|m| (m.get("source").and_then(Value::as_str)!=Some("homebrew") || cfg.get("homebrew_enabled").and_then(Value::as_bool).unwrap_or(false)) && !omission_keys_rs(m).iter().any(|k|omit.contains(k)));
     let prefs:Value=serde_json::from_str(source_preferences_json).unwrap_or_else(|_|serde_json::json!({"default":"flatpak","apps":{}}));
     let locks=system_flatpak_locks.into_iter().map(|s|normalize_id(&s)).collect();
     let host_os=host_os_keys.into_iter().map(|s|s.to_lowercase()).collect();
@@ -1872,7 +1898,7 @@ pub(crate) fn build_appstream_catalog_index(
     // the same AppStream ID as the rest of the catalog while retaining snap_name.
     reconcile_snap_common_ids_rs(&mut vals);
     apply_snap_identity_overlays_rs(&mut vals,&overlay_map);
-    vals.retain(|m| (m.get("source").and_then(Value::as_str)!=Some("homebrew") || cfg.get("homebrew_enabled").and_then(Value::as_bool).unwrap_or(false)) && !component_policy_keys_rs(m).iter().any(|k|omit.contains(k)));
+    vals.retain(|m| (m.get("source").and_then(Value::as_str)!=Some("homebrew") || cfg.get("homebrew_enabled").and_then(Value::as_bool).unwrap_or(false)) && !omission_keys_rs(m).iter().any(|k|omit.contains(k)));
     let prefs:Value=serde_json::from_str(source_preferences_json).unwrap_or_else(|_|serde_json::json!({"default":"flatpak","apps":{}}));
     let locks=system_flatpak_locks.into_iter().map(|s|normalize_id(&s)).collect();
     let host_os=host_os_keys.into_iter().map(|s|s.to_lowercase()).collect();
@@ -1926,6 +1952,100 @@ pub(crate) fn source_metadata_fingerprint(paths: Vec<String>) -> String {
     }
 
     format!("{:x}", hasher.finalize())
+}
+
+#[cfg(test)]
+mod appimage_source_tests {
+    use super::*;
+
+    fn component(id: &str, name: &str, source: &str, categories: &[&str]) -> serde_json::Map<String, Value> {
+        serde_json::json!({
+            "id": id, "name": name, "summary": format!("{} summary", name),
+            "packages": [name], "categories": categories, "source": source
+        })
+        .as_object()
+        .unwrap()
+        .clone()
+    }
+
+    fn collapse(entries: Vec<serde_json::Map<String, Value>>, prefs: Value) -> Vec<serde_json::Map<String, Value>> {
+        let paths: Vec<String> = vec!["/scripts/creative/audio".into(), "/scripts/devs".into()];
+        let cfg = serde_json::json!({"main": {"Game": ("game",)}, "additional": {}});
+        let locks: std::collections::HashSet<String> = Default::default();
+        let host_os: std::collections::HashSet<String> = Default::default();
+        let first = collapse_source_groups_rs(entries, &paths, &cfg, &prefs, &locks, &host_os, false, false, false, false);
+        collapse_source_groups_rs(first, &paths, &cfg, &prefs, &locks, &host_os, false, false, false, true)
+    }
+
+    #[test]
+    fn appimage_source_preference_is_honored() {
+        let entries = vec![
+            component("org.distro.App", "App", "native", &["Utility"]),
+            component("appimage.community.app", "App", "appimage", &["Utility"]),
+        ];
+        // Explicit per-app preference for the AppImage source.
+        let prefs = serde_json::json!({"default": "flatpak", "apps": {"app": {"all": "appimage"}}});
+        let selected = collapse(entries.clone(), prefs);
+        assert_eq!(selected.len(), 1);
+        assert_eq!(selected[0]["source"], "appimage");
+        // The unselected source stays reachable through source options.
+        assert!(selected[0].get("_source_alternatives").is_some());
+    }
+
+    #[test]
+    fn appimage_only_groups_pass_through_without_options() {
+        let entries = vec![
+            component("appimage.community.app", "App", "appimage", &["Utility"]),
+        ];
+        let prefs = serde_json::json!({"default": "flatpak", "apps": {}});
+        let selected = collapse(entries, prefs);
+        assert_eq!(selected.len(), 1);
+        assert_eq!(selected[0]["source"], "appimage");
+        assert!(selected[0].get("_source_alternatives").is_none());
+    }
+
+    #[test]
+    fn appimage_preference_value_accepts_the_source() {
+        let host_os: std::collections::HashSet<String> = Default::default();
+        assert_eq!(preference_value_rs(&serde_json::json!("appimage"), &host_os), Some("appimage".into()));
+        assert_eq!(preference_value_rs(&serde_json::json!({"all": "appimage"}), &host_os), Some("appimage".into()));
+        assert_eq!(preference_value_rs(&serde_json::json!("bogus"), &host_os), None);
+    }
+}
+
+#[cfg(test)]
+mod omission_key_tests {
+    use super::*;
+
+    #[test]
+    fn snap_entries_answer_to_io_snapcraft_keys() {
+        let item = serde_json::json!({
+            "id": "io.snapcraft.firefox", "name": "Firefox", "source": "snap",
+            "snap_name": "firefox", "snap_id": "bugPu8dGvZXa3p7X", "packages": ["firefox"]
+        }).as_object().unwrap().clone();
+        let keys = omission_keys_rs(&item);
+        assert!(keys.contains(&"io.snapcraft.firefox".to_string()), "{:?}", keys);
+        assert!(keys.contains(&"firefox".to_string()));
+    }
+
+    #[test]
+    fn homebrew_entries_answer_to_homebrew_formula_keys() {
+        let item = serde_json::json!({
+            "id": "homebrew:wget", "name": "wget", "source": "homebrew", "packages": ["wget"]
+        }).as_object().unwrap().clone();
+        let keys = omission_keys_rs(&item);
+        assert!(keys.contains(&"homebrew.wget".to_string()), "{:?}", keys);
+        assert!(keys.contains(&"wget".to_string()));
+    }
+
+    #[test]
+    fn native_entries_gain_no_omission_extras() {
+        let item = serde_json::json!({
+            "id": "org.distro.App", "name": "App", "source": "native", "packages": ["app"]
+        }).as_object().unwrap().clone();
+        let keys = omission_keys_rs(&item);
+        assert!(!keys.iter().any(|k| k.starts_with("io.snapcraft.") || k.starts_with("homebrew.")), "{:?}", keys);
+    }
 }
 
 #[cfg(test)]

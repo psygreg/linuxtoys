@@ -24,6 +24,21 @@ AUR_OMIT = {
     # "example-package",
 }
 
+def _aur_omit_keys():
+    """Union of the curated AUR omit set and the shared AppStream omit list.
+
+    APPSTREAM_OMIT (appstream_parser) is the developer-facing curation list;
+    AUR package names live in their own catalog, so both sets are merged and
+    entries are matched case-insensitively by package name.
+    """
+    try:
+        from .appstream_parser import APPSTREAM_OMIT as shared_omit
+    except Exception:
+        shared_omit = ()
+    keys = {str(name).strip().casefold() for name in (*AUR_OMIT, *shared_omit)
+            if str(name or "").strip()}
+    return keys
+
 
 def _native_repository_packages():
     """Return package names from pacman's enabled sync repositories.
@@ -115,7 +130,7 @@ def _catalog():
             return _CATALOG
     catalog = _catalog_rs.load_aur_catalog(
         os.fspath(CATALOG_PATH),
-        sorted(str(name).strip().casefold() for name in AUR_OMIT if str(name).strip()),
+        sorted(_aur_omit_keys()),
         _native_repository_packages(),
     )
     with _LOCK:

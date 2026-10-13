@@ -820,11 +820,7 @@ class AppWindow(
         }
 
     def _appimage_category_items(self, category_info):
-        """Mirror the LT directory hierarchy, retaining only populated branches.
-
-        Categories are relativized against the scripts root Rust-side, so the
-        tree is machine-independent.
-        """
+        """Mirror the LT directory hierarchy, retaining only populated branches."""
         prefix = str(category_info.get("appimage_relative_category") or "").strip("/")
         children = appstream_parser.get_appimage_subcategories(prefix)
         # The root level only ever holds subcategories: every catalog entry

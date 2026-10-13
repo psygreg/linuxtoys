@@ -85,7 +85,8 @@ APPSTREAM_OMIT = {
     "com.heroicgameslauncher.hgl",
     "code",
     "org.cutwire.Drift",
-    "org.cutwire.Prism"
+    "org.cutwire.Prism",
+    "appimage.community.virtualbox-kvm"
 }
 
 # AppStream uses the freedesktop.org Desktop Menu category registry. Keep Main
