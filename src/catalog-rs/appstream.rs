@@ -1078,6 +1078,17 @@ impl AppStreamGeneration {
                 }
             }
 
+            // A transient feed failure must not publish an empty AppImage source.
+            // The feed loader rejects empty snapshots, so absence here indicates
+            // an unavailable source rather than an intentional catalog deletion.
+            if reuse_previous
+                && !reconciled.iter().any(|entry| entry.get("source").and_then(Value::as_str) == Some("appimage"))
+            {
+                reconciled.extend(self.previous.iter().filter(|entry| {
+                    entry.get("source").and_then(Value::as_str) == Some("appimage")
+                }).cloned());
+            }
+
             reconciled.sort_by(|a, b| {
                 let an = a.get("name").and_then(Value::as_str).unwrap_or("").to_lowercase();
                 let bn = b.get("name").and_then(Value::as_str).unwrap_or("").to_lowercase();

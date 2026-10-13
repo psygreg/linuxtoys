@@ -97,10 +97,14 @@ def _create_icon_widget(category_info):
 
     # Get icon from category info
     icon_value = category_info.get('icon', 'application-x-executable')
+    # Synthetic AppImage root uses the same bundled artwork as its source badge.
+    # Resolve it through the existing icon loader, not the GTK icon theme.
+    if str(icon_value).lower() in ('appimage', 'appimages', 'appimages.webp'):
+        icon_value = 'appimages.webp'
     icon_widget = None
     
     # If icon_value looks like a file path or just a filename, use Gtk.Image.new_from_file
-    if icon_value.endswith('.png') or icon_value.endswith('.svg'):
+    if icon_value.lower().endswith(('.png', '.svg', '.webp')):
         # If only a filename, use the global icon path resolver
         if not os.path.isabs(icon_value) and '/' not in icon_value:
             icon_path = get_icon_path(icon_value)
