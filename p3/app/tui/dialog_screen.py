@@ -44,7 +44,8 @@ class ConfirmScriptScreen(ModalScreen[bool]):
                 f"{translations.get('term_view_execute', 'Cancel')} '{self.script_name}'?",
                 id="confirm-title",
             )
-            yield Static(self.description, id="confirm-description")
+            with VerticalScroll(id="confirm-description"):
+                yield Static(self.description)
             with Horizontal(id="confirm-buttons"):
                 yield Button(
                     translations.get("cancel_btn_label", "Cancel"),
@@ -150,7 +151,8 @@ class RemoveScriptScreen(ModalScreen[bool]):
         )
         with Vertical(id="confirm-dialog"):
             yield Static(heading, id="confirm-title")
-            yield Static(self.description, id="confirm-description")
+            with VerticalScroll(id="confirm-description"):
+                yield Static(self.description)
             with Horizontal(id="confirm-buttons"):
                 yield Button(
                     translations.get("cancel_btn_label", "Cancel"),

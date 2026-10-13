@@ -270,7 +270,8 @@ ConfirmScriptScreen {
 
 #confirm-dialog {
   width: 60%;
-  max-width: 70;
+  max-width: 95%;
+  max-width: 95vh;
   height: auto;
   border: thick $primary;
   background: $surface;
@@ -289,7 +290,7 @@ ConfirmScriptScreen {
   padding: 1 2;
   margin-bottom: 1;
   height: auto;
-  max-height: 12;
+  max-height: 50vh;
 }
 
 #confirm-buttons {
@@ -363,6 +364,11 @@ ConfirmCleanupDialog {
     background: #4a192c;
     border: round #a32a49;
     color: #f38ba8;
+}
+
+#aur-security-detail{
+  height: auto;
+  max-height: 50vh;
 }
 /* ------------------------------ END -------------------- */
 
