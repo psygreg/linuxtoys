@@ -4,7 +4,7 @@
         "description": "Writing and document design; an open-source, clean-room reimplementation of *Microsoft Word*, rebuilt in pure Rust: a fast word processor with the *Word* workflow you already know: the ribbon, styles, tables, track changes, references and mail merge.",
         "developer": "ArtCraft",
         "repo": "https://github.com/storytold/wordcraft",
-        "category": "office",
+        "category": "document",
         "icon": "./wordcraft.svg",
         "license": "Apache-2.0 and MIT",
         "descriptions": "word-descs.json",
