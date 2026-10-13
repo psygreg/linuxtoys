@@ -1,0 +1,9 @@
+{
+  "description_tag": "cadcraft_desc",
+  "long-description": "cad-md/en.md",
+  "description_long_tag": "cadcraft_long",
+  "en": {
+    "cadcraft_long": "cad-md/en.md",
+    "cadcraft_desc": "Computer-aided design and drafting; an open-source, clean-room reimplementation of Autodesk AutoCAD, rebuilt in pure Rust."
+  }
+}

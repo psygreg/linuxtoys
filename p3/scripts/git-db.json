@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-10T05:20:26Z",
+  "generated_at": "2026-10-13T02:55:37Z",
   "repositories": {
     "https://github.com/AprilNEA/OpenLogi": {
       "assets": [
@@ -1459,6 +1459,547 @@
         "Rclone UI"
       ]
     },
+    "https://github.com/storytold/cadcraft": {
+      "assets": [
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "cadcraft-0.6.2-freebsd-x86_64.tar.gz"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "cadcraft-0.6.2-linux-aarch64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "cadcraft-0.6.2-linux-aarch64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "deb",
+          "name": "cadcraft-0.6.2-linux-aarch64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "flatpak",
+          "name": "cadcraft-0.6.2-linux-aarch64.flatpak"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "rpm",
+          "name": "cadcraft-0.6.2-linux-aarch64.rpm"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "tar",
+          "name": "cadcraft-0.6.2-linux-aarch64.tar.gz"
+        },
+        {
+          "architectures": [
+            "riscv64"
+          ],
+          "kind": "deb",
+          "name": "cadcraft-0.6.2-linux-riscv64.deb"
+        },
+        {
+          "architectures": [
+            "riscv64"
+          ],
+          "kind": "rpm",
+          "name": "cadcraft-0.6.2-linux-riscv64.rpm"
+        },
+        {
+          "architectures": [
+            "riscv64"
+          ],
+          "kind": "tar",
+          "name": "cadcraft-0.6.2-linux-riscv64.tar.gz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "cadcraft-0.6.2-linux-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "cadcraft-0.6.2-linux-x86_64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "cadcraft-0.6.2-linux-x86_64.deb"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "flatpak",
+          "name": "cadcraft-0.6.2-linux-x86_64.flatpak"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "cadcraft-0.6.2-linux-x86_64.rpm"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "cadcraft-0.6.2-linux-x86_64.tar.gz"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "cadcraft-0.6.2-macos-universal.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "cadcraft-0.6.2-windows-arm64-portable.zip"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "cadcraft-0.6.2-windows-arm64.msi"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "cadcraft-0.6.2-windows-x64-portable.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "cadcraft-0.6.2-windows-x64.msi"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "cadcraft-0.6.2-windows-x86-portable.zip"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "cadcraft-0.6.2-windows-x86.msi"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "cadcraft-cli-0.6.2-macos-universal.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "cadcraft-web-0.6.2.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "SHA256SUMS.txt"
+        }
+      ],
+      "checked_at": "2026-10-13T02:53:42Z",
+      "names": [
+        "CADCraft"
+      ]
+    },
+    "https://github.com/storytold/craft-launcher": {
+      "assets": [
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "artcraft-launcher-0.3.2-freebsd-x86_64.tar.gz"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "artcraft-launcher-0.3.2-linux-aarch64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "artcraft-launcher-0.3.2-linux-aarch64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "deb",
+          "name": "artcraft-launcher-0.3.2-linux-aarch64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "flatpak",
+          "name": "artcraft-launcher-0.3.2-linux-aarch64.flatpak"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "rpm",
+          "name": "artcraft-launcher-0.3.2-linux-aarch64.rpm"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "tar",
+          "name": "artcraft-launcher-0.3.2-linux-aarch64.tar.gz"
+        },
+        {
+          "architectures": [
+            "riscv64"
+          ],
+          "kind": "deb",
+          "name": "artcraft-launcher-0.3.2-linux-riscv64.deb"
+        },
+        {
+          "architectures": [
+            "riscv64"
+          ],
+          "kind": "rpm",
+          "name": "artcraft-launcher-0.3.2-linux-riscv64.rpm"
+        },
+        {
+          "architectures": [
+            "riscv64"
+          ],
+          "kind": "tar",
+          "name": "artcraft-launcher-0.3.2-linux-riscv64.tar.gz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "artcraft-launcher-0.3.2-linux-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "artcraft-launcher-0.3.2-linux-x86_64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "artcraft-launcher-0.3.2-linux-x86_64.deb"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "flatpak",
+          "name": "artcraft-launcher-0.3.2-linux-x86_64.flatpak"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "artcraft-launcher-0.3.2-linux-x86_64.rpm"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "artcraft-launcher-0.3.2-linux-x86_64.tar.gz"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "artcraft-launcher-0.3.2-macos-universal.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "artcraft-launcher-0.3.2-windows-arm64-portable.zip"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "artcraft-launcher-0.3.2-windows-arm64.msi"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "artcraft-launcher-0.3.2-windows-x64-portable.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "artcraft-launcher-0.3.2-windows-x64.msi"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "artcraft-launcher-0.3.2-windows-x86-portable.zip"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "artcraft-launcher-0.3.2-windows-x86.msi"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "artcraft-launcher-web-0.3.2.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "SHA256SUMS.txt"
+        }
+      ],
+      "checked_at": "2026-10-13T02:53:42Z",
+      "names": [
+        "ArtCraft Launcher"
+      ]
+    },
+    "https://github.com/storytold/deckcraft": {
+      "assets": [
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "deckcraft-0.6.1-freebsd-x86_64.tar.gz"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "deckcraft-0.6.1-linux-aarch64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "deckcraft-0.6.1-linux-aarch64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "deb",
+          "name": "deckcraft-0.6.1-linux-aarch64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "flatpak",
+          "name": "deckcraft-0.6.1-linux-aarch64.flatpak"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "rpm",
+          "name": "deckcraft-0.6.1-linux-aarch64.rpm"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "tar",
+          "name": "deckcraft-0.6.1-linux-aarch64.tar.gz"
+        },
+        {
+          "architectures": [
+            "riscv64"
+          ],
+          "kind": "deb",
+          "name": "deckcraft-0.6.1-linux-riscv64.deb"
+        },
+        {
+          "architectures": [
+            "riscv64"
+          ],
+          "kind": "rpm",
+          "name": "deckcraft-0.6.1-linux-riscv64.rpm"
+        },
+        {
+          "architectures": [
+            "riscv64"
+          ],
+          "kind": "tar",
+          "name": "deckcraft-0.6.1-linux-riscv64.tar.gz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "deckcraft-0.6.1-linux-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "deckcraft-0.6.1-linux-x86_64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "deckcraft-0.6.1-linux-x86_64.deb"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "flatpak",
+          "name": "deckcraft-0.6.1-linux-x86_64.flatpak"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "deckcraft-0.6.1-linux-x86_64.rpm"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "deckcraft-0.6.1-linux-x86_64.tar.gz"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "deckcraft-0.6.1-macos-universal.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "deckcraft-0.6.1-windows-arm64-portable.zip"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "deckcraft-0.6.1-windows-arm64.msi"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "deckcraft-0.6.1-windows-x64-portable.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "deckcraft-0.6.1-windows-x64.msi"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "deckcraft-0.6.1-windows-x86-portable.zip"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "deckcraft-0.6.1-windows-x86.msi"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "deckcraft-cli-0.6.1-macos-universal.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "deckcraft-web-0.6.1.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "SHA256SUMS.txt"
+        }
+      ],
+      "checked_at": "2026-10-13T02:53:43Z",
+      "names": [
+        "DeckCraft"
+      ]
+    },
     "https://github.com/storytold/designcraft": {
       "assets": [
         {
@@ -1940,6 +2481,188 @@
       "checked_at": "2026-10-08T20:49:41Z",
       "names": [
         "FilmCraft"
+      ]
+    },
+    "https://github.com/storytold/gridcraft": {
+      "assets": [
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "gridcraft-0.6.1-freebsd-x86_64.tar.gz"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "gridcraft-0.6.1-linux-aarch64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "gridcraft-0.6.1-linux-aarch64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "deb",
+          "name": "gridcraft-0.6.1-linux-aarch64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "flatpak",
+          "name": "gridcraft-0.6.1-linux-aarch64.flatpak"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "rpm",
+          "name": "gridcraft-0.6.1-linux-aarch64.rpm"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "tar",
+          "name": "gridcraft-0.6.1-linux-aarch64.tar.gz"
+        },
+        {
+          "architectures": [
+            "riscv64"
+          ],
+          "kind": "deb",
+          "name": "gridcraft-0.6.1-linux-riscv64.deb"
+        },
+        {
+          "architectures": [
+            "riscv64"
+          ],
+          "kind": "rpm",
+          "name": "gridcraft-0.6.1-linux-riscv64.rpm"
+        },
+        {
+          "architectures": [
+            "riscv64"
+          ],
+          "kind": "tar",
+          "name": "gridcraft-0.6.1-linux-riscv64.tar.gz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "gridcraft-0.6.1-linux-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "gridcraft-0.6.1-linux-x86_64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "gridcraft-0.6.1-linux-x86_64.deb"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "flatpak",
+          "name": "gridcraft-0.6.1-linux-x86_64.flatpak"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "gridcraft-0.6.1-linux-x86_64.rpm"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "gridcraft-0.6.1-linux-x86_64.tar.gz"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "gridcraft-0.6.1-macos-universal.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "gridcraft-0.6.1-windows-arm64-portable.zip"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "gridcraft-0.6.1-windows-arm64.msi"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "gridcraft-0.6.1-windows-x64-portable.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "gridcraft-0.6.1-windows-x64.msi"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "gridcraft-0.6.1-windows-x86-portable.zip"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "gridcraft-0.6.1-windows-x86.msi"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "gridcraft-cli-0.6.1-macos-universal.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "gridcraft-web-0.6.1.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "SHA256SUMS.txt"
+        }
+      ],
+      "checked_at": "2026-10-13T02:53:43Z",
+      "names": [
+        "GridCraft"
       ]
     },
     "https://github.com/storytold/lightcraft": {
@@ -2425,6 +3148,188 @@
         "PhotoCraft"
       ]
     },
+    "https://github.com/storytold/soundcraft": {
+      "assets": [
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "SHA256SUMS.txt"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "soundcraft-0.6.1-freebsd-x86_64.tar.gz"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "soundcraft-0.6.1-linux-aarch64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "soundcraft-0.6.1-linux-aarch64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "deb",
+          "name": "soundcraft-0.6.1-linux-aarch64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "flatpak",
+          "name": "soundcraft-0.6.1-linux-aarch64.flatpak"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "rpm",
+          "name": "soundcraft-0.6.1-linux-aarch64.rpm"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "tar",
+          "name": "soundcraft-0.6.1-linux-aarch64.tar.gz"
+        },
+        {
+          "architectures": [
+            "riscv64"
+          ],
+          "kind": "deb",
+          "name": "soundcraft-0.6.1-linux-riscv64.deb"
+        },
+        {
+          "architectures": [
+            "riscv64"
+          ],
+          "kind": "rpm",
+          "name": "soundcraft-0.6.1-linux-riscv64.rpm"
+        },
+        {
+          "architectures": [
+            "riscv64"
+          ],
+          "kind": "tar",
+          "name": "soundcraft-0.6.1-linux-riscv64.tar.gz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "soundcraft-0.6.1-linux-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "soundcraft-0.6.1-linux-x86_64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "soundcraft-0.6.1-linux-x86_64.deb"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "flatpak",
+          "name": "soundcraft-0.6.1-linux-x86_64.flatpak"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "soundcraft-0.6.1-linux-x86_64.rpm"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "soundcraft-0.6.1-linux-x86_64.tar.gz"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "soundcraft-0.6.1-macos-universal.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "soundcraft-0.6.1-windows-arm64-portable.zip"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "soundcraft-0.6.1-windows-arm64.msi"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "soundcraft-0.6.1-windows-x64-portable.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "soundcraft-0.6.1-windows-x64.msi"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "soundcraft-0.6.1-windows-x86-portable.zip"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "soundcraft-0.6.1-windows-x86.msi"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "soundcraft-cli-0.6.1-macos-universal.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "soundcraft-web-0.6.1.zip"
+        }
+      ],
+      "checked_at": "2026-10-13T02:53:43Z",
+      "names": [
+        "SoundCraft"
+      ]
+    },
     "https://github.com/storytold/vectorcraft": {
       "assets": [
         {
@@ -2584,6 +3489,188 @@
       "checked_at": "2026-10-08T20:49:42Z",
       "names": [
         "VectorCraft"
+      ]
+    },
+    "https://github.com/storytold/wordcraft": {
+      "assets": [
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "SHA256SUMS.txt"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "wordcraft-0.6.1-freebsd-x86_64.tar.gz"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "appimage",
+          "name": "wordcraft-0.6.1-linux-aarch64.AppImage"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "wordcraft-0.6.1-linux-aarch64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "deb",
+          "name": "wordcraft-0.6.1-linux-aarch64.deb"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "flatpak",
+          "name": "wordcraft-0.6.1-linux-aarch64.flatpak"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "rpm",
+          "name": "wordcraft-0.6.1-linux-aarch64.rpm"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "tar",
+          "name": "wordcraft-0.6.1-linux-aarch64.tar.gz"
+        },
+        {
+          "architectures": [
+            "riscv64"
+          ],
+          "kind": "deb",
+          "name": "wordcraft-0.6.1-linux-riscv64.deb"
+        },
+        {
+          "architectures": [
+            "riscv64"
+          ],
+          "kind": "rpm",
+          "name": "wordcraft-0.6.1-linux-riscv64.rpm"
+        },
+        {
+          "architectures": [
+            "riscv64"
+          ],
+          "kind": "tar",
+          "name": "wordcraft-0.6.1-linux-riscv64.tar.gz"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "appimage",
+          "name": "wordcraft-0.6.1-linux-x86_64.AppImage"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "wordcraft-0.6.1-linux-x86_64.AppImage.zsync"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "deb",
+          "name": "wordcraft-0.6.1-linux-x86_64.deb"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "flatpak",
+          "name": "wordcraft-0.6.1-linux-x86_64.flatpak"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "rpm",
+          "name": "wordcraft-0.6.1-linux-x86_64.rpm"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "tar",
+          "name": "wordcraft-0.6.1-linux-x86_64.tar.gz"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "wordcraft-0.6.1-macos-universal.dmg"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "wordcraft-0.6.1-windows-arm64-portable.zip"
+        },
+        {
+          "architectures": [
+            "aarch64"
+          ],
+          "kind": "other",
+          "name": "wordcraft-0.6.1-windows-arm64.msi"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "wordcraft-0.6.1-windows-x64-portable.zip"
+        },
+        {
+          "architectures": [
+            "x86_64"
+          ],
+          "kind": "other",
+          "name": "wordcraft-0.6.1-windows-x64.msi"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "wordcraft-0.6.1-windows-x86-portable.zip"
+        },
+        {
+          "architectures": [
+            "i686"
+          ],
+          "kind": "other",
+          "name": "wordcraft-0.6.1-windows-x86.msi"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "wordcraft-cli-0.6.1-macos-universal.zip"
+        },
+        {
+          "architectures": [],
+          "kind": "other",
+          "name": "wordcraft-web-0.6.1.zip"
+        }
+      ],
+      "checked_at": "2026-10-13T02:53:43Z",
+      "names": [
+        "WordCraft"
       ]
     },
     "https://github.com/utajum/g-helper-linux": {

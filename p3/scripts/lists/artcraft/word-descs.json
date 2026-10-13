@@ -1,0 +1,9 @@
+{
+  "description_tag": "wordcraft_desc",
+  "long-description": "word-md/en.md",
+  "description_long_tag": "wordcraft_long",
+  "en": {
+    "wordcraft_long": "word-md/en.md",
+    "wordcraft_desc": "Writing and document design; an open-source, clean-room reimplementation of Microsoft Word, rebuilt in pure Rust: a fast word processor with the Word workflow you already know: the ribbon, styles, tables, track changes, references and mail merge."
+  }
+}

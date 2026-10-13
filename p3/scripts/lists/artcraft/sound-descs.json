@@ -1,0 +1,9 @@
+{
+  "description_tag": "soundcraft_desc",
+  "long-description": "sound-md/en.md",
+  "description_long_tag": "soundcraft_long",
+  "en": {
+    "soundcraft_long": "sound-md/en.md",
+    "soundcraft_desc": "Recording, editing and mixing audio; an open-source, clean-room reimplementation of Avid Pro Tools, rebuilt in pure Rust: a complete digital audio workstation that runs natively and in the browser."
+  }
+}

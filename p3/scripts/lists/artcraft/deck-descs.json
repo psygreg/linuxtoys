@@ -1,0 +1,9 @@
+{
+  "description_tag": "deckcraft_desc",
+  "long-description": "deck-md/en.md",
+  "description_long_tag": "deckcraft_long",
+  "en": {
+    "deckcraft_long": "deck-md/en.md",
+    "deckcraft_desc": "Presentations and slide shows; an open-source, clean-room reimplementation of Microsoft PowerPoint, rebuilt in pure Rust."
+  }
+}

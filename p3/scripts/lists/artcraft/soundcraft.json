@@ -1,0 +1,17 @@
+[
+    {
+        "name": "SoundCraft",
+        "description": "Recording, editing and mixing audio; an open-source, clean-room reimplementation of *Avid Pro Tools*, rebuilt in pure Rust: a complete digital audio workstation that runs natively and in the browser.",
+        "developer": "ArtCraft",
+        "repo": "https://github.com/storytold/soundcraft",
+        "category": "audio",
+        "icon": "./soundcraft.svg",
+        "license": "Apache-2.0 and MIT",
+        "descriptions": "sound-descs.json",
+        "screenshots": "sound-screens/",
+        "purchase": {
+          "url": "https://getartcraft.com/pricing",
+          "sub_price": 10.00
+        }
+    }
+]
