@@ -1,6 +1,7 @@
 import sys
 import os
 import subprocess
+import threading
 
 from . import dev_mode, reboot_helper
 from .gtk_common import GLib, Gtk, Vte
@@ -26,6 +27,34 @@ class TerminalRunner:
         return result.returncode == 0 and bool(result.stdout.strip())
 
     def _run_next_script(self):
+        # Serialize against the AppStream runner queue: queued package
+        # transactions share the package managers with this terminal session,
+        # so a script must never start while a runner job runs or is pending.
+        if not getattr(self, "_exclusive_hold", False):
+            runner = getattr(self.parent, "_appstream_runner", None)
+            if (
+                runner is not None
+                and not getattr(self, "_exclusive_wait_started", False)
+                and not getattr(self, "_exclusive_serialization_disabled", False)
+                and runner.has_active_or_queued_jobs()
+            ):
+                self._exclusive_wait_started = True
+                self.parent._script_running = True
+                self._set_runner_locked(True)
+                if self.terminal is not None:
+                    waiting = self.translations.get(
+                        "term_view_queue_wait",
+                        "Waiting for background operations to finish…",
+                    )
+                    self.terminal.feed(f"\r\n{waiting}\r\n".encode())
+                threading.Thread(
+                    target=self._wait_for_exclusive_window,
+                    daemon=True,
+                    name="linuxtoys-term-exclusive",
+                ).start()
+                return
+        self._release_exclusive_hold_if_done()
+
         if self.script_queue and not hasattr(self, "_flatpak_apps_present_before_run"):
             self._flatpak_apps_present_before_run = self._has_flatpak_apps()
 
@@ -341,6 +370,44 @@ class TerminalRunner:
                     pass
             except OSError:
                 pass
+
+    def _release_exclusive_hold_if_done(self):
+        """Hand the package managers back to the runner when the session ends.
+
+        Runs on every dispatch decision: while scripts remain the hold is kept
+        (an empty runner queue would otherwise interleave jobs between this
+        session's scripts), and once the queue is exhausted the hold is
+        released so pending runner records can proceed.
+        """
+        if getattr(self, "_exclusive_hold", False) and not self.script_queue:
+            self._release_exclusive_hold()
+
+    def _wait_for_exclusive_window(self):
+        """Wait (off the GTK thread) for the runner to pause with no active job."""
+        runner = getattr(self.parent, "_appstream_runner", None)
+        acquired = runner is not None and runner.request_exclusive_hold()
+        GLib.idle_add(self._exclusive_window_acquired, acquired)
+
+    def _exclusive_window_acquired(self, acquired):
+        """Resume the queued terminal scripts once the runner window is ours."""
+        self._exclusive_wait_started = False
+        if acquired:
+            self._exclusive_hold = True
+        else:
+            # Runner shutting down: proceed unserialized rather than looping.
+            self._exclusive_serialization_disabled = True
+        if not getattr(self, "_destroyed", False) and self.script_queue:
+            self._run_next_script()
+        return False
+
+    def _release_exclusive_hold(self):
+        """Hand the package managers back to the runner queue."""
+        if not getattr(self, "_exclusive_hold", False):
+            return
+        self._exclusive_hold = False
+        runner = getattr(self.parent, "_appstream_runner", None)
+        if runner is not None:
+            runner.release_exclusive_hold()
 
     def _is_error_exit_code(self, status):
         """Check if the exit status indicates an error (not success, not cancelled, not normal signal)."""

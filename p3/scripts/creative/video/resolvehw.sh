@@ -10,7 +10,7 @@
 source "$SCRIPT_DIR/libs/helpers.lib"
 _lang_
 install_nobox () {
-    ls /opt/resolve &>/dev/null || fatal "DaVinci Resolve is not currently installed in this computer."
+    ls /opt/resolve &>/dev/null || fatal "$noresolve"
     prep_tmp_noram
     wget https://github.com/EdvinNilsson/ffmpeg_encoder_plugin/releases/latest/download/ffmpeg_encoder_plugin.dvcp.bundle.zip || fatal "Failed to download plugin bundle."
 

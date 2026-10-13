@@ -52,6 +52,32 @@ fn component_policy_keys_rs(item: &serde_json::Map<String, Value>) -> Vec<String
     keys
 }
 
+// APPSTREAM_OMIT-only identities for catalog-specific sources. These namespaced
+// forms exist purely for omission matching: preference, category overrides and
+// every other id-keyed mechanism keep using the entries' own ids, so adding a
+// key here can never change what an app resolves to or how it installs.
+fn omission_keys_rs(item: &serde_json::Map<String, Value>) -> Vec<String> {
+    let mut keys = component_policy_keys_rs(item);
+    let source = item.get("source").and_then(Value::as_str).unwrap_or("");
+    if source == "snap" {
+        if let Some(name) = item.get("snap_name").and_then(Value::as_str) {
+            let name = name.trim().to_lowercase();
+            if !name.is_empty() { keys.push(format!("io.snapcraft.{}", name)); }
+        }
+        if let Some(id) = item.get("snap_id").and_then(Value::as_str) {
+            let id = id.trim().to_lowercase();
+            if !id.is_empty() { keys.push(id); }
+        }
+    }
+    if source == "homebrew" {
+        if let Some(name) = item.get("name").and_then(Value::as_str) {
+            let name = name.trim().to_lowercase();
+            if !name.is_empty() { keys.push(format!("homebrew.{}", name)); }
+        }
+    }
+    keys
+}
+
 fn reconcile_snap_common_ids_rs(components: &mut [serde_json::Map<String, Value>]) {
     // Snap Store records can advertise several common IDs. snap_catalog.py keeps
     // all of them in snap_common_ids but uses only the first one as `id`.
@@ -200,7 +226,11 @@ fn adapt_appstream_maps_values(components:Vec<serde_json::Map<String,Value>>, ca
         let (name,_)=localized(&m,"localized_names",lang,m.get("name").cloned().unwrap_or(Value::String(String::new())));let(summary,_)=localized(&m,"localized_summaries",lang,m.get("summary").cloned().unwrap_or(Value::String(String::new())));let(dev,_)=localized(&m,"localized_developers",lang,m.get("developer").cloned().unwrap_or(Value::String(String::new())));let(blocks,bloc)=localized(&m,"localized_descriptions",lang,m.get("description_blocks").cloned().unwrap_or_else(||Value::Array(vec![])));let shots=clean_screens(m.get("screenshots"));let source=m.get("source").and_then(Value::as_str).unwrap_or("native");let flat=source=="flatpak";let snap=source=="snap";let origin=m.get("origin").and_then(Value::as_str).unwrap_or("");let scope=m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("");let long=flatten_blocks(&blocks);
         let mut e=serde_json::Map::new();macro_rules! s { ($k:expr, $v:expr) => {{ let _ = e.insert($k.into(), Value::String($v.to_string())); }} }
         s!("id",id);e.insert("name".into(),name);s!("appstream_canonical_name",m.get("name").and_then(Value::as_str).unwrap_or(id));e.insert("description".into(),summary);s!("description_tag","");e.insert("description_localized".into(),Value::Bool(has_localized(&m,"localized_summaries",lang)));s!("long_description",long);e.insert("long_description_blocks".into(),blocks);s!("long_description_locale",bloc);s!("long_description_tag","");s!("long_description_format",if snap{"markdown"}else{"appstream"});e.insert("screenshots".into(),shots.clone());
-        for(k,src)in [("homepage_url","homepage"),("donate","donation"),("donate_url","donation"),("license","license")]{s!(k,m.get(src).and_then(Value::as_str).unwrap_or(""));}e.insert("developer".into(),dev);s!("icon",if brew{"brewpkg.webp"}else{m.get("icon").and_then(Value::as_str).unwrap_or("application-x-executable")});s!("category",category);s!("type",if flat{"flathub"}else if snap{"snap"}else if brew{"homebrew"}else{"native"});e.insert("package-name".into(),if flat||snap||brew{Value::String(packages.first().cloned().unwrap_or_else(||id.into()))}else{Value::Array(packages.iter().cloned().map(Value::String).collect())});s!("repo",if origin.is_empty(){"appstream"}else{origin});for(k,v)in [("revert","yes"),("reboot","no")]{s!(k,v)}for k in ["is_script","is_repo_entry","is_appstream_entry"]{e.insert(k.into(),Value::Bool(true));}e.insert("is_subcategory".into(),Value::Bool(false));s!("appstream_id",id);s!("appstream_launchable",m.get("launchable").and_then(Value::as_str).unwrap_or(""));s!("appstream_source",source);s!("appstream_origin",origin);for k in ["flatpak_remote","flatpak_scope","flatpak_installation","flatpak_ref","flatpak_arch","flatpak_branch"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}for k in ["snap_name","snap_id","snap_channel","snap_confinement"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}e.insert("overrides".into(),if flat&&scope=="system"{serde_json::json!({"skip-user":true})}else{serde_json::json!({})});for k in ["review_rating","review_count"]{e.insert(k.into(),m.get(k).cloned().unwrap_or(Value::Null));}s!("appstream_version",m.get("version").and_then(Value::as_str).unwrap_or(""));s!("repo_app_id",id);e.insert("is_new".into(),Value::Bool(false));e.insert("is_verified".into(),Value::Bool(flat&&m.get("verified").and_then(Value::as_bool).unwrap_or(false)));s!("native_distro_badge",if flat||snap||brew{""}else{native_badge});s!("appstream_badge",if flat{"distros/flathub.webp"}else if snap{"snapbadge.webp"}else if brew{"brew.png"}else{""});e.insert("has_app_page".into(),Value::Bool(brew||!long.is_empty()||shots.as_array().is_some_and(|a|!a.is_empty())));s!("path",format!("appstream://{source}/{id}"));
+        for(k,src)in [("homepage_url","homepage"),("donate","donation"),("donate_url","donation"),("license","license")]{s!(k,m.get(src).and_then(Value::as_str).unwrap_or(""));}e.insert("developer".into(),dev);s!("icon",if brew{"brewpkg.webp"}else{m.get("icon").and_then(Value::as_str).unwrap_or("application-x-executable")});s!("category",category);s!("type",if flat{"flathub"}else if snap{"snap"}else if brew{"homebrew"}else if source=="appimage"{"appimage"}else{"native"});e.insert("package-name".into(),if flat||snap||brew||source=="appimage"{Value::String(packages.first().cloned().unwrap_or_else(||id.into()))}else{Value::Array(packages.iter().cloned().map(Value::String).collect())});s!("repo",if origin.is_empty(){"appstream"}else{origin});for(k,v)in [("revert","yes"),("reboot","no")]{s!(k,v)}for k in ["is_script","is_repo_entry","is_appstream_entry"]{e.insert(k.into(),Value::Bool(true));}e.insert("is_subcategory".into(),Value::Bool(false));s!("appstream_id",id);s!("appstream_launchable",m.get("launchable").and_then(Value::as_str).unwrap_or(""));s!("appstream_source",source);s!("appstream_origin",origin);for k in ["flatpak_remote","flatpak_scope","flatpak_installation","flatpak_ref","flatpak_arch","flatpak_branch"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}for k in ["snap_name","snap_id","snap_channel","snap_confinement"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}e.insert("overrides".into(),if flat&&scope=="system"{serde_json::json!({"skip-user":true})}else{serde_json::json!({})});for k in ["review_rating","review_count"]{e.insert(k.into(),m.get(k).cloned().unwrap_or(Value::Null));}s!("appstream_version",m.get("version").and_then(Value::as_str).unwrap_or(""));s!("repo_app_id",id);e.insert("is_new".into(),Value::Bool(false));e.insert("is_verified".into(),Value::Bool(flat&&m.get("verified").and_then(Value::as_bool).unwrap_or(false)));s!("native_distro_badge",if flat||snap||brew||source=="appimage"{""}else{native_badge});s!("appstream_badge",if flat{"distros/flathub.webp"}else if snap{"snapbadge.webp"}else if brew{"brew.png"}else if source=="appimage"{"appimages.webp"}else{""});e.insert("has_app_page".into(),Value::Bool(brew||source=="appimage"||!long.is_empty()||shots.as_array().is_some_and(|a|!a.is_empty())));s!("path",format!("appstream://{source}/{id}"));
+        if source=="appimage" {
+            e.insert("appimage_links".into(),m.get("appimage_links").cloned().unwrap_or(Value::Array(vec![])));
+            e.insert("appimage_needs_resolution".into(),Value::Bool(true));
+        }
         if brew { e.insert("homebrew_install_count".into(), m.get("homebrew_install_count").cloned().unwrap_or(Value::Number(0.into()))); s!("homebrew_name",packages.first().map(String::as_str).unwrap_or("")); s!("registry_name",id); }
         if let Some(overlay)=ov.and_then(|o|o.get(&normalize_id(id))).and_then(Value::as_object){for(k,v)in overlay{e.insert(k.clone(),v.clone());}if overlay.get("purchase_options").is_some()||overlay.get("subscription_options").is_some(){e.insert("has_app_page".into(),Value::Bool(true));}}
         if let Some(alts)=m.get("_source_alternatives").and_then(Value::as_array){let mut opts=vec![Value::Object(e.clone())];for a in alts{if let Value::Object(am)=a{let nested=adapt_appstream_maps_values(vec![am.clone()],category_paths.clone(),category_config_json,lang,vec![],vec![],vec![],overlays_json,native_badge);if let Some(n)=nested.into_iter().next(){opts.push(n);}}}if opts.len()>1{e.insert("source_options".into(),Value::Array(opts));s!("recommended_source",m.get("_source_recommended").and_then(Value::as_str).unwrap_or(source));}}
@@ -237,10 +267,11 @@ fn with_source_options_rs(selected:&serde_json::Map<String,Value>,group:&[serde_
     let flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).collect();
     let native:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").collect();
     let snap:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("snap")).collect();
+    let appimage:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("appimage")).collect();
     // Verification affects which source may be chosen by the default policy, not
     // which valid sources the app page is allowed to expose. Keep every source in
     // the selector even when the currently selected Flatpak is verified.
-    let mut candidates:Vec<&serde_json::Map<String,Value>>=native.into_iter().chain(flat).chain(snap).collect();
+    let mut candidates:Vec<&serde_json::Map<String,Value>>=native.into_iter().chain(flat).chain(snap).chain(appimage).collect();
     let mut seen=std::collections::HashSet::new();candidates.retain(|m|seen.insert(source_option_key_rs(m)));if candidates.len()<2{return selected.clone()}
     let sk=source_option_key_rs(selected);let alts:Vec<Value>=candidates.into_iter().filter(|m|source_option_key_rs(m)!=sk).map(|m|Value::Object(m.clone())).collect();let mut r=selected.clone();if !alts.is_empty(){r.insert("_source_alternatives".into(),Value::Array(alts));r.insert("_source_recommended".into(),Value::String(sk));}r
 }
@@ -254,10 +285,10 @@ fn group_prefers_dev_native_rs(group:&[serde_json::Map<String,Value>],paths:&[St
     }))
 }
 fn preference_value_rs(v:&Value,host_os:&std::collections::HashSet<String>)->Option<String>{
-    if let Some(s)=v.as_str(){return matches!(s,"native"|"flatpak").then(||s.to_string())}
+    if let Some(s)=v.as_str(){return matches!(s,"native"|"flatpak"|"appimage").then(||s.to_string())}
     if let Some(m)=v.as_object(){
-        for(k,v)in m{if k!="all"&&host_os.contains(&k.to_lowercase()){if let Some(s)=v.as_str(){if matches!(s,"native"|"flatpak"){return Some(s.into())}}}}
-        return m.get("all").and_then(Value::as_str).filter(|s|matches!(*s,"native"|"flatpak")).map(str::to_string)
+        for(k,v)in m{if k!="all"&&host_os.contains(&k.to_lowercase()){if let Some(s)=v.as_str(){if matches!(s,"native"|"flatpak"|"appimage"){return Some(s.into())}}}}
+        return m.get("all").and_then(Value::as_str).filter(|s|matches!(*s,"native"|"flatpak"|"appimage")).map(str::to_string)
     }
     None
 }
@@ -275,15 +306,15 @@ fn explicit_group_preference_rs(group:&[serde_json::Map<String,Value>],prefs:&Va
     group.iter().find_map(|item|explicit_preference_rs(item,prefs,host_os))
 }
 fn preference_rs(item:&serde_json::Map<String,Value>,prefs:&Value,host_os:&std::collections::HashSet<String>)->String{
-    explicit_preference_rs(item,prefs,host_os).unwrap_or_else(||prefs.as_object().and_then(|o|o.get("default")).and_then(Value::as_str).filter(|s|matches!(*s,"native"|"flatpak")).unwrap_or("flatpak").to_string())
+    explicit_preference_rs(item,prefs,host_os).unwrap_or_else(||prefs.as_object().and_then(|o|o.get("default")).and_then(Value::as_str).filter(|s|matches!(*s,"native"|"flatpak"|"appimage")).unwrap_or("flatpak").to_string())
 }
 fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths:&[String],cfg:&Value,prefs:&Value,locks:&std::collections::HashSet<String>,host_os:&std::collections::HashSet<String>,prefer_native_host:bool,steamos:bool,suse:bool,by_name_pass:bool)->Vec<serde_json::Map<String,Value>>{
     let mut groups:std::collections::BTreeMap<String,Vec<serde_json::Map<String,Value>>>=std::collections::BTreeMap::new();let mut pass=Vec::new();
     for m in components {if m.get("source").and_then(Value::as_str)==Some("homebrew"){pass.push(m);continue}let(id,name)=component_identity_rs(&m);let key=if by_name_pass{if name.is_empty(){None}else{Some(name)}}else if !id.is_empty(){Some(format!("id:{id}"))}else if !name.is_empty(){Some(format!("name:{name}"))}else{None};if let Some(k)=key{groups.entry(k).or_default().push(m)}else{pass.push(m)}}
     let mut out=pass;
     for (_,raw) in groups {let mut group=if by_name_pass{expand_source_group_rs(&raw)}else{raw};if let Some(l)=locked_system_flatpak_rs(&group,locks){out.push(l);continue}
-        let mut flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).cloned().collect();let natives:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").cloned().collect();let snaps:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("snap")).cloned().collect();flat.sort_by_key(|m|(m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("")!="user",m.get("flatpak_installation").and_then(Value::as_str).unwrap_or("").to_string()));group=natives.iter().cloned().chain(flat.iter().cloned()).chain(snaps.iter().cloned()).collect();
-        if natives.is_empty()&&flat.len()>1{out.push(with_source_options_rs(&flat[0],&group));continue}let sources:std::collections::HashSet<_>=group.iter().map(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")).collect();if sources.len()<2{out.extend(group);continue}
+        let mut flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).cloned().collect();let natives:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").cloned().collect();let snaps:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("snap")).cloned().collect();let appimages:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("appimage")).cloned().collect();flat.sort_by_key(|m|(m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("")!="user",m.get("flatpak_installation").and_then(Value::as_str).unwrap_or("").to_string()));group=natives.iter().cloned().chain(flat.iter().cloned()).chain(snaps.iter().cloned()).chain(appimages.iter().cloned()).collect();
+        if natives.is_empty()&&flat.len()>1{out.push(with_source_options_rs(&flat[0],&group));continue}let sources:std::collections::HashSet<_>=group.iter().map(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")).collect();if sources.len()<2{if !appimages.is_empty(){out.push(group[0].clone())}else{out.extend(group)}continue}
         if let Some(pref)=explicit_group_preference_rs(&group,prefs,host_os){let mut selected:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")==pref).cloned().collect();if !selected.is_empty(){if pref=="flatpak"{selected.truncate(1)}out.extend(selected.iter().map(|m|with_source_options_rs(m,&group)));continue}}
         // Whole-category native policy is a default-source decision and outranks
         // Flatpak verification. Explicit per-app preferences above still win, and
@@ -291,7 +322,7 @@ fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths
         let category_prefers_native=!natives.is_empty()&&group_prefers_dev_native_rs(&group,paths,cfg,steamos,suse);
         if category_prefers_native{out.extend(natives.iter().map(|m|with_source_options_rs(m,&group)));continue}
         if let Some(v)=flat.iter().find(|m|is_verified_flatpak_rs(m)){out.push(with_source_options_rs(v,&group));continue}if prefer_native_host&&!natives.is_empty(){out.extend(natives.iter().map(|m|with_source_options_rs(m,&group)));continue}
-        let pref=preference_rs(&group[0],prefs,host_os);let mut selected:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")==pref).cloned().collect();if selected.is_empty(){selected=natives.clone()}if selected.is_empty(){selected=flat.clone()}if selected.is_empty(){selected=snaps.clone()}if selected.first().and_then(|m|m.get("source")).and_then(Value::as_str)==Some("flatpak"){selected.truncate(1)}if selected.first().and_then(|m|m.get("source")).and_then(Value::as_str)==Some("snap"){selected.truncate(1)}out.extend(selected.iter().map(|m|with_source_options_rs(m,&group)));
+        let pref=preference_rs(&group[0],prefs,host_os);let mut selected:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")==pref).cloned().collect();if selected.is_empty(){selected=natives.clone()}if selected.is_empty(){selected=flat.clone()}if selected.is_empty(){selected=snaps.clone()}if selected.is_empty(){selected=appimages.clone()}if selected.first().and_then(|m|m.get("source")).and_then(Value::as_str)==Some("flatpak"){selected.truncate(1)}if selected.first().and_then(|m|m.get("source")).and_then(Value::as_str)==Some("snap"){selected.truncate(1)}out.extend(selected.iter().map(|m|with_source_options_rs(m,&group)));
     } out
 }
 
@@ -833,6 +864,20 @@ impl AppStreamGeneration {
         let count = maps.len(); self.entries.extend(maps); Ok(count)
     }
 
+    fn add_appimage(&mut self, _py: Python<'_>, components: &Bound<'_, PyList>) -> PyResult<usize> {
+        let mut maps = Vec::with_capacity(components.len());
+        for obj in components.iter() {
+            if let Value::Object(map) = py_to_json(&obj)? {
+                if map.get("source").and_then(Value::as_str) == Some("appimage") {
+                    maps.push(map);
+                }
+            }
+        }
+        let count = maps.len();
+        self.entries.extend(maps);
+        Ok(count)
+    }
+
     fn add_snap(&mut self, _py: Python<'_>, components: &Bound<'_, PyList>) -> PyResult<usize> {
         let mut maps = Vec::with_capacity(components.len());
         for obj in components.iter() {
@@ -1031,6 +1076,17 @@ impl AppStreamGeneration {
                 } else {
                     reconciled.push(map);
                 }
+            }
+
+            // A transient feed failure must not publish an empty AppImage source.
+            // The feed loader rejects empty snapshots, so absence here indicates
+            // an unavailable source rather than an intentional catalog deletion.
+            if reuse_previous
+                && !reconciled.iter().any(|entry| entry.get("source").and_then(Value::as_str) == Some("appimage"))
+            {
+                reconciled.extend(self.previous.iter().filter(|entry| {
+                    entry.get("source").and_then(Value::as_str) == Some("appimage")
+                }).cloned());
             }
 
             reconciled.sort_by(|a, b| {
@@ -1263,7 +1319,7 @@ pub(crate) fn build_appstream_catalog(
     // the same AppStream ID as the rest of the catalog while retaining snap_name.
     reconcile_snap_common_ids_rs(&mut vals);
     apply_snap_identity_overlays_rs(&mut vals,&overlay_map);
-    vals.retain(|m| (m.get("source").and_then(Value::as_str)!=Some("homebrew") || cfg.get("homebrew_enabled").and_then(Value::as_bool).unwrap_or(false)) && !component_policy_keys_rs(m).iter().any(|k|omit.contains(k)));
+    vals.retain(|m| (m.get("source").and_then(Value::as_str)!=Some("homebrew") || cfg.get("homebrew_enabled").and_then(Value::as_bool).unwrap_or(false)) && !omission_keys_rs(m).iter().any(|k|omit.contains(k)));
     let prefs:Value=serde_json::from_str(source_preferences_json).unwrap_or_else(|_|serde_json::json!({"default":"flatpak","apps":{}}));
     let locks=system_flatpak_locks.into_iter().map(|s|normalize_id(&s)).collect();
     let host_os=host_os_keys.into_iter().map(|s|s.to_lowercase()).collect();
@@ -1563,6 +1619,64 @@ impl AppStreamCatalog {
         }
     }
 
+    fn appimage_entries(&self, py: Python<'_>) -> PyResult<Vec<Py<PyAny>>> {
+        let indices: Vec<usize> = self.entries.iter().enumerate()
+            .filter_map(|(i, entry)| (entry.source == "appimage").then_some(i)).collect();
+        self.materialize_indices(py, &indices)
+    }
+
+    fn appimage_entries_for_category(&self, py: Python<'_>, relative: &str, root: &str) -> PyResult<Vec<Py<PyAny>>> {
+        // Materialize only the entries under one relative category prefix; the
+        // root level materializes the whole pool, so callers should prefer the
+        // subcategory accessor for intermediate levels. Categories are stored
+        // as absolute paths (the by_category convention) and are relativized
+        // against the scripts root here so the tree is machine-independent.
+        let relative = relative.trim_matches('/');
+        let root = root.trim_matches('/');
+        let mut indices = Vec::new();
+        for (i, entry) in self.entries.iter().enumerate() {
+            if entry.source != "appimage" { continue; }
+            let cat = entry.category.trim_matches('/');
+            let rel_cat = if root.is_empty() { cat } else { cat.strip_prefix(&format!("{root}/")).unwrap_or(cat) };
+            let within = relative.is_empty()
+                || rel_cat == relative
+                || rel_cat.strip_prefix(&format!("{relative}/")).is_some();
+            if within { indices.push(i); }
+        }
+        self.materialize_indices(py, &indices)
+    }
+
+    fn appimage_subcategory_paths(&self, relative: &str, root: &str) -> Vec<String> {
+        // Child category paths under one relative prefix, computed from the
+        // compact entries: no msgpack decode and no Python conversion, so the
+        // sidebar can rebuild the tree cheaply on every refresh.
+        let relative = relative.trim_matches('/');
+        let root = root.trim_matches('/');
+        let mut children: std::collections::BTreeSet<String> = std::collections::BTreeSet::new();
+        for entry in &self.entries {
+            if entry.source != "appimage" { continue; }
+            let cat = entry.category.trim_matches('/');
+            let rel_cat = if root.is_empty() { cat } else { cat.strip_prefix(&format!("{root}/")).unwrap_or(cat) };
+            let rest = if relative.is_empty() {
+                Some(rel_cat)
+            } else {
+                rel_cat.strip_prefix(&format!("{relative}/"))
+            };
+            if let Some(rest) = rest {
+                if let Some(first) = rest.split('/').next() {
+                    if !first.is_empty() {
+                        children.insert(if relative.is_empty() {
+                            first.to_string()
+                        } else {
+                            format!("{relative}/{first}")
+                        });
+                    }
+                }
+            }
+        }
+        children.into_iter().collect()
+    }
+
     fn category_entry_count(&self, category: &str) -> usize {
         self.by_category.get(category.trim_matches('/')).map_or(0, Vec::len)
     }
@@ -1581,7 +1695,9 @@ impl AppStreamCatalog {
         }
         if let Some(indices) = self.by_category.get(category.trim_matches('/')) {
             for &index in indices {
-                if let Some(value) = self.entries.get(index).and_then(RuntimeAppStreamEntry::decode) { values.push(value); }
+                if let Some(value) = self.entries.get(index).and_then(RuntimeAppStreamEntry::decode) {
+                    if value.get("appstream_source").and_then(Value::as_str) != Some("appimage") { values.push(value); }
+                }
             }
         }
         rank_browse_values(&mut values, &known_popular);
@@ -1793,7 +1909,7 @@ pub(crate) fn build_appstream_catalog_index(
     // the same AppStream ID as the rest of the catalog while retaining snap_name.
     reconcile_snap_common_ids_rs(&mut vals);
     apply_snap_identity_overlays_rs(&mut vals,&overlay_map);
-    vals.retain(|m| (m.get("source").and_then(Value::as_str)!=Some("homebrew") || cfg.get("homebrew_enabled").and_then(Value::as_bool).unwrap_or(false)) && !component_policy_keys_rs(m).iter().any(|k|omit.contains(k)));
+    vals.retain(|m| (m.get("source").and_then(Value::as_str)!=Some("homebrew") || cfg.get("homebrew_enabled").and_then(Value::as_bool).unwrap_or(false)) && !omission_keys_rs(m).iter().any(|k|omit.contains(k)));
     let prefs:Value=serde_json::from_str(source_preferences_json).unwrap_or_else(|_|serde_json::json!({"default":"flatpak","apps":{}}));
     let locks=system_flatpak_locks.into_iter().map(|s|normalize_id(&s)).collect();
     let host_os=host_os_keys.into_iter().map(|s|s.to_lowercase()).collect();
@@ -1847,6 +1963,100 @@ pub(crate) fn source_metadata_fingerprint(paths: Vec<String>) -> String {
     }
 
     format!("{:x}", hasher.finalize())
+}
+
+#[cfg(test)]
+mod appimage_source_tests {
+    use super::*;
+
+    fn component(id: &str, name: &str, source: &str, categories: &[&str]) -> serde_json::Map<String, Value> {
+        serde_json::json!({
+            "id": id, "name": name, "summary": format!("{} summary", name),
+            "packages": [name], "categories": categories, "source": source
+        })
+        .as_object()
+        .unwrap()
+        .clone()
+    }
+
+    fn collapse(entries: Vec<serde_json::Map<String, Value>>, prefs: Value) -> Vec<serde_json::Map<String, Value>> {
+        let paths: Vec<String> = vec!["/scripts/creative/audio".into(), "/scripts/devs".into()];
+        let cfg = serde_json::json!({"main": {"Game": ("game",)}, "additional": {}});
+        let locks: std::collections::HashSet<String> = Default::default();
+        let host_os: std::collections::HashSet<String> = Default::default();
+        let first = collapse_source_groups_rs(entries, &paths, &cfg, &prefs, &locks, &host_os, false, false, false, false);
+        collapse_source_groups_rs(first, &paths, &cfg, &prefs, &locks, &host_os, false, false, false, true)
+    }
+
+    #[test]
+    fn appimage_source_preference_is_honored() {
+        let entries = vec![
+            component("org.distro.App", "App", "native", &["Utility"]),
+            component("appimage.community.app", "App", "appimage", &["Utility"]),
+        ];
+        // Explicit per-app preference for the AppImage source.
+        let prefs = serde_json::json!({"default": "flatpak", "apps": {"app": {"all": "appimage"}}});
+        let selected = collapse(entries.clone(), prefs);
+        assert_eq!(selected.len(), 1);
+        assert_eq!(selected[0]["source"], "appimage");
+        // The unselected source stays reachable through source options.
+        assert!(selected[0].get("_source_alternatives").is_some());
+    }
+
+    #[test]
+    fn appimage_only_groups_pass_through_without_options() {
+        let entries = vec![
+            component("appimage.community.app", "App", "appimage", &["Utility"]),
+        ];
+        let prefs = serde_json::json!({"default": "flatpak", "apps": {}});
+        let selected = collapse(entries, prefs);
+        assert_eq!(selected.len(), 1);
+        assert_eq!(selected[0]["source"], "appimage");
+        assert!(selected[0].get("_source_alternatives").is_none());
+    }
+
+    #[test]
+    fn appimage_preference_value_accepts_the_source() {
+        let host_os: std::collections::HashSet<String> = Default::default();
+        assert_eq!(preference_value_rs(&serde_json::json!("appimage"), &host_os), Some("appimage".into()));
+        assert_eq!(preference_value_rs(&serde_json::json!({"all": "appimage"}), &host_os), Some("appimage".into()));
+        assert_eq!(preference_value_rs(&serde_json::json!("bogus"), &host_os), None);
+    }
+}
+
+#[cfg(test)]
+mod omission_key_tests {
+    use super::*;
+
+    #[test]
+    fn snap_entries_answer_to_io_snapcraft_keys() {
+        let item = serde_json::json!({
+            "id": "io.snapcraft.firefox", "name": "Firefox", "source": "snap",
+            "snap_name": "firefox", "snap_id": "bugPu8dGvZXa3p7X", "packages": ["firefox"]
+        }).as_object().unwrap().clone();
+        let keys = omission_keys_rs(&item);
+        assert!(keys.contains(&"io.snapcraft.firefox".to_string()), "{:?}", keys);
+        assert!(keys.contains(&"firefox".to_string()));
+    }
+
+    #[test]
+    fn homebrew_entries_answer_to_homebrew_formula_keys() {
+        let item = serde_json::json!({
+            "id": "homebrew:wget", "name": "wget", "source": "homebrew", "packages": ["wget"]
+        }).as_object().unwrap().clone();
+        let keys = omission_keys_rs(&item);
+        assert!(keys.contains(&"homebrew.wget".to_string()), "{:?}", keys);
+        assert!(keys.contains(&"wget".to_string()));
+    }
+
+    #[test]
+    fn native_entries_gain_no_omission_extras() {
+        let item = serde_json::json!({
+            "id": "org.distro.App", "name": "App", "source": "native", "packages": ["app"]
+        }).as_object().unwrap().clone();
+        let keys = omission_keys_rs(&item);
+        assert!(!keys.iter().any(|k| k.starts_with("io.snapcraft.") || k.starts_with("homebrew.")), "{:?}", keys);
+    }
 }
 
 #[cfg(test)]

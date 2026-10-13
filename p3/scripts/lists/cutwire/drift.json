@@ -1,0 +1,16 @@
+[
+    {
+        "name": "CutWire Drift",
+        "description": "A desktop video editor for the edits people actually make from Reels and Shorts and game clips to product demos without living in a browser or paying a subscription.",
+        "developer": "CutWire Studios",
+        "repo": "https://github.com/CutWire-Studios/Drift",
+        "category": "video",
+        "icon": "./drift_icon.webp",
+        "license": "GPLv3",
+        "descriptions": "drift-desc.json",
+        "screenshots": "drift-screens/",
+        "donate": {
+          "url": "https://cutwire.org/drift"
+        }
+    }
+]

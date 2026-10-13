@@ -148,3 +148,4 @@ libvirtdnsmasq="Byl zjištěn dnsmasq. Pokud jej používáte jako mezipaměť D
 defaultpwr="Výchozí"
 highperfpwr="AMD Vysoký výkon"
 msg306="GIMP právě běží. Zavřete jej prosím a spusťte tento patch znovu."
+noresolve="DaVinci Resolve není v tomto počítači aktuálně nainstalován. Nainstalujte jej a zkuste to znovu."

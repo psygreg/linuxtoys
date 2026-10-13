@@ -1,2 +1,0 @@
-RUSTICL_ENABLE=iris
-OCL_ICD_VENDORS=/etc/OpenCL/vendors/rusticl.icd

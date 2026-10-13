@@ -16,7 +16,7 @@ import urllib.request
 import threading
 import uuid
 
-from . import homebrew_catalog
+from . import homebrew_catalog, appimage_catalog
 from .antenna import antenna
 from .gtk_common import GLib
 from .library_loader import script_command, script_environment
@@ -97,6 +97,36 @@ class AppStreamRunner:
         self._master_fd = None
         self._stopping = threading.Event()
         self._start_lock = threading.Lock()
+        # Serialization against terminal-viewer operations: _exclusive_hold is
+        # set while a terminal operation waits for/holds the package managers,
+        # and _job_active is True while one queued job executes.
+        self._exclusive_hold = False
+        self._job_active = False
+
+    def has_active_or_queued_jobs(self):
+        """Whether a job is executing or records are waiting in the queue."""
+        with self._condition:
+            return self._job_active or bool(self._jobs)
+
+    def request_exclusive_hold(self):
+        """Block until the runner is idle with the queue held for a caller.
+
+        Intended for terminal-viewer operations, which share the package
+        managers with queued jobs: the hold prevents the next queued record
+        from starting, and the wait ends as soon as the in-flight job does.
+        Returns False when the runner is shutting down.
+        """
+        with self._condition:
+            self._exclusive_hold = True
+            while not self._stopping.is_set() and self._job_active:
+                self._condition.wait(timeout=0.5)
+            return not self._stopping.is_set()
+
+    def release_exclusive_hold(self):
+        """Resume queue processing after a request_exclusive_hold() session."""
+        with self._condition:
+            self._exclusive_hold = False
+            self._condition.notify_all()
 
     def enqueue(self, scripts):
         if not scripts:
@@ -150,6 +180,38 @@ class AppStreamRunner:
         payload = dict(info)
         payload["is_flatpak_extension"] = True
         return self.enqueue([payload])
+
+    def enqueue_apt_refresh(self, on_complete=None):
+        """Queue one `apt-get update` through the persistent PTY.
+
+        Debian-family AppStream (DEP-11) metadata is fetched by the apt hook in
+        the 'appstream' package, so fresh systems only gain a native catalog
+        after an apt update ran at least once. Running it here gives the user
+        the same sudo/password flow as ordinary installations, and `on_complete`
+        lets the caller rebuild the catalog once the metadata exists.
+        """
+        label = "Refresh package metadata"
+        self._ensure_started()
+        record = {
+            "id": uuid.uuid4().hex,
+            "info": {
+                "name": label,
+                "icon": "view-refresh-symbolic",
+                "is_apt_refresh": True,
+            },
+            "name": label,
+            "icon": "view-refresh-symbolic",
+            "status": "queued",
+            "exit_code": None,
+            "action": "apt_refresh",
+            "on_complete": on_complete,
+        }
+        with self._condition:
+            self._records.append(record)
+            self._jobs.append(record)
+            self._condition.notify()
+        self._notify_changed()
+        return record["id"]
 
     def enqueue_extension_removal(self, info, record_id=None):
         """Queue removal of a Flatpak extension without Action Registry state."""
@@ -421,7 +483,10 @@ class AppStreamRunner:
     def _worker(self):
         while not self._stopping.is_set():
             with self._condition:
-                while not self._jobs and not self._stopping.is_set():
+                while (
+                    (not self._jobs or self._exclusive_hold)
+                    and not self._stopping.is_set()
+                ):
                     self._condition.wait(timeout=0.5)
                 if self._stopping.is_set():
                     break
@@ -431,6 +496,9 @@ class AppStreamRunner:
                 # This transition happens while holding the same lock used by
                 # cancel(), so a job can never be cancelled after it has started.
                 record["status"] = "running"
+                self._job_active = True
+                self._condition.notify_all()
+
             self._notify_changed()
 
             exit_code = None
@@ -444,6 +512,8 @@ class AppStreamRunner:
                     exit_code, failure_output = self._run_aur_removal_job(record["remove_info"])
                 elif record.get("action") == "remove":
                     exit_code = self._run_removal_job(record["remove_info"])
+                elif record["info"].get("appstream_source") == "appimage":
+                    exit_code = self._run_appimage_job(record["info"])
                 elif record["info"].get("appstream_source") == "homebrew":
                     exit_code = self._run_homebrew_job(record["info"])
                 elif aur_job:
@@ -456,6 +526,8 @@ class AppStreamRunner:
                     exit_code = self._run_flatpak_extension(record["info"], remove=False)
                 elif record["info"].get("is_local_package"):
                     exit_code = self._run_local_package_job(record["info"])
+                elif record.get("action") == "apt_refresh":
+                    exit_code = self._run_apt_refresh_job()
                 else:
                     exit_code = self._run_job(record["info"])
 
@@ -495,11 +567,17 @@ class AppStreamRunner:
                     record["exit_code"] = -1
                     record["status"] = "failed"
                 print(f"AppStream background runner failed: {exc}", file=os.sys.stderr)
+            with self._condition:
+                self._job_active = False
+                self._condition.notify_all()
             self._notify_changed()
             if exit_code == 0:
                 refresh = getattr(self.parent, "_refresh_installed_packages_async", None)
                 if refresh is not None:
                     GLib.idle_add(refresh, True)
+                on_complete = record.get("on_complete")
+                if callable(on_complete):
+                    GLib.idle_add(on_complete)
 
     def _run_aur_job(self, script_info):
         """Run an AUR install through normal pkg_install/registry machinery and capture PTY output."""
@@ -914,6 +992,35 @@ class AppStreamRunner:
             argv += ["install", "-y", remote, ref]
         return self._dispatch_argv(argv)
 
+    def _run_apt_refresh_job(self):
+        """Refresh APT metadata using the standard LinuxToys sudo_ helper."""
+        if self._process is None or self._process.poll() is not None:
+            self._close_pty()
+            self._spawn_shell()
+        if shutil.which("apt-get") is None:
+            return 127
+
+        # Run through library_loader so the LinuxToys shell library is sourced.
+        # Direct sudo in the hidden PTY can wait forever for a password.
+        directory = "/tmp/linuxtoys/appstream-overrides"
+        os.makedirs(directory, mode=0o700, exist_ok=True)
+        fd, path = tempfile.mkstemp(
+            prefix="apt-refresh-", suffix=".sh", dir=directory, text=True
+        )
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                handle.write("#!/usr/bin/env bash\n")
+                handle.write("sudo_ apt-get update\n")
+            os.chmod(path, 0o700)
+            env = script_environment({"name": "Refresh package metadata"}, os.environ.copy())
+            env.pop("LINUXTOYS_RUNNER_STATE", None)
+            return self._dispatch_path(path, env)
+        finally:
+            try:
+                os.remove(path)
+            except OSError:
+                pass
+
     def _dispatch_argv(self, argv):
         token = uuid.uuid4().hex
         marker = f"__LINUXTOYS_APPSTREAM_DONE_{token}__"
@@ -959,6 +1066,24 @@ class AppStreamRunner:
                 os.remove(script_path)
             except OSError:
                 pass
+
+    def _run_appimage_job(self, script_info):
+        """Resolve and download an AppImage only when its queue job starts."""
+        try:
+            with appimage_catalog.download_for_install(script_info) as (path, release):
+                payload = dict(script_info)
+                payload["path"] = path
+                payload["appimage_release"] = release
+                return self._run_local_package_job({
+                    **payload,
+                    "is_local_package": True,
+                    "local_package_path": path,
+                    "local_package_kind": "appimage",
+                    "local_package_signature": appimage_catalog.file_signature(path),
+                })
+        except (OSError, ValueError, RuntimeError) as exc:
+            print(f"AppImage installation failed: {exc}", file=os.sys.stderr)
+            return 1
 
     def _run_homebrew_job(self, script_info):
         payload = homebrew_catalog.materialize_install(script_info)

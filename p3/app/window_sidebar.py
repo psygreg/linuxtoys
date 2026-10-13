@@ -11,6 +11,7 @@ restores itself afterwards.
 """
 
 import os
+import logging
 
 from .gtk_common import GLib, Gtk
 from . import get_icon_path, gui_rs, homebrew_catalog, parser
@@ -42,6 +43,8 @@ class SidebarCtl:
         path = str(info.get("path", "") or "")
         if path and "://" not in path:
             return os.path.abspath(path)
+        if info.get("is_appimage_category"):
+            return "synthetic:appimages:" + str(info.get("appimage_relative_category") or "root")
         if info.get("is_homebrew_category"):
             return "synthetic:homebrew"
         if info.get("is_aur_category"):
@@ -133,12 +136,22 @@ class SidebarCtl:
             self._append_sidebar_entry(
                 self._homebrew_category_info(), 0, entries, used_keys, ()
             )
+        self._append_sidebar_entry(
+            self._appimage_category_info(), 0, entries, used_keys, ()
+        )
         return entries
 
     def _sidebar_subcategories(self, category, depth):
         """File-backed subcategories eligible for rows; [] past the depth cap."""
         if depth >= SIDEBAR_MAX_DEPTH:
             return []
+        if category.get("is_appimage_category"):
+            try:
+                return [item for item in self._appimage_category_items(category)
+                        if item.get("is_appimage_category") and item.get("is_subcategory")]
+            except Exception:
+                logging.exception("Unable to populate AppImages sidebar subcategories")
+                return []
         path = str(category.get("path", "") or "")
         if not path or "://" in path:
             return []  # synthetic categories have no file-backed children
@@ -429,6 +442,9 @@ class SidebarCtl:
         if homebrew_catalog.enabled():
             info = self._homebrew_category_info()
             names[self._sidebar_entry_key(info)] = str(info.get("name", "") or "")
+        absorb(self._appimage_category_info(), 0,
+               self._sidebar_entry_key(self._appimage_category_info())
+               in self._sidebar_expanded_keys)
         return names
 
     @classmethod

@@ -146,3 +146,4 @@ libvirtdnsmasq="È stato rilevato dnsmasq. Se lo utilizzi come cache DNS, libvir
 defaultpwr="Predefinito"
 highperfpwr="AMD Prestazioni elevate"
 msg306="GIMP è attualmente in esecuzione. Chiudilo ed esegui di nuovo questa patch."
+noresolve="DaVinci Resolve non è attualmente installato su questo computer. Installalo e riprova."

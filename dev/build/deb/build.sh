@@ -112,7 +112,7 @@ Build-Depends:
  libgtk-3-dev,
  patchelf,
 Standards-Version: 4.6.2
-Homepage: https://git.linux.toys/psygreg/linuxtoys
+Homepage: https://linux.toys
 
 Package: linuxtoys
 Architecture: amd64

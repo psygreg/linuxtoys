@@ -148,3 +148,4 @@ libvirtdnsmasq="dnsmasq havaittiin. Jos käytät sitä DNS-välimuistina, libvir
 defaultpwr="Oletus"
 highperfpwr="AMD Korkea suorituskyky"
 msg306="GIMP on käynnissä. Sulje se ja suorita tämä korjaus uudelleen."
+noresolve="DaVinci Resolvea ei ole tällä hetkellä asennettu tähän tietokoneeseen. Asenna se ja yritä uudelleen."

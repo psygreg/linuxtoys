@@ -148,3 +148,4 @@ libvirtdnsmasq="Aptiktas dnsmasq. Jei naudojate jį kaip DNS podėlį, libvirt g
 defaultpwr="Numatytasis"
 highperfpwr="AMD Didelis našumas"
 msg306="Šiuo metu veikia GIMP. Uždarykite jį ir vėl paleiskite šį pataisymą."
+noresolve="DaVinci Resolve šiuo metu neįdiegta šiame kompiuteryje. Įdiekite ją ir bandykite dar kartą."

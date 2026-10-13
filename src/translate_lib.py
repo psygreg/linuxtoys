@@ -11,289 +11,175 @@ LANG_DIR = "../p3/libs/lang"
 # Translations for all messages across all supported languages
 TRANSLATIONS = {
     'am.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq ተገኝቷል። እንደ DNS መሸጎጫ እየተጠቀሙበት ከሆነ፣ libvirt ችግር ሊፈጥር እና ግንኙነትዎ የDNS ጥያቄዎችን መፍታት እንዳይችል ሊያደርግ ይችላል። ለማንኛውም ይቀጥሉ?"',
-        'defaultpwr': 'defaultpwr="ነባሪ"',
-        'highperfpwr': 'highperfpwr="AMD ከፍተኛ አፈጻጸም"'
+        'noresolve': 'noresolve="DaVinci Resolve በዚህ ኮምፒውተር ላይ አልተጫነም። ይጫኑትና እንደገና ይሞክሩ።"'
     },
     'ar.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="تم اكتشاف dnsmasq. إذا كنت تستخدمه كذاكرة تخزين مؤقت لـ DNS، فقد يتسبب libvirt في حدوث مشكلات ويجعل اتصالك غير قادر على حل طلبات DNS. هل تريد المتابعة على أي حال؟"',
-        'defaultpwr': 'defaultpwr="افتراضي"',
-        'highperfpwr': 'highperfpwr="AMD أداء عالٍ"'
+        'noresolve': 'noresolve="برنامج DaVinci Resolve غير مثبت حاليًا على هذا الكمبيوتر. ثبّته وحاول مرة أخرى."'
     },
     'az.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq aşkarlandı. Əgər onu DNS keşi kimi istifadə edirsinizsə, libvirt problemlər yarada və bağlantınızın DNS sorğularını həll etməsinə mane ola bilər. Yenə də davam edilsin?"',
-        'defaultpwr': 'defaultpwr="Standart"',
-        'highperfpwr': 'highperfpwr="AMD Yüksək Performans"'
+        'noresolve': 'noresolve="DaVinci Resolve hazırda bu kompüterdə quraşdırılmayıb. Onu quraşdırın və yenidən cəhd edin."'
     },
     'bg.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Открит е dnsmasq. Ако го използвате като DNS кеш, libvirt може да причини проблеми и да попречи на връзката ви да разрешава DNS заявки. Искате ли да продължите въпреки това?"',
-        'defaultpwr': 'defaultpwr="По подразбиране"',
-        'highperfpwr': 'highperfpwr="AMD Висока производителност"'
+        'noresolve': 'noresolve="DaVinci Resolve в момента не е инсталиран на този компютър. Инсталирайте го и опитайте отново."'
     },
     'bn.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq শনাক্ত করা হয়েছে। আপনি যদি এটিকে DNS ক্যাশ হিসেবে ব্যবহার করেন, তাহলে libvirt সমস্যা সৃষ্টি করতে পারে এবং আপনার সংযোগকে DNS অনুরোধ সমাধান করতে অক্ষম করে দিতে পারে। তবুও এগিয়ে যাবেন?"',
-        'defaultpwr': 'defaultpwr="ডিফল্ট"',
-        'highperfpwr': 'highperfpwr="AMD উচ্চ কর্মক্ষমতা"'
+        'noresolve': 'noresolve="DaVinci Resolve বর্তমানে এই কম্পিউটারে ইনস্টল করা নেই। এটি ইনস্টল করে আবার চেষ্টা করুন।"'
     },
     'bs.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Otkriven je dnsmasq. Ako ga koristite kao DNS keš, libvirt može uzrokovati probleme i onemogućiti vašoj vezi razrješavanje DNS zahtjeva. Ipak nastaviti?"',
-        'defaultpwr': 'defaultpwr="Zadano"',
-        'highperfpwr': 'highperfpwr="AMD Visoke performanse"'
+        'noresolve': 'noresolve="DaVinci Resolve trenutno nije instaliran na ovom računaru. Instalirajte ga i pokušajte ponovo."'
     },
     'cs.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Byl zjištěn dnsmasq. Pokud jej používáte jako mezipaměť DNS, může libvirt způsobit problémy a znemožnit vašemu připojení překlad DNS požadavků. Přesto pokračovat?"',
-        'defaultpwr': 'defaultpwr="Výchozí"',
-        'highperfpwr': 'highperfpwr="AMD Vysoký výkon"'
+        'noresolve': 'noresolve="DaVinci Resolve není v tomto počítači aktuálně nainstalován. Nainstalujte jej a zkuste to znovu."'
     },
     'da.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq blev fundet. Hvis du bruger den som DNS-cache, kan libvirt forårsage problemer og gøre din forbindelse ude af stand til at opløse DNS-forespørgsler. Fortsæt alligevel?"',
-        'defaultpwr': 'defaultpwr="Standard"',
-        'highperfpwr': 'highperfpwr="AMD Høj ydeevne"'
+        'noresolve': 'noresolve="DaVinci Resolve er ikke installeret på denne computer. Installer det, og prøv igen."'
     },
     'de.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq wurde erkannt. Wenn Sie es als DNS-Cache verwenden, kann libvirt Probleme verursachen und dazu führen, dass Ihre Verbindung keine DNS-Anfragen mehr auflösen kann. Trotzdem fortfahren?"',
-        'defaultpwr': 'defaultpwr="Standard"',
-        'highperfpwr': 'highperfpwr="AMD Hohe Leistung"'
+        'noresolve': 'noresolve="DaVinci Resolve ist derzeit nicht auf diesem Computer installiert. Installieren Sie es und versuchen Sie es erneut."'
     },
     'el.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Εντοπίστηκε το dnsmasq. Εάν το χρησιμοποιείτε ως προσωρινή μνήμη DNS, το libvirt ενδέχεται να προκαλέσει προβλήματα και να εμποδίσει τη σύνδεσή σας να επιλύει αιτήματα DNS. Συνέχεια ούτως ή άλλως;"',
-        'defaultpwr': 'defaultpwr="Προεπιλογή"',
-        'highperfpwr': 'highperfpwr="AMD Υψηλή απόδοση"'
+        'noresolve': 'noresolve="Το DaVinci Resolve δεν είναι εγκατεστημένο αυτή τη στιγμή σε αυτόν τον υπολογιστή. Εγκαταστήστε το και δοκιμάστε ξανά."'
     },
     'es.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Se detectó dnsmasq. Si lo utiliza como caché de DNS, libvirt puede causar problemas e impedir que su conexión resuelva solicitudes DNS. ¿Continuar de todos modos?"',
-        'defaultpwr': 'defaultpwr="Predeterminado"',
-        'highperfpwr': 'highperfpwr="AMD Alto rendimiento"'
+        'noresolve': 'noresolve="DaVinci Resolve no está instalado actualmente en este equipo. Instálalo e inténtalo de nuevo."'
     },
     'et.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Tuvastati dnsmasq. Kui kasutate seda DNS-i vahemäluna, võib libvirt põhjustada probleeme ja takistada teie ühendusel DNS-päringute lahendamist. Kas jätkata ikkagi?"',
-        'defaultpwr': 'defaultpwr="Vaikimisi"',
-        'highperfpwr': 'highperfpwr="AMD Suur jõudlus"'
+        'noresolve': 'noresolve="DaVinci Resolve pole praegu sellesse arvutisse paigaldatud. Paigaldage see ja proovige uuesti."'
     },
     'fa.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq شناسایی شد. اگر از آن به‌عنوان حافظه نهان DNS استفاده می‌کنید، libvirt ممکن است باعث بروز مشکل شود و اتصال شما را از حل درخواست‌های DNS بازدارد. با این حال ادامه داده شود؟"',
-        'defaultpwr': 'defaultpwr="پیش‌فرض"',
-        'highperfpwr': 'highperfpwr="AMD عملکرد بالا"'
+        'noresolve': 'noresolve="DaVinci Resolve در حال حاضر روی این رایانه نصب نیست. آن را نصب کنید و دوباره تلاش کنید."'
     },
     'fi.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq havaittiin. Jos käytät sitä DNS-välimuistina, libvirt voi aiheuttaa ongelmia ja estää yhteyttäsi selvittämästä DNS-pyyntöjä. Jatketaanko silti?"',
-        'defaultpwr': 'defaultpwr="Oletus"',
-        'highperfpwr': 'highperfpwr="AMD Korkea suorituskyky"'
+        'noresolve': 'noresolve="DaVinci Resolvea ei ole tällä hetkellä asennettu tähän tietokoneeseen. Asenna se ja yritä uudelleen."'
     },
     'fr.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq a été détecté. Si vous l’utilisez comme cache DNS, libvirt peut provoquer des problèmes et empêcher votre connexion de résoudre les requêtes DNS. Continuer quand même ?"',
-        'defaultpwr': 'defaultpwr="Par défaut"',
-        'highperfpwr': 'highperfpwr="AMD Hautes performances"'
+        'noresolve': 'noresolve="DaVinci Resolve n’est actuellement pas installé sur cet ordinateur. Installez-le et réessayez."'
     },
     'ga.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Braitheadh dnsmasq. Má tá tú á úsáid mar thaisce DNS, d’fhéadfadh libvirt fadhbanna a chruthú agus cosc a chur ar do cheangal iarratais DNS a réiteach. Lean ar aghaidh mar sin féin?"',
-        'defaultpwr': 'defaultpwr="Réamhshocrú"',
-        'highperfpwr': 'highperfpwr="AMD Ardfheidhmíocht"'
+        'noresolve': 'noresolve="Níl DaVinci Resolve suiteáilte ar an ríomhaire seo faoi láthair. Suiteáil é agus bain triail eile as."'
     },
     'he.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="זוהה dnsmasq. אם נעשה בו שימוש כמטמון DNS, ‏libvirt עלול לגרום לבעיות ולמנוע מהחיבור שלך לפתור בקשות DNS. להמשיך בכל זאת?"',
-        'defaultpwr': 'defaultpwr="ברירת מחדל"',
-        'highperfpwr': 'highperfpwr="AMD ביצועים גבוהים"'
+        'noresolve': 'noresolve="DaVinci Resolve אינו מותקן כרגע במחשב זה. התקינו אותו ונסו שוב."'
     },
     'hi.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq का पता चला है। यदि आप इसे DNS कैश के रूप में उपयोग कर रहे हैं, तो libvirt समस्याएँ पैदा कर सकता है और आपके कनेक्शन को DNS अनुरोध हल करने में असमर्थ बना सकता है। फिर भी आगे बढ़ें?"',
-        'defaultpwr': 'defaultpwr="डिफ़ॉल्ट"',
-        'highperfpwr': 'highperfpwr="AMD उच्च प्रदर्शन"'
+        'noresolve': 'noresolve="DaVinci Resolve वर्तमान में इस कंप्यूटर पर इंस्टॉल नहीं है। इसे इंस्टॉल करें और फिर से प्रयास करें।"'
     },
     'hr.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Otkriven je dnsmasq. Ako ga koristite kao DNS predmemoriju, libvirt može uzrokovati probleme i onemogućiti vašoj vezi razrješavanje DNS zahtjeva. Ipak nastaviti?"',
-        'defaultpwr': 'defaultpwr="Zadano"',
-        'highperfpwr': 'highperfpwr="AMD Visoke performanse"'
+        'noresolve': 'noresolve="DaVinci Resolve trenutačno nije instaliran na ovom računalu. Instalirajte ga i pokušajte ponovno."'
     },
     'hu.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="A rendszer dnsmasq szolgáltatást észlelt. Ha DNS-gyorsítótárként használja, a libvirt problémákat okozhat, és megakadályozhatja, hogy a kapcsolat DNS-kéréseket oldjon fel. Mindenképpen folytatja?"',
-        'defaultpwr': 'defaultpwr="Alapértelmezett"',
-        'highperfpwr': 'highperfpwr="AMD Nagy teljesítmény"'
+        'noresolve': 'noresolve="A DaVinci Resolve jelenleg nincs telepítve erre a számítógépre. Telepítse, majd próbálja újra."'
     },
     'hy.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Հայտնաբերվել է dnsmasq։ Եթե այն օգտագործում եք որպես DNS քեշ, libvirt-ը կարող է խնդիրներ առաջացնել և խանգարել ձեր կապին DNS հարցումները լուծել։ Շարունակե՞լ այնուամենայնիվ։"',
-        'defaultpwr': 'defaultpwr="Լռելյայն"',
-        'highperfpwr': 'highperfpwr="AMD Բարձր արտադրողականություն"'
+        'noresolve': 'noresolve="DaVinci Resolve-ը ներկայումս տեղադրված չէ այս համակարգչում։ Տեղադրեք այն և կրկին փորձեք։"'
     },
     'id.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq terdeteksi. Jika Anda menggunakannya sebagai cache DNS, libvirt dapat menyebabkan masalah dan membuat koneksi Anda tidak dapat meresolusi permintaan DNS. Tetap lanjutkan?"',
-        'defaultpwr': 'defaultpwr="Bawaan"',
-        'highperfpwr': 'highperfpwr="AMD Performa Tinggi"'
+        'noresolve': 'noresolve="DaVinci Resolve saat ini belum terinstal di komputer ini. Instal terlebih dahulu, lalu coba lagi."'
     },
     'is.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq fannst. Ef þú notar það sem DNS-skyndiminni getur libvirt valdið vandamálum og komið í veg fyrir að tengingin þín geti leyst DNS-beiðnir. Halda samt áfram?"',
-        'defaultpwr': 'defaultpwr="Sjálfgefið"',
-        'highperfpwr': 'highperfpwr="AMD Mikil afköst"'
+        'noresolve': 'noresolve="DaVinci Resolve er ekki uppsett á þessari tölvu eins og er. Settu það upp og reyndu aftur."'
     },
     'it.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="È stato rilevato dnsmasq. Se lo utilizzi come cache DNS, libvirt potrebbe causare problemi e impedire alla tua connessione di risolvere le richieste DNS. Procedere comunque?"',
-        'defaultpwr': 'defaultpwr="Predefinito"',
-        'highperfpwr': 'highperfpwr="AMD Prestazioni elevate"'
+        'noresolve': 'noresolve="DaVinci Resolve non è attualmente installato su questo computer. Installalo e riprova."'
     },
     'ja.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq が検出されました。DNS キャッシュとして使用している場合、libvirt が問題を引き起こし、接続で DNS リクエストを解決できなくなる可能性があります。それでも続行しますか？"',
-        'defaultpwr': 'defaultpwr="デフォルト"',
-        'highperfpwr': 'highperfpwr="AMD 高パフォーマンス"'
+        'noresolve': 'noresolve="DaVinci Resolve は現在このコンピューターにインストールされていません。インストールしてから再試行してください。"'
     },
     'ka.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="აღმოჩენილია dnsmasq. თუ მას DNS ქეშად იყენებთ, libvirt-მა შეიძლება პრობლემები გამოიწვიოს და თქვენს კავშირს DNS მოთხოვნების ამოხსნა აღარ შეეძლოს. მაინც გაგრძელდეს?"',
-        'defaultpwr': 'defaultpwr="ნაგულისხმევი"',
-        'highperfpwr': 'highperfpwr="AMD მაღალი წარმადობა"'
+        'noresolve': 'noresolve="DaVinci Resolve ამჟამად ამ კომპიუტერზე არ არის დაინსტალირებული. დააინსტალირეთ და ხელახლა სცადეთ."'
     },
     'km.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="បានរកឃើញ dnsmasq។ ប្រសិនបើអ្នកកំពុងប្រើវាជាឃ្លាំងសម្ងាត់ DNS នោះ libvirt អាចបង្កបញ្ហា និងធ្វើឱ្យការតភ្ជាប់របស់អ្នកមិនអាចដោះស្រាយសំណើ DNS បាន។ តើនៅតែបន្តឬ?"',
-        'defaultpwr': 'defaultpwr="លំនាំដើម"',
-        'highperfpwr': 'highperfpwr="AMD ដំណើរការខ្ពស់"'
+        'noresolve': 'noresolve="DaVinci Resolve មិនទាន់បានដំឡើងនៅលើកុំព្យូទ័រនេះទេ។ សូមដំឡើងវា ហើយព្យាយាមម្តងទៀត។"'
     },
     'ko.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq가 감지되었습니다. DNS 캐시로 사용 중인 경우 libvirt로 인해 문제가 발생하여 연결에서 DNS 요청을 확인할 수 없게 될 수 있습니다. 그래도 계속하시겠습니까?"',
-        'defaultpwr': 'defaultpwr="기본값"',
-        'highperfpwr': 'highperfpwr="AMD 고성능"'
+        'noresolve': 'noresolve="DaVinci Resolve가 현재 이 컴퓨터에 설치되어 있지 않습니다. 설치한 후 다시 시도하세요."'
     },
     'lo.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="ກວດພົບ dnsmasq. ຖ້າທ່ານໃຊ້ມັນເປັນແຄດ DNS, libvirt ອາດເຮັດໃຫ້ເກີດບັນຫາ ແລະ ເຮັດໃຫ້ການເຊື່ອມຕໍ່ຂອງທ່ານບໍ່ສາມາດແກ້ໄຂຄຳຮ້ອງຂໍ DNS ໄດ້. ຍັງຈະສືບຕໍ່ບໍ?"',
-        'defaultpwr': 'defaultpwr="ຄ່າເລີ່ມຕົ້ນ"',
-        'highperfpwr': 'highperfpwr="AMD ປະສິດທິພາບສູງ"'
+        'noresolve': 'noresolve="DaVinci Resolve ຍັງບໍ່ໄດ້ຕິດຕັ້ງໃນຄອມພິວເຕີນີ້. ກະລຸນາຕິດຕັ້ງແລ້ວລອງໃໝ່."'
     },
     'lt.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Aptiktas dnsmasq. Jei naudojate jį kaip DNS podėlį, libvirt gali sukelti problemų ir neleisti jūsų ryšiui išspręsti DNS užklausų. Vis tiek tęsti?"',
-        'defaultpwr': 'defaultpwr="Numatytasis"',
-        'highperfpwr': 'highperfpwr="AMD Didelis našumas"'
+        'noresolve': 'noresolve="DaVinci Resolve šiuo metu neįdiegta šiame kompiuteryje. Įdiekite ją ir bandykite dar kartą."'
     },
     'lv.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Tika konstatēts dnsmasq. Ja izmantojat to kā DNS kešatmiņu, libvirt var radīt problēmas un neļaut savienojumam atrisināt DNS pieprasījumus. Vai tomēr turpināt?"',
-        'defaultpwr': 'defaultpwr="Noklusējums"',
-        'highperfpwr': 'highperfpwr="AMD Augsta veiktspēja"'
+        'noresolve': 'noresolve="DaVinci Resolve pašlaik nav instalēts šajā datorā. Instalējiet to un mēģiniet vēlreiz."'
     },
     'mn.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq илэрлээ. Хэрэв та үүнийг DNS кэш болгон ашиглаж байгаа бол libvirt асуудал үүсгэж, таны холболт DNS хүсэлтүүдийг шийдвэрлэх боломжгүй болж магадгүй. Ямартай ч үргэлжлүүлэх үү?"',
-        'defaultpwr': 'defaultpwr="Өгөгдмөл"',
-        'highperfpwr': 'highperfpwr="AMD Өндөр гүйцэтгэл"'
+        'noresolve': 'noresolve="DaVinci Resolve одоогоор энэ компьютерт суулгагдаагүй байна. Суулгаад дахин оролдоно уу."'
     },
     'ms.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq dikesan. Jika anda menggunakannya sebagai cache DNS, libvirt mungkin menyebabkan masalah dan menjadikan sambungan anda tidak dapat menyelesaikan permintaan DNS. Teruskan juga?"',
-        'defaultpwr': 'defaultpwr="Lalai"',
-        'highperfpwr': 'highperfpwr="AMD Prestasi Tinggi"'
+        'noresolve': 'noresolve="DaVinci Resolve belum dipasang pada komputer ini. Pasangkannya dan cuba lagi."'
     },
     'my.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq ကို တွေ့ရှိထားသည်။ ၎င်းကို DNS cache အဖြစ် အသုံးပြုနေပါက libvirt သည် ပြဿနာများ ဖြစ်စေနိုင်ပြီး သင့်ချိတ်ဆက်မှုမှ DNS တောင်းဆိုချက်များကို ဖြေရှင်းနိုင်ခြင်း မရှိစေနိုင်ပါသည်။ ဆက်လက်လုပ်ဆောင်မည်လား?"',
-        'defaultpwr': 'defaultpwr="မူလ"',
-        'highperfpwr': 'highperfpwr="AMD စွမ်းဆောင်ရည်မြင့်"'
+        'noresolve': 'noresolve="DaVinci Resolve ကို ဤကွန်ပျူတာတွင် လက်ရှိ ထည့်သွင်းထားခြင်း မရှိပါ။ ထည့်သွင်းပြီး ထပ်မံကြိုးစားပါ။"'
     },
     'nb.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq ble oppdaget. Hvis du bruker den som DNS-hurtigbuffer, kan libvirt forårsake problemer og gjøre at tilkoblingen din ikke kan løse DNS-forespørsler. Fortsette likevel?"',
-        'defaultpwr': 'defaultpwr="Standard"',
-        'highperfpwr': 'highperfpwr="AMD Høy ytelse"'
+        'noresolve': 'noresolve="DaVinci Resolve er ikke installert på denne datamaskinen. Installer det og prøv igjen."'
     },
     'ne.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq पत्ता लागेको छ। यदि तपाईं यसलाई DNS क्यासको रूपमा प्रयोग गर्दै हुनुहुन्छ भने, libvirt ले समस्या निम्त्याउन सक्छ र तपाईंको जडानलाई DNS अनुरोधहरू समाधान गर्न असमर्थ बनाउन सक्छ। तैपनि अगाडि बढ्ने?"',
-        'defaultpwr': 'defaultpwr="पूर्वनिर्धारित"',
-        'highperfpwr': 'highperfpwr="AMD उच्च कार्यसम्पादन"'
+        'noresolve': 'noresolve="DaVinci Resolve हाल यो कम्प्युटरमा स्थापना गरिएको छैन। यसलाई स्थापना गरेर फेरि प्रयास गर्नुहोस्।"'
     },
     'nl.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq is gedetecteerd. Als u het als DNS-cache gebruikt, kan libvirt problemen veroorzaken waardoor uw verbinding geen DNS-verzoeken meer kan oplossen. Toch doorgaan?"',
-        'defaultpwr': 'defaultpwr="Standaard"',
-        'highperfpwr': 'highperfpwr="AMD Hoge prestaties"'
+        'noresolve': 'noresolve="DaVinci Resolve is momenteel niet op deze computer geïnstalleerd. Installeer het en probeer het opnieuw."'
     },
     'pl.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Wykryto dnsmasq. Jeśli używasz go jako pamięci podręcznej DNS, libvirt może powodować problemy i uniemożliwić połączeniu rozwiązywanie zapytań DNS. Kontynuować mimo to?"',
-        'defaultpwr': 'defaultpwr="Domyślny"',
-        'highperfpwr': 'highperfpwr="AMD Wysoka wydajność"'
+        'noresolve': 'noresolve="DaVinci Resolve nie jest obecnie zainstalowany na tym komputerze. Zainstaluj go i spróbuj ponownie."'
     },
     'pt.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="O dnsmasq foi detectado. Se você o utiliza como cache DNS, o libvirt pode causar problemas e fazer com que sua conexão não consiga resolver solicitações DNS. Continuar mesmo assim?"',
-        'defaultpwr': 'defaultpwr="Padrão"',
-        'highperfpwr': 'highperfpwr="AMD Alto desempenho"'
+        'noresolve': 'noresolve="O DaVinci Resolve não está instalado neste computador. Instale-o e tente novamente."'
     },
     'ro.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="A fost detectat dnsmasq. Dacă îl utilizați drept cache DNS, libvirt poate cauza probleme și poate împiedica conexiunea să rezolve cererile DNS. Continuați oricum?"',
-        'defaultpwr': 'defaultpwr="Implicit"',
-        'highperfpwr': 'highperfpwr="AMD Performanță ridicată"'
+        'noresolve': 'noresolve="DaVinci Resolve nu este instalat în prezent pe acest computer. Instalați-l și încercați din nou."'
     },
     'ru.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Обнаружен dnsmasq. Если вы используете его в качестве DNS-кэша, libvirt может вызвать проблемы и лишить ваше соединение возможности разрешать DNS-запросы. Всё равно продолжить?"',
-        'defaultpwr': 'defaultpwr="По умолчанию"',
-        'highperfpwr': 'highperfpwr="AMD Высокая производительность"'
+        'noresolve': 'noresolve="DaVinci Resolve сейчас не установлен на этом компьютере. Установите его и повторите попытку."'
     },
     'sk.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Bol zistený dnsmasq. Ak ho používate ako vyrovnávaciu pamäť DNS, libvirt môže spôsobiť problémy a zabrániť vášmu pripojeniu v preklade DNS požiadaviek. Napriek tomu pokračovať?"',
-        'defaultpwr': 'defaultpwr="Predvolené"',
-        'highperfpwr': 'highperfpwr="AMD Vysoký výkon"'
+        'noresolve': 'noresolve="DaVinci Resolve momentálne nie je nainštalovaný na tomto počítači. Nainštalujte ho a skúste to znova."'
     },
     'sl.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Zaznan je bil dnsmasq. Če ga uporabljate kot predpomnilnik DNS, lahko libvirt povzroči težave in vaši povezavi onemogoči razreševanje zahtev DNS. Vseeno nadaljujem?"',
-        'defaultpwr': 'defaultpwr="Privzeto"',
-        'highperfpwr': 'highperfpwr="AMD Visoka zmogljivost"'
+        'noresolve': 'noresolve="DaVinci Resolve trenutno ni nameščen na tem računalniku. Namestite ga in poskusite znova."'
     },
     'sq.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="U zbulua dnsmasq. Nëse po e përdorni si cache DNS, libvirt mund të shkaktojë probleme dhe ta bëjë lidhjen tuaj të paaftë për të zgjidhur kërkesat DNS. Të vazhdohet gjithsesi?"',
-        'defaultpwr': 'defaultpwr="Parazgjedhur"',
-        'highperfpwr': 'highperfpwr="AMD Performancë e lartë"'
+        'noresolve': 'noresolve="DaVinci Resolve nuk është aktualisht i instaluar në këtë kompjuter. Instalojeni dhe provoni përsëri."'
     },
     'sr.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Откривен је dnsmasq. Ако га користите као DNS кеш, libvirt може изазвати проблеме и онемогућити вашој вези да разрешава DNS захтеве. Ипак наставити?"',
-        'defaultpwr': 'defaultpwr="Подразумевано"',
-        'highperfpwr': 'highperfpwr="AMD Високе перформансе"'
+        'noresolve': 'noresolve="DaVinci Resolve тренутно није инсталиран на овом рачунару. Инсталирајте га и покушајте поново."'
     },
     'sv.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq upptäcktes. Om du använder den som DNS-cache kan libvirt orsaka problem och göra att din anslutning inte kan lösa DNS-förfrågningar. Fortsätt ändå?"',
-        'defaultpwr': 'defaultpwr="Standard"',
-        'highperfpwr': 'highperfpwr="AMD Hög prestanda"'
+        'noresolve': 'noresolve="DaVinci Resolve är för närvarande inte installerat på den här datorn. Installera det och försök igen."'
     },
     'sw.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq imegunduliwa. Ikiwa unaitumia kama akiba ya DNS, libvirt inaweza kusababisha matatizo na kufanya muunganisho wako ushindwe kutatua maombi ya DNS. Uendelee hata hivyo?"',
-        'defaultpwr': 'defaultpwr="Chaguo-msingi"',
-        'highperfpwr': 'highperfpwr="AMD Utendaji wa Juu"'
+        'noresolve': 'noresolve="DaVinci Resolve haijasakinishwa kwenye kompyuta hii kwa sasa. Isakinishe kisha ujaribu tena."'
     },
     'ta.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq கண்டறியப்பட்டது. இதை DNS தற்காலிக சேமிப்பாகப் பயன்படுத்தினால், libvirt சிக்கல்களை ஏற்படுத்தி உங்கள் இணைப்பால் DNS கோரிக்கைகளைத் தீர்க்க முடியாமல் போகலாம். இருப்பினும் தொடரவா?"',
-        'defaultpwr': 'defaultpwr="இயல்புநிலை"',
-        'highperfpwr': 'highperfpwr="AMD உயர் செயல்திறன்"'
+        'noresolve': 'noresolve="DaVinci Resolve தற்போது இந்தக் கணினியில் நிறுவப்படவில்லை. அதை நிறுவி மீண்டும் முயற்சிக்கவும்."'
     },
     'tg.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq муайян карда шуд. Агар шумо онро ҳамчун кэши DNS истифода баред, libvirt метавонад мушкилот эҷод кунад ва пайвасти шуморо аз ҳалли дархостҳои DNS боздорад. Ба ҳар ҳол идома дода шавад?"',
-        'defaultpwr': 'defaultpwr="Пешфарз"',
-        'highperfpwr': 'highperfpwr="AMD Иҷрои баланд"'
+        'noresolve': 'noresolve="DaVinci Resolve ҳоло дар ин компютер насб нашудааст. Онро насб кунед ва дубора кӯшиш кунед."'
     },
     'th.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="ตรวจพบ dnsmasq หากคุณใช้เป็นแคช DNS, libvirt อาจทำให้เกิดปัญหาและทำให้การเชื่อมต่อของคุณไม่สามารถแก้ไขคำขอ DNS ได้ ต้องการดำเนินการต่อหรือไม่?"',
-        'defaultpwr': 'defaultpwr="ค่าเริ่มต้น"',
-        'highperfpwr': 'highperfpwr="AMD ประสิทธิภาพสูง"'
+        'noresolve': 'noresolve="ขณะนี้ยังไม่ได้ติดตั้ง DaVinci Resolve บนคอมพิวเตอร์เครื่องนี้ โปรดติดตั้งแล้วลองอีกครั้ง"'
     },
     'tl.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Natukoy ang dnsmasq. Kung ginagamit mo ito bilang DNS cache, maaaring magdulot ng problema ang libvirt at gawing hindi kayang lutasin ng iyong koneksyon ang mga kahilingan sa DNS. Magpatuloy pa rin?"',
-        'defaultpwr': 'defaultpwr="Default"',
-        'highperfpwr': 'highperfpwr="AMD Mataas na Pagganap"'
+        'noresolve': 'noresolve="Hindi kasalukuyang naka-install ang DaVinci Resolve sa computer na ito. I-install ito at subukan ulit."'
     },
     'tr.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq algılandı. DNS önbelleği olarak kullanıyorsanız libvirt sorunlara yol açabilir ve bağlantınızın DNS isteklerini çözümleyememesine neden olabilir. Yine de devam edilsin mi?"',
-        'defaultpwr': 'defaultpwr="Varsayılan"',
-        'highperfpwr': 'highperfpwr="AMD Yüksek Performans"'
+        'noresolve': 'noresolve="DaVinci Resolve şu anda bu bilgisayarda yüklü değil. Yükleyip tekrar deneyin."'
     },
     'uk.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Виявлено dnsmasq. Якщо ви використовуєте його як DNS-кеш, libvirt може спричинити проблеми та позбавити ваше з’єднання можливості розв’язувати DNS-запити. Усе одно продовжити?"',
-        'defaultpwr': 'defaultpwr="Типово"',
-        'highperfpwr': 'highperfpwr="AMD Висока продуктивність"'
+        'noresolve': 'noresolve="DaVinci Resolve наразі не встановлено на цьому комп’ютері. Встановіть його та спробуйте ще раз."'
     },
     'ur.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq کا پتہ چلا ہے۔ اگر آپ اسے DNS کیش کے طور پر استعمال کر رہے ہیں تو libvirt مسائل پیدا کر سکتا ہے اور آپ کے کنکشن کو DNS درخواستیں حل کرنے سے روک سکتا ہے۔ پھر بھی آگے بڑھیں؟"',
-        'defaultpwr': 'defaultpwr="ڈیفالٹ"',
-        'highperfpwr': 'highperfpwr="AMD اعلیٰ کارکردگی"'
+        'noresolve': 'noresolve="DaVinci Resolve فی الحال اس کمپیوٹر پر انسٹال نہیں ہے۔ اسے انسٹال کریں اور دوبارہ کوشش کریں۔"'
     },
     'uz.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="dnsmasq aniqlandi. Agar undan DNS keshi sifatida foydalanayotgan bo‘lsangiz, libvirt muammolarga sabab bo‘lishi va ulanishingiz DNS so‘rovlarini hal qila olmay qolishiga olib kelishi mumkin. Shunga qaramay davom etilsinmi?"',
-        'defaultpwr': 'defaultpwr="Standart"',
-        'highperfpwr': 'highperfpwr="AMD Yuqori unumdorlik"'
+        'noresolve': 'noresolve="DaVinci Resolve hozirda ushbu kompyuterga o‘rnatilmagan. Uni o‘rnating va qayta urinib ko‘ring."'
     },
     'vi.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="Đã phát hiện dnsmasq. Nếu bạn đang sử dụng nó làm bộ nhớ đệm DNS, libvirt có thể gây ra sự cố và khiến kết nối của bạn không thể phân giải các yêu cầu DNS. Vẫn tiếp tục?"',
-        'defaultpwr': 'defaultpwr="Mặc định"',
-        'highperfpwr': 'highperfpwr="AMD Hiệu năng cao"'
+        'noresolve': 'noresolve="DaVinci Resolve hiện chưa được cài đặt trên máy tính này. Hãy cài đặt rồi thử lại."'
     },
     'zh.lib': {
-        'libvirtdnsmasq': 'libvirtdnsmasq="检测到 dnsmasq。如果您将其用作 DNS 缓存，libvirt 可能会引发问题，导致您的连接无法解析 DNS 请求。仍要继续吗？"',
-        'defaultpwr': 'defaultpwr="默认"',
-        'highperfpwr': 'highperfpwr="AMD 高性能"'
+        'noresolve': 'noresolve="此计算机目前未安装 DaVinci Resolve。请先安装，然后重试。"'
     }
 }
 

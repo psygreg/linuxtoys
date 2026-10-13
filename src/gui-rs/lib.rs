@@ -1207,7 +1207,7 @@ pub struct LtGuiItemCardSpec {
     category: u8,
 }
 
-unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec) -> Option<gtk::EventBox> {
+unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec, featured_height: i32) -> Option<gtk::EventBox> {
     let name = cstr(spec.name);
     let icon_path = cstr(spec.icon_path);
     let icon_name = cstr(spec.icon_name);
@@ -1263,7 +1263,16 @@ unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec) -> Option<gtk::Ev
             label.set_margin_start(22);
         }
     }
-    label.set_line_wrap(true);
+    if featured_height > 0 {
+        // Featured ordinary cards live in a row-homogeneous Grid: one wrapping
+        // name raises the minimum height of EVERY row, so the whole section's
+        // geometry depended on which apps a reroll happened to pick. Fixed
+        // height + single-line ellipsize keeps rows deterministic.
+        label.set_line_wrap(false);
+        label.set_ellipsize(gtk::pango::EllipsizeMode::End);
+    } else {
+        label.set_line_wrap(true);
+    }
     label.set_justify(gtk::Justification::Center);
     label.set_halign(gtk::Align::Center);
     label.set_valign(gtk::Align::Center);
@@ -1373,6 +1382,11 @@ unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec) -> Option<gtk::Ev
     }
 
     let event_box = gtk::EventBox::new();
+    if featured_height > 0 {
+        // Pin the card to the planner's row metric. Natural content height is
+        // css-adjusted and content-dependent; the plan is the contract.
+        event_box.set_size_request(128, featured_height);
+    }
     event_box.add(&overlay);
     event_box.set_events(
         event_box.events()
@@ -1408,7 +1422,7 @@ pub unsafe extern "C" fn lt_gui_flowbox_add_item_cards(
     // fallback safe: a failed native batch can never leave a partial prefix behind.
     let mut cards = Vec::with_capacity(count);
     for spec in specs {
-        match create_item_card_from_spec(spec) {
+        match create_item_card_from_spec(spec, 0) {
             Some(card) => cards.push(card),
             None => return 0,
         }
@@ -1602,10 +1616,11 @@ unsafe fn create_featured_large_card_from_spec(
     row.set_margin_start(16);
     row.set_margin_end(16);
     // `outer_height` is the complete EventBox height. The row contributes 24 px
-    // of vertical margins and the card surface contributes another 4 px top margin.
-    // Account for both here so the large card's natural request is exactly the
-    // height of two ordinary rows plus the GtkGrid row spacing.
-    row.set_size_request(108, (outer_height - 28).max(1));
+    // of vertical margins, the card surface another 4 px top margin, and the
+    // script-item CSS border 2 px. Account for all three here so the large
+    // card's natural request is exactly the height of two ordinary rows plus
+    // the GtkGrid row spacing; any excess would stretch every homogeneous row.
+    row.set_size_request(108, (outer_height - 30).max(1));
     row.pack_start(&icon, false, false, 0);
     row.pack_start(&text_box, true, true, 0);
 
@@ -1765,6 +1780,7 @@ pub unsafe extern "C" fn lt_gui_grid_attach_item_cards(
     specs: *const LtGuiItemCardSpec,
     positions: *const LtGuiGridPosition,
     count: usize,
+    featured_height: i32,
 ) -> usize {
     ensure_gtk_initialized();
 
@@ -1782,7 +1798,7 @@ pub unsafe extern "C" fn lt_gui_grid_attach_item_cards(
 
     let mut cards = Vec::with_capacity(count);
     for spec in specs {
-        match create_item_card_from_spec(spec) {
+        match create_item_card_from_spec(spec, featured_height) {
             Some(card) => cards.push(card),
             None => return 0,
         }

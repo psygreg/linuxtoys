@@ -148,3 +148,4 @@ libvirtdnsmasq="dnsmasq ble oppdaget. Hvis du bruker den som DNS-hurtigbuffer, k
 defaultpwr="Standard"
 highperfpwr="AMD Høy ytelse"
 msg306="GIMP kjører for øyeblikket. Lukk den og kjør denne oppdateringen igjen."
+noresolve="DaVinci Resolve er ikke installert på denne datamaskinen. Installer det og prøv igjen."

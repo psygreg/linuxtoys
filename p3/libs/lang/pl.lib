@@ -148,3 +148,4 @@ libvirtdnsmasq="Wykryto dnsmasq. Jeśli używasz go jako pamięci podręcznej DN
 defaultpwr="Domyślny"
 highperfpwr="AMD Wysoka wydajność"
 msg306="GIMP jest obecnie uruchomiony. Zamknij go i uruchom tę poprawkę ponownie."
+noresolve="DaVinci Resolve nie jest obecnie zainstalowany na tym komputerze. Zainstaluj go i spróbuj ponownie."

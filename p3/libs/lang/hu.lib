@@ -148,3 +148,4 @@ libvirtdnsmasq="A rendszer dnsmasq szolgáltatást észlelt. Ha DNS-gyorsítót�
 defaultpwr="Alapértelmezett"
 highperfpwr="AMD Nagy teljesítmény"
 msg306="A GIMP jelenleg fut. Zárja be, majd futtassa újra ezt a javítást."
+noresolve="A DaVinci Resolve jelenleg nincs telepítve erre a számítógépre. Telepítse, majd próbálja újra."

@@ -49,7 +49,7 @@ rocm_arch () {
         nonfatal "$msg040"
     fi
 }
-if [[ "$ID_LIKE" == *debian* ]] || [[ "$ID_LIKE" == *ubuntu* ]] || [ "$ID" == "debian" ] || [ "$ID" == "ubuntu" ] || is_deepin; then
+if is_debian || is_ubuntu || is_deepin; then
     sudo_rq
     sudo mkdir --parents --mode=0755 /etc/apt/keyrings
     wget https://repo.radeon.com/rocm/rocm.gpg.key -O - | \
@@ -65,10 +65,10 @@ Pin-Priority: 1001
 EOF
     sudo apt update
     rocm_deb
-elif [[ "$ID" =~ ^(arch|cachyos)$ ]] || [[ "$ID_LIKE" == *arch* ]] || [[ "$ID_LIKE" == *archlinux* ]]; then
+elif is_arch || is_cachy; then
     sudo_rq
     rocm_arch
-elif [[ "$ID_LIKE" =~ (rhel|fedora) ]] || [ "$ID" == "fedora" ] || [ "$ID" == "suse" ] || [[ "$ID_LIKE" == *suse* ]]; then
+elif is_rhel || is_fedora || is_ostree || is_suse; then
     sudo_rq
     rocm_rpm
 elif is_solus; then
@@ -77,4 +77,9 @@ elif is_solus; then
     sudo usermod -aG render,video $USER
 else
     fatal "$msg077"
+fi
+if ! clinfo_chk; then
+    fatal "$nocl"
+else
+    info "$rebootmsg"
 fi

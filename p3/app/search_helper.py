@@ -850,6 +850,14 @@ class SearchEngine:
         ]
         return self._group_results_by_category(results, max_results)
 
+    def search_appimage_only(self, query, max_results=50):
+        """Search the AppImage catalog without global category navigation."""
+        if not query or len(query.strip()) < 2:
+            return []
+        results = [SearchResult(info, "script", int(score))
+                   for info, score in appstream_parser.search_appimage_entries(query.strip().casefold())]
+        return self._group_results_by_category(results, max_results)
+
     def search_homebrew_only(self, query, max_results=50):
         """Filter the current Homebrew category without global discovery/navigation."""
         if not query or len(query.strip()) < 2:

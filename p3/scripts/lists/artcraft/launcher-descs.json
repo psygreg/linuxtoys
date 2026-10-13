@@ -1,0 +1,9 @@
+{
+  "description_tag": "launcher_desc",
+  "long-description": "launcher-md/en.md",
+  "description_long_tag": "launcher_long",
+  "en": {
+    "launcher_long": "launcher-md/en.md",
+    "launcher_desc": "One place to install, update and open every app in the Craft App Suite: PhotoCraft, LightCraft, FilmCraft, DesignCraft, VectorCraft, PdfCraft, EffectCraft, WordCraft, DeckCraft, GridCraft, CADCraft and SoundCraft - the right build for your computer, kept up to date."
+  }
+}

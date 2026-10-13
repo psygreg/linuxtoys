@@ -1,0 +1,17 @@
+[
+    {
+        "name": "DeckCraft",
+        "description": "Presentations and slide shows; an open-source, clean-room reimplementation of *Microsoft PowerPoint*, rebuilt in pure Rust.",
+        "developer": "ArtCraft",
+        "repo": "https://github.com/storytold/deckcraft",
+        "category": "office",
+        "icon": "./deckcraft.svg",
+        "license": "Apache-2.0 and MIT",
+        "descriptions": "deck-descs.json",
+        "screenshots": "deck-screens/",
+        "purchase": {
+          "url": "https://getartcraft.com/pricing",
+          "sub_price": 10.00
+        }
+    }
+]

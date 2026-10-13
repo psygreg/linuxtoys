@@ -134,7 +134,6 @@ class AppPageView(Gtk.Box):
         self._body_switcher = None
         self._extensions_view = None
         self.connect("destroy", self._on_destroy)
-
         self.header = InfosHead(self.translations, show_terminal_controls=False)
         self.header._update_header_labels(script_info)
         app_icon = str(script_info.get("icon", "") or "").strip()
@@ -1718,6 +1717,8 @@ class AppPageView(Gtk.Box):
             return "AUR"
         if source == "homebrew":
             return "Homebrew"
+        if source == "appimage":
+            return "AppImage"
         return source.capitalize() or self.translations.get("app_page_source_native", "Native")
 
     @staticmethod
@@ -1927,9 +1928,9 @@ class AppPageView(Gtk.Box):
         stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
 
     def set_install_state(self, state):
-        """Render the AppStream install action without affecting the rest of the page."""
+        """Render the install action without affecting the rest of the page."""
         button = self._install_button
-        if button is None or not self.script_info.get("is_appstream_entry"):
+        if button is None:
             return
 
         self._install_state = state
@@ -1996,9 +1997,24 @@ class AppPageView(Gtk.Box):
         button.show_all()
         self._refresh_rating_state()
 
+    def _on_page_mapped(self, *_args):
+        """Re-derive install state after the page was hidden behind a terminal."""
+        if self._destroyed:
+            return False
+        self.refresh_install_state()
+        return False
+
     def refresh_install_state(self):
         """Refresh Available/Queued/Installed from the window's session/registry state."""
         if not self.script_info.get("is_appstream_entry"):
+            # LinuxToys-curated feature: installed means a reversible
+            # transaction is registered for this entry (ScriptCache removable
+            # state; registry + revert capability underneath).
+            removable_check = getattr(self.parent, "_is_script_removable", None)
+            if removable_check is None:
+                return
+            installed = bool(removable_check(self._selected_install_info))
+            self.set_install_state("installed" if installed else "available")
             return
         resolver = getattr(self.parent, "_get_appstream_install_state", None)
         state = resolver(self._selected_install_info) if resolver is not None else "available"

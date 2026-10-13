@@ -147,3 +147,4 @@ libvirtdnsmasq="dnsmasq가 감지되었습니다. DNS 캐시로 사용 중인 �
 defaultpwr="기본값"
 highperfpwr="AMD 고성능"
 msg306="GIMP가 실행 중입니다. 종료한 후 이 패치를 다시 실행하십시오."
+noresolve="DaVinci Resolve가 현재 이 컴퓨터에 설치되어 있지 않습니다. 설치한 후 다시 시도하세요."

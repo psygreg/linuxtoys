@@ -142,11 +142,9 @@ def script_preamble(script_text, script_dir):
     lines.append("source " + shlex.quote(str(Path(script_dir) / "libs/linuxtoys.bash"))
                  + " || exit $?")
     lines.append(
-        "_linuxtoys_prepare_session || { "
-        "_lt_mirror_status=$?; "
-        'if [[ ${LINUXTOYS_REQUIRE_CACHYOS_MIRRORS:-1} != 0 ]]; then '
-        'exit "$_lt_mirror_status"; fi; '
-        'echo "Continuing without CachyOS mirror refresh for this Flatpak/Snap entry."; }'
+        'if [[ ${LINUXTOYS_REQUIRE_CACHYOS_MIRRORS:-1} != 0 ]]; then\n'
+        '_linuxtoys_prepare_session || exit $?\n'
+        'fi'
     )
     return "\n".join(lines) + "\n"
 

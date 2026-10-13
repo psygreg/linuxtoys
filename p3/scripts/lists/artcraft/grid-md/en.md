@@ -1,0 +1,8 @@
+Spreadsheets and data; a fast, open-source, clean-room reimplementation of *Microsoft Excel*, rebuilt in pure Rust.
+
+- **Familiar**: *Excel*'s ribbon, formula bar, Name Box, sheet tabs, keyboard shortcuts, fill handle, point-mode formula entry with coloured references, Format Cells, Paste Special, conditional formatting, tables, charts and more. If you know *Excel*, you already know **GridCraft**.
+- **Compatible**: XLSX is the native format: styles, themes, formulas (including dynamic arrays), tables, conditional formats, validation, comments, hyperlinks, charts, pictures, sparklines, PivotTables and print settings round-trip. CSV and TSV too. *Excel* 97-2003 .xls workbooks open with their values, formulas and number formats (formatting and objects not yet). XLSB worksheet data can be imported, using saved values instead of formulas. ODS worksheet data can be imported, using saved values instead of formulas. Static pictures can live inside cells, fitting their size and moving with the data.
+- **Capable**: a dependency-graph calculation engine with dynamic arrays and spilling, 500+ worksheet functions plus LET, LAMBDA, MAP, REDUCE, SCAN, BYROW, BYCOL and MAKEARRAY, structured table references, *Excel*'s full number-format language, sort and AutoFilter, Flash Fill, data validation, outlining and subtotals.
+- **Fast**: copy-on-write workbooks (undo snapshots are nearly free), incremental recalculation, and a virtualised grid that only lays out what's on screen.
+- **Agent-native**: every ribbon button, menu item, dialog, keystroke and mouse gesture is a command that agents can run over a JSON control channel, an MCP server, or the CLI.
+- **Everywhere**: One Rust codebase for desktop and the web. No subscription, no license server, no telemetry.

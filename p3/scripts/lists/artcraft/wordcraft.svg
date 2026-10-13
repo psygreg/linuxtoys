@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- WordCraft placeholder icon (original; MIT OR Apache-2.0). To be replaced by the mascot drawing. -->
+  <rect width="512" height="512" rx="112" fill="#3B5BDB"/>
+  <g transform="rotate(-6 256 256)">
+    <path d="M150 92 H322 L384 154 V420 H150 Z" fill="#efe9dc" stroke="#0b0b0c" stroke-width="14" stroke-linejoin="round"/>
+    <path d="M322 92 V154 H384" fill="none" stroke="#0b0b0c" stroke-width="14" stroke-linejoin="round"/>
+    <g stroke="#0b0b0c" stroke-width="14" stroke-linecap="round">
+      <line x1="190" y1="200" x2="344" y2="200"/>
+      <line x1="190" y1="246" x2="344" y2="246"/>
+      <line x1="190" y1="292" x2="344" y2="292"/>
+      <line x1="190" y1="338" x2="290" y2="338"/>
+    </g>
+  </g>
+  <path d="M300 410 L418 292 L446 320 L328 438 L292 446 Z" fill="#0b0b0c"/>
+  <path d="M418 292 L436 274 L464 302 L446 320 Z" fill="#efe9dc" stroke="#0b0b0c" stroke-width="8"/>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- GridCraft PLACEHOLDER icon: a ledger page with a selected cell, on GridCraft green.
+       Original work; temporary until the owner's engraved creature portrait replaces it
+       (craftrules standards/icon-design.md). Palette: ink #0b0b0c, paper #efe9dc,
+       app colour #1f9d55 (proposed). -->
+  <defs>
+    <clipPath id="tile"><rect width="512" height="512" rx="112"/></clipPath>
+  </defs>
+  <g clip-path="url(#tile)">
+    <rect width="512" height="512" fill="#1f9d55"/>
+    <g transform="rotate(-6 256 268)" stroke="#0b0b0c" stroke-linejoin="round" stroke-linecap="round">
+      <!-- page with a folded top-right corner -->
+      <path d="M112 76 H336 L404 144 V440 H112 Z" fill="#efe9dc" stroke-width="14"/>
+      <path d="M336 76 V144 H404" fill="none" stroke-width="12"/>
+      <!-- title lines -->
+      <path d="M146 106 H272 M146 130 H232" stroke-width="12"/>
+      <!-- header row and row-number column, in the app colour -->
+      <path d="M112 164 H404 V204 H164 V440 H112 Z" fill="#1f9d55" stroke="none"/>
+      <!-- grid -->
+      <path d="M112 164 H404 M112 204 H404 M112 250 H404 M112 296 H404 M112 342 H404 M112 388 H404
+               M164 164 V440 M244 164 V440 M324 164 V440" fill="none" stroke-width="8"/>
+      <!-- the selected cell and its fill handle -->
+      <rect x="244" y="250" width="80" height="46" fill="none" stroke-width="16"/>
+      <rect x="312" y="284" width="24" height="24" fill="#0b0b0c" stroke="#efe9dc" stroke-width="5"/>
+      <!-- double rule under the total -->
+      <path d="M252 410 H316 M252 424 H316" stroke-width="7"/>
+    </g>
+  </g>
+</svg>

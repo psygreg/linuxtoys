@@ -152,6 +152,7 @@ class AppWindow(
         self._background_update_started = False
         self._update_state = "checking" if self.automatic_updates_enabled else "disabled"
         self._appstream_state = "hidden"
+        self._apt_appstream_refresh_enqueued = False
         # Only the bootstrap case blocks the main menu. Once both artifacts exist,
         # future AppStream refreshes remain fully background operations.
         self._appstream_pickle_missing_at_startup = (
@@ -387,15 +388,11 @@ class AppWindow(
         self.random_scripts_flowbox.set_column_spacing(20)
         self.random_scripts_flowbox.set_row_spacing(18)
 
-        self.random_scripts_revealer = Gtk.Revealer()
-        self.random_scripts_revealer.set_transition_type(
-            Gtk.RevealerTransitionType.CROSSFADE
-        )
-        self.random_scripts_revealer.set_transition_duration(180)
-        self.random_scripts_revealer.set_reveal_child(False)
-        self.random_scripts_revealer.add(self.random_scripts_flowbox)
+        # Grid opacity already animates card swaps. Avoid an extra revealer
+        # allocation layer, which can shift the title-to-card gap on redraw.
+        self.random_scripts_revealer = None
         self.featured_scripts_container.pack_start(
-            self.random_scripts_revealer, False, False, 0
+            self.random_scripts_flowbox, False, False, 0
         )
 
         self.featured_scripts_revealer.add(self.featured_scripts_container)
@@ -584,6 +581,10 @@ class AppWindow(
             return False  # publish_full_featured retries when the pool lands
         self._language_featured_refresh_pending = False
         self._refresh_random_scripts_display(force=True)
+        # publish_full_featured restarts rotation before the cards exist (the
+        # language rebuild clears them while the transition is still active),
+        # so re-arm here — otherwise rerolls stay dead until navigation.
+        self._restart_random_scripts_refresh_timer()
         return False
 
     def _startup_recommendations_suppressed(self):
@@ -788,6 +789,49 @@ class AppWindow(
 
         GLib.timeout_add(100, finish_loading)
 
+    def _appimage_category_info(self, relative=""):
+        """Use the actual LT category metadata, including its declared icon.
+
+        Category names are not guaranteed to match icon filenames; in particular
+        nested directories often use a different icon specified in category-info.txt.
+        """
+        relative = str(relative or "").strip("/")
+        leaf = relative.rsplit("/", 1)[-1] if relative else ""
+        name = self.translations.get("appimage_category", "AppImages")
+        icon = "appimages.webp"
+        description = self.translations.get(
+            "appimage_category_desc", "Browse applications distributed as AppImages."
+        )
+        if leaf:
+            category_dir = os.path.join(parser.SCRIPTS_DIR, *relative.split("/"))
+            metadata = parser._parse_metadata_file(
+                os.path.join(category_dir, "category-info.txt"),
+                {"icon": "folder-open", "description": ""},
+                self.translations,
+            )
+            name = self.translations.get(leaf, leaf)
+            icon = metadata.get("icon") or "folder-open"
+            description = metadata.get("description") or ""
+        return {
+            "name": name, "description": description, "icon": icon,
+            "path": "appimages://" + (relative or "root"),
+            "type": "category", "is_script": False, "is_subcategory": bool(leaf),
+            "is_appimage_category": True, "appimage_relative_category": relative,
+        }
+
+    def _appimage_category_items(self, category_info):
+        """Mirror the LT directory hierarchy, retaining only populated branches."""
+        prefix = str(category_info.get("appimage_relative_category") or "").strip("/")
+        children = appstream_parser.get_appimage_subcategories(prefix)
+        # The root level only ever holds subcategories: every catalog entry
+        # carries a resolved category, so materializing the whole pool here
+        # would decode every payload just to render subcategory cards.
+        selected = []
+        if not children or prefix:
+            selected = appstream_parser.get_appimage_entries(prefix)
+        return [self._appimage_category_info(child) for child in sorted(children)] + sorted(
+            selected, key=lambda item: str(item.get("name") or "").casefold())
+
     def _homebrew_category_info(self):
         return {
             "name": "Homebrew",
@@ -874,12 +918,43 @@ class AppWindow(
         self._refresh_homebrew_catalog()
         return False
 
+    def _maybe_enqueue_apt_appstream_refresh(self):
+        """Bootstrap Debian-family AppStream metadata through the runner PTY.
+
+        Ubuntu/Debian only expose repository AppStream (DEP-11) data after an
+        apt update ran with the 'appstream' hook installed, so fresh systems
+        would otherwise keep an empty native catalog indefinitely. Attempt the
+        refresh once per session and rebuild the catalog when it succeeds.
+        """
+        if self._apt_appstream_refresh_enqueued:
+            return
+        self._apt_appstream_refresh_enqueued = True
+        try:
+            if shutil.which("apt-get") is None:
+                return
+            if not appstream_cache.debian_appstream_metadata_missing():
+                return
+        except Exception as error:
+            logger.warning("AppStream apt-refresh check failed: %s", error)
+            return
+        if not getattr(self, "_appstream_runner", None):
+            return
+
+        def reseed_catalog():
+            # apt update changed the native source fingerprint; run the normal
+            # refresh path again so the catalog picks the metadata up.
+            self._appstream_cache_started = False
+            GLib.idle_add(self._start_appstream_cache)
+
+        self._appstream_runner.enqueue_apt_refresh(on_complete=reseed_catalog)
+
     def _start_appstream_cache(self, *, force=False):
         """Refresh AppStream metadata on its background worker."""
         if self._appstream_cache_started:
             return False
         self._appstream_cache_started = True
         self._start_aur_refresh_if_enabled()
+        self._maybe_enqueue_apt_appstream_refresh()
 
         def report_state(state):
             GLib.idle_add(self._set_appstream_state, state)
@@ -1034,7 +1109,7 @@ class AppWindow(
             def add_items(items):
                 for item in items or ():
                     if (not item.get("is_script") or item.get("is_create_script")
-                            or item.get("appstream_source") == "homebrew"):
+                            or item.get("appstream_source") in ("homebrew", "appimage")):
                         continue
                     key = item.get("path") or (
                         item.get("name", ""),
@@ -1390,19 +1465,24 @@ class AppWindow(
         self.script_cache = search_helper.ScriptCache()
         self.category_cache = search_helper.CategoryCache()
         self.search_engine.set_cache(self.script_cache)
-        self.all_scripts = []
 
-        # Immediately rebuild the visible view directly from the new filesystem.
-        self.load_categories()
-        if self.current_category_info is not None:
-            fresh_info = self._get_fresh_category_info_with_translations()
-            if fresh_info:
-                self.current_category_info = fresh_info
-            self.load_scripts(self.current_category_info)
-            self._update_header(self.current_category_info)
+        if source_changed:
+            # Card paths identify the previous tree root: the visible menu must
+            # be rebuilt against the new filesystem immediately.
+            self.load_categories()
+            if self.current_category_info is not None:
+                fresh_info = self._get_fresh_category_info_with_translations()
+                if fresh_info:
+                    self.current_category_info = fresh_info
+                self.load_scripts(self.current_category_info)
+                self._update_header(self.current_category_info)
+        # A content-only sync (same tree root) leaves the rendered menu and its
+        # Featured cards valid; rebuild the backing parser/search/Featured data
+        # only. Rendering here — and again from publish_bootstrap — was the
+        # haphazard menu rebuild after the startup sync.
 
         # Repopulate all acceleration caches from the new source in one pass.
-        self._populate_runtime_caches()
+        self._populate_runtime_caches(catalog_refresh=True)
 
         # If a search is visible, rerun the query once the new search cache is ready.
         if self.main_stack.get_visible_child_name() == "search":
@@ -2746,6 +2826,7 @@ class AppWindow(
         category_snapshot = [specials_category, *categories]
         if homebrew_catalog.enabled():
             category_snapshot.append(self._homebrew_category_info())
+        category_snapshot.append(self._appimage_category_info())
 
         # A language change only changes translated card metadata; the root category
         # structure and artwork normally remain identical. Rebind those native cards
@@ -2881,6 +2962,8 @@ class AppWindow(
     def _category_items_for_display(self, category_info):
         """Return the exact item list used by normal category browsing."""
         category_path = category_info["path"]
+        if category_info.get("is_appimage_category"):
+            return self._appimage_category_items(category_info)
         if category_info.get("is_homebrew_category"):
             return appstream_parser.get_homebrew_entries()
         if category_info.get("is_aur_category"):
@@ -2928,7 +3011,7 @@ class AppWindow(
         # Available/Installed split would enumerate the complete repository and
         # defeat paged browsing. Individual AUR cards still refresh their normal
         # installed/removable state after transactions.
-        if category_info.get("is_aur_category") or category_info.get("is_homebrew_category"):
+        if category_info.get("is_aur_category") or category_info.get("is_homebrew_category") or category_info.get("is_appimage_category"):
             return False
         if (
             category_info.get("is_linuxtoys_specials")
@@ -4851,6 +4934,9 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
                 }
             )
             return refreshed
+
+        if self.current_category_info.get("is_appimage_category"):
+            return self._appimage_category_info(self.current_category_info.get("appimage_relative_category", ""))
 
         if self.current_category_info.get("is_homebrew_category"):
             return self._homebrew_category_info() if homebrew_catalog.enabled() else None

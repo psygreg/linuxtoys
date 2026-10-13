@@ -593,6 +593,19 @@ pub fn load_aur_catalog(
     py.allow_threads(|| load_aur_catalog_inner(path, omit, native_packages))
 }
 
+fn expand_aur_omit_keys(omit: Vec<String>) -> HashSet<String> {
+    omit.into_iter()
+        .map(|value| value.trim().to_ascii_lowercase())
+        .filter(|value| !value.is_empty())
+        // Omission-only interpretation of the aur.<package> namespaced form:
+        // a key like "aur.yay" targets the AUR package "yay".
+        .flat_map(|value| match value.strip_prefix("aur.") {
+            Some(stripped) if !stripped.is_empty() => vec![value.clone(), stripped.to_string()],
+            _ => vec![value],
+        })
+        .collect()
+}
+
 fn load_aur_catalog_inner(
     path: &str,
     omit: Vec<String>,
@@ -617,11 +630,7 @@ fn load_aur_catalog_inner(
     // Resolve runtime-only exclusions once. catalog.bin remains independent of
     // both developer policy and the host's currently enabled native repositories.
     // dependency_name() strips version constraints from Provides entries.
-    let omitted_names: HashSet<String> = omit
-        .into_iter()
-        .map(|value| value.trim().to_ascii_lowercase())
-        .filter(|value| !value.is_empty())
-        .collect();
+    let omitted_names: HashSet<String> = expand_aur_omit_keys(omit);
     let native_names: HashSet<String> = native_packages
         .into_iter()
         .map(|value| value.trim().to_ascii_lowercase())
@@ -680,6 +689,17 @@ fn load_aur_catalog_inner(
 #[cfg(test)]
 mod appstream_icon_tests {
     use super::*;
+
+    #[test]
+    fn aur_omit_keys_expand_to_the_bare_package_name() {
+        let expanded = expand_aur_omit_keys(vec![
+            "aur.yay".into(), "yay-bin".into(), "aur.".into(), "aur.gnome".into(),
+        ]);
+        assert!(expanded.contains("aur.yay"), "the namespaced key stays omittable");
+        assert!(expanded.contains("yay"), "the bare package name is derived");
+        assert!(expanded.contains("yay-bin"));
+        assert!(expanded.contains("gnome"), "aur.gnome -> gnome");
+    }
     #[test]
     fn variants_keep_a_shared_icon_key() {
         assert_eq!(icon_key("Neovim-bin"), "neovim");

@@ -1013,6 +1013,12 @@ def create_install_script(entry):
     Returns its filesystem path.
     """
     install_type = entry.get("type", "git")
+    if install_type == "appimage":
+        # AppImage catalog entries are resolved, downloaded and installed by
+        # the AppStream runner (appimage_catalog.resolve_download + pkg_appimage)
+        # when their queued job starts. No terminal script exists for them; the
+        # runner's own convention for "nothing to dispatch" is the "true" path.
+        return "true"
     name = _metadata_line(entry["name"])
     description = _metadata_line(entry["description"])
     repo = entry["repo"]

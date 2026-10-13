@@ -149,3 +149,4 @@ libvirtdnsmasq="dnsmasq imegunduliwa. Ikiwa unaitumia kama akiba ya DNS, libvirt
 defaultpwr="Chaguo-msingi"
 highperfpwr="AMD Utendaji wa Juu"
 msg306="GIMP inaendeshwa kwa sasa. Tafadhali uifunge kisha uendeshe marekebisho haya tena."
+noresolve="DaVinci Resolve haijasakinishwa kwenye kompyuta hii kwa sasa. Isakinishe kisha ujaribu tena."

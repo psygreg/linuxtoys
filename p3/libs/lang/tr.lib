@@ -147,3 +147,4 @@ libvirtdnsmasq="dnsmasq algılandı. DNS önbelleği olarak kullanıyorsanız li
 defaultpwr="Varsayılan"
 highperfpwr="AMD Yüksek Performans"
 msg306="GIMP şu anda çalışıyor. Lütfen kapatın ve bu yamayı yeniden çalıştırın."
+noresolve="DaVinci Resolve şu anda bu bilgisayarda yüklü değil. Yükleyip tekrar deneyin."

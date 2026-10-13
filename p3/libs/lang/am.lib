@@ -148,3 +148,4 @@ libvirtdnsmasq="dnsmasq ተገኝቷል። እንደ DNS መሸጎጫ እየተ�
 defaultpwr="ነባሪ"
 highperfpwr="AMD ከፍተኛ አፈጻጸም"
 msg306="GIMP በአሁኑ ጊዜ ክፍት ነው። እባክዎ ይዝጉት እና ፓቹን እንደገና ያሂዱ።"
+noresolve="DaVinci Resolve በዚህ ኮምፒውተር ላይ አልተጫነም። ይጫኑትና እንደገና ይሞክሩ።"

@@ -147,3 +147,4 @@ libvirtdnsmasq="Đã phát hiện dnsmasq. Nếu bạn đang sử dụng nó là
 defaultpwr="Mặc định"
 highperfpwr="AMD Hiệu năng cao"
 msg306="GIMP đang chạy. Vui lòng đóng nó và chạy bản vá này một lần nữa."
+noresolve="DaVinci Resolve hiện chưa được cài đặt trên máy tính này. Hãy cài đặt rồi thử lại."

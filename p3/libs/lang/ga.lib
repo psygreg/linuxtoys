@@ -148,3 +148,4 @@ libvirtdnsmasq="Braitheadh dnsmasq. Má tá tú á úsáid mar thaisce DNS, d’
 defaultpwr="Réamhshocrú"
 highperfpwr="AMD Ardfheidhmíocht"
 msg306="Tá GIMP ag rith faoi láthair. Dún é agus rith an paiste seo arís."
+noresolve="Níl DaVinci Resolve suiteáilte ar an ríomhaire seo faoi láthair. Suiteáil é agus bain triail eile as."

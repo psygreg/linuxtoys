@@ -12,7 +12,7 @@ askpass
 if is_ubuntu || is_debian; then
     sudo dpkg --add-architecture i386
     sudo apt update
-    pkg_install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
+    pkg_install libc6:i386 libncurses6:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
 elif is_fedora || is_ostree || is_rhel; then
     pkg_install glibc.i686 libgcc.i686 libstdc++.i686 ncurses-libs.i686 bzip2-libs.i686 zlib-ng-compat.i686
 elif is_arch || is_cachy; then

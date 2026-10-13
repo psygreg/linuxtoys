@@ -148,3 +148,4 @@ libvirtdnsmasq="Otkriven je dnsmasq. Ako ga koristite kao DNS keš, libvirt mož
 defaultpwr="Zadano"
 highperfpwr="AMD Visoke performanse"
 msg306="GIMP je trenutno pokrenut. Zatvorite ga i pokrenite ovaj patch ponovo."
+noresolve="DaVinci Resolve trenutno nije instaliran na ovom računaru. Instalirajte ga i pokušajte ponovo."

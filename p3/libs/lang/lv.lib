@@ -148,3 +148,4 @@ libvirtdnsmasq="Tika konstatēts dnsmasq. Ja izmantojat to kā DNS kešatmiņu, 
 defaultpwr="Noklusējums"
 highperfpwr="AMD Augsta veiktspēja"
 msg306="GIMP pašlaik darbojas. Aizveriet to un vēlreiz palaidiet šo ielāpu."
+noresolve="DaVinci Resolve pašlaik nav instalēts šajā datorā. Instalējiet to un mēģiniet vēlreiz."
