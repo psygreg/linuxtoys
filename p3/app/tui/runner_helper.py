@@ -1699,12 +1699,14 @@ class ManifestRunnerMixin:
             for key, value in env.items()
         }
 
-    def _manifest_start_failed(self, script_name: str) -> None:
+    def _manifest_start_failed(
+        self, script_name: str, exit_code: int = 1
+    ) -> None:
         """An item could not even start (e.g. repo entry preparation)."""
         if self._manifest_bootstrap is not None:
-            self._after_manifest_bootstrap(ScriptResult.ERROR, 1)
+            self._after_manifest_bootstrap(ScriptResult.ERROR, exit_code)
         else:
-            self._advance_manifest(script_name, 1)
+            self._advance_manifest(script_name, exit_code)
 
     def _on_manifest_item_finished(self, message) -> None:
         script_info = self._running_script_info or {}

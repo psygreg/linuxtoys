@@ -42,34 +42,10 @@ def _t(key: str, default: str) -> str:
     return translations.get(key, default)
 
 
-# =============================================================================
-# Diálogos modais
-# =============================================================================
-
-_MODAL_CSS = """
-{cls} {{
-    align: center middle;
-}}
-{cls} > Vertical {{
-    width: 64;
-    max-width: 90%;
-    height: auto;
-    max-height: 80%;
-    padding: 1 2;
-    border: thick $primary;
-    background: $surface;
-}}
-{cls} .dialog-title {{ text-style: bold; margin-bottom: 1; }}
-{cls} .dialog-text {{ color: $text-muted; margin-bottom: 1; }}
-{cls} Horizontal {{ height: auto; align-horizontal: right; }}
-{cls} Button {{ margin-left: 1; }}
-"""
-
-
 class ActionDialog(ModalScreen["str | None"]):
     """Back / View Details / Install para a skill selecionada."""
 
-    DEFAULT_CSS = _MODAL_CSS.format(cls="ActionDialog")
+    DEFAULT_CLASSES = "lt-modal"
     BINDINGS = [Binding("escape", "close", "Back")]
 
     def __init__(self, skill: dict) -> None:
@@ -115,12 +91,7 @@ class ActionDialog(ModalScreen["str | None"]):
 class AgentChoiceDialog(ModalScreen["str | None"]):
     """Lista de agentes detectados; devolve o id do agente escolhido."""
 
-    DEFAULT_CSS = (
-        _MODAL_CSS.format(cls="AgentChoiceDialog")
-        + """
-    AgentChoiceDialog OptionList { height: auto; max-height: 14; margin-bottom: 1; }
-    """
-    )
+    DEFAULT_CLASSES = "lt-modal"
     BINDINGS = [Binding("escape", "close", "Cancel")]
 
     def __init__(self, agents: list[str]) -> None:
@@ -170,7 +141,7 @@ class AgentChoiceDialog(ModalScreen["str | None"]):
 class ConfirmRemoveDialog(ModalScreen[bool]):
     """Confirmação de remoção (equivalente ao MessageDialog da GUI)."""
 
-    DEFAULT_CSS = _MODAL_CSS.format(cls="ConfirmRemoveDialog")
+    DEFAULT_CLASSES = "lt-modal"
     BINDINGS = [Binding("escape", "close", "Cancel")]
 
     def __init__(self, skill_name: str) -> None:
@@ -211,11 +182,6 @@ class ConfirmRemoveDialog(ModalScreen[bool]):
         self.dismiss(False)
 
 
-# =============================================================================
-# Itens de lista
-# =============================================================================
-
-
 class SkillCard(ListItem):
     """Skill da aba Discover."""
 
@@ -243,11 +209,6 @@ class InstalledCard(ListItem):
         yield Label(f"[b]{name}[/b]{suffix}")
 
 
-# =============================================================================
-# View principal
-# =============================================================================
-
-
 class SkillsSeekerView(Vertical):
     """Navegação, busca, instalação e remoção de skills."""
 
@@ -264,8 +225,6 @@ class SkillsSeekerView(Vertical):
     def __init__(self) -> None:
         super().__init__()
         self._all_skills: list[dict] = []
-
-    # --- composição -----------------------------------------------------------
 
     def compose(self) -> ComposeResult:
         with TabbedContent(initial="discover"):
@@ -289,8 +248,6 @@ class SkillsSeekerView(Vertical):
     def focus_results(self) -> None:
         self.query_one("#discover_list", ListView).focus()
 
-    # --- helpers de estado de UI ---------------------------------------------
-
     def _set_busy(self, tab: str, busy: bool) -> None:
         self.query_one(f"#{tab}_loading").display = busy
         self.query_one(f"#{tab}_list").display = not busy
@@ -305,8 +262,6 @@ class SkillsSeekerView(Vertical):
             await list_view.extend(items)
             list_view.index = 0
 
-    # --- eventos de aba -------------------------------------------------------
-
     @on(TabbedContent.TabActivated)
     def _tab_activated(self, event: TabbedContent.TabActivated) -> None:
         if event.pane.id == "installed":
@@ -317,8 +272,6 @@ class SkillsSeekerView(Vertical):
         event.stop()
         self.load_installed()
 
-    # --- Discover: popular + busca -------------------------------------------
-
     def do_search(self, query: str) -> None:
         """API pública: chamada pela tela principal ao submeter a busca."""
         self.query_one(TabbedContent).active = "discover"
@@ -326,7 +279,6 @@ class SkillsSeekerView(Vertical):
 
     @work(exclusive=True, group="discover")
     async def load_discover(self, query: str = "") -> None:
-        # `exclusive` cancela a busca anterior: descarta resultados obsoletos.
         self._set_busy("discover", True)
         if query:
             self._set_status(
@@ -337,9 +289,7 @@ class SkillsSeekerView(Vertical):
                 "skills_no_results", "No skills found for your search."
             )
         else:
-            if (
-                self._all_skills
-            ):  # busca vazia restaura o cache da lista popular
+            if self._all_skills:
                 skills = self._all_skills
             else:
                 self._set_status(
@@ -379,8 +329,6 @@ class SkillsSeekerView(Vertical):
                 )
         elif action == "install":
             self._start_install(skill)
-
-    # --- Instalação -----------------------------------------------------------
 
     def _start_install(self, skill: dict) -> None:
         if not skill.get("source"):
@@ -431,7 +379,7 @@ class SkillsSeekerView(Vertical):
                 )
             )
             return
-        except Exception as e:  # noqa: BLE001 - nunca derrubar o app por um worker
+        except Exception as e:  # noqa: BLE001
             self._install_failed(str(e))
             return
 
@@ -458,8 +406,6 @@ class SkillsSeekerView(Vertical):
             "discover", _t("skills_error_install", "Installation failed.")
         )
         self.notify(message, severity="error", timeout=10)
-
-    # --- Installed ------------------------------------------------------------
 
     @work(exclusive=True, group="installed")
     async def load_installed(self) -> None:

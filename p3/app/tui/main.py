@@ -54,6 +54,7 @@ from .runner_helper import (
     ScriptRunnerMixin,
     UpdateRunnerMixin,
 )
+from .startup_recommendation import StartupRecommendationsMixin
 from .tui_app_page import AppPageWidget, hide_app_page, show_app_page
 
 HOMEBREW_WATCH_INTERVAL = 3.0
@@ -71,6 +72,7 @@ class HomeScreen(
     UpdateRunnerMixin,
     ManifestRunnerMixin,
     RegistryOpenerMixin,
+    StartupRecommendationsMixin,
     Screen,
 ):
     """main screen for linuxtoys TUI"""
@@ -174,21 +176,21 @@ class HomeScreen(
                     yield Terminal(id="terminal")
 
         with Horizontal(classes="home-links"):
-            yield Link(" Wiki", url="https://linux.toys/documentation.html")
+            yield Link("Wiki", url="https://linux.toys/documentation.html")
             yield Static("│", classes="link-sep")
             yield FocusableLabel(
-                f" [u]{translations.get('report_label', 'Report Bug')}[/u]",
+                f"[u]{translations.get('report_label', 'Report Bug')}[/u]",
                 id="report-bug",
                 classes="report-bug",
             )
             yield Static("│", classes="link-sep")
             yield Link(
-                f" {translations.get('devportal_label', 'Credits')}",
+                f"{translations.get('devportal_label', 'Credits')}",
                 url="https://dev.linux.toys",
             )
             yield Static("│", classes="link-sep")
             yield Link(
-                f" {translations.get('support_footer', 'Support this project')}",
+                f"{translations.get('support_footer', 'Support this project')}",
                 url="https://ko-fi.com/psygreg",
             )
 
@@ -604,7 +606,7 @@ class HomeScreen(
         await menu.mount(
             ListItem(
                 Label(
-                    f" {translations.get('load_manifest', 'Load manifest')}"
+                    f"📃 {translations.get('load_manifest', 'Load manifest')}"
                 ),
                 id="manifest",
             )
@@ -612,28 +614,28 @@ class HomeScreen(
         await menu.mount(
             ListItem(
                 Label(
-                    f" {translations.get('select_language', 'Select language')}"
+                    f"💬 {translations.get('select_language', 'Select language')}"
                 ),
                 id="language",
             )
         )
         await menu.mount(
             ListItem(
-                Label(f" {translations.get('about', 'About')}"),
+                Label(f"🐧 {translations.get('about', 'About')}"),
                 id="about",
             )
         )
         await menu.mount(
             ListItem(
-                Label(f"󰲃 {translations.get('action_registry')}"),
+                Label(f"🗂️ {translations.get('action_registry')}"),
                 id="registry",
             )
         )
-        await menu.mount(ListItem(Label("󰚰 Update LinuxToys"), id="update"))
+        await menu.mount(ListItem(Label("🔃 Update LinuxToys"), id="update"))
         await menu.mount(
             ListItem(
                 Label(
-                    f" {translations.get('scripts_resync', 'Scripts resync')}"
+                    f"🔄 {translations.get('scripts_resync', 'Scripts resync')}"
                 ),
                 id="scripts_resync",
             )
@@ -642,12 +644,12 @@ class HomeScreen(
         links_container = self.query_one(".home-links", Horizontal)
         await links_container.remove_children()
         await links_container.mount(
-            Link(" Wiki", url="https://linux.toys/documentation.html")
+            Link("Wiki", url="https://linux.toys/documentation.html")
         )
         await links_container.mount(Static("│", classes="link-sep"))
         await links_container.mount(
             FocusableLabel(
-                f" [u]{translations.get('report_label', 'Report Bug')}[/u]",
+                f"[u]{translations.get('report_label', 'Report Bug')}[/u]",
                 id="report-bug",
                 classes="report-bug",
             )
@@ -655,14 +657,14 @@ class HomeScreen(
         await links_container.mount(Static("│", classes="link-sep"))
         await links_container.mount(
             Link(
-                f" {translations.get('devportal_label', 'Credits')}",
+                f"{translations.get('devportal_label', 'Credits')}",
                 url="https://dev.linux.toys",
             )
         )
         await links_container.mount(Static("│", classes="link-sep"))
         await links_container.mount(
             Link(
-                f" {translations.get('support_footer', 'Support this project')}",
+                f"{translations.get('support_footer', 'Support this project')}",
                 url="https://ko-fi.com/psygreg",
             )
         )
