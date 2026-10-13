@@ -629,26 +629,23 @@ _linuxtoys_prepare_session() (
     # first result rather than starting installations with an unfinished list.
     exec 9>"$session_dir/cachyos-mirrors.lock" || return 1
     flock -x 9 || return 1
-    if [[ -f "$session_dir/cachyos-mirrors.status" ]]; then
-        read -r mirror_status < "$session_dir/cachyos-mirrors.status"
-        if (( mirror_status != 0 )); then
-            echo "CachyOS mirror refresh failed earlier in this session. Restart LinuxToys to retry." >&2
-        fi
-        return "$mirror_status"
+    # Only a completed successful refresh is cached. A failed attempt remains
+    # retryable on the next operation, without restarting LinuxToys.
+    if [[ -f "$session_dir/cachyos-mirrors.status" ]] &&
+       [[ $(cat "$session_dir/cachyos-mirrors.status" 2>/dev/null) == 0 ]]; then
+        return 0
     fi
 
-    # Record an attempted preflight before invoking sudo. Authentication can
-    # exit the shell, and a cancelled attempt must not silently permit installs.
-    printf '1\n' > "$session_dir/cachyos-mirrors.status" || return 1
     echo "Refreshing CachyOS mirrors..."
     runner_lock "CachyOS mirror refresh"
     if sudo_ cachyos-rate-mirrors; then
+        printf '0\n' > "$session_dir/cachyos-mirrors.status"
         mirror_status=0
     else
         mirror_status=$?
-        printf 'CachyOS mirror refresh failed (status %d). Restart LinuxToys to retry.\n' "$mirror_status" >&2
+        rm -f -- "$session_dir/cachyos-mirrors.status"
+        printf 'CachyOS mirror refresh failed (status %d). The next operation will retry.\n' "$mirror_status" >&2
     fi
     runner_unlock
-    printf '%s\n' "$mirror_status" > "$session_dir/cachyos-mirrors.status"
     return "$mirror_status"
 )
