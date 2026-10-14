@@ -79,6 +79,11 @@ exec /usr/bin/python3 linuxtoys.py "$@"
 EOF
 chmod +x "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys"
 
+# Make the installed application accessible to non-root users while
+# retaining executable bits on bundled helpers and native binaries.
+find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys" -type d -exec chmod 755 {} +
+find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys" -type f -exec chmod a+r {} +
+
 # Make sure all shell scripts are executable
 find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/scripts/" -name "*.sh" -exec chmod +x {} \;
 chmod +x "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/linuxtoys.py"
@@ -158,6 +163,9 @@ override_dh_auto_build:
 
 override_dh_install:
 	dh_install
+	# Normalize the installed tree even if upstream sources have restrictive modes.
+	find debian/linuxtoys/usr/share/linuxtoys -type d -exec chmod 755 {} +
+	find debian/linuxtoys/usr/share/linuxtoys -type f -exec chmod a+r {} +
 	install -m 755 $$(find wheel-unpack-catalog -type f -name '_catalog_rs*.so' -print -quit) debian/linuxtoys/usr/share/linuxtoys/app/
 	install -m 755 target/release/liblinuxtoys_gui.so debian/linuxtoys/usr/share/linuxtoys/app/liblinuxtoys_gui.so
 	test -f debian/linuxtoys/usr/share/linuxtoys/app/_catalog_rs.abi3.so

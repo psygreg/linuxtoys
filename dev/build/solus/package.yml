@@ -85,6 +85,10 @@ install    : |
         cp -r --preserve=mode files/[^L]* $installdir/usr/share/linuxtoys/ 2>/dev/null || true
     fi
 
+    # Normalize copied source permissions for system-wide installation.
+    find "$installdir/usr/share/linuxtoys" -type d -exec chmod 755 {} +
+    find "$installdir/usr/share/linuxtoys" -type f -exec chmod a+r {} +
+
     # The catalog crate is a PyO3 abi3 extension. The GUI crate is a plain
     # C-ABI cdylib loaded through ctypes and must retain its native filename.
     install -m 755 target/release/lib_catalog_rs.so \
@@ -105,5 +109,8 @@ install    : |
     install -m 644 $workdir/src/toys.linux.LinuxToys.metainfo.xml $installdir/usr/share/metainfo/
     install -m 644 $workdir/src/linuxtoys.svg $installdir/usr/share/icons/hicolor/scalable/apps/
 
-    # Fix permissions on Python scripts
-    chmod 755 $installdir/usr/share/linuxtoys/linuxtoys.py 2>/dev/null || true
+    # Ensure launchers and shell scripts remain executable.
+    chmod 755 "$installdir/usr/share/linuxtoys/linuxtoys.py"
+    if [ -d "$installdir/usr/share/linuxtoys/scripts" ]; then
+        find "$installdir/usr/share/linuxtoys/scripts" -type f -name '*.sh' -exec chmod 755 {} +
+    fi

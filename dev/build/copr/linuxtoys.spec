@@ -38,6 +38,9 @@ mkdir -p %{buildroot}/usr/share/metainfo/
 mkdir -p %{buildroot}/usr/share/mime/packages/
 
 cp -a p3/. %{buildroot}/usr/share/linuxtoys/
+# Preserve executables, but make all packaged modules and assets readable.
+find %{buildroot}/usr/share/linuxtoys -type d -exec chmod 755 {} +
+find %{buildroot}/usr/share/linuxtoys -type f -exec chmod a+r {} +
 find %{buildroot}/usr/share/linuxtoys -type d -name __pycache__ -prune -exec rm -rf {} + 2>/dev/null || true
 find %{buildroot}/usr/share/linuxtoys -type f -name '*.pyc' -delete 2>/dev/null || true
 

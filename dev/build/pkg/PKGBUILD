@@ -36,6 +36,10 @@ package() {
     find "${pkgdir}/usr/share/linuxtoys" -type d -name '__pycache__' -prune -exec rm -rf {} +
     find "${pkgdir}/usr/share/linuxtoys" -type f \( -name '*.pyc' -o -name '*.pyo' \) -delete
 
+    # Ensure Python modules and assets are readable by ordinary users.
+    find "${pkgdir}/usr/share/linuxtoys" -type d -exec chmod 755 {} +
+    find "${pkgdir}/usr/share/linuxtoys" -type f -exec chmod a+r {} +
+
     # Set proper permissions for executable files
     chmod +x "${pkgdir}/usr/bin/linuxtoys"
     chmod +x "${pkgdir}/usr/share/linuxtoys/linuxtoys.py"

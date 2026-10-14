@@ -220,6 +220,9 @@ build_glycin_ng
 # Build directly from the official source tree. This replaces pkgforge's
 # linuxtoys-bin AUR install + /usr/share/linuxtoys copy step.
 cp -a "$ROOT_DIR/p3/." "$APP_BIN/"
+# Make bundled Python modules and assets accessible regardless of source modes.
+find "$APP_BIN" -type d -exec chmod 755 {} +
+find "$APP_BIN" -type f -exec chmod a+r {} +
 build_linuxtoys_rust
 find "$APP_BIN" -type d -name __pycache__ -prune -exec rm -rf {} + 2>/dev/null || true
 find "$APP_BIN" -type f -name '*.pyc' -delete 2>/dev/null || true
