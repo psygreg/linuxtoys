@@ -67,6 +67,11 @@ exec /usr/bin/python3 linuxtoys.py "$@"
 EOF
 chmod +x "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/bin/linuxtoys"
 
+# Make the installed application accessible to non-root users while
+# retaining executable bits on bundled helpers and native binaries.
+find "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys" -type d -exec chmod 755 {} +
+find "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys" -type f -exec chmod a+r {} +
+
 # Make sure all shell scripts are executable
 find "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys/scripts/" -name "*.sh" -exec chmod +x {} \;
 chmod +x "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys/linuxtoys.py"

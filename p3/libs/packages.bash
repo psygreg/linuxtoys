@@ -1610,9 +1610,9 @@ pkg_appimage () {
         # package exposed by the host repositories instead of keying off a codename.
         if dpkg -s libfuse2t64 >/dev/null 2>&1 || dpkg -s libfuse2 >/dev/null 2>&1; then
             :
-        elif apt-cache policy libfuse2t64 | grep -Eq 'Candidate: [^ (]'; then
+        elif LC_ALL=C apt-cache policy libfuse2t64 | grep -Eq '^[[:space:]]*Candidate: [^ (]'; then
             pkg_install libfuse2t64
-        elif apt-cache policy libfuse2 | grep -Eq 'Candidate: [^ (]'; then
+        elif LC_ALL=C apt-cache policy libfuse2 | grep -Eq '^[[:space:]]*Candidate: [^ (]'; then
             pkg_install libfuse2
         elif is_ubuntu; then
             # Ubuntu publishes libfuse2t64 in universe. If APT cannot see either
@@ -1623,9 +1623,9 @@ pkg_appimage () {
             sudo_ add-apt-repository -y universe || \
                 die "Failed to enable Ubuntu universe repository"
             sudo_ apt-get update || die "Failed to refresh APT repositories after enabling universe"
-            if apt-cache policy libfuse2t64 | grep -Eq 'Candidate: [^ (]'; then
+            if LC_ALL=C apt-cache policy libfuse2t64 | grep -Eq '^[[:space:]]*Candidate: [^ (]'; then
                 pkg_install libfuse2t64
-            elif apt-cache policy libfuse2 | grep -Eq 'Candidate: [^ (]'; then
+            elif LC_ALL=C apt-cache policy libfuse2 | grep -Eq '^[[:space:]]*Candidate: [^ (]'; then
                 pkg_install libfuse2
             else
                 die "No FUSE 2 compatibility package is available after enabling Ubuntu universe"
