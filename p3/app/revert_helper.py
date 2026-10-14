@@ -810,37 +810,35 @@ def _reverse_rclone_mount(mount_paths):
 
 
 def _reverse_systemd_operation(service, action):
-    """Reverse systemd operations."""
+    """Reverse system services, tolerating units already removed by package cleanup."""
     reversals = {
-        "enabled": "sudo systemctl disable",
-        "disabled": "sudo systemctl enable",
-        "started": "sudo systemctl stop",
-        "stopped": "sudo systemctl start",
+        "enabled": "disable", "disabled": "enable",
+        "started": "stop", "stopped": "start",
     }
-
     if action not in reversals:
         return None
-
-    return f"{reversals[action]} {service}"
+    unit = shlex.quote(service)
+    return (
+        f"if systemctl cat {unit} >/dev/null 2>&1; then "
+        f"sudo systemctl {reversals[action]} {unit}; "
+        "fi"
+    )
 
 
 def _reverse_systemd_usermode_operation(service, action):
-    """Reverse user-level systemd operations (without sudo).
-
-    User-level systemd operations are run by the user for their own services,
-    so they don't need sudo and use --user flag instead.
-    """
+    """Reverse user services, tolerating units already removed."""
     reversals = {
-        "enabled": "systemctl --user disable",
-        "disabled": "systemctl --user enable",
-        "started": "systemctl --user stop",
-        "stopped": "systemctl --user start",
+        "enabled": "disable", "disabled": "enable",
+        "started": "stop", "stopped": "start",
     }
-
     if action not in reversals:
         return None
-
-    return f"{reversals[action]} {service}"
+    unit = shlex.quote(service)
+    return (
+        f"if systemctl --user cat {unit} >/dev/null 2>&1; then "
+        f"systemctl --user {reversals[action]} {unit}; "
+        "fi"
+    )
 
 
 def _reverse_bootloader_update():
