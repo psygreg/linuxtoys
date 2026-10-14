@@ -85,6 +85,17 @@ grubbyargs_upd () {
     done
 }
 
+# Signing is useful when Secure Boot is enforced or the firmware is in
+# UEFI Setup Mode (preparing for Secure Boot provisioning).
+secureboot_signing_applicable() {
+    local state
+    [[ -d /sys/firmware/efi ]] || return 1
+    command -v mokutil >/dev/null 2>&1 || return 1
+    state=$(LC_ALL=C mokutil --sb-state 2>/dev/null) || return 1
+    [[ "$state" == *"SecureBoot enabled"* ]] ||
+        [[ "$state" == *"Platform is in Setup Mode"* ]]
+}
+
 secureboot_check() {
     local _ubuntumok=0
     for arg in "$@"; do
@@ -92,7 +103,7 @@ secureboot_check() {
             _ubuntumok=1
         fi
     done
-    sudo_ mokutil --sb-state | grep -q "SecureBoot enabled" || return 0
+    secureboot_signing_applicable || return 0
     if is_fedora || is_rhel || is_ostree; then
         call_script modsign
     elif is_ubuntu; then
