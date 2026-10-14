@@ -73,7 +73,7 @@ from .my_widgets import (
     ScriptFinished,
     Terminal,
 )
-from .tui_app_page import AppPageWidget, show_app_page
+from .tui_app_page import AppPageWidget, hide_app_page, show_app_page
 
 TRANSMAP_PATH = "/tmp/linuxtoys/transmap"
 
