@@ -1024,23 +1024,6 @@ class AppstreamRunnerMixin:
             self._reset_install_button()
             return
 
-        if entry.get("type", "") == "tar":
-            try:
-                script_info = materialize_repo_script(script_info)
-                resolve_script_dir()
-                temp_path_tar = create_temp_file(script_info["path"])
-            except (ValueError, NotImplementedError, OSError) as exc:
-                self.notify(
-                    "✗ Could not prepare repository entry "
-                    f"'{script_info.get('name', 'unknown')}': {exc}",
-                    severity="error",
-                )
-                self._running_button = None
-                if self._is_manifest_run:
-                    self._manifest_start_failed(
-                        script_info.get("name", "unknown"), 1
-                    )
-                return
         try:
             os.makedirs(
                 os.path.dirname(TRANSMAP_PATH), mode=0o700, exist_ok=True
@@ -1062,17 +1045,6 @@ class AppstreamRunnerMixin:
         self._running_is_uninstall = False
         self._running_is_appstream = True
         self._running_appstream_action = "install"
-
-        if temp_path_tar:
-            terminal = self.query_one("#terminal", Terminal)
-            terminal.run_script(
-                temp_path_tar,
-                env=self._script_env(
-                    name,
-                    TRANSMAP_PATH=TRANSMAP_PATH,
-                ),
-                pause_on_exit=False,
-            )
 
         terminal = self.query_one("#terminal", Terminal)
         terminal.run_script(
