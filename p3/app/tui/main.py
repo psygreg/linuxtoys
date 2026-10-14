@@ -59,7 +59,6 @@ from .tui_app_page import AppPageWidget, hide_app_page, show_app_page
 
 HOMEBREW_WATCH_INTERVAL = 3.0
 HOMEBREW_STARTUP_DELAY = 15.0
-RENDER_CHUNK_SIZE = 100
 HOMEBREW_PAGE_SIZE = 60
 RENDER_CHUNK_SIZE = 100
 SCROLL_LOAD_MARGIN = 5
@@ -215,6 +214,8 @@ class HomeScreen(
         first_button = left_panel.query(InfoButton).first()
         if first_button is not None:
             first_button.focus()
+
+        self.call_after_refresh(self.check_startup_recommendations)
 
     @property
     def _is_app_page_showing(self) -> bool:
