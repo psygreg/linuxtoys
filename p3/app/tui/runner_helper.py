@@ -391,14 +391,7 @@ class ScriptRunnerMixin:
             return
 
         self._running_button = button
-        self._execute_script_info(
-            {
-                "name": str(button.label),
-                "path": button.path,
-                "is_repo_entry": button.is_repo_entry,
-                "is_appstream_entry": button.is_appstream_entry,
-            }
-        )
+        self._execute_script_info(button.info)
 
     def _execute_script_info(self, script_info: dict) -> None:
         if not self._ensure_terminal_free():
