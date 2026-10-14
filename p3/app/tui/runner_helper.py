@@ -94,7 +94,11 @@ class ScriptRunnerMixin:
 
     async def handle_desc_button(self, button: InfoButton) -> None:
         """Call a function based on is script or not."""
-        if button.is_repo_entry and button.has_app_page:
+        if (
+            button.is_repo_entry
+            and button.has_app_page
+            and button.is_appstream_entry
+        ):
             pass
         elif button.is_script:
             await self._handle_script_button(button)
@@ -986,6 +990,26 @@ class AppstreamRunnerMixin:
     _running_dev_mode: bool
     _running_is_uninstall: bool
 
+    @staticmethod
+    def _is_plain_script_entry(entry: Mapping[str, Any]) -> bool:
+        return not entry.get("is_appstream_entry")
+
+    async def _run_plain_script_from_page(self, entry: dict) -> None:
+        """Item com app_page que não é AppStream (ex.: tar): usa o fluxo comum."""
+        button = InfoButton(
+            entry["name"],
+            entry.get("description", ""),
+            entry["path"],
+            entry.get("is_script", True),
+            is_repo_entry=entry.get("is_repo_entry", False),
+            is_appstream_entry=False,
+            has_app_page=True,
+            info=entry,
+        )
+        if self._is_app_page_showing:
+            await hide_app_page(self)
+        await self.handle_desc_button(button)
+
     def _reset_appstream_remove_button(self) -> None:
         page = self._current_app_page()
         if page is not None:
@@ -1020,6 +1044,11 @@ class AppstreamRunnerMixin:
     def run_appstream_install(self, script_info: Mapping[str, Any]) -> None:
         entry = dict(script_info)
         name = entry.get("name", "")
+
+        if self._is_plain_script_entry(entry):
+            self.run_worker(self._run_plain_script_from_page(entry))
+            return
+
         if not self._ensure_terminal_free():
             self._reset_install_button()
             return
@@ -1115,6 +1144,11 @@ class AppstreamRunnerMixin:
         )
 
     def run_appstream_uninstall(self, script_info: Mapping[str, Any]) -> None:
+        entry = dict(script_info)
+        if self._is_plain_script_entry(entry):
+            self.run_worker(self._run_plain_script_from_page(entry))
+            return
+
         if self._preparing_run or not self._ensure_terminal_free():
             self._reset_appstream_remove_button()
             return

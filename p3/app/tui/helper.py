@@ -5,7 +5,6 @@ from enum import Enum, auto
 from typing import Any
 
 from app.lang_utils import load_translations
-from app.parser import get_appstream_entries
 from app.search_helper import (
     CategoryCache,
     ScriptCache,
@@ -40,7 +39,6 @@ def is_search_ready() -> bool:
 
 
 def is_registered_entry(info: Mapping[str, Any], registry_data) -> bool:
-    """Mesma regra do GUI (_appstream_registry_managed), para qualquer item."""
     candidates = (
         info.get("registry_name"),
         info.get("appstream_id"),
