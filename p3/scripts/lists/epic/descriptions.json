@@ -1,0 +1,181 @@
+{
+  "long-description": "md/en.md",
+  "description_long_tag": "epic_long",
+  "description_tag": "epic_desc",
+  "en": {
+    "epic_desc": "The new, vibe-coded Epic Games Launcher that’s way faster and more responsive.",
+    "epic_long": "md/en.md"
+  },
+  "pt": {
+    "epic_long": "md/pt.md",
+    "epic_desc": "O novo Launcher da Epic Games, criado com vibe coding, muito mais rápido e responsivo."
+  },
+  "am": {
+    "epic_desc": "በvibe coding የተሰራው አዲሱ የEpic Games Launcher፣ እጅግ ፈጣን እና ምላሽ ሰጪ ነው።"
+  },
+  "ar": {
+    "epic_desc": "مشغّل Epic Games الجديد المطوّر بأسلوب vibe coding، أسرع بكثير وأكثر استجابة."
+  },
+  "az": {
+    "epic_desc": "Vibe coding ilə hazırlanmış, daha sürətli və çevik yeni Epic Games Launcher."
+  },
+  "bg": {
+    "epic_desc": "Новият Epic Games Launcher, създаден с vibe coding, е много по-бърз и отзивчив."
+  },
+  "bn": {
+    "epic_desc": "ভাইব কোডিং দিয়ে তৈরি নতুন Epic Games Launcher, যা অনেক দ্রুত এবং আরও প্রতিক্রিয়াশীল।"
+  },
+  "bs": {
+    "epic_desc": "Novi Epic Games Launcher, napravljen uz vibe coding, mnogo je brži i odzivniji."
+  },
+  "cs": {
+    "epic_desc": "Nový Epic Games Launcher vytvořený pomocí vibe codingu je mnohem rychlejší a svižnější."
+  },
+  "da": {
+    "epic_desc": "Den nye Epic Games Launcher, skabt med vibe coding, er meget hurtigere og mere responsiv."
+  },
+  "de": {
+    "epic_desc": "Der neue, mit Vibe Coding entwickelte Epic Games Launcher ist deutlich schneller und reaktionsfreudiger."
+  },
+  "el": {
+    "epic_desc": "Ο νέος Epic Games Launcher, φτιαγμένος με vibe coding, είναι πολύ πιο γρήγορος και άμεσος."
+  },
+  "es": {
+    "epic_desc": "El nuevo Epic Games Launcher, creado con vibe coding, es mucho más rápido y ágil."
+  },
+  "et": {
+    "epic_desc": "Uus vibe coding’u abil loodud Epic Games Launcher on palju kiirem ja reageerib sujuvamalt."
+  },
+  "fa": {
+    "epic_desc": "لانچر جدید Epic Games که با vibe coding ساخته شده، بسیار سریع‌تر و پاسخ‌گوتر است."
+  },
+  "fi": {
+    "epic_desc": "Uusi vibe codingilla tehty Epic Games Launcher on paljon nopeampi ja responsiivisempi."
+  },
+  "fr": {
+    "epic_desc": "Le nouveau lanceur Epic Games, créé en vibe coding, est bien plus rapide et réactif."
+  },
+  "ga": {
+    "epic_desc": "Tá an Epic Games Launcher nua, cruthaithe le vibe coding, i bhfad níos tapúla agus níos freagrúla."
+  },
+  "he": {
+    "epic_desc": "משגר Epic Games החדש, שנוצר באמצעות vibe coding, מהיר ומגיב הרבה יותר."
+  },
+  "hi": {
+    "epic_desc": "वाइब कोडिंग से बना नया Epic Games Launcher, जो कहीं ज़्यादा तेज़ और प्रतिक्रियाशील है।"
+  },
+  "hr": {
+    "epic_desc": "Novi Epic Games Launcher, izrađen uz vibe coding, mnogo je brži i odzivniji."
+  },
+  "hu": {
+    "epic_desc": "Az új, vibe codinggal készült Epic Games Launcher sokkal gyorsabb és reszponzívabb."
+  },
+  "hy": {
+    "epic_desc": "Vibe coding-ով ստեղծված նոր Epic Games Launcher-ը շատ ավելի արագ է և արձագանքող։"
+  },
+  "id": {
+    "epic_desc": "Epic Games Launcher baru yang dibuat dengan vibe coding, jauh lebih cepat dan responsif."
+  },
+  "is": {
+    "epic_desc": "Nýi Epic Games Launcher, búinn til með vibe coding, er mun hraðari og viðbragðsbetri."
+  },
+  "it": {
+    "epic_desc": "Il nuovo Epic Games Launcher, creato con il vibe coding, è molto più veloce e reattivo."
+  },
+  "ja": {
+    "epic_desc": "バイブコーディングで作られた新しいEpic Games Launcher。従来よりずっと高速で、反応も軽快です。"
+  },
+  "ka": {
+    "epic_desc": "Vibe coding-ით შექმნილი ახალი Epic Games Launcher გაცილებით სწრაფი და რეაგირებადია."
+  },
+  "km": {
+    "epic_desc": "Epic Games Launcher ថ្មីដែលបង្កើតដោយ vibe coding មានល្បឿនលឿនជាងមុន និងឆ្លើយតបរហ័សជាងមុន។"
+  },
+  "ko": {
+    "epic_desc": "바이브 코딩으로 만든 새로운 Epic Games Launcher로, 훨씬 빠르고 반응성이 뛰어납니다."
+  },
+  "lo": {
+    "epic_desc": "Epic Games Launcher ໃໝ່ທີ່ສ້າງດ້ວຍ vibe coding ໄວຂຶ້ນຫຼາຍ ແລະຕອບສະໜອງໄດ້ດີຂຶ້ນ."
+  },
+  "lt": {
+    "epic_desc": "Naujoji „Epic Games Launcher“ programa, sukurta naudojant vibe coding, yra daug greitesnė ir jautresnė."
+  },
+  "lv": {
+    "epic_desc": "Jaunais Epic Games Launcher, kas izveidots ar vibe coding, ir daudz ātrāks un atsaucīgāks."
+  },
+  "mn": {
+    "epic_desc": "Vibe coding ашиглан бүтээсэн шинэ Epic Games Launcher нь хавьгүй хурдан, илүү шуурхай ажиллагаатай."
+  },
+  "ms": {
+    "epic_desc": "Epic Games Launcher baharu yang dibina menggunakan vibe coding, jauh lebih pantas dan responsif."
+  },
+  "my": {
+    "epic_desc": "Vibe coding ဖြင့် ဖန်တီးထားသော Epic Games Launcher အသစ်သည် ပိုမိုမြန်ဆန်ပြီး တုံ့ပြန်မှုလည်း ပိုကောင်းပါသည်။"
+  },
+  "nb": {
+    "epic_desc": "Den nye Epic Games Launcher, laget med vibe coding, er mye raskere og mer responsiv."
+  },
+  "ne": {
+    "epic_desc": "भाइब कोडिङबाट बनाइएको नयाँ Epic Games Launcher, जुन धेरै छिटो र प्रतिक्रियाशील छ।"
+  },
+  "nl": {
+    "epic_desc": "De nieuwe Epic Games Launcher, gemaakt met vibe coding, is veel sneller en reageert vlotter."
+  },
+  "pl": {
+    "epic_desc": "Nowy Epic Games Launcher, stworzony metodą vibe coding, jest znacznie szybszy i bardziej responsywny."
+  },
+  "ro": {
+    "epic_desc": "Noul Epic Games Launcher, creat prin vibe coding, este mult mai rapid și mai receptiv."
+  },
+  "ru": {
+    "epic_desc": "Новый Epic Games Launcher, созданный с помощью вайб-кодинга, стал гораздо быстрее и отзывчивее."
+  },
+  "sk": {
+    "epic_desc": "Nový Epic Games Launcher vytvorený pomocou vibe codingu je oveľa rýchlejší a pohotovejší."
+  },
+  "sl": {
+    "epic_desc": "Novi Epic Games Launcher, ustvarjen z vibe codingom, je veliko hitrejši in odzivnejši."
+  },
+  "sq": {
+    "epic_desc": "Epic Games Launcher i ri, i krijuar me vibe coding, është shumë më i shpejtë dhe reagon më mirë."
+  },
+  "sr": {
+    "epic_desc": "Нови Epic Games Launcher, направљен уз vibe coding, много је бржи и одзивнији."
+  },
+  "sv": {
+    "epic_desc": "Den nya Epic Games Launcher, skapad med vibe coding, är mycket snabbare och mer responsiv."
+  },
+  "sw": {
+    "epic_desc": "Epic Games Launcher mpya iliyoundwa kwa vibe coding, yenye kasi zaidi na mwitikio bora zaidi."
+  },
+  "ta": {
+    "epic_desc": "வைப் கோடிங் மூலம் உருவாக்கப்பட்ட புதிய Epic Games Launcher, மிகவும் வேகமானதும் சிறப்பாகப் பதிலளிப்பதுமாக உள்ளது."
+  },
+  "tg": {
+    "epic_desc": "Epic Games Launcher-и нав, ки бо vibe coding сохта шудааст, хеле тезтар ва ҷавобгӯтар аст."
+  },
+  "th": {
+    "epic_desc": "Epic Games Launcher ใหม่ที่สร้างด้วย vibe coding เร็วขึ้นมากและตอบสนองได้ดียิ่งขึ้น"
+  },
+  "tl": {
+    "epic_desc": "Ang bagong Epic Games Launcher na ginawa gamit ang vibe coding, mas mabilis at mas responsive."
+  },
+  "tr": {
+    "epic_desc": "Vibe coding ile geliştirilen yeni Epic Games Launcher, çok daha hızlı ve duyarlı."
+  },
+  "uk": {
+    "epic_desc": "Новий Epic Games Launcher, створений за допомогою вайбкодингу, значно швидший і чутливіший."
+  },
+  "ur": {
+    "epic_desc": "وائب کوڈنگ سے بنایا گیا نیا Epic Games Launcher، جو بہت زیادہ تیز اور بہتر ردعمل والا ہے۔"
+  },
+  "uz": {
+    "epic_desc": "Vibe coding yordamida yaratilgan yangi Epic Games Launcher ancha tezkor va sezgir."
+  },
+  "vi": {
+    "epic_desc": "Epic Games Launcher mới được tạo bằng vibe coding, nhanh hơn và phản hồi nhạy hơn nhiều."
+  },
+  "zh": {
+    "epic_desc": "全新 Epic Games Launcher，采用氛围编程（vibe coding）打造，速度更快、响应更灵敏。"
+  }
+}

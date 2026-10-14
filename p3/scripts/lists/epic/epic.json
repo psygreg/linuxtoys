@@ -1,0 +1,17 @@
+[
+    {
+        "name": "Epic Games Launcher",
+        "description": "The new, vibe-coded Epic Games Launcher that’s way faster and more responsive.",
+        "description_tag": "epic_desc",
+        "license": "LicenseRef-proprietary",
+        "repo": "https://store.epicgames.com/",
+        "category": "game",
+        "icon": "./epic.svg",
+        "descriptions": "descriptions.json",
+        "screenshots": "screens/",
+        "type": "url",
+        "urls": {
+            "appimage": "https://launcher-public-service-prod06.ol.epicgames.com/launcher/api/installer/download/EpicGamesLauncher-x86_64.AppImage"
+        }
+    }
+]
