@@ -262,52 +262,69 @@ ManifestDialog {
 }
 /* ------------------------------ END -------------------- */
 
-
 /* ------------------------------ DIALOG CSS -------------------- */
-ConfirmScriptScreen {
+ModalScreen {
   align: center middle;
 }
 
+ConfirmCleanupDialog {
+  background: $background 70%;
+}
+
 #confirm-dialog {
-  width: 60%;
+  width: 70;
   max-width: 95%;
-  max-width: 95vh;
   height: auto;
+  max-height: 95%;
   border: thick $primary;
   background: $surface;
   padding: 1 2;
 }
 
-#confirm-title {
+#confirm-dialog Label,
+#confirm-dialog Static {
+  width: 100%;
+}
+
+#confirm-title,
+#dialog-title {
   text-style: bold;
-  content-align: center middle;
+  text-align: center;
   margin-bottom: 1;
-  height: auto;
 }
 
-#confirm-description {
+#dialog-message {
+  color: $text-muted;
+  margin-bottom: 1;
+}
+
+#confirm-description,
+#aur-security-detail,
+#changelog {
   border: round $accent;
-  padding: 1 2;
+  padding: 0 1;
   margin-bottom: 1;
   height: auto;
-  max-height: 50vh;
+  max-height: 40vh;
 }
 
-#confirm-buttons {
-  align: center middle;
+#confirm-buttons,
+#dialog-buttons {
+  width: 100%;
   height: auto;
+  align: center middle;
 }
 
-#confirm-buttons Button {
-  margin: 0 2;
+#confirm-buttons Button,
+#dialog-buttons Button {
+  margin: 0 1;
   min-width: 12;
 }
 
 #sudo-error {
   color: $error;
   text-style: bold;
-  content-align: center middle;
-  height: auto;
+  text-align: center;
   margin-bottom: 1;
 }
 
@@ -315,60 +332,16 @@ ConfirmScriptScreen {
   margin-bottom: 1;
 }
 
-ConfirmCleanupDialog {
-    align: center middle;
-    background: $background 70%;
+ConfirmCleanupDialog #cancel-btn {
+  background: transparent;
+  border: round $primary;
+  color: $text;
 }
 
-#confirm-dialog {
-    width: 66;
-    height: auto;
-    background: #1e1e2e;
-    border: solid #3b3b4f;
-    padding: 1 2;
-}
-
-#dialog-title {
-    text-align: center;
-    text-style: bold;
-    width: 100%;
-    margin-bottom: 1;
-    color: $text;
-}
-
-#dialog-message {
-    width: 100%;
-    margin-bottom: 1;
-    color: $text-muted;
-}
-
-#dialog-buttons {
-    width: 100%;
-    height: 3;
-    align: center middle;
-    margin-top: 1;
-}
-
-#dialog-buttons Button {
-    width: 1fr;
-    margin: 0 1;
-}
-
-#cancel-btn {
-    background: transparent;
-    border: round $primary;
-    color: $text;
-}
-
-#remove-btn {
-    background: #4a192c;
-    border: round #a32a49;
-    color: #f38ba8;
-}
-
-#aur-security-detail{
-  height: auto;
-  max-height: 50vh;
+ConfirmCleanupDialog #remove-btn {
+  background: #4a192c;
+  border: round #a32a49;
+  color: #f38ba8;
 }
 /* ------------------------------ END -------------------- */
 

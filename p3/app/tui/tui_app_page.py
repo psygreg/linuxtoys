@@ -40,9 +40,6 @@ MAX_COLUMNS = 5
 _BLANK = Select.NULL
 
 
-# --------------------------------------------------------------------------- #
-# Helpers puros
-# --------------------------------------------------------------------------- #
 def _norm_lang(value: Any) -> str:
     value = str(value or "").strip().replace("_", "-")
     return value.split("-", 1)[0].split(".", 1)[0].casefold() if value else ""
@@ -111,9 +108,6 @@ def _fmt_price(option: Mapping[str, Any]) -> str:
     )
 
 
-# --------------------------------------------------------------------------- #
-# Card do "Try These"
-# --------------------------------------------------------------------------- #
 class FeaturedCard(Static, can_focus=True):
     BINDINGS = [Binding("enter", "select", "Open", show=False)]
 
@@ -140,9 +134,6 @@ class FeaturedCard(Static, can_focus=True):
         self.post_message(self.Selected(self.script_info))
 
 
-# --------------------------------------------------------------------------- #
-# Página
-# --------------------------------------------------------------------------- #
 class AppPageWidget(Vertical):
     """Página de app. Recebe tudo que precisa no construtor."""
 
@@ -219,7 +210,6 @@ class AppPageWidget(Vertical):
             super().__init__()
             self.job_id = job_id
 
-    # ---- construção ------------------------------------------------------- #
     def __init__(
         self,
         script_info: Mapping[str, Any],
@@ -258,7 +248,6 @@ class AppPageWidget(Vertical):
                 self._source_options[0],
             )
 
-        # Descrição (original / traduzida)
         self._blocks = (
             script_info.get("long_description_blocks")
             or script_info.get("long_description")
@@ -268,7 +257,6 @@ class AppPageWidget(Vertical):
         self._translated_blocks: Any = None
         self._showing_translation = False
 
-        # Avaliação (estado real vem do appstream_cache, como na GUI)
         self._user_rating: int | None = script_info.get("user_rating")
         self._rated = self._user_rating is not None
         self._can_rate = False
@@ -276,12 +264,10 @@ class AppPageWidget(Vertical):
         self._pending_stars: int | None = None
         self._snap_vote_synced: set[str] = set()
 
-        # Extensões Flatpak da fonte selecionada (aba criada sob demanda)
         self._extensions = self._load_extensions()
         self._extension_jobs: list[Mapping[str, Any]] = []
         self._extensions_populated = False
 
-        # Featured: mesma categoria primeiro, nunca o app atual
         current = _script_key(script_info)
         category = script_info.get("category")
         cands = [f for f in (featured or ()) if _script_key(f) != current]
@@ -299,7 +285,6 @@ class AppPageWidget(Vertical):
     def _t(self, key: str, default: str) -> str:
         return self.translations.get(key, default)
 
-    # ---- fontes ----------------------------------------------------------- #
     def _recommended_source(self) -> str:
         return str(
             self.script_info.get("recommended_source")
@@ -351,7 +336,6 @@ class AppPageWidget(Vertical):
             == "snap"
         )
 
-    # ---- textos do cabeçalho ---------------------------------------------- #
     def _name_text(self) -> Text:
         text = Text()
         text.append(str(self.script_info.get("name", "") or ""), style="bold")
@@ -394,7 +378,6 @@ class AppPageWidget(Vertical):
                 text.append(f" ({count})")
         return text if text.plain else None
 
-    # ---- comércio --------------------------------------------------------- #
     def _commerce_label(
         self, kind: str, options: Sequence[Mapping[str, Any]]
     ) -> str:
@@ -455,7 +438,6 @@ class AppPageWidget(Vertical):
         button.url = url  # type: ignore[attr-defined]
         return button
 
-    # ---- compose ---------------------------------------------------------- #
     def compose(self) -> ComposeResult:
         with Horizontal(id="app-top"):
             yield Button("←", id="app-back", tooltip=self._t("back", "Back"))
@@ -481,8 +463,6 @@ class AppPageWidget(Vertical):
         yield self._rating_row()
         yield self._rating_confirm_row()
 
-        # Sempre TabbedContent: a aba Extensions entra/sai quando a fonte
-        # muda (GUI: _sync_extensions_tabs). Sem extensões, a barra some.
         with TabbedContent(
             id="app-tabs", classes="" if self._extensions else "no-ext"
         ):
@@ -627,7 +607,6 @@ class AppPageWidget(Vertical):
         description = str(self.script_info.get("description") or "").strip()
         return description or None
 
-    # ---- corpo ------------------------------------------------------------ #
     def _build_content(self) -> VerticalScroll:
         children: list[Widget] = []
 
@@ -659,12 +638,13 @@ class AppPageWidget(Vertical):
             children[-1].display = False
         return VerticalScroll(*children, id="app-content")
 
-    # ---- extensões -------------------------------------------------------- #
     def _load_extensions(self) -> list[Mapping[str, Any]]:
         """Mesma fonte da GUI: addons Flatpak da fonte selecionada."""
         return [
             dict(item)
-            for item in appstream_cache.get_flatpak_extensions(dict(self._selected))
+            for item in appstream_cache.get_flatpak_extensions(
+                dict(self._selected)
+            )
             or ()
         ]
 
@@ -698,7 +678,6 @@ class AppPageWidget(Vertical):
         state: str,
         record: Mapping[str, Any] | None,
     ) -> Horizontal:
-        # (texto secundário, rótulo do botão, variante, ação)
         views = {
             "available": (
                 str(info.get("summary") or ""),
@@ -832,7 +811,6 @@ class AppPageWidget(Vertical):
             and source != self._system_language
         )
 
-    # ---- ciclo de vida ---------------------------------------------------- #
     def on_mount(self) -> None:
         self._refresh_rating()
         self._load_rating_state()
@@ -858,7 +836,6 @@ class AppPageWidget(Vertical):
         self._featured_signature = None
         self._schedule_featured()
 
-    # ---- API pública (host atualiza estado) ------------------------------ #
     def set_install_state(self, installed: bool) -> None:
         self._installed = installed
         self.query_one("#app-install").display = not installed
@@ -942,7 +919,6 @@ class AppPageWidget(Vertical):
             else None
         )
 
-    # ---- avaliação (mesma lógica da GUI, via appstream_cache) ------------ #
     def _rating_app_id(self) -> str:
         info = self.script_info
         return str(info.get("appstream_id") or info.get("id") or "").strip()
@@ -1086,12 +1062,16 @@ class AppPageWidget(Vertical):
         self._rating_busy = False
         if success:
             key, default = (
-                ("app_page_rate_success_message_snap",
-                 "Thank you! Your vote was submitted to Canonical Snap "
-                 "ratings.")
+                (
+                    "app_page_rate_success_message_snap",
+                    "Thank you! Your vote was submitted to Canonical Snap "
+                    "ratings.",
+                )
                 if snap
-                else ("app_page_rate_success_message",
-                      "Thank you! Your rating was submitted to ODRS.")
+                else (
+                    "app_page_rate_success_message",
+                    "Thank you! Your rating was submitted to ODRS.",
+                )
             )
             title = self._t("app_page_rate_success_title", "Rating Submitted")
             self.app.notify(self._t(key, default), title=title)
@@ -1108,7 +1088,6 @@ class AppPageWidget(Vertical):
         self._load_rating_state()
         self._refresh_rating()
 
-    # ---- featured (preenche só o espaço sobrando, como na GUI) ------------ #
     def _schedule_featured(self) -> None:
         if not self._featured or not self.is_mounted:
             return

@@ -576,7 +576,7 @@ class UpdateAvailableDialog(ModalScreen[bool]):
         self.changelog = changelog
 
     def compose(self) -> ComposeResult:
-        with Vertical():
+        with Vertical(id="confirm-dialog"):
             tempalte_test = translations.get(
                 "update_available_message",
                 "A new version ${version} of LinuxToys is available.",
@@ -584,7 +584,7 @@ class UpdateAvailableDialog(ModalScreen[bool]):
             yield Label(tempalte_test.replace("${version}", self.tag))
             with VerticalScroll(id="changelog"):
                 yield Static(self.changelog)
-            with Horizontal():
+            with Horizontal(id="confirm-buttons"):
                 yield Button("Ignore", id="no", variant="error")
                 yield Button("Install Update", id="yes", variant="success")
 
@@ -598,7 +598,7 @@ class UpdateCompleteDialog(ModalScreen[None]):
     ]
 
     def compose(self) -> ComposeResult:
-        with Vertical():
+        with Vertical(id="confirm-dialog"):
             yield Label("Atualização concluída!")
             yield Label(
                 translations.get(
