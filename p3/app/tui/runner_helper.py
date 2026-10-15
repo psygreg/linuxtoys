@@ -53,9 +53,12 @@ from .helper import (
     SPECIALS_ROOT,
     ScriptResult,
     _classify_exit_code,
+    appimage_relative,
+    get_appimage_items,
     get_homebrew_items,
     get_scripts_for_category_cached,
     get_specials_items,
+    is_appimage_path,
     is_homebrew_catalog_valid,
     is_homebrew_path,
     is_registered_entry,
@@ -63,6 +66,7 @@ from .helper import (
     is_specials_path,
     refresh_homebrew_catalog,
     refresh_removable_state,
+    search_appimage_items,
     search_homebrew_items,
     translations,
 )
@@ -228,6 +232,11 @@ class ScriptRunnerMixin:
         if is_homebrew_path(button.path):
             await self._open_homebrew_category(button)
             return
+
+        if is_appimage_path(button.path):
+            await self._open_appimage_category(button)
+            return
+
         self._nav_stack.append((button.path, str(button.label)))
         await self._render_items(self._items_for_path(button.path))
         self._update_breadcrumb()
@@ -886,6 +895,19 @@ class ScriptRunnerMixin:
             panel.border_title = current_name or "Homebrew"
             return
 
+        if is_appimage_path(current_path):
+            panel.border_title = " › ".join(
+                [
+                    translations.get("appimage_category", "AppImages"),
+                    *[
+                        translations.get(p, p)
+                        for p in appimage_relative(current_path).split("/")
+                        if p
+                    ],
+                ]
+            )
+            return
+
         crumbs = get_breadcrumb_path(current_path, translations)
         names = " › ".join(
             translations.get(c["name"], c["name"]) for c in crumbs
@@ -980,6 +1002,85 @@ class ScriptRunnerMixin:
                 translations.get(
                     "homebrew_no_results", "No Homebrew packages found."
                 )
+            )
+            return
+        await self._render_items(results, lazy=True)
+
+    def _appimage_view_active(self) -> bool:
+        return bool(self._nav_stack) and is_appimage_path(
+            self._nav_stack[-1][0]
+        )
+
+    async def _open_appimage_category(self, button: InfoButton) -> None:
+        self._nav_stack.append((button.path, str(button.label)))
+        self._update_breadcrumb()
+        await self._render_items([])
+        if self._appimage_view_active():
+            self._set_items_loading(True)
+        self._load_appimage_items()
+
+    def _load_appimage_items(self) -> None:
+        self.run_worker(
+            self._load_appimage_items_async(),
+            exclusive=True,
+            group="appimage-items",
+        )
+
+    async def _load_appimage_items_async(self) -> None:
+        if not self._appimage_view_active():
+            return
+        path = self._nav_stack[-1][0]
+        try:
+            items = await asyncio.to_thread(get_appimage_items, path)
+        except Exception:  # noqa: BLE001
+            if self._appimage_view_active():
+                await self._show_items_message(
+                    translations.get(
+                        "appimage_unavailable",
+                        "AppImage catalog is unavailable.",
+                    )
+                )
+            return
+        if not self._appimage_view_active() or self._nav_stack[-1][0] != path:
+            return  # navegou durante a carga
+        if not items:
+            await self._show_items_message(
+                translations.get("appimage_no_items", "No AppImages found.")
+            )
+            return
+        await self._render_items(items, lazy=True)
+
+    def _schedule_appimage_search(self, query: str) -> None:
+        if self._appimage_search_timer:
+            self._appimage_search_timer.stop()
+        self._appimage_search_timer = self.set_timer(
+            0.2, partial(self._run_appimage_search, query)
+        )
+
+    def _run_appimage_search(self, query: str) -> None:
+        if not self._appimage_view_active():
+            return
+        self.run_worker(
+            self._appimage_search_async(query),
+            exclusive=True,
+            group="appimage-items",
+        )
+
+    async def _appimage_search_async(self, query: str) -> None:
+        if not query:
+            await self._load_appimage_items_async()
+            return
+        try:
+            results = await asyncio.to_thread(search_appimage_items, query)
+        except Exception:  # noqa: BLE001
+            logger.exception("AppImage search failed")
+            return
+        current = self.query_one("#search-input", Input).value.strip()
+        if not self._appimage_view_active() or current != query:
+            return
+        if not results:
+            await self._show_items_message(
+                translations.get("appimage_no_results", "No AppImages found.")
             )
             return
         await self._render_items(results, lazy=True)

@@ -31,9 +31,11 @@ from .app_page_translate import (
 )
 from .dialog_screen import ReportBugDialog
 from .helper import (
+    appimage_category_info,
     get_categories,
     get_specials_root_item,
     homebrew_category_info,
+    is_appimage_path,
     is_registered_entry,
     is_search_ready,
     make_widget_id,
@@ -89,6 +91,7 @@ class HomeScreen(
         self._registry_data = None
         self._skills_search_timer = None
         self._homebrew_search_timer = None
+        self._appimage_search_timer = None
         self._skills_prev_display: dict[str, bool] = {}
         self._skills_prev_placeholder = ""
         self._skills_prev_panel_title = ""
@@ -485,6 +488,10 @@ class HomeScreen(
                 self._schedule_homebrew_search(query)
             return
 
+        if self._appimage_view_active():
+            self._schedule_appimage_search(query)
+            return
+
         if self._search_timer:
             self._search_timer.cancel()
         if not query:
@@ -556,6 +563,7 @@ class HomeScreen(
         ]
         if homebrew_catalog.enabled():
             category_snapshot.append(homebrew_category_info())
+        category_snapshot.append(appimage_category_info())
         return category_snapshot
 
     async def action_go_back(self) -> None:
@@ -584,6 +592,12 @@ class HomeScreen(
         self._nav_stack.pop()
         if self._nav_stack:
             current_path, _ = self._nav_stack[-1]
+            if is_appimage_path(current_path):
+                self._update_breadcrumb()
+                await self._render_items([])
+                self._set_items_loading(True)
+                self._load_appimage_items()
+                return
             await self._render_items(self._items_for_path(current_path))
         else:
             await self.action_reset_to_home()

@@ -1,3 +1,4 @@
+import os
 import re
 import threading
 from collections.abc import Mapping
@@ -21,6 +22,8 @@ _cache_lock = threading.Lock()
 SPECIALS_PREFIX = "specials://"
 SPECIALS_ROOT = "specials://root"
 HOMEBRE_PREFIX = "homebrew://"
+APPIMAGE_PREFIX = "appimages://"
+APPIMAGE_ROOT = "appimages://root"
 
 
 def make_widget_id(identifier: str) -> str:
@@ -161,6 +164,10 @@ def is_specials_path(path: str) -> bool:
 
 def is_homebrew_path(path: str) -> bool:
     return path.startswith(HOMEBRE_PREFIX)
+
+
+def is_appimage_path(path: str) -> bool:
+    return path.startswith(APPIMAGE_PREFIX)
 
 
 def get_specials_items(path: str, trans=None) -> list[dict]:
@@ -316,3 +323,74 @@ def _classify_exit_code(exit_code: int | None) -> ScriptResult:
     if exit_code == 100 or 128 <= exit_code <= 192:
         return ScriptResult.CANCELLED
     return ScriptResult.ERROR
+
+
+def appimage_relative(path: str) -> str:
+    """'appimages://root' -> ''; 'appimages://a/b' -> 'a/b'."""
+    rel = path[len(APPIMAGE_PREFIX) :].strip("/")
+    return "" if rel == "root" else rel
+
+
+def appimage_category_info(relative: str = "", trans=None) -> dict:
+    """Mesmo formato da GUI (_appimage_category_info)."""
+    from app import parser
+
+    active = trans or translations
+    relative = str(relative or "").strip("/")
+    leaf = relative.rsplit("/", 1)[-1] if relative else ""
+    name = active.get("appimage_category", "AppImages")
+    icon = "appimages.webp"
+    description = active.get(
+        "appimage_category_desc",
+        "Browse applications distributed as AppImages.",
+    )
+    if leaf:
+        category_dir = os.path.join(parser.SCRIPTS_DIR, *relative.split("/"))
+        metadata = parser._parse_metadata_file(
+            os.path.join(category_dir, "category-info.txt"),
+            {"icon": "folder-open", "description": ""},
+            active,
+        )
+        name = active.get(leaf, leaf)
+        icon = metadata.get("icon") or "folder-open"
+        description = metadata.get("description") or ""
+    return {
+        "name": name,
+        "description": description,
+        "icon": icon,
+        "path": "appimages://" + (relative or "root"),
+        "type": "category",
+        "is_script": False,
+        "is_subcategory": bool(leaf),
+        "is_appimage_category": True,
+        "appimage_relative_category": relative,
+    }
+
+
+def _unwrap_entries(results) -> list[dict]:
+    """search(...) devolve (dict, score); get_*_entries devolve dict."""
+    return [e[0] if isinstance(e, tuple) else e for e in results]
+
+
+def get_appimage_items(path: str) -> list[dict]:
+    """Espelha a hierarquia LT. BLOQUEANTE: executar em thread."""
+    from app import appstream_parser
+
+    ensure_homebrew_context()
+    prefix = appimage_relative(path)
+    children = appstream_parser.get_appimage_subcategories(prefix)
+    entries = []
+    if not children or prefix:
+        entries = _unwrap_entries(
+            appstream_parser.get_appimage_entries(prefix)
+        )
+    entries.sort(key=lambda item: str(item.get("name") or "").casefold())
+    return [appimage_category_info(c) for c in sorted(children)] + entries
+
+
+def search_appimage_items(query: str) -> list[dict]:
+    """Busca só em AppImage. BLOQUEANTE: executar em thread."""
+    from app import appstream_parser
+
+    ensure_homebrew_context()
+    return _unwrap_entries(appstream_parser.search_appimage_entries(query))
