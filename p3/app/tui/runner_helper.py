@@ -20,7 +20,7 @@ from app.easy_cli import (
     is_dev_mode_enabled,
     resolve_script_dir,
 )
-from app.library_loader import script_command
+from app.library_loader import script_command, script_environment
 from app.manifest_helper import find_script_by_name_async
 from app.parser import get_breadcrumb_path, script_requires_reboot
 from app.registry_utils import parse_registry_file
@@ -431,6 +431,7 @@ class ScriptRunnerMixin:
         self._running_is_appstream = False
 
         env = self._script_env(script_info.get("name", "unknown"))
+        env.update(self._app_identity_env(script_info))
         if self._is_manifest_run and not script_info.get("is_batch"):
             env.update(self._manifest_script_env(script_info))
 
@@ -440,6 +441,19 @@ class ScriptRunnerMixin:
             temp_path,
             env=env,
         )
+
+    @staticmethod
+    def _app_identity_env(script_info: dict) -> dict[str, str]:
+        """Identidade canônica do app (LINUXTOYS_APP_*), igual à da GUI.
+
+        `script_environment` devolve um ambiente completo. Parte-se de um
+        `base_env` mínimo para que só as variáveis acrescentadas por ele
+        sejam injetadas via `env K=V` no terminal.
+        """
+        base_env = {"SCRIPT_DIR": os.environ.get("SCRIPT_DIR", "")}
+        env = script_environment(script_info, base_env=base_env)
+        env.pop("SCRIPT_DIR", None)  # o preâmbulo do script já o exporta
+        return env
 
     @staticmethod
     def _script_env(script_name: str, **extra: str) -> dict[str, str]:
