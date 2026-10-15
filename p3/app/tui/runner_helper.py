@@ -382,9 +382,9 @@ class ScriptRunnerMixin:
                 ),
                 severity="warning",
             )
-            await self._show_home()
+            await self.action_reset_to_home()
         elif not self._nav_stack:
-            await self._show_home()
+            await self.action_reset_to_home()
 
     def run_script(self, button: InfoButton) -> None:
         if not self._ensure_terminal_free():
