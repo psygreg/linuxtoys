@@ -26,8 +26,12 @@ rhel_check () {
 }
 
 { is_rhel && rhel_check; } || true
+if ! secureboot_signing_applicable; then
+    echo "Secure Boot is neither enabled nor in UEFI Setup Mode; module signing setup skipped."
+    exit 100
+fi
 sudo_rq
-if sudo mokutil --sb-state | grep -q "SecureBoot enabled"; then
+if secureboot_signing_applicable; then
     if is_ostree; then
         if ! rpm -qi "akmods-keys" &>/dev/null; then
             pkg_install rpmdevtools akmods
