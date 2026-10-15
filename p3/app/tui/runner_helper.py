@@ -4,6 +4,7 @@ import shlex
 import tempfile
 import threading
 from collections.abc import Mapping
+from contextlib import ExitStack
 from functools import partial
 from typing import Any
 
@@ -94,6 +95,7 @@ class ScriptRunnerMixin:
     _running_temp_path: str | None = None
     _running_dev_mode: bool = False
     _running_is_uninstall: bool = False
+    _running_appimage_stack: ExitStack | None = None
     _preparing_run: bool = False
 
     async def handle_desc_button(self, button: InfoButton) -> None:
@@ -761,7 +763,12 @@ class ScriptRunnerMixin:
         self._running_is_uninstall = False
         self._running_is_appstream = False
         self._running_appstream_action = None
-
+        stack, self._running_appimage_stack = (
+            self._running_appimage_stack,
+            None,
+        )
+        if stack is not None:
+            stack.close()
         self.run_worker(
             self._refresh_removable_state(),
             group="removable-refresh",
@@ -1091,6 +1098,7 @@ class AppstreamRunnerMixin:
 
     _running_is_appstream: bool = False
     _running_appstream_action: str | None = None
+    _running_appimage_stack: ExitStack | None
 
     _running_button: InfoButton | None
     _running_script_info: dict | None
@@ -1157,8 +1165,15 @@ class AppstreamRunnerMixin:
             self.run_worker(self._run_plain_script_from_page(entry))
             return
 
-        if not self._ensure_terminal_free():
+        if self._preparing_run or not self._ensure_terminal_free():
             self._reset_install_button()
+            return
+
+        if entry.get("appstream_source") == "appimage":
+            self._preparing_run = True
+            self.run_worker(
+                self._run_appimage_install(entry), group="appimage-install"
+            )
             return
 
         try:
@@ -1451,6 +1466,74 @@ class AppstreamRunnerMixin:
         if not started:
             self._finish_script_run()
             self._refresh_extensions_page()
+
+    async def _run_appimage_install(self, entry: dict) -> None:
+        """Baixa o AppImage só agora e o instala, sem abrir o terminal."""
+        from app import appimage_catalog
+
+        stack = ExitStack()
+        started = False
+        try:
+            path, release = await asyncio.to_thread(
+                lambda: stack.enter_context(
+                    appimage_catalog.download_for_install(entry)
+                )
+            )
+            started = self._start_appimage_install(entry, path, release, stack)
+        except (OSError, ValueError, RuntimeError) as exc:
+            self.notify(
+                f"✗ AppImage installation failed: {exc}", severity="error"
+            )
+        finally:
+            if not started:
+                stack.close()
+                self._reset_install_button()
+            self._preparing_run = False
+
+    def _start_appimage_install(
+        self, entry: dict, path: str, release: Any, stack: ExitStack
+    ) -> bool:
+        if not self._ensure_terminal_free():
+            return False
+        directory = os.path.dirname(TRANSMAP_PATH)
+        os.makedirs(directory, mode=0o700, exist_ok=True)
+        with open(TRANSMAP_PATH, "w"):
+            pass
+
+        fd, script_path = tempfile.mkstemp(
+            prefix="local-package-", suffix=".sh", dir=directory, text=True
+        )
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                handle.write("#!/usr/bin/env bash\n")
+                handle.write(f"pkg_appimage {shlex.quote(path)}\n")
+            os.chmod(script_path, 0o700)
+            command = script_command(script_path, resolve_script_dir())
+        except (OSError, ValueError):
+            self._cleanup_temp_file(script_path, False)
+            raise
+
+        self._running_button = None
+        self._running_script_info = {**entry, "appimage_release": release}
+        self._running_temp_path = script_path
+        self._running_dev_mode = False
+        self._running_is_uninstall = False
+        self._running_is_appstream = True
+        self._running_appstream_action = "install"
+        self._running_appimage_stack = stack
+
+        terminal = self.query_one("#terminal", Terminal)
+        started = terminal.run_script(
+            command,
+            env=self._script_env(
+                entry.get("name", ""), TRANSMAP_PATH=TRANSMAP_PATH
+            ),
+            pause_on_exit=False,
+        )
+        if not started:
+            self._cleanup_temp_file(script_path, False)
+            self._finish_script_run()
+        return bool(started)
 
 
 class ManifestRunnerMixin:
