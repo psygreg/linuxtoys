@@ -238,6 +238,44 @@ def is_wsl():
     """Return True when Linux is running under WSL, probing the host once."""
     return bool(_cached_host_value("wsl", _detect_wsl))
 
+def _is_supported_debian_release():
+    """
+    Check if the host runs a supported Debian release (trixie or newer).
+
+    /etc/debian_version is the source of truth because Debian derivatives
+    (Kali, Deepin, etc.) expose their own ID/VERSION_CODENAME instead of
+    Debian's. Stable reports a numeric version ('13.7' for trixie), while
+    testing/unstable report '<codename>/sid' ('forky/sid') or 'sid'.
+
+    Returns:
+        bool: True if the Debian base is trixie or newer, False otherwise
+    """
+    try:
+        with open("/etc/debian_version", "r") as f:
+            debian_version = f.read().strip().lower()
+    except Exception:
+        return False
+
+    # Testing/unstable-style values: 'forky/sid', 'trixie/sid' or 'sid'.
+    if debian_version == "sid" or "trixie" in debian_version or "forky" in debian_version:
+        return True
+
+    # Stable-style values: numeric '<major>.<minor>' (13.x is trixie).
+    major = debian_version.split(".", 1)[0]
+    if major.isdigit():
+        return int(major) >= 13
+
+    return False
+
+
+def _is_debian_family(id_val, id_like):
+    """Check if the host belongs to the Debian family (excluding Ubuntu-like)."""
+    return (
+        (id_val in ["debian", "deepin"] or "debian" in id_like)
+        and id_val not in ["ubuntu"] and "ubuntu" not in id_like
+    )
+
+
 def is_supported_system():
     """
     Check if the current system is supported by LinuxToys.
@@ -291,6 +329,11 @@ def is_supported_system():
         ubuntu_codename = os_release.get("UBUNTU_CODENAME", "").lower()
         if ubuntu_codename not in ["noble", "resolute", "stonking"]:
             return False
+
+    # Block Debian releases older than trixie (bookworm and older), including
+    # derivatives that ship an outdated Debian base.
+    if _is_debian_family(id_val, id_like) and not _is_supported_debian_release():
+        return False
 
     # Get system compatibility keys
     compat_keys = get_system_compat_keys()
@@ -373,7 +416,7 @@ def get_system_compat_keys():
         id_val in ["rhel", "centos", "almalinux"] or "rhel" in id_like
     )
 
-    if (id_val in ["debian"] or id_val in ["deepin"] or "debian" in id_like) and (id_val not in ["ubuntu"] and "ubuntu" not in id_like):
+    if _is_debian_family(id_val, id_like) and _is_supported_debian_release():
         keys.add("debian")
     if id_val in ["ubuntu"]:
         # Only add ubuntu compat key for supported versions (noble, resolute)

@@ -16,7 +16,9 @@ if [ ! -f /etc/apt/apt.conf.d/99-amd64v3 ] && [[ "$SUPPORTED" == *"supported"* ]
     prep_create /etc/apt/apt.conf.d/99-amd64v3
     echo 'APT::Architecture-Variants "amd64v3";' | sudo tee /etc/apt/apt.conf.d/99-amd64v3 > /dev/null
     sudo apt update
+    runner_lock
     sudo apt upgrade -y
+    runner_unlock
     info "$rebootmsg"
 else
     [ -f /etc/apt/apt.conf.d/99-amd64v3 ] && { { [ -n "$OPTIMIZER_RUN" ] && echo "$msg234"; } || info "$msg234" && exit 100; }
