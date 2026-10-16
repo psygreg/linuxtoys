@@ -11,7 +11,7 @@ from typing import Any
 from textual.css.query import NoMatches
 from textual.widgets import Input
 
-from app import homebrew_catalog, installed_packages
+from app import aur_cache, homebrew_catalog, installed_packages
 from app.compat import get_revert_capability, get_system_compat_keys
 from app.easy_cli import (
     _cleanup_tmp_noram_dirs,
