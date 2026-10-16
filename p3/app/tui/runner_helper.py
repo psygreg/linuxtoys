@@ -1131,17 +1131,6 @@ class AppstreamRunnerMixin:
         if page is not None:
             page.reset_remove_button()
 
-    def _reset_appstream_install_button(
-        self, entry: Mapping[str, Any]
-    ) -> None:
-        page = self._current_app_page()
-        if page is None:
-            return
-        if self._is_extension_entry(entry):
-            page.refresh_extensions()
-        else:
-            page.reset_install_button()
-
     @staticmethod
     def _prepare_install_command(entry: dict) -> tuple[Any, str]:
         script_dir = resolve_script_dir()
