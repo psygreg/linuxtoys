@@ -39,6 +39,7 @@ from .appstream_executor import (
     check_aur_package_security,
 )
 from .dialog_screen import (
+    AurConsentDialog,
     AurSecurityDialog,
     CancelledDialog,
     ConfirmScriptScreen,
@@ -97,6 +98,7 @@ class ScriptRunnerMixin:
     _running_is_uninstall: bool = False
     _running_appimage_stack: ExitStack | None = None
     _preparing_run: bool = False
+    _aur_category_path: str | None = None
 
     async def handle_desc_button(self, button: InfoButton) -> None:
         """Call a function based on is script or not."""
@@ -231,6 +233,10 @@ class ScriptRunnerMixin:
         self.run_uninstall(button, script_info)
 
     async def _navigate_to_category(self, button: InfoButton) -> None:
+        if button.info.get("is_aur_category"):
+            await self._activate_aur_category(button)
+            return
+
         if is_homebrew_path(button.path):
             await self._open_homebrew_category(button)
             return
@@ -782,6 +788,7 @@ class ScriptRunnerMixin:
             not self._nav_stack
             or self._current_app_page() is not None
             or self._homebrew_view_active()
+            or self._aur_view_active()
         ):
             return
         current_path, _ = self._nav_stack[-1]
@@ -1091,6 +1098,70 @@ class ScriptRunnerMixin:
             )
             return
         await self._render_items(results, lazy=True)
+
+    async def _activate_aur_category(self, button: InfoButton) -> None:
+        """Pede consentimento (uma vez) e abre o AUR como uma categoria."""
+        if aur_cache.enabled():
+            await self._open_aur_category(button)
+            return
+        self.app.push_screen(
+            AurConsentDialog(),
+            callback=lambda accepted: self._on_aur_consent(button, accepted),
+        )
+
+    def _on_aur_consent(self, button: InfoButton, accepted: bool) -> None:
+        if not accepted:
+            return
+        if not aur_cache.enable():
+            self.notify(
+                "The AUR is not supported on this system.",
+                severity="warning",
+            )
+            return
+        self.run_worker(self._open_aur_category(button))
+
+    def _aur_view_active(self) -> bool:
+        return (
+            bool(self._nav_stack)
+            and self._nav_stack[-1][0] == self._aur_category_path
+        )
+
+    async def _open_aur_category(self, button: InfoButton) -> None:
+        # Navega já, para o download pendente ter um destino visível.
+        self._aur_category_path = button.path
+        self._nav_stack.append((button.path, str(button.label)))
+        self._update_breadcrumb()
+        await self._render_items([])
+        if self._aur_view_active():
+            self._set_items_loading(True)
+        self.run_worker(
+            self._load_aur_items(), exclusive=True, group="aur-items"
+        )
+
+    @staticmethod
+    def _fetch_aur_items():
+        """BLOQUEANTE (rede, pacman, catálogo): rodar em thread."""
+        aur_cache.refresh_if_stale()
+        return aur_cache.browse_entries()
+
+    async def _load_aur_items(self) -> None:
+        unavailable = translations.get(
+            "aur_refresh_failed_title", "AUR metadata unavailable"
+        )
+        try:
+            items = await asyncio.to_thread(self._fetch_aur_items)
+        except Exception as exc:  # noqa: BLE001 - erros do catálogo em Rust
+            if self._aur_view_active():
+                await self._show_items_message(f"{unavailable}\n\n{exc}")
+            return
+        # Voltar ou abrir outra categoria nunca deve ser desfeito por
+        # uma conclusão tardia (mesma proteção da GUI).
+        if not self._aur_view_active():
+            return
+        if not items:
+            await self._show_items_message(unavailable)
+            return
+        await self._render_items(items, lazy=True)
 
 
 class AppstreamRunnerMixin:

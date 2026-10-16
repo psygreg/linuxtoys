@@ -659,3 +659,49 @@ class AurSecurityDialog(ModalScreen[None]):
 
     def action_cancel(self) -> None:
         self.dismiss()
+
+
+class AurConsentDialog(ModalScreen[bool]):
+    """Aviso antes de habilitar o AUR. Retorna True se o usuário aceitar."""
+
+    BINDINGS = [
+        Binding("escape", "cancel", translations.get("script_runner_close"))
+    ]
+
+    def compose(self) -> ComposeResult:
+        with Vertical(id="confirm-dialog"):
+            yield Static(
+                translations.get("aur_warning_title", "Enable the AUR?"),
+                id="confirm-title",
+            )
+            with VerticalScroll(id="confirm-description"):
+                yield Static(
+                    translations.get(
+                        "aur_warning_message",
+                        "The Arch User Repository contains user-produced "
+                        "build scripts that are not reviewed or supported by "
+                        "Arch Linux. Installing AUR packages can execute "
+                        "package build instructions on your system. Review "
+                        "packages and PKGBUILDs before installing them.",
+                    )
+                )
+            with Horizontal(id="confirm-buttons"):
+                yield Button(
+                    translations.get("aur_warning_return", "Return"),
+                    id="cancel-btn",
+                )
+                yield Button(
+                    translations.get("aur_warning_enable", "Enable AUR"),
+                    id="enable-btn",
+                    variant="warning",
+                )
+
+    def on_mount(self) -> None:
+        self.query_one("#cancel-btn", Button).focus()
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        event.stop()
+        self.dismiss(event.button.id == "enable-btn")
+
+    def action_cancel(self) -> None:
+        self.dismiss(False)

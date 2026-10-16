@@ -390,7 +390,9 @@ class HomeScreen(
             await self._open_skills_seeker()
             return
 
-        if button.is_repo_entry and button.has_app_page:
+        if button.info.get("is_aur_entry") or (
+            button.is_repo_entry and button.has_app_page
+        ):
             info = button.info
             if info is None:
                 self.notify(
