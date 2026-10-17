@@ -705,3 +705,38 @@ class AurConsentDialog(ModalScreen[bool]):
 
     def action_cancel(self) -> None:
         self.dismiss(False)
+
+
+class AurHelperDialog(ModalScreen[bool]):
+    """Pergunta se o Paru (helper do AUR) deve ser instalado agora."""
+
+    BINDINGS = [
+        Binding("escape", "cancel", translations.get("script_runner_close"))
+    ]
+
+    def compose(self) -> ComposeResult:
+        with Vertical(id="confirm-dialog"):
+            yield Label(
+                translations.get(
+                    "aur_helper_required",
+                    "This installation requires having paru, an AUR helper, "
+                    "available. Do you wish to install it now?",
+                )
+            )
+            with Horizontal(id="confirm-buttons"):
+                yield Button(translations.get("no", "No"), id="cancel-btn")
+                yield Button(
+                    translations.get("yes", "Yes"),
+                    id="yes-btn",
+                    variant="success",
+                )
+
+    def on_mount(self) -> None:
+        self.query_one("#cancel-btn", Button).focus()
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        event.stop()
+        self.dismiss(event.button.id == "yes-btn")
+
+    def action_cancel(self) -> None:
+        self.dismiss(False)

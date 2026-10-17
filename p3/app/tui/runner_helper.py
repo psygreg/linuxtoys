@@ -1,6 +1,7 @@
 import asyncio
 import os
 import shlex
+import shutil
 import tempfile
 import threading
 from collections.abc import Mapping
@@ -40,6 +41,7 @@ from .appstream_executor import (
 )
 from .dialog_screen import (
     AurConsentDialog,
+    AurHelperDialog,
     AurSecurityDialog,
     CancelledDialog,
     ConfirmScriptScreen,
@@ -1456,6 +1458,13 @@ class AppstreamRunnerMixin:
             )
             return
 
+        if self._aur_helper_missing():
+            self._reset_install_button()
+            self.app.push_screen(
+                AurHelperDialog(), callback=self._on_aur_helper_answer
+            )
+            return
+
         raw_path = build_aur_install_script(package)
         resolve_script_dir()
         script_path = create_temp_file(raw_path)
@@ -1594,6 +1603,33 @@ class AppstreamRunnerMixin:
             self._cleanup_temp_file(script_path, False)
             self._finish_script_run()
         return bool(started)
+
+    @staticmethod
+    def _aur_helper_missing() -> bool:
+        """pkg_install usa o paru para pacotes do AUR (pamac no Manjaro)."""
+        if "manjaro" in get_system_compat_keys():
+            return False
+        return shutil.which("paru") is None
+
+    def _on_aur_helper_answer(self, accepted: bool) -> None:
+        if accepted:
+            self.run_worker(self._install_aur_helper())
+
+    async def _install_aur_helper(self) -> None:
+        info = await find_script_by_name_async("Paru", translations)
+        if info is None:
+            self.notify("✗ Script 'Paru' not found.", severity="warning")
+            return
+        button = InfoButton(
+            info["name"],
+            info.get("description", ""),
+            info["path"],
+            True,
+            info=info,
+        )
+        if self._is_app_page_showing:
+            await hide_app_page(self)
+        self.run_script(button)
 
 
 class ManifestRunnerMixin:
