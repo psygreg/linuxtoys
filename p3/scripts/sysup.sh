@@ -44,9 +44,38 @@ offer_release_upgrade() {
     zenity --question --text="$sysup_available" --title="Release Upgrade" || return 1
 }
 
+# Update Flatpak packages for one installation ($1: --user or --system, $2: "sudo" to elevate).
+# Package refs are updated explicitly instead of a bare 'flatpak update': without REFs,
+# flatpak also refreshes appstream metadata for every configured remote in one pass and
+# fails wholesale — reporting a misleading "No such ref 'appstream2/...'" — when a single
+# stale or unreachable remote breaks, masking the package updates that did succeed.
+# Metadata is instead refreshed per remote afterwards, best-effort.
+flatpak_update_installation() {
+    local scope="$1" elevated="$2"
+    local update_cmd=(flatpak update "$scope")
+    local appstream_cmd=(flatpak update "$scope" --appstream)
+    if [ "$elevated" = "sudo" ]; then
+        update_cmd=(sudo_ "${update_cmd[@]}")
+        appstream_cmd=(sudo_ "${appstream_cmd[@]}")
+    fi
+
+    local refs=()
+    mapfile -t refs < <(flatpak list "$scope" --app --runtime --columns=application 2>/dev/null)
+    if ((${#refs[@]})); then
+        "${update_cmd[@]}" -y "${refs[@]}" || warn "Failed to upgrade Flatpaks"
+    fi
+
+    local remote
+    while IFS= read -r remote; do
+        [ -n "$remote" ] || continue
+        "${appstream_cmd[@]}" "$remote" 2>/dev/null ||
+            warn "Failed to update appstream metadata for Flatpak remote $remote"
+    done < <(flatpak remotes "$scope" --columns=name 2>/dev/null)
+}
+
 if [ "$UPD_SERVICE" = "1" ] && [ "$(id -u)" -ne 0 ]; then
     flatpak uninstall --user --unused --delete-data -y || warn "Failed to remove orphaned user Flatpaks"
-    flatpak update --user -y || warn "Failed to upgrade user Flatpaks"
+    flatpak_update_installation --user ""
     echo "$sysup_completed"
     exit 0
 fi
@@ -104,13 +133,13 @@ fi
 if command -v flatpak >/dev/null 2>&1; then
     if [ "$UPD_SERVICE" = "1" ]; then
         flatpak uninstall --system --unused --delete-data -y || warn "Failed to remove orphaned system Flatpaks"
-        flatpak update --system -y || warn "Failed to upgrade system Flatpaks"
+        flatpak_update_installation --system ""
     else
         flatpak uninstall --user --unused --delete-data -y || warn "Failed to remove orphaned user Flatpaks"
-        flatpak update --user -y || warn "Failed to upgrade user Flatpaks"
+        flatpak_update_installation --user ""
 
         sudo_ flatpak uninstall --system --unused --delete-data -y || warn "Failed to remove orphaned system Flatpaks"
-        sudo_ flatpak update --system -y || warn "Failed to upgrade system Flatpaks"
+        flatpak_update_installation --system sudo
     fi
 fi
 if command -v snap >/dev/null 2>&1 && command -v snapd >/dev/null 2>&1; then

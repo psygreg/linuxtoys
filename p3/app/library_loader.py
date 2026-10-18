@@ -345,6 +345,40 @@ def _appstream_phase_lines(entry):
     return pre, dependencies, flatpak, post
 
 
+def _refresh_cold_appstream_catalog():
+    """Synchronously rebuild the AppStream catalog when the last one is unusable.
+
+    A nested call_script with an AppStream ID resolves against the last
+    published catalog.json. On a fresh install that generation can be cold
+    (never built) or a native-only starter generation — Flatpak-primary hosts
+    excepted — so Flathub component ids such as it.mijorus.gearlever cannot
+    resolve, and a newly configured Flathub remote may not even have its local
+    AppStream database populated yet. refresh_cache() handles all of this
+    (including _refresh_missing_flatpak_appstream), so one synchronous refresh
+    makes CLI resolutions match what the AppStream UI already sees.
+
+    Best effort: any failure leaves the previous generation untouched, and the
+    caller falls back to the normal not-found behavior.
+    """
+    import sys
+
+    try:
+        from app import appstream_cache
+    except ImportError:
+        return False
+
+    try:
+        if appstream_cache.cache_needs_refresh():
+            print("call_script: the AppStream catalog is not ready yet; refreshing it now...",
+                  file=sys.stderr)
+            appstream_cache.refresh_cache()
+    except Exception:
+        # A failed refresh keeps the previous published generation. The retry
+        # below resolves against whatever generation exists afterwards.
+        pass
+    return True
+
+
 def materialize_appstream_by_target(target, script_dir):
     """Resolve and materialize an AppStream app for nested call_script execution.
 
@@ -369,19 +403,29 @@ def materialize_appstream_by_target(target, script_dir):
         if relative != ".":
             category_paths.append(relative)
 
-    entry = appstream_parser.find_entry_by_id(
-        scripts_dir,
-        target,
-        curated_entries=curated_entries,
-        category_paths=category_paths,
-    )
-    if entry is None:
-        entry = appstream_parser.find_entry_by_name(
+    def find_entry():
+        entry = appstream_parser.find_entry_by_id(
             scripts_dir,
             target,
             curated_entries=curated_entries,
             category_paths=category_paths,
         )
+        if entry is None:
+            entry = appstream_parser.find_entry_by_name(
+                scripts_dir,
+                target,
+                curated_entries=curated_entries,
+                category_paths=category_paths,
+            )
+        return entry
+
+    entry = find_entry()
+    if entry is None:
+        # The catalog can be cold or starter-only (native components only) on a
+        # fresh install. One synchronous refresh repopulates it — including the
+        # local Flathub AppStream database — then the lookup is retried once.
+        _refresh_cold_appstream_catalog()
+        entry = find_entry()
     if entry is None:
         return None
 

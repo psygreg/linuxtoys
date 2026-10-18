@@ -459,6 +459,19 @@ git_app_versions() {
     eval "$exports"
 }
 
+# Flatpak component IDs are reverse-DNS names: at least three dot-separated
+# labels (e.g. it.mijorus.gearlever, org.gnome.Calculator). Native AppStream
+# IDs usually carry a .desktop suffix, and display names passed to
+# call_script contain spaces or slashes. Only a Flatpak ID pattern can justify
+# bootstrapping Flatpak support during AppStream resolution.
+_appstream_target_is_flatpak_id () {
+    local id="$1"
+    [[ -z "$id" ]] && return 1
+    [[ "$id" == *.desktop || "$id" == *.Desktop ]] && return 1
+    [[ "$id" == *" "* || "$id" == */* ]] && return 1
+    [[ "$id" =~ ^[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+){2,}$ ]]
+}
+
 # script calling -- used for scripts to call other scripts from the app.
 call_script () {
     local script_name="$1"
@@ -534,6 +547,27 @@ PY
                 python3 "$SCRIPT_DIR/app/library_loader.py" --materialize-appstream "$script_name"
             )
             local appstream_status=${PIPESTATUS[0]}
+
+            if [[ $appstream_status -ne 0 || ${#appstream_selection[@]} -ne 4 ]]; then
+                # Flatpak-backed AppStream IDs cannot resolve while Flatpak or
+                # its Flathub remote is unavailable: the catalog has no Flathub
+                # component to index. Bootstrap Flathub support once (the same
+                # preparation pkg_flat performs) and retry. The Python resolver
+                # refreshes the AppStream catalog after the source universe
+                # changed, including Flathub's local AppStream database.
+                # Flatpak is systemd-only, so the bootstrap runs only when the
+                # target itself looks like a Flatpak component ID; native and
+                # other sources never trigger a Flatpak installation.
+                if _appstream_target_is_flatpak_id "$script_name" &&
+                   { ! command -v flatpak &>/dev/null ||
+                     ! flatpak remote-list 2>/dev/null | grep -q flathub; }; then
+                    call_script flathub || die "call_script: Failed to prepare Flathub support for '$script_name'"
+                    mapfile -t appstream_selection < <(
+                        python3 "$SCRIPT_DIR/app/library_loader.py" --materialize-appstream "$script_name"
+                    )
+                    appstream_status=${PIPESTATUS[0]}
+                fi
+            fi
 
             if [[ $appstream_status -ne 0 || ${#appstream_selection[@]} -ne 4 ]]; then
                 die "call_script: Script, repository app or AppStream app '$script_name' not found"
