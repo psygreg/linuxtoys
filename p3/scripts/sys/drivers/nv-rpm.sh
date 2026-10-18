@@ -25,7 +25,7 @@ _legacy_gpu_chk () {
     return $legacy
 }
 if _legacy_gpu_chk; then
-    die "$incompatmsg"$'\n'"Use v580 instead."
+    die "$incompatmsg"
     exit 100
 fi
 if is_rhel && [ "$(rpm -E %rhel)" = "10" ]; then
