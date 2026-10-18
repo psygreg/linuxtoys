@@ -107,6 +107,9 @@ secureboot_check() {
     if is_fedora || is_rhel || is_ostree; then
         call_script modsign
     elif is_ubuntu; then
+        if [ "$ID" = "pop" ]; then
+            pkg_install shim-signed
+        fi
         { sudo_ mokutil --test-key /var/lib/shim-signed/mok/MOK.der | grep -q "not enrolled" && \
             { sudo_ update-secureboot-policy --enroll-key || die "Failed to update secure boot policy"; }; } || true
     elif is_debian; then
