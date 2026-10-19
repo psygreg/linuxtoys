@@ -3,7 +3,7 @@
 # version: 1.0
 # description: vbox_desc
 # icon: vbox.svg
-# compat: debian, ubuntu, fedora, rhel, suse, ostree
+# compat: debian, ubuntu, fedora, rhel, suse
 # reboot: yes
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

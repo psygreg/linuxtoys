@@ -29,15 +29,18 @@ def _aur_omit_keys():
 
     APPSTREAM_OMIT (appstream_parser) is the developer-facing curation list;
     AUR package names live in their own catalog, so both sets are merged and
-    entries are matched case-insensitively by package name.
+    entries are matched case-insensitively by package name. The shared list is
+    resolved for this host first, so its per-OS rules and "!" exceptions apply
+    to the AUR browser the same way they apply to AppStream entries.
     """
     try:
-        from .appstream_parser import APPSTREAM_OMIT as shared_omit
+        from .appstream_parser import _appstream_omit_keys as shared_omit_keys
+        shared = shared_omit_keys()
     except Exception:
-        shared_omit = ()
-    keys = {str(name).strip().casefold() for name in (*AUR_OMIT, *shared_omit)
+        shared = set()
+    keys = {str(name).strip().casefold() for name in AUR_OMIT
             if str(name or "").strip()}
-    return keys
+    return keys | shared
 
 
 def _native_repository_packages():
