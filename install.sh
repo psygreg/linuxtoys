@@ -16,26 +16,6 @@ info() { printf "\e[0;32m[INFO]\e[m %s\n" "${1}"; exit 0; }
 
 error() { printf "\e[0;31m[ERROR]\e[m %s\n" "${1}"; exit 1; }
 
-ostree() {
-	if command -v rpm-ostree >/dev/null 2>&1 && [ -f /run/ostree-booted ]; then
-		if curl -fsSL "${_rpm}" -o "/tmp/${_rpm_name}"; then
-			if rpm -qi linuxtoys >/dev/null 2>&1; then
-				if ! sudo rpm-ostree remove linuxtoys; then
-					error "Failed to remove existing linuxtoys."
-				fi
-			fi
-
-			if sudo rpm-ostree install "/tmp/${_rpm_name}"; then
-				info "LinuxToys installed or updated!"
-			else
-				error "Installation failed (rpm-ostree)."
-			fi
-		else
-			error "Failed to download: ${_rpm_name}"
-		fi
-	fi
-}
-
 osdeb() {
 	if curl -fsSL "${_deb}" -o "/tmp/${_deb_name}"; then
 		sudo apt update || true
@@ -132,6 +112,16 @@ osappimage() {
 		error "Flatpak is required to install the LinuxToys AppImage on this system."
 	fi
 
+	# Migration: hosts that installed LinuxToys through rpm-ostree layering
+	# carry a native copy whose desktop entry would conflict with the
+	# AppImage integration. Remove it before integrating the new one.
+	if command -v rpm-ostree >/dev/null 2>&1 && [ -f /run/ostree-booted ] &&
+		rpm -qi linuxtoys >/dev/null 2>&1; then
+		printf "\e[0;36m[INFO]\e[m Removing existing rpm-ostree layered LinuxToys...\n"
+		sudo rpm-ostree remove linuxtoys ||
+			printf "\e[0;33m[WARN]\e[m Failed to remove the layered LinuxToys package; its desktop entry may keep appearing alongside the AppImage.\n"
+	fi
+
 	# Prefer the user's existing Flathub setup. If Flathub exists only system-wide,
 	# use that scope instead, matching LinuxToys' normal Flatpak behavior.
 	_flatpak_scope="--user"
@@ -219,6 +209,12 @@ manjaro() {
 }
 
 requires_appimage() {
+    # rpm-ostree immutable systems use the AppImage route as well: the native
+    # package would have to be layered with rpm-ostree, which the AppImage
+    # (via Gear Lever) avoids entirely. Mirrors the app's ostree/ublue keys.
+    if command -v rpm-ostree >/dev/null 2>&1 && [ -f /run/ostree-booted ]; then
+        return 0
+    fi
     local distro_id="${ID,,}" distro_like=" ${ID_LIKE,,} "
     local distro_variant="${VARIANT_ID,,} ${VARIANT,,} ${NAME,,} ${PRETTY_NAME,,}"
 
@@ -269,14 +265,12 @@ installer() {
 		error "Unsupported operating system (no /etc/os-release)."
 	fi
 
-    # Select the AppImage before either rpm-ostree or ID_LIKE can route an
-    # immutable host to a native package installation.
+    # Select the AppImage before either the ostree check or ID_LIKE can route
+    # an immutable host to a native package installation.
     if requires_appimage; then
         osappimage
         return
     fi
-
-    ostree
 
 	case "${ID:-}" in
 		debian|ubuntu|deepin) osdeb ;;
