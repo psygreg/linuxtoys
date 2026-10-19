@@ -1486,7 +1486,7 @@ def _reverse_flatpak_override(operands):
 
     if scope == "system":
         return [
-            f"sudo flatpak override --system --reset {shlex.quote(target)}"
+            f"sudo_rq && sudo_ flatpak override --system --reset {shlex.quote(target)}"
         ]
 
     return []

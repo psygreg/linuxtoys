@@ -340,10 +340,29 @@ sudo_() {
     # for the session bus; sudo's env_reset makes them autolaunch dbus-launch,
     # which is missing on stock GNOME installs and fails elsewhere. Forward the
     # desktop session bus when the script has one.
+    #
+    # flatpak's CLI also warns when its export directories are missing from
+    # XDG_DATA_DIRS; sudo's env_reset strips them, so every elevated flatpak
+    # call printed a false "not in the search path" warning even on correctly
+    # configured sessions. Rebuild the value for the elevated context instead
+    # of forwarding user data paths (root's home differs from the caller's).
+    local elevated_dirs="${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+    local flatpak_export_dir
+    for flatpak_export_dir in \
+        /var/lib/flatpak/exports/share \
+        /root/.local/share/flatpak/exports/share
+    do
+        case ":$elevated_dirs:" in
+            *:"$flatpak_export_dir":*) ;;
+            *) elevated_dirs="$elevated_dirs:$flatpak_export_dir" ;;
+        esac
+    done
+
     if [[ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]]; then
-        "$sudo_cmd" env DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" "$@"
+        "$sudo_cmd" env DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" \
+            XDG_DATA_DIRS="$elevated_dirs" "$@"
     else
-        "$sudo_cmd" "$@"
+        "$sudo_cmd" env XDG_DATA_DIRS="$elevated_dirs" "$@"
     fi
 }
 
