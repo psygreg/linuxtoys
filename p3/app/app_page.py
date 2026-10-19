@@ -1718,12 +1718,25 @@ class AppPageView(Gtk.Box):
         if source == "homebrew":
             return "Homebrew"
         if source == "appimage":
-            return "AppImage"
+            package_name = entry.get("package-name")
+            if isinstance(package_name, (list, tuple)):
+                package_name = next((value for value in package_name if value), "")
+            package_name = str(package_name or "").strip()
+            return f"AppImage ({package_name})" if package_name else "AppImage"
         return source.capitalize() or self.translations.get("app_page_source_native", "Native")
 
     @staticmethod
     def _source_key(entry):
         source = str(entry.get("appstream_source", "") or "").strip()
+        if source == "appimage":
+            identity = str(entry.get("appstream_id") or entry.get("id") or "").strip().lower()
+            if identity.endswith(".desktop"):
+                identity = identity[:-8]
+            package_name = str(entry.get("package-name") or "").strip().lower()
+            normalized_package = "".join(character for character in package_name if character.isalnum())
+            if identity:
+                return f"appimage:{identity}:{normalized_package}" if normalized_package else f"appimage:{identity}"
+            return f"appimage:{normalized_package}" if normalized_package else source
         if source != "flatpak":
             return source
         scope = str(entry.get("flatpak_scope", "") or "").strip()
