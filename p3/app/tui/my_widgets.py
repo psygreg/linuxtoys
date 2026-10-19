@@ -21,10 +21,18 @@ from .helper import is_removable
 
 
 class FocusableLabel(Label):
-    """Um Label que aceita foco via tecla TAB e emite um evento ao pressionar Enter/Espaço."""
+    """Label that can take focus and behaves like a button.
+
+    It is reachable with TAB. Pressing Enter or Space, or clicking it,
+    posts a ``FocusableLabel.Pressed`` message.
+    """
 
     class Pressed(Message):
-        """Disparado quando o label é clicado ou ativado via teclado."""
+        """Posted when the label is clicked or activated by keyboard.
+
+        Attributes:
+            label: The label that was activated.
+        """
 
         def __init__(self, label: "FocusableLabel") -> None:
             self.label = label
@@ -32,6 +40,10 @@ class FocusableLabel(Label):
 
         @property
         def control(self) -> Label:
+            """Return the label that sent the message.
+
+            Textual uses this property to match selectors in ``@on``.
+            """
             return self.label
 
     def __init__(
@@ -43,6 +55,16 @@ class FocusableLabel(Label):
         markup=True,
         **kwargs,
     ) -> None:
+        """Initialize the label.
+
+        Args:
+            renderable: Text or Rich renderable to display.
+            expand: Expand the content to fill the container.
+            shrink: Shrink the content to fit the container.
+            markup: Whether to parse markup in ``renderable``.
+            **kwargs: Forwarded to ``Label``. ``can_focus`` (default
+                ``True``) is consumed here to set focusability.
+        """
         can_focus = kwargs.pop("can_focus", True)
         super().__init__(
             renderable, expand=expand, shrink=shrink, markup=markup, **kwargs
@@ -60,6 +82,26 @@ class FocusableLabel(Label):
 
 
 class InfoButton(Button):
+    """Button that represents one installable item in the menu.
+
+    Holds the metadata needed to install or remove the item and styles
+    itself by state: red border with a trash icon when installed and
+    removable, yellow border when flagged as new.
+
+    Attributes:
+        description: Short text, also shown as the tooltip.
+        path: Location of the item's script or manifest.
+        script_name: Display name (same as the button label).
+        is_script: True if the item is a script entry.
+        is_new: True if the item should be highlighted as new.
+        is_installed: True if the item is already installed.
+        is_repo_entry: True if the item comes from a repository.
+        is_appstream_entry: True if the item comes from AppStream.
+        has_app_page: True if the item has a detail page.
+        info: Extra metadata used to decide removability.
+        revert: True if the item is installed and can be removed.
+    """
+
     def __init__(
         self,
         label: str,
@@ -105,12 +147,25 @@ class InfoButton(Button):
 
 
 class RegistryListItem(ListItem):
+    """List item that displays the name of a registry script.
+
+    Args:
+        script_name: Name shown in the list and kept for lookups.
+    """
+
     def __init__(self, script_name: str) -> None:
         super().__init__(Label(script_name))
         self.script_name = script_name
 
 
 class LanguageListItem(ListItem):
+    """List item for the language picker.
+
+    Args:
+        code: Language code of the entry (e.g. ``"pt_BR"``).
+        display_name: Human-readable name shown in the list.
+    """
+
     def __init__(self, code: str, display_name: str) -> None:
         super().__init__(Label(display_name))
         self.code = code
@@ -118,19 +173,47 @@ class LanguageListItem(ListItem):
 
 
 class PyteDisplay:
+    """Rich renderable that prints pre-built terminal rows.
+
+    Args:
+        lines: One ``rich.text.Text`` per terminal row.
+    """
+
     def __init__(self, lines):
         self.lines = lines
 
     def __rich_console__(self, console, options):
+        """Yield the stored rows to the Rich console."""
         yield from self.lines
 
 
 class TerminalPTY:
-    """Dono do PTY de verdade: spawna um bash persistente e faz a ponte
-    entre ele e as filas assíncronas usadas pelo widget Terminal.
-    Adaptado do exemplo oficial do pyte (não herda de App)."""
+    """Own a real PTY running a persistent bash and bridge it to queues.
+
+    The widget talks to the PTY only through two asyncio queues:
+    ``recv_queue`` carries commands to the PTY (``["stdin", str]``,
+    ``["set_size", rows, cols, ...]``) and ``send_queue`` carries
+    events from it (``["setup", {}]``, ``["stdout", str]``,
+    ``["disconnect", 1]``). Does not inherit from ``App``.
+
+    Adapted from the official pyte example.
+
+    Attributes:
+        ncol: Initial terminal width in columns.
+        nrow: Initial terminal height in rows.
+        fd: Master file descriptor of the PTY.
+        child_pid: PID of the bash process.
+        recv_queue: Messages going into the PTY.
+        send_queue: Messages coming out of the PTY.
+    """
 
     def __init__(self, ncol: int, nrow: int) -> None:
+        """Spawn bash and prepare the queues and UTF-8 decoder.
+
+        Args:
+            ncol: Terminal width in columns.
+            nrow: Terminal height in rows.
+        """
         self.ncol = ncol
         self.nrow = nrow
         self.data_or_disconnect: str | None = None
@@ -142,6 +225,15 @@ class TerminalPTY:
         self._decoder = codecs.getincrementaldecoder("utf-8")(errors="replace")
 
     def _open_terminal(self) -> int:
+        """Fork a PTY and exec a clean bash in the child process.
+
+        Bash runs without rc files, line editing or history expansion,
+        with ``TERM=xterm-256color``, a minimal prompt and terminal
+        echo disabled. Also stores the child PID in ``child_pid``.
+
+        Returns:
+            The master file descriptor of the PTY.
+        """
         argv = ["bash", "--norc", "--noprofile", "--noediting", "+H"]
         env = dict(
             os.environ,
@@ -166,10 +258,19 @@ class TerminalPTY:
         return fd
 
     def start(self) -> None:
+        """Schedule the I/O loop as an asyncio task.
+
+        Must be called from a running event loop.
+        """
         self._task = asyncio.create_task(self._run())
 
     def close(self) -> None:
-        """Libera task, fd e processo bash."""
+        """Release the I/O task, file descriptor and bash process.
+
+        Cancels the task, removes the reader, closes the master fd and
+        sends SIGHUP to bash. Errors from already released resources
+        are ignored, so calling it twice is safe.
+        """
         task = getattr(self, "_task", None)
         if task is not None:
             task.cancel()
@@ -191,6 +292,13 @@ class TerminalPTY:
             pass
 
     async def _run(self) -> None:
+        """Pump data between the PTY and the queues.
+
+        Registers a reader on the master fd that decodes UTF-8 output
+        into ``["stdout", text]`` messages (``["disconnect", 1]`` on
+        EOF or error). Then loops forever handling ``stdin`` writes
+        and ``set_size`` window resizes from ``recv_queue``.
+        """
         loop = asyncio.get_running_loop()
 
         def on_output() -> None:
@@ -218,8 +326,12 @@ class TerminalPTY:
 
 
 class ScriptFinished(Message):
-    """Postada quando um script rodado via run_script() termina.
-    exit_code=None significa que o próprio bash caiu (não o script)."""
+    """Posted when a script started with ``run_script`` ends.
+
+    Attributes:
+        exit_code: Exit status of the script, or ``None`` if bash
+            itself died instead of the script.
+    """
 
     def __init__(self, exit_code: int | None) -> None:
         self.exit_code = exit_code
@@ -227,12 +339,36 @@ class ScriptFinished(Message):
 
 
 class PasswordPromptDetected(Message):
-    """Postada quando o terminal parece estar esperando uma senha
-    (heurística: procura 'password' no output recém-chegado). Não é
-    garantia 100% — é detecção conservadora, igual à do library_loader."""
+    """Posted when the terminal appears to wait for a password.
+
+    Detection is a conservative heuristic (a ``password ...:`` prompt
+    at the end of recent output), so misses and false positives are
+    possible.
+    """
 
 
 class Terminal(Widget, can_focus=True):
+    """Embedded terminal backed by a persistent bash and pyte.
+
+    Runs bash in a PTY, renders its screen with pyte and forwards key
+    presses to it. Scripts are launched with ``run_script``, which
+    wraps them in start/exit markers so the widget can detect the end
+    of the run and report the exit code. PageUp/PageDown and the mouse
+    wheel scroll the history.
+
+    Messages:
+        ScriptFinished: A script ended (or bash died).
+        PasswordPromptDetected: Output looks like a password prompt.
+
+    Attributes:
+        EXIT_MARKER: Prefix of the line that carries the exit code.
+        ncol: Current width in columns.
+        nrow: Current height in rows.
+        pty: Active ``TerminalPTY``, or ``None`` before mount.
+        ctrl_keys: Maps Textual key names to the sequences sent to
+            the PTY.
+    """
+
     EXIT_MARKER = "@@LT_EXIT@@:"
     _MARKER_TAG = "@@LT_"
     _MARKER_RE = re.compile(r"@@LT_(?:START@@:[0-9a-f]+|EXIT@@:\d+)\r?\n")
@@ -279,8 +415,18 @@ class Terminal(Widget, can_focus=True):
         return self._awaiting_exit_code
 
     def _strip_markers(self, chars: str) -> str:
-        """Remove linhas de marcador do texto exibido, mesmo quando elas
-        chegam divididas entre dois blocos de saída."""
+        """Remove marker lines from output before it reaches pyte.
+
+        A marker may arrive split across two chunks, so a possible
+        partial marker at the end of ``chars`` is held in
+        ``_marker_carry`` and prepended on the next call.
+
+        Args:
+            chars: Newly received output.
+
+        Returns:
+            The text that is safe to feed to the pyte stream.
+        """
         data = self._MARKER_RE.sub("", self._marker_carry + chars)
         self._marker_carry = ""
         tag = self._MARKER_TAG
@@ -296,7 +442,12 @@ class Terminal(Widget, can_focus=True):
         return data
 
     def _spawn_pty(self) -> None:
-        """Sobe um bash novo (primeiro mount e recuperação de queda)."""
+        """Start a fresh bash session and reset the screen state.
+
+        Used on first mount and to recover when bash dies. Closes the
+        previous PTY, recreates the pyte screen and stream, clears the
+        scan buffers and starts the ``_recv`` worker only once.
+        """
         old_pty, self.pty = self.pty, TerminalPTY(self.ncol, self.nrow)
         if old_pty is not None:
             old_pty.close()
@@ -317,9 +468,19 @@ class Terminal(Widget, can_focus=True):
             self.pty.close()
 
     def get_full_text(self, only_last_run: bool = False) -> str:
-        """Reconstrói o texto puro (sem ANSI/cor) de tudo que já passou
-        pelo terminal nessa sessão — histórico de rolagem + tela atual.
-        Pensado pra relatórios de bug, não pra exibição visual."""
+        """Return the plain text of the session, without ANSI or color.
+
+        Joins the scrollback history and the current screen. Meant for
+        bug reports, not for display.
+
+        Args:
+            only_last_run: If True, return only the output after the
+                start marker of the last ``run_script`` call. Falls
+                back to the full text if the marker is not found.
+
+        Returns:
+            The reconstructed terminal text.
+        """
 
         def row_to_text(row: dict) -> str:
             if not row:
@@ -386,6 +547,15 @@ class Terminal(Widget, can_focus=True):
         await self._resize_terminal(event.size.width, event.size.height)
 
     async def _resize_terminal(self, ncol: int, nrow: int) -> None:
+        """Resize the pyte screen and the PTY window.
+
+        Does nothing if a dimension is not positive or if the size is
+        unchanged.
+
+        Args:
+            ncol: New width in columns.
+            nrow: New height in rows.
+        """
         if ncol <= 0 or nrow <= 0 or (ncol == self.ncol and nrow == self.nrow):
             return
 
@@ -399,6 +569,15 @@ class Terminal(Widget, can_focus=True):
 
     @staticmethod
     def _split_marker(marker: str) -> tuple[str, str]:
+        """Split a marker in two halves.
+
+        The shell rebuilds the marker by concatenating the halves, so
+        the full marker never appears in the injected command line and
+        cannot be mistaken for real output.
+
+        Returns:
+            The first and second halves of ``marker``.
+        """
         mid = len(marker) // 2
         return marker[:mid], marker[mid:]
 
@@ -408,10 +587,27 @@ class Terminal(Widget, can_focus=True):
         env: dict[str, str] | None = None,
         pause_on_exit: bool = True,
     ) -> bool:
-        """Injeta 'bash <script>' no shell persistente, com um marcador
-        de saída logo depois pra detectar o fim e capturar o exit code."""
+        """Run a command in the persistent bash and track its end.
+
+        Injects one command line that prints a start marker, runs the
+        command, optionally waits for ENTER and prints an exit marker
+        with the exit code. The end is reported via ``ScriptFinished``.
+        Exit codes 130 and 100 are reported as 100 and skip the pause.
+
+        Args:
+            command: Script path (run as ``bash <script>``) or a full
+                argv list.
+            env: Variables set for this command only; nothing leaks
+                into the persistent shell.
+            pause_on_exit: Wait for ENTER before finishing so the user
+                can read the output.
+
+        Returns:
+            True if the command was sent, False if there is no PTY or
+            another script is still running.
+        """
         if self.pty is None or self._awaiting_exit_code:
-            return
+            return False
 
         self._awaiting_exit_code = True
         self._exit_scan_buffer = ""
@@ -458,6 +654,16 @@ class Terminal(Widget, can_focus=True):
         return True
 
     async def _recv(self) -> None:
+        """Consume PTY events and update the screen.
+
+        Waits for a message, drains any others already queued and
+        handles the batch: ``setup`` sends the initial window size;
+        ``stdout`` is scanned for the exit marker and password prompt,
+        stripped of markers and fed to pyte; ``disconnect`` posts
+        ``ScriptFinished(None)`` and respawns the PTY. Renders once
+        per batch and sleeps 10 ms so input stays responsive. Runs as
+        a worker for the whole widget lifetime.
+        """
         while True:
             # Pega a primeira mensagem
             message = await self.pty.send_queue.get()
@@ -496,6 +702,13 @@ class Terminal(Widget, can_focus=True):
             await asyncio.sleep(0.01)
 
     def _check_exit_marker(self, chars: str) -> None:
+        """Detect the exit marker in new output and finish the run.
+
+        Keeps a short tail of the output so a marker split across
+        chunks is still found. On a match, posts ``ScriptFinished``
+        with the last exit code seen. Does nothing unless a script is
+        running.
+        """
         if not self._awaiting_exit_code:
             return
         buffer = self._exit_scan_buffer + chars
@@ -516,6 +729,11 @@ class Terminal(Widget, can_focus=True):
         self._exit_scan_buffer = buffer[keep_from:]
 
     def _check_password_prompt(self, chars: str) -> None:
+        """Post ``PasswordPromptDetected`` for password-like prompts.
+
+        Scans the last 200 characters of output. Posts once, until
+        ``send_password`` or ``cancel_password_prompt`` re-arms it.
+        """
         if self._password_prompt_pending:
             return
         self._password_prompt_scan_buffer = (
@@ -526,8 +744,13 @@ class Terminal(Widget, can_focus=True):
             self.post_message(PasswordPromptDetected())
 
     def send_password(self, password: str) -> None:
-        """Envia a senha coletada por um diálogo, como se o usuário
-        tivesse digitado ela + Enter direto no terminal."""
+        """Type a password followed by Enter into the terminal.
+
+        Also re-arms password prompt detection.
+
+        Args:
+            password: Password collected by the dialog.
+        """
         if self.pty is None:
             return
         self._password_prompt_pending = False
@@ -535,12 +758,20 @@ class Terminal(Widget, can_focus=True):
         self.pty.recv_queue.put_nowait(["stdin", password + "\n"])
 
     def cancel_password_prompt(self) -> None:
-        """Usuário cancelou o diálogo — libera a detecção de novo (útil
-        se ele preferir digitar direto no terminal em vez do diálogo)."""
+        """Re-arm password detection after the dialog is dismissed.
+
+        Useful when the user prefers to type directly in the terminal.
+        """
         self._password_prompt_pending = False
         self._password_prompt_scan_buffer = ""
 
     def send_interrupt(self) -> None:
+        """Interrupt the running script and emit an exit marker.
+
+        Sends Ctrl+C, then echoes the exit marker with code 100 by
+        hand, because the shell abandons the rest of the injected
+        command line on interrupt and the normal marker never prints.
+        """
         if self.pty is None:
             return
 
@@ -554,6 +785,11 @@ class Terminal(Widget, can_focus=True):
         asyncio.create_task(_do_interrupt())
 
     def _render_screen(self) -> None:
+        """Rebuild the display from the pyte screen and refresh.
+
+        Converts each row to Rich text and draws the cursor as a
+        reverse-video character.
+        """
         lines = []
         for i, line in enumerate(self._screen.display):
             text = Text.from_ansi(line)
