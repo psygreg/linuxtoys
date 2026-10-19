@@ -875,7 +875,7 @@ class ScriptRunnerMixin:
         script_name = (
             str(self._running_button.label)
             if self._running_button
-            else "o script"
+            else "script"
         )
         self.app.push_screen(
             SudoPasswordScreen(script_name),
@@ -2135,7 +2135,13 @@ class ManifestRunnerMixin:
         self._manifest_results = []
         self._running_script_info = None
         self._running_temp_path = None
-        self.app.push_screen(ManifestReportDialog(results, not_run=not_run))
+        if self._is_startup:
+            self.app.push_screen(SuccessDialog("Script", action="install"))
+            self._is_startup = False
+        else:
+            self.app.push_screen(
+                ManifestReportDialog(results, not_run=not_run)
+            )
 
     def _start_manifest_dry_run(self, plan) -> None:
         self.notify("Validando itens (dry-run)...", timeout=3)

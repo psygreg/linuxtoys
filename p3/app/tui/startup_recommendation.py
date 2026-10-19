@@ -234,6 +234,7 @@ class StartupRecommendationsMixin:
     """Detecta, pergunta e instala as recomendações via fila do manifesto."""
 
     _startup_checked = False
+    _is_startup = False
 
     def check_startup_recommendations(self) -> None:
         """Chame uma vez, depois da home desenhada (call_after_refresh)."""
@@ -342,4 +343,5 @@ class StartupRecommendationsMixin:
                 severity="error",
             )
             return
+        self._is_startup = True
         self._start_manifest_queue(prepared)
