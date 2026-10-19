@@ -173,14 +173,78 @@ fn has_localized(m:&serde_json::Map<String,Value>,field:&str,lang:&str)->bool{
 fn first_category(cands:&Value, exact:&std::collections::HashSet<String>, by:&std::collections::HashMap<String,Vec<String>>)->Option<String>{
     for c in cands.as_array()? {let s=c.as_str()?.trim_matches('/'); if exact.contains(s){return Some(s.into())} if let Some(v)=by.get(s){if let Some(x)=v.first(){return Some(x.clone())}}} None
 }
+fn category_path_is_within_rs(path:&str, parent:&str)->bool{
+    path==parent||path.strip_prefix(parent).is_some_and(|suffix|suffix.starts_with('/'))
+}
 fn resolve_category_rs(cats:&Value, paths:&[String], cfg:&Value)->Option<String>{
     let set:std::collections::HashSet<&str>=cats.as_array()?.iter().filter_map(Value::as_str).collect(); let mut exact=std::collections::HashSet::new(); let mut by:std::collections::HashMap<String,Vec<String>>=std::collections::HashMap::new();
     for p in paths{let p=p.replace('\\',"/").trim_matches('/').to_string();if p.is_empty()||p=="lists"{continue} exact.insert(p.clone());by.entry(p.rsplit('/').next().unwrap_or(&p).into()).or_default().push(p)}
     for v in by.values_mut(){v.sort_by_key(|p|(p.matches('/').count(),p.clone()))}
     let o=cfg.as_object()?;
-    if set.contains("Emulator"){if let Some(v)=first_category(&serde_json::json!(["emu"]),&exact,&by){return Some(v)}}
-    if let Some(rules)=o.get("expressions").and_then(Value::as_array){for r in rules{let a=r.as_array()?;let req=a.get(0)?.as_array()?;if req.iter().filter_map(Value::as_str).all(|x|set.contains(x)){if let Some(v)=first_category(a.get(1)?,&exact,&by){return Some(v)}}}}
-    for pair in [("standalone_priority","additional"),("main_priority","main")] {if let Some(pr)=o.get(pair.0).and_then(Value::as_array){for k in pr.iter().filter_map(Value::as_str){if set.contains(k){if let Some(c)=o.get(pair.1).and_then(Value::as_object).and_then(|m|m.get(k)){if let Some(v)=first_category(c,&exact,&by){return Some(v)}}}}}}
+    let main_map=o.get("main").and_then(Value::as_object);
+    let preferred_main=o.get("main_priority").and_then(Value::as_array).into_iter().flatten().filter_map(Value::as_str).find_map(|key|{
+        if !set.contains(key){return None}
+        let candidates=main_map?.get(key)?;
+        Some((key,first_category(candidates,&exact,&by)?))
+    });
+
+    // Emulator is a useful refinement of a game/emulator category, but should
+    // not defeat an unrelated, more specific Main category.
+    if set.contains("Emulator"){
+        if let Some(category)=first_category(&serde_json::json!(["emu"]),&exact,&by){
+            let relevant=preferred_main.as_ref().map_or(true,|(key,parent)|{
+                *key=="Game"||*key=="Emulator"||category_path_is_within_rs(&category,parent)
+            });
+            if relevant{return Some(category)}
+        }
+    }
+
+    if let Some(rules)=o.get("expressions").and_then(Value::as_array){
+        for rule in rules{
+            let Some(parts)=rule.as_array() else{continue};
+            let Some(required)=parts.first().and_then(Value::as_array) else{continue};
+            let Some(destinations)=parts.get(1) else{continue};
+            let required:Option<Vec<&str>>=required.iter().map(Value::as_str).collect();
+            let Some(required)=required else{continue};
+            if required.is_empty()||!required.iter().all(|category|set.contains(category)){continue}
+            let Some(category)=first_category(destinations,&exact,&by) else{continue};
+            let relevant=preferred_main.as_ref().map_or(true,|(main_key,main_path)|{
+                required.iter().any(|category|category==main_key)
+                    ||category_path_is_within_rs(&category,main_path)
+            });
+            if relevant{return Some(category)}
+        }
+    }
+
+    let generic_main_categories=o.get("generic_main_categories").and_then(Value::as_array);
+    if let Some((main_key,main_category))=preferred_main{
+        let generic=generic_main_categories.is_some_and(|categories|{
+            categories.iter().any(|category|category.as_str()==Some(main_key))
+        });
+        if let Some(priority)=o.get("standalone_priority").and_then(Value::as_array){
+            if let Some(additional)=o.get("additional").and_then(Value::as_object){
+                for key in priority.iter().filter_map(Value::as_str){
+                    if !set.contains(key){continue}
+                    let Some(candidates)=additional.get(key) else{continue};
+                    if let Some(category)=first_category(candidates,&exact,&by){
+                        if generic||category_path_is_within_rs(&category,&main_category){return Some(category)}
+                    }
+                }
+            }
+        }
+        return Some(main_category)
+    }
+
+    if let Some(priority)=o.get("standalone_priority").and_then(Value::as_array){
+        if let Some(additional)=o.get("additional").and_then(Value::as_object){
+            for key in priority.iter().filter_map(Value::as_str){
+                if !set.contains(key){continue}
+                if let Some(candidates)=additional.get(key){
+                    if let Some(category)=first_category(candidates,&exact,&by){return Some(category)}
+                }
+            }
+        }
+    }
     None
 }
 fn resolve_component_category_rs(component:&serde_json::Map<String,Value>, paths:&[String], cfg:&Value)->Option<String>{
@@ -1963,6 +2027,106 @@ pub(crate) fn source_metadata_fingerprint(paths: Vec<String>) -> String {
     }
 
     format!("{:x}", hasher.finalize())
+}
+
+#[cfg(test)]
+mod category_resolution_tests {
+    use super::*;
+
+    fn paths() -> Vec<String> {
+        [
+            "game", "game/action", "game/emu", "sys", "sys/sysadm", "utils", "utils/archive",
+            "network", "network/remote", "devs", "devs/txt", "devs/ides",
+            "media", "media/players", "creative", "creative/audio",
+            "creative/draw", "edu", "edu/tech",
+        ]
+        .into_iter()
+        .map(str::to_string)
+        .collect()
+    }
+
+    fn config() -> Value {
+        serde_json::json!({
+            "main": {
+                "Game": ["game"],
+                "Emulator": ["emu", "game"],
+                "Development": ["devs"],
+                "Graphics": ["creative"],
+                "AudioVideo": ["media"],
+                "Network": ["network"],
+                "Education": ["edu"],
+                "System": ["sysadm"],
+                "ConsoleOnly": ["utils"],
+                "Utility": ["utils"]
+            },
+            "additional": {
+                "PackageManager": ["sysadm"],
+                "FileManager": ["archive"],
+                "RemoteAccess": ["remote"],
+                "TextEditor": ["txt"]
+            },
+            "expressions": [
+                [["System", "PackageManager"], ["sysadm"]],
+                [["Game", "PackageManager"], ["game"]],
+                [["System", "FileManager"], ["archive"]],
+                [["Game", "ActionGame"], ["action"]],
+                [["Game", "Development", "IDE"], ["ides"]],
+                [["Graphics", "2DGraphics"], ["draw"]],
+                [["Game", "Graphics", "2DGraphics"], ["draw"]],
+                [["Network", "RemoteAccess"], ["remote"]],
+                [["AudioVideo", "Player"], ["players"]],
+                [["AudioVideo", "Audio"], ["audio"]],
+                [["Science", "DataVisualization"], ["tech"]]
+            ],
+            "standalone_priority": ["PackageManager", "RemoteAccess", "TextEditor"],
+            "main_priority": [
+                "Game", "Emulator", "Development", "AudioVideo", "Network",
+                "Education", "System", "ConsoleOnly", "Utility"
+            ],
+            "generic_main_categories": ["ConsoleOnly", "Utility"]
+        })
+    }
+
+    fn resolve(categories: &[&str]) -> Option<String> {
+        resolve_category_rs(&serde_json::json!(categories), &paths(), &config())
+    }
+
+    #[test]
+    fn game_main_beats_unrelated_expression_and_purpose_tags() {
+        assert_eq!(resolve(&["Game", "Qt", "PackageManager"]), Some("game".into()));
+        assert_eq!(resolve(&["Game", "System", "PackageManager"]), Some("game".into()));
+        assert_eq!(resolve(&["System", "PackageManager"]), Some("sys/sysadm".into()));
+        assert_eq!(resolve(&["Game", "System", "FileManager"]), Some("game".into()));
+        assert_eq!(resolve(&["System", "FileManager"]), Some("utils/archive".into()));
+    }
+
+    #[test]
+    fn generic_main_and_missing_main_still_use_standalone_purpose_tags() {
+        assert_eq!(resolve(&["Utility", "PackageManager"]), Some("sys/sysadm".into()));
+        assert_eq!(resolve(&["PackageManager"]), Some("sys/sysadm".into()));
+    }
+
+    #[test]
+    fn expressions_refine_the_preferred_main_without_crossing_domains() {
+        assert_eq!(resolve(&["Game", "ActionGame"]), Some("game/action".into()));
+        assert_eq!(resolve(&["Game", "Development", "IDE"]), Some("devs/ides".into()));
+        assert_eq!(resolve(&["Game", "Graphics", "2DGraphics"]), Some("creative/draw".into()));
+        assert_eq!(resolve(&["Game", "Network", "RemoteAccess"]), Some("game".into()));
+        assert_eq!(resolve(&["AudioVideo", "Player"]), Some("media/players".into()));
+        assert_eq!(resolve(&["AudioVideo", "Audio"]), Some("creative/audio".into()));
+        assert_eq!(resolve(&["Education", "Science", "DataVisualization"]), Some("edu/tech".into()));
+    }
+
+    #[test]
+    fn standalone_tags_can_refine_a_main_category_path() {
+        assert_eq!(resolve(&["Development", "TextEditor"]), Some("devs/txt".into()));
+    }
+
+    #[test]
+    fn console_only_is_a_generic_utility_category_not_a_game() {
+        assert_eq!(resolve(&["ConsoleOnly"]), Some("utils".into()));
+        assert_eq!(resolve(&["Game", "ConsoleOnly"]), Some("game".into()));
+    }
 }
 
 #[cfg(test)]
