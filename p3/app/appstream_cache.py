@@ -28,7 +28,7 @@ from . import _catalog_rs as _catalog_rs
 from .compat import get_linuxtoys_cache_dir
 
 
-CACHE_SCHEMA = 25
+CACHE_SCHEMA = 26
 CACHE_MAX_AGE = 14 * 24 * 60 * 60
 CHECKPOINT_EVERY = 100
 
@@ -874,35 +874,29 @@ def _load_appstream_pool_components():
     return _as_list(pool.get_components())
 
 
-def _load_appstream_components():
-    if not _native_appstream_supported_host():
-        return []
+def _load_appstream_catalog_components():
+    """Parse every native catalog file directly, bypassing pool merging.
 
-    try:
-        components = _load_appstream_pool_components()
-    except Exception as error:
-        logging.warning("Native AppStream pool failed; trying catalog files: %s", error)
-        components = []
-    if any(_native_component_usable(component) for component in components):
-        return components
-
+    The pool re-validates cached icons against all registered origins and
+    silently drops them whenever a component id also exists in a second
+    catalog whose icon tree lacks the files — foreign catalogs shared through
+    user or system cache locations can therefore strip most icons (observed
+    with Arch's JPEG-XL swcatalog icons). Direct parsing keeps icon
+    resolution deterministic; duplicate ids across duplicate locations are
+    deduped by data id.
+    """
     import gi
 
     gi.require_version("AppStream", "1.0")
     from gi.repository import AppStream, Gio
 
-    # Last resort for unavailable pool discovery/merging. Keep package-backed
-    # catalog entries ahead of installed metainfo, and read every location.
-    _extract_zypp_icon_tarballs()
     catalog_components = {}
     seen_files = set()
-    catalog_files = 0
     for catalog_path, catalog_origin in _native_catalog_files():
         resolved = catalog_path.resolve()
         if resolved in seen_files:
             continue
         seen_files.add(resolved)
-        catalog_files += 1
         try:
             metadata = AppStream.Metadata()
             metadata.set_format_style(AppStream.FormatStyle.CATALOG)
@@ -921,10 +915,47 @@ def _load_appstream_components():
                 catalog_components[key] = component
         except Exception as error:
             logging.warning("Cannot parse native AppStream catalog %s: %s", catalog_path, error)
-    if catalog_components:
-        return list(catalog_components.values())
+    return list(catalog_components.values())
 
-    logging.warning("No usable native AppStream repository catalog (%d local catalog files)", catalog_files)
+
+def _load_appstream_components():
+    if not _native_appstream_supported_host():
+        return []
+
+    # Catalog files are the authoritative native source: parse them directly
+    # so cached icons survive (see _load_appstream_catalog_components). The
+    # pool then only contributes components the catalogs do not cover, such
+    # as installed metainfo without catalog presence.
+    _extract_zypp_icon_tarballs()
+    components = _load_appstream_catalog_components()
+    if any(_native_component_usable(component) for component in components):
+        known_ids = {
+            str(_safe_call(component, "get_id", "") or "").strip().lower()
+            for component in components
+        }
+        known_ids.discard("")
+        try:
+            for component in _load_appstream_pool_components():
+                component_id = str(_safe_call(component, "get_id", "") or "").strip().lower()
+                if component_id and component_id not in known_ids:
+                    components.append(component)
+        except Exception as error:
+            logging.warning("Native AppStream pool failed: %s", error)
+        return components
+
+    try:
+        pool_components = _load_appstream_pool_components()
+    except Exception as error:
+        logging.warning("Native AppStream pool failed: %s", error)
+        pool_components = []
+    if any(_native_component_usable(component) for component in pool_components):
+        return pool_components
+
+    # Last resort diagnostics for unavailable pool discovery/merging.
+    logging.warning(
+        "No usable native AppStream repository catalog (%d local catalog files)",
+        len(_native_catalog_files()),
+    )
     try:
         from .compat import get_system_compat_keys
         compat_keys = get_system_compat_keys()
@@ -944,7 +975,7 @@ def _load_appstream_components():
             )
     except (ImportError, AttributeError):
         pass
-    return components
+    return []
 
 
 def _flatpak_installations():
