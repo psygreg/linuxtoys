@@ -173,14 +173,78 @@ fn has_localized(m:&serde_json::Map<String,Value>,field:&str,lang:&str)->bool{
 fn first_category(cands:&Value, exact:&std::collections::HashSet<String>, by:&std::collections::HashMap<String,Vec<String>>)->Option<String>{
     for c in cands.as_array()? {let s=c.as_str()?.trim_matches('/'); if exact.contains(s){return Some(s.into())} if let Some(v)=by.get(s){if let Some(x)=v.first(){return Some(x.clone())}}} None
 }
+fn category_path_is_within_rs(path:&str, parent:&str)->bool{
+    path==parent||path.strip_prefix(parent).is_some_and(|suffix|suffix.starts_with('/'))
+}
 fn resolve_category_rs(cats:&Value, paths:&[String], cfg:&Value)->Option<String>{
     let set:std::collections::HashSet<&str>=cats.as_array()?.iter().filter_map(Value::as_str).collect(); let mut exact=std::collections::HashSet::new(); let mut by:std::collections::HashMap<String,Vec<String>>=std::collections::HashMap::new();
     for p in paths{let p=p.replace('\\',"/").trim_matches('/').to_string();if p.is_empty()||p=="lists"{continue} exact.insert(p.clone());by.entry(p.rsplit('/').next().unwrap_or(&p).into()).or_default().push(p)}
     for v in by.values_mut(){v.sort_by_key(|p|(p.matches('/').count(),p.clone()))}
     let o=cfg.as_object()?;
-    if set.contains("Emulator"){if let Some(v)=first_category(&serde_json::json!(["emu"]),&exact,&by){return Some(v)}}
-    if let Some(rules)=o.get("expressions").and_then(Value::as_array){for r in rules{let a=r.as_array()?;let req=a.get(0)?.as_array()?;if req.iter().filter_map(Value::as_str).all(|x|set.contains(x)){if let Some(v)=first_category(a.get(1)?,&exact,&by){return Some(v)}}}}
-    for pair in [("standalone_priority","additional"),("main_priority","main")] {if let Some(pr)=o.get(pair.0).and_then(Value::as_array){for k in pr.iter().filter_map(Value::as_str){if set.contains(k){if let Some(c)=o.get(pair.1).and_then(Value::as_object).and_then(|m|m.get(k)){if let Some(v)=first_category(c,&exact,&by){return Some(v)}}}}}}
+    let main_map=o.get("main").and_then(Value::as_object);
+    let preferred_main=o.get("main_priority").and_then(Value::as_array).into_iter().flatten().filter_map(Value::as_str).find_map(|key|{
+        if !set.contains(key){return None}
+        let candidates=main_map?.get(key)?;
+        Some((key,first_category(candidates,&exact,&by)?))
+    });
+
+    // Emulator is a useful refinement of a game/emulator category, but should
+    // not defeat an unrelated, more specific Main category.
+    if set.contains("Emulator"){
+        if let Some(category)=first_category(&serde_json::json!(["emu"]),&exact,&by){
+            let relevant=preferred_main.as_ref().map_or(true,|(key,parent)|{
+                *key=="Game"||*key=="Emulator"||category_path_is_within_rs(&category,parent)
+            });
+            if relevant{return Some(category)}
+        }
+    }
+
+    if let Some(rules)=o.get("expressions").and_then(Value::as_array){
+        for rule in rules{
+            let Some(parts)=rule.as_array() else{continue};
+            let Some(required)=parts.first().and_then(Value::as_array) else{continue};
+            let Some(destinations)=parts.get(1) else{continue};
+            let required:Option<Vec<&str>>=required.iter().map(Value::as_str).collect();
+            let Some(required)=required else{continue};
+            if required.is_empty()||!required.iter().all(|category|set.contains(category)){continue}
+            let Some(category)=first_category(destinations,&exact,&by) else{continue};
+            let relevant=preferred_main.as_ref().map_or(true,|(main_key,main_path)|{
+                required.iter().any(|category|category==main_key)
+                    ||category_path_is_within_rs(&category,main_path)
+            });
+            if relevant{return Some(category)}
+        }
+    }
+
+    let generic_main_categories=o.get("generic_main_categories").and_then(Value::as_array);
+    if let Some((main_key,main_category))=preferred_main{
+        let generic=generic_main_categories.is_some_and(|categories|{
+            categories.iter().any(|category|category.as_str()==Some(main_key))
+        });
+        if let Some(priority)=o.get("standalone_priority").and_then(Value::as_array){
+            if let Some(additional)=o.get("additional").and_then(Value::as_object){
+                for key in priority.iter().filter_map(Value::as_str){
+                    if !set.contains(key){continue}
+                    let Some(candidates)=additional.get(key) else{continue};
+                    if let Some(category)=first_category(candidates,&exact,&by){
+                        if generic||category_path_is_within_rs(&category,&main_category){return Some(category)}
+                    }
+                }
+            }
+        }
+        return Some(main_category)
+    }
+
+    if let Some(priority)=o.get("standalone_priority").and_then(Value::as_array){
+        if let Some(additional)=o.get("additional").and_then(Value::as_object){
+            for key in priority.iter().filter_map(Value::as_str){
+                if !set.contains(key){continue}
+                if let Some(candidates)=additional.get(key){
+                    if let Some(category)=first_category(candidates,&exact,&by){return Some(category)}
+                }
+            }
+        }
+    }
     None
 }
 fn resolve_component_category_rs(component:&serde_json::Map<String,Value>, paths:&[String], cfg:&Value)->Option<String>{
@@ -241,6 +305,15 @@ fn adapt_appstream_maps_values(components:Vec<serde_json::Map<String,Value>>, ca
 
 fn source_option_key_rs(item: &serde_json::Map<String, Value>) -> String {
     let source = item.get("source").and_then(Value::as_str).unwrap_or("native");
+    if source == "appimage" {
+        let id = normalize_id(item.get("id").and_then(Value::as_str).unwrap_or(""));
+        let name = item.get("name").and_then(Value::as_str).unwrap_or("");
+        let name = normalized_app_name_rs(name);
+        if !id.is_empty() {
+            return if name.is_empty(){format!("appimage:{id}")}else{format!("appimage:{id}:{name}")};
+        }
+        return if name.is_empty() { source.to_string() } else { format!("appimage:{name}") };
+    }
     if source != "flatpak" { return source.to_string(); }
     let scope = item.get("flatpak_scope").and_then(Value::as_str).unwrap_or("");
     let installation = item.get("flatpak_installation").and_then(Value::as_str).unwrap_or("");
@@ -248,6 +321,48 @@ fn source_option_key_rs(item: &serde_json::Map<String, Value>) -> String {
 }
 fn component_identity_rs(item:&serde_json::Map<String,Value>)->(String,String){
     (normalize_id(item.get("id").and_then(Value::as_str).unwrap_or("")), item.get("name").and_then(Value::as_str).unwrap_or("").trim().to_lowercase())
+}
+fn normalized_app_name_rs(name:&str)->String{
+    name.chars().flat_map(char::to_lowercase).filter(|ch|ch.is_alphanumeric()).collect()
+}
+fn is_appimage_variant_suffix_rs(suffix:&str)->bool{
+    !suffix.is_empty()&&(suffix.chars().all(|ch|ch.is_ascii_digit())||suffix.strip_prefix("asm").is_some_and(|digits|!digits.is_empty()&&digits.chars().all(|ch|ch.is_ascii_digit())))
+}
+fn appimage_name_aliases_rs(name:&str)->Vec<String>{
+    let lowered=name.trim().to_lowercase();
+    let exact=normalized_app_name_rs(&lowered);
+    if exact.is_empty(){return Vec::new()}
+    let mut aliases=vec![exact.clone()];
+    let mut push_base=|base:&str|{
+        let base=normalized_app_name_rs(base);
+        if base.chars().count()>=4&&!aliases.contains(&base){aliases.push(base);}
+    };
+
+    // AppImage feeds sometimes append a release/version or build flavor to the
+    // application name (e.g. "FreeCAD 2" or "FreeCAD-asm3"). Keep the exact
+    // form first, then expose a conservative base-name alias for matching.
+    for (index, separator) in lowered.char_indices().rev(){
+        if separator.is_alphanumeric(){continue}
+        let suffix=normalized_app_name_rs(&lowered[index+separator.len_utf8()..]);
+        if is_appimage_variant_suffix_rs(&suffix){push_base(&lowered[..index]);}
+    }
+    let without_digits=exact.trim_end_matches(|ch:char|ch.is_ascii_digit());
+    if without_digits.len()!=exact.len(){push_base(without_digits);}
+    if let Some(index)=exact.rfind("asm"){
+        let digits=&exact[index+3..];
+        if !digits.is_empty()&&digits.chars().all(|ch|ch.is_ascii_digit()){push_base(&exact[..index]);}
+    }
+    aliases
+}
+fn appimage_standard_name_group_rs(name:&str,standard_names:&std::collections::HashMap<String,std::collections::HashSet<String>>)->Option<String>{
+    for (index,alias) in appimage_name_aliases_rs(name).iter().enumerate(){
+        let Some(groups)=standard_names.get(alias) else{continue};
+        if groups.len()==1{return groups.iter().next().cloned()}
+        // An exact but ambiguous standard name should not be guessed into one
+        // of two unrelated catalog entries.
+        if index==0{return None}
+    }
+    None
 }
 fn is_verified_flatpak_rs(item:&serde_json::Map<String,Value>)->bool{
     item.get("source").and_then(Value::as_str).unwrap_or("native")=="flatpak" && item.get("verified").and_then(Value::as_bool).unwrap_or(false)
@@ -310,12 +425,40 @@ fn preference_rs(item:&serde_json::Map<String,Value>,prefs:&Value,host_os:&std::
 }
 fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths:&[String],cfg:&Value,prefs:&Value,locks:&std::collections::HashSet<String>,host_os:&std::collections::HashSet<String>,prefer_native_host:bool,steamos:bool,suse:bool,by_name_pass:bool)->Vec<serde_json::Map<String,Value>>{
     let mut groups:std::collections::BTreeMap<String,Vec<serde_json::Map<String,Value>>>=std::collections::BTreeMap::new();let mut pass=Vec::new();
-    for m in components {if m.get("source").and_then(Value::as_str)==Some("homebrew"){pass.push(m);continue}let(id,name)=component_identity_rs(&m);let key=if by_name_pass{if name.is_empty(){None}else{Some(name)}}else if !id.is_empty(){Some(format!("id:{id}"))}else if !name.is_empty(){Some(format!("name:{name}"))}else{None};if let Some(k)=key{groups.entry(k).or_default().push(m)}else{pass.push(m)}}
+    let mut standard_names=std::collections::HashMap::<String,std::collections::HashSet<String>>::new();
+    if by_name_pass{
+        for item in &components{
+            let source=item.get("source").and_then(Value::as_str).unwrap_or("native");
+            if matches!(source,"appimage"|"homebrew"){continue}
+            let name=item.get("name").and_then(Value::as_str).unwrap_or("").trim();
+            let normalized=normalized_app_name_rs(name);
+            let group_name=name.to_lowercase();
+            if !normalized.is_empty()&&!group_name.is_empty(){standard_names.entry(normalized).or_default().insert(group_name);}
+        }
+    }
+    for m in components {
+        if m.get("source").and_then(Value::as_str)==Some("homebrew"){pass.push(m);continue}
+        let source=m.get("source").and_then(Value::as_str).unwrap_or("native");
+        let(id,name)=component_identity_rs(&m);
+        let key=if by_name_pass{
+            if name.is_empty(){None}
+            else if source=="appimage"{
+                let canonical=m.get("name").and_then(Value::as_str).unwrap_or("");
+                let matched=appimage_standard_name_group_rs(canonical,&standard_names);
+                Some(matched.map(|group|format!("name:{group}")).unwrap_or_else(||{
+                    format!("appimage:{}",if id.is_empty(){name.clone()}else{id.clone()})
+                }))
+            }else{Some(format!("name:{name}"))}
+        }else if !id.is_empty(){Some(format!("id:{id}"))}
+        else if !name.is_empty(){Some(format!("name:{name}"))}
+        else{None};
+        if let Some(key)=key{groups.entry(key).or_default().push(m)}else{pass.push(m)}
+    }
     let mut out=pass;
     for (_,raw) in groups {let mut group=if by_name_pass{expand_source_group_rs(&raw)}else{raw};if let Some(l)=locked_system_flatpak_rs(&group,locks){out.push(l);continue}
         let mut flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).cloned().collect();let natives:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").cloned().collect();let snaps:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("snap")).cloned().collect();let appimages:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("appimage")).cloned().collect();flat.sort_by_key(|m|(m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("")!="user",m.get("flatpak_installation").and_then(Value::as_str).unwrap_or("").to_string()));group=natives.iter().cloned().chain(flat.iter().cloned()).chain(snaps.iter().cloned()).chain(appimages.iter().cloned()).collect();
-        if natives.is_empty()&&flat.len()>1{out.push(with_source_options_rs(&flat[0],&group));continue}let sources:std::collections::HashSet<_>=group.iter().map(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")).collect();if sources.len()<2{if !appimages.is_empty(){out.push(group[0].clone())}else{out.extend(group)}continue}
-        if let Some(pref)=explicit_group_preference_rs(&group,prefs,host_os){let mut selected:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")==pref).cloned().collect();if !selected.is_empty(){if pref=="flatpak"{selected.truncate(1)}out.extend(selected.iter().map(|m|with_source_options_rs(m,&group)));continue}}
+        if natives.is_empty()&&flat.len()>1{out.push(with_source_options_rs(&flat[0],&group));continue}let sources:std::collections::HashSet<_>=group.iter().map(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")).collect();if sources.len()<2{if !appimages.is_empty(){out.extend(appimages)}else{out.extend(group)}continue}
+        if let Some(pref)=explicit_group_preference_rs(&group,prefs,host_os){let mut selected:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")==pref).cloned().collect();if !selected.is_empty(){if matches!(pref.as_str(),"flatpak"|"appimage"){selected.truncate(1)}out.extend(selected.iter().map(|m|with_source_options_rs(m,&group)));continue}}
         // Whole-category native policy is a default-source decision and outranks
         // Flatpak verification. Explicit per-app preferences above still win, and
         // with_source_options_rs keeps Flatpak/Snap available for manual switching.
@@ -1966,6 +2109,106 @@ pub(crate) fn source_metadata_fingerprint(paths: Vec<String>) -> String {
 }
 
 #[cfg(test)]
+mod category_resolution_tests {
+    use super::*;
+
+    fn paths() -> Vec<String> {
+        [
+            "game", "game/action", "game/emu", "sys", "sys/sysadm", "utils", "utils/archive",
+            "network", "network/remote", "devs", "devs/txt", "devs/ides",
+            "media", "media/players", "creative", "creative/audio",
+            "creative/draw", "edu", "edu/tech",
+        ]
+        .into_iter()
+        .map(str::to_string)
+        .collect()
+    }
+
+    fn config() -> Value {
+        serde_json::json!({
+            "main": {
+                "Game": ["game"],
+                "Emulator": ["emu", "game"],
+                "Development": ["devs"],
+                "Graphics": ["creative"],
+                "AudioVideo": ["media"],
+                "Network": ["network"],
+                "Education": ["edu"],
+                "System": ["sysadm"],
+                "ConsoleOnly": ["utils"],
+                "Utility": ["utils"]
+            },
+            "additional": {
+                "PackageManager": ["sysadm"],
+                "FileManager": ["archive"],
+                "RemoteAccess": ["remote"],
+                "TextEditor": ["txt"]
+            },
+            "expressions": [
+                [["System", "PackageManager"], ["sysadm"]],
+                [["Game", "PackageManager"], ["game"]],
+                [["System", "FileManager"], ["archive"]],
+                [["Game", "ActionGame"], ["action"]],
+                [["Game", "Development", "IDE"], ["ides"]],
+                [["Graphics", "2DGraphics"], ["draw"]],
+                [["Game", "Graphics", "2DGraphics"], ["draw"]],
+                [["Network", "RemoteAccess"], ["remote"]],
+                [["AudioVideo", "Player"], ["players"]],
+                [["AudioVideo", "Audio"], ["audio"]],
+                [["Science", "DataVisualization"], ["tech"]]
+            ],
+            "standalone_priority": ["PackageManager", "RemoteAccess", "TextEditor"],
+            "main_priority": [
+                "Game", "Emulator", "Development", "AudioVideo", "Network",
+                "Education", "System", "ConsoleOnly", "Utility"
+            ],
+            "generic_main_categories": ["ConsoleOnly", "Utility"]
+        })
+    }
+
+    fn resolve(categories: &[&str]) -> Option<String> {
+        resolve_category_rs(&serde_json::json!(categories), &paths(), &config())
+    }
+
+    #[test]
+    fn game_main_beats_unrelated_expression_and_purpose_tags() {
+        assert_eq!(resolve(&["Game", "Qt", "PackageManager"]), Some("game".into()));
+        assert_eq!(resolve(&["Game", "System", "PackageManager"]), Some("game".into()));
+        assert_eq!(resolve(&["System", "PackageManager"]), Some("sys/sysadm".into()));
+        assert_eq!(resolve(&["Game", "System", "FileManager"]), Some("game".into()));
+        assert_eq!(resolve(&["System", "FileManager"]), Some("utils/archive".into()));
+    }
+
+    #[test]
+    fn generic_main_and_missing_main_still_use_standalone_purpose_tags() {
+        assert_eq!(resolve(&["Utility", "PackageManager"]), Some("sys/sysadm".into()));
+        assert_eq!(resolve(&["PackageManager"]), Some("sys/sysadm".into()));
+    }
+
+    #[test]
+    fn expressions_refine_the_preferred_main_without_crossing_domains() {
+        assert_eq!(resolve(&["Game", "ActionGame"]), Some("game/action".into()));
+        assert_eq!(resolve(&["Game", "Development", "IDE"]), Some("devs/ides".into()));
+        assert_eq!(resolve(&["Game", "Graphics", "2DGraphics"]), Some("creative/draw".into()));
+        assert_eq!(resolve(&["Game", "Network", "RemoteAccess"]), Some("game".into()));
+        assert_eq!(resolve(&["AudioVideo", "Player"]), Some("media/players".into()));
+        assert_eq!(resolve(&["AudioVideo", "Audio"]), Some("creative/audio".into()));
+        assert_eq!(resolve(&["Education", "Science", "DataVisualization"]), Some("edu/tech".into()));
+    }
+
+    #[test]
+    fn standalone_tags_can_refine_a_main_category_path() {
+        assert_eq!(resolve(&["Development", "TextEditor"]), Some("devs/txt".into()));
+    }
+
+    #[test]
+    fn console_only_is_a_generic_utility_category_not_a_game() {
+        assert_eq!(resolve(&["ConsoleOnly"]), Some("utils".into()));
+        assert_eq!(resolve(&["Game", "ConsoleOnly"]), Some("game".into()));
+    }
+}
+
+#[cfg(test)]
 mod appimage_source_tests {
     use super::*;
 
@@ -2013,6 +2256,63 @@ mod appimage_source_tests {
         assert_eq!(selected.len(), 1);
         assert_eq!(selected[0]["source"], "appimage");
         assert!(selected[0].get("_source_alternatives").is_none());
+    }
+
+    #[test]
+    fn appimage_name_variants_attach_to_the_standard_entry_as_distinct_options() {
+        let entries = vec![
+            component("org.freecad.FreeCAD", "FreeCAD", "native", &["Utility"]),
+            component("appimage.community.freecad-2", "FreeCAD 2", "appimage", &["Utility"]),
+            component("appimage.community.freecad2", "FreeCAD2", "appimage", &["Utility"]),
+            component("appimage.community.freecad-asm3", "FreeCAD-asm3", "appimage", &["Utility"]),
+            component("org.prismlauncher.PrismLauncher", "Prism Launcher", "native", &["Utility"]),
+            component("appimage.community.prismlauncher", "prismlauncher", "appimage", &["Utility"]),
+        ];
+        let prefs = serde_json::json!({"default": "flatpak", "apps": {}});
+        let selected = collapse(entries, prefs);
+
+        assert_eq!(selected.len(), 2, "{selected:?}");
+        let freecad = selected.iter().find(|entry|entry.get("id").and_then(Value::as_str)==Some("org.freecad.FreeCAD")).unwrap();
+        let freecad_options=freecad.get("_source_alternatives").and_then(Value::as_array).unwrap();
+        assert_eq!(freecad_options.len(),3,"{freecad_options:?}");
+        let freecad_keys:std::collections::HashSet<String>=freecad_options.iter()
+            .filter_map(Value::as_object)
+            .map(source_option_key_rs)
+            .collect();
+        assert_eq!(freecad_keys.len(),3,"{freecad_keys:?}");
+
+        let prism = selected.iter().find(|entry|entry.get("id").and_then(Value::as_str)==Some("org.prismlauncher.PrismLauncher")).unwrap();
+        assert_eq!(prism.get("_source_alternatives").and_then(Value::as_array).unwrap().len(),1);
+    }
+
+    #[test]
+    fn explicit_appimage_preference_selects_one_variant_and_keeps_the_rest_available() {
+        let entries = vec![
+            component("org.freecad.FreeCAD", "FreeCAD", "native", &["Utility"]),
+            component("appimage.community.freecad2", "FreeCAD2", "appimage", &["Utility"]),
+            component("appimage.community.freecad-asm3", "FreeCAD-asm3", "appimage", &["Utility"]),
+        ];
+        let prefs = serde_json::json!({
+            "default": "flatpak",
+            "apps": {"org.freecad.FreeCAD": "appimage"}
+        });
+        let selected = collapse(entries, prefs);
+
+        assert_eq!(selected.len(),1,"{selected:?}");
+        assert_eq!(selected[0]["source"],"appimage");
+        assert_eq!(selected[0].get("_source_alternatives").and_then(Value::as_array).unwrap().len(),2);
+    }
+
+    #[test]
+    fn unmatched_appimages_remain_separate_entries() {
+        let entries = vec![
+            component("org.freecad.FreeCAD", "FreeCAD", "native", &["Utility"]),
+            component("appimage.community.freecad-tools", "FreeCAD Tools", "appimage", &["Utility"]),
+            component("appimage.community.freecad-viewer", "FreeCAD Viewer", "appimage", &["Utility"]),
+        ];
+        let selected = collapse(entries, serde_json::json!({"default": "flatpak", "apps": {}}));
+        assert_eq!(selected.len(),3,"{selected:?}");
+        assert!(selected.iter().all(|entry|entry.get("_source_alternatives").is_none()));
     }
 
     #[test]

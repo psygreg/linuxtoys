@@ -20,7 +20,7 @@ _DERIVED_REFRESHING = set()
 # Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
 # catalog.json remains authoritative; this file is disposable and regenerated
 # whenever any input represented by the runtime cache key changes.
-RUNTIME_CACHE_SCHEMA = 27
+RUNTIME_CACHE_SCHEMA = 29
 RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries-rs.bin"
 
 # Most recent inputs used to build the live runtime catalog. This is process-local
@@ -148,7 +148,8 @@ MAIN_CATEGORY_CANDIDATES = {
     "AdventureGame": ("game",),
     "StrategyGame": ("game",),
     "Sports": ("game",),
-    "ConsoleOnly": ("game",),
+    # ConsoleOnly describes a text/terminal interface, not a game genre.
+    "ConsoleOnly": ("utils",),
     "Emulator": ("emu", "game"),
 }
 
@@ -300,10 +301,12 @@ ADDITIONAL_CATEGORY_CANDIDATES = {
     "ConsoleOnly": ("devs", "utilities"),
 }
 
-# AppStream categories are tags rather than a strict taxonomy.  Following the
-# same basic model used by GNOME Software, LinuxToys resolves meaningful
-# Main+Additional expressions before falling back to a broad Main category.
-# LinuxToys still chooses one destination, so rules are ordered: first match wins.
+# AppStream categories are tags rather than a strict taxonomy. The resolver
+# chooses a preferred Main category, then accepts an expression only when it
+# refines that Main (or explicitly includes it). This prevents unrelated tags
+# from winning while retaining useful Main+Additional specializations.
+# LinuxToys still chooses one destination, so rules are ordered: first eligible
+# match wins.
 #
 # A few cross-main overrides come first for cases where the functional tag is more
 # informative than the broad main tag (CAD/engineering is the canonical example).
@@ -320,6 +323,9 @@ CATEGORY_EXPRESSION_RULES = (
 
     # Development.
     (("Development", "IDE"), ("ides", "development")),
+    # A few game-creation tools are also tagged as games. Require the full
+    # combination so this specific development classification can beat Game.
+    (("Game", "Development", "IDE"), ("ides", "development")),
     (("Development", "GUIDesigner"), ("ides", "development")),
     (("Development", "Building"), ("tools", "development")),
     (("Development", "Debugger"), ("tools", "development")),
@@ -340,11 +346,17 @@ CATEGORY_EXPRESSION_RULES = (
     (("Office", "Presentation"), ("document", "productivity")),
     (("Office", "Spreadsheet"), ("document", "productivity")),
     (("Office", "WordProcessor"), ("document", "productivity")),
+    (("Office", "Email"), ("chat", "network", "productivity")),
+    (("Office", "Chat"), ("chat", "utils")),
+    (("Office", "InstantMessaging"), ("chat", "utils")),
+    (("Office", "TextEditor"), ("document", "office")),
 
     # Graphics. Engineering overrides above deliberately beat 3D graphics.
     (("Graphics", "Photography"), ("photo", "graphics", "office")),
     (("Graphics", "ImageProcessing"), ("photo", "graphics", "office")),
     (("Graphics", "2DGraphics"), ("draw", "graphics", "office")),
+    # Tux Paint and similar kid-focused drawing tools can also carry Game.
+    (("Game", "Graphics", "2DGraphics"), ("draw", "graphics", "office")),
     (("Graphics", "VectorGraphics"), ("draw", "graphics", "office")),
     (("Graphics", "RasterGraphics"), ("draw", "graphics", "office")),
     (("Graphics", "3DGraphics"), ("creative", "graphics", "office")),
@@ -390,12 +402,23 @@ CATEGORY_EXPRESSION_RULES = (
     (("Audio", "Sequencer"), ("audio", "multimedia", "media")),
     (("Audio", "Tuner"), ("tv", "audio", "multimedia", "media")),
     (("Video", "TV"), ("tv", "video", "multimedia", "media")),
+    (("AudioVideo", "Audio", "AudioVideoEditing"), ("audio", "multimedia", "media")),
     (("AudioVideo", "AudioVideoEditing"), ("video", "multimedia", "office")),
     (("AudioVideo", "Player"), ("players", "multimedia", "office")),
     (("AudioVideo", "Recorder"), ("rec", "multimedia", "office")),
     (("AudioVideo", "DiscBurning"), ("rec", "multimedia")),
+    # AudioVideo is a broad umbrella; use narrower tags when no more specific
+    # expression (for example Player, TV, or Recorder) matched first.
+    (("AudioVideo", "Network", "Telephony"), ("network", "utils")),
+    (("AudioVideo", "Audio"), ("audio", "multimedia", "media")),
+    (("AudioVideo", "Video"), ("video", "multimedia", "media")),
 
     # Games.
+    (("Game", "Education", "Astronomy"), ("nature", "science", "education")),
+    (("Game", "Education", "Languages"), ("langs", "science", "education")),
+    # Package managers paired with Game describe launchers/stores, not game
+    # genres such as ActionGame or Simulation.
+    (("Game", "PackageManager"), ("game",)),
     (("Game", "ActionGame"), ("action", "games")),
     (("Game", "AdventureGame"), ("action", "games")),
     (("Game", "ArcadeGame"), ("classic", "games")),
@@ -415,6 +438,10 @@ CATEGORY_EXPRESSION_RULES = (
     (("Education", "Languages"), ("langs", "science", "education")),
     (("Education", "Literature"), ("langs", "science", "education")),
     (("Education", "Astronomy"), ("nature", "science", "education")),
+    (("Education", "Engineering"), ("eng", "office")),
+    (("Science", "Engineering"), ("eng", "office")),
+    (("Education", "Electronics"), ("eng", "office")),
+    (("Science", "Electronics"), ("eng", "office")),
     (("Education", "Biology"), ("nature", "science", "education")),
     (("Education", "Chemistry"), ("nature", "science", "education")),
     (("Education", "Geography"), ("geo", "science", "education")),
@@ -466,12 +493,10 @@ STANDALONE_PURPOSE_PRIORITY = (
 
 MAIN_CATEGORY_PRIORITY = (
     # Consultation order: the first key present in a component's categories
-    # decides its destination. Toolkit/desktop tags ("Qt", "GNOME", "None"...)
-    # sit last so real categories always win; AppImage feed entries tagged only
-    # with them are parked in utils instead of being dropped.
+    # decides its primary destination. ConsoleOnly is a weak UI-mode hint, not
+    # a game category, so it stays with the generic fallback tags at the end.
     "Game",
     "Sports",
-    "ConsoleOnly",
     "AdventureGame",
     "StrategyGame",
     "Emulator",
@@ -510,6 +535,7 @@ MAIN_CATEGORY_PRIORITY = (
     "ArtificialIntelligence",
     "Player",
     "Utility",
+    "ConsoleOnly",
     "Qt",
     "GNOME",
     "GTK",
@@ -518,6 +544,14 @@ MAIN_CATEGORY_PRIORITY = (
     "None",
     "X-Tool",
     "X-Utilities",
+)
+
+# Broad or implementation-only Main tags may be refined by standalone purpose
+# tags (for example Utility + PackageManager -> sysadm). They must not override
+# a specific Main category such as Game, Network, or Development.
+GENERIC_MAIN_CATEGORIES = (
+    "Utility", "ConsoleOnly", "TerminalEmulator",
+    "Qt", "GNOME", "GTK", "KDE", "Application", "None", "X-Tool", "X-Utilities",
 )
 
 
@@ -701,6 +735,7 @@ def _runtime_catalog(
         "expressions": CATEGORY_EXPRESSION_RULES,
         "standalone_priority": STANDALONE_PURPOSE_PRIORITY,
         "main_priority": MAIN_CATEGORY_PRIORITY,
+        "generic_main_categories": GENERIC_MAIN_CATEGORIES,
         "overrides": APPSTREAM_CATEGORY_OVERRIDE,
     }
     rust_cache_key = json.dumps({
