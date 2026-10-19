@@ -500,7 +500,7 @@ def _reverse_package_fromfile(file_paths):
                 f"if flatpak info --user {app_id} >/dev/null 2>&1; then "
                 f"flatpak uninstall --user --noninteractive {app_id}; "
                 f"elif flatpak info --system {app_id} >/dev/null 2>&1; then "
-                f"sudo_rq && sudo flatpak uninstall --system --noninteractive {app_id}; "
+                f"sudo_rq && sudo_ flatpak uninstall --system --noninteractive {app_id}; "
                 f"fi"
             )
             reversal_commands.append(cmd)
@@ -582,7 +582,7 @@ def _reverse_flatpak_removal(app_ids):
             f"if flatpak info --user {app_id} >/dev/null 2>&1; then "
             f"flatpak uninstall --user --noninteractive {app_id}; "
             f"elif flatpak info --system {app_id} >/dev/null 2>&1; then "
-            f"sudo_rq && sudo flatpak uninstall --system --noninteractive {app_id}; "
+            f"sudo_rq && sudo_ flatpak uninstall --system --noninteractive {app_id}; "
             f"fi"
         )
         commands.append(cmd)

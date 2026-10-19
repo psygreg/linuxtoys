@@ -10,6 +10,15 @@ source "$SCRIPT_DIR/libs/sysinfo.bash"
 [ -n "$HELPERS_OPS" ] && source "$SCRIPT_DIR/libs/helpers.bash"
 [ -n "$OPTIMIZER_OPS" ] && source "$SCRIPT_DIR/libs/optimizers.bash"
 
+# GLib/libdbus clients (flatpak, gsettings, ...) connect to the session bus at
+# startup; without an address they fall back to autolaunching dbus-launch,
+# which is absent on stock GNOME installs and fails elsewhere. Launch contexts
+# that strip the desktop environment (TTY, cron, systemd units) still have the
+# per-user bus socket, so derive the address when it is missing.
+if [[ -z "${DBUS_SESSION_BUS_ADDRESS:-}" && -S "/run/user/${UID}/bus" ]]; then
+    export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${UID}/bus"
+fi
+
 # legacy explicit sourcing
 summon_helpers() {
     [ -n "$HELPERS_OPS" ] && return 0
