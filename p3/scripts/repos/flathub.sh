@@ -32,7 +32,14 @@ repair_flathub_remote() {
     fi
 }
 
-[ -f /tmp/linuxtoys_flatpak_done ] && exit 0
+# The marker keeps call_script bootstraps idempotent within a session. Manual
+# runs must never exit silently through it: the configuration below is
+# idempotent and reports what it did, while a completely silent exit looks
+# like a broken runner and generates empty-log reports.
+if [ -f /tmp/linuxtoys_flatpak_done ]; then
+    echo "Flathub support was already configured during this session; re-checking..."
+    [ -n "${CALLED_SCRIPT:-}" ] && exit 0
+fi
 
 askpass
 # fix for MODICIA OS, issue #1407
