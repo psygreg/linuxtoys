@@ -454,7 +454,7 @@ class ItemWidgetFactory:
             icon_value = item_info.get("icon", "application-x-executable")
             icon_size = 38
             pixbuf = None
-            if icon_value.endswith((".png", ".svg", ".webp")):
+            if icon_value.endswith((".png", ".svg", ".webp", ".jxl")):
                 if not os.path.isabs(icon_value) and "/" not in icon_value:
                     icon_path = get_icon_path(
                         "local-script.svg"
@@ -471,7 +471,7 @@ class ItemWidgetFactory:
             else:
                 themed = (
                     icon_value
-                    if not icon_value.endswith((".png", ".svg", ".webp"))
+                    if not icon_value.endswith((".png", ".svg", ".webp", ".jxl"))
                     else "application-x-executable"
                 )
                 icon.set_from_icon_name(themed, Gtk.IconSize.DIALOG)

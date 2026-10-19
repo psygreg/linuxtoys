@@ -10,6 +10,15 @@ source "$SCRIPT_DIR/libs/sysinfo.bash"
 [ -n "$HELPERS_OPS" ] && source "$SCRIPT_DIR/libs/helpers.bash"
 [ -n "$OPTIMIZER_OPS" ] && source "$SCRIPT_DIR/libs/optimizers.bash"
 
+# GLib/libdbus clients (flatpak, gsettings, ...) connect to the session bus at
+# startup; without an address they fall back to autolaunching dbus-launch,
+# which is absent on stock GNOME installs and fails elsewhere. Launch contexts
+# that strip the desktop environment (TTY, cron, systemd units) still have the
+# per-user bus socket, so derive the address when it is missing.
+if [[ -z "${DBUS_SESSION_BUS_ADDRESS:-}" && -S "/run/user/${UID}/bus" ]]; then
+    export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/${UID}/bus"
+fi
+
 # legacy explicit sourcing
 summon_helpers() {
     [ -n "$HELPERS_OPS" ] && return 0
@@ -53,6 +62,34 @@ zenity() {
 }
 
 # privilege escalation
+_sudo_command_path() {
+    local sudo_path run0_path
+
+    sudo_path=$(type -P sudo 2>/dev/null) || sudo_path=""
+    run0_path=$(type -P run0-sudo 2>/dev/null) || run0_path=""
+
+    # run0-wrappers commonly installs `sudo` as a symlink to run0-sudo. Use the
+    # run0 backend when that is the implementation behind `sudo`, or when it
+    # is the only available sudo-compatible command.
+    if [[ -n "$run0_path" ]] && {
+        [[ -z "$sudo_path" ]] || [[ "$sudo_path" -ef "$run0_path" ]]
+    }; then
+        printf '%s\n' "$run0_path"
+    elif [[ -n "$sudo_path" ]]; then
+        printf '%s\n' "$sudo_path"
+    else
+        return 127
+    fi
+}
+
+_sudo_uses_run0_sudo() {
+    local sudo_path="${1:-}" run0_path
+
+    [[ -n "$sudo_path" ]] || return 1
+    run0_path=$(type -P run0-sudo 2>/dev/null) || return 1
+    [[ "$sudo_path" -ef "$run0_path" ]]
+}
+
 askpass() {
     local mode="${1:-sudo}"
     shift || true
@@ -60,6 +97,8 @@ askpass() {
     local title="LinuxToys"
     [[ "$mode" == "command" ]] || title="${1:-LinuxToys}"
     local _pass=""
+    local sudo_cmd=""
+    local sudo_shim_dir=""
     local max_attempts=3
     local attempts=0
     local marker="${TMPDIR:-/tmp}/linuxtoys_sudo_validated-${UID}"
@@ -89,21 +128,44 @@ askpass() {
             ;;
 
         sudo)
-            # Only sudo itself can confirm whether the current authorization
-            # is still valid. The marker must not bypass this check.
-            if sudo -n true 2>/dev/null; then
+            sudo_cmd=$(_sudo_command_path) || {
+                printf 'askpass: no sudo or run0-sudo command found\n' >&2
+                return 127
+            }
+
+            # Only the active privilege helper can confirm whether the current
+            # authorization is still valid. The marker must not bypass this check.
+            if "$sudo_cmd" -n true 2>/dev/null; then
                 return 0
             fi
 
             # Remove a stale informational marker.
             rm -f "$marker"
 
+            # run0-sudo delegates authentication to polkit; it does not accept
+            # sudo's password-on-stdin options. Let the polkit agent handle the
+            # prompt instead of opening LinuxToys' password dialog.
+            if _sudo_uses_run0_sudo "$sudo_cmd"; then
+                if ! "$sudo_cmd" -v; then
+                    _msg error \
+                        "Authorization failed or was cancelled." \
+                        "Authentication Failed"
+                    exit 100
+                fi
+
+                if [[ -n ${LINUXTOYS_CHECKLIST:-} ]]; then
+                    touch "$marker"
+                fi
+
+                return 0
+            fi
+
             if [[ ${DISABLE_ZENITY:-0} == "1" ]]; then
                 while (( attempts < max_attempts )); do
                     _pass=$(askpass password "$title") || return 1
 
                     if printf '%s\n' "$_pass" |
-                        sudo -S -p '' -v >/dev/null 2>&1; then
+                        "$sudo_cmd" -S -p '' -v >/dev/null 2>&1; then
                         unset _pass
 
                         if [[ -n ${LINUXTOYS_CHECKLIST:-} ]]; then
@@ -145,7 +207,7 @@ askpass() {
                 fi
             else
                 if ! printf '%s\n' "$_pass" |
-                    sudo -S -p '' -v >/dev/null 2>&1; then
+                    "$sudo_cmd" -S -p '' -v >/dev/null 2>&1; then
                     unset _pass
 
                     _msg error \
@@ -165,6 +227,47 @@ askpass() {
             ;;
 
         command)
+            sudo_cmd=$(_sudo_command_path) || sudo_cmd=""
+
+            # run0-sudo authenticates through polkit, so don't collect a
+            # password that it cannot consume via SUDO_ASKPASS. Put a sudo
+            # symlink first in PATH so nested commands use the same backend.
+            if [[ -n "$sudo_cmd" ]] && _sudo_uses_run0_sudo "$sudo_cmd"; then
+                [[ "$sudo_cmd" == /* ]] || sudo_cmd="$PWD/$sudo_cmd"
+
+                (
+                    (( $# > 0 )) || {
+                        printf 'askpass command: command not provided\n' >&2
+                        exit 2
+                    }
+                    local command_status
+
+                    sudo_shim_dir=$(mktemp -d "${TMPDIR:-/tmp}/linuxtoys-run0.XXXXXX") || exit 1
+                    trap 'rm -rf -- "$sudo_shim_dir"' EXIT
+                    trap 'exit 129' HUP
+                    trap 'exit 130' INT
+                    trap 'exit 143' TERM
+                    chmod 700 "$sudo_shim_dir" || exit 1
+                    ln -s -- "$sudo_cmd" "$sudo_shim_dir/sudo" || exit 1
+                    unset SUDO_ASKPASS
+
+                    if ! "$sudo_cmd" -v; then
+                        _msg error \
+                            "Authorization failed or was cancelled." \
+                            "Authentication Failed"
+                        exit 100
+                    fi
+
+                    if PATH="$sudo_shim_dir${PATH:+:$PATH}" "$@"; then
+                        command_status=0
+                    else
+                        command_status=$?
+                    fi
+                    exit "$command_status"
+                )
+                return $?
+            fi
+
             # Isolate helper state and traps from the calling script.
             (
                 (( $# > 0 )) || {
@@ -230,15 +333,36 @@ askpass() {
 # Privileged command wrapper. Library helpers should use sudo_ instead of calling
 # askpass directly: authentication is validated immediately before escalation.
 sudo_() {
+    local sudo_cmd
     askpass sudo || return $?
+    sudo_cmd=$(_sudo_command_path) || return $?
     # Package scriptlets and status dialogs run GLib/libdbus clients that reach
     # for the session bus; sudo's env_reset makes them autolaunch dbus-launch,
     # which is missing on stock GNOME installs and fails elsewhere. Forward the
     # desktop session bus when the script has one.
+    #
+    # flatpak's CLI also warns when its export directories are missing from
+    # XDG_DATA_DIRS; sudo's env_reset strips them, so every elevated flatpak
+    # call printed a false "not in the search path" warning even on correctly
+    # configured sessions. Rebuild the value for the elevated context instead
+    # of forwarding user data paths (root's home differs from the caller's).
+    local elevated_dirs="${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+    local flatpak_export_dir
+    for flatpak_export_dir in \
+        /var/lib/flatpak/exports/share \
+        /root/.local/share/flatpak/exports/share
+    do
+        case ":$elevated_dirs:" in
+            *:"$flatpak_export_dir":*) ;;
+            *) elevated_dirs="$elevated_dirs:$flatpak_export_dir" ;;
+        esac
+    done
+
     if [[ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]]; then
-        command sudo env DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" "$@"
+        "$sudo_cmd" env DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION_BUS_ADDRESS" \
+            XDG_DATA_DIRS="$elevated_dirs" "$@"
     else
-        command sudo "$@"
+        "$sudo_cmd" env XDG_DATA_DIRS="$elevated_dirs" "$@"
     fi
 }
 

@@ -78,7 +78,22 @@ SYSTEM_FLATPAK_ONLY = {
 # a dedicated installation procedure for an application. Match by AppStream ID,
 # Flatpak application ID, or native package name. AppStream IDs ending in
 # .desktop are normalized automatically. Matching is case-insensitive.
-APPSTREAM_OMIT = {
+#
+# Accepted shapes:
+#   - a dict mapping system tags to id collections: each tag scopes its ids;
+#   - a collection (tuple/list/set) of entries, where each entry is a plain
+#     string (omitted on every system) or one of those tag->ids dicts.
+# Tags are LinuxToys compatibility keys or os-release family keys ("arch",
+# "cachy", "fedora", "ostree", "steamos", ...). A plain tag omits its ids only
+# on matching systems; a tag prefixed with "!" is an exception and omits its
+# ids on every system EXCEPT the matching one (several "!" tags OR together),
+# and an exception always wins over any other omit for the same id.
+#
+# Examples:
+#   ("virtualbox",                                   # omitted everywhere
+#    {"arch": {"code"}},                             # omitted only on arch-family
+#    {"!ostree": {"appimage.community.virtualbox-kvm"}})   # omitted everywhere but ostree
+APPSTREAM_OMIT = (
     "virtualbox",
     "virt-manager",
     "org.virt_manager.virt-manager",
@@ -86,8 +101,12 @@ APPSTREAM_OMIT = {
     "code",
     "org.cutwire.Drift",
     "org.cutwire.Prism",
-    "appimage.community.virtualbox-kvm"
-}
+    # KVM AppImage variant: only offered where the regular VirtualBox package
+    # route is unavailable (immutable/SteamOS systems); omitted on the rest.
+    {"!ostree": "appimage.community.virtualbox-kvm",
+     "!ublue": "appimage.community.virtualbox-kvm",
+     "!steamos": "appimage.community.virtualbox-kvm"}
+)
 
 # AppStream uses the freedesktop.org Desktop Menu category registry. Keep Main
 # and Additional categories separate so the finer Additional mappings can be
@@ -623,14 +642,72 @@ def _host_os_keys():
     values.update(aliases[key] for key in tuple(values) if key in aliases)
     return values
 
-def _appstream_omit_keys():
+def _normalize_omit_key(value):
+    key = str(value or "").strip().casefold()
+    if key.endswith(".desktop"):
+        key = key[:-8]
+    return key
+
+
+def _appstream_omit_keys(host_keys=None):
+    """Resolve APPSTREAM_OMIT to the flat omit-key set for this system.
+
+    Plain string entries are omitted everywhere. Dict entries map system tags
+    to id collections: a plain tag omits its ids only on matching systems,
+    while a "!"-prefixed tag is an exception that omits its ids on every
+    system EXCEPT the matching one. A matching exception always wins over any
+    other omit declared for the same id. Tags match LinuxToys compatibility
+    keys ("arch", "cachy", "ostree", "steamos", ...) and os-release family
+    keys ("debian", "ubuntu", "suse", ...).
+    """
+    if host_keys is None:
+        host_keys = _host_os_keys() | get_system_compat_keys()
+    host_keys = {str(key or "").strip().casefold() for key in host_keys}
+    host_keys.discard("")
+
+    # A dict may be APPSTREAM_OMIT itself (one tag->ids mapping) or one entry
+    # inside a collection; both forms resolve to the same spec shape.
+    omit_spec = (APPSTREAM_OMIT,) if isinstance(APPSTREAM_OMIT, dict) else APPSTREAM_OMIT
+
+    def spec_ids(values):
+        if isinstance(values, str):
+            values = (values,)
+        else:
+            values = tuple(values) if isinstance(values, (list, tuple, set, frozenset)) else ()
+        return {key for key in (_normalize_omit_key(value) for value in values) if key}
+
     result = set()
-    for value in APPSTREAM_OMIT:
-        key = str(value or "").strip().casefold()
-        if key.endswith(".desktop"):
-            key = key[:-8]
-        if key:
-            result.add(key)
+    exceptions = set()
+    for spec in omit_spec:
+        if isinstance(spec, str):
+            key = _normalize_omit_key(spec)
+            if key and key not in exceptions:
+                result.add(key)
+            continue
+        if not isinstance(spec, dict):
+            continue
+
+        for tag, values in spec.items():
+            ids = spec_ids(values)
+            if not ids:
+                continue
+            tag_key = str(tag or "").strip().casefold()
+            negated = tag_key.startswith("!")
+            tag_key = tag_key.lstrip("!").strip()
+            if not tag_key:
+                continue
+
+            if negated:
+                if tag_key == "all" or tag_key in host_keys:
+                    # Matching exception tag: these ids are never omitted here.
+                    result -= ids
+                    exceptions |= ids
+                else:
+                    # Non-matching exception tag: omit on every other system.
+                    result |= ids - exceptions
+            elif tag_key == "all" or tag_key in host_keys:
+                result |= ids - exceptions
+            # A positive tag that does not match this host omits nothing.
     return result
 
 

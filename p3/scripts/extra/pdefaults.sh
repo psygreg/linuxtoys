@@ -27,7 +27,10 @@ sysag_run () {
     call_script gtk-bmg-fix
     # add alive timeout fix for Gnome
     if echo "$XDG_CURRENT_DESKTOP" | grep -qi 'gnome'; then
-        sudo gsettings set org.gnome.mutter check-alive-timeout 20000
+        # Runs as the user on purpose: mutter reads the user's gsettings, and
+        # a root-run gsettings would write root's dconf database (and try to
+        # autolaunch a session bus, since sudo strips DBUS_SESSION_BUS_ADDRESS).
+        gsettings set org.gnome.mutter check-alive-timeout 20000
     fi
     # full kernel preemption for better latency in Fedora -- will skip automatically in other OS
     call_script preemptfedora

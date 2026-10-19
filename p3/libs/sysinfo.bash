@@ -10,6 +10,17 @@ is_arch() { sysdetect_once && [[ ("$ID" =~ arch || "$ID" == "artix" || "$ID_LIKE
 is_cachy() { sysdetect_once && [[ "$ID" == "cachyos" ]]; }
 is_fedora() { sysdetect_once && [[ "$ID" == "fedora" || ("$ID_LIKE" =~ "fedora" && "$ID" != "almalinux") ]] && [ ! -f /run/ostree-booted ]; }
 is_ostree() { sysdetect_once && [[ ("$ID" == "fedora" || "$ID" == "rhel" || "$ID_LIKE" =~ "fedora" || "$ID_LIKE" =~ "rhel" || "$ID_LIKE" =~ "centos") ]] && command -v rpm-ostree &>/dev/null && [ -f /run/ostree-booted ]; }
+# Universal Blue images (Bazzite, Bluefin, Aurora): rpm-ostree immutable systems
+# with their own layering/update procedures. Mirrors the app's compat keys, so
+# restricted bootc variants (bluefin-dakota and friends) are not reported as
+# ublue — they follow the SteamOS policy instead.
+is_ublue() {
+    sysdetect_once
+    [[ "$ID" =~ ^(bazzite|bluefin|aurora)$ ]] || return 1
+    local variant="${VARIANT_ID:-} ${VARIANT:-} ${NAME:-} ${PRETTY_NAME:-}"
+    [[ "${variant,,}" != *dakota* && ! "$ID_LIKE" =~ (^|[[:space:]])gnomeos([[:space:]]|$) ]] || return 1
+    [ -f /run/ostree-booted ] && command -v rpm-ostree &>/dev/null
+}
 is_debian() { sysdetect_once && [[ ("$ID" == "debian" || "$ID" == "deepin" || "$ID_LIKE" =~ "debian") && ! ("$ID" == "ubuntu" || "$ID_LIKE" =~ "ubuntu") ]]; }
 is_ubuntu() { sysdetect_once && [[ "$ID" == "ubuntu" || "$ID_LIKE" =~ "ubuntu" ]]; }
 is_suse() {

@@ -35,6 +35,7 @@ rundeps    :
     - appstream
     - shared-mime-info
     - util-linux
+    - gnome-icon-theme-symbolic
     - webp-pixbuf-loader
 
 setup      : |

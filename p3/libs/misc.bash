@@ -77,7 +77,10 @@ flatpak_override () {
     flatpak info "$target" &>/dev/null || { echo "W: override target not available" && return 100; }
 
     if [ "$scope" = "system" ]; then
-        sudo_ -i sh -c "'flatpak override --$scope --$type=$setting $target'"
+        # Direct call: `sudo_ -i sh -c` cannot be used here because sudo_ prepends
+        # `env DBUS_SESSION_BUS_ADDRESS=...` when forwarding the desktop session
+        # bus, and env would treat the trailing `-i` as the command to execute.
+        sudo_ flatpak override --"$scope" --"$type"="$setting" "$target"
     elif [ "$scope" = "user" ]; then
         flatpak override --"$scope" --"$type"="$setting" "$target"
     else

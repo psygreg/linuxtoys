@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        7.7.1
+Version:        7.7.3
 Release:        1
 Summary:        A set of tools for Linux presented in a user-friendly way
 BuildArch:      x86_64
@@ -7,7 +7,7 @@ BuildArch:      x86_64
 License:        GPL3
 Source0:        linuxtoys-%{version}.tar.xz
 
-Requires:       bash git curl wget zenity appstream appstream-data shared-mime-info python3 python3-gobject gtk3 python3-requests python3-urllib3 python3-certifi vte291 /usr/bin/script (sudo or sudo-rs)
+Requires:       bash git curl wget zenity appstream appstream-data shared-mime-info python3 python3-gobject gtk3 python3-requests python3-urllib3 python3-certifi vte291 gnome-icon-theme /usr/bin/script (sudo or sudo-rs)
 BuildRequires:  desktop-file-utils cargo rust python3-devel maturin gtk3-devel pkgconf-pkg-config patchelf
 
 %description
@@ -84,6 +84,6 @@ test -f %{buildroot}/usr/share/linuxtoys/app/liblinuxtoys_gui.so
 /usr/share/metainfo/toys.linux.LinuxToys.metainfo.xml
 
 %changelog
-* Wed Oct 14 2026 Victor Gregory <psygreg@pm.me> - 7.7.1
+* Mon Oct 19 2026 Victor Gregory <psygreg@pm.me> - 7.7.3
 - Added proper file permissions for all scripts
 - Updated dependencies for current requirements
