@@ -365,7 +365,7 @@ pkg_snap_revert () {
     snap list "$pak" >/dev/null 2>&1 || return 1
 
     askpass
-    runner_lock "package-transaction"
+    runner_lock "package-removal"
     sudo_ snap revert "$pak" || {
         runner_unlock
         fatal "Failed to revert snap package $pak"
@@ -387,7 +387,7 @@ pkg_snap_remove () {
     (( ${#_snap_found[@]} > 0 )) || return 0
 
     askpass
-    runner_lock "package-transaction"
+    runner_lock "package-removal"
     sudo_ snap remove "${_snap_found[@]}" || {
         runner_unlock
         fatal "Failed to remove snap packages ${_snap_found[*]}"
@@ -1476,7 +1476,9 @@ pkg_remove () {
 
     # Manjaro uses pamac directly here; other native removals escalate.
     is_manjaro || askpass
-    runner_lock "package-transaction"
+    # Removals: the mirror preflight must not block or fail an offline-capable
+    # uninstall, so runner_lock is asked for a removal lock instead.
+    runner_lock "package-removal"
 
     if is_debian || is_ubuntu; then
         sudo_ apt-get remove -y --allow-unauthenticated "${pkg_found[@]}" \
@@ -1896,7 +1898,7 @@ pkg_brew_remove () {
         if ! HOMEBREW_NO_AUTO_UPDATE=1 "$brew_bin" list --formula --versions "$pak" 2>/dev/null | grep -q .; then
             continue
         fi
-        runner_lock "package-transaction"
+        runner_lock "package-removal"
         status=0
         HOMEBREW_NO_ASK=1 HOMEBREW_NO_AUTO_UPDATE=1 "$brew_bin" uninstall --formula "$pak" || status=$?
         runner_unlock
