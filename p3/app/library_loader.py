@@ -40,6 +40,16 @@ LEGACY_SUMMONS = {
     "summon_helpers": "helpers.bash",
     "summon_optimizers": "optimizers.bash",
 }
+
+# Raw native package-manager commands in plain script bodies. These bypass the
+# pkg_* helpers entirely — and with it the runner_lock preflight in
+# linuxtoys.bash — so only scripts referencing them still carry the CachyOS
+# mirror preflight through their preamble. (Chaotic/multilib-style repo
+# scripts run pacman -Syy before any helper could.)
+_RAW_NATIVE_MANAGER_WORDS = {
+    "pacman", "paru", "pamac", "apt", "apt-get", "dpkg", "rpm",
+    "dnf", "dnf5", "zypper", "rpm-ostree",
+}
 _FUNCTION = re.compile(
     r"^\s*(?:function\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:\(\s*\))?"
     r"|([A-Za-z_][A-Za-z0-9_]*)\s*\(\s*\))\s*\{", re.MULTILINE
@@ -84,11 +94,13 @@ def _list_hook_paths(script_text, script_dir):
     return paths
 
 def library_flags(script_text, script_dir):
-    """Return flags for direct references and transitive library dependencies.
+    """Return (flags, referenced) for direct references and transitive deps.
 
     This is conservative static detection, not a Bash parser. Computed function
     names cannot be inferred; scripts can still explicitly set an *_OPS flag
-    and source linuxtoys.bash for those cases.
+    and source linuxtoys.bash for those cases. `referenced` holds the words
+    the script (or its list hooks) itself names, before the transitive closure
+    blends in library internals — the level the CachyOS mirror gate evaluates.
     """
     libs = Path(script_dir) / "libs"
     texts = {name: (libs / name).read_text(encoding="utf-8")
@@ -106,6 +118,14 @@ def library_flags(script_text, script_dir):
             )
         except OSError:
             pass
+
+    # Snapshot the words this script (or its list hooks) itself references,
+    # before the core merge below adds library internals: linuxtoys.bash and
+    # sysinfo.bash are attached to every run, and packages.bash also hosts the
+    # Flatpak/Snap/AppImage helpers, so library-level words would make every
+    # script look like a native transaction.
+    referenced = set(required)
+
     # Core functions (notably init_transmap -> prep_tmp) need dependencies too.
     for name in ("linuxtoys.bash", "sysinfo.bash"):
         required.update(_words((libs / name).read_text(encoding="utf-8")))
@@ -126,14 +146,15 @@ def library_flags(script_text, script_dir):
         selected.update(added)
         for name in added:
             required.update(_words(texts[name]))
-    return {flag: "1" if name in selected else ""
-            for name, flag in LIBRARY_FLAGS.items()}
+    flags = {flag: "1" if name in selected else ""
+             for name, flag in LIBRARY_FLAGS.items()}
+    return flags, referenced
 
 
 def script_preamble(script_text, script_dir):
     """Set invocation-local flags and always load the core before script code."""
     script_dir = os.path.abspath(script_dir)
-    flags = library_flags(script_text, script_dir)
+    flags, referenced = library_flags(script_text, script_dir)
     lines = ["export SCRIPT_DIR=" + shlex.quote(script_dir),
              "export LINUXTOYS_EXECUTION_SESSION_DIR="
              + shlex.quote(_execution_session_dir())]
@@ -141,11 +162,23 @@ def script_preamble(script_text, script_dir):
                  for key, value in flags.items())
     lines.append("source " + shlex.quote(str(Path(script_dir) / "libs/linuxtoys.bash"))
                  + " || exit $?")
-    lines.append(
-        'if [[ ${LINUXTOYS_REQUIRE_CACHYOS_MIRRORS:-1} != 0 ]]; then\n'
-        '_linuxtoys_prepare_session || exit $?\n'
-        'fi'
-    )
+    # The CachyOS mirror preflight is lazy: linuxtoys.bash performs it from
+    # runner_lock the first time a run actually enters a native package
+    # transaction, so helper-based scripts (pkg_install and everything reaching
+    # it, including pkg_appimage/pkg_npm/pkg_make internals) need nothing here.
+    # Raw manager calls in plain script bodies bypass the helpers entirely
+    # (e.g. repos/multilib.sh running pacman -Syy), so only those runs carry
+    # the preflight here, before any script code executes. A script header
+    # opt-out (`cachyos-mirrors-required: 0`) remains available as an override,
+    # and ${LINUXTOYS_REQUIRE_CACHYOS_MIRRORS} keeps exempting plain
+    # Flatpak/Snap entries from a failed preflight.
+    if (referenced & _RAW_NATIVE_MANAGER_WORDS
+            and re.search(r"(?m)^#\s*cachyos-mirrors-required:\s*0\s*$", script_text) is None):
+        lines.append(
+            'if [[ ${LINUXTOYS_REQUIRE_CACHYOS_MIRRORS:-1} != 0 ]]; then\n'
+            '_linuxtoys_prepare_session || exit $?\n'
+            'fi'
+        )
     return "\n".join(lines) + "\n"
 
 

@@ -531,8 +531,33 @@ _lang_
 # runner navigation lock control
 # The terminal runner exports LINUXTOYS_RUNNER_STATE when it can honor locks.
 # Locks are reference-counted so nested package helpers cannot unlock each other.
+# The first lock of a run also lazily performs the CachyOS mirror preflight:
+# only runs that actually enter a native package transaction pay for it. Raw
+# manager calls bypass the helpers entirely, and the launcher arms the
+# preflight for those scripts through the preamble instead.
 runner_lock() {
     local reason="${1:-operation}"
+    # ${2-default} (no colon): an explicitly empty message suppresses the echo.
+    local message="${2-Starting package transaction...}"
+
+    # Every native transaction passes through here before touching the package
+    # manager, so this is the single lazy preflight point. Removals need no
+    # repository access and must survive offline; the preflight itself takes
+    # this lock recursively. LINUXTOYS_REQUIRE_CACHYOS_MIRRORS=0 marks
+    # Flatpak/Snap entries that may continue without a completed ranking.
+    if [[ "$reason" != "CachyOS mirror refresh" && "$reason" != *removal*
+          && -z "${LINUXTOYS_MIRROR_PREFLIGHT_DONE:-}" ]]; then
+        LINUXTOYS_MIRROR_PREFLIGHT_DONE=1
+        _linuxtoys_prepare_session
+        local _prep_status=$?
+        if (( _prep_status != 0 )); then
+            if [[ ${LINUXTOYS_REQUIRE_CACHYOS_MIRRORS:-1} != 0 ]]; then
+                exit "$_prep_status"
+            fi
+            echo "Continuing without CachyOS mirror refresh."
+        fi
+    fi
+
     [[ -n "${LINUXTOYS_RUNNER_STATE:-}" ]] || return 0
 
     LINUXTOYS_RUNNER_LOCK_DEPTH=$(( ${LINUXTOYS_RUNNER_LOCK_DEPTH:-0} + 1 ))
@@ -540,7 +565,9 @@ runner_lock() {
 
     if (( LINUXTOYS_RUNNER_LOCK_DEPTH == 1 )); then
         printf '%s\n' "$reason" > "$LINUXTOYS_RUNNER_STATE" 2>/dev/null || true
-        echo "Starting package transaction..."
+        if [[ -n "$message" ]]; then
+            echo "$message"
+        fi
     fi
 }
 
@@ -795,7 +822,9 @@ _linuxtoys_prepare_session() (
     fi
 
     echo "Rating CachyOS mirrors. Please wait..."
-    runner_lock "CachyOS mirror refresh"
+    # The rating itself already reports on the terminal; suppress the generic
+    # transaction message so a mirror refresh is never announced as one.
+    runner_lock "CachyOS mirror refresh" ""
     # cachyos-rate-mirrors and pacman are chatty; keep their output out of the
     # terminal viewer unless the operation fails (then show it for diagnosis).
     local rating_log
