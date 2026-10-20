@@ -794,16 +794,23 @@ _linuxtoys_prepare_session() (
         return 0
     fi
 
-    echo "Refreshing CachyOS mirrors..."
+    echo "Rating CachyOS mirrors. Please wait..."
     runner_lock "CachyOS mirror refresh"
-    if sudo_ cachyos-rate-mirrors && sudo_ pacman -Sy --noconfirm; then
-        # Cache success only after both mirror ranking and database refresh.
+    # cachyos-rate-mirrors and pacman are chatty; keep their output out of the
+    # terminal viewer unless the operation fails (then show it for diagnosis).
+    local rating_log
+    rating_log=$(mktemp "$session_dir/cachyos-rating.XXXXXX") || rating_log=/dev/null
+    if { sudo_ cachyos-rate-mirrors && sudo_ pacman -Sy --noconfirm; } >"$rating_log" 2>&1; then
+        # Cache success only after both mirror rating and database refresh.
+        [[ "$rating_log" == /dev/null ]] || rm -f -- "$rating_log"
         printf '0\n' > "$session_dir/cachyos-mirrors.status"
         mirror_status=0
     else
         mirror_status=$?
         rm -f -- "$session_dir/cachyos-mirrors.status"
-        printf 'CachyOS mirror ranking or package database synchronization failed (status %d). The next operation will retry.\n' "$mirror_status" >&2
+        printf 'CachyOS mirror rating or package database synchronization failed (status %d). Output follows:\n' "$mirror_status" >&2
+        cat "$rating_log" >&2
+        [[ "$rating_log" == /dev/null ]] || rm -f -- "$rating_log"
     fi
     runner_unlock
     return "$mirror_status"
