@@ -21,15 +21,27 @@ _search_engine: SearchEngine | None = None
 _cache_lock = threading.Lock()
 SPECIALS_PREFIX = "specials://"
 SPECIALS_ROOT = "specials://root"
-HOMEBRE_PREFIX = "homebrew://"
+HOMEBREW_PREFIX = "homebrew://"
 APPIMAGE_PREFIX = "appimages://"
 APPIMAGE_ROOT = "appimages://root"
 
 
 def make_widget_id(identifier: str) -> str:
-    """Gera um id de widget válido e estável a partir de algo que já é
-    único e independente de idioma (ex.: o path do script).
-    NUNCA passar texto traduzido aqui — só chaves/paths estáveis."""
+    """Build a valid, stable Textual widget id from an identifier.
+
+    Characters outside ``[a-zA-Z0-9_-]`` become ``_``. If the result
+    is empty or does not start with a letter or underscore (a Textual
+    requirement), the ``id_`` prefix is added.
+
+    Pass only language-independent keys such as script paths. Never
+    pass translated text, or the id changes with the UI language.
+
+    Args:
+        identifier: Stable unique key of the widget.
+
+    Returns:
+        A valid widget id.
+    """
     slug = re.sub(r"[^a-zA-Z0-9_-]", "_", identifier)
     # Textual exige que o id comece com letra ou underscore
     if not slug or not (slug[0].isalpha() or slug[0] == "_"):
@@ -141,7 +153,10 @@ def search_scripts_fast(query: str) -> list[dict]:
 
 
 def refresh_removable_state() -> None:
-    """Recalcula o cache de 'removível' após instalar/remover algo."""
+    """Recompute the cached removable state after install/removal.
+
+    Does nothing if the caches are not warm.
+    """
     script_cache = _script_cache
     if script_cache is not None:
         script_cache.refresh_removable_cache()
@@ -163,7 +178,7 @@ def is_specials_path(path: str) -> bool:
 
 
 def is_homebrew_path(path: str) -> bool:
-    return path.startswith(HOMEBRE_PREFIX)
+    return path.startswith(HOMEBREW_PREFIX)
 
 
 def is_appimage_path(path: str) -> bool:
@@ -171,10 +186,18 @@ def is_appimage_path(path: str) -> bool:
 
 
 def get_specials_items(path: str, trans=None) -> list[dict]:
-    """Resolve a virtual specials:// path into the items to render.
+    """Resolve a virtual ``specials://`` path into items to render.
+    - ``specials://root``: the curated categories.
+    - ``specials://category/{name}``: the curated scripts of the
+      category with that name.
 
-    - specials://root         -> curated categories
-    - specials://category/{n} -> curated scripts of that category
+    Args:
+        path: Virtual path to resolve.
+        trans: Translations mapping. Defaults to ``translations``.
+
+    Returns:
+        Item dicts. Empty if the cache is not populated or ``path``
+        matches no category.
     """
     cache = _category_cache
     if cache is None or not cache.is_populated:
@@ -196,7 +219,12 @@ def get_specials_items(path: str, trans=None) -> list[dict]:
 
 
 def is_homebrew_catalog_valid() -> bool:
-    """Brew presente e catálogo completo, com snapshot e fingerprint atuais."""
+    """Return whether the Homebrew catalog is ready to use.
+
+    True only if Homebrew is enabled, its source is marked complete,
+    a binary snapshot exists and the stored fingerprint matches the
+    current one (the snapshot is up to date).
+    """
     from app import homebrew_catalog
 
     if not homebrew_catalog.enabled():
@@ -212,7 +240,17 @@ def is_homebrew_catalog_valid() -> bool:
 
 
 def refresh_homebrew_catalog() -> dict:
-    """Atualiza o catálogo. BLOQUEANTE: executar apenas em thread."""
+    """Refresh the Homebrew catalog cache.
+
+    BLOCKING: call only from a worker thread. If the refresh succeeds
+    and changed something, rebuilds the runtime context and cache,
+    then preloads the Homebrew entries.
+
+    Returns:
+        The refresh result dict, or
+        ``{"success": False, "error": <message>}`` if an exception
+        is raised.
+    """
     from app import appstream_cache, appstream_parser
 
     try:
@@ -235,7 +273,17 @@ def get_homebrew_items() -> list[dict]:
 
 
 def search_homebrew_items(query: str) -> list[dict]:
-    """Busca só no Homebrew (Rust). BLOQUEANTE: executar em thread."""
+    """Search the Homebrew catalog only (Rust index).
+
+    BLOCKING: call from a worker thread.
+
+    Args:
+        query: Search text.
+
+    Returns:
+        Matching entry dicts without scores. Empty if Homebrew is
+        disabled.
+    """
     from app import homebrew_catalog
 
     if not homebrew_catalog.enabled():
@@ -244,9 +292,7 @@ def search_homebrew_items(query: str) -> list[dict]:
 
     ensure_homebrew_context()
     results = appstream_parser.search_homebrew_entries(query)
-    return [
-        entry[0] if isinstance(entry, tuple) else entry for entry in results
-    ]
+    return _unwrap_entries(results)
 
 
 def get_specials_root_item(trans=None) -> dict:
@@ -279,10 +325,15 @@ def homebrew_category_info(trans=None) -> dict:
 
 
 def ensure_homebrew_context() -> bool:
-    """Garante o contexto de runtime do appstream_parser. BLOQUEANTE (thread).
+    """Ensure the ``appstream_parser`` runtime context exists.
 
-    Usa os mesmos argumentos que a GUI (parser.get_appstream_entries), mas
-    sem materializar o catálogo: só precisa publicar _LAST_LOAD_CONTEXT.
+    BLOCKING: call from a worker thread. Uses the same arguments as
+    the GUI (``parser.get_appstream_entries``) but does not
+    materialize the catalog; it only needs ``_LAST_LOAD_CONTEXT`` to
+    be published.
+
+    Returns:
+        True if the context is ready, False if building it failed.
     """
     from app import appstream_parser, parser
 
@@ -326,13 +377,22 @@ def _classify_exit_code(exit_code: int | None) -> ScriptResult:
 
 
 def appimage_relative(path: str) -> str:
-    """'appimages://root' -> ''; 'appimages://a/b' -> 'a/b'."""
+    """Strip the ``appimages://`` prefix from a virtual path.
+
+    Assumes ``path`` starts with the prefix (see
+    ``is_appimage_path``).
+
+    Examples:
+        >>> appimage_relative("appimages://root")
+        ''
+        >>> appimage_relative("appimages://a/b")
+        'a/b'
+    """
     rel = path[len(APPIMAGE_PREFIX) :].strip("/")
     return "" if rel == "root" else rel
 
 
 def appimage_category_info(relative: str = "", trans=None) -> dict:
-    """Mesmo formato da GUI (_appimage_category_info)."""
     from app import parser
 
     active = trans or translations
@@ -368,7 +428,17 @@ def appimage_category_info(relative: str = "", trans=None) -> dict:
 
 
 def _unwrap_entries(results) -> list[dict]:
-    """search(...) devolve (dict, score); get_*_entries devolve dict."""
+    """Normalize parser results into a list of entry dicts.
+
+    ``search_*`` functions return ``(dict, score)`` tuples, while
+    ``get_*_entries`` return plain dicts.
+
+    Args:
+        results: Iterable of entries or ``(entry, score)`` tuples.
+
+    Returns:
+        The entry dicts, scores dropped.
+    """
     return [e[0] if isinstance(e, tuple) else e for e in results]
 
 
@@ -389,7 +459,16 @@ def get_appimage_items(path: str) -> list[dict]:
 
 
 def search_appimage_items(query: str) -> list[dict]:
-    """Busca só em AppImage. BLOQUEANTE: executar em thread."""
+    """Search AppImage entries only.
+
+    BLOCKING: call from a worker thread.
+
+    Args:
+        query: Search text.
+
+    Returns:
+        Matching entry dicts without scores.
+    """
     from app import appstream_parser
 
     ensure_homebrew_context()

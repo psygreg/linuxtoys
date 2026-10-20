@@ -1,5 +1,3 @@
-import os
-
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal, Vertical
@@ -110,12 +108,21 @@ class RegistryScreen(Screen):
         await self._filter_history(event.value)
 
     async def _filter_history(self, query: str) -> None:
+        """Rebuild the list with the scripts that match ``query``.
+
+        Selects the first match and shows its details, or a "not
+        found" message when nothing matches.
+
+        Args:
+            query: Text typed in the search box.
+        """
         filtered_data = search_registry_entries(self.registry_data, query)
         filtered_names = sorted(filtered_data.keys())
         list_view = self.query_one("#registry-list", ListView)
         await list_view.clear()
-        for name in filtered_names:
-            await list_view.append(RegistryListItem(name))
+        await list_view.extend(RegistryListItem(n) for n in filtered_names)
+        # for name in filtered_names:
+        #     await list_view.append(RegistryListItem(name))
         details = self.query_one("#registry-details", Static)
         if filtered_names:
             list_view.index = 0
@@ -124,6 +131,14 @@ class RegistryScreen(Screen):
             details.update("No script found.")  # criar tradução
 
     def _display_script_details(self, script_name: str) -> None:
+        """Render the executions of a script in the details panel.
+
+        For each execution it shows the timestamp (when available) and
+        the list of operations, or a "none" line when there are none.
+
+        Args:
+            script_name: Registry key of the script to display.
+        """
         executions = self.registry_data.get(script_name, [])
         lines = [f"Script: {script_name}\n", "=" * 60 + "\n\n"]
 
@@ -170,6 +185,7 @@ class RegistryScreen(Screen):
         )
 
     async def _execute_cleanup(self) -> None:
+        """Remove the highlighted script from the registry and its backups."""
         list_view = self.query_one("#registry-list", ListView)
         self.selected_item = list_view.highlighted_child
         if not isinstance(self.selected_item, RegistryListItem):
@@ -196,13 +212,18 @@ class RegistryScreen(Screen):
                 self.notify(
                     f"Registry entry and {len(backup_files)} backup file(s) successfully removed."
                 )
-                await self._refresh_page()
+            await self._refresh_page()
         else:
             self.notify(
                 translations.get("registry_cleanup_failed", "Cleanup Failed")
             )
 
     async def _refresh_page(self):
+        """Reload the registry from disk and rebuild the list.
+
+        Selects the first script and shows its details, or the
+        "nothing executed yet" message if the registry is empty.
+        """
         self.registry_data = parse_registry_file()
         script_names = sorted(self.registry_data.keys())
         list_view = self.query_one("#registry-list", ListView)
@@ -234,14 +255,6 @@ class RegistryScreen(Screen):
                 translations.get(
                     "registry_export_error_title", "Manifest export failed"
                 )
-            )
-
-        if os.environ.get("LT_DEBUG") == "1":
-            self.notify(
-                translations.get(
-                    "registry_export_success_message",
-                    "Exported {count} registered operation(s) to:\n{path}",
-                ).format(count=entry_count, path=manifest_path)
             )
 
 

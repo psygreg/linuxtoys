@@ -135,7 +135,7 @@ class AboutWidget(Widget):
         display_parts = [__version__]
         if primary_os:
             display_parts.append(primary_os.capitalize())
-        return " | ".join(display_parts) if display_parts else "Unknown"
+        return " | ".join(display_parts)
 
     @work(exclusive=True, thread=True)
     def _load_contributor_lts(self) -> None:

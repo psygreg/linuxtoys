@@ -1,11 +1,27 @@
-"""Manifest resolution for the TUI.
+"""Resolve and validate manifest entries for the TUI, without executing.
 
 Mirrors the validation pipeline of the CLI ``run_manifest_mode`` but never
-prints, prompts, installs or touches the UI. It returns a :class:`ManifestPlan`
-that the caller can review, confirm and execute.
+prints, prompts, installs or touches the UI. ``resolve_manifest`` returns
+a :class:`ManifestPlan` that the caller can review, confirm and execute.
 
-``resolve_manifest`` is blocking (subprocesses and ``asyncio.run``), so it must
-be called from a worker thread, never from the Textual event loop.
+Supported entry syntax:
+
+- ``script:<id>[@<source>]``: LinuxToys script by stable ID, optionally
+  forced to one source (``native``, ``flatpak``, ``snap`` or
+  ``homebrew``).
+- ``package:<name>`` or ``pkg:<name>``: native package.
+- ``flatpak:<id>``, ``snap:<name>`` and ``homebrew:<formula>``.
+- ``require:flathub``: declares that Flathub must be ready.
+- Any other entry is auto-detected: LinuxToys script by name first, then
+  Flatpak ID, then native package.
+
+Missing prerequisites (Flatpak/Flathub, Homebrew) are flagged in
+``ManifestPlan.bootstrap`` and never installed here, because setting them
+up may need ``sudo`` and therefore a real terminal.
+
+``resolve_manifest`` is BLOCKING (subprocesses and ``asyncio.run``), so
+it must be called from a worker thread, never from the Textual event
+loop.
 """
 
 from __future__ import annotations
@@ -49,14 +65,29 @@ _FORMULA_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9+_.@-]*")
 class ManifestPlan:
     """Result of resolving a manifest against the current system.
 
-    ``errors`` are blocking: if any is present nothing must be executed.
-    ``warnings`` are items skipped for compatibility reasons.
+    The plan is safe to execute only if ``is_valid`` is True and
+    ``bootstrap`` is None. ``errors`` are blocking: if any is present,
+    nothing must be executed. ``warnings`` are non-blocking and list items
+    skipped for compatibility reasons.
 
-    ``bootstrap`` is ``"flatpak"`` or ``"homebrew"`` when a prerequisite must
-    be set up before the manifest can be resolved; the plan is then incomplete
-    and must be discarded. Resolution never performs the bootstrap itself,
-    because it may need ``sudo`` and therefore a real terminal.
-    ``bootstrap_script`` holds the script that sets Homebrew up.
+    ``bootstrap`` is ``"flatpak"`` or ``"homebrew"`` when a prerequisite
+    must be set up before the manifest can be resolved. The plan is then
+    incomplete and must be discarded: set the prerequisite up, then call
+    ``resolve_manifest`` again. Resolution never performs the bootstrap
+    itself, because it may need ``sudo`` and therefore a real terminal.
+
+    Attributes:
+        scripts: Runnable script info dicts (LinuxToys, repository,
+            AppStream and Homebrew entries), without duplicates.
+        packages: Native package names, without duplicates.
+        snaps: Snap names, without duplicates.
+        flatpaks: Flatpak IDs confirmed in the configured remotes.
+        errors: Blocking problems, as user-facing messages.
+        warnings: Skipped items, as user-facing messages.
+        bootstrap: Prerequisite to set up first (``"flatpak"`` or
+            ``"homebrew"``), or None.
+        bootstrap_script: Script info that sets Homebrew up. Only set
+            when ``bootstrap`` is ``"homebrew"``.
     """
 
     scripts: list[dict] = field(default_factory=list)
@@ -84,7 +115,18 @@ class ManifestPlan:
 
 @dataclass
 class _Entries:
-    """Manifest lines grouped by how they were declared."""
+    """Manifest entries grouped by how they were declared.
+
+    Attributes:
+        scripts: ``(script_id, source)`` pairs from ``script:`` entries.
+            ``source`` is an empty string when no override was given.
+        packages: Names from ``package:`` and ``pkg:`` entries.
+        snaps: Names from ``snap:`` entries.
+        flatpaks: IDs from ``flatpak:`` entries.
+        homebrew: Formula names from ``homebrew:`` entries.
+        auto: Unprefixed entries, left for auto-detection.
+        requirements: Supported ``require:`` values, lowercased.
+    """
 
     scripts: list[tuple[str, str]] = field(default_factory=list)
     packages: list[str] = field(default_factory=list)
@@ -96,21 +138,51 @@ class _Entries:
 
 
 def resolve_manifest(names: list[str], translations=None) -> ManifestPlan:
-    """Classify and validate manifest entries without executing anything."""
+    """Classify and validate manifest entries without executing anything.
+
+    BLOCKING: call from a worker thread (subprocesses and
+    ``asyncio.run``). Do not call it from the Textual event loop or from
+    a thread that already runs an asyncio loop.
+
+    Each call uses a fresh resolver, so calls are independent. The result
+    may be incomplete: resolution stops early when a prerequisite must be
+    bootstrapped or when Homebrew formulae are invalid. Always check
+    ``ManifestPlan.bootstrap`` and ``ManifestPlan.errors``. Invalid
+    entries are reported in ``errors``, not raised.
+
+    Args:
+        names: Raw manifest entries, e.g. ``"script:<id>@flatpak"``,
+            ``"flatpak:org.mozilla.firefox"`` or an unprefixed name.
+        translations: Optional translations mapping, forwarded to the
+            script lookups.
+
+    Returns:
+        The resolved plan.
+    """
     return _ManifestResolver(translations).resolve(names)
 
 
 def refresh_appstream_after_flathub() -> None:
-    """Rebuild AppStream so Flathub entries are visible to the next pass.
+    """Rebuild the AppStream cache so Flathub entries become visible.
 
-    Mirrors the tail of the CLI's ``_bootstrap_flatpak_for_manifest``.
+    BLOCKING: call from a worker thread (forces a full cache refresh).
+
+    Call it after the Flathub bootstrap and before resolving the manifest
+    again. It refreshes the on-disk cache, then clears the in-memory
+    parser cache. Mirrors the tail of the CLI's
+    ``_bootstrap_flatpak_for_manifest``.
     """
     appstream_cache.refresh_cache(force=True)
     appstream_parser.clear_runtime_cache()
 
 
 def _flathub_ready() -> bool:
-    """Return True when Flatpak is installed and the Flathub remote exists."""
+    """Return True when Flatpak is installed and the Flathub remote exists.
+
+    BLOCKING: runs ``flatpak remote-list`` (30 s timeout). A missing
+    binary, a non-zero exit, a timeout or an OS error all return False
+    instead of raising.
+    """
     if shutil.which("flatpak") is None:
         return False
     try:
@@ -137,6 +209,19 @@ def _split_script_source(value: str) -> tuple[str, str]:
 
 
 class _ManifestResolver:
+    """Single-use resolver that builds one :class:`ManifestPlan`.
+
+    The constructor captures the system compatibility keys, the container
+    state and whether the system is SteamOS. The plan accumulates inside
+    the instance, so create a new resolver for each manifest.
+
+    BLOCKING: see ``resolve_manifest``.
+
+    Args:
+        translations: Optional translations mapping, forwarded to the
+            script lookups.
+    """
+
     def __init__(self, translations=None) -> None:
         self._translations = translations
         self._plan = ManifestPlan()
@@ -146,6 +231,24 @@ class _ManifestResolver:
         self._auto_flatpaks: list[str] = []
 
     def resolve(self, names: list[str]) -> ManifestPlan:
+        """Run the whole resolution pipeline and return the plan.
+
+        Stages, in order: parse, Flatpak prerequisite, Homebrew formulae,
+        native packages, snaps, explicit scripts, auto-detected items,
+        Flatpak batch check and de-duplication. The pipeline returns the
+        partial plan early when a prerequisite needs a bootstrap or when
+        Homebrew formulae are invalid. Errors from the later stages are
+        then not collected.
+
+        De-duplication keeps the first occurrence and the original
+        order. Scripts are compared by ``(name, path)``.
+
+        Args:
+            names: Raw manifest entries.
+
+        Returns:
+            The resolved, possibly incomplete, plan.
+        """
         entries = self._parse(names)
 
         if not self._flatpak_available(entries):
@@ -175,9 +278,20 @@ class _ManifestResolver:
         self._plan.scripts = list(unique_scripts.values())
         return self._plan
 
-    # -- parsing -----------------------------------------------------------
-
     def _parse(self, names: list[str]) -> _Entries:
+        """Group raw entries by prefix.
+
+        The prefix match is case-insensitive. Entries without a known
+        prefix are left in ``auto`` for auto-detection. An empty value
+        after a known prefix, or an unsupported ``require:`` value, is
+        recorded as an error.
+
+        Args:
+            names: Raw manifest entries.
+
+        Returns:
+            The grouped entries.
+        """
         entries = _Entries()
         for raw_name in names:
             prefix, separator, value = raw_name.partition(":")
@@ -212,9 +326,23 @@ class _ManifestResolver:
                 entries.flatpaks.append(value)
         return entries
 
-    # -- prerequisites: flagged, never performed here ----------------------
-
     def _flatpak_available(self, entries: _Entries) -> bool:
+        """Check that Flathub is ready when the manifest needs it.
+
+        BLOCKING: may run ``flatpak remote-list``.
+
+        Flatpak is needed by ``require:flathub``, by ``flatpak:`` entries
+        and by ``script:`` entries forced to the ``flatpak`` source. If it
+        is needed but not ready, ``plan.bootstrap`` is set to
+        ``"flatpak"``.
+
+        Args:
+            entries: The parsed entries.
+
+        Returns:
+            False if resolution must stop for a Flatpak bootstrap, True
+            otherwise.
+        """
         needs_flatpak = (
             "flathub" in entries.requirements
             or bool(entries.flatpaks)
@@ -226,7 +354,22 @@ class _ManifestResolver:
         return True
 
     def _add_homebrew(self, names: list[str]) -> bool:
-        """Validate formula names first, then check that Brew is present."""
+        """Validate Homebrew formulae, then check that Brew is present.
+
+        Names are de-duplicated and validated before anything else. If
+        the Homebrew catalog is disabled, the ``brew`` script is stored in
+        ``plan.bootstrap_script`` and ``plan.bootstrap`` is set to
+        ``"homebrew"``, or an error is recorded if that script is missing.
+        Otherwise the prepared entries are appended to ``plan.scripts``.
+
+        Args:
+            names: Formula names from ``homebrew:`` entries.
+
+        Returns:
+            True if there is nothing to do or the formulae were added.
+            False if resolution must stop (invalid names, bootstrap
+            needed or preparation failure).
+        """
         if not names:
             return True
 
@@ -267,9 +410,21 @@ class _ManifestResolver:
             return False
         return True
 
-    # -- packages / snaps / flatpaks ---------------------------------------
-
     def _add_package(self, name: str, *, auto: bool = False) -> None:
+        """Validate a native package and record it in the plan.
+
+        BLOCKING: ``check_package_exists`` may run external commands.
+
+        Outcomes: an invalid name is an error. On SteamOS the package is
+        skipped with a warning, because native packages are not
+        supported there. A package that exists is added to
+        ``plan.packages``, and a missing one is an error.
+
+        Args:
+            name: Package name.
+            auto: True when the entry had no prefix and matched neither a
+                script nor a Flatpak ID. Only changes the error messages.
+        """
         if not valid_package_name(name):
             kind = "Item inseguro ou malformado" if auto else "Pacote inválido"
             self._plan.errors.append(f"{kind}: '{name}'.")
@@ -292,13 +447,34 @@ class _ManifestResolver:
             )
 
     def _add_snap(self, name: str) -> None:
+        """Validate a snap name and add it to the plan.
+
+        Only the name format is checked. The snap's existence is not
+        verified.
+
+        Args:
+            name: Snap name.
+        """
         if valid_package_name(name):
             self._plan.snaps.append(name)
         else:
             self._plan.errors.append(f"Nome de snap inválido: '{name}'.")
 
     def _add_flatpaks(self, candidates: list[str]) -> None:
-        """Validate IDs first, then check them all in a single async batch."""
+        """Validate Flatpak IDs, then check them in one async batch.
+
+        BLOCKING: runs ``asyncio.run``, so the calling thread must not
+        already have a running event loop.
+
+        IDs are de-duplicated and validated first, and invalid ones are
+        recorded as errors. The rest are checked together, and IDs not
+        found in the configured remotes become errors. Results are paired
+        with the IDs by position.
+
+        Args:
+            candidates: Flatpak IDs from ``flatpak:`` entries and from
+                auto-detected items.
+        """
         valid_ids = []
         for name in dict.fromkeys(candidates):
             if valid_flatpak_id(name):
@@ -318,10 +494,20 @@ class _ManifestResolver:
                     "configurados."
                 )
 
-    # -- scripts -----------------------------------------------------------
-
     def _add_explicit_scripts(self, entries: list[tuple[str, str]]) -> None:
-        """Resolve ``script:`` entries strictly through stable LinuxToys IDs."""
+        """Resolve ``script:`` entries strictly through stable IDs.
+
+        Unknown IDs are errors, unless Flathub is not ready. In that case
+        ``plan.bootstrap`` is set to ``"flatpak"`` and the method returns
+        without adding anything, because a Flathub-only AppStream app is
+        not visible on a fresh system. When a source is given, the entry
+        is narrowed to that source, and an ID that does not offer it is an
+        error. Accepted scripts are appended to ``plan.scripts``.
+
+        Args:
+            entries: ``(script_id, source)`` pairs, where ``source`` is
+                empty if not overridden.
+        """
         resolved: list[tuple[str, str, dict]] = []
         unresolved: list[tuple[str, str]] = []
         for script_id, source in entries:
@@ -358,6 +544,15 @@ class _ManifestResolver:
                 self._plan.scripts.append(script)
 
     def _add_auto_item(self, name: str) -> None:
+        """Resolve an unprefixed manifest entry.
+
+        Order of detection: LinuxToys/AppStream script by name, then a
+        Flatpak ID (deferred to the batch check in ``_add_flatpaks``),
+        then a native package.
+
+        Args:
+            name: Raw entry without a known prefix.
+        """
         info = find_script_by_name(name, self._translations)
         if info is None:
             # Not a LinuxToys/AppStream entry: try Flatpak, then package.
@@ -372,13 +567,27 @@ class _ManifestResolver:
             self._plan.scripts.append(script)
 
     def _accept_script(self, info: dict, display: str) -> dict | None:
-        """Apply source-specific checks; return the runnable info or None.
+        """Apply the source-specific checks to a resolved script.
 
-        The returned dict is always the *original* info: Homebrew entries are
-        materialized by the runner right before execution, and repository
-        entries are materialized again there (the generated file is
-        deterministic) so that ``is_repo_entry`` stays available to
-        ``script_environment``.
+        Homebrew entries need the Homebrew catalog enabled. Repository
+        entries are materialized once, only to validate them, so a bad
+        entry aborts before anything runs. Other entries need a real file
+        path (virtual ``://`` paths are rejected) and must be compatible
+        with the system and, in containers, with containers.
+        Incompatibility is a warning, the rest are errors.
+
+        The returned dict is always the original ``info``. The runner
+        materializes Homebrew and repository entries again right before
+        execution (the generated file is deterministic), so that
+        ``is_repo_entry`` stays available to ``script_environment``.
+
+        Args:
+            info: Script info dict.
+            display: Label used in messages, e.g. ``"script:<id>@snap"``.
+
+        Returns:
+            ``info`` if the script can run, otherwise None with an error
+            or warning recorded in the plan.
         """
         if info.get("appstream_source") == "homebrew":
             if not homebrew_catalog.enabled():

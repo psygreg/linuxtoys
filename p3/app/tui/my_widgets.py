@@ -147,10 +147,12 @@ class InfoButton(Button):
 
 
 class RegistryListItem(ListItem):
-    """List item that displays the name of a registry script.
+    """List item for a script in the user's action registry.
+
+    The registry records the scripts the user has run.
 
     Args:
-        script_name: Name shown in the list and kept for lookups.
+        script_name: Name of the registered script.
     """
 
     def __init__(self, script_name: str) -> None:
@@ -162,7 +164,7 @@ class LanguageListItem(ListItem):
     """List item for the language picker.
 
     Args:
-        code: Language code of the entry (e.g. ``"pt_BR"``).
+        code: Short language code (e.g. ``"pt"``).
         display_name: Human-readable name shown in the list.
     """
 
@@ -330,7 +332,8 @@ class ScriptFinished(Message):
 
     Attributes:
         exit_code: Exit status of the script, or ``None`` if bash
-            itself died instead of the script.
+            itself died. Codes follow the LinuxToys convention (100
+            means cancelled); see ``helper._classify_exit_code``.
     """
 
     def __init__(self, exit_code: int | None) -> None:
@@ -592,15 +595,17 @@ class Terminal(Widget, can_focus=True):
         Injects one command line that prints a start marker, runs the
         command, optionally waits for ENTER and prints an exit marker
         with the exit code. The end is reported via ``ScriptFinished``.
-        Exit codes 130 and 100 are reported as 100 and skip the pause.
+        Exit codes 130 (SIGINT) and 100 (LinuxToys "cancelled")
+        are reported as 100 and skip the pause.
 
         Args:
             command: Script path (run as ``bash <script>``) or a full
                 argv list.
             env: Variables set for this command only; nothing leaks
                 into the persistent shell.
-            pause_on_exit: Wait for ENTER before finishing so the user
-                can read the output.
+            pause_on_exit: Keep the output on screen after the script
+                ends and wait for ENTER, so the user can read it and
+                then close the terminal.
 
         Returns:
             True if the command was sent, False if there is no PTY or

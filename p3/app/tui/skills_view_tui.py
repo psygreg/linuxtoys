@@ -39,11 +39,25 @@ from .skills_core import (
 
 
 def _t(key: str, default: str) -> str:
+    """Return the translation of ``key``, or ``default`` if missing.
+
+    Reads the shared ``translations`` dict on every call, so labels
+    follow the current language each time a widget is built.
+    """
     return translations.get(key, default)
 
 
 class ActionDialog(ModalScreen["str | None"]):
-    """Back / View Details / Install para a skill selecionada."""
+    """Modal that asks what to do with the selected skill.
+
+    Shows the name, the description (or a generic text) and the AI
+    agent disclaimer, with Back, View Details and Install buttons.
+    Dismisses with ``"details"`` or ``"install"``, or with None for
+    Back and Escape.
+
+    Args:
+        skill: Skill dict to act on.
+    """
 
     DEFAULT_CLASSES = "lt-modal"
     BINDINGS = [Binding("escape", "close", "Back")]
@@ -89,7 +103,15 @@ class ActionDialog(ModalScreen["str | None"]):
 
 
 class AgentChoiceDialog(ModalScreen["str | None"]):
-    """Lista de agentes detectados; devolve o id do agente escolhido."""
+    """Modal that lets the user pick the agent to install a skill for.
+
+    Lists the detected agents with Cancel and Install buttons.
+    Dismisses with the chosen agent id, or None if cancelled.
+
+    Args:
+        agents: Agent ids from ``detect_agents``. The caller is
+            expected to pass at least one.
+    """
 
     DEFAULT_CLASSES = "lt-modal"
     BINDINGS = [Binding("escape", "close", "Cancel")]
@@ -139,7 +161,15 @@ class AgentChoiceDialog(ModalScreen["str | None"]):
 
 
 class ConfirmRemoveDialog(ModalScreen[bool]):
-    """Confirmação de remoção (equivalente ao MessageDialog da GUI)."""
+    """Modal that asks to confirm the removal of a skill.
+
+    Equivalent to the GUI's ``MessageDialog``. Cancel is focused by
+    default. Dismisses with True only when Remove is pressed; Cancel
+    and Escape dismiss with False.
+
+    Args:
+        skill_name: Name of the skill, shown in the dialog.
+    """
 
     DEFAULT_CLASSES = "lt-modal"
     BINDINGS = [Binding("escape", "close", "Cancel")]
@@ -183,7 +213,17 @@ class ConfirmRemoveDialog(ModalScreen[bool]):
 
 
 class SkillCard(ListItem):
-    """Skill da aba Discover."""
+    """List item for a skill in the Discover tab.
+
+    Shows the name and the install count (e.g. ``↓ 1.2K``).
+
+    Attributes:
+        skill_data: The skill dict. Not called ``name`` to avoid a
+            clash with ``Widget.name``.
+
+    Args:
+        skill: Skill dict from ``load_popular`` or ``search``.
+    """
 
     def __init__(self, skill: dict) -> None:
         super().__init__()
@@ -196,7 +236,16 @@ class SkillCard(ListItem):
 
 
 class InstalledCard(ListItem):
-    """Skill da aba Installed."""
+    """List item for a skill in the Installed tab.
+
+    Shows the name in bold followed by the agents it is linked to.
+
+    Attributes:
+        skill_data: The skill dict.
+
+    Args:
+        skill: Skill dict from ``list_installed``.
+    """
 
     def __init__(self, skill: dict) -> None:
         super().__init__()
@@ -210,7 +259,21 @@ class InstalledCard(ListItem):
 
 
 class SkillsSeekerView(Vertical):
-    """Navegação, busca, instalação e remoção de skills."""
+    """Main view of the skills feature: browse, search, install, remove.
+
+    Has two tabs. "Discover" lists the popular skills (or the search
+    results) from skills.sh. Selecting one opens ``ActionDialog``,
+    which leads to its page or to the install flow. "Installed" lists
+    the globally installed skills; selecting one asks for confirmation
+    and removes it. Network and npx work runs in workers, so the UI
+    stays responsive.
+
+    The main screen calls ``do_search`` when the user submits a search
+    and ``focus_results`` to move focus into the list.
+
+    Attributes:
+        _all_skills: Cache of the popular skills, loaded once.
+    """
 
     DEFAULT_CSS = """
     SkillsSeekerView { height: 1fr; width: 100% }
@@ -249,13 +312,34 @@ class SkillsSeekerView(Vertical):
         self.query_one("#discover_list", ListView).focus()
 
     def _set_busy(self, tab: str, busy: bool) -> None:
+        """Switch a tab between the loading indicator and its list.
+
+        Args:
+            tab: ``"discover"`` or ``"installed"``.
+            busy: True to show the indicator and hide the list.
+        """
         self.query_one(f"#{tab}_loading").display = busy
         self.query_one(f"#{tab}_list").display = not busy
 
     def _set_status(self, tab: str, text: str) -> None:
+        """Set the status line text of a tab.
+
+        Args:
+            tab: ``"discover"`` or ``"installed"``.
+            text: Text to show.
+        """
         self.query_one(f"#{tab}_status", Label).update(text)
 
     async def _fill_list(self, tab: str, items: list[ListItem]) -> None:
+        """Replace the contents of a tab's list.
+
+        Clears the list, adds ``items`` in one operation and
+        highlights the first one.
+
+        Args:
+            tab: ``"discover"`` or ``"installed"``.
+            items: New list items. May be empty.
+        """
         list_view = self.query_one(f"#{tab}_list", ListView)
         await list_view.clear()
         if items:
@@ -264,6 +348,7 @@ class SkillsSeekerView(Vertical):
 
     @on(TabbedContent.TabActivated)
     def _tab_activated(self, event: TabbedContent.TabActivated) -> None:
+        """Reload the installed skills whenever that tab is opened."""
         if event.pane.id == "installed":
             self.load_installed()
 
@@ -273,12 +358,31 @@ class SkillsSeekerView(Vertical):
         self.load_installed()
 
     def do_search(self, query: str) -> None:
-        """API pública: chamada pela tela principal ao submeter a busca."""
+        """Search the catalog from the Discover tab.
+
+        Public API, called by the main screen when the user submits a
+        search. Switches to the Discover tab and loads the results.
+        An empty query shows the popular skills.
+
+        Args:
+            query: Search text. Surrounding whitespace is ignored.
+        """
         self.query_one(TabbedContent).active = "discover"
         self.load_discover(query.strip())
 
     @work(exclusive=True, group="discover")
     async def load_discover(self, query: str = "") -> None:
+        """Load the Discover list: search results or popular skills.
+
+        Worker, exclusive in the ``discover`` group, so a new call
+        supersedes the previous one. Shows the loading indicator, runs
+        the network call in a thread, fills the list and sets the
+        status to the result count or to an empty/offline message. The
+        popular skills are fetched once and cached in ``_all_skills``.
+
+        Args:
+            query: Search text. Empty to show the popular skills.
+        """
         self._set_busy("discover", True)
         if query:
             self._set_status(

@@ -1,3 +1,21 @@
+"""Build the shell scripts and commands that run AppStream installs.
+
+TUI port of the job logic of the GUI ``AppStreamRunner``, without GTK.
+Nothing here runs an install: the functions write temporary ``.sh``
+scripts under ``_OVERRIDES_DIR`` or return argv lists for the runner
+to execute. The module also provides a static security check for AUR
+package sources.
+
+Constants:
+    AUR_SECURITY_OK: Status returned when no suspicious pattern was
+        found.
+    AUR_SECURITY_UNAVAILABLE: Status returned when the check could not
+        run (missing git, network failure, missing or unreadable
+        PKGBUILD).
+    AUR_SECURITY_BLOCKED: Status returned when the sources look
+        obfuscated.
+"""
+
 import os
 import re
 import shlex
@@ -59,6 +77,19 @@ _AUR_OBFUSCATION_RULES = (
 
 
 def _write_temp_script(lines: list[str], prefix: str) -> str:
+    """Write shell lines to a private, executable temporary script.
+
+    Creates ``_OVERRIDES_DIR`` (mode 0700) if needed, then writes a
+    bash shebang followed by ``lines`` joined with newlines. The file
+    is ``chmod`` 0700. The caller owns the file and must delete it.
+
+    Args:
+        lines: Shell lines to write after the shebang.
+        prefix: Filename prefix for the temporary file.
+
+    Returns:
+        Absolute path of the created script.
+    """
     os.makedirs(_OVERRIDES_DIR, mode=0o700, exist_ok=True)
     fd, path = tempfile.mkstemp(
         prefix=prefix, suffix=".sh", dir=_OVERRIDES_DIR, text=True
@@ -72,8 +103,20 @@ def _write_temp_script(lines: list[str], prefix: str) -> str:
 
 
 def _dependency_lines(dependencies) -> list[str]:
-    """Porta direta de _new_dependency_script, mas devolvendo linhas em vez
-    de já escrever um arquivo — a montagem final acontece em build_install_script."""
+    """Convert a manifest dependency list into shell install lines.
+
+    Maps each package by dependency type: ``native`` to ``pkg_install``,
+    ``flathub`` to ``pkg_flat`` and ``snap`` to ``pkg_snap``. Package
+    names are shell-quoted. Malformed entries, blank package names and
+    unknown types are skipped silently.
+
+    Args:
+        dependencies: List of dicts with ``type`` and ``packages`` keys.
+            Any other type yields no lines.
+
+    Returns:
+        One shell line per package, in manifest order.
+    """
     if not isinstance(dependencies, list):
         return []
 
@@ -99,7 +142,22 @@ def _dependency_lines(dependencies) -> list[str]:
 
 
 def _override_lines(overrides: dict, phase: str) -> list[str]:
-    """Porta direta de _new_override_script, devolvendo linhas."""
+    """Convert manifest overrides into shell lines for one phase.
+
+    For ``pre`` and ``post``, an inline script string is used as is and
+    a ``{"script": ...}`` mapping becomes a ``run_list_hook`` call. For
+    ``flatpak``, each override becomes a shell-quoted
+    ``flatpak_override`` call with scope, type, setting and target.
+
+    Args:
+        overrides: Manifest ``overrides`` mapping. Any other type
+            yields no lines.
+        phase: One of ``"pre"``, ``"post"`` or ``"flatpak"``. Other
+            values yield no lines.
+
+    Returns:
+        Shell lines for the requested phase.
+    """
     if not isinstance(overrides, dict):
         return []
 
@@ -129,7 +187,20 @@ def _override_lines(overrides: dict, phase: str) -> list[str]:
 
 
 def _resolve_native_package_env(script_info: dict) -> str | None:
-    """Porta da lógica de resolução de pacote nativo único em _run_job."""
+    """Resolve the single native package of an AppStream entry.
+
+    Only applies to entries whose ``appstream_source`` is ``"native"``
+    and that declare exactly one ``package-name`` (a string or a
+    list/tuple of strings). Resolution is delegated to
+    ``resolve_native_appstream_package``.
+
+    Args:
+        script_info: Entry info mapping.
+
+    Returns:
+        The resolved package name, or None if the entry is not native
+        or does not have exactly one package.
+    """
     if script_info.get("appstream_source") != "native":
         return None
 
@@ -153,10 +224,25 @@ def _resolve_native_package_env(script_info: dict) -> str | None:
 
 
 def build_install_script(entry: dict) -> str:
-    """Monta o pipeline completo (pre -> deps -> install -> flatpak
-    overrides -> post) em UM arquivo .sh. Cada fase é checada logo após
-    seu último comando, preservando a semântica de 'a primeira fase que
-    falhar interrompe o resto' do AppStreamRunner._run_job original.
+    """Build one install script covering every phase of an entry.
+
+    Phases run in this order: ``pre``, dependencies, install, flatpak
+    overrides and ``post``. Empty phases are omitted, and a status
+    check between phases makes the first failing phase stop the rest.
+    The install body comes from ``repo_parser.create_install_script``;
+    its temporary file is read and removed, and its shebang is dropped.
+
+    The caller owns the returned file and must delete it.
+
+    Args:
+        entry: AppStream entry info dict.
+
+    Returns:
+        Path of the generated executable script.
+
+    Raises:
+        OSError: If the install script cannot be read or the final
+            script cannot be written.
     """
     install_path = repo_parser.create_install_script(entry)
     try:
@@ -184,8 +270,7 @@ def build_install_script(entry: dict) -> str:
         phases.append("\n".join(flatpak))
     if post:
         phases.append("\n".join(post))
-
-    gate = "\nif [ $? -ne 0 ]; then exit $?; fi\n"
+    gate = '\n_lt_rc=$?; [ "$_lt_rc" -eq 0 ] || exit "$_lt_rc"\n'
     script_body = gate.join(phases)
 
     os.makedirs(_OVERRIDES_DIR, mode=0o700, exist_ok=True)
@@ -204,6 +289,27 @@ def build_install_script(entry: dict) -> str:
 
 
 def build_flatpak_extension_command(info: dict, remove: bool) -> list[str]:
+    """Build the ``flatpak`` argv to install or remove an extension.
+
+    The scope flag comes from ``flatpak_scope`` and
+    ``flatpak_installation``: ``--user`` for user scope,
+    ``--installation=<name>`` for a named non-default installation, and
+    ``--system`` otherwise. Installs use ``flatpak_remote`` (default
+    ``flathub``); the remote is ignored on removal. The command is
+    non-interactive (``-y``).
+
+    Args:
+        info: Entry info with ``flatpak_ref`` and, optionally,
+            ``flatpak_scope``, ``flatpak_installation`` and
+            ``flatpak_remote``.
+        remove: True to uninstall, False to install.
+
+    Returns:
+        Argument list ready for ``subprocess``.
+
+    Raises:
+        ValueError: If ``flatpak_ref`` is missing or blank.
+    """
     ref = str(info.get("flatpak_ref") or "").strip()
     if not ref:
         raise ValueError("Extension has no flatpak_ref")
@@ -229,6 +335,19 @@ def build_flatpak_extension_command(info: dict, remove: bool) -> list[str]:
 
 
 def build_snap_revert_command(info: dict) -> list[str]:
+    """Build the command that reverts a snap.
+
+    Args:
+        info: Entry info with the ``snap_name`` key.
+
+    Returns:
+        ``["pkg_snap_revert", <snap_name>]``. ``pkg_snap_revert`` is a
+        LinuxToys shell helper, so the command must run in a shell
+        that has the helper loaded.
+
+    Raises:
+        ValueError: If ``snap_name`` is missing or blank.
+    """
     snap_name = str(info.get("snap_name") or "").strip()
     if not snap_name:
         raise ValueError("Entry has no snap_name")
@@ -236,6 +355,18 @@ def build_snap_revert_command(info: dict) -> list[str]:
 
 
 def _scan_aur_text_for_obfuscation(filename: str, text: str) -> list[str]:
+    """Scan one text against the AUR obfuscation rules.
+
+    Each rule reports at most once, at its first match.
+
+    Args:
+        filename: Name shown in the findings, relative to the repo.
+        text: File content to inspect.
+
+    Returns:
+        Findings formatted as ``"<filename>:<line>: <description>"``.
+        Empty if nothing matched.
+    """
     findings = []
     for description, pattern in _AUR_OBFUSCATION_RULES:
         match = pattern.search(text)
@@ -247,9 +378,30 @@ def _scan_aur_text_for_obfuscation(filename: str, text: str) -> list[str]:
 
 
 def check_aur_package_security(package: str) -> tuple[int, str]:
-    """Porte direto de AppStreamRunner._verify_aur_package_sources.
-    Clona o repositório AUR raso e inspeciona estaticamente o PKGBUILD
-    e os hooks *.install — nada do repositório é executado.
+    """Statically check AUR package sources for obfuscated code.
+
+    BLOCKING: call from a worker thread (network clone, 45 s timeout).
+
+    Shallow-clones ``https://aur.archlinux.org/<package>.git`` into a
+    temporary directory with git hooks disabled, then scans the
+    ``PKGBUILD`` and every ``*.install`` file against the obfuscation
+    rules. Nothing from the repository is executed. Symbolic links and
+    the ``.git`` directory are skipped, files over 1 MiB are reported
+    as findings instead of being scanned, and the temporary directory
+    is always removed. Expected failures are returned, not raised.
+
+    Args:
+        package: AUR package name. Must match ``[A-Za-z0-9@._+:-]+``.
+
+    Returns:
+        A ``(status, message)`` tuple:
+
+        - ``(AUR_SECURITY_OK, "")``: no findings.
+        - ``(AUR_SECURITY_BLOCKED, findings)``: at most 20 findings,
+          one per line.
+        - ``(AUR_SECURITY_UNAVAILABLE, reason)``: the check could not
+          run (git missing, invalid name, clone failure or timeout,
+          unreadable or missing PKGBUILD).
     """
     git = shutil.which("git")
     if not git:
@@ -367,7 +519,19 @@ def check_aur_package_security(package: str) -> tuple[int, str]:
 
 
 def build_aur_install_script(package: str) -> str:
-    """Igual a _run_aur_job: só pkg_install <package>, sem create_install_script."""
+    """Write a minimal script that installs one AUR package.
+
+    The script only calls ``pkg_install`` with the shell-quoted name
+    and does not use ``repo_parser.create_install_script``. It does not
+    verify the package, so run ``check_aur_package_security`` first.
+    The caller owns the file and must delete it.
+
+    Args:
+        package: AUR package name.
+
+    Returns:
+        Path of the generated executable script.
+    """
     os.makedirs(_OVERRIDES_DIR, mode=0o700, exist_ok=True)
     fd, path = tempfile.mkstemp(
         prefix="aur-install-", suffix=".sh", dir=_OVERRIDES_DIR, text=True

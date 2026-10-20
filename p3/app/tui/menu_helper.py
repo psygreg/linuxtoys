@@ -1,3 +1,5 @@
+import asyncio
+
 from app.easy_cli import is_dev_mode_enabled
 
 from .about_helper import AboutWidget
@@ -12,8 +14,22 @@ from .registry_screen import RegistryScreen
 
 
 class MenuSelectionMixin:
-    """
-    Mixin para lidar com a lógica de seleção de itens no menu principal da HomeScreen.
+    """Mixin that handles main menu selection on the HomeScreen.
+
+    Maps each menu item to its action: toggle the About panel, open
+    the registry, resync the scripts, change the language, open the
+    manifest dialog or check for updates.
+
+    The host class must provide ``query``, ``query_one``, ``notify``,
+    ``run_worker`` and ``app``, the widgets ``#menu-panel``,
+    ``#logo_lt``, ``#home-menu`` and ``#terminal-conteiner``, and the
+    methods ``_hide_terminal``, ``action_reset_to_home``,
+    ``_refresh_fixed_ui_labels``, ``on_manifest_chosen`` and
+    ``_trigger_update_check``.
+
+    Attributes:
+        _is_about_showing: Whether the About panel is currently
+            replacing the main menu.
     """
 
     _is_about_showing: bool = False
@@ -46,15 +62,22 @@ class MenuSelectionMixin:
             action_map[item_id]()
 
     def _toggle_about_panel(self, force_hide: bool = False) -> None:
-        """
-        Mostra ou esconde o painel 'Sobre' no lugar do menu principal.
+        """Show or hide the About panel in place of the main menu.
+
+        Hides the embedded terminal first if it is visible. When
+        shown, hides the logo and the menu, mounts an ``AboutWidget``
+        in ``#menu-panel`` and sets the panel title. When hidden,
+        removes the widget and brings the logo and menu back.
+
+        Args:
+            force_hide: If True, always hide the panel instead of
+                toggling it.
         """
         menu_panel = self.query_one("#menu-panel")
         logo = self.query_one("#logo_lt")
         home_menu = self.query_one("#home-menu")
         terminal_container = self.query_one("#terminal-conteiner")
 
-        # Esconde o terminal se estiver aberto
         if terminal_container.display:
             self._hide_terminal()
 
@@ -79,7 +102,13 @@ class MenuSelectionMixin:
                 about_content.remove()
 
     def _start_scripts_resync(self) -> None:
-        """Inicia a ressincronização dos scripts se o modo de desenvolvedor não estiver ativo."""
+        """Start a background resync of the scripts.
+
+        In developer mode the sync is skipped (with a warning) so
+        local script edits are not overwritten. Otherwise it notifies
+        the user and runs ``_resync_scripts_worker`` as an exclusive
+        thread worker.
+        """
         if is_dev_mode_enabled():
             self.notify(
                 "Modo de desenvolvedor ativo — sincronização de scripts foi pulada.",
@@ -96,9 +125,12 @@ class MenuSelectionMixin:
         )
 
     def _resync_scripts_worker(self) -> None:
-        """
-        Força a atualização dos scripts e reporta o progresso.
-        (Este método roda em uma thread de trabalho)
+        """Force-update the scripts and report progress to the UI.
+
+        Runs in a worker thread. Calls ``force_update_scripts`` and
+        shows each progress key, translated through ``translations``,
+        as a notification on the UI thread. When it ends,
+        ``_on_scripts_resync_done`` receives the result.
         """
         from app.git_scripts_manager import force_update_scripts
 
@@ -106,17 +138,28 @@ class MenuSelectionMixin:
             message = translations.get(key, key)
             self.app.call_from_thread(self.notify, message, timeout=3)
 
-        success = force_update_scripts(progress_callback=progress)
+        try:
+            success = force_update_scripts(progress_callback=progress)
+            if success:
+                invalidate_search_caches()
+                warm_search_and_category_index(translations)
+        except Exception:
+            success = False
         self.app.call_from_thread(self._on_scripts_resync_done, success)
 
     def _on_scripts_resync_done(self, success: bool) -> None:
-        """Callback executado após a tentativa de ressincronização."""
+        """Handle the end of the scripts resync.
+
+        Runs on the UI thread. On success, notifies,
+        returns to the home screen so the menu shows the updated scripts.
+
+        Args:
+            success: Whether the resync worked.
+        """
         if success:
             self.notify(
                 "Scripts sincronizados com sucesso.", severity="information"
             )
-            invalidate_search_caches()
-            warm_search_and_category_index(translations)
             self.run_worker(self.action_reset_to_home())
         else:
             self.notify(
@@ -127,7 +170,20 @@ class MenuSelectionMixin:
     async def apply_language_change(
         self, new_language_code: str | None
     ) -> None:
-        """Aplica a mudança de idioma em toda a aplicação."""
+        """Apply a language change to the whole application.
+
+        Loads the new translations and updates the shared
+        ``translations`` dict in place, so every module that imports
+        it sees the new strings. Then persists the choice, rebuilds
+        the search and category caches, resets to the home screen and
+        refreshes the fixed UI labels. Used as the callback of
+        ``LanguageSelectorDialog``.
+
+        Args:
+            new_language_code: Short language code (e.g. ``"pt"``),
+                or None if the dialog was dismissed without a choice,
+                in which case nothing happens.
+        """
         if new_language_code is None:
             return
 
@@ -138,7 +194,7 @@ class MenuSelectionMixin:
         translations.update(new_translations)
         lang_utils.save_language(new_language_code)
         invalidate_search_caches()
-        warm_search_and_category_index(translations)
+        await asyncio.to_thread(warm_search_and_category_index, translations)
 
         await self.action_reset_to_home()
         await self._refresh_fixed_ui_labels()

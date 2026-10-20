@@ -41,10 +41,13 @@ _BLANK = Select.NULL
 
 
 def _norm_lang(value: Any) -> str:
+    """Normalize a locale string to a lowercase language code.
+    Drops the region, encoding and modifiers."""
     value = str(value or "").strip().replace("_", "-")
     return value.split("-", 1)[0].split(".", 1)[0].casefold() if value else ""
 
 
+#: Maps AppStream span styles to Rich style strings.
 _SPAN_STYLES = {
     "bold": "bold",
     "strong": "bold",
@@ -57,7 +60,18 @@ _SPAN_STYLES = {
 
 
 def _spans_to_text(spans: Sequence[Mapping[str, Any]] | str) -> Text:
-    """Converte spans do AppStream ({'text', 'styles', 'url'}) em rich.Text."""
+    """Convert AppStream inline spans into a Rich ``Text``.
+
+    Styles missing from ``_SPAN_STYLES`` are ignored. A span with a
+    ``url`` becomes an underlined blue link.
+
+    Args:
+        spans: A plain str (returned as is) or span mappings with
+            ``text`` and optional ``styles`` and ``url`` keys.
+
+    Returns:
+        The styled text.
+    """
     if isinstance(spans, str):
         return Text(spans)
     out = Text()
@@ -75,7 +89,18 @@ def _spans_to_text(spans: Sequence[Mapping[str, Any]] | str) -> Text:
 
 
 def blocks_to_text(blocks: Any) -> Text:
-    """Renderiza blocos (paragraph / unordered_list / ordered_list) ou str."""
+    """Render an AppStream description into a Rich ``Text``.
+
+    Paragraphs are separated by a blank line. List items go on their own
+    lines, with a bullet (``unordered_list``) or a number
+    (``ordered_list``). Other block types are ignored.
+
+    Args:
+        blocks: A plain str or a list of block dicts.
+
+    Returns:
+        The rendered text.
+    """
     if isinstance(blocks, str):
         return Text(blocks)
     out = Text()
@@ -97,18 +122,51 @@ def blocks_to_text(blocks: Any) -> Text:
 
 
 def _script_key(info: Mapping[str, Any]) -> str:
+    """Return the key that identifies a script entry.
+
+    Uses ``id``, then ``appstream_id``, then ``name``.
+
+    Args:
+        info: Script info mapping.
+
+    Returns:
+        The key, or ``""`` if none is set.
+    """
     return str(
         info.get("id") or info.get("appstream_id") or info.get("name") or ""
     )
 
 
 def _fmt_price(option: Mapping[str, Any]) -> str:
+    """Format the price of a purchase or subscription option.
+
+    Args:
+        option: Mapping with ``price`` and an optional
+            ``currency_symbol`` (default ``"$"``).
+
+    Returns:
+        The symbol followed by the price with two decimals, e.g.
+        ``"$9.99"``.
+
+    Raises:
+        KeyError: If ``price`` is missing.
+        ValueError: If ``price`` is not numeric.
+    """
     return (
         f"{option.get('currency_symbol') or '$'}{float(option['price']):.2f}"
     )
 
 
 class FeaturedCard(Static, can_focus=True):
+    """Focusable card for one entry of the "Try These" grid.
+
+    Shows the name in bold and the description dimmed, which is also the
+    tooltip. A click or the Enter key posts ``Selected``.
+
+    Args:
+        script_info: Script info mapping of the featured entry.
+    """
+
     BINDINGS = [Binding("enter", "select", "Open", show=False)]
 
     class Selected(Message):
@@ -135,7 +193,30 @@ class FeaturedCard(Static, can_focus=True):
 
 
 class AppPageWidget(Vertical):
-    """Página de app. Recebe tudo que precisa no construtor."""
+    """Page that shows one app and its actions.
+
+    Everything it needs comes from the constructor. User actions leave
+    as messages for the host to handle: install, uninstall, open URL,
+    translate, source change, featured selection and the extension
+    actions. After handling them, the host updates the page with
+    ``set_install_state``, ``set_translated_blocks``, ``set_user_rating``,
+    ``refresh_extensions`` and the ``reset_*_button`` methods.
+
+    The initial source is ``recommended_source`` (or ``appstream_source``)
+    when ``source_options`` has it, otherwise the first option. Featured
+    candidates exclude the current app and list the same category first.
+
+    Args:
+        script_info: Script info mapping of the app.
+        translations: UI translations. Missing keys fall back to
+            English defaults.
+        featured: Candidate entries for the "Try These" grid.
+        installed: Whether the app is currently installed.
+        system_language: Target language for description translation.
+            Defaults to the ``LANG`` environment variable.
+        id: Widget id.
+        **kwargs: Forwarded to ``Vertical``.
+    """
 
     DEFAULT_CSS = """
     AppPageWidget #app-tabs.no-ext ContentTabs { display: none; }
@@ -147,57 +228,108 @@ class AppPageWidget(Vertical):
 
     # ---- mensagens para o host ------------------------------------------- #
     class BackRequested(Message):
-        pass
+        """Posted when the user asks to leave the page."""
 
     class InstallRequested(Message):
+        """Posted when Install is pressed.
+
+        Attributes:
+            script_info: The selected source entry.
+        """
+
         def __init__(self, script_info: Mapping[str, Any]) -> None:
             super().__init__()
             self.script_info = script_info
 
     class OpenRequested(InstallRequested):
-        pass
-
-    class RevertRequested(InstallRequested):
-        pass
+        """Posted when Open is pressed. Same payload as the parent."""
 
     class RateRequested(Message):
+        """Reserved for GUI parity. Ratings are sent by the widget.
+
+        Attributes:
+            stars: Star count (1 to 5).
+            script_info: Script info of the rated app.
+        """
+
         def __init__(self, stars: int, script_info: Mapping[str, Any]) -> None:
             super().__init__()
             self.stars = stars
             self.script_info = script_info
 
     class UrlRequested(Message):
+        """Posted when a purchase, website or donate link is chosen.
+
+        Attributes:
+            url: URL the host should open.
+        """
+
         def __init__(self, url: str) -> None:
             super().__init__()
             self.url = url
 
     class TranslateRequested(Message):
+        """Posted when the user asks to translate the description.
+
+        The host should translate in a worker thread and answer with
+        ``set_translated_blocks`` (or None on failure).
+
+        Attributes:
+            blocks: Description to translate (str or list of blocks).
+            target_language: Target language code.
+        """
+
         def __init__(self, blocks: Any, target_language: str) -> None:
             super().__init__()
             self.blocks = blocks
             self.target_language = target_language
 
     class SourceChanged(Message):
+        """Posted after the user picks another install source.
+
+        Attributes:
+            script_info: The newly selected source entry.
+        """
+
         def __init__(self, script_info: Mapping[str, Any]) -> None:
             super().__init__()
             self.script_info = script_info
 
     class FeaturedSelected(Message):
+        """Posted when a featured card is chosen.
+
+        Attributes:
+            script_info: Script info of the chosen entry.
+        """
+
         def __init__(self, script_info: Mapping[str, Any]) -> None:
             super().__init__()
             self.script_info = script_info
 
     class UninstallRequested(InstallRequested):
-        pass
+        """Posted when Remove is pressed. Same payload as the parent."""
 
     class ExtensionInstallRequested(Message):
-        """Payload já inclui ``is_flatpak_extension`` (igual à GUI)."""
+        """Posted when an extension Install button is pressed.
+
+        Attributes:
+            info: Extension info. It already includes
+                ``is_flatpak_extension=True``, as in the GUI.
+        """
 
         def __init__(self, info: Mapping[str, Any]) -> None:
             super().__init__()
             self.info = info
 
     class ExtensionRemoveRequested(Message):
+        """Posted when an extension Remove button is pressed.
+
+        Attributes:
+            info: Extension info.
+            record_id: ID of the finished, successful install job of
+                this extension, or None if there is none.
+        """
+
         def __init__(
             self, info: Mapping[str, Any], record_id: Any = None
         ) -> None:
@@ -206,6 +338,12 @@ class AppPageWidget(Vertical):
             self.record_id = record_id
 
     class ExtensionCancelRequested(Message):
+        """Posted when a queued extension install is cancelled.
+
+        Attributes:
+            job_id: ID of the queued job.
+        """
+
         def __init__(self, job_id: Any) -> None:
             super().__init__()
             self.job_id = job_id
@@ -337,6 +475,7 @@ class AppPageWidget(Vertical):
         )
 
     def _name_text(self) -> Text:
+        """Build the header text: bold name plus dimmed license."""
         text = Text()
         text.append(str(self.script_info.get("name", "") or ""), style="bold")
         license_name = str(self.script_info.get("license", "") or "").strip()
@@ -345,6 +484,12 @@ class AppPageWidget(Vertical):
         return text
 
     def _developer_text(self) -> Text | None:
+        """Build the developer line, or None without a developer.
+
+        The marker shows the trust level: a green check for official or
+        verified entries, a cyan diamond for LinuxToys scripts and
+        repository entries, and a dimmed diamond for AppStream entries.
+        """
         info = self.script_info
         developer = str(info.get("developer", "") or "").strip()
         if not developer:
@@ -360,6 +505,12 @@ class AppPageWidget(Vertical):
         return text
 
     def _meta_text(self) -> Text | None:
+        """Build the repository and rating line, or None if empty.
+
+        The rating applies only to AppStream entries. ``review_rating``
+        is on a 0 to 100 scale and is shown as stars out of 5, followed
+        by the review count. Invalid ratings and zero counts are hidden.
+        """
         info = self.script_info
         text = Text()
         repo = str(info.get("repo", "") or "").strip()
@@ -381,6 +532,19 @@ class AppPageWidget(Vertical):
     def _commerce_label(
         self, kind: str, options: Sequence[Mapping[str, Any]]
     ) -> str:
+        """Build the label of a purchase or subscription control.
+
+        Without options, the plain label is used. Otherwise the
+        translated template gets the lowest price, prefixed by "from"
+        when there are several options.
+
+        Args:
+            kind: ``"purchase"`` or ``"subscription"``.
+            options: Option mappings with a ``price``.
+
+        Returns:
+            The label text.
+        """
         if kind == "purchase":
             plain_k, plain_d = "app_page_purchase", "Purchase"
             price_k, price_d = "app_page_purchase_price", "Purchase · ${price}"
@@ -402,6 +566,11 @@ class AppPageWidget(Vertical):
         return template.replace("${price}", price_text).strip()
 
     def _option_label(self, kind: str, option: Mapping[str, Any]) -> str:
+        """Build the label of one option in a purchase selector.
+
+        Joins, with ``" · "``, the option name, the duration (only for
+        subscriptions with a positive ``months``) and the price.
+        """
         pieces = []
         name = str(option.get("name") or "").strip()
         if name:
@@ -420,6 +589,21 @@ class AppPageWidget(Vertical):
     def _commerce_widget(
         self, kind: str, options: list, fallback_url: str
     ) -> Widget:
+        """Build the purchase or subscription control.
+
+        Several options produce a ``Select`` (ids ``app-<kind>-select``),
+        and choosing one posts ``UrlRequested``. One option, or none,
+        produces a ``Button`` (id ``app-<kind>``) whose ``url`` attribute
+        holds the option URL or ``fallback_url``.
+
+        Args:
+            kind: ``"purchase"`` or ``"subscription"``.
+            options: Option mappings with ``price`` and ``url``.
+            fallback_url: URL used when there are no options.
+
+        Returns:
+            The ``Select`` or ``Button``.
+        """
         label = self._commerce_label(kind, options)
         if len(options) > 1:
             self._purchase_options[kind] = options
@@ -474,6 +658,8 @@ class AppPageWidget(Vertical):
                 yield self._extensions_pane()
 
     def _primary_actions(self) -> list[Widget]:
+        """Build the install and remove buttons and the source selector."""
+
         install = Button(
             "⬇ " + self._t("skills_install_label", "Install").strip(),
             variant="success",
@@ -507,6 +693,7 @@ class AppPageWidget(Vertical):
         return widgets
 
     def _link_actions(self) -> list[Widget]:
+        """Build the purchase, subscription, website and donate controls."""
         info = self.script_info
         purchase_url = info.get("purchase_url") or ""
         purchase = list(info.get("purchase_options") or [])
@@ -576,6 +763,9 @@ class AppPageWidget(Vertical):
         return widgets
 
     def _rating_row(self) -> Horizontal:
+        """Build the hidden row of five rating buttons.
+        Visibility and labels are managed by ``_refresh_rating``.
+        """
         row = Horizontal(
             Label(self._t("app_page_rate", "Rate:")),
             *[Button("☆", id=f"app-rate-{i}") for i in range(1, 6)],
@@ -586,6 +776,7 @@ class AppPageWidget(Vertical):
         return row
 
     def _rating_confirm_row(self) -> Horizontal:
+        """Build the hidden rating confirmation row (text, Submit, Cancel)."""
         row = Horizontal(
             Static(id="app-rating-confirm-text"),
             Button(
@@ -608,6 +799,7 @@ class AppPageWidget(Vertical):
         return description or None
 
     def _build_content(self) -> VerticalScroll:
+        """Build the scrollable content of the Details tab."""
         children: list[Widget] = []
 
         desc_parts: list[Widget] = []
@@ -661,6 +853,11 @@ class AppPageWidget(Vertical):
         installed: set[str],
         jobs: Mapping[str, Mapping[str, Any]],
     ) -> tuple[str, Mapping[str, Any] | None]:
+        """Resolve the display state of an extension.
+
+        A queued or running job overrides the installed state. A job
+        whose action is ``extension_remove`` becomes ``"removing"``.
+        """
         state = "installed" if ref in installed else "available"
         record = jobs.get(ref)
         if record and record.get("status") in ("queued", "running"):
@@ -678,6 +875,7 @@ class AppPageWidget(Vertical):
         state: str,
         record: Mapping[str, Any] | None,
     ) -> Horizontal:
+        """Build one row of the Extensions tab."""
         views = {
             "available": (
                 str(info.get("summary") or ""),
@@ -724,7 +922,14 @@ class AppPageWidget(Vertical):
     def refresh_extensions(
         self, jobs: Sequence[Mapping[str, Any]] | None = None
     ) -> None:
-        """Atualiza a aba Extensions. ``jobs`` = ``runner.snapshot()``."""
+        """Update the Extensions tab with the current jobs.
+
+        Nothing is rendered until the tab has been opened once.
+
+        Args:
+            jobs: Runner job snapshot (``runner.snapshot()``). None keeps
+                the previous snapshot.
+        """
         if jobs is not None:
             self._extension_jobs = list(jobs)
         if self._extensions_populated:
@@ -732,6 +937,13 @@ class AppPageWidget(Vertical):
 
     @work(exclusive=True, group="extensions")
     async def _render_extensions(self) -> None:
+        """Rebuild the rows of the Extensions tab.
+
+        Worker. Reads the installed refs in a thread, matches job records
+        by ``info.flatpak_ref`` (the first record of each ref wins),
+        derives each state and replaces the rows. It is exclusive, so a
+        newer refresh cancels a stale one.
+        """
         installed = await asyncio.to_thread(
             appstream_cache.installed_flatpak_extension_refs,
             dict(self._selected),
@@ -755,7 +967,12 @@ class AppPageWidget(Vertical):
         await container.mount_all(rows)
 
     async def _sync_extensions_tabs(self) -> None:
-        """Mostra Details/Extensions só se a fonte selecionada tiver addons."""
+        """Show the Extensions tab only if the source has extensions.
+
+        Reloads the extensions, adds or removes the pane as needed, and
+        toggles the ``no-ext`` class that hides the tab bar. If the
+        Extensions tab is already active, it is populated again.
+        """
         self._extensions = self._load_extensions()
         self._extensions_populated = False
         tabs = self.query_one("#app-tabs", TabbedContent)
@@ -769,7 +986,7 @@ class AppPageWidget(Vertical):
             self._populate_extensions()
 
     def _populate_extensions(self) -> None:
-        """Preenche as linhas só quando a aba é aberta (como na GUI)."""
+        """Render the extension rows on the first tab activation."""
         if not self._extensions_populated:
             self._extensions_populated = True
             self._render_extensions()
@@ -781,6 +998,19 @@ class AppPageWidget(Vertical):
         info: Mapping[str, Any],
         record: Mapping[str, Any] | None,
     ) -> None:
+        """Handle a press on an extension row button.
+
+        The button is disabled at once to prevent double actions. Then
+        the matching message is posted: ``ExtensionInstallRequested``,
+        ``ExtensionRemoveRequested`` (with the job id only if the record
+        is a successful job) or ``ExtensionCancelRequested``.
+
+        Args:
+            button: The pressed button.
+            action: ``"install"``, ``"remove"`` or ``"cancel"``.
+            info: Extension info.
+            record: Matching job record, or None.
+        """
         button.disabled = True
         if action == "install":
             self.post_message(
@@ -830,6 +1060,7 @@ class AppPageWidget(Vertical):
 
     @on(TabbedContent.TabActivated)
     def _tab_changed(self) -> None:
+        """Populate the Extensions tab when opened and re-layout the grid."""
         tabs = self.query_one("#app-tabs", TabbedContent)
         if tabs.active == "tab-extensions":
             self._populate_extensions()
@@ -837,22 +1068,32 @@ class AppPageWidget(Vertical):
         self._schedule_featured()
 
     def set_install_state(self, installed: bool) -> None:
+        """Update the page after the install state changed."""
         self._installed = installed
         self.query_one("#app-install").display = not installed
         self.query_one("#app-remove").display = installed
         self._refresh_rating()
         self._load_rating_state()
 
-    def set_snap_revert_visible(self, visible: bool) -> None:
-        """Mantido por compatibilidade: a TUI não oferece Revert."""
-
     def set_user_rating(self, stars: int | None) -> None:
+        """Set the rating already submitted by the user."""
         self._user_rating = stars
         self._rated = stars is not None
         self._refresh_rating()
 
     def set_translated_blocks(self, blocks: Any) -> None:
-        """Host chama com a tradução pronta (ou None em caso de falha)."""
+        """Receive the translation result from the host.
+
+        Re-enables the translate button. On success the translated
+        description is stored and shown. On failure (None) the original
+        text stays and the button tooltip reports the error.
+
+        Args:
+            blocks: Translated str or blocks, or None on failure.
+
+        Raises:
+            NoMatches: If the page has no translate button.
+        """
         btn = self.query_one("#app-translate", Button)
         btn.disabled = False
         btn.label = "文/A"
@@ -864,7 +1105,6 @@ class AppPageWidget(Vertical):
         self._translated_blocks = blocks
         self._show_description(translated=True)
 
-    # ---- internos --------------------------------------------------------- #
     def _show_description(self, *, translated: bool) -> None:
         blocks = self._translated_blocks if translated else self._blocks
         self.query_one("#app-description-text", Static).update(
@@ -881,7 +1121,11 @@ class AppPageWidget(Vertical):
         self.call_after_refresh(self._schedule_featured)
 
     def _rating_supported(self) -> bool:
-        """GUI: avaliação só para entradas AppStream e nunca em Homebrew."""
+        """Return True if the app can be rated.
+
+        Same rule as the GUI: only AppStream entries, and never the
+        Homebrew source.
+        """
         return bool(
             self.script_info.get("is_appstream_entry")
             and self._selected.get("appstream_source") != "homebrew"
@@ -1056,6 +1300,11 @@ class AppPageWidget(Vertical):
 
     @work(group="rating-submit")
     async def _submit_rating_worker(self, stars: int, snap: bool) -> None:
+        """Send the rating off the event loop and report the result.
+
+        Worker. Shows a success notification or an error notification
+        with the backend detail, then reloads the rating state.
+        """
         success, error = await asyncio.to_thread(
             self._send_rating, stars, snap
         )
@@ -1089,6 +1338,10 @@ class AppPageWidget(Vertical):
         self._refresh_rating()
 
     def _schedule_featured(self) -> None:
+        """Schedule a featured grid layout (debounced, 0.12 s).
+
+        Does nothing without candidates or before the page is mounted.
+        """
         if not self._featured or not self.is_mounted:
             return
         if self._featured_timer is not None:
@@ -1096,6 +1349,7 @@ class AppPageWidget(Vertical):
         self._featured_timer = self.set_timer(0.12, self._refresh_featured)
 
     def _refresh_featured(self) -> None:
+        """Lay out the "Try These" grid in the free vertical space."""
         self._featured_timer = None
         try:
             box = self.query_one("#app-featured")
@@ -1141,12 +1395,12 @@ class AppPageWidget(Vertical):
             )
         box.display = True
 
-    # ---- handlers --------------------------------------------------------- #
     def action_back(self) -> None:
         self.post_message(self.BackRequested())
 
     @on(FeaturedCard.Selected)
     def _featured_selected(self, event: FeaturedCard.Selected) -> None:
+        """Re-post a card selection as ``FeaturedSelected``."""
         event.stop()
         self.post_message(self.FeaturedSelected(event.script_info))
 
@@ -1207,9 +1461,6 @@ class AppPageWidget(Vertical):
         button.disabled = False
         button.label = "🗑 " + self._t("app_page_remove", "Remover").strip()
 
-    def reset_revert_button(self) -> None:
-        """Mantido por compatibilidade: a TUI não oferece Revert."""
-
     def _on_translate_pressed(self, button: Button) -> None:
         if self._showing_translation:
             self._show_description(translated=False)
@@ -1249,9 +1500,6 @@ class AppPageWidget(Vertical):
             self.post_message(self.UrlRequested(url))
 
 
-# --------------------------------------------------------------------------- #
-# Troca de painel na homepage (mesmo padrão do _toggle_about_panel)
-# --------------------------------------------------------------------------- #
 async def show_app_page(
     host: Widget,
     script_info: Mapping[str, Any],
@@ -1263,14 +1511,12 @@ async def show_app_page(
     """Esconde logo/menu/terminal do #menu-panel e monta a app page no lugar."""
     panel = host.query_one(MENU_PANEL)
 
-    # Fecha o painel "Sobre" e o terminal, se abertos (igual ao _toggle_about_panel)
     about_open = getattr(host, "_is_about_showing", False)
     if about_open and hasattr(host, "_toggle_about_panel"):
         host._toggle_about_panel(force_hide=True)
     if host.query_one(TERMINAL).display and hasattr(host, "_hide_terminal"):
         host._hide_terminal()
 
-    # Título original da borda (preservado de uma página anterior, se houver)
     previous_title = "Menu" if about_open else panel.border_title
     for old in list(host.query(AppPageWidget)):
         previous_title = old._previous_border_title

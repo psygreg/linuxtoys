@@ -14,8 +14,7 @@ SKILLS_SH_URL = "https://skills.sh"
 LIST_TIMEOUT = 30
 INSTALL_TIMEOUT = 120
 REMOVE_TIMEOUT = 60
-
-# (diretório de configuração, id do agente usado pelo `npx skills -a`)
+# (config directory parts under $HOME, agent id used by ``npx skills -a``)
 _AGENT_DIRS: tuple[tuple[tuple[str, ...], str], ...] = (
     ((".claude",), "claude-code"),
     ((".codex",), "codex"),
@@ -52,27 +51,39 @@ _MOCK_INSTALLED = [
 ]
 
 
-# --- Erros de domínio (a UI traduz para mensagens) ---------------------------
-
-
 class SkillsError(Exception):
-    """Base de todos os erros do domínio de skills."""
+    """Base class for all errors of the skills domain."""
 
 
 class NpxNotFoundError(SkillsError):
-    """`npx` (Node.js) não está disponível no PATH."""
+    """Raised when ``npx`` (Node.js) is not available in ``PATH``."""
 
 
 class MissingSourceError(SkillsError):
-    """A skill não possui `source`/`skillId` suficientes para a operação."""
+    """Raised when a skill lacks the data an operation needs.
+
+    That means no ``source`` or skill id for an install, or no
+    ``name`` for a removal.
+    """
 
 
 class CommandError(SkillsError):
-    """Um comando npx falhou; `str(e)` contém a mensagem bruta."""
+    """Raised when an npx command fails; ``str(e)`` is the raw message."""
 
 
 @dataclass(frozen=True)
 class OpResult:
+    """Immutable result of an npx operation.
+
+    Attributes:
+        ok: True if the command succeeded (for removals, if every
+            command succeeded).
+        stdout: Captured standard output, stripped.
+        stderr: Captured standard error, stripped, or the joined error
+            messages.
+        timed_out: True if the command hit its timeout.
+    """
+
     ok: bool
     stdout: str = ""
     stderr: str = ""
@@ -83,15 +94,29 @@ class OpResult:
         return self.stdout or self.stderr
 
 
-# --- Utilidades --------------------------------------------------------------
-
-
 def is_dev_mode() -> bool:
     return os.environ.get("DEV_MODE") == "1"
 
 
 def format_installs(count) -> str:
-    """1200 -> '1.2K', 3_500_000 -> '3.5M'."""
+    """Format an install count with a K or M suffix.
+
+    Examples:
+        >>> format_installs(1200)
+        '1.2K'
+        >>> format_installs(3_500_000)
+        '3.5M'
+        >>> format_installs("abc")
+        '0'
+
+    Args:
+        count: Number of installs. A value that cannot be converted
+            to ``int`` is treated as zero.
+
+    Returns:
+        The formatted text. Values below one thousand are returned
+        unchanged.
+    """
     try:
         count = int(count)
     except (TypeError, ValueError):
@@ -104,7 +129,15 @@ def format_installs(count) -> str:
 
 
 def detect_agents() -> list[str]:
-    """Agentes de IA detectados pela presença do diretório de configuração."""
+    """Return the AI agents found on this system.
+
+    An agent is detected when its configuration directory exists in
+    the home directory (see ``_AGENT_DIRS``).
+
+    Returns:
+        Agent ids accepted by ``npx skills -a``, in the order of
+        ``_AGENT_DIRS``.
+    """
     home = os.path.expanduser("~")
     return [
         agent
@@ -126,7 +159,17 @@ def skill_url(skill: dict) -> str | None:
 
 
 def open_skill_url(skill: dict) -> bool:
-    """Abre a página da skill no navegador. False se não der para montar a URL."""
+    """Open the skill page in the default browser (``xdg-open``).
+
+    Does not wait for the browser and discards its output.
+
+    Args:
+        skill: Skill dict.
+
+    Returns:
+        True if the browser was launched. False if the URL cannot be
+        built or ``xdg-open`` cannot be started.
+    """
     url = skill_url(skill)
     if not url:
         return False
@@ -141,10 +184,16 @@ def open_skill_url(skill: dict) -> bool:
     return True
 
 
-# --- Catálogo (skills.sh) ----------------------------------------------------
-
-
 def _normalize(raw: dict) -> dict:
+    """Keep only the fields the TUI uses, with safe defaults.
+
+    Args:
+        raw: Skill dict returned by ``app.skills_fetcher``.
+
+    Returns:
+        Dict with ``id``, ``skillId``, ``name``, ``installs`` (0 by
+        default) and ``source``.
+    """
     return {
         "id": raw.get("id", ""),
         "skillId": raw.get("skillId", ""),
@@ -164,10 +213,22 @@ def search(query: str, limit: int = 20) -> list[dict]:
     ]
 
 
-# --- npx ---------------------------------------------------------------------
-
-
 def _run_npx(args: tuple[str, ...], timeout: int) -> OpResult:
+    """Run ``npx`` with ``args`` and capture its output.
+
+    BLOCKING: call from a worker thread.
+
+    Args:
+        args: Arguments for ``npx`` (e.g. ``("skills", "list")``).
+        timeout: Maximum run time in seconds.
+
+    Returns:
+        An ``OpResult``. ``ok`` is True on exit code 0. A timeout sets
+        ``timed_out``. An ``OSError`` puts its message in ``stderr``.
+
+    Raises:
+        NpxNotFoundError: If ``npx`` is not in ``PATH``.
+    """
     npx = find_npx()
     if not npx:
         raise NpxNotFoundError
@@ -187,6 +248,23 @@ def _run_npx(args: tuple[str, ...], timeout: int) -> OpResult:
 
 
 def install_skill(skill: dict, agent: str) -> OpResult:
+    """Install a skill globally for one agent (``npx skills add``).
+
+    Runs non-interactively (``-y``) with the global flag (``-g``) and
+    the ``INSTALL_TIMEOUT`` limit. BLOCKING: call from a worker
+    thread.
+
+    Args:
+        skill: Skill dict with ``source`` and ``skillId`` (or ``id``).
+        agent: Agent id from ``detect_agents`` (value of ``-a``).
+
+    Returns:
+        The operation result.
+
+    Raises:
+        MissingSourceError: If the skill has no source or id.
+        NpxNotFoundError: If ``npx`` is not available.
+    """
     source = skill.get("source", "")
     slug = skill.get("skillId") or skill.get("id", "")
     if not source or not slug:
@@ -198,6 +276,20 @@ def install_skill(skill: dict, agent: str) -> OpResult:
 
 
 def list_installed() -> list[dict]:
+    """List the globally installed skills (``npx skills list``).
+
+    In developer mode it returns sample data instead of running npx.
+    BLOCKING: call from a worker thread.
+
+    Returns:
+        Skill dicts; the code relies on ``name`` and ``agents``.
+        Empty if the output is empty or is not a JSON list.
+
+    Raises:
+        NpxNotFoundError: If ``npx`` is not available.
+        CommandError: If the command fails or times out, or its output
+            is not valid JSON.
+    """
     if is_dev_mode():
         return list(_MOCK_INSTALLED)
     res = _run_npx(("skills", "list", "--json", "-g"), LIST_TIMEOUT)
@@ -211,14 +303,31 @@ def list_installed() -> list[dict]:
 
 
 def remove_skill(skill: dict) -> OpResult:
-    """Remove a skill de cada agente vinculado (ou globalmente, se não houver)."""
+    """Remove a skill from every agent it is linked to.
+
+    Runs ``npx skills remove`` once per agent in ``skill["agents"]``,
+    or once without ``-a`` if the skill has no agents. Agent names are
+    converted to ids on a best-effort basis (lowercase, spaces to
+    hyphens), the same mapping the GUI uses. A failing command does
+    not stop the others. BLOCKING: call from a worker thread.
+
+    Args:
+        skill: Skill dict with ``name`` and, optionally, ``agents``.
+
+    Returns:
+        ``OpResult`` whose ``ok`` is True only if every command
+        succeeded. ``stderr`` joins the errors of the failed ones.
+
+    Raises:
+        MissingSourceError: If the skill has no name.
+        NpxNotFoundError: If ``npx`` is not available.
+    """
     name = skill.get("name", "")
     agents = skill.get("agents", [])
     if not name:
         raise MissingSourceError
 
     if agents:
-        # Mesmo mapeamento "best effort" da GUI: nome de exibição -> id.
         commands = [
             (
                 "skills",
