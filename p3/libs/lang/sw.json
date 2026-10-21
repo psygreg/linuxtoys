@@ -733,5 +733,7 @@
   "sidebar_expand": "Panua",
   "sidebar_collapse": "Kunja",
   "sidebar_toggle": "Badilisha upau wa pembeni wa kategoria",
-  "main_menu": "Menyu kuu"
+  "main_menu": "Menyu kuu",
+  "package_manager_busy_title": "Kidhibiti vifurushi kinashughulika",
+  "package_manager_busy_message": "Operesheni nyingine ya vifurushi inaendelea tayari. Kidhibiti vifurushi hakitumii operesheni sambamba. Tafadhali subiri mchakato unaoendelea ukamilike kabla ya kujaribu operesheni za aina hiyo na LinuxToys."
 }

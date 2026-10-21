@@ -735,5 +735,7 @@
   "sidebar_expand": "Palawakin",
   "sidebar_collapse": "I-tipon",
   "sidebar_toggle": "I-toggle ang sidebar ng kategorya",
-  "main_menu": "Pangunahing menu"
+  "main_menu": "Pangunahing menu",
+  "package_manager_busy_title": "Abala ang package manager",
+  "package_manager_busy_message": "May isa pang pagpapakete na operasyon na kasalukuyang tumatakbo. Hindi sumusuporta ang mga package manager sa sabay-sabay na operasyon. Mangyaring maghintay na matapos ang kasalukuyang proseso bago sumubok ng anumang ganoong operasyon kasama ang LinuxToys."
 }

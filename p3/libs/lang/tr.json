@@ -735,5 +735,7 @@
   "sidebar_expand": "Genişlet",
   "sidebar_collapse": "Daralt",
   "sidebar_toggle": "Kategori kenar çubuğunu aç/kapat",
-  "main_menu": "Ana menü"
+  "main_menu": "Ana menü",
+  "package_manager_busy_title": "Paket yöneticisi meşgul",
+  "package_manager_busy_message": "Başka bir paket işlemi zaten çalışıyor. Paket yöneticileri paralel işlemleri desteklemez. LinuxToys ile bu tür işlemleri denemeden önce lütfen süren işlemin bitmesini bekleyin."
 }

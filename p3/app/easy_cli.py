@@ -18,6 +18,7 @@ from .library_loader import script_command, script_preamble
 from .dev_mode import is_dev_mode_enabled
 from .compat import get_system_compat_keys, get_linuxtoys_cache_dir
 from . import installed_packages
+from . import package_guard
 from .revert_helper import build_auto_revert_script_entry, build_uninstall_script_entry
 from .repo_parser import materialize_repo_script
 
@@ -219,7 +220,16 @@ def _try_execute_auto_revert(script_info, transmap_path):
         revert_script_path = auto_revert_entry.get("path")
         if not revert_script_path:
             return False
-        
+
+        # The revert reaches native managers through pkg_install/pkg_remove.
+        # Refuse while another package operation holds them; keeping the
+        # transmap lets the user report or revert manually afterwards.
+        if package_guard.native_transaction_conflict(
+            revert_script_path, resolve_script_dir()
+        ) is not None:
+            print(f"\n✗ {package_guard.busy_texts()[1]}")
+            return False
+
         print("\n⚠️  Script failed. Attempting automatic reversion...")
         print("=" * 60)
         
@@ -504,6 +514,15 @@ def _run_uninstall_entry(script_info, translations):
 
     uninstall_path = uninstall_entry.get("path")
     cleanup_path = uninstall_entry.get("cleanup_path")
+
+    # Uninstalls reach native managers through pkg_remove/pkg_install (or
+    # reinstall during reversion); refuse while another package operation
+    # is holding them.
+    if package_guard.native_transaction_conflict(
+        uninstall_path, resolve_script_dir()
+    ) is not None:
+        print(f"✗ {package_guard.busy_texts()[1]}")
+        return 1
 
     try:
         result = subprocess.run(

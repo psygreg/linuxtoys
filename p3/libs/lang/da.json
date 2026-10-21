@@ -735,5 +735,7 @@
   "sidebar_expand": "Udvid",
   "sidebar_collapse": "Sammenfold",
   "sidebar_toggle": "Skift kategorisidebjælke",
-  "main_menu": "Hovedmenu"
+  "main_menu": "Hovedmenu",
+  "package_manager_busy_title": "Pakkehåndteringen er optaget",
+  "package_manager_busy_message": "En anden pakkehandling kører allerede. Pakkehåndteringer understøtter ikke parallelle handlinger. Vent på, at den igangværende proces fuldføres, før du prøver sådanne handlinger med LinuxToys."
 }

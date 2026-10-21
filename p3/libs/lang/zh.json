@@ -737,5 +737,7 @@
   "sidebar_expand": "展开",
   "sidebar_collapse": "折叠",
   "sidebar_toggle": "切换分类侧边栏",
-  "main_menu": "主菜单"
+  "main_menu": "主菜单",
+  "package_manager_busy_title": "软件包管理器正忙",
+  "package_manager_busy_message": "已有另一个软件包操作正在运行。软件包管理器不支持并行操作。请等待正在进行的进程完成，然后再使用 LinuxToys 尝试此类操作。"
 }

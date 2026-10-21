@@ -735,5 +735,7 @@
   "sidebar_expand": "Rozwiń",
   "sidebar_collapse": "Zwiń",
   "sidebar_toggle": "Przełącz panel boczny kategorii",
-  "main_menu": "Menu główne"
+  "main_menu": "Menu główne",
+  "package_manager_busy_title": "Menedżer pakietów jest zajęty",
+  "package_manager_busy_message": "Trwa już inna operacja na pakietach. Menedżery pakietów nie obsługują operacji równoległych. Poczekaj na zakończenie trwającego procesu, zanim spróbujesz wykonać takie operacje z LinuxToys."
 }

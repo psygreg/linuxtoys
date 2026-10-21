@@ -735,5 +735,7 @@
   "sidebar_expand": "Izvērst",
   "sidebar_collapse": "Sakļaut",
   "sidebar_toggle": "Pārslēgt kategoriju sānu joslu",
-  "main_menu": "Galvenā izvēlne"
+  "main_menu": "Galvenā izvēlne",
+  "package_manager_busy_title": "Paku pārvaldnieks ir aizņemts",
+  "package_manager_busy_message": "Cita paku darbība jau notiek. Paku pārvaldnieki neatbalsta paralēlas darbības. Lūdzu, pagaidiet, līdz notiekošais proces beidzas, pirms mēģināt veikt šādas darbības ar LinuxToys."
 }

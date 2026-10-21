@@ -735,5 +735,7 @@
   "sidebar_expand": "Uitklappen",
   "sidebar_collapse": "Inklappen",
   "sidebar_toggle": "Categoriezijbalk in- of uitschakelen",
-  "main_menu": "Hoofdmenu"
+  "main_menu": "Hoofdmenu",
+  "package_manager_busy_title": "Pakketbeheer is bezig",
+  "package_manager_busy_message": "Er wordt al een andere pakketbewerking uitgevoerd. Pakketbeheerders ondersteunen geen parallelle bewerkingen. Wacht tot het lopende proces is afgerond voordat je dergelijke bewerkingen met LinuxToys probeert."
 }

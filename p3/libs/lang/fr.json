@@ -735,5 +735,7 @@
   "sidebar_expand": "Déplier",
   "sidebar_collapse": "Replier",
   "sidebar_toggle": "Afficher ou masquer le panneau des catégories",
-  "main_menu": "Menu principal"
+  "main_menu": "Menu principal",
+  "package_manager_busy_title": "Gestionnaire de paquets occupé",
+  "package_manager_busy_message": "Une autre opération sur les paquets est déjà en cours. Les gestionnaires de paquets ne prennent pas en charge les opérations en parallèle. Attendez la fin du processus en cours avant d'essayer de telles opérations avec LinuxToys."
 }

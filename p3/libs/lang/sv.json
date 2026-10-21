@@ -735,5 +735,7 @@
   "sidebar_expand": "Fäll ut",
   "sidebar_collapse": "Fäll ihop",
   "sidebar_toggle": "Växla kategorisidopanelen",
-  "main_menu": "Huvudmeny"
+  "main_menu": "Huvudmeny",
+  "package_manager_busy_title": "Pakethanteraren är upptagen",
+  "package_manager_busy_message": "En annan paketåtgärd pågår redan. Pakethanterare stöder inte parallella åtgärder. Vänta tills den pågående processen är klar innan du försöker utföra sådana åtgärder med LinuxToys."
 }

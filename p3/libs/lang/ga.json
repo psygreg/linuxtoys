@@ -735,5 +735,7 @@
   "sidebar_expand": "Leathnaigh",
   "sidebar_collapse": "Fill",
   "sidebar_toggle": "Scoránraigh an barra taoibh catagóirí",
-  "main_menu": "Príomh-roghchlár"
+  "main_menu": "Príomh-roghchlár",
+  "package_manager_busy_title": "Bainisteoir pacáistí gnóthach",
+  "package_manager_busy_message": "Tá oibríocht phacáistí eile ar siúl cheana. Ní thacaíonn bainisteoirí pacáistí le hoibríochtaí comhuaineach. Fan go dtí go mbeidh an próiseas atá ar siúl críochnaithe sula ndéanfaidh tú iarracht oibríochtaí den chineál sin a dhéanamh le LinuxToys."
 }

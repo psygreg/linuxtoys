@@ -735,5 +735,7 @@
   "sidebar_expand": "펼치기",
   "sidebar_collapse": "접기",
   "sidebar_toggle": "카테고리 사이드바 전환",
-  "main_menu": "메인 메뉴"
+  "main_menu": "메인 메뉴",
+  "package_manager_busy_title": "패키지 관리자 사용 중",
+  "package_manager_busy_message": "다른 패키지 작업이 이미 실행 중입니다. 패키지 관리자는 병렬 작업을 지원하지 않습니다. LinuxToys에서 이런 작업을 시도하기 전에 진행 중인 프로세스가 끝날 때까지 기다려 주세요."
 }

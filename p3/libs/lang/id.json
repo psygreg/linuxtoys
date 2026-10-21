@@ -735,5 +735,7 @@
   "sidebar_expand": "Bentangkan",
   "sidebar_collapse": "Lipatkan",
   "sidebar_toggle": "Alih bilah samping kategori",
-  "main_menu": "Menu utama"
+  "main_menu": "Menu utama",
+  "package_manager_busy_title": "Manajer paket sedang sibuk",
+  "package_manager_busy_message": "Operasi paket lain sudah berjalan. Manajer paket tidak mendukung operasi paralel. Mohon tunggu proses yang sedang berjalan selesai sebelum mencoba operasi semacam itu dengan LinuxToys."
 }

@@ -735,5 +735,7 @@
   "sidebar_expand": "Stækka",
   "sidebar_collapse": "Fella saman",
   "sidebar_toggle": "Víxla hliðarstiku flokka",
-  "main_menu": "Aðalvalmynd"
+  "main_menu": "Aðalvalmynd",
+  "package_manager_busy_title": "Pakkastjórinn er upptekinn",
+  "package_manager_busy_message": "Önnur pakkaaðgerð er þegar í gangi. Pakkastjórar styðja ekki samhliðaaðgerðir. Bíddu eftir að núverandi ferli lýkur áður en þú reynir slíkar aðgerðir með LinuxToys."
 }

@@ -735,5 +735,7 @@
   "sidebar_expand": "展開",
   "sidebar_collapse": "折りたたむ",
   "sidebar_toggle": "カテゴリーサイドバーの切り替え",
-  "main_menu": "メインメニュー"
+  "main_menu": "メインメニュー",
+  "package_manager_busy_title": "パッケージマネージャーが使用中です",
+  "package_manager_busy_message": "別のパッケージ操作がすでに実行中です。パッケージマネージャーは並行操作をサポートしていません。LinuxToys でこのような操作を試す前に、実行中のプロセスが完了するまでお待ちください。"
 }

@@ -735,5 +735,7 @@
   "sidebar_expand": "Expand",
   "sidebar_collapse": "Collapse",
   "sidebar_toggle": "Toggle category sidebar",
-  "main_menu": "Main Menu"
+  "main_menu": "Main Menu",
+  "package_manager_busy_title": "Package manager busy",
+  "package_manager_busy_message": "Another package operation is already running. Package managers don't support operations in parallel. Please wait for the ongoing process to finish before attempting any such operations with LinuxToys."
 }

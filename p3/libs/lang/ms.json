@@ -735,5 +735,7 @@
   "sidebar_expand": "Kembangkan",
   "sidebar_collapse": "Lipat",
   "sidebar_toggle": "Tukar bar sisi kategori",
-  "main_menu": "Menu utama"
+  "main_menu": "Menu utama",
+  "package_manager_busy_title": "Pengurus pakej sibuk",
+  "package_manager_busy_message": "Operasi pakej lain sedang dijalankan. Pengurus pakej tidak menyokong operasi selari. Sila tunggu proses yang sedang dijalankan selesai sebelum mencuba sebarang operasi sedemikian dengan LinuxToys."
 }

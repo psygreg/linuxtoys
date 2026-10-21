@@ -735,5 +735,7 @@
   "sidebar_expand": "Rozbalit",
   "sidebar_collapse": "Sbalit",
   "sidebar_toggle": "Přepnout postranní panel kategorií",
-  "main_menu": "Hlavní nabídka"
+  "main_menu": "Hlavní nabídka",
+  "package_manager_busy_title": "Správce balíčků je zaneprázdněný",
+  "package_manager_busy_message": "Již probíhá jiná operace s balíčky. Správci balíčků nepodporují paralelní operace. Počkejte na dokončení probíhajícího procesu, než zkusíte takové operace s LinuxToys."
 }

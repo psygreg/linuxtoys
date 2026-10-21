@@ -735,5 +735,7 @@
   "sidebar_expand": "Utvid",
   "sidebar_collapse": "Slå sammen",
   "sidebar_toggle": "Vis eller skjul kategorisidelinjen",
-  "main_menu": "Hovedmeny"
+  "main_menu": "Hovedmeny",
+  "package_manager_busy_title": "Pakkebehandleren er opptatt",
+  "package_manager_busy_message": "En annen pakkehandling kjører allerede. Pakkebehandlere støtter ikke parallelle handlinger. Vent til den pågående prosessen er ferdig før du prøver slike handlinger med LinuxToys."
 }

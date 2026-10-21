@@ -735,5 +735,7 @@
   "sidebar_expand": "Razširi",
   "sidebar_collapse": "Strni",
   "sidebar_toggle": "Preklopi stransko vrstico kategorij",
-  "main_menu": "Glavni meni"
+  "main_menu": "Glavni meni",
+  "package_manager_busy_title": "Upravitelj paketov je zaposlen",
+  "package_manager_busy_message": "Druga operacija s paketi se že izvaja. Upravitelji paketov ne podpirajo vzporednih operacij. Počakajte, da se trenutni proces zaključi, preden poskusite take operacije z LinuxToys."
 }

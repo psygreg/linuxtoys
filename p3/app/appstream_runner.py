@@ -16,7 +16,7 @@ import urllib.request
 import threading
 import uuid
 
-from . import homebrew_catalog, appimage_catalog
+from . import homebrew_catalog, appimage_catalog, package_guard
 from .antenna import antenna
 from .gtk_common import GLib
 from .library_loader import script_command, script_environment
@@ -26,6 +26,11 @@ from .term_registry import ExecutionRegistry
 
 class AppStreamRunner:
     """Serialize AppStream jobs through one session-lifetime PTY."""
+
+    # Exit code for jobs refused because another package-manager process is
+    # already running (see _native_transaction_conflict). Distinct from 0, 100
+    # and the AUR security codes so callers can tell a refusal from a failure.
+    _NATIVE_TRANSACTION_BUSY_EXIT = 90
 
     # PTY captures contain terminal protocol that VTE normally consumes rather
     # than displays. Keep failure dialogs textual without changing the terminal
@@ -480,6 +485,46 @@ class AppStreamRunner:
         self._process.stdin.write(b"set +o history\n")
         self._process.stdin.flush()
 
+    def _native_transaction_conflict(self, record):
+        """Return a running native package-manager process name when dispatching
+        this queued record would enter a native package transaction, else None."""
+        action = record.get("action")
+        info = record.get("info") or {}
+
+        if action == "apt_refresh":
+            # sudo_ apt-get update serializes through the same apt locks as
+            # any installation.
+            return package_guard.busy_native_manager_process()
+        if action == "snap_revert" or action == "extension_remove" \
+                or info.get("is_flatpak_extension"):
+            # Flatpak and Snap transactions queue inside their own daemons.
+            return None
+
+        source = str(info.get("appstream_source") or "")
+        if info.get("is_local_package") or source in ("aur", "appimage", "native"):
+            # pkg_fromfile/pkg_appimage internals and the generated AUR and
+            # native-install scripts reach the native managers directly.
+            return package_guard.busy_native_manager_process()
+
+        for dependency in info.get("appstream_dependencies") or []:
+            if isinstance(dependency, dict) \
+                    and str(dependency.get("type") or "") == "native":
+                return package_guard.busy_native_manager_process()
+
+        # Inspect the actual script when it exists: flatpak/snap installs and
+        # generated removals never touch native managers unless their body
+        # says so (reviewed pre/post overlays included).
+        script_path = None
+        if action == "remove":
+            script_path = (record.get("remove_info") or {}).get("path")
+        if not script_path:
+            script_path = info.get("path")
+        if script_path and os.path.isfile(script_path):
+            return package_guard.native_transaction_conflict(
+                script_path, os.environ.get("SCRIPT_DIR", "")
+            )
+        return None
+
     def _worker(self):
         while not self._stopping.is_set():
             with self._condition:
@@ -508,7 +553,13 @@ class AppStreamRunner:
                 # installation registry/transmap behavior.
                 aur_job = str(record["info"].get("appstream_source", "") or "") == "aur"
                 failure_output = ""
-                if record.get("action") == "remove" and aur_job:
+                # Refuse to dispatch this record into a native package
+                # transaction while another package-manager process is already
+                # running: the collision would fail the job opaquely mid-run.
+                native_conflict = self._native_transaction_conflict(record)
+                if native_conflict is not None:
+                    exit_code = self._NATIVE_TRANSACTION_BUSY_EXIT
+                elif record.get("action") == "remove" and aur_job:
                     exit_code, failure_output = self._run_aur_removal_job(record["remove_info"])
                 elif record.get("action") == "remove":
                     exit_code = self._run_removal_job(record["remove_info"])
@@ -542,7 +593,11 @@ class AppStreamRunner:
                             pass
                     else:
                         record["status"] = "success" if exit_code == 0 else "failed"
-                if aur_job and exit_code == self._AUR_SECURITY_BLOCKED:
+                if native_conflict is not None:
+                    callback = getattr(self.parent, "_show_package_manager_busy", None)
+                    if callback is not None:
+                        GLib.idle_add(callback)
+                elif aur_job and exit_code == self._AUR_SECURITY_BLOCKED:
                     callback = getattr(self.parent, "_show_aur_security_blocked", None)
                     if callback is not None:
                         GLib.idle_add(
