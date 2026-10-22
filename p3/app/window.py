@@ -23,6 +23,7 @@ from . import (
     dev_mode,
     file_watcher,
     get_icon_path,
+    gregos_helper,
     head_menu,
     header,
     manifest_helper,
@@ -561,6 +562,7 @@ class AppWindow(
         GLib.idle_add(self._start_file_watcher)
         GLib.idle_add(self._check_deepin_immutability_on_startup)
         GLib.idle_add(self._start_startup_recommendation_check)
+        GLib.idle_add(self._start_gregos_setup_check)
 
 
 
@@ -2424,6 +2426,29 @@ class AppWindow(
                 self.reboot_required = True
         except Exception as e:
             logger.error(f"Error checking Deepin immutability: {e}")
+        return False  # Remove from idle callbacks
+
+    def _start_gregos_setup_check(self):
+        """Run the GregOS post-install setup once per configured version.
+
+        Silent background pass: on a booted GregOS image whose recorded setup
+        version is stale or missing, gregos.bash runs unattended (authenticating
+        via the normal askpass/sudo path) and the marker is updated on success.
+        """
+        if dev_mode.is_dev_mode_enabled():
+            return False
+
+        def worker():
+            try:
+                gregos_helper.run_setup_if_needed()
+            except Exception as e:
+                logger.warning("GregOS setup check failed: %s", e)
+
+        threading.Thread(
+            target=worker,
+            daemon=True,
+            name="linuxtoys-gregos-setup",
+        ).start()
         return False  # Remove from idle callbacks
 
     def _set_window_icon(self):

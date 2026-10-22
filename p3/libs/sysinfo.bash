@@ -21,6 +21,33 @@ is_ublue() {
     [[ "${variant,,}" != *dakota* && ! "$ID_LIKE" =~ (^|[[:space:]])gnomeos([[:space:]]|$) ]] || return 1
     [ -f /run/ostree-booted ] && command -v rpm-ostree &>/dev/null
 }
+# GregOS: a custom Bazzite-based image. The booted container image reference is
+# the source of truth (not /etc/os-release). Strips ostree transport prefixes
+# and any ':tag' / '@sha256:' suffix, then matches the bare image name exactly so
+# lookalikes (gregos-tweaks, other/gregos) do not match. Mirrors compat.is_gregos().
+GREGOS_IMAGE_REF="ghcr.io/psygreg/gregos"
+is_gregos() {
+    [ -f /run/ostree-booted ] && command -v rpm-ostree &>/dev/null || return 1
+    local ref core head name
+    ref=$(rpm-ostree status --json 2>/dev/null |
+        python3 -c 'import json,sys
+try:
+    d=json.load(sys.stdin)
+    for x in d.get("deployments",[]) or []:
+        if x.get("booted"):
+            print(x.get("container-image-reference") or "")
+            break
+except Exception:
+    pass' 2>/dev/null) || return 1
+    [ -n "$ref" ] || return 1
+
+    core="${ref##*://}"
+    head="${core%%/*}"
+    [[ "$core" == */* && "$head" == *:* ]] && core="${core#*:}"
+    name="${core%%@*}"
+    [[ "${name##*/}" == *:* ]] && name="${name%:*}"
+    [[ "$name" == "$GREGOS_IMAGE_REF" ]]
+}
 is_debian() { sysdetect_once && [[ ("$ID" == "debian" || "$ID" == "deepin" || "$ID_LIKE" =~ "debian") && ! ("$ID" == "ubuntu" || "$ID_LIKE" =~ "ubuntu") ]]; }
 is_ubuntu() { sysdetect_once && [[ "$ID" == "ubuntu" || "$ID_LIKE" =~ "ubuntu" ]]; }
 is_suse() {

@@ -238,6 +238,75 @@ def is_wsl():
     """Return True when Linux is running under WSL, probing the host once."""
     return bool(_cached_host_value("wsl", _detect_wsl))
 
+
+# OCI image reference for the custom GregOS image. A booted host matches when
+# its rpm-ostree container image reference resolves to this exact image name.
+GREGOS_IMAGE_REF = "ghcr.io/psygreg/gregos"
+
+
+def _normalize_image_name(image_ref):
+    """Reduce an OCI/ostree image reference to its bare ``host/path`` name.
+
+    Strips transport prefixes (``ostree-unverified-registry:``, ``docker://``,
+    ...), any ``:tag`` on the final path component, and any ``@sha256:...``
+    digest, so ``ghcr.io/psygreg/gregos:latest`` and
+    ``ostree-unverified-registry:ghcr.io/psygreg/gregos`` both normalize to
+    ``ghcr.io/psygreg/gregos``. Lookalikes such as ``ghcr.io/psygreg/gregos-tweaks``
+    or ``ghcr.io/other/gregos`` are preserved and do not match.
+    """
+    if not image_ref:
+        return ""
+    core = image_ref.split("://", 1)[-1]
+    head, separator, _ = core.partition("/")
+    if separator and ":" in head:
+        # Drop an opaque transport scheme ahead of the registry host.
+        core = core.split(":", 1)[1]
+    core = core.split("@", 1)[0]
+    # A tag may only appear on the final path component and never contains '/'.
+    if ":" in core.rsplit("/", 1)[-1]:
+        core = core.rsplit(":", 1)[0]
+    return core.strip()
+
+
+def _detect_booted_image_ref():
+    """Return the currently booted rpm-ostree container image reference."""
+    import json
+    import subprocess
+
+    try:
+        result = subprocess.run(
+            ["rpm-ostree", "status", "--json"],
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=15,
+        )
+        data = json.loads(result.stdout)
+    except Exception:
+        return ""
+
+    for deployment in data.get("deployments", ()) or ():
+        if deployment.get("booted"):
+            return str(deployment.get("container-image-reference") or "")
+    return ""
+
+
+def get_booted_image_ref():
+    """Return the booted container image reference, probed once per process."""
+    return str(_cached_host_value("booted_image_ref", _detect_booted_image_ref) or "")
+
+
+def is_gregos_image(image_ref=None):
+    """Return True when an image reference resolves to the GregOS image."""
+    if image_ref is None:
+        image_ref = get_booted_image_ref()
+    return _normalize_image_name(image_ref) == GREGOS_IMAGE_REF
+
+
+def is_gregos():
+    """Return True when the currently booted image is the GregOS image."""
+    return bool(_cached_host_value("gregos", is_gregos_image))
+
 def _is_supported_debian_release():
     """
     Check if the host runs a supported Debian release (trixie or newer).
@@ -281,7 +350,7 @@ def is_supported_system():
     Check if the current system is supported by LinuxToys.
 
     A system is considered supported if it matches at least one of the
-    supported OS compatibility keys (debian, ubuntu, cachy, arch, fedora, rhel, suse, ostree, ublue).
+    supported OS compatibility keys (debian, ubuntu, cachy, arch, fedora, rhel, suse, ostree, ublue, gregos).
 
     In developer mode:
     - If COMPAT is set to simulate a specific system, that system's compatibility is checked
@@ -353,6 +422,7 @@ def is_supported_system():
         "suse",
         "ostree",
         "ublue",
+        "gregos",
         "zorin",
         "solus",
         "pika",
@@ -373,7 +443,7 @@ def get_system_compat_keys():
 
     Returns:
         set: Set of compatibility keys for the current system
-               (OS keys: debian, ubuntu, cachy, arch, fedora, rhel, suse, ostree, ublue;
+               (OS keys: debian, ubuntu, cachy, arch, fedora, rhel, suse, ostree, ublue, gregos;
               GPU keys: gpu, gpu-amd, gpu-intel, gpu-nvidia;
               Desktop keys: desktop, desktop-gnome, desktop-plasma, desktop-hyprland, desktop-sway, desktop-other;
               Init keys: systemd;
@@ -387,7 +457,7 @@ def get_system_compat_keys():
             keys = set(get_effective_compat_keys())
             if keys.intersection({"dakota", "gnomeos", "kde-linux"}):
                 keys.difference_update({"arch", "cachy", "manjaro", "debian", "ubuntu",
-                                        "fedora", "rhel", "suse", "solus", "ostree", "ublue"})
+                                        "fedora", "rhel", "suse", "solus", "ostree", "ublue", "gregos"})
                 keys.add("steamos")
             return keys
     except ImportError:
@@ -463,6 +533,13 @@ def get_system_compat_keys():
             keys = {"ublue", "ostree"}
         else:
             keys = {"ostree"}
+
+    # GregOS is a custom Bazzite-based image. It keeps its ublue/ostree identity
+    # and additionally reports the 'gregos' key so image-specific scripts can
+    # target it. The booted container image, not /etc/os-release, is the source
+    # of truth: 'gregos' is only added when the booted image is the GregOS image.
+    if is_gregos():
+        keys.add("gregos")
 
     # These hosts share SteamOS's installation policy, but have no supported
     # make-build container workaround. Keep their identity as an extra key so

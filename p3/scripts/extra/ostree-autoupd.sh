@@ -3,7 +3,7 @@
 # version: 1.0
 # description: ostree-autoupd_desc
 # icon: grubtrfs.svg
-# compat: ostree, ublue
+# compat: ostree
 # nocontainer
 # systemd: yes
 

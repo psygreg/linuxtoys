@@ -21,7 +21,7 @@ class AboutDialog:
         # Order of priority for display
         os_keys = [
             "debian", "ubuntu", "zorin", "cachy", "arch", "fedora", 
-            "rhel", "suse", "solus", "manjaro", "ostree", "ublue"
+            "rhel", "suse", "solus", "manjaro", "ostree", "ublue", "gregos"
         ]
         desktop_keys = ["desktop-gnome", "desktop-plasma", "desktop-other"]
         
