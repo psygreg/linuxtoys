@@ -436,29 +436,62 @@ class TerminalRunner:
     def _wait_for_exclusive_window(self):
         """Wait (off the GTK thread) for the runner to pause with no active job."""
         runner = getattr(self.parent, "_appstream_runner", None)
-        acquired = runner is not None and runner.request_exclusive_hold()
-        GLib.idle_add(self._exclusive_window_acquired, acquired)
+        if runner is None:
+            GLib.idle_add(self._exclusive_window_acquired, None)
+            return
+        # A unique per-wait owner. If the view is torn down before the hold is
+        # granted, the runner's owner tracking plus the wait timeout release the
+        # wait so the background queue is never parked for a caller that is gone.
+        # A fresh object (not id(self)) is used so a recycled interpreter id can
+        # never be confused with a different view's hold.
+        owner = object()
+        self._exclusive_wait_owner = owner
+        token = runner.request_exclusive_hold(owner=owner)
+        GLib.idle_add(self._exclusive_window_acquired, token)
 
-    def _exclusive_window_acquired(self, acquired):
+    def _exclusive_window_acquired(self, token):
         """Resume the queued terminal scripts once the runner window is ours."""
         self._exclusive_wait_started = False
-        if acquired:
-            self._exclusive_hold = True
-        else:
-            # Runner shutting down: proceed unserialized rather than looping.
+        if getattr(self, "_destroyed", False):
+            # The view died while we were waiting. Give the hold straight back
+            # so the background queue is never parked for a view that is gone.
+            if token is not None:
+                runner = getattr(self.parent, "_appstream_runner", None)
+                if runner is not None:
+                    runner.release_exclusive_hold(token)
             self._exclusive_serialization_disabled = True
-        if not getattr(self, "_destroyed", False) and self.script_queue:
+            return False
+        if token is not None:
+            self._exclusive_hold = True
+            self._exclusive_hold_token = token
+        else:
+            # Runner shutting down or the wait timed out: proceed unserialized
+            # rather than looping forever behind a queue that never drains.
+            self._exclusive_serialization_disabled = True
+        if self.script_queue:
             self._run_next_script()
         return False
 
     def _release_exclusive_hold(self):
         """Hand the package managers back to the runner queue."""
-        if not getattr(self, "_exclusive_hold", False):
+        # Release a hold that was already granted.
+        if getattr(self, "_exclusive_hold", False):
+            self._exclusive_hold = False
+            token = getattr(self, "_exclusive_hold_token", None)
+            self._exclusive_hold_token = None
+            runner = getattr(self.parent, "_appstream_runner", None)
+            if runner is not None:
+                runner.release_exclusive_hold(token)
             return
-        self._exclusive_hold = False
-        runner = getattr(self.parent, "_appstream_runner", None)
-        if runner is not None:
-            runner.release_exclusive_hold()
+        # The view may be torn down while still waiting to be granted the hold.
+        # Drop that pending owner immediately so the runner wait ends now instead
+        # of after its backstop timeout.
+        owner = getattr(self, "_exclusive_wait_owner", None)
+        if owner is not None:
+            self._exclusive_wait_owner = None
+            runner = getattr(self.parent, "_appstream_runner", None)
+            if runner is not None:
+                runner.release_exclusive_hold(owner)
 
     def _is_error_exit_code(self, status):
         """Check if the exit status indicates an error (not success, not cancelled, not normal signal)."""
