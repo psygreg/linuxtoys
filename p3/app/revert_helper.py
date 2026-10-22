@@ -626,8 +626,27 @@ def _reverse_appimage_removal(appimage_files):
     if not appimage_files:
         return []
 
-    # Use pkg_appimage_rm library function to handle appimage removal
-    appimage_args = " ".join(appimage_files)
+    # A recorded "appimage rm <name>" is itself a removal, not an install, so it
+    # has nothing to reverse (reinstalling would need the original download).
+    # _parse_operation yields ["rm", <name>] for such records.
+    if appimage_files and appimage_files[0] == "rm":
+        return []
+
+    # Only bare filenames are safe to hand to pkg_appimage_rm; drop operands
+    # that are option-like or path-like rather than emitting a broken command.
+    names = []
+    for name in appimage_files:
+        name = str(name).strip()
+        if not name or name.startswith("-") or "/" in name:
+            continue
+        names.append(name)
+
+    if not names:
+        return ["false # No valid AppImage filename to remove"]
+
+    # Use pkg_appimage_rm library function to handle appimage removal.
+    # Quote each operand so unusual-but-legal filenames cannot break the script.
+    appimage_args = " ".join(shlex.quote(name) for name in names)
     return [f"pkg_appimage_rm {appimage_args}"]
 
 
