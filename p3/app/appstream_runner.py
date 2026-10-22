@@ -9,6 +9,7 @@ import shlex
 import subprocess
 import tempfile
 import json
+import time
 from datetime import datetime, timezone
 import urllib.error
 import urllib.parse
@@ -16,7 +17,7 @@ import urllib.request
 import threading
 import uuid
 
-from . import homebrew_catalog, appimage_catalog
+from . import homebrew_catalog, appimage_catalog, package_guard
 from .antenna import antenna
 from .gtk_common import GLib
 from .library_loader import script_command, script_environment
@@ -24,8 +25,17 @@ from .appstream_resolver import resolve_native_appstream_package
 from .term_registry import ExecutionRegistry
 
 
+class _StallTimeout(RuntimeError):
+    """Raised when a job's PTY transcript goes quiet and never resumes."""
+
+
 class AppStreamRunner:
     """Serialize AppStream jobs through one session-lifetime PTY."""
+
+    # Exit code for jobs refused because another package-manager process is
+    # already running (see _native_transaction_conflict). Distinct from 0, 100
+    # and the AUR security codes so callers can tell a refusal from a failure.
+    _NATIVE_TRANSACTION_BUSY_EXIT = 90
 
     # PTY captures contain terminal protocol that VTE normally consumes rather
     # than displays. Keep failure dialogs textual without changing the terminal
@@ -44,6 +54,25 @@ class AppStreamRunner:
     _AUR_SECURITY_BLOCKED = 126
     _AUR_SECURITY_UNAVAILABLE = 125
     _AUR_SCAN_MAX_FILE = 1024 * 1024
+
+    # Exit code for a job whose PTY transcript stopped making progress (e.g. a
+    # hidden `sudo` password prompt the marker can never follow, or a completion
+    # marker that was lost). Distinct from the other codes so a stall is reported
+    # as a failure rather than leaving the record stuck in "running" forever.
+    _STALL_EXIT = 124
+
+    # A job may legitimately spend a long time downloading/building without
+    # emitting its completion marker, but it must keep producing PTY output.
+    # This is the maximum time we wait after the *last* byte of output before
+    # declaring the job stalled and recovering the queue. It is deliberately
+    # generous: quiet-but-alive package managers pause between progress lines.
+    _STALL_IDLE_TIMEOUT = 300.0
+
+    # Upper bound on how long a terminal viewer will wait to take the package
+    # managers from the background queue. The job it waits for is itself bounded
+    # by _STALL_IDLE_TIMEOUT, so this is only a backstop against a pathological
+    # hold; it is generous enough never to fire during normal operation.
+    _EXCLUSIVE_WAIT_TIMEOUT = 900.0
 
     # High-confidence obfuscation indicators only. This is intentionally not a
     # general "suspicious shell" scanner: ordinary PKGBUILDs legitimately use
@@ -99,8 +128,10 @@ class AppStreamRunner:
         self._start_lock = threading.Lock()
         # Serialization against terminal-viewer operations: _exclusive_hold is
         # set while a terminal operation waits for/holds the package managers,
-        # and _job_active is True while one queued job executes.
+        # and _job_active is True while one queued job executes. _exclusive_holders
+        # tracks who holds the lock so an abandoned hold can never park the queue.
         self._exclusive_hold = False
+        self._exclusive_holders = set()
         self._job_active = False
 
     def has_active_or_queued_jobs(self):
@@ -108,25 +139,52 @@ class AppStreamRunner:
         with self._condition:
             return self._job_active or bool(self._jobs)
 
-    def request_exclusive_hold(self):
+    def request_exclusive_hold(self, owner=None):
         """Block until the runner is idle with the queue held for a caller.
 
         Intended for terminal-viewer operations, which share the package
         managers with queued jobs: the hold prevents the next queued record
         from starting, and the wait ends as soon as the in-flight job does.
-        Returns False when the runner is shutting down.
+
+        ``owner`` identifies the holder so a hold whose caller disappears (its
+        view is destroyed before the wait is granted) cannot park the queue
+        forever. Returns a token to pass to release_exclusive_hold(), or None
+        when the runner is shutting down. The legacy no-owner form is still
+        accepted and behaves as before.
         """
         with self._condition:
+            token = owner if owner is not None else object()
             self._exclusive_hold = True
+            self._exclusive_holders.add(token)
+            # Bound the wait: a job that is itself stuck should not be able to
+            # block this caller forever. _read_until_marker already bounds the
+            # job, but keep a generous ceiling here as a backstop.
+            deadline = time.monotonic() + self._EXCLUSIVE_WAIT_TIMEOUT
             while not self._stopping.is_set() and self._job_active:
-                self._condition.wait(timeout=0.5)
-            return not self._stopping.is_set()
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    break
+                self._condition.wait(timeout=min(0.5, remaining))
+            if self._stopping.is_set():
+                self._release_holder_locked(token)
+                return None
+            return token
 
-    def release_exclusive_hold(self):
+    def release_exclusive_hold(self, token=None):
         """Resume queue processing after a request_exclusive_hold() session."""
         with self._condition:
-            self._exclusive_hold = False
-            self._condition.notify_all()
+            self._release_holder_locked(token)
+
+    def _release_holder_locked(self, token):
+        """Drop one holder; the queue resumes once no holders remain."""
+        if token is not None:
+            self._exclusive_holders.discard(token)
+        else:
+            self._exclusive_holders.clear()
+        # A hold with no surviving owner is a bug/hang waiting to happen: never
+        # keep the queue parked for a caller that will never release it.
+        self._exclusive_hold = bool(self._exclusive_holders)
+        self._condition.notify_all()
 
     def enqueue(self, scripts):
         if not scripts:
@@ -480,6 +538,46 @@ class AppStreamRunner:
         self._process.stdin.write(b"set +o history\n")
         self._process.stdin.flush()
 
+    def _native_transaction_conflict(self, record):
+        """Return a running native package-manager process name when dispatching
+        this queued record would enter a native package transaction, else None."""
+        action = record.get("action")
+        info = record.get("info") or {}
+
+        if action == "apt_refresh":
+            # sudo_ apt-get update serializes through the same apt locks as
+            # any installation.
+            return package_guard.busy_native_manager_process()
+        if action == "snap_revert" or action == "extension_remove" \
+                or info.get("is_flatpak_extension"):
+            # Flatpak and Snap transactions queue inside their own daemons.
+            return None
+
+        source = str(info.get("appstream_source") or "")
+        if info.get("is_local_package") or source in ("aur", "appimage", "native"):
+            # pkg_fromfile/pkg_appimage internals and the generated AUR and
+            # native-install scripts reach the native managers directly.
+            return package_guard.busy_native_manager_process()
+
+        for dependency in info.get("appstream_dependencies") or []:
+            if isinstance(dependency, dict) \
+                    and str(dependency.get("type") or "") == "native":
+                return package_guard.busy_native_manager_process()
+
+        # Inspect the actual script when it exists: flatpak/snap installs and
+        # generated removals never touch native managers unless their body
+        # says so (reviewed pre/post overlays included).
+        script_path = None
+        if action == "remove":
+            script_path = (record.get("remove_info") or {}).get("path")
+        if not script_path:
+            script_path = info.get("path")
+        if script_path and os.path.isfile(script_path):
+            return package_guard.native_transaction_conflict(
+                script_path, os.environ.get("SCRIPT_DIR", "")
+            )
+        return None
+
     def _worker(self):
         while not self._stopping.is_set():
             with self._condition:
@@ -508,7 +606,13 @@ class AppStreamRunner:
                 # installation registry/transmap behavior.
                 aur_job = str(record["info"].get("appstream_source", "") or "") == "aur"
                 failure_output = ""
-                if record.get("action") == "remove" and aur_job:
+                # Refuse to dispatch this record into a native package
+                # transaction while another package-manager process is already
+                # running: the collision would fail the job opaquely mid-run.
+                native_conflict = self._native_transaction_conflict(record)
+                if native_conflict is not None:
+                    exit_code = self._NATIVE_TRANSACTION_BUSY_EXIT
+                elif record.get("action") == "remove" and aur_job:
                     exit_code, failure_output = self._run_aur_removal_job(record["remove_info"])
                 elif record.get("action") == "remove":
                     exit_code = self._run_removal_job(record["remove_info"])
@@ -542,7 +646,11 @@ class AppStreamRunner:
                             pass
                     else:
                         record["status"] = "success" if exit_code == 0 else "failed"
-                if aur_job and exit_code == self._AUR_SECURITY_BLOCKED:
+                if native_conflict is not None:
+                    callback = getattr(self.parent, "_show_package_manager_busy", None)
+                    if callback is not None:
+                        GLib.idle_add(callback)
+                elif aur_job and exit_code == self._AUR_SECURITY_BLOCKED:
                     callback = getattr(self.parent, "_show_aur_security_blocked", None)
                     if callback is not None:
                         GLib.idle_add(
@@ -562,11 +670,39 @@ class AppStreamRunner:
                     callback = getattr(self.parent, "_show_aur_operation_failure", None)
                     if callback is not None:
                         GLib.idle_add(callback, record.get("name", "AUR package"), failure_output)
+            except _StallTimeout as exc:
+                # The hidden PTY stopped making progress (typically a `sudo`
+                # password prompt nobody can answer, or a lost completion
+                # marker). Report the job as failed and recycle the shell: the
+                # child is very likely blocked mid-command, so leaving it in
+                # place would stall every later job behind it. Without this the
+                # record stays "running" and the queue indicator spins forever.
+                with self._condition:
+                    record["exit_code"] = self._STALL_EXIT
+                    record["status"] = "failed"
+                print(f"AppStream background runner stalled: {exc}", file=os.sys.stderr)
+                try:
+                    self._close_pty()
+                    self._spawn_shell()
+                except Exception as recycle_exc:
+                    print(
+                        f"AppStream PTY recycle failed: {recycle_exc}",
+                        file=os.sys.stderr,
+                    )
             except Exception as exc:
                 with self._condition:
                     record["exit_code"] = -1
                     record["status"] = "failed"
                 print(f"AppStream background runner failed: {exc}", file=os.sys.stderr)
+                # An unexpected failure can also leave the child in an unknown
+                # state; give the next job a clean shell rather than risk it
+                # inheriting a wedged one.
+                try:
+                    if self._process is not None and self._process.poll() is not None:
+                        self._close_pty()
+                        self._spawn_shell()
+                except Exception:
+                    pass
             with self._condition:
                 self._job_active = False
                 self._condition.notify_all()
@@ -1426,16 +1562,33 @@ class AppStreamRunner:
         captured = bytearray()
         capture_started = not bool(start_bytes)
         capture_limit = 512 * 1024
+        # Stall watchdog: the hidden PTY can block forever on a `sudo` password
+        # prompt (there is no terminal to answer it) or lose the completion
+        # marker. Either way the job would sit in "running" forever and keep the
+        # queue indicator spinning. Track the last time any byte arrived and
+        # give up once output has gone quiet for _STALL_IDLE_TIMEOUT, so the
+        # worker can mark the record failed and move on instead of hanging.
+        last_activity = time.monotonic()
         while not self._stopping.is_set():
             if self._process is None or self._process.poll() is not None:
                 raise RuntimeError("persistent AppStream PTY shell exited unexpectedly")
             readable, _, _ = select.select([self._master_fd], [], [], 0.5)
             if not readable:
+                # No new output. If the child has been silent past the idle
+                # budget, treat the job as stalled rather than waiting forever.
+                if time.monotonic() - last_activity > self._STALL_IDLE_TIMEOUT:
+                    raise _StallTimeout(
+                        f"AppStream job stalled: no PTY output for "
+                        f"{int(self._STALL_IDLE_TIMEOUT)}s while waiting for {marker}"
+                    )
                 continue
             chunk = os.read(self._master_fd, 4096)
             if not chunk:
                 raise RuntimeError("persistent AppStream PTY closed unexpectedly")
 
+            # Any bytes at all reset the stall clock, even if they are not the
+            # marker: a download that keeps printing progress is alive.
+            last_activity = time.monotonic()
             pending += chunk
 
             if capture_output:

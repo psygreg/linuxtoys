@@ -735,5 +735,7 @@
   "sidebar_expand": "Mở rộng",
   "sidebar_collapse": "Thu gọn",
   "sidebar_toggle": "Bật hoặc tắt thanh bên danh mục",
-  "main_menu": "Menu chính"
+  "main_menu": "Menu chính",
+  "package_manager_busy_title": "Trình quản lý gói đang bận",
+  "package_manager_busy_message": "Một thao tác gói khác đang được thực hiện. Các trình quản lý gói không hỗ trợ thao tác song song. Vui lòng đợi tiến trình đang chạy hoàn tất trước khi thử thao tác tương tự với LinuxToys."
 }

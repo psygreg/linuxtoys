@@ -735,5 +735,7 @@
   "sidebar_expand": "הרחבה",
   "sidebar_collapse": "כיווץ",
   "sidebar_toggle": "הצגה או הסתרה של סרגל הקטגוריות",
-  "main_menu": "תפריט ראשי"
+  "main_menu": "תפריט ראשי",
+  "package_manager_busy_title": "מנהל החבילות עסוק",
+  "package_manager_busy_message": "פעולת חבילות אחרת כבר מתבצעת. מנהלי חבילות אינם תומכים בפעולות מקבילות. יש להמתין לסיום התהליך הנוכחי לפני ניסיון לבצע פעולות כאלה עם LinuxToys."
 }

@@ -38,6 +38,7 @@ from . import (
     git_scripts_manager,
     gtk_dialogs,
     gui_rs,
+    package_guard,
     package_view
 )
 from .gtk_common import Gdk, GLib, Gtk, GdkPixbuf
@@ -96,6 +97,7 @@ class AppWindow(
         self._installed_packages_refresh_pending = False
         self._appstream_runner = appstream_runner.AppStreamRunner(self)
         self._package_view_prev = None
+        self._package_busy_dialog_open = False
 
         # Initialize search functionality with cache
         self.script_cache = search_helper.ScriptCache()
@@ -3577,6 +3579,30 @@ class AppWindow(
             buttons=[("OK", Gtk.ResponseType.OK)],
             default_response=Gtk.ResponseType.OK,
         )
+        return False
+
+    def _show_package_manager_busy(self):
+        """Explain a queue job refused because another package operation runs.
+
+        Queued jobs that would enter a native transaction are refused while
+        another package-manager process is running; several may be refused
+        while one dialog is open, so collapse them into a single dialog.
+        """
+        if self._package_busy_dialog_open:
+            return False
+        self._package_busy_dialog_open = True
+        try:
+            title, message = package_guard.busy_texts(self.translations)
+            gtk_dialogs.run_message_dialog(
+                self,
+                title=title,
+                secondary_text=message,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=[("OK", Gtk.ResponseType.OK)],
+                default_response=Gtk.ResponseType.OK,
+            )
+        finally:
+            self._package_busy_dialog_open = False
         return False
 
     def _start_aur_refresh_if_enabled(self):

@@ -735,5 +735,7 @@
   "sidebar_expand": "Išskleisti",
   "sidebar_collapse": "Suskleisti",
   "sidebar_toggle": "Perjungti kategorijų šoninį skydą",
-  "main_menu": "Pagrindinis meniu"
+  "main_menu": "Pagrindinis meniu",
+  "package_manager_busy_title": "Paketų tvarkyklė užimta",
+  "package_manager_busy_message": "Jau vykdoma kita paketų operacija. Paketų tvarkyklės nepalaiko lygiagrečių operacijų. Palaukite, kol baigsis einantis procesas, prieš bandydami atlikti tokias operacijas su LinuxToys."
 }

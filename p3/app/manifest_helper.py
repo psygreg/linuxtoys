@@ -19,6 +19,7 @@ from .compat import get_system_compat_keys, script_is_compatible, is_containeriz
 from .reboot_helper import check_ostree_pending_deployments
 from .repo_parser import materialize_repo_script
 from .library_loader import script_command, script_environment
+from . import package_guard
 from .updater.update_helper import UpdateHelper
 from .registry_utils import parse_registry_file
 
@@ -30,6 +31,12 @@ ALLOWED_LIBRARY_FUNCTIONS = frozenset({'pkg_install', 'pkg_flat', 'pkg_snap'})
 FLATPAK_ID_RE = re.compile(
     r"^[A-Za-z][A-Za-z0-9_-]*(?:\.[A-Za-z0-9][A-Za-z0-9_-]*){2,}(?:/[A-Za-z0-9_.-]+){0,2}$"
 )
+
+
+def _print_busy_package_manager():
+    """Print the translated busy-package-manager refusal for CLI contexts."""
+    _title, message = package_guard.busy_texts()
+    print(f"✗ {message}")
 
 
 def _validate_script_dir():
@@ -170,6 +177,12 @@ async def check_flatpaks_async(flatpak_names):
 def install_packages(package_names):
     """Install packages in one pkg_install call through linuxtoys.lib."""
     if "steamos" in get_system_compat_keys():
+        return False
+
+    # pkg_install reaches the native manager directly; refuse instead of
+    # colliding with an already-running package operation.
+    if package_guard.busy_native_manager_process() is not None:
+        _print_busy_package_manager()
         return False
 
     result = _run_library_function('pkg_install', package_names)
@@ -746,7 +759,16 @@ def _run_script_impl(script_info):
     
     try:
         child_env = script_environment(script_info, os.environ.copy())
-        command = script_command(script_info['path'], _validate_script_dir())
+        script_dir = _validate_script_dir()
+        command = script_command(script_info['path'], script_dir)
+
+        # Same preflight as the GUI runners: refuse runs that would enter a
+        # native package transaction while another package-manager process is
+        # already running (EASY_CLI and manifest mode are CLI contexts, so
+        # the refusal is reported in text rather than with a dialog).
+        if package_guard.native_transaction_conflict(script_info['path'], script_dir):
+            _print_busy_package_manager()
+            return 1
 
         # Check if EASY_CLI mode is enabled
         if os.environ.get("EASY_CLI") == "1":

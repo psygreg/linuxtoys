@@ -735,5 +735,7 @@
   "sidebar_expand": "Espandi",
   "sidebar_collapse": "Comprimi",
   "sidebar_toggle": "Mostra o nascondi la barra laterale delle categorie",
-  "main_menu": "Menu principale"
+  "main_menu": "Menu principale",
+  "package_manager_busy_title": "Gestore dei pacchetti occupato",
+  "package_manager_busy_message": "Un'altra operazione sui pacchetti è già in corso. I gestori dei pacchetti non supportano operazioni in parallelo. Attendi il completamento del processo in corso prima di tentare qualsiasi operazione di questo tipo con LinuxToys."
 }

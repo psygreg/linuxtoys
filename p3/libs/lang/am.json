@@ -735,5 +735,7 @@
   "sidebar_expand": "መስፋት",
   "sidebar_collapse": "መጠቅለል",
   "sidebar_toggle": "የጎን ምናሌን ቀያይር",
-  "main_menu": "ዋና ምናሌ"
+  "main_menu": "ዋና ምናሌ",
+  "package_manager_busy_title": "የጥቅል አስተዳዳሪ እየሰራ ነው",
+  "package_manager_busy_message": "ሌላ የጥቅል ሥራ ቀድሞውኑ እየሰራ ነው። የጥቅል አስተዳዳሪዎች ትይዩ ሥራዎችን አይደግፉም። ከLinuxToys ጋር የመሳሰሉ ሥራዎችን ከመሞከርዎ በፊት እባክዎ እየተከናወነ ያለውን ሂደት እስኪጨረስ ይጠብቁ።"
 }

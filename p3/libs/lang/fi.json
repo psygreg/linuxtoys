@@ -735,5 +735,7 @@
   "sidebar_expand": "Laajenna",
   "sidebar_collapse": "Tiivistä",
   "sidebar_toggle": "Vaihda luokkien sivupalkki",
-  "main_menu": "Päävalikko"
+  "main_menu": "Päävalikko",
+  "package_manager_busy_title": "Paketinhallinta on käynnissä",
+  "package_manager_busy_message": "Toinen pakettoiminto on jo käynnissä. Paketinhallintaohjelmat eivät tue rinnakkaisia toimintoja. Odota käynnissä olevan prosessin valmistumista ennen kuin yrität sellaisia toimintoja LinuxToysin kanssa."
 }

@@ -734,5 +734,7 @@
   "sidebar_expand": "Yoyish",
   "sidebar_collapse": "Yig'ish",
   "sidebar_toggle": "Kategoriya yon panelini almashtirish",
-  "main_menu": "Asosiy menyu"
+  "main_menu": "Asosiy menyu",
+  "package_manager_busy_title": "Paket menejer band",
+  "package_manager_busy_message": "Boshqa paket operatsiyasi allaqachon ishlayapti. Paket menejerlari parallel operatsiyalarni qo'llab-quvvatlamaydi. LinuxToys bilan bunday operatsiyalarni sinab ko'rishdan oldin, iltimos, davom etayotgan jarayon tugashini kutishingiz kerak."
 }

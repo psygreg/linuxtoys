@@ -735,5 +735,7 @@
   "sidebar_expand": "Zgjero",
   "sidebar_collapse": "Pallos",
   "sidebar_toggle": "Aktivizo ose çaktivizo anëshirën e kategorive",
-  "main_menu": "Menyja kryesore"
+  "main_menu": "Menyja kryesore",
+  "package_manager_busy_title": "Menaxheri i paketave është i zënë",
+  "package_manager_busy_message": "Një veprim tjetër me paketa është tashmë në ekzekutim. Menaxherët e paketave nuk mbështesin veprime paralele. Ju lutem prisni që procesi në zhvillim të përfundojë përpara se të provoni veprime të tilla me LinuxToys."
 }

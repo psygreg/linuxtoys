@@ -735,5 +735,7 @@
   "sidebar_expand": "Kibontás",
   "sidebar_collapse": "Összecsukás",
   "sidebar_toggle": "Kategória oldalsáv be/ki",
-  "main_menu": "Főmenü"
+  "main_menu": "Főmenü",
+  "package_manager_busy_title": "A csomagkezelő foglalt",
+  "package_manager_busy_message": "Már fut egy másik csomagművelet. A csomagkezelők nem támogatják a párhuzamos műveleteket. Kérjük, várja meg, amíg a folyamat befejeződik, mielőtt ilyet próbálna a LinuxToysszal."
 }

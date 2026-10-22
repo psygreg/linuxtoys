@@ -734,5 +734,7 @@
   "sidebar_expand": "Proširi",
   "sidebar_collapse": "Skupi",
   "sidebar_toggle": "Prebaci bočnu traku kategorija",
-  "main_menu": "Glavni meni"
+  "main_menu": "Glavni meni",
+  "package_manager_busy_title": "Upravljač paketa je zauzet",
+  "package_manager_busy_message": "Druga operacija s paketima je već u toku. Upravljači paketa ne podržavaju paralelne operacije. Sačekajte da trenutni proces završi prije nego što pokušate takve operacije s LinuxToysom."
 }

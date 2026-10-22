@@ -734,5 +734,7 @@
   "sidebar_expand": "Genişləndir",
   "sidebar_collapse": "Yığ",
   "sidebar_toggle": "Kateqoriya yan panelini çevir",
-  "main_menu": "Əsas menyu"
+  "main_menu": "Əsas menyu",
+  "package_manager_busy_title": "Paket meneceri məşğuldur",
+  "package_manager_busy_message": "Başqa paket əməliyyatı artıq icra olunur. Paket menecerləri paralel əməliyyatları dəstəkləmir. LinuxToys ilə belə əməliyyatları sınmazdan əvvəl davam edən prosesin bitməsini gözləyin."
 }

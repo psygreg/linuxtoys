@@ -1677,14 +1677,23 @@ EOF
             call_script it.mijorus.gearlever
         fi
         local output
+        # Snapshot ~/AppImages before integration so the exact new file can be
+        # identified after. The old mtime-newest heuristic could grab the wrong
+        # AppImage when another one landed in between.
+        local _pre_list
+        _pre_list=$(mktemp) || return 1
+        find "$HOME/AppImages" -maxdepth 1 -type f -printf '%f\n' 2>/dev/null | sort > "$_pre_list"
         if output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "$@" 2>&1); then
-            local appimage_name
+            # Record the one filename newly added to ~/AppImages by this call.
+            # Gear Lever names the integrated file from the AppImage's internal
+            # metadata, so we observe the actual result rather than guessing it.
+            local appimage_name=""
             appimage_name=$(
-                find "$HOME/AppImages" -maxdepth 1 -type f -printf '%T@ %f\n' 2>/dev/null |
-                    sort -nr |
-                    head -n1 |
-                    cut -d' ' -f2-
+                comm -13 "$_pre_list" \
+                    <(find "$HOME/AppImages" -maxdepth 1 -type f -printf '%f\n' 2>/dev/null | sort) |
+                    head -n1
             )
+            rm -f "$_pre_list"
             if [[ -n "$appimage_name" ]]; then
                 _append_transmap "appimage $appimage_name"
             else
@@ -1692,6 +1701,7 @@ EOF
             fi
             return 0
         fi
+        rm -f "$_pre_list"
 
         echo "$output"
         warn "Gear Lever integration failed. Falling back to LinuxToys AppImage integration."
@@ -1726,29 +1736,56 @@ pkg_appimage_rm () {
         shift
     fi
     [[ $# -gt 0 ]] || return 0
+
+    # Normalize each operand to a bare basename that actually exists in
+    # ~/AppImages. Accept a full path or ./name on input but strip it down;
+    # reject only genuinely unsafe values (option injection / traversal).
+    local -a _targets=()
     for appimage_file in "$@"; do
-        [[ "$appimage_file" != */* && "$appimage_file" != .* && "$appimage_file" != -* ]] || return 1
+        [[ "$appimage_file" != -* ]] || return 1
+        appimage_file="${appimage_file##*/}"
+        [[ "$appimage_file" != "." && "$appimage_file" != ".." && -n "$appimage_file" ]] || return 1
+
+        if [[ ! -e "$HOME/AppImages/$appimage_file" ]]; then
+            # Self-heal: the recorded name may be stale (Gear Lever renames by
+            # internal metadata). Match a single AppImage case-insensitively.
+            local _resolved
+            _resolved=$(
+                find "$HOME/AppImages" -maxdepth 1 -type f \
+                    \( -iname '*.appimage' -o -iname '*.AppImage' \) \
+                    -iname "$appimage_file" -printf '%f\n' 2>/dev/null | head -n1
+            )
+            if [[ -z "$_resolved" ]]; then
+                _resolved=$(
+                    find "$HOME/AppImages" -maxdepth 1 -type f \
+                        -iname '*.appimage' -printf '%f\n' 2>/dev/null |
+                        awk -v target="${appimage_file%.*}" \
+                            'BEGIN{IGNORECASE=1} { base=$0; sub(/\.[^.]*$/, "", base); if (base == target) { print $0; exit } }'
+                )
+            fi
+            [[ -n "$_resolved" ]] || return 1
+            appimage_file="$_resolved"
+        fi
+        _targets+=("$appimage_file")
     done
+
     if is_systemd; then
         # Use Gear Lever for removal on systemd systems
         (
             cd "$HOME/AppImages" || exit 1
-            echo "y" | flatpak run it.mijorus.gearlever --remove "$@"
+            echo "y" | flatpak run it.mijorus.gearlever --remove "${_targets[@]}"
         ) || return $?
-        for appimage_file in "$@"; do
+        for appimage_file in "${_targets[@]}"; do
             [[ ! -e "$HOME/AppImages/$appimage_file" && ! -L "$HOME/AppImages/$appimage_file" ]] || return 1
         done
-        [[ $skip_appends -eq 1 ]] || _append_transmap "appimage rm $*"
+        [[ $skip_appends -eq 1 ]] || _append_transmap "appimage rm ${_targets[*]}"
     else
         # Manual removal for non-systemd systems
-        for appimage_file in "$@"; do
-            local appimage_basename=$(basename "$appimage_file")
-            local appimage_name_without_ext="${appimage_basename%.*}"
-
+        for appimage_file in "${_targets[@]}"; do
             # Remove from AppImages directory
-            if [[ -f "$HOME/AppImages/$appimage_basename" ]]; then
-                rm -f -- "$HOME/AppImages/$appimage_basename" || return $?
-                [[ $skip_appends -eq 1 ]] || _append_transmap "appimage rm $appimage_basename"
+            if [[ -e "$HOME/AppImages/$appimage_file" || -L "$HOME/AppImages/$appimage_file" ]]; then
+                rm -f -- "$HOME/AppImages/$appimage_file" || return $?
+                [[ $skip_appends -eq 1 ]] || _append_transmap "appimage rm $appimage_file"
             fi
         done
     fi

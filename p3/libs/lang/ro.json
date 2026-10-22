@@ -735,5 +735,7 @@
   "sidebar_expand": "Extinde",
   "sidebar_collapse": "Restrânge",
   "sidebar_toggle": "Comută bara laterală de categorii",
-  "main_menu": "Meniu principal"
+  "main_menu": "Meniu principal",
+  "package_manager_busy_title": "Administratorul de pachete este ocupat",
+  "package_manager_busy_message": "Altă operațiune cu pachete rulează deja. Administratorii de pachete nu suportă operațiuni în paralel. Vă rugăm să așteptați finalizarea procesului în curs înainte de a încerca astfel de operațiuni cu LinuxToys."
 }

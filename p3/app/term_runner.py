@@ -3,8 +3,9 @@ import os
 import subprocess
 import threading
 
-from . import dev_mode, reboot_helper
+from . import dev_mode, package_guard, reboot_helper
 from .gtk_common import GLib, Gtk, Vte
+from .gtk_dialogs import run_message_dialog
 from .term_registry import ExecutionRegistry
 from .antenna import antenna
 from .library_loader import script_command, script_environment
@@ -110,6 +111,19 @@ class TerminalRunner:
         current_script = self.script_queue.pop(0)
         self.vbox_main._update_header_labels(current_script)
 
+        # Refuse to dispatch a script that would enter a native package
+        # transaction while another package-manager process is already
+        # running: the helpers share filesystem locks with it and would fail
+        # opaquely mid-run (see package_guard).
+        if not dev_mode.is_dev_mode_enabled():
+            conflict = package_guard.native_transaction_conflict(
+                current_script.get("path", "true"),
+                os.environ.get("SCRIPT_DIR", ""),
+            )
+            if conflict is not None:
+                self._skip_script_for_busy_manager(current_script)
+                return
+
         # Add script to execution history
         script_name = current_script.get("name", "unknown")
         registry_name = current_script.get("registry_name", script_name)
@@ -186,6 +200,43 @@ class TerminalRunner:
 
         self.vbox_main.button_run.set_sensitive(False)
         self.vbox_main.button_remove.set_sensitive(False)
+
+    def _skip_script_for_busy_manager(self, script_info):
+        """Refuse one script because another package operation is running.
+
+        The (translated) dialog explains the refusal once per run; afterwards
+        only the terminal viewer notes the skipped script, and the queue
+        continues with the remaining scripts, which may be non-native ones
+        (Flatpak/Snap) that can run safely in parallel.
+        """
+        title, message = package_guard.busy_texts(self.translations)
+
+        if not getattr(self, "_busy_manager_dialog_shown", False):
+            self._busy_manager_dialog_shown = True
+            run_message_dialog(
+                self,
+                title=title,
+                secondary_text=message,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=[("OK", Gtk.ResponseType.OK)],
+                default_response=Gtk.ResponseType.OK,
+            )
+
+        if self.terminal is not None:
+            name = script_info.get("name", "unknown")
+            self.terminal.feed(f"\r\n✗ {name}: {message}\r\n".encode())
+
+        self.scripts_executed += 1
+        self.vbox_main.progress_bar.set_fraction(
+            self.scripts_executed / self.total_scripts
+        )
+        running_text = self.translations.get(
+            "term_view_running", "Running {current}/{total}"
+        )
+        self.vbox_main.progress_bar.set_text(
+            running_text.format(current=self.scripts_executed, total=self.total_scripts)
+        )
+        self._run_next_script()
 
     def on_child_exit(self, term, status):
         # A dying child must never leave navigation locked, including fatal/exit 100 paths.
@@ -385,29 +436,62 @@ class TerminalRunner:
     def _wait_for_exclusive_window(self):
         """Wait (off the GTK thread) for the runner to pause with no active job."""
         runner = getattr(self.parent, "_appstream_runner", None)
-        acquired = runner is not None and runner.request_exclusive_hold()
-        GLib.idle_add(self._exclusive_window_acquired, acquired)
+        if runner is None:
+            GLib.idle_add(self._exclusive_window_acquired, None)
+            return
+        # A unique per-wait owner. If the view is torn down before the hold is
+        # granted, the runner's owner tracking plus the wait timeout release the
+        # wait so the background queue is never parked for a caller that is gone.
+        # A fresh object (not id(self)) is used so a recycled interpreter id can
+        # never be confused with a different view's hold.
+        owner = object()
+        self._exclusive_wait_owner = owner
+        token = runner.request_exclusive_hold(owner=owner)
+        GLib.idle_add(self._exclusive_window_acquired, token)
 
-    def _exclusive_window_acquired(self, acquired):
+    def _exclusive_window_acquired(self, token):
         """Resume the queued terminal scripts once the runner window is ours."""
         self._exclusive_wait_started = False
-        if acquired:
-            self._exclusive_hold = True
-        else:
-            # Runner shutting down: proceed unserialized rather than looping.
+        if getattr(self, "_destroyed", False):
+            # The view died while we were waiting. Give the hold straight back
+            # so the background queue is never parked for a view that is gone.
+            if token is not None:
+                runner = getattr(self.parent, "_appstream_runner", None)
+                if runner is not None:
+                    runner.release_exclusive_hold(token)
             self._exclusive_serialization_disabled = True
-        if not getattr(self, "_destroyed", False) and self.script_queue:
+            return False
+        if token is not None:
+            self._exclusive_hold = True
+            self._exclusive_hold_token = token
+        else:
+            # Runner shutting down or the wait timed out: proceed unserialized
+            # rather than looping forever behind a queue that never drains.
+            self._exclusive_serialization_disabled = True
+        if self.script_queue:
             self._run_next_script()
         return False
 
     def _release_exclusive_hold(self):
         """Hand the package managers back to the runner queue."""
-        if not getattr(self, "_exclusive_hold", False):
+        # Release a hold that was already granted.
+        if getattr(self, "_exclusive_hold", False):
+            self._exclusive_hold = False
+            token = getattr(self, "_exclusive_hold_token", None)
+            self._exclusive_hold_token = None
+            runner = getattr(self.parent, "_appstream_runner", None)
+            if runner is not None:
+                runner.release_exclusive_hold(token)
             return
-        self._exclusive_hold = False
-        runner = getattr(self.parent, "_appstream_runner", None)
-        if runner is not None:
-            runner.release_exclusive_hold()
+        # The view may be torn down while still waiting to be granted the hold.
+        # Drop that pending owner immediately so the runner wait ends now instead
+        # of after its backstop timeout.
+        owner = getattr(self, "_exclusive_wait_owner", None)
+        if owner is not None:
+            self._exclusive_wait_owner = None
+            runner = getattr(self.parent, "_appstream_runner", None)
+            if runner is not None:
+                runner.release_exclusive_hold(owner)
 
     def _is_error_exit_code(self, status):
         """Check if the exit status indicates an error (not success, not cancelled, not normal signal)."""

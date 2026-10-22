@@ -735,5 +735,7 @@
   "sidebar_expand": "Expandir",
   "sidebar_collapse": "Recolher",
   "sidebar_toggle": "Alternar barra lateral de categorias",
-  "main_menu": "Menu principal"
+  "main_menu": "Menu principal",
+  "package_manager_busy_title": "Gerenciador de pacotes ocupado",
+  "package_manager_busy_message": "Outra operação de pacotes já está em execução. Os gerenciadores de pacotes não suportam operações em paralelo. Aguarde a conclusão do processo em andamento antes de tentar qualquer operação desse tipo com o LinuxToys."
 }

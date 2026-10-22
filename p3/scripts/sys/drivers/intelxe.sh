@@ -62,7 +62,7 @@ elif is_suse; then
     pkg_install intel-media-driver
 elif is_debian; then
     enable_debian_nonfree
-    pkg_install intel-media-va-driver-non-free libmfx-gen1
+    pkg_install intel-media-va-driver-non-free libmfx-gen1.2
 elif is_arch || is_cachy; then
     pkg_install intel-media-driver vpl-gpu-rt
 fi
