@@ -487,12 +487,16 @@ info() {
     fi
 }
 warn() {
-    _zenity_can_run || { echo "$1" && return 0; }
+    # Always echo so the warning is captured in the terminal buffer for bug
+    # reporting, even when a GUI dialog is shown (matches how error() behaves).
     if [ -n "$CHECKLIST_RUN" ]; then
-        echo "WARN: $1";
+        echo "WARN: $1"
     else
-        _msg warning "$1";
+        echo "$1"
     fi
+    _zenity_can_run || return 0
+    [ -n "$CHECKLIST_RUN" ] && return 0
+    _msg warning "$1"
 }
 error() {
     _zenity_can_run || { echo "$1" && return 1; }

@@ -7,35 +7,82 @@ from .term_registry import ExecutionRegistry
 from .antenna import antenna
 
 class BugReporting:
-    def _get_terminal_text(self) -> str:
-        """Extract all text from the terminal by copying to clipboard and reading back."""
+    def _get_vte_buffer_text(self) -> str:
+        """Read the terminal's scrollback buffer directly from VTE.
+
+        The script output is rendered into the VTE widget through a PTY and never
+        passes through the Python process's stdout/stderr, so antenna's log_capture
+        buffer is empty for real script runs. Reading the widget's own text buffer
+        is therefore the reliable source and needs no clipboard round-trip (which is
+        prone to returning None/empty under Wayland, without a selection owner, or
+        when wait_for_text() times out).
+        """
+        terminal = getattr(self, "terminal", None)
+        if terminal is None:
+            return ""
+
+        text = None
+        # get_text_format() returns the full buffer as a plain string and is the
+        # modern, non-deprecated API. Avoid get_text(): in current VTE bindings its
+        # attributes handling trips an assertion and it returns (None, ...).
         try:
-            # Select all terminal content
+            if hasattr(terminal, "get_text_format"):
+                result = terminal.get_text_format(Vte.Format.TEXT)
+                if isinstance(result, str):
+                    text = result
+            if not isinstance(text, str) and hasattr(terminal, "get_text_range_format"):
+                rows = terminal.get_row_count()
+                result = terminal.get_text_range_format(
+                    Vte.Format.TEXT, 0, 0, rows, 0
+                )
+                if isinstance(result, tuple):
+                    text = result[0]
+                elif isinstance(result, str):
+                    text = result
+        except Exception:
+            text = None
+
+        return text if isinstance(text, str) else ""
+
+    def _get_terminal_text(self) -> str:
+        """Extract the terminal output for bug reporting.
+
+        Order of preference:
+        1. The VTE text buffer directly (reliable, no clipboard).
+        2. A clipboard round-trip (legacy behaviour).
+        3. antenna's in-memory log_capture buffer (only has Python-side output).
+        """
+        text = self._get_vte_buffer_text()
+        if text.strip():
+            return text
+
+        # Legacy clipboard fallback.
+        try:
             if hasattr(self.terminal, "select_all"):
                 self.terminal.select_all()
-            
-            # Copy to clipboard
+
             if hasattr(self.terminal, "copy_clipboard_format"):
                 self.terminal.copy_clipboard_format(Vte.Format.TEXT)
             else:
                 self.terminal.copy_clipboard()
-            
-            # Read from clipboard
+
             clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-            text = clipboard.wait_for_text()
-            
-            # Unselect
+            clip_text = clipboard.wait_for_text()
+
             if hasattr(self.terminal, "unselect_all"):
                 self.terminal.unselect_all()
-            
-            return text if isinstance(text, str) else ""
+
+            if isinstance(clip_text, str) and clip_text.strip():
+                return clip_text
         except Exception:
-            # If clipboard extraction fails, fall back to antenna logs
-            try:
-                logs = antenna.log_capture.get_logs()
-                return logs if isinstance(logs, str) else ""
-            except Exception:
-                return ""
+            pass
+
+        # Last resort: Python-side captured stdout/stderr.
+        try:
+            logs = antenna.log_capture.get_logs()
+            return logs if isinstance(logs, str) else ""
+        except Exception:
+            return ""
  
     def _show_bug_report_confirmation_dialog(self):
         response = run_message_dialog(
@@ -100,6 +147,23 @@ class BugReporting:
             )
             return response == Gtk.ResponseType.OK
  
+    def _show_bug_report_empty_dialog(self):
+        """Tell the user there is no terminal output to report, and do not submit."""
+        return run_message_dialog(
+            self,
+            title=self.translations.get(
+                "bug_report_empty_title",
+                "Nothing to Report",
+            ),
+            secondary_text=self.translations.get(
+                "bug_report_empty_logs",
+                "There is no terminal output to send. Run a script first, then try again.",
+            ),
+            message_type=Gtk.MessageType.WARNING,
+            buttons=[("OK", Gtk.ResponseType.OK)],
+            default_response=Gtk.ResponseType.OK,
+        )
+
     def _show_bug_report_network_error_dialog(self, title: str, message: str):
         response = run_message_dialog(
             self,
@@ -147,7 +211,15 @@ class BugReporting:
                 registry_logs = ExecutionRegistry._get_last_registry_execution(script_name)
                 if registry_logs:
                     logs = f"[Using registry data from last execution]\n{registry_logs}"
-            
+
+            # Never send an empty report. If there is no real terminal output and no
+            # registry fallback, stop here and tell the user, instead of letting the
+            # downstream padding in antenna.submit_issue (transmap / registry footer)
+            # fabricate a non-empty body from operations metadata.
+            if not logs or logs.strip() == "":
+                self._show_bug_report_empty_dialog()
+                return
+
             # Gather system information
             context_parts = []
             
@@ -230,7 +302,11 @@ class BugReporting:
         try:
             # Get terminal logs
             logs = self._get_terminal_text()
-            
+
+            # Do not auto-file a report with no real output.
+            if not logs or logs.strip() == "":
+                return
+
             # Gather system information
             context_parts = []
             

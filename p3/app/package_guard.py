@@ -53,12 +53,24 @@ _NATIVE_TRANSACTION_WORDS = _NATIVE_HELPER_WORDS | _RAW_MANAGER_WORDS
 # Process names per native transaction family. Flatpak and Snap are excluded
 # on purpose: their transactions queue inside their own daemons, so parallel
 # operations are safe there.
+#
+# Names are matched against /proc/<pid>/comm exactly, and comm is truncated to
+# 15 characters, so entries use the truncated form where that matters
+# (e.g. "apt.systemd.dai" for "apt.systemd.daily"). PackageKit (packagekitd/
+# pkcon) is included because it holds the apt/dpkg locks while a parallel native
+# transaction would collide with it — PackageKit is how GUI software centres and
+# derivative updaters (e.g. Zorin) drive apt. apt's download helpers (http/https)
+# are deliberately NOT watched: their names are too generic and would match
+# unrelated processes.
 _FAMILY_MANAGER_PROCESSES = {
-    "debian": ("apt", "apt-get", "dpkg", "unattended-upgr"),
-    "arch": ("pacman", "paru", "pamac", "yay"),
+    "debian": (
+        "apt", "apt-get", "apt-key", "dpkg", "dpkg-deb", "unattended-upgr",
+        "apt.systemd.dai", "packagekitd", "pkcon",
+    ),
+    "arch": ("pacman", "paru", "pamac", "pamac-daemon", "yay"),
     "ostree": ("rpm-ostree",),
-    "fedora": ("dnf", "dnf5"),
-    "suse": ("zypper",),
+    "fedora": ("dnf", "dnf5", "dnf-automatic"),
+    "suse": ("zypper", "zypp-refresh"),
     "solus": ("eopkg",),
 }
 
