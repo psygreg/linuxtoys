@@ -105,7 +105,8 @@ APPSTREAM_OMIT = (
     # route is unavailable (immutable/SteamOS systems); omitted on the rest.
     {"!ostree": "appimage.community.virtualbox-kvm",
      "!ublue": "appimage.community.virtualbox-kvm",
-     "!steamos": "appimage.community.virtualbox-kvm"}
+     "!steamos": "appimage.community.virtualbox-kvm"},
+    "appimage.community.Winboat"
 )
 
 # AppStream uses the freedesktop.org Desktop Menu category registry. Keep Main
