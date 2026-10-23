@@ -638,11 +638,19 @@ def _native_launchable_id(component) -> str:
 
 
 def _native_appstream_supported_host() -> bool:
-    """Return whether LinuxToys may install native AppStream packages here."""
+    """Return whether LinuxToys may install native AppStream packages here.
+
+    Immutable hosts (ostree/ublue and the SteamOS-family tags) never get a
+    native package catalog: package overlays are not indiscriminately installed
+    there. Scripts may still use overlays internally when called for, but the
+    catalog hides native entries and falls back to Flatpak/AppImage sources.
+    """
     try:
         from .compat import get_system_compat_keys
 
-        return not {"steamos", "dakota", "gnomeos", "kde-linux"}.intersection(get_system_compat_keys())
+        return not {"ostree", "ublue", "steamos", "dakota", "gnomeos", "kde-linux"}.intersection(
+            get_system_compat_keys()
+        )
     except (ImportError, AttributeError):
         return True
 
