@@ -57,3 +57,9 @@ else
         echo "source ~/.sloth-bash" >> ~/.profile
     fi
 fi
+
+# swap setup
+call_script swapfile
+
+# additional flatpaks
+pkg_flat net.nokyan.Resources
