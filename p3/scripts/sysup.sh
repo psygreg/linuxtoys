@@ -12,10 +12,19 @@ _lang_
 
 needs_reboot() {
     if is_fedora || is_rhel; then
-        if ! { [ "$UPD_SERVICE" = "1" ] && dnf needs-restarting -r; } || sudo_ dnf needs-restarting -r 2>&1; then
-            return 1
+        # 'dnf needs-restarting -r' exits 0 when NO reboot is required and 1 when
+        # a reboot IS required. Treat "reboot required" as a recommendation to
+        # return 0 (reboot recommended), matching the other branches below.
+        if [ "$UPD_SERVICE" = "1" ]; then
+            dnf needs-restarting -r >/dev/null 2>&1
         else
-            return 0
+            sudo_ dnf needs-restarting -r >/dev/null 2>&1
+        fi
+        # $? holds the dnf exit code: 0 = no reboot needed, 1 = reboot required.
+        if [ $? -eq 1 ]; then
+            return 0  # reboot required
+        else
+            return 1  # no reboot required
         fi
     elif is_debian || is_ubuntu; then
         [ -f /var/run/reboot-required ]

@@ -2,7 +2,7 @@
 # name: ZRAM/ZSWAP
 # description: zram_desc
 # icon: preload.svg
-# compat: ubuntu, debian, arch, fedora, ostree, rhel, cachy, suse
+# compat: ubuntu, debian, arch, fedora, rhel, cachy, suse
 # nocontainer
 # new
 # systemd: yes

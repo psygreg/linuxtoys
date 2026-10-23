@@ -58,13 +58,25 @@ def _acknowledge_warning_this_boot(path):
 
 def check_flatpak_path_pending():
     """
-    Check if flatpak installation has set the path pending flag.
-    This indicates that the system PATH needs to be updated, requiring a reboot.
+    Check whether Flathub was configured for the first time this session.
+
+    The flag is set by flathub.sh on a fresh Flathub setup, where Flatpak's
+    app-export paths and the desktop menu cache have not been picked up by the
+    running session yet. Newly installed Flatpak apps need a logout/login (or
+    reboot) to appear in the app menu.
 
     Returns:
-        bool: True if the flatpak path pending flag exists, False otherwise
+        bool: True if the pending flag exists, False otherwise
     """
     return os.path.isfile("/tmp/flatpak_path_pending")
+
+
+def _clear_flatpak_path_pending():
+    """Remove the Flatpak session-refresh flag once the prompt has been shown."""
+    try:
+        os.remove("/tmp/flatpak_path_pending")
+    except OSError:
+        pass
 
 
 def check_ostree_pending_deployments():
@@ -109,13 +121,17 @@ def check_ostree_pending_deployments():
         return False
 
 
-def show_reboot_warning_dialog(parent_window, translations):
+def show_reboot_warning_dialog(
+    parent_window, translations, message_key=None, message_default=None
+):
     """
-    Shows a dialog warning that a reboot is required before continuing.
+    Show a dialog warning that a reboot or session refresh is required.
 
     Args:
         parent_window: The parent GTK window for the dialog
         translations: Dictionary containing translation keys
+        message_key: Optional translation key overriding the default message
+        message_default: Optional default text for the overriding message
 
     Returns:
         str: 'reboot_now', 'reboot_later', or 'cancelled'
@@ -160,12 +176,17 @@ def show_reboot_warning_dialog(parent_window, translations):
 
     # Message text
     message_label = Gtk.Label()
-    message_label.set_text(
-        translations.get(
-            "reboot_required_message",
-            "A script requiring a system reboot has been executed. You must reboot your computer before installing other features.",
+    if message_key:
+        message_label.set_text(
+            translations.get(message_key, message_default or "")
         )
-    )
+    else:
+        message_label.set_text(
+            translations.get(
+                "reboot_required_message",
+                "A script requiring a system reboot has been executed. You must reboot your computer before installing other features.",
+            )
+        )
     message_label.set_line_wrap(True)
     message_label.set_max_width_chars(50)
     message_label.set_justify(Gtk.Justification.LEFT)
@@ -454,9 +475,17 @@ def _show_reboot_error_dialog(parent_window, title, message):
     error_dialog.destroy()
 
 
-def handle_reboot_requirement(parent_window, translations, close_app_callback):
+def handle_reboot_requirement(
+    parent_window, translations, close_app_callback, flatpak_session=False
+):
     """
     Handle the reboot requirement.
+
+    Args:
+        flatpak_session: True when the caller knows the requirement is a
+            Flatpak session refresh (log out/in) rather than a full reboot.
+            When False, the Flatpak session-refresh wording is applied
+            automatically if the Flatpak session-refresh flag is set.
 
     Returns:
         bool: True when script execution should remain blocked.
@@ -464,7 +493,22 @@ def handle_reboot_requirement(parent_window, translations, close_app_callback):
     """
     global _reboot_warning_acknowledged
 
-    response = show_reboot_warning_dialog(parent_window, translations)
+    if not flatpak_session and check_flatpak_path_pending():
+        flatpak_session = True
+
+    if flatpak_session:
+        response = show_reboot_warning_dialog(
+            parent_window,
+            translations,
+            message_key="flatpak_session_refresh_message",
+            message_default=(
+                "Flathub was just set up for the first time on this system. "
+                "Log out and back in (or reboot) so newly installed Flatpak "
+                "applications appear in your app menu before installing more."
+            ),
+        )
+    else:
+        response = show_reboot_warning_dialog(parent_window, translations)
 
     if response == "reboot_now":
         if not reboot_system(parent_window):
@@ -475,6 +519,7 @@ def handle_reboot_requirement(parent_window, translations, close_app_callback):
     if response == "reboot_later":
         _reboot_warning_acknowledged = True
         _acknowledge_warning_this_boot(FLATPAK_ACK_PATH)
+        _clear_flatpak_path_pending()
         return False
 
     # Closing or cancelling the dialog should not bypass the requirement.
@@ -559,11 +604,15 @@ def check_reboot_requirement_after_checklist(
     )
 
     if not flatpak_acknowledged and check_flatpak_path_pending():
-        return handle_reboot_requirement(
+        blocked = handle_reboot_requirement(
             parent_window,
             translations,
             close_app_callback,
+            flatpak_session=True,
         )
+        if not blocked:
+            _clear_flatpak_path_pending()
+        return blocked
 
     ostree_acknowledged = (
         _ostree_warning_acknowledged

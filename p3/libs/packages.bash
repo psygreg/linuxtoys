@@ -312,7 +312,12 @@ pkg_flat() {
 # Snap requires a real host system. Keep this check centralized so Store,
 # local-file, URL and release-asset installs cannot bypass it.
 _snap_supported_host () {
-    is_systemd && ! is_ostree && ! is_steamos || return 1
+    # GregOS (a Bazzite-based ostree image) ships Snap support despite being
+    # ostree, so it is exempted from the ostree exclusion here as well.
+    is_systemd && ! is_steamos || return 1
+    if is_ostree && ! is_gregos; then
+        return 1
+    fi
     python3 "$SCRIPT_DIR/app/compat.py" --is-containerized >/dev/null 2>&1 && return 1
     return 0
 }

@@ -72,19 +72,22 @@ _msg info "Building LinuxToys version $LT_VERSION for Solus..."
 _msg info "SHA256: $LT_SHA256"
 _msg info "Output path: $OUTPUT_PATH"
 
-# check for solbuild
-. /etc/os-release
-if ! which solbuild >/dev/null 2>&1; then
-    _msg info "solbuild not found, installing..."
-    if [[ "$ID" != "solus" ]]; then
-        git clone https://github.com/getsolus/solbuild.git
-        cd solbuild
-        make
-        sudo make install
-        cd ..
-    else
-        sudo eopkg it -y solbuild
-    fi
+# solbuild runs inside a distrobox container (default: alma)
+SOLUS_CONTAINER="${SOLUS_CONTAINER:-alma}"
+
+if ! distrobox list 2>/dev/null | grep -qw "$SOLUS_CONTAINER"; then
+    _msg error "Distrobox container '$SOLUS_CONTAINER' not found."
+    _msg info "Create it or pick another one with: SOLUS_CONTAINER=<name> $0"
+    exit 1
+fi
+
+_msg info "Using distrobox container: $SOLUS_CONTAINER"
+
+# check for solbuild inside the container
+if ! distrobox-enter -n "$SOLUS_CONTAINER" -- which solbuild >/dev/null 2>&1; then
+    _msg error "solbuild not found inside container '$SOLUS_CONTAINER'."
+    _msg info "Install it in the container first (see dev/build/solus/README.md)."
+    exit 1
 fi
 
 # Delete output directory if it exists
@@ -118,11 +121,12 @@ _msg info "Build structure created at: $OUTPUT_PATH/linuxtoys-$LT_VERSION"
 _msg info "Package.yml preview:"
 head -5 "$PACKAGE_YML"
 
-# Build with solbuild
-_msg info "Starting solbuild build process..."
+# Build with solbuild inside the container
+_msg info "Starting solbuild build process in container '$SOLUS_CONTAINER'..."
 cd "$OUTPUT_PATH/linuxtoys-$LT_VERSION"
-if ! solbuild list-profiles >/dev/null 2>&1; then
+if ! distrobox-enter -n "$SOLUS_CONTAINER" -- solbuild list-profiles >/dev/null 2>&1; then
     _msg info "Initializing solbuild (first run, this may take a while)..."
-    sudo solbuild init -u -p main-x86_64 || _msg warn "solbuild init may have issues, continuing..."
+    distrobox-enter -n "$SOLUS_CONTAINER" -- sudo solbuild init -u -p main-x86_64 \
+        || _msg warning "solbuild init may have issues, continuing..."
 fi
-sudo solbuild build -p main-x86_64 2>&1 | tee "$OUTPUT_PATH/build.log"
+distrobox-enter -n "$SOLUS_CONTAINER" -- sudo solbuild build -p main-x86_64 2>&1 | tee "$OUTPUT_PATH/build.log"

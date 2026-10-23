@@ -373,16 +373,19 @@ _msg() {
     local title="${3:-LinuxToys}"
 
     if [[ "$DISABLE_ZENITY" == "1" ]]; then
-        echo "$text"
         return 0
     fi
 
     case "$type" in
+        # Echo before the dialog so the terminal buffer always holds the
+        # message for bug reporting; the dialog is purely the visible surface.
         info)
-            _zenity_run --info --text "$text" --width 360 --height 300 || echo "$text"
+            echo "$text"
+            _zenity_run --info --text "$text" --width 360 --height 300 || true
             ;;
         warning)
-            _zenity_run --warning --text "$text" --width 360 --height 300 || echo "$text"
+            echo "$text"
+            _zenity_run --warning --text "$text" --width 360 --height 300 || true
             ;;
         error)
             echo "$text"
@@ -479,7 +482,6 @@ listselect() {
 
 info() {
     { { [ -n "$CALLED_SCRIPT" ] && { [ "$1" = "$finishmsg" ] || [ "$1" = "$rebootmsg" ]; }; } && return 0; } || true
-    _zenity_can_run || { echo "$1" && return 0; }
     if [ -n "$CHECKLIST_RUN" ]; then
         echo "$1";
     else
@@ -487,12 +489,16 @@ info() {
     fi
 }
 warn() {
-    _zenity_can_run || { echo "$1" && return 0; }
+    # Always echo so the warning is captured in the terminal buffer for bug
+    # reporting, even when a GUI dialog is shown (matches how error() behaves).
     if [ -n "$CHECKLIST_RUN" ]; then
-        echo "WARN: $1";
+        echo "WARN: $1"
     else
-        _msg warning "$1";
+        echo "$1"
     fi
+    _zenity_can_run || return 0
+    [ -n "$CHECKLIST_RUN" ] && return 0
+    _msg warning "$1"
 }
 error() {
     _zenity_can_run || { echo "$1" && return 1; }
