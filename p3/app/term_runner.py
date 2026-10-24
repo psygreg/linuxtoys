@@ -254,18 +254,21 @@ class TerminalRunner:
             self._run_next_script()
             return False
 
-        # Timed out: the ongoing operation is taking too long.
+        # Timed out: the ongoing operation is taking too long. The script is
+        # finished as cancelled (exit 100), which continues the queue itself.
         self._set_runner_locked(False)
         self._skip_script_for_slow_manager(script_info or {})
-        self._run_next_script()
         return False
 
     def _skip_script_for_slow_manager(self, script_info):
-        """Report a wait that timed out and skip the queued script.
+        """Report a wait that timed out and finish the script as cancelled.
 
         The (translated) dialog explains the timeout once per run; afterwards
-        only the terminal viewer notes the skipped script, and the queue
-        continues with the remaining scripts.
+        the terminal viewer notes the skipped script. The script is then
+        finished exactly as if it had exited with code 100 (cancelled) via
+        on_child_exit, so the normal completion path runs: transmap cleanup,
+        no registry save, and the queue continues (unlocking the terminal once
+        it drains).
         """
         title, message = package_guard.timeout_texts(self.translations)
 
@@ -284,17 +287,20 @@ class TerminalRunner:
             name = script_info.get("name", "unknown")
             self.terminal.feed(f"\r\n✗ {name}: {message}\r\n".encode())
 
-        self.scripts_executed += 1
-        self.vbox_main.progress_bar.set_fraction(
-            self.scripts_executed / self.total_scripts
-        )
-        running_text = self.translations.get(
-            "term_view_running", "Running {current}/{total}"
-        )
-        self.vbox_main.progress_bar.set_text(
-            running_text.format(current=self.scripts_executed, total=self.total_scripts)
-        )
-        self._run_next_script()
+        # A script whose wait timed out is counted as cancelled (exit code 100)
+        # so the terminal view can be left like any other cancelled run. No
+        # child process was spawned, so drive the completion path directly with
+        # a synthetic "exited 100" wait status.
+        self.on_child_exit(self.terminal, self._synthetic_exit_status(100))
+
+    @staticmethod
+    def _synthetic_exit_status(exit_code):
+        """Build a wait status byte-pattern as if a child exited with exit_code.
+
+        Mirrors the layout os.WIFEXITED/os.WEXITSTATUS decode: the exit code
+        occupies the high byte of a 16-bit status.
+        """
+        return (int(exit_code) & 0xFF) << 8
 
     def on_child_exit(self, term, status):
         # A dying child must never leave navigation locked, including fatal/exit 100 paths.
