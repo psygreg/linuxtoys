@@ -72,21 +72,45 @@ _msg info "Building LinuxToys version $LT_VERSION for Solus..."
 _msg info "SHA256: $LT_SHA256"
 _msg info "Output path: $OUTPUT_PATH"
 
-# solbuild runs inside a distrobox container (default: alma)
+# solbuild runs inside a rootful distrobox container (default: alma).
+# Rootful mode is required: solbuild mounts its rootfs image via a loop device
+# and chroots into it, which needs CAP_SYS_ADMIN + /dev/loop* (not available in
+# a rootless container -> "failed to setup loop device").
 SOLUS_CONTAINER="${SOLUS_CONTAINER:-alma}"
+DBOX_RUN=(distrobox enter --root -n "$SOLUS_CONTAINER" --)
 
-if ! distrobox list 2>/dev/null | grep -qw "$SOLUS_CONTAINER"; then
-    _msg error "Distrobox container '$SOLUS_CONTAINER' not found."
-    _msg info "Create it or pick another one with: SOLUS_CONTAINER=<name> $0"
+if ! distrobox list --root 2>/dev/null | grep -qw "$SOLUS_CONTAINER"; then
+    _msg error "Rootful distrobox container '$SOLUS_CONTAINER' not found."
+    _msg info "Create one with: distrobox create --root --name $SOLUS_CONTAINER --image <image>"
+    _msg info "or pick another name with: SOLUS_CONTAINER=<name> $0"
     exit 1
 fi
 
-_msg info "Using distrobox container: $SOLUS_CONTAINER"
+_msg info "Using rootful distrobox container: $SOLUS_CONTAINER"
 
 # check for solbuild inside the container
-if ! distrobox-enter -n "$SOLUS_CONTAINER" -- which solbuild >/dev/null 2>&1; then
+if ! "${DBOX_RUN[@]}" which solbuild >/dev/null 2>&1; then
     _msg error "solbuild not found inside container '$SOLUS_CONTAINER'."
     _msg info "Install it in the container first (see dev/build/solus/README.md)."
+    exit 1
+fi
+
+# sanity check: confirm the container really can set up loop devices
+_msg info "Checking loop device support inside container '$SOLUS_CONTAINER'..."
+if ! "${DBOX_RUN[@]}" sh -c '
+    set -e
+    tmp=$(mktemp /tmp/solbuild-loopcheck.XXXXXX.img)
+    mnt=$(mktemp -d /tmp/solbuild-loopcheck.XXXXXX.mnt)
+    trap "rm -f \"$tmp\"; rmdir \"$mnt\" 2>/dev/null || true" EXIT
+    dd if=/dev/zero of="$tmp" bs=1k count=64 2>/dev/null
+    mount -o loop,ro "$tmp" "$mnt"
+    umount "$mnt"
+'; then
+    _msg error "Container '$SOLUS_CONTAINER' cannot set up loop devices."
+    _msg info "solbuild needs to mount its rootfs image through a loop device,"
+    _msg info "which requires a privileged (rootful) container."
+    _msg info "Recreate the container with rootful mode, for example:"
+    _msg info "  distrobox create --root --name $SOLUS_CONTAINER --image <image>"
     exit 1
 fi
 
@@ -124,9 +148,9 @@ head -5 "$PACKAGE_YML"
 # Build with solbuild inside the container
 _msg info "Starting solbuild build process in container '$SOLUS_CONTAINER'..."
 cd "$OUTPUT_PATH/linuxtoys-$LT_VERSION"
-if ! distrobox-enter -n "$SOLUS_CONTAINER" -- solbuild list-profiles >/dev/null 2>&1; then
+if ! "${DBOX_RUN[@]}" test -d /var/lib/solbuild/images; then
     _msg info "Initializing solbuild (first run, this may take a while)..."
-    distrobox-enter -n "$SOLUS_CONTAINER" -- sudo solbuild init -u -p main-x86_64 \
+    "${DBOX_RUN[@]}" solbuild init -u -p main-x86_64 \
         || _msg warning "solbuild init may have issues, continuing..."
 fi
-distrobox-enter -n "$SOLUS_CONTAINER" -- sudo solbuild build -p main-x86_64 2>&1 | tee "$OUTPUT_PATH/build.log"
+"${DBOX_RUN[@]}" solbuild build -p main-x86_64 2>&1 | tee "$OUTPUT_PATH/build.log"
