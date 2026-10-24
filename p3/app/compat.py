@@ -307,6 +307,17 @@ def is_gregos():
     """Return True when the currently booted image is the GregOS image."""
     return bool(_cached_host_value("gregos", is_gregos_image))
 
+
+def self_updates_disabled():
+    """Return True when LinuxToys must not self-update on this host.
+
+    GregOS ships LinuxToys inside its own image, so LinuxToys is only meant to
+    change when the system image itself is updated. Every other system,
+    including other ublue/ostree images, keeps the normal self-update behaviour.
+    """
+    return bool(_cached_host_value("gregos", is_gregos_image))
+
+
 def _is_supported_debian_release():
     """
     Check if the host runs a supported Debian release (trixie or newer).

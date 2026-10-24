@@ -34,6 +34,14 @@ class UpdateHelper:
         self._latest_ver = {}
 
     def _update_available(self) -> bool:
+        # GregOS ships LinuxToys inside its image, so it only updates with the
+        # system image. Never report an update (and never trigger the update
+        # dialog or background update) there. Every other host is unchanged.
+        from ..compat import self_updates_disabled
+
+        if self_updates_disabled():
+            return False
+
         if not os.environ.get("DEV_MODE") == "1":
             if not self._is_from_repository():
                 return self._check_for_updates()

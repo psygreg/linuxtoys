@@ -151,7 +151,12 @@ class AppWindow(
         self.auto_error_reports_enabled = False
 
         # Automatic self-update state. Missing preferences intentionally default on.
-        self.automatic_updates_enabled = get_automatic_updates()
+        # GregOS ships LinuxToys inside its image, so self-updating is forced off
+        # there regardless of the stored preference; every other host keeps the
+        # saved preference.
+        self.automatic_updates_enabled = (
+            get_automatic_updates() and not compat.self_updates_disabled()
+        )
         self._background_update_started = False
         self._update_state = "checking" if self.automatic_updates_enabled else "disabled"
         self._appstream_state = "hidden"
@@ -1650,6 +1655,9 @@ class AppWindow(
         return self._refresh_status_indicator()
 
     def set_automatic_updates_enabled(self, enabled):
+        # GregOS self-updates only with the system image; never re-enable here.
+        if compat.self_updates_disabled():
+            enabled = False
         self.automatic_updates_enabled = bool(enabled)
         if not enabled:
             # Do not discard a completed update's restart affordance.
