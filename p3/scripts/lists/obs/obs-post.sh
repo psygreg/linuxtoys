@@ -30,7 +30,7 @@ elif is_debian || is_ubuntu; then
     sudo_ env DEBIAN_FRONTEND=noninteractive apt-get install -y "${pkg_notfound[@]}"
     _append_transmap "pkg ${pkg_notfound[*]}"
     secureboot_check
-elif is_fedora || is_rhel || is_ostree; then
+elif is_fedora || is_rhel || { is_ostree && ! is_ublue; }; then
     summon_helpers
     rpmfusion_chk
     secureboot_check

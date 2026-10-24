@@ -177,7 +177,8 @@ override_dh_install:
 EOF
 chmod +x "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/rules"
 
-# Create debian/copyright
+# Create debian/copyright. The metainfo is CC0-1.0 (AppStream only accepts permissive
+# metadata licenses), so it needs its own stanza instead of falling under the GPL code.
 cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/copyright" <<'EOF'
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: linuxtoys
@@ -203,6 +204,17 @@ License: GPL-3+
  .
  On Debian systems, the complete text of the GNU General
  Public License version 3 can be found in "/usr/share/common-licenses/GPL-3".
+
+Files: src/toys.linux.LinuxToys.metainfo.xml usr/share/metainfo/toys.linux.LinuxToys.metainfo.xml
+Copyright: 2024-2025 Victor Gregory <psygreg@icloud.com>
+License: CC0-1.0
+
+License: CC0-1.0
+ To the extent possible under law, the author has waived all copyright and
+ related or neighboring rights to this AppStream metainfo file.
+ .
+ On Debian systems, the complete text of the CC0 1.0 Universal license can be
+ found in "/usr/share/common-licenses/CC0-1.0".
 EOF
 
 # Create debian/source/format

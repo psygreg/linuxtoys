@@ -3,13 +3,9 @@
 # version: 1.0
 # description: swapfile_desc
 # icon: swapfile.svg
-# compat: ubuntu, debian, arch, fedora, rhel, suse
+# compat: ubuntu, debian, arch, fedora, rhel, suse, gregos
 # noconfirm: yes
 # nocontainer
-# new
-
-# --- Start of the script code ---
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
 
 fix_selinux_context () {
     local swapfile_path=$1
@@ -58,6 +54,9 @@ ACTIVE_SWAP=$(swapon --show 2>/dev/null | tail -n +2)
 if [ -n "$ACTIVE_SWAP" ]; then
     zenwrn "Swap already enabled in your system:\n$ACTIVE_SWAP"
     exit 100
+elif is_gregos; then
+    create_swap "/var"
+    info "$finishmsg"
 else
     # menu
     while true; do
