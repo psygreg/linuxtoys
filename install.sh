@@ -122,6 +122,15 @@ osappimage() {
 			printf "\e[0;33m[WARN]\e[m Failed to remove the layered LinuxToys package; its desktop entry may keep appearing alongside the AppImage.\n"
 	fi
 
+	# Solus native packages can leave a conflicting desktop entry behind when
+	# the AppImage is integrated. Remove the eopkg installation first.
+	if [ "${ID:-}" = "solus" ] && command -v eopkg >/dev/null 2>&1 &&
+		eopkg list-installed linuxtoys >/dev/null 2>&1; then
+		printf "\e[0;36m[INFO]\e[m Removing existing eopkg LinuxToys installation...\n"
+		sudo eopkg remove -y linuxtoys ||
+			error "Failed to remove the existing eopkg LinuxToys installation."
+	fi
+
 	# Prefer the user's existing Flathub setup. If Flathub exists only system-wide,
 	# use that scope instead, matching LinuxToys' normal Flatpak behavior.
 	_flatpak_scope="--user"
@@ -279,7 +288,7 @@ installer() {
 		manjaro|biglinux|bigcommunity) manjaro;;
 		steamos) osappimage ;;
 		arch|cachyos|artix) osarch ;;
-		solus) ossolus ;;
+		solus) osappimage ;;
 	esac
 
 	case "${ID_LIKE:-}" in
