@@ -3,7 +3,7 @@
 # version: 1.0
 # description: kconnect_desc
 # icon: kconnect.svg
-# compat: !ubuntu, !zorin, !solus, !fedora
+# compat: !ubuntu, !zorin, !solus, !fedora, !gregos
 # revert: no
 
 # --- Start of the script code ---

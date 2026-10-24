@@ -3,7 +3,7 @@
 # version: 1.0
 # description: ondemand_desc
 # icon: optimizer.svg
-# compat: ubuntu, debian, fedora, suse, arch, ostree, ublue, rhel
+# compat: ubuntu, debian, fedora, suse, arch, ostree, !ublue, rhel, !gregos
 # reboot: yes
 # nocontainer
 # systemd: yes

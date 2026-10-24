@@ -4,7 +4,7 @@
 # icon: terminal.svg
 # reboot: yes
 # nocontainer
-# compat: !steamos
+# compat: !steamos, !gregos
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_

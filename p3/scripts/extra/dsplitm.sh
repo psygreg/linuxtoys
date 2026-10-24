@@ -3,7 +3,7 @@
 # version: 1.0
 # description: dsplitm_desc
 # icon: utils.svg
-# compat: ubuntu, debian, suse, fedora, arch, cachy, rhel, ostree
+# compat: ubuntu, debian, suse, fedora, arch, cachy, rhel, ostree, !gregos
 # reboot: yes
 # nocontainer
 
