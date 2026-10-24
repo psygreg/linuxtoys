@@ -736,6 +736,8 @@
   "sidebar_collapse": "Comprimi",
   "sidebar_toggle": "Mostra o nascondi la barra laterale delle categorie",
   "main_menu": "Menu principale",
-  "package_manager_busy_title": "Gestore dei pacchetti occupato",
-  "package_manager_busy_message": "Un'altra operazione sui pacchetti è già in corso. I gestori dei pacchetti non supportano operazioni in parallelo. Attendi il completamento del processo in corso prima di tentare qualsiasi operazione di questo tipo con LinuxToys."
+  "package_manager_busy_title": "In attesa del gestore dei pacchetti",
+  "package_manager_busy_message": "In questo momento è in corso un'altra operazione sui pacchetti, quindi LinuxToys è in attesa che termini. I gestori dei pacchetti non supportano operazioni in parallelo. Non devi fare nulla: la tua operazione inizierà automaticamente non appena quella corrente sarà completata.",
+  "package_manager_timeout_title": "Operazione sui pacchetti che dura troppo",
+  "package_manager_timeout_message": "Un'altra operazione sui pacchetti è ancora in corso e sta durando troppo. Attendi il completamento dell'operazione in corso, poi riprova."
 }

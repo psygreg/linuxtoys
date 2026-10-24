@@ -736,6 +736,8 @@
   "sidebar_collapse": "Tiivistä",
   "sidebar_toggle": "Vaihda luokkien sivupalkki",
   "main_menu": "Päävalikko",
-  "package_manager_busy_title": "Paketinhallinta on käynnissä",
-  "package_manager_busy_message": "Toinen pakettoiminto on jo käynnissä. Paketinhallintaohjelmat eivät tue rinnakkaisia toimintoja. Odota käynnissä olevan prosessin valmistumista ennen kuin yrität sellaisia toimintoja LinuxToysin kanssa."
+  "package_manager_busy_title": "Odotetaan paketinhallintaa",
+  "package_manager_busy_message": "Toinen pakettoiminto on juuri nyt käynnissä, joten LinuxToys odottaa sen valmistumista. Paketinhallintaohjelmat eivät tue rinnakkaisia toimintoja. Sinun ei tarvitse tehdä mitään — toimintosi käynnistyy automaattisesti, heti kun nykyinen valmistuu.",
+  "package_manager_timeout_title": "Paketointi kestää liian kauan",
+  "package_manager_timeout_message": "Toinen paketointi on yhä käynnissä ja kestää liian kauan. Odota, että käynnissä oleva toiminto valmistuu, ja yritä uudelleen."
 }

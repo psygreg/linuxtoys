@@ -736,6 +736,8 @@
   "sidebar_collapse": "I-tipon",
   "sidebar_toggle": "I-toggle ang sidebar ng kategorya",
   "main_menu": "Pangunahing menu",
-  "package_manager_busy_title": "Abala ang package manager",
-  "package_manager_busy_message": "May isa pang pagpapakete na operasyon na kasalukuyang tumatakbo. Hindi sumusuporta ang mga package manager sa sabay-sabay na operasyon. Mangyaring maghintay na matapos ang kasalukuyang proseso bago sumubok ng anumang ganoong operasyon kasama ang LinuxToys."
+  "package_manager_busy_title": "Naghihintay sa package manager",
+  "package_manager_busy_message": "May ibang operasyon ng pakete na tumatakbo sa kasalukuyan, kaya naghihintay ang LinuxToys hanggang matapos ito. Hindi sumusuporta ang mga package manager sa sabay-sabay na operasyon. Hindi kailangang gumawa ng anuman — awtomatikong magsisimula ang iyong operasyon kapag natapos ang kasalukuyan.",
+  "package_manager_timeout_title": "Masyadong matagal ang operasyon ng pakete",
+  "package_manager_timeout_message": "May isa pang operasyon ng pakete na tumatakbo pa rin at masyadong matagal. Mangyaring hintayin ang operasyon na nagpapatuloy na matapos, pagkatapos ay subukan muli."
 }

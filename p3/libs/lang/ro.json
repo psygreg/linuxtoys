@@ -736,6 +736,8 @@
   "sidebar_collapse": "Restrânge",
   "sidebar_toggle": "Comută bara laterală de categorii",
   "main_menu": "Meniu principal",
-  "package_manager_busy_title": "Administratorul de pachete este ocupat",
-  "package_manager_busy_message": "Altă operațiune cu pachete rulează deja. Administratorii de pachete nu suportă operațiuni în paralel. Vă rugăm să așteptați finalizarea procesului în curs înainte de a încerca astfel de operațiuni cu LinuxToys."
+  "package_manager_busy_title": "Se așteaptă administratorul de pachete",
+  "package_manager_busy_message": "În acest moment rulează altă operațiune cu pachete, așa că LinuxToys așteaptă finalizarea ei. Administratorii de pachete nu suportă operațiuni în paralelu. Nu trebuie să faceți nimic — operațiunea dvs. va începe automat de îndată ce se încheie cea curentă.",
+  "package_manager_timeout_title": "Operațiunea de pachete durează prea mult",
+  "package_manager_timeout_message": "O altă operațiune de pachete rulează încă și durează prea mult. Vă rugăm să așteptați finalizarea operațiunii în curs, apoi încercați din nou."
 }

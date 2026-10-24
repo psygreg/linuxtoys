@@ -736,6 +736,8 @@
   "sidebar_collapse": "Inklappen",
   "sidebar_toggle": "Categoriezijbalk in- of uitschakelen",
   "main_menu": "Hoofdmenu",
-  "package_manager_busy_title": "Pakketbeheer is bezig",
-  "package_manager_busy_message": "Er wordt al een andere pakketbewerking uitgevoerd. Pakketbeheerders ondersteunen geen parallelle bewerkingen. Wacht tot het lopende proces is afgerond voordat je dergelijke bewerkingen met LinuxToys probeert."
+  "package_manager_busy_title": "Wachten op de pakketbeheerder",
+  "package_manager_busy_message": "Er wordt op dit moment een andere pakketbewerking uitgevoerd, dus LinuxToys wacht tot deze klaar is. Pakketbeheerders ondersteunen geen parallelle bewerkingen. Je hoeft niets te doen — je bewerking start automatisch zodra de huidige is voltooid.",
+  "package_manager_timeout_title": "Pakketbewerking duurt te lang",
+  "package_manager_timeout_message": "Er wordt nog een andere pakketbewerking uitgevoerd en deze duurt te lang. Wacht tot de lopende bewerking is voltooid en probeer het opnieuw."
 }

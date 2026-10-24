@@ -735,6 +735,8 @@
   "sidebar_collapse": "Skupi",
   "sidebar_toggle": "Prebaci bočnu traku kategorija",
   "main_menu": "Glavni meni",
-  "package_manager_busy_title": "Upravljač paketa je zauzet",
-  "package_manager_busy_message": "Druga operacija s paketima je već u toku. Upravljači paketa ne podržavaju paralelne operacije. Sačekajte da trenutni proces završi prije nego što pokušate takve operacije s LinuxToysom."
+  "package_manager_busy_title": "Čekam na upravljača paketa",
+  "package_manager_busy_message": "Trenutno se izvodi druga radnja s paketima, pa LinuxToys čeka da se završi. Upravljači paketa ne podržavaju paralelne radnje. Ne morate ništa poduzeti — vaša će se radnja automatski pokrenuti čim se trenutna dovrši.",
+  "package_manager_timeout_title": "Radnja s paketima traje predugo",
+  "package_manager_timeout_message": "Druga radnja s paketima se još izvodi i traje predugo. Sačekajte da se trenutna radnja završi, pa pokušajte ponovo."
 }

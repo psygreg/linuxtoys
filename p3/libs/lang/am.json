@@ -736,6 +736,8 @@
   "sidebar_collapse": "መጠቅለል",
   "sidebar_toggle": "የጎን ምናሌን ቀያይር",
   "main_menu": "ዋና ምናሌ",
-  "package_manager_busy_title": "የጥቅል አስተዳዳሪ እየሰራ ነው",
-  "package_manager_busy_message": "ሌላ የጥቅል ሥራ ቀድሞውኑ እየሰራ ነው። የጥቅል አስተዳዳሪዎች ትይዩ ሥራዎችን አይደግፉም። ከLinuxToys ጋር የመሳሰሉ ሥራዎችን ከመሞከርዎ በፊት እባክዎ እየተከናወነ ያለውን ሂደት እስኪጨረስ ይጠብቁ።"
+  "package_manager_busy_title": "የጥቅል አስተዳዳሪ በመጠበቅ ላይ",
+  "package_manager_busy_message": "በአሁኑ ጊዜ ሌላ የጥቅል ሥራ እየተከናወነ ስለሆነ፣ LinuxToys እስኪጨርስ በመጠበቅ ላይ ነው። የጥቅል አስተዳዳሪዎች ትይዩ ሥራዎችን አይደግፉም። ምንም እርምጃ አያስፈልግም — አሁን ያለው ሥራ ከጨረሰ በኋላ የእርስዎ ሥራ በራስ-ሰር ይጀምራል።",
+  "package_manager_timeout_title": "የጥቅል ሥራው በጣም ረጅም ጊዜ ይወስዳል",
+  "package_manager_timeout_message": "ሌላ የጥቅል ሥራ አሁንም እየተከናወነ ነው፣ በጣም ረጅም ጊዜ ይወስዳል። እባክዎ እየተከናወነ ያለው ሥራ እስኪጨረስ ይጠብቁ፣ ከዚያ እንደገና ይሞክሩ።"
 }

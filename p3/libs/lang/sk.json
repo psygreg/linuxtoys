@@ -736,6 +736,8 @@
   "sidebar_collapse": "Zbaliť",
   "sidebar_toggle": "Prepnúť bočný panel kategórií",
   "main_menu": "Hlavná ponuka",
-  "package_manager_busy_title": "Správca balíkov je zaneprázdnený",
-  "package_manager_busy_message": "Už prebieha iná operácia s balíkmi. Správcovia balíkov nepodporujú paralelné operácie. Počkajte na dokončenie prebiehajúceho procesu, skôr ako skúsite také operácie s LinuxToys."
+  "package_manager_busy_title": "Čakám na správcu balíkov",
+  "package_manager_busy_message": "Práve prebieha iná operácia s balíkmi, takže LinuxToys čaká na jej dokončenie. Správcovia balíkov nepodporujú paralelné operácie. Nemusíte nič robiť — vaša operácia sa spustí automaticky po dokončení tej aktuálnej.",
+  "package_manager_timeout_title": "Operácia s balíkmi trvá príliš dlho",
+  "package_manager_timeout_message": "Iná operácia s balíkmi stále prebieha a trvá príliš dlho. Počkajte na dokončenie prebiehajúcej operácie a skúste to znova."
 }

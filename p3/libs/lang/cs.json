@@ -736,6 +736,8 @@
   "sidebar_collapse": "Sbalit",
   "sidebar_toggle": "Přepnout postranní panel kategorií",
   "main_menu": "Hlavní nabídka",
-  "package_manager_busy_title": "Správce balíčků je zaneprázdněný",
-  "package_manager_busy_message": "Již probíhá jiná operace s balíčky. Správci balíčků nepodporují paralelní operace. Počkejte na dokončení probíhajícího procesu, než zkusíte takové operace s LinuxToys."
+  "package_manager_busy_title": "Čekám na správce balíčků",
+  "package_manager_busy_message": "Právě probíhá jiná operace s balíčky, takže LinuxToys čeká na její dokončení. Správci balíčků nepodporují paralelní operace. Nemusíte nic dělat — vaše operace se spustí automaticky po dokončení té aktuální.",
+  "package_manager_timeout_title": "Operace s balíčky trvá příliš dlouho",
+  "package_manager_timeout_message": "Jiná operace s balíčky stále běží a trvá příliš dlouho. Počkejte na dokončení probíhající operace a zkuste to znovu."
 }

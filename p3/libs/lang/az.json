@@ -735,6 +735,8 @@
   "sidebar_collapse": "Yığ",
   "sidebar_toggle": "Kateqoriya yan panelini çevir",
   "main_menu": "Əsas menyu",
-  "package_manager_busy_title": "Paket meneceri məşğuldur",
-  "package_manager_busy_message": "Başqa paket əməliyyatı artıq icra olunur. Paket menecerləri paralel əməliyyatları dəstəkləmir. LinuxToys ilə belə əməliyyatları sınmazdan əvvəl davam edən prosesin bitməsini gözləyin."
+  "package_manager_busy_title": "Paket menecerini gözləyirik",
+  "package_manager_busy_message": "Hazırda başqa bir paket əməliyyatı icra olunur, buna görə LinuxToys onun bitməsini gözləyir. Paket menecerləri paralel əməliyyatları dəstəkləmir. Heç bir tədbir görmək lazım deyil — cari əməliyyat bitən kimi sizin əməliyyatınız avtomatik başlayacaq.",
+  "package_manager_timeout_title": "Paket əməliyyatı çox uzun çəkir",
+  "package_manager_timeout_message": "Başqa bir paket əməliyyatı hələ də davam edir və çox uzun çəkir. Zəhmət olmasa davam edən əməliyyatın bitməsini gözləyin, sonra yenidən cəhd edin."
 }

@@ -736,6 +736,8 @@
   "sidebar_collapse": "Strni",
   "sidebar_toggle": "Preklopi stransko vrstico kategorij",
   "main_menu": "Glavni meni",
-  "package_manager_busy_title": "Upravitelj paketov je zaposlen",
-  "package_manager_busy_message": "Druga operacija s paketi se že izvaja. Upravitelji paketov ne podpirajo vzporednih operacij. Počakajte, da se trenutni proces zaključi, preden poskusite take operacije z LinuxToys."
+  "package_manager_busy_title": "Čakam na upravitelja paketov",
+  "package_manager_busy_message": "Trenutno poteka druga operacija s paketi, zato LinuxToys čaka, da se konča. Upravitelji paketov ne podpirajo vzporednih operacij. Ničesar vam ni treba storiti — vaša operacija se bo samodejno začela, ko se trenutna konča.",
+  "package_manager_timeout_title": "Operacija s paketi traja predolgo",
+  "package_manager_timeout_message": "Druga operacija s paketi še poteka in traja predolgo. Počakajte, da se trenutna operacija konča, in poskusite znova."
 }

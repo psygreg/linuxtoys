@@ -736,6 +736,8 @@
   "sidebar_collapse": "Fäll ihop",
   "sidebar_toggle": "Växla kategorisidopanelen",
   "main_menu": "Huvudmeny",
-  "package_manager_busy_title": "Pakethanteraren är upptagen",
-  "package_manager_busy_message": "En annan paketåtgärd pågår redan. Pakethanterare stöder inte parallella åtgärder. Vänta tills den pågående processen är klar innan du försöker utföra sådana åtgärder med LinuxToys."
+  "package_manager_busy_title": "Väntar på pakethanteraren",
+  "package_manager_busy_message": "En annan paketåtgärd pågår just nu, så LinuxToys väntar tills den är klar. Pakethanterare stöder inte parallella åtgärder. Du behöver inte göra något — din åtgärd startar automatiskt så snart den pågående är slutförd.",
+  "package_manager_timeout_title": "Paketåtgärden tar för lång tid",
+  "package_manager_timeout_message": "En annan paketåtgärd pågår fortfarande och tar för lång tid. Vänta tills den pågående åtgärden är klar och försök igen."
 }

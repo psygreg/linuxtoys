@@ -736,6 +736,8 @@
   "sidebar_collapse": "Einklappen",
   "sidebar_toggle": "Kategorien-Seitenleiste umschalten",
   "main_menu": "Hauptmenü",
-  "package_manager_busy_title": "Paketverwaltung ist beschäftigt",
-  "package_manager_busy_message": "Es läuft bereits eine andere Paketoperation. Paketverwaltungen unterstützen keine parallelen Operationen. Bitte warte, bis der laufende Prozess abgeschlossen ist, bevor du solche Operationen mit LinuxToys versuchst."
+  "package_manager_busy_title": "Warte auf die Paketverwaltung",
+  "package_manager_busy_message": "Derzeit läuft eine andere Paketoperation, daher wartet LinuxToys, bis sie abgeschlossen ist. Paketverwaltungen unterstützen keine parallelen Operationen. Du musst nichts tun — deine Operation startet automatisch, sobald die aktuelle abgeschlossen ist.",
+  "package_manager_timeout_title": "Paketoperation dauert zu lange",
+  "package_manager_timeout_message": "Eine andere Paketoperation läuft noch und dauert zu lange. Bitte warte, bis der laufende Vorgang abgeschlossen ist, und versuche es dann erneut."
 }

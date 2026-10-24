@@ -3607,17 +3607,18 @@ class AppWindow(
         return False
 
     def _show_package_manager_busy(self):
-        """Explain a queue job refused because another package operation runs.
+        """Explain a queue job refused because a package operation ran too long.
 
-        Queued jobs that would enter a native transaction are refused while
-        another package-manager process is running; several may be refused
-        while one dialog is open, so collapse them into a single dialog.
+        Queued jobs that would enter a native transaction now wait (bounded)
+        for a running package-manager process to finish; a refusal only
+        happens when that wait times out. Several may be refused while one
+        dialog is open, so collapse them into a single dialog.
         """
         if self._package_busy_dialog_open:
             return False
         self._package_busy_dialog_open = True
         try:
-            title, message = package_guard.busy_texts(self.translations)
+            title, message = package_guard.timeout_texts(self.translations)
             gtk_dialogs.run_message_dialog(
                 self,
                 title=title,

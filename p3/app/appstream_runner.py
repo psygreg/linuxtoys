@@ -606,12 +606,22 @@ class AppStreamRunner:
                 # installation registry/transmap behavior.
                 aur_job = str(record["info"].get("appstream_source", "") or "") == "aur"
                 failure_output = ""
-                # Refuse to dispatch this record into a native package
-                # transaction while another package-manager process is already
-                # running: the collision would fail the job opaquely mid-run.
+                # Wait (bounded) for a running native package operation to
+                # finish before dispatching this record: the collision would
+                # fail the job opaquely mid-run. Only report a timeout if the
+                # operation is still going after the wait.
                 native_conflict = self._native_transaction_conflict(record)
                 if native_conflict is not None:
-                    exit_code = self._NATIVE_TRANSACTION_BUSY_EXIT
+                    idle, _name = package_guard.wait_for_idle(
+                        timeout=package_guard.BUSY_WAIT_TIMEOUT_SECONDS
+                    )
+                    if idle:
+                        native_conflict = None
+                    else:
+                        exit_code = self._NATIVE_TRANSACTION_BUSY_EXIT
+
+                if native_conflict is not None:
+                    pass  # already timed out; skip to status update below
                 elif record.get("action") == "remove" and aur_job:
                     exit_code, failure_output = self._run_aur_removal_job(record["remove_info"])
                 elif record.get("action") == "remove":

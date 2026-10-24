@@ -736,6 +736,8 @@
   "sidebar_collapse": "Sakļaut",
   "sidebar_toggle": "Pārslēgt kategoriju sānu joslu",
   "main_menu": "Galvenā izvēlne",
-  "package_manager_busy_title": "Paku pārvaldnieks ir aizņemts",
-  "package_manager_busy_message": "Cita paku darbība jau notiek. Paku pārvaldnieki neatbalsta paralēlas darbības. Lūdzu, pagaidiet, līdz notiekošais proces beidzas, pirms mēģināt veikt šādas darbības ar LinuxToys."
+  "package_manager_busy_title": "Gaidu paku pārvaldnieku",
+  "package_manager_busy_message": "Pašlaik notiek cita paku darbība, tāpēc LinuxToys gaida tās beigas. Paku pārvaldnieki neatbalsta paralēlas darbības. Nav jādara nekas — jūsu darbība sāksies automātiski, tiklīdz pašreizējā būs beigusies.",
+  "package_manager_timeout_title": "Paku darbība aizņem pārāk ilgu laiku",
+  "package_manager_timeout_message": "Cita paku darbība joprojām notiek un aizņem pārāk ilgu laiku. Lūdzu, pagaidiet, līdz notiekošā darbība beidzas, un mēģiniet vēlreiz."
 }

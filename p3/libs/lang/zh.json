@@ -738,6 +738,8 @@
   "sidebar_collapse": "折叠",
   "sidebar_toggle": "切换分类侧边栏",
   "main_menu": "主菜单",
-  "package_manager_busy_title": "软件包管理器正忙",
-  "package_manager_busy_message": "已有另一个软件包操作正在运行。软件包管理器不支持并行操作。请等待正在进行的进程完成，然后再使用 LinuxToys 尝试此类操作。"
+  "package_manager_busy_title": "正在等待软件包管理器",
+  "package_manager_busy_message": "当前有另一个软件包操作正在运行，LinuxToys 正在等待其完成。软件包管理器不支持并行操作。无需任何操作——当前操作完成后，您的操作会自动开始。",
+  "package_manager_timeout_title": "软件包操作耗时过长",
+  "package_manager_timeout_message": "另一个软件包操作仍在运行，耗时过长。请等待正在进行的操作完成后再试。"
 }
