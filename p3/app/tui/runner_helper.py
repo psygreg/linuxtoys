@@ -448,6 +448,8 @@ class ScriptRunnerMixin:
         self._running_dev_mode = dev_mode
         self._running_is_uninstall = False
         self._running_is_appstream = False
+        # Disable zenity to avoid GUI prompts during EASY_CLI execution
+        os.environ["DISABLE_ZENITY"] = "1"
 
         env = self._script_env(script_info.get("name", "unknown"))
         env.update(self._app_identity_env(script_info))
