@@ -241,9 +241,6 @@ class AppPageWidget(Vertical):
             super().__init__()
             self.script_info = script_info
 
-    class OpenRequested(InstallRequested):
-        """Posted when Open is pressed. Same payload as the parent."""
-
     class RateRequested(Message):
         """Reserved for GUI parity. Ratings are sent by the widget.
 
@@ -1050,7 +1047,7 @@ class AppPageWidget(Vertical):
     def _focus_first(self) -> None:
         try:
             self.query_one(
-                "#app-install" if not self._installed else "#app-open"
+                "#app-install" if not self._installed else "#app-remove"
             ).focus()
         except Exception:
             pass
@@ -1417,8 +1414,6 @@ class AppPageWidget(Vertical):
             event.button.disabled = True
             event.button.label = "..."
             self.post_message(self.InstallRequested(self._selected))
-        elif bid == "app-open":
-            self.post_message(self.OpenRequested(self._selected))
         elif bid == "app-remove":
             event.button.disabled = True
             event.button.label = "..."
