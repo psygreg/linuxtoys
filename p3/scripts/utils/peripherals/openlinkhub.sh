@@ -4,14 +4,14 @@
 # description: openlinkhub_desc
 # icon: corsair.svg
 # repo: https://github.com/jurkovic-nikola/OpenLinkHub
-# compat: ubuntu, debian, fedora, ostree, ublue, arch, cachy, rhel, suse
+# compat: ubuntu, debian, fedora, ostree, ublue, arch, cachy, rhel, suse, steamos
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 # for version comparison
 askpass
-if is_ostree; then
+if is_ostree || is_steamos; then
     prep_tmp_noram
     TAGNAME=$(curl -s https://api.github.com/repos/jurkovic-nikola/OpenLinkHub/releases/latest | jq -r '.tag_name')
     wget "https://github.com/jurkovic-nikola/OpenLinkHub/releases/latest/download/OpenLinkHub_${TAGNAME}_amd64.tar.gz"
