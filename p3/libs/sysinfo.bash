@@ -5,7 +5,33 @@ sysdetect() {
 }
 sysdetect_once() { [[ -n ${ID:-} ]] || sysdetect; }
 
-is_steamos() { sysdetect_once && [[ "$ID" == "steamos" ]]; }
+# True-immutables (restricted bootc hosts) share SteamOS's installation policy,
+# so compat.py folds them under the 'steamos' tag. Mirrors the app's
+# compat.get_system_compat_keys() 'restricted_host' block (dakota, gnomeos,
+# kde-linux). Keep this in sync with that logic.
+is_restricted_host() {
+    sysdetect_once
+    local variant="${VARIANT_ID:-} ${VARIANT:-} ${NAME:-} ${PRETTY_NAME:-}"
+    variant="${variant,,}"
+    # bluefin-dakota and friends: bootc variants that report dakota identity,
+    # matched via ID or the dakota/gnomeos markers in their variant fields.
+    if [[ "$ID" =~ ^(dakota|bluefin-dakota)$ ]] ||
+        [[ "$ID" == "bluefin" && ( "$variant" == *dakota* || " $ID_LIKE " == *" gnomeos "* ) ]]; then
+        return 0
+    fi
+    # GNOME OS: ID or an explicit gnomeos marker in ID_LIKE.
+    if [[ "$ID" == "gnomeos" || " $ID_LIKE " == *" gnomeos "* ]]; then
+        return 0
+    fi
+    # KDE Linux.
+    [[ "$ID" == "kde-linux" ]]
+}
+# Matches the compat.py 'steamos' tag: SteamOS proper plus the true-immutables
+# (dakota, gnomeos, kde-linux) that share its install policy.
+is_steamos() {
+    sysdetect_once
+    [[ "$ID" == "steamos" ]] || is_restricted_host
+}
 is_arch() { sysdetect_once && [[ ("$ID" =~ arch || "$ID" == "artix" || "$ID_LIKE" =~ arch) && "$ID" != "cachyos" && "$ID" != "steamos" ]]; }
 is_cachy() { sysdetect_once && [[ "$ID" == "cachyos" ]]; }
 is_fedora() { sysdetect_once && [[ "$ID" == "fedora" || ("$ID_LIKE" =~ "fedora" && "$ID" != "almalinux") ]] && [ ! -f /run/ostree-booted ]; }

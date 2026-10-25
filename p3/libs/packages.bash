@@ -936,6 +936,16 @@ pkg_make () {
     [[ $# -gt 0 ]] || die "pkg_make requires a source"
     [[ -n "${install_command//[[:space:]]/}" ]] || die "pkg_make install command cannot be empty"
 
+    # The make-build workaround (temporarily unlocking the image with
+    # steamos-readonly to install build dependencies) is specific to SteamOS
+    # proper. The true-immutables (dakota, gnomeos, kde-linux) share SteamOS's
+    # install policy but have no supported make-build container workaround, so
+    # they must never run pkg_make. This mirrors repo_parser._steamos_user_make,
+    # which excludes those hosts from the SteamOS make path.
+    if is_restricted_host; then
+        die "Building from source (pkg_make) is unsupported on this system"
+    fi
+
     case "$1" in
         --tar|--tarball)
             mode="release-tar"
