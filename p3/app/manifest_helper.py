@@ -33,10 +33,25 @@ FLATPAK_ID_RE = re.compile(
 )
 
 
-def _print_busy_package_manager():
-    """Print the translated busy-package-manager refusal for CLI contexts."""
-    _title, message = package_guard.busy_texts()
+def _print_busy_package_manager(timeout=False):
+    """Print the translated package-manager wait/timeout message for CLI contexts."""
+    if timeout:
+        _title, message = package_guard.timeout_texts()
+    else:
+        _title, message = package_guard.busy_texts()
     print(f"✗ {message}")
+
+
+def _wait_for_package_manager():
+    """Wait (bounded) for a running native package manager to go idle.
+
+    Returns True once idle, False if the wait timed out (the caller should
+    report the timeout and abort).
+    """
+    idle, _name = package_guard.wait_for_idle(
+        timeout=package_guard.BUSY_WAIT_TIMEOUT_SECONDS
+    )
+    return idle
 
 
 def _validate_script_dir():
@@ -179,11 +194,12 @@ def install_packages(package_names):
     if "steamos" in get_system_compat_keys():
         return False
 
-    # pkg_install reaches the native manager directly; refuse instead of
-    # colliding with an already-running package operation.
+    # pkg_install reaches the native manager directly; wait for any running
+    # package operation to finish before colliding with it.
     if package_guard.busy_native_manager_process() is not None:
-        _print_busy_package_manager()
-        return False
+        if not _wait_for_package_manager():
+            _print_busy_package_manager(timeout=True)
+            return False
 
     result = _run_library_function('pkg_install', package_names)
     if result.returncode != 0 and result.stderr:
@@ -767,8 +783,9 @@ def _run_script_impl(script_info):
         # already running (EASY_CLI and manifest mode are CLI contexts, so
         # the refusal is reported in text rather than with a dialog).
         if package_guard.native_transaction_conflict(script_info['path'], script_dir):
-            _print_busy_package_manager()
-            return 1
+            if not _wait_for_package_manager():
+                _print_busy_package_manager(timeout=True)
+                return 1
 
         # Check if EASY_CLI mode is enabled
         if os.environ.get("EASY_CLI") == "1":

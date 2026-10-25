@@ -111,17 +111,18 @@ class TerminalRunner:
         current_script = self.script_queue.pop(0)
         self.vbox_main._update_header_labels(current_script)
 
-        # Refuse to dispatch a script that would enter a native package
-        # transaction while another package-manager process is already
-        # running: the helpers share filesystem locks with it and would fail
-        # opaquely mid-run (see package_guard).
+        # A run that can reach a native package transaction must not start
+        # while another package-manager process is already running: the helpers
+        # share filesystem locks with it and would fail opaquely mid-run (see
+        # package_guard). Only wait when a manager is actually present — a
+        # script that is merely *capable* of a transaction on an idle system
+        # runs immediately, with no "waiting" flash or terminal lock.
         if not dev_mode.is_dev_mode_enabled():
-            conflict = package_guard.native_transaction_conflict(
+            if package_guard.script_enters_native_transaction(
                 current_script.get("path", "true"),
                 os.environ.get("SCRIPT_DIR", ""),
-            )
-            if conflict is not None:
-                self._skip_script_for_busy_manager(current_script)
+            ) and package_guard.busy_native_manager_process() is not None:
+                self._begin_busy_wait(current_script)
                 return
 
         # Add script to execution history
@@ -201,15 +202,75 @@ class TerminalRunner:
         self.vbox_main.button_run.set_sensitive(False)
         self.vbox_main.button_remove.set_sensitive(False)
 
-    def _skip_script_for_busy_manager(self, script_info):
-        """Refuse one script because another package operation is running.
+    def _begin_busy_wait(self, script_info):
+        """Wait for a running native package operation before dispatching.
 
-        The (translated) dialog explains the refusal once per run; afterwards
-        only the terminal viewer notes the skipped script, and the queue
-        continues with the remaining scripts, which may be non-native ones
-        (Flatpak/Snap) that can run safely in parallel.
+        Reuses the same serialization thread as the background-queue wait
+        (_wait_for_exclusive_window) so both cases behave identically: poll
+        until the manager is idle, then dispatch; after the timeout, report
+        that the ongoing operation is taking too long and skip the script.
         """
-        title, message = package_guard.busy_texts(self.translations)
+        if getattr(self, "_busy_wait_started", False):
+            return
+
+        self._busy_wait_started = True
+        self._busy_wait_script = script_info
+        self.parent._script_running = True
+        self._set_runner_locked(True)
+        if self.terminal is not None:
+            waiting = self.translations.get(
+                "term_view_queue_wait",
+                "Waiting for background operations to finish…",
+            )
+            self.terminal.feed(f"\r\n{waiting}\r\n".encode())
+        threading.Thread(
+            target=self._wait_for_busy_manager,
+            daemon=True,
+            name="linuxtoys-term-busy-wait",
+        ).start()
+
+    def _wait_for_busy_manager(self):
+        """Poll (off the GTK thread) for the native package manager to go idle."""
+        idle, _name = package_guard.wait_for_idle(
+            timeout=package_guard.BUSY_WAIT_TIMEOUT_SECONDS
+        )
+        GLib.idle_add(self._busy_wait_finished, idle)
+
+    def _busy_wait_finished(self, idle):
+        """Dispatch after a successful wait, or report a timeout."""
+        script_info = getattr(self, "_busy_wait_script", None)
+        self._busy_wait_started = False
+        self._busy_wait_script = None
+
+        if getattr(self, "_destroyed", False):
+            self._set_runner_locked(False)
+            return False
+
+        if idle and script_info is not None:
+            # Re-enqueue at the front so _run_next_script re-evaluates and
+            # dispatches it now that the manager is idle.
+            self.script_queue.insert(0, script_info)
+            self._set_runner_locked(False)
+            self._run_next_script()
+            return False
+
+        # Timed out: the ongoing operation is taking too long. The script is
+        # finished as cancelled (exit 100), which continues the queue itself.
+        self._set_runner_locked(False)
+        self._skip_script_for_slow_manager(script_info or {})
+        return False
+
+    def _skip_script_for_slow_manager(self, script_info):
+        """Report a wait that timed out and finish the script as cancelled.
+
+        The (translated) dialog explains the timeout once per run; afterwards
+        the terminal viewer notes the skipped script. The script is then
+        finished exactly as if it had exited with code 100 (cancelled) via
+        on_child_exit, so the normal completion path runs: transmap cleanup,
+        no registry save, and the queue continues (unlocking the terminal once
+        it drains).
+        """
+        title, message = package_guard.timeout_texts(self.translations)
 
         if not getattr(self, "_busy_manager_dialog_shown", False):
             self._busy_manager_dialog_shown = True
@@ -226,17 +287,20 @@ class TerminalRunner:
             name = script_info.get("name", "unknown")
             self.terminal.feed(f"\r\n✗ {name}: {message}\r\n".encode())
 
-        self.scripts_executed += 1
-        self.vbox_main.progress_bar.set_fraction(
-            self.scripts_executed / self.total_scripts
-        )
-        running_text = self.translations.get(
-            "term_view_running", "Running {current}/{total}"
-        )
-        self.vbox_main.progress_bar.set_text(
-            running_text.format(current=self.scripts_executed, total=self.total_scripts)
-        )
-        self._run_next_script()
+        # A script whose wait timed out is counted as cancelled (exit code 100)
+        # so the terminal view can be left like any other cancelled run. No
+        # child process was spawned, so drive the completion path directly with
+        # a synthetic "exited 100" wait status.
+        self.on_child_exit(self.terminal, self._synthetic_exit_status(100))
+
+    @staticmethod
+    def _synthetic_exit_status(exit_code):
+        """Build a wait status byte-pattern as if a child exited with exit_code.
+
+        Mirrors the layout os.WIFEXITED/os.WEXITSTATUS decode: the exit code
+        occupies the high byte of a 16-bit status.
+        """
+        return (int(exit_code) & 0xFF) << 8
 
     def on_child_exit(self, term, status):
         # A dying child must never leave navigation locked, including fatal/exit 100 paths.

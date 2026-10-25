@@ -736,6 +736,8 @@
   "sidebar_collapse": "접기",
   "sidebar_toggle": "카테고리 사이드바 전환",
   "main_menu": "메인 메뉴",
-  "package_manager_busy_title": "패키지 관리자 사용 중",
-  "package_manager_busy_message": "다른 패키지 작업이 이미 실행 중입니다. 패키지 관리자는 병렬 작업을 지원하지 않습니다. LinuxToys에서 이런 작업을 시도하기 전에 진행 중인 프로세스가 끝날 때까지 기다려 주세요."
+  "package_manager_busy_title": "패키지 관리자 대기 중",
+  "package_manager_busy_message": "현재 다른 패키지 작업이 실행 중이므로 LinuxToys가 완료될 때까지 기다리고 있습니다. 패키지 관리자는 병렬 작업을 지원하지 않습니다. 아무 조치도 필요하지 않습니다. 현재 작업이 끝나면 작업이 자동으로 시작됩니다.",
+  "package_manager_timeout_title": "패키지 작업이 너무 오래 걸리고 있습니다",
+  "package_manager_timeout_message": "다른 패키지 작업이 아직 실행 중이며 너무 오래 걸리고 있습니다. 진행 중인 작업이 끝날 때까지 기다린 후 다시 시도해 주세요."
 }

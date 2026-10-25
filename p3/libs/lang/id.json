@@ -736,6 +736,8 @@
   "sidebar_collapse": "Lipatkan",
   "sidebar_toggle": "Alih bilah samping kategori",
   "main_menu": "Menu utama",
-  "package_manager_busy_title": "Manajer paket sedang sibuk",
-  "package_manager_busy_message": "Operasi paket lain sudah berjalan. Manajer paket tidak mendukung operasi paralel. Mohon tunggu proses yang sedang berjalan selesai sebelum mencoba operasi semacam itu dengan LinuxToys."
+  "package_manager_busy_title": "Menunggu pengelola paket",
+  "package_manager_busy_message": "Operasi paket lain sedang berjalan saat ini, jadi LinuxToys menunggu hingga selesai. Manajer paket tidak mendukung operasi paralel. Tidak perlu tindakan apa pun — operasi Anda akan dimulai secara otomatis setelah yang sedang berjalan selesai.",
+  "package_manager_timeout_title": "Operasi paket memakan waktu terlalu lama",
+  "package_manager_timeout_message": "Operasi paket lain masih berjalan dan memakan waktu terlalu lama. Mohon tunggu operasi yang sedang berjalan selesai, lalu coba lagi."
 }

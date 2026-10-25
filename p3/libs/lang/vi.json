@@ -736,6 +736,8 @@
   "sidebar_collapse": "Thu gọn",
   "sidebar_toggle": "Bật hoặc tắt thanh bên danh mục",
   "main_menu": "Menu chính",
-  "package_manager_busy_title": "Trình quản lý gói đang bận",
-  "package_manager_busy_message": "Một thao tác gói khác đang được thực hiện. Các trình quản lý gói không hỗ trợ thao tác song song. Vui lòng đợi tiến trình đang chạy hoàn tất trước khi thử thao tác tương tự với LinuxToys."
+  "package_manager_busy_title": "Đang chờ trình quản lý gói",
+  "package_manager_busy_message": "Hiện có một thao tác gói khác đang chạy nên LinuxToys đang chờ cho đến khi nó hoàn tất. Các trình quản lý gói không hỗ trợ thao tác song song. Bạn không cần làm gì — thao tác của bạn sẽ tự động bắt đầu ngay khi thao tác hiện tại hoàn tất.",
+  "package_manager_timeout_title": "Thao tác gói mất quá nhiều thời gian",
+  "package_manager_timeout_message": "Một thao tác gói khác vẫn đang được thực hiện và mất quá nhiều thời gian. Vui lòng đợi thao tác đang diễn ra hoàn tất, sau đó thử lại."
 }

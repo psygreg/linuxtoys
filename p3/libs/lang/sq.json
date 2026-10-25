@@ -736,6 +736,8 @@
   "sidebar_collapse": "Pallos",
   "sidebar_toggle": "Aktivizo ose çaktivizo anëshirën e kategorive",
   "main_menu": "Menyja kryesore",
-  "package_manager_busy_title": "Menaxheri i paketave është i zënë",
-  "package_manager_busy_message": "Një veprim tjetër me paketa është tashmë në ekzekutim. Menaxherët e paketave nuk mbështesin veprime paralele. Ju lutem prisni që procesi në zhvillim të përfundojë përpara se të provoni veprime të tilla me LinuxToys."
+  "package_manager_busy_title": "Në pritje të menaxherit të paketave",
+  "package_manager_busy_message": "Një veprim tjetër me paketa është duke u ekzekutuar momentalisht, ndaj LinuxToys po pret që ai të përfundojë. Menaxherët e paketave nuk mbështesin veprime paralele. Nuk duhet të bëni asgjë — veprimi juaj do të fillojë automatikisht sapo ai aktual të përfundojë.",
+  "package_manager_timeout_title": "Veprimi me paketa po zgjat shumë",
+  "package_manager_timeout_message": "Një veprim tjetër me paketa është ende në ekzekutim dhe po zgjat shumë. Ju lutem prisni që veprimi në zhvillim të përfundojë, pastaj provoni përsëri."
 }

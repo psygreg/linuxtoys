@@ -736,6 +736,8 @@
   "sidebar_collapse": "Replier",
   "sidebar_toggle": "Afficher ou masquer le panneau des catégories",
   "main_menu": "Menu principal",
-  "package_manager_busy_title": "Gestionnaire de paquets occupé",
-  "package_manager_busy_message": "Une autre opération sur les paquets est déjà en cours. Les gestionnaires de paquets ne prennent pas en charge les opérations en parallèle. Attendez la fin du processus en cours avant d'essayer de telles opérations avec LinuxToys."
+  "package_manager_busy_title": "En attente du gestionnaire de paquets",
+  "package_manager_busy_message": "Une autre opération sur les paquets est en cours, LinuxToys la laisse donc se terminer avant de démarrer. Les gestionnaires de paquets ne prennent pas en charge les opérations en parallèle. Aucune action n'est nécessaire : votre opération démarrera automatiquement dès que celle en cours sera terminée.",
+  "package_manager_timeout_title": "L'opération sur les paquets prend trop de temps",
+  "package_manager_timeout_message": "Une autre opération sur les paquets est toujours en cours et prend trop de temps. Attendez la fin de l'opération en cours, puis réessayez."
 }

@@ -734,6 +734,8 @@
   "sidebar_collapse": "Kunja",
   "sidebar_toggle": "Badilisha upau wa pembeni wa kategoria",
   "main_menu": "Menyu kuu",
-  "package_manager_busy_title": "Kidhibiti vifurushi kinashughulika",
-  "package_manager_busy_message": "Operesheni nyingine ya vifurushi inaendelea tayari. Kidhibiti vifurushi hakitumii operesheni sambamba. Tafadhali subiri mchakato unaoendelea ukamilike kabla ya kujaribu operesheni za aina hiyo na LinuxToys."
+  "package_manager_busy_title": "Inasubiri kidhibiti vifurushi",
+  "package_manager_busy_message": "Kwa sasa kuna operesheni nyingine ya vifurushi inaendelea, kwa hivyo LinuxToys inasubiri hadi ikamilike. Kidhibiti vifurushi hakitumii operesheni sambamba. Hakuna kinachohitajika kufanywa — operesheni yako itaanza kiotomatiki mara tu ya sasa itakapokamilika.",
+  "package_manager_timeout_title": "Operesheni ya vifurushi inachukua muda mrefu sana",
+  "package_manager_timeout_message": "Operesheni nyingine ya vifurushi bado inaendelea na inachukua muda mrefu sana. Tafadhali subiri operesheni inayoendelea ikamilike, kisha jaribu tena."
 }

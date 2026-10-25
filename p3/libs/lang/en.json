@@ -736,6 +736,8 @@
   "sidebar_collapse": "Collapse",
   "sidebar_toggle": "Toggle category sidebar",
   "main_menu": "Main Menu",
-  "package_manager_busy_title": "Package manager busy",
-  "package_manager_busy_message": "Another package operation is already running. Package managers don't support operations in parallel. Please wait for the ongoing process to finish before attempting any such operations with LinuxToys."
+  "package_manager_busy_title": "Waiting for the package manager",
+  "package_manager_busy_message": "Another package operation is currently running, so LinuxToys is standing by until it finishes. Package managers can't handle operations in parallel. No action is needed — your operation will start automatically as soon as the current one completes.",
+  "package_manager_timeout_title": "Package operation taking too long",
+  "package_manager_timeout_message": "Another package operation is still running and is taking too long. Please wait for the ongoing operation to finish, then try again."
 }

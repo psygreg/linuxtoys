@@ -736,6 +736,8 @@
   "sidebar_collapse": "折りたたむ",
   "sidebar_toggle": "カテゴリーサイドバーの切り替え",
   "main_menu": "メインメニュー",
-  "package_manager_busy_title": "パッケージマネージャーが使用中です",
-  "package_manager_busy_message": "別のパッケージ操作がすでに実行中です。パッケージマネージャーは並行操作をサポートしていません。LinuxToys でこのような操作を試す前に、実行中のプロセスが完了するまでお待ちください。"
+  "package_manager_busy_title": "パッケージマネージャーを待機中",
+  "package_manager_busy_message": "現在、別のパッケージ操作が実行中です。LinuxToys は完了するまで待機しています。パッケージマネージャーは並行操作をサポートしていないためです。操作の必要はありません。現在の操作が完了し次第、自動的に開始されます。",
+  "package_manager_timeout_title": "パッケージ操作に時間がかかっています",
+  "package_manager_timeout_message": "別のパッケージ操作がまだ実行中で、時間がかかっています。実行中の操作が完了するまでお待ちいただき、もう一度お試しください。"
 }

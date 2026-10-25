@@ -5,7 +5,7 @@
 # icon: gaming.svg
 # reboot: yes
 # nocontainer
-# compat: !steamos
+# compat: !steamos, !gregos
 
 # --- Start of the script code ---
 if [ ! -f ${HOME}/.booster ]; then

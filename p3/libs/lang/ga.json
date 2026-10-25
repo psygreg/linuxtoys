@@ -736,6 +736,8 @@
   "sidebar_collapse": "Fill",
   "sidebar_toggle": "Scoránraigh an barra taoibh catagóirí",
   "main_menu": "Príomh-roghchlár",
-  "package_manager_busy_title": "Bainisteoir pacáistí gnóthach",
-  "package_manager_busy_message": "Tá oibríocht phacáistí eile ar siúl cheana. Ní thacaíonn bainisteoirí pacáistí le hoibríochtaí comhuaineach. Fan go dtí go mbeidh an próiseas atá ar siúl críochnaithe sula ndéanfaidh tú iarracht oibríochtaí den chineál sin a dhéanamh le LinuxToys."
+  "package_manager_busy_title": "Ag fanacht leis an mbainisteoir pacáistí",
+  "package_manager_busy_message": "Tá oibríocht phacáistí eile ar siúl faoi láthair, mar sin tá LinuxToys ag fanacht go gcríochnóidh sí. Ní thacaíonn bainisteoirí pacáistí le hoibríochtaí comhuaineach. Ní gá duit rud ar bith a dhéanamh — tosóidh d'oibríocht go huathoibríoch a luaithe a bheidh an ceann reatha críochnaithe.",
+  "package_manager_timeout_title": "Tá an oibríocht phacáistí ró-fhada",
+  "package_manager_timeout_message": "Tá oibríocht phacáistí eile ar siúl fós agus tá sí ró-fhada. Fan go dtí go mbeidh an oibríocht atá ar siúl críochnaithe, ansin bain triail eile as."
 }

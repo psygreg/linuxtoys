@@ -736,6 +736,8 @@
   "sidebar_collapse": "Fella saman",
   "sidebar_toggle": "Víxla hliðarstiku flokka",
   "main_menu": "Aðalvalmynd",
-  "package_manager_busy_title": "Pakkastjórinn er upptekinn",
-  "package_manager_busy_message": "Önnur pakkaaðgerð er þegar í gangi. Pakkastjórar styðja ekki samhliðaaðgerðir. Bíddu eftir að núverandi ferli lýkur áður en þú reynir slíkar aðgerðir með LinuxToys."
+  "package_manager_busy_title": "Bíð eftir pakkastjóra",
+  "package_manager_busy_message": "Önnur pakkaaðgerð er í gangi núna, svo LinuxToys bíður eftir að hún klárist. Pakkastjórar styðja ekki samhliðaaðgerðir. Þú þarft ekki að gera neitt — aðgerðin þín hefst sjálfkrafa um leið og sú núverandi lýkur.",
+  "package_manager_timeout_title": "Pakkaaðgerðin tek of lengi",
+  "package_manager_timeout_message": "Önnur pakkaaðgerð er enn í gangi og tekur of lengi. Bíddu eftir að aðgerðin sem er í gangi klárist og reyndu svo aftur."
 }

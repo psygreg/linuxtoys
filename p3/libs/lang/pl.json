@@ -736,6 +736,8 @@
   "sidebar_collapse": "Zwiń",
   "sidebar_toggle": "Przełącz panel boczny kategorii",
   "main_menu": "Menu główne",
-  "package_manager_busy_title": "Menedżer pakietów jest zajęty",
-  "package_manager_busy_message": "Trwa już inna operacja na pakietach. Menedżery pakietów nie obsługują operacji równoległych. Poczekaj na zakończenie trwającego procesu, zanim spróbujesz wykonać takie operacje z LinuxToys."
+  "package_manager_busy_title": "Czekam na menedżera pakietów",
+  "package_manager_busy_message": "W tej chwili trwa inna operacja na pakietach, więc LinuxToys czeka na jej zakończenie. Menedżery pakietów nie obsługują operacji równoległych. Nie musisz nic robić — Twoja operacja rozpocznie się automatycznie po zakończeniu bieżącej.",
+  "package_manager_timeout_title": "Operacja na pakietach trwa zbyt długo",
+  "package_manager_timeout_message": "Inna operacja na pakietach nadal trwa i trwa zbyt długo. Poczekaj na zakończenie bieżącej operacji, a następnie spróbuj ponownie."
 }

@@ -736,6 +736,8 @@
   "sidebar_collapse": "Összecsukás",
   "sidebar_toggle": "Kategória oldalsáv be/ki",
   "main_menu": "Főmenü",
-  "package_manager_busy_title": "A csomagkezelő foglalt",
-  "package_manager_busy_message": "Már fut egy másik csomagművelet. A csomagkezelők nem támogatják a párhuzamos műveleteket. Kérjük, várja meg, amíg a folyamat befejeződik, mielőtt ilyet próbálna a LinuxToysszal."
+  "package_manager_busy_title": "Várakozás a csomagkezelőre",
+  "package_manager_busy_message": "Jelenleg egy másik csomagművelet fut, ezért a LinuxToys megvárja a befejezését. A csomagkezelők nem támogatják a párhuzamos műveleteket. Nem kell tennie semmit — a művelete automatikusan elindul, amint a jelenlegi befejeződik.",
+  "package_manager_timeout_title": "A csomagművelet túl sokáig tart",
+  "package_manager_timeout_message": "Egy másik csomagművelet még mindig fut, és túl sokáig tart. Kérjük, várja meg a folyamatban lévő művelet befejezését, majd próbálja újra."
 }

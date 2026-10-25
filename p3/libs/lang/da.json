@@ -736,6 +736,8 @@
   "sidebar_collapse": "Sammenfold",
   "sidebar_toggle": "Skift kategorisidebjælke",
   "main_menu": "Hovedmenu",
-  "package_manager_busy_title": "Pakkehåndteringen er optaget",
-  "package_manager_busy_message": "En anden pakkehandling kører allerede. Pakkehåndteringer understøtter ikke parallelle handlinger. Vent på, at den igangværende proces fuldføres, før du prøver sådanne handlinger med LinuxToys."
+  "package_manager_busy_title": "Venter på pakkehåndteringen",
+  "package_manager_busy_message": "En anden pakkehandling kører i øjeblikket, så LinuxToys venter, til den er færdig. Pakkehåndteringer understøtter ikke parallelle handlinger. Du skal ikke gøre noget — din handling starter automatisk, så snart den aktuelle er fuldført.",
+  "package_manager_timeout_title": "Pakkehåndtering tager for lang tid",
+  "package_manager_timeout_message": "En anden pakkehandling kører stadig og tager for lang tid. Vent på, at den igangværende handling er fuldført, og prøv igen."
 }

@@ -5,7 +5,7 @@
 # icon: proton.svg
 # gpu: intel, amd
 # wayland: yes
-# compat: !steamos
+# compat: !steamos, !gregos
 
 # --- Start of the script code ---
 askpass

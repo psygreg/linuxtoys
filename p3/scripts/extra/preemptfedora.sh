@@ -2,7 +2,7 @@
 # name: preemptfedora
 # description: preempt_desc
 # icon: cpu-x.png
-# compat: fedora, ostree, rhel, ubuntu
+# compat: fedora, ostree, rhel, ubuntu, !gregos, !ublue
 # nocontainer
 
 # --- Start of the script code ---

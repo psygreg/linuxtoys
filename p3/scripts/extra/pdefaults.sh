@@ -3,7 +3,7 @@
 # version: 1.0
 # description: pdefaults_desc
 # icon: optimizer.svg
-# compat: ubuntu, debian, fedora, suse, arch, cachy, rhel, !zorin, !deepin, ostree
+# compat: ubuntu, debian, fedora, suse, arch, cachy, rhel, !zorin, !deepin, ostree, !gregos
 # reboot: yes
 # noconfirm: yes
 # nocontainer

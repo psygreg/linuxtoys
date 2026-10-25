@@ -736,6 +736,8 @@
   "sidebar_collapse": "Lipat",
   "sidebar_toggle": "Tukar bar sisi kategori",
   "main_menu": "Menu utama",
-  "package_manager_busy_title": "Pengurus pakej sibuk",
-  "package_manager_busy_message": "Operasi pakej lain sedang dijalankan. Pengurus pakej tidak menyokong operasi selari. Sila tunggu proses yang sedang dijalankan selesai sebelum mencuba sebarang operasi sedemikian dengan LinuxToys."
+  "package_manager_busy_title": "Menunggu pengurus pakej",
+  "package_manager_busy_message": "Operasi pakej lain sedang dijalankan pada masa ini, jadi LinuxToys sedang menunggu sehingga ia selesai. Pengurus pakej tidak menyokong operasi selari. Tidak perlu sebarang tindakan — operasi anda akan bermula secara automatik sebaik sahaja yang semasa selesai.",
+  "package_manager_timeout_title": "Operasi pakej mengambil masa terlalu lama",
+  "package_manager_timeout_message": "Operasi pakej lain masih dijalankan dan mengambil masa terlalu lama. Sila tunggu operasi yang sedang berjalan selesai, kemudian cuba lagi."
 }

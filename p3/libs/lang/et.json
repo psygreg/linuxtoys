@@ -736,6 +736,8 @@
   "sidebar_collapse": "Ahenda",
   "sidebar_toggle": "Lülita kategooriate külgriba sisse/välja",
   "main_menu": "Peamenüü",
-  "package_manager_busy_title": "Paketihaldur on hõivatud",
-  "package_manager_busy_message": "Teine paketioperatsioon on juba käimas. Paketihaldurid ei toeta paralleelseid operatsioone. Palun oodake, kuni käimasolev protsess lõpeb, enne kui proovite LinuxToysega selliseid operatsioone."
+  "package_manager_busy_title": "Ootan paketihaldurit",
+  "package_manager_busy_message": "Praegu töötab teine paketioperatsioon, seega LinuxToys ootab selle lõppemist. Paketihaldurid ei toeta paralleelseid operatsioone. Te ei pea midagi tegema — teie operatsioon algab automaatselt niipea, kui praegune lõpeb.",
+  "package_manager_timeout_title": "Paketioperatsioon võtab liiga kaua aega",
+  "package_manager_timeout_message": "Teine paketioperatsioon on endiselt käimas ja võtab liiga kaua aega. Palun oodake, kuni käimasolev operatsioon lõpeb, ja proovige uuesti."
 }

@@ -5,6 +5,7 @@ from . import about_helper
 from . import action_registry
 from . import get_icon_path
 from . import git_scripts_manager
+from . import compat
 from .lang_utils import create_translator, get_automatic_updates, save_automatic_updates
 from .gtk_dialogs import WaitDialog
 import threading
@@ -134,7 +135,14 @@ class MenuButton(Gtk.MenuButton):
 		if auto_updates_label == "autosysup":
 			auto_updates_label = "Automatic updates"
 		self.auto_updates = Gtk.CheckButton(label=auto_updates_label)
-		self.auto_updates.set_active(get_automatic_updates())
+		# GregOS ships LinuxToys inside its image and only updates with the image,
+		# so the automatic-updates option is disabled and forced off there. Every
+		# other host keeps the stored preference.
+		if compat.self_updates_disabled():
+			self.auto_updates.set_active(False)
+			self.auto_updates.set_sensitive(False)
+		else:
+			self.auto_updates.set_active(get_automatic_updates())
 		self.auto_updates.connect("toggled", self.__on_auto_updates_toggled)
 
 		vbox.pack_start(self.load_manifest, True, True, 0)
@@ -173,6 +181,9 @@ class MenuButton(Gtk.MenuButton):
 	def __on_auto_updates_toggled(self, widget):
 		"""Persist automatic updates and notify the main window."""
 		is_enabled = widget.get_active()
+		# GregOS self-updates only with its system image; never persist an enable.
+		if compat.self_updates_disabled():
+			is_enabled = False
 		save_automatic_updates(is_enabled)
 		if self.parent_window:
 			self.parent_window.set_automatic_updates_enabled(is_enabled)

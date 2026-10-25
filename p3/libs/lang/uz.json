@@ -735,6 +735,8 @@
   "sidebar_collapse": "Yig'ish",
   "sidebar_toggle": "Kategoriya yon panelini almashtirish",
   "main_menu": "Asosiy menyu",
-  "package_manager_busy_title": "Paket menejer band",
-  "package_manager_busy_message": "Boshqa paket operatsiyasi allaqachon ishlayapti. Paket menejerlari parallel operatsiyalarni qo'llab-quvvatlamaydi. LinuxToys bilan bunday operatsiyalarni sinab ko'rishdan oldin, iltimos, davom etayotgan jarayon tugashini kutishingiz kerak."
+  "package_manager_busy_title": "Paket menejerini kutyapmiz",
+  "package_manager_busy_message": "Hozir boshqa paket operatsiyasi bajarilmoqda, shuning uchun LinuxToys uning tugashini kutyapti. Paket menejerlari parallel operatsiyalarni qo'llab-quvvatlamaydi. Hech narsa qilish shart emas — joriy operatsiya tugashi bilan sizning operatsiyangiz avtomatik boshlanadi.",
+  "package_manager_timeout_title": "Paket operatsiyasi juda uzoq ketmoqda",
+  "package_manager_timeout_message": "Boshqa paket operatsiyasi hali ham davom etmoqda va juda uzoq ketmoqda. Iltimos, davom etayotgan operatsiya tugashini kutib, keyin qayta urinib ko'ring."
 }

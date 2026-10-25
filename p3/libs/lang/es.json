@@ -736,6 +736,8 @@
   "sidebar_collapse": "Contraer",
   "sidebar_toggle": "Alternar barra lateral de categorías",
   "main_menu": "Menú principal",
-  "package_manager_busy_title": "Gestor de paquetes ocupado",
-  "package_manager_busy_message": "Ya se está ejecutando otra operación de paquetes. Los gestores de paquetes no admiten operaciones en paralelo. Espera a que finalice el proceso en curso antes de intentar cualquier operación de este tipo con LinuxToys."
+  "package_manager_busy_title": "Esperando al gestor de paquetes",
+  "package_manager_busy_message": "Ahora mismo se está ejecutando otra operación de paquetes, por lo que LinuxToys está a la espera hasta que finalice. Los gestores de paquetes no admiten operaciones en paralelo. No hace falta hacer nada: tu operación comenzará automáticamente en cuanto termine la actual.",
+  "package_manager_timeout_title": "La operación de paquetes está tardando demasiado",
+  "package_manager_timeout_message": "Otra operación de paquetes sigue en ejecución y está tardando demasiado. Espera a que termine la operación en curso y vuelve a intentarlo."
 }

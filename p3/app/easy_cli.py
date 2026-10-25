@@ -30,6 +30,18 @@ CLI_OPTIONS = frozenset({
     "-v", "--version", "-y", "--yes", "--check-updates", "--export-manifest",
 })
 
+def _wait_for_package_manager_cli():
+    """Wait (bounded) for a running native package manager to go idle.
+
+    Returns True once idle, False if the wait timed out (the caller reports
+    the timeout and aborts).
+    """
+    idle, _name = package_guard.wait_for_idle(
+        timeout=package_guard.BUSY_WAIT_TIMEOUT_SECONDS
+    )
+    return idle
+
+
 def resolve_script_dir():
     """
     Get the SCRIPT_DIR from environment variable or search for it.
@@ -222,13 +234,14 @@ def _try_execute_auto_revert(script_info, transmap_path):
             return False
 
         # The revert reaches native managers through pkg_install/pkg_remove.
-        # Refuse while another package operation holds them; keeping the
-        # transmap lets the user report or revert manually afterwards.
+        # Wait for a running package operation to finish; keeping the transmap
+        # lets the user report or revert manually afterwards.
         if package_guard.native_transaction_conflict(
             revert_script_path, resolve_script_dir()
         ) is not None:
-            print(f"\n✗ {package_guard.busy_texts()[1]}")
-            return False
+            if not _wait_for_package_manager_cli():
+                print(f"\n✗ {package_guard.timeout_texts()[1]}")
+                return False
 
         print("\n⚠️  Script failed. Attempting automatic reversion...")
         print("=" * 60)
@@ -516,13 +529,13 @@ def _run_uninstall_entry(script_info, translations):
     cleanup_path = uninstall_entry.get("cleanup_path")
 
     # Uninstalls reach native managers through pkg_remove/pkg_install (or
-    # reinstall during reversion); refuse while another package operation
-    # is holding them.
+    # reinstall during reversion); wait for a running package operation.
     if package_guard.native_transaction_conflict(
         uninstall_path, resolve_script_dir()
     ) is not None:
-        print(f"✗ {package_guard.busy_texts()[1]}")
-        return 1
+        if not _wait_for_package_manager_cli():
+            print(f"✗ {package_guard.timeout_texts()[1]}")
+            return 1
 
     try:
         result = subprocess.run(

@@ -736,6 +736,8 @@
   "sidebar_collapse": "Daralt",
   "sidebar_toggle": "Kategori kenar çubuğunu aç/kapat",
   "main_menu": "Ana menü",
-  "package_manager_busy_title": "Paket yöneticisi meşgul",
-  "package_manager_busy_message": "Başka bir paket işlemi zaten çalışıyor. Paket yöneticileri paralel işlemleri desteklemez. LinuxToys ile bu tür işlemleri denemeden önce lütfen süren işlemin bitmesini bekleyin."
+  "package_manager_busy_title": "Paket yöneticisi bekleniyor",
+  "package_manager_busy_message": "Şu anda başka bir paket işlemi çalışıyor, bu yüzden LinuxToys tamamlanmasını bekliyor. Paket yöneticileri paralel işlemleri desteklemez. Herhangi bir işlem yapmanıza gerek yok — mevcut işlem tamamlandığında işleminiz otomatik olarak başlayacaktır.",
+  "package_manager_timeout_title": "Paket işlemi çok uzun sürüyor",
+  "package_manager_timeout_message": "Başka bir paket işlemi hâlâ çalışıyor ve çok uzun sürüyor. Lütfen devam eden işlemin bitmesini bekleyin, sonra tekrar deneyin."
 }
