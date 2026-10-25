@@ -1525,6 +1525,55 @@ pkg_remove () {
 }
 pkg_rm () { pkg_remove "$@"; }
 
+# Whether the Gear Lever Flatpak is installed in any usable scope.
+_pkg_appimage_gearlever_installed () {
+    command -v flatpak &>/dev/null || return 1
+    flatpak info --user it.mijorus.gearlever &>/dev/null && return 0
+    flatpak info --system it.mijorus.gearlever &>/dev/null && return 0
+    flatpak list --app --columns=application 2>/dev/null | grep -Fxq it.mijorus.gearlever
+}
+
+# Install the Gear Lever Flatpak. Prefer the AppStream-driven call_script path
+# (it records the transaction), but verify the result and fall back to a direct
+# Flatpak install when the catalog cannot resolve the Flathub component (cold or
+# starter-only catalogs on a fresh install). Never report success unless the
+# Flatpak is actually installed afterwards.
+_pkg_appimage_install_gearlever () {
+    local scope
+
+    # Best-effort catalog path; its exit status alone is not proof of install.
+    call_script it.mijorus.gearlever || true
+
+    _pkg_appimage_gearlever_installed && return 0
+
+    # Direct install: same mechanism pkg_flat/install.sh use, independent of the
+    # AppStream catalog. Reuse the Flathub remote that is already configured.
+    if flatpak remote-list --user 2>/dev/null | grep -q flathub; then
+        scope="--user"
+    elif flatpak remote-list --system 2>/dev/null | grep -q flathub; then
+        scope="--system"
+    else
+        call_script flathub || true
+        if flatpak remote-list --user 2>/dev/null | grep -q flathub; then
+            scope="--user"
+        elif flatpak remote-list --system 2>/dev/null | grep -q flathub; then
+            scope="--system"
+        fi
+    fi
+
+    if [[ -n "${scope:-}" ]]; then
+        if [[ "$scope" == "--user" ]]; then
+            flatpak install --or-update --user -y flathub it.mijorus.gearlever || \
+                sudo_ flatpak install --or-update --system -y flathub it.mijorus.gearlever || true
+        else
+            sudo_ flatpak install --or-update --system -y flathub it.mijorus.gearlever || \
+                flatpak install --or-update --user -y flathub it.mijorus.gearlever || true
+        fi
+    fi
+
+    _pkg_appimage_gearlever_installed
+}
+
 _pkg_appimage_gearlever_previous () {
     local app_name="${LINUXTOYS_APP_NAME:-}"
     [[ -n "$app_name" ]] || return 0
@@ -1687,9 +1736,9 @@ EOF
     # Prefer Gear Lever on systemd systems. If it cannot inspect/integrate an
     # otherwise valid AppImage, fall back to LinuxToys' own simple integration.
     if is_systemd; then
-        if ! flatpak list | grep -q "it.mijorus.gearlever"; then
+        if ! _pkg_appimage_gearlever_installed; then
             info "$gearlevermsg"
-            call_script it.mijorus.gearlever
+            _pkg_appimage_install_gearlever
         fi
         local output
         # Snapshot ~/AppImages before integration so the exact new file can be
