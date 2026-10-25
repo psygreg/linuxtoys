@@ -5,6 +5,7 @@ from collections.abc import Mapping
 from enum import Enum, auto
 from typing import Any
 
+from app import appstream_cache
 from app.lang_utils import load_translations
 from app.search_helper import (
     CategoryCache,
@@ -125,6 +126,8 @@ def warm_search_and_category_index(trans=None) -> SearchEngine:
         _category_cache = cat_cache
         _script_cache = scr_cache
         _search_engine = engine
+
+        appstream_cache.refresh_cache()
 
         return _search_engine
 
