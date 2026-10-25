@@ -42,7 +42,7 @@ from . import (
     package_guard,
     package_view
 )
-from .gtk_common import Gdk, GLib, Gtk, GdkPixbuf
+from .gtk_common import Gdk, GLib, Gtk, GdkPixbuf, resolve_symbolic_icon
 from gi.repository import Gio
 from .window_items import ItemWidgetFactory
 from .window_search import SearchCtl
@@ -261,7 +261,7 @@ class AppWindow(
         self.header_bar.pack_start(self.sidebar_toggle_button)
 
         self.back_button = Gtk.Button.new_from_icon_name(
-            "go-previous-symbolic", Gtk.IconSize.BUTTON
+            resolve_symbolic_icon("go-previous-symbolic"), Gtk.IconSize.BUTTON
         )
         self.header_bar.pack_start(self.back_button)
 
@@ -287,7 +287,7 @@ class AppWindow(
         # Installed features library. pack_end() ordering is right-to-left here,
         # so this sits immediately to the left of the shared LinuxToys state button.
         self.installed_features_button = Gtk.Button.new_from_icon_name(
-            "view-list-symbolic", Gtk.IconSize.BUTTON
+            resolve_symbolic_icon("view-list-symbolic"), Gtk.IconSize.BUTTON
         )
         self.installed_features_button.set_relief(Gtk.ReliefStyle.NONE)
         self.installed_features_button.set_tooltip_text(
@@ -299,7 +299,7 @@ class AppWindow(
         # Session AppStream queue. It becomes part of the header only after the
         # persistent PTY has actually been requested for the first time.
         self.appstream_queue_button = Gtk.Button.new_from_icon_name(
-            "folder-download-symbolic", Gtk.IconSize.BUTTON
+            resolve_symbolic_icon("folder-download-symbolic"), Gtk.IconSize.BUTTON
         )
         self.appstream_queue_button.set_relief(Gtk.ReliefStyle.NONE)
         self.appstream_queue_button.get_style_context().add_class("appstream-queue-indicator")
@@ -1585,7 +1585,7 @@ class AppWindow(
                 )
             else:
                 image = Gtk.Image.new_from_icon_name(
-                    "dialog-warning-symbolic", Gtk.IconSize.BUTTON
+                    resolve_symbolic_icon("dialog-warning-symbolic"), Gtk.IconSize.BUTTON
                 )
                 tooltip = self.translations.get(
                     "appstream_status_failed",
@@ -1597,14 +1597,14 @@ class AppWindow(
                 return False
             if state == "checking":
                 image = Gtk.Image.new_from_icon_name(
-                    "view-refresh-symbolic", Gtk.IconSize.BUTTON
+                    resolve_symbolic_icon("view-refresh-symbolic"), Gtk.IconSize.BUTTON
                 )
                 tooltip = self._tr_update(
                     "update_status_checking", "Checking for updates…"
                 )
             elif state == "up-to-date":
                 image = Gtk.Image.new_from_icon_name(
-                    "emblem-ok-symbolic", Gtk.IconSize.BUTTON
+                    resolve_symbolic_icon("emblem-ok-symbolic"), Gtk.IconSize.BUTTON
                 )
                 tooltip = self._tr_update(
                     "update_status_up_to_date", "LinuxToys is up to date."
@@ -1618,7 +1618,7 @@ class AppWindow(
                 )
             elif state == "restart-ready":
                 image = Gtk.Image.new_from_icon_name(
-                    "software-update-available-symbolic", Gtk.IconSize.BUTTON
+                    resolve_symbolic_icon("software-update-available-symbolic"), Gtk.IconSize.BUTTON
                 )
                 tooltip = self._tr_update(
                     "update_status_restart", "Update installed. Restart LinuxToys."
@@ -1628,7 +1628,7 @@ class AppWindow(
                 context.add_class("update-restart-ready")
             elif state == "reboot-ready":
                 image = Gtk.Image.new_from_icon_name(
-                    "system-reboot-symbolic", Gtk.IconSize.BUTTON
+                    resolve_symbolic_icon("system-reboot-symbolic"), Gtk.IconSize.BUTTON
                 )
                 tooltip = self.translations.get(
                     "ostree_deployment_title", "Pending System Updates"
@@ -1638,7 +1638,7 @@ class AppWindow(
                 context.add_class("update-restart-ready")
             else:
                 image = Gtk.Image.new_from_icon_name(
-                    "dialog-warning-symbolic", Gtk.IconSize.BUTTON
+                    resolve_symbolic_icon("dialog-warning-symbolic"), Gtk.IconSize.BUTTON
                 )
                 tooltip = self._tr_update(
                     "update_status_failed", "Automatic update failed."
@@ -3890,7 +3890,7 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         script_info = {
             "name": f"Install {slug}",
             "path": tmp_script,
-            "icon": "emblem-system-symbolic",
+            "icon": resolve_symbolic_icon("emblem-system-symbolic"),
             "description": f"Install skill {source}/{slug} for {agent}",
         }
         self.open_term_view([script_info], removable_script_info=script_info, auto_run=True)

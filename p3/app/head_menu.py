@@ -1,4 +1,4 @@
-from .gtk_common import Gtk, GLib
+from .gtk_common import Gtk, GLib, resolve_symbolic_icon
 from . import manifest_helper
 from . import language_selector
 from . import about_helper
@@ -75,7 +75,7 @@ class MenuButton(Gtk.MenuButton):
 		self.dlg = None
 
 		# Set the hamburger menu icon (like GNOME)
-		hamburger_icon = Gtk.Image.new_from_icon_name("open-menu-symbolic", Gtk.IconSize.BUTTON)
+		hamburger_icon = Gtk.Image.new_from_icon_name(resolve_symbolic_icon("open-menu-symbolic"), Gtk.IconSize.BUTTON)
 		self.set_image(hamburger_icon)
 
 		pop = Gtk.Popover()

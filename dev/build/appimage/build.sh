@@ -45,7 +45,6 @@ GLYCIN_NG_REPO="https://github.com/QaidVoid/glycin-ng.git"
 GLYCIN_NG_REF="${GLYCIN_NG_REF:-main}"
 GLYCIN_NG_SRC="$BUILD_DIR/glycin-ng"
 
-
 cleanup_quick_sharun() {
     rm -f "$QUICK_SHARUN"
 }
@@ -90,6 +89,59 @@ build_glycin_ng() {
         _msg error "glycin-ng shim build did not produce libglycin_2.so."
         exit 1
     }
+}
+
+# Bundle the symbolic icon themes the UI uses so the AppImage renders status
+# icons on hosts that ship neither package. XSI is theme-independent (hicolor);
+# the Adwaita set covers the remaining names and hosts where XSI is absent. Only
+# the symbolic/xsi SVGs are copied (not whole themes) to keep the bundle small.
+# The launcher prepends the bundled icons/parent to XDG_DATA_DIRS at runtime.
+bundle_icon_themes() {
+    local bundled=0
+
+    # XSI ships as xsi-*.svg inside the hicolor theme. Rebuild just those into a
+    # minimal hicolor theme so Gtk.IconTheme falls back to it.
+    if [ -d /usr/share/icons/hicolor ]; then
+        local xsi_count=0
+        local src_rel dst
+        mkdir -p "$APPDIR/share/icons/hicolor"
+        while IFS= read -r src_rel; do
+            [ -n "$src_rel" ] || continue
+            dst="$APPDIR/share/icons/hicolor/$src_rel"
+            mkdir -p "$(dirname "$dst")"
+            cp -a "/usr/share/icons/hicolor/$src_rel" "$dst"
+            xsi_count=$((xsi_count + 1))
+        done < <(cd /usr/share/icons/hicolor && find . -type f -name 'xsi-*.svg' -printf '%P\n' 2>/dev/null)
+        if [ "$xsi_count" -gt 0 ]; then
+            _msg info "Bundled $xsi_count XSI symbolic icons into hicolor."
+            bundled=$((bundled + 1))
+        fi
+    fi
+
+    # The Adwaita symbolic set (emblem-ok-symbolic et al.) covers the original
+    # Adwaita names and hosts where XSI is not installed.
+    for theme_dir in /usr/share/icons/Adwaita /usr/share/icons/AdwaitaLegacy; do
+        if [ -d "$theme_dir/symbolic" ]; then
+            mkdir -p "$APPDIR/share/icons/$(basename "$theme_dir")"
+            cp -a "$theme_dir/symbolic" "$APPDIR/share/icons/$(basename "$theme_dir")/"
+            [ -f "$theme_dir/index.theme" ] && cp -a "$theme_dir/index.theme" "$APPDIR/share/icons/$(basename "$theme_dir")/"
+            _msg info "Bundled Adwaita symbolic icons from $theme_dir."
+            bundled=$((bundled + 1))
+            break
+        fi
+    done
+
+    if [ "$bundled" -eq 0 ]; then
+        _msg error "No symbolic icon theme (xapp-symbolic-icons or adwaita-icon-theme) found on the build host. The AppImage would show missing status icons."
+        exit 1
+    fi
+
+    # Ensure the hicolor fallback theme index exists so Gtk.IconTheme has a base
+    # to inherit from even on minimal hosts.
+    if [ ! -e "$APPDIR/share/icons/hicolor/index.theme" ] && [ -f /usr/share/icons/hicolor/index.theme ]; then
+        mkdir -p "$APPDIR/share/icons/hicolor"
+        cp -a /usr/share/icons/hicolor/index.theme "$APPDIR/share/icons/hicolor/"
+    fi
 }
 
 build_linuxtoys_rust() {
@@ -223,6 +275,7 @@ cp -a "$ROOT_DIR/p3/." "$APP_BIN/"
 # Make bundled Python modules and assets accessible regardless of source modes.
 find "$APP_BIN" -type d -exec chmod 755 {} +
 find "$APP_BIN" -type f -exec chmod a+r {} +
+bundle_icon_themes
 build_linuxtoys_rust
 find "$APP_BIN" -type d -name __pycache__ -prune -exec rm -rf {} + 2>/dev/null || true
 find "$APP_BIN" -type f -name '*.pyc' -delete 2>/dev/null || true
@@ -240,6 +293,17 @@ export LINUXTOYS_PROCESS_NAME=linuxtoys
 export LINUXTOYS_APPIMAGE=1
 export LINUXTOYS_APPIMAGE_DIR="$APPDIR"
 export GI_TYPELIB_PATH="$APPDIR/lib/girepository-1.0${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}"
+
+# Prefer the symbolic icon themes bundled in the AppDir so status icons resolve
+# even when the host ships neither xapp-symbolic-icons nor adwaita-icon-theme.
+# XDG_DATA_DIRS entries must be the *parent* of the icons/ directory.
+_bundled_icons=""
+for _d in "$APPDIR/share" "$APPDIR"; do
+    [ -d "$_d/icons" ] && _bundled_icons="${_bundled_icons:+$_bundled_icons:}$_d"
+done
+if [ -n "$_bundled_icons" ]; then
+    export XDG_DATA_DIRS="${_bundled_icons}${XDG_DATA_DIRS:+:$XDG_DATA_DIRS}"
+fi
 
 if [ "$#" -eq 1 ]; then
     case "$1" in

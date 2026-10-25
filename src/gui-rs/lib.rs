@@ -210,6 +210,30 @@ fn bind_remote_image(image: &gtk::Image, source: &str, size: i32) {
     });
 }
 
+/// Prefer the XSI (xapp-symbolic-icons) equivalent of a `*-symbolic` icon name,
+/// falling back to the original name when XSI is not installed. Non-symbolic
+/// names are returned unchanged. Mirrors `p3/app/gtk_common.resolve_symbolic_icon`.
+fn resolve_symbolic_icon(name: &str) -> String {
+    if !name.ends_with("-symbolic") {
+        return name.to_string();
+    }
+    let base = &name[..name.len() - "-symbolic".len()];
+    let mapped = match base {
+        "application-x-addon" => "addon",
+        "system-reboot" => "reboot",
+        "system-search" => "search",
+        "emblem-web" => "insert-link",
+        other => other,
+    };
+    let xsi = format!("xsi-{mapped}-symbolic");
+    if let Some(theme) = gtk::IconTheme::default() {
+        if theme.has_icon(&xsi) {
+            return xsi;
+        }
+    }
+    name.to_string()
+}
+
 fn set_image_source(image: &gtk::Image, icon_path: &str, icon_name: &str, size: i32) {
     let key = widget_key(image);
     REMOTE_IMAGE_BINDINGS.with(|bindings| {
@@ -230,8 +254,12 @@ fn set_image_source(image: &gtk::Image, icon_path: &str, icon_name: &str, size: 
         return;
     }
 
-    let name = if icon_name.is_empty() { "application-x-executable" } else { icon_name };
-    image.set_from_icon_name(Some(name), gtk::IconSize::Dialog);
+    let name = if icon_name.is_empty() {
+        "application-x-executable".to_string()
+    } else {
+        resolve_symbolic_icon(icon_name)
+    };
+    image.set_from_icon_name(Some(&name), gtk::IconSize::Dialog);
     image.set_pixel_size(size);
 }
 
@@ -240,7 +268,6 @@ fn image(icon_path: &str, icon_name: &str, size: i32) -> gtk::Image {
     set_image_source(&img, icon_path, icon_name, size);
     img
 }
-
 
 #[derive(Clone)]
 struct CategoryWatermarkState {
@@ -1228,7 +1255,7 @@ unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec, featured_height: 
     // removable, so do not create or reserve a removal-control slot for them.
     if !category {
         let remove_button = gtk::Button::from_icon_name(
-            Some("edit-delete-symbolic"),
+            Some(&resolve_symbolic_icon("edit-delete-symbolic")),
             gtk::IconSize::Menu,
         );
         remove_button.style_context().add_class("installed-card-remove-left");
@@ -1898,7 +1925,7 @@ pub unsafe extern "C" fn lt_gui_populate_infos_head(
     let run = gtk::Button::with_label(&cstr(spec.execute_label));
     run.set_widget_name("linuxtoys-infos-run");
     run.set_image(Some(&gtk::Image::from_icon_name(
-        Some("emblem-system-symbolic"),
+        Some(&resolve_symbolic_icon("emblem-system-symbolic")),
         gtk::IconSize::Button,
     )));
     run.set_halign(gtk::Align::Start);
@@ -1907,7 +1934,7 @@ pub unsafe extern "C" fn lt_gui_populate_infos_head(
     let remove = gtk::Button::with_label(&cstr(spec.remove_label));
     remove.set_widget_name("linuxtoys-infos-remove");
     remove.set_image(Some(&gtk::Image::from_icon_name(
-        Some("edit-delete-symbolic"),
+        Some(&resolve_symbolic_icon("edit-delete-symbolic")),
         gtk::IconSize::Button,
     )));
     remove.set_halign(gtk::Align::Start);
@@ -1916,7 +1943,7 @@ pub unsafe extern "C" fn lt_gui_populate_infos_head(
     let report = gtk::Button::with_label(&cstr(spec.report_label));
     report.set_widget_name("linuxtoys-infos-report");
     report.set_image(Some(&gtk::Image::from_icon_name(
-        Some("dialog-warning-symbolic"),
+        Some(&resolve_symbolic_icon("dialog-warning-symbolic")),
         gtk::IconSize::Button,
     )));
     report.set_halign(gtk::Align::Start);
@@ -2051,7 +2078,7 @@ pub unsafe extern "C" fn lt_gui_populate_app_page_header(
     let install = gtk::Button::with_label(&cstr(spec.install_label));
     install.set_widget_name("linuxtoys-app-install");
     install.set_image(Some(&gtk::Image::from_icon_name(
-        Some("emblem-system-symbolic"),
+        Some(&resolve_symbolic_icon("emblem-system-symbolic")),
         gtk::IconSize::Button,
     )));
     install.set_size_request(125, 35);
@@ -2070,7 +2097,7 @@ pub unsafe extern "C" fn lt_gui_populate_app_page_header(
     open_content.set_margin_end(8);
 
     let open_icon = gtk::Image::from_icon_name(
-        Some("media-playback-start-symbolic"),
+        Some(&resolve_symbolic_icon("media-playback-start-symbolic")),
         gtk::IconSize::Button,
     );
     let open_label = gtk::Label::new(Some(&cstr(spec.open_label)));
@@ -2178,7 +2205,10 @@ unsafe fn create_list_row_from_spec(spec: &LtGuiListRowSpec) -> gtk::Box {
         slot.pack_start(&indicator, true, true, 0);
         outer.pack_start(&slot, false, false, 4);
     } else if !status_icon.is_empty() {
-        let indicator = gtk::Image::from_icon_name(Some(&status_icon), gtk::IconSize::Button);
+        let indicator = gtk::Image::from_icon_name(
+            Some(&resolve_symbolic_icon(&status_icon)),
+            gtk::IconSize::Button,
+        );
         indicator.set_widget_name("linuxtoys-list-row-status");
         indicator.set_halign(gtk::Align::Center);
         indicator.set_valign(gtk::Align::Center);
@@ -2194,7 +2224,7 @@ unsafe fn create_list_row_from_spec(spec: &LtGuiListRowSpec) -> gtk::Box {
 
     if spec.launch != 0 {
         let launch = gtk::Button::from_icon_name(
-            Some("media-playback-start-symbolic"),
+            Some(&resolve_symbolic_icon("media-playback-start-symbolic")),
             gtk::IconSize::Button,
         );
         launch.set_widget_name("linuxtoys-list-row-launch");
@@ -2203,14 +2233,14 @@ unsafe fn create_list_row_from_spec(spec: &LtGuiListRowSpec) -> gtk::Box {
     }
 
     if spec.action_kind != 0 {
-        let icon_name = if spec.destructive_action != 0 {
+        let icon_name = resolve_symbolic_icon(if spec.destructive_action != 0 {
             "edit-delete-symbolic"
         } else if spec.action_kind == 3 {
             "list-add-symbolic"
         } else {
             "process-stop-symbolic"
-        };
-        let action = gtk::Button::from_icon_name(Some(icon_name), gtk::IconSize::Button);
+        });
+        let action = gtk::Button::from_icon_name(Some(&icon_name), gtk::IconSize::Button);
         action.set_widget_name("linuxtoys-list-row-action");
         action.set_relief(gtk::ReliefStyle::None);
         if !action_tooltip.is_empty() {
@@ -2309,7 +2339,10 @@ unsafe fn update_list_row_from_spec(row: &gtk::Box, spec: &LtGuiListRowSpec) -> 
     } else {
         let status_icon = cstr(spec.status_icon);
         if !status_icon.is_empty() {
-            let indicator = gtk::Image::from_icon_name(Some(&status_icon), gtk::IconSize::Button);
+            let indicator = gtk::Image::from_icon_name(
+                Some(&resolve_symbolic_icon(&status_icon)),
+                gtk::IconSize::Button,
+            );
             indicator.set_widget_name("linuxtoys-list-row-status");
             indicator.set_halign(gtk::Align::Center);
             indicator.set_valign(gtk::Align::Center);
@@ -2332,7 +2365,7 @@ unsafe fn update_list_row_from_spec(row: &gtk::Box, spec: &LtGuiListRowSpec) -> 
     }
     if spec.launch != 0 {
         let launch = gtk::Button::from_icon_name(
-            Some("media-playback-start-symbolic"),
+            Some(&resolve_symbolic_icon("media-playback-start-symbolic")),
             gtk::IconSize::Button,
         );
         launch.set_widget_name("linuxtoys-list-row-launch");
@@ -2346,14 +2379,14 @@ unsafe fn update_list_row_from_spec(row: &gtk::Box, spec: &LtGuiListRowSpec) -> 
         row.remove(&old);
     }
     if spec.action_kind != 0 {
-        let action_icon = if spec.destructive_action != 0 {
+        let action_icon = resolve_symbolic_icon(if spec.destructive_action != 0 {
             "edit-delete-symbolic"
         } else if spec.action_kind == 3 {
             "list-add-symbolic"
         } else {
             "process-stop-symbolic"
-        };
-        let action = gtk::Button::from_icon_name(Some(action_icon), gtk::IconSize::Button);
+        });
+        let action = gtk::Button::from_icon_name(Some(&action_icon), gtk::IconSize::Button);
         action.set_widget_name("linuxtoys-list-row-action");
         action.set_relief(gtk::ReliefStyle::None);
         let tooltip = cstr(spec.action_tooltip);
@@ -2489,11 +2522,11 @@ pub unsafe extern "C" fn lt_gui_build_sidebar(
             toggle.set_valign(gtk::Align::Fill);
             toggle.style_context().add_class("linuxtoys-sidebar-toggle");
             let arrow = gtk::Image::from_icon_name(
-                Some(if spec.expanded {
+                Some(&resolve_symbolic_icon(if spec.expanded {
                     "pan-down-symbolic"
                 } else {
                     "pan-end-symbolic"
-                }),
+                })),
                 gtk::IconSize::Menu,
             );
             toggle.set_image(Some(&arrow));
@@ -2842,7 +2875,10 @@ pub unsafe extern "C" fn lt_gui_add_app_page_action_button(
     let label = gtk::Label::new(Some(cstr(spec.label).trim()));
     content.pack_start(&label, false, false, 0);
     if spec.dropdown != 0 {
-        let arrow = gtk::Image::from_icon_name(Some("pan-down-symbolic"), gtk::IconSize::Button);
+        let arrow = gtk::Image::from_icon_name(
+            Some(&resolve_symbolic_icon("pan-down-symbolic")),
+            gtk::IconSize::Button,
+        );
         content.pack_start(&arrow, false, false, 0);
     }
     if let Ok(container) = button.clone().downcast::<gtk::Container>() { container.add(&content); }
@@ -2871,10 +2907,16 @@ pub unsafe extern "C" fn lt_gui_populate_screenshot_chrome(
     let spec = &*spec;
     let row = gtk::Box::new(gtk::Orientation::Horizontal, 10);
     row.set_widget_name("linuxtoys-screenshot-row");
-    let prev = gtk::Button::from_icon_name(Some("go-previous-symbolic"), gtk::IconSize::Button);
+    let prev = gtk::Button::from_icon_name(
+        Some(&resolve_symbolic_icon("go-previous-symbolic")),
+        gtk::IconSize::Button,
+    );
     prev.set_widget_name("linuxtoys-screenshot-previous");
     prev.set_tooltip_text(Some(&cstr(spec.previous_tooltip)));
-    let next = gtk::Button::from_icon_name(Some("go-next-symbolic"), gtk::IconSize::Button);
+    let next = gtk::Button::from_icon_name(
+        Some(&resolve_symbolic_icon("go-next-symbolic")),
+        gtk::IconSize::Button,
+    );
     next.set_widget_name("linuxtoys-screenshot-next");
     next.set_tooltip_text(Some(&cstr(spec.next_tooltip)));
     row.pack_start(&prev, false, false, 0);

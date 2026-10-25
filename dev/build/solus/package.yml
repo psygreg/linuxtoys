@@ -36,6 +36,7 @@ rundeps    :
     - shared-mime-info
     - util-linux
     - adwaita-icon-theme
+    - xapp-symbolic-icons
     - webp-pixbuf-loader
 
 setup      : |

@@ -19,7 +19,7 @@ import uuid
 
 from . import homebrew_catalog, appimage_catalog, package_guard
 from .antenna import antenna
-from .gtk_common import GLib
+from .gtk_common import GLib, resolve_symbolic_icon
 from .library_loader import script_command, script_environment
 from .appstream_resolver import resolve_native_appstream_package
 from .term_registry import ExecutionRegistry
@@ -254,11 +254,11 @@ class AppStreamRunner:
             "id": uuid.uuid4().hex,
             "info": {
                 "name": label,
-                "icon": "view-refresh-symbolic",
+                "icon": resolve_symbolic_icon("view-refresh-symbolic"),
                 "is_apt_refresh": True,
             },
             "name": label,
-            "icon": "view-refresh-symbolic",
+            "icon": resolve_symbolic_icon("view-refresh-symbolic"),
             "status": "queued",
             "exit_code": None,
             "action": "apt_refresh",
@@ -289,7 +289,7 @@ class AppStreamRunner:
                 record = {
                     "id": uuid.uuid4().hex, "info": dict(info),
                     "name": info.get("name", ref),
-                    "icon": info.get("icon", "application-x-addon-symbolic"),
+                    "icon": info.get("icon") or resolve_symbolic_icon("application-x-addon-symbolic"),
                     "status": "queued", "exit_code": None,
                 }
                 self._records.append(record)

@@ -1,4 +1,4 @@
-from .gtk_common import Gdk, Gtk, GLib
+from .gtk_common import Gdk, Gtk, GLib, resolve_symbolic_icon
 from .window_items import ItemWidgetFactory
 from . import gui_rs
 
@@ -516,7 +516,7 @@ class SearchCtl:
         search_info = {
             "name": "",
             "description": "",
-            "icon": "system-search-symbolic",
+            "icon": resolve_symbolic_icon("system-search-symbolic"),
             "is_search_header": True,
         }
 

@@ -12,7 +12,7 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
 
-from .gtk_common import Gdk, Gtk, GdkPixbuf, Pango, GLib
+from .gtk_common import Gdk, Gtk, GdkPixbuf, Pango, GLib, resolve_symbolic_icon
 from .term_header import InfosHead
 from . import (
     get_icon_path,
@@ -1275,7 +1275,7 @@ class AppPageView(Gtk.Box):
         self._snap_revert_button = gui_rs.add_app_page_action_button(
             controls,
             self.translations.get("app_page_snap_revert", " Revert "),
-            "document-revert-symbolic",
+            resolve_symbolic_icon("document-revert-symbolic"),
         )
         if self._snap_revert_button is None:
             raise RuntimeError("Native Snap revert action construction failed")
@@ -1286,7 +1286,7 @@ class AppPageView(Gtk.Box):
         self._flatpak_data_button = gui_rs.add_app_page_action_button(
             controls,
             self.translations.get("app_page_remove_data", " Remove data "),
-            "edit-delete-symbolic",
+            resolve_symbolic_icon("edit-delete-symbolic"),
         )
         if self._flatpak_data_button is None:
             raise RuntimeError("Native Flatpak residual-data action construction failed")
@@ -1338,7 +1338,7 @@ class AppPageView(Gtk.Box):
         if homepage_url:
             homepage_button = gui_rs.add_app_page_action_button(
                 controls, self.translations.get("app_page_homepage", " Website "),
-                "web-browser-symbolic",
+                resolve_symbolic_icon("web-browser-symbolic"),
             )
             if homepage_button is None:
                 raise RuntimeError("Native homepage action construction failed")
@@ -1347,7 +1347,7 @@ class AppPageView(Gtk.Box):
         if donate_url:
             donate_button = gui_rs.add_app_page_action_button(
                 controls, self.translations.get("app_page_donate", " Donate "),
-                "emblem-favorite-symbolic",
+                resolve_symbolic_icon("emblem-favorite-symbolic"),
                 suggested=not purchase_url and not purchase_options and not subscription_options,
             )
             if donate_button is None:
@@ -1649,7 +1649,9 @@ class AppPageView(Gtk.Box):
         content.set_margin_end(8)
 
         content.pack_start(
-            Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.BUTTON),
+            Gtk.Image.new_from_icon_name(
+                resolve_symbolic_icon(icon_name), Gtk.IconSize.BUTTON
+            ),
             False,
             False,
             0,
@@ -1660,13 +1662,32 @@ class AppPageView(Gtk.Box):
 
         if dropdown:
             content.pack_start(
-                Gtk.Image.new_from_icon_name("pan-down-symbolic", Gtk.IconSize.BUTTON),
+                Gtk.Image.new_from_icon_name(
+                    resolve_symbolic_icon("pan-down-symbolic"), Gtk.IconSize.BUTTON
+                ),
                 False,
                 False,
                 0,
             )
 
         button.add(content)
+
+    @staticmethod
+    def _commerce_icon_name():
+        """Best available glyph for the buy / subscribe / website button.
+
+        XSI has no web/globe icon, so prefer the Adwaita name, then XSI's link
+        glyph (via resolve_symbolic_icon), then the Adwaita browser icon.
+        """
+        theme = Gtk.IconTheme.get_default()
+        for candidate in (
+            "emblem-web-symbolic",
+            resolve_symbolic_icon("emblem-web-symbolic"),
+            "web-browser-symbolic",
+        ):
+            if theme.has_icon(candidate):
+                return candidate
+        return "web-browser-symbolic"
 
     def _build_commerce_button(self, kind, options, fallback_url=""):
         label = self._commerce_button_label(kind, options)
@@ -1676,7 +1697,7 @@ class AppPageView(Gtk.Box):
         if len(options) > 1:
             button = Gtk.MenuButton()
             self._set_action_button_content(
-                button, label, "emblem-web-symbolic", dropdown=True
+                button, label, self._commerce_icon_name(), dropdown=True
             )
             menu = Gtk.Menu()
             for option in options:
@@ -1694,7 +1715,7 @@ class AppPageView(Gtk.Box):
             button.set_popup(menu)
         else:
             button = Gtk.Button()
-            self._set_action_button_content(button, label, "emblem-web-symbolic")
+            self._set_action_button_content(button, label, self._commerce_icon_name())
             target_url = options[0]["url"] if options else fallback_url
             button.connect("clicked", self._open_url, target_url)
 
@@ -1952,7 +1973,7 @@ class AppPageView(Gtk.Box):
 
         if state == "installed":
             label = self.translations.get("skills_remove_label", "Remove")
-            icon = "edit-delete-symbolic"
+            icon = resolve_symbolic_icon("edit-delete-symbolic")
             # Dependency protection overlay: the app stays recognized as
             # installed, but its removal is switched off while dependents exist.
             blockers = installed_packages.dependency_blockers(
@@ -1971,16 +1992,16 @@ class AppPageView(Gtk.Box):
             context.add_class("destructive-action")
         elif state == "removing":
             label = self.translations.get("skills_removing", "Removing…")
-            icon = "folder-download-symbolic"
+            icon = resolve_symbolic_icon("folder-download-symbolic")
             sensitive = False
             context.add_class("destructive-action")
         elif state == "queued":
             label = self.translations.get("app_page_queued", "Queued")
-            icon = "folder-download-symbolic"
+            icon = resolve_symbolic_icon("folder-download-symbolic")
             sensitive = False
         else:
             label = self.translations.get("skills_install_label", "Install")
-            icon = "emblem-system-symbolic"
+            icon = resolve_symbolic_icon("emblem-system-symbolic")
             sensitive = True
 
         button.set_label(label)

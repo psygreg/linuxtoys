@@ -3,7 +3,7 @@
 import os
 
 from . import get_icon_path, gui_rs
-from .gtk_common import Gtk
+from .gtk_common import Gtk, resolve_symbolic_icon
 
 
 class AppStreamQueueView(Gtk.ScrolledWindow):
@@ -55,6 +55,8 @@ class AppStreamQueueView(Gtk.ScrolledWindow):
             if path and os.path.isfile(path):
                 icon_path = path
                 icon_name = "application-x-executable"
+        else:
+            icon_name = resolve_symbolic_icon(icon_value)
 
         action_kind = 1 if state == "queued" else 2 if state == "success" else 0
         tooltip = ""
@@ -106,9 +108,9 @@ class AppStreamQueueView(Gtk.ScrolledWindow):
 
     @staticmethod
     def _status_icon(state):
-        return {
+        return resolve_symbolic_icon({
             "queued": "appointment-soon-symbolic",
             "success": "emblem-ok-symbolic",
             "failed": "dialog-warning-symbolic",
             "cancelled": "process-stop-symbolic",
-        }.get(state, "dialog-information-symbolic")
+        }.get(state, "dialog-information-symbolic"))
