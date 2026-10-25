@@ -22,6 +22,11 @@ from .antenna import antenna
 from .gtk_common import GLib, resolve_symbolic_icon
 from .library_loader import script_command, script_environment
 from .appstream_resolver import resolve_native_appstream_package
+from .appstream_logs import (
+    appstream_log_path,
+    appstream_log_directory,
+    append_appstream_log,
+)
 from .term_registry import ExecutionRegistry
 
 
@@ -200,6 +205,7 @@ class AppStreamRunner:
                     "icon": script_info.get("icon", "application-x-executable"),
                     "status": "queued",
                     "exit_code": None,
+                    "failure_reason": "",
                 }
                 self._records.append(record)
                 self._jobs.append(record)
@@ -261,6 +267,7 @@ class AppStreamRunner:
             "icon": resolve_symbolic_icon("view-refresh-symbolic"),
             "status": "queued",
             "exit_code": None,
+            "failure_reason": "",
             "action": "apt_refresh",
             "on_complete": on_complete,
         }
@@ -291,6 +298,7 @@ class AppStreamRunner:
                     "name": info.get("name", ref),
                     "icon": info.get("icon") or resolve_symbolic_icon("application-x-addon-symbolic"),
                     "status": "queued", "exit_code": None,
+                    "failure_reason": "",
                 }
                 self._records.append(record)
             elif record["status"] in ("queued", "running"):
@@ -298,6 +306,7 @@ class AppStreamRunner:
             else:
                 record["status"] = "queued"
                 record["exit_code"] = None
+                record["failure_reason"] = ""
             record["action"] = "extension_remove"
             self._jobs.append(record)
             self._condition.notify()
@@ -350,6 +359,7 @@ class AppStreamRunner:
                     "icon": app_info.get("icon", "application-x-executable"),
                     "status": "queued",
                     "exit_code": None,
+                    "failure_reason": "",
                 }
                 self._records.append(record)
             elif record["status"] in ("queued", "running"):
@@ -357,6 +367,7 @@ class AppStreamRunner:
             else:
                 record["status"] = "queued"
                 record["exit_code"] = None
+                record["failure_reason"] = ""
 
             record["action"] = "remove"
             record["remove_info"] = dict(remove_info)
@@ -391,6 +402,7 @@ class AppStreamRunner:
                 "icon": app_info.get("icon", "application-x-executable"),
                 "status": "queued",
                 "exit_code": None,
+                "failure_reason": "",
                 "action": "snap_revert",
                 "snap_name": snap_name,
             }
@@ -637,6 +649,10 @@ class AppStreamRunner:
                 # installation registry/transmap behavior.
                 aur_job = str(record["info"].get("appstream_source", "") or "") == "aur"
                 failure_output = ""
+                # Every job run keeps a transcript (like the terminal viewer's
+                # scrollback) so a background failure can still be diagnosed
+                # after the fact. Runners report their reason through this.
+                failure_reason = ""
                 # Wait (bounded) for a running native package operation to
                 # finish before dispatching this record: the collision would
                 # fail the job opaquely mid-run. Only report a timeout if the
@@ -658,7 +674,7 @@ class AppStreamRunner:
                 elif record.get("action") == "remove":
                     exit_code = self._run_removal_job(record["remove_info"])
                 elif record["info"].get("appstream_source") == "appimage":
-                    exit_code = self._run_appimage_job(record["info"])
+                    exit_code, failure_reason = self._run_appimage_job(record["info"])
                 elif record["info"].get("appstream_source") == "homebrew":
                     exit_code = self._run_homebrew_job(record["info"])
                 elif aur_job:
@@ -670,7 +686,7 @@ class AppStreamRunner:
                 elif record["info"].get("is_flatpak_extension"):
                     exit_code = self._run_flatpak_extension(record["info"], remove=False)
                 elif record["info"].get("is_local_package"):
-                    exit_code = self._run_local_package_job(record["info"])
+                    exit_code, failure_reason = self._run_local_package_job(record["info"])
                 elif record.get("action") == "apt_refresh":
                     exit_code = self._run_apt_refresh_job()
                 else:
@@ -678,6 +694,7 @@ class AppStreamRunner:
 
                 with self._condition:
                     record["exit_code"] = exit_code
+                    record["failure_reason"] = failure_reason
                     if record.get("action") in ("remove", "extension_remove") and exit_code == 0:
                         # The generated uninstall script has already removed the
                         # reverted registry transaction. Retire its session record.
@@ -711,6 +728,17 @@ class AppStreamRunner:
                     callback = getattr(self.parent, "_show_aur_operation_failure", None)
                     if callback is not None:
                         GLib.idle_add(callback, record.get("name", "AUR package"), failure_output)
+                elif exit_code not in (0, 100, self._NATIVE_TRANSACTION_BUSY_EXIT) and not aur_job:
+                    # Background jobs have no terminal to read after the fact,
+                    # so surface the recorded reason (and its transcript)
+                    # instead of leaving the user with "Installation failed".
+                    callback = getattr(self.parent, "_show_installation_failure", None)
+                    if callback is not None:
+                        GLib.idle_add(
+                            callback,
+                            record.get("name", "application"),
+                            failure_reason,
+                        )
             except _StallTimeout as exc:
                 # The hidden PTY stopped making progress (typically a `sudo`
                 # password prompt nobody can answer, or a lost completion
@@ -721,6 +749,11 @@ class AppStreamRunner:
                 with self._condition:
                     record["exit_code"] = self._STALL_EXIT
                     record["status"] = "failed"
+                    record["failure_reason"] = (
+                        "The operation stopped producing output and was aborted "
+                        "(usually a password prompt that cannot be answered in "
+                        "the background)."
+                    )
                 print(f"AppStream background runner stalled: {exc}", file=os.sys.stderr)
                 try:
                     self._close_pty()
@@ -734,6 +767,7 @@ class AppStreamRunner:
                 with self._condition:
                     record["exit_code"] = -1
                     record["status"] = "failed"
+                    record["failure_reason"] = f"Unexpected error: {exc}"
                 print(f"AppStream background runner failed: {exc}", file=os.sys.stderr)
                 # An unexpected failure can also leave the child in an unknown
                 # state; give the next job a clean shell rather than risk it
@@ -1216,14 +1250,19 @@ class AppStreamRunner:
     def _run_local_package_job(self, script_info):
         package_path = os.path.realpath(str(script_info.get("local_package_path") or ""))
         expected = tuple(script_info.get("local_package_signature") or ())
+        name = str(script_info.get("name") or "Local package")
         try:
             stat = os.stat(package_path)
             current = (stat.st_dev, stat.st_ino, stat.st_size, stat.st_mtime_ns)
-        except OSError:
-            return 1
+        except OSError as exc:
+            reason = f"The downloaded file disappeared before installation: {exc}"
+            self._append_transcript(name, f"Local package installation failed: {reason}\n")
+            return 1, reason
         if expected and current != expected:
+            reason = f"The downloaded file changed before installation: {package_path}"
+            self._append_transcript(name, f"Local package installation failed: {reason}\n")
             print(f"Local package changed before installation: {package_path}", file=os.sys.stderr)
-            return 1
+            return 1, reason
 
         kind = str(script_info.get("local_package_kind") or "")
         function = "pkg_appimage" if kind == "appimage" else "pkg_fromfile"
@@ -1237,7 +1276,14 @@ class AppStreamRunner:
             os.chmod(script_path, 0o700)
             payload = dict(script_info)
             payload["path"] = script_path
-            return self._run_job(payload)
+            exit_code, output = self._run_job(payload, capture_output=True)
+            if output:
+                self._append_transcript(name, output + "\n")
+            if exit_code != 0:
+                return exit_code, self._failure_reason_from_output(
+                    f"{function} exited with status {exit_code}", output
+                )
+            return 0, ""
         finally:
             try:
                 os.remove(script_path)
@@ -1245,22 +1291,52 @@ class AppStreamRunner:
                 pass
 
     def _run_appimage_job(self, script_info):
-        """Resolve and download an AppImage only when its queue job starts."""
+        """Resolve, download and install an AppImage when its queue job starts.
+
+        Returns ``(exit_code, failure_reason)``. The AppImage pipeline runs
+        Python-side first (forge resolution, release download, validation) and
+        only then a generated ``pkg_appimage`` script in the hidden PTY, so a
+        failure can happen on either half — and the hidden PTY has no terminal
+        to read. Every failure is therefore turned into an explicit reason that
+        the queue row and the failure dialog can show, and appended to the
+        job's transcript like the terminal viewer keeps its scrollback.
+        """
+        name = str(script_info.get("name") or "AppImage")
+        transcript = self._transcript_header(script_info)
         try:
             with appimage_catalog.download_for_install(script_info) as (path, release):
-                payload = dict(script_info)
-                payload["path"] = path
-                payload["appimage_release"] = release
-                return self._run_local_package_job({
-                    **payload,
+                transcript += (
+                    f"Resolved AppImage release {release.get('version') or '(untagged)'}\n"
+                    f"Downloaded {release.get('download_url') or path}\n"
+                )
+                exit_code = self._run_local_package_job({
+                    **dict(script_info),
                     "is_local_package": True,
+                    "path": path,
+                    "appimage_release": release,
                     "local_package_path": path,
                     "local_package_kind": "appimage",
                     "local_package_signature": appimage_catalog.file_signature(path),
-                })
+                })[0]
+                if exit_code != 0:
+                    reason = (
+                        f"pkg_appimage exited with status {exit_code}. "
+                        "The full installer output is in this job's log."
+                    )
+                    transcript += f"{reason}\n"
+                    self._append_transcript(name, transcript)
+                    return exit_code, reason
+                self._append_transcript(name, transcript + "AppImage installed.\n")
+                return 0, ""
         except (OSError, ValueError, RuntimeError) as exc:
-            print(f"AppImage installation failed: {exc}", file=os.sys.stderr)
-            return 1
+            # The concrete reason (gone upstream repository, ambiguous release
+            # asset, non-ELF download, ...) must reach the user: this is the
+            # only place that knows it.
+            reason = f"{exc}"
+            transcript += f"AppImage installation failed: {reason}\n"
+            self._append_transcript(name, transcript)
+            print(f"AppImage installation failed: {reason}", file=os.sys.stderr)
+            return 1, reason
 
     def _run_homebrew_job(self, script_info):
         payload = homebrew_catalog.materialize_install(script_info)
@@ -1272,7 +1348,13 @@ class AppStreamRunner:
             except OSError:
                 pass
 
-    def _run_job(self, script_info):
+    def _run_job(self, script_info, capture_output=False):
+        """Run one generated AppStream script through the hidden PTY.
+
+        With ``capture_output`` the script's PTY transcript is returned as a
+        second value and kept in the job log; otherwise only the exit status
+        comes back, as before.
+        """
         if self._process is None or self._process.poll() is not None:
             self._close_pty()
             self._spawn_shell()
@@ -1324,36 +1406,49 @@ class AppStreamRunner:
                     )
 
         override_paths = []
+        transcript = ""
         try:
             overrides = script_info.get("appstream_overrides")
             if not isinstance(overrides, dict):
                 overrides = {}
 
+            def dispatch(script_path, phase):
+                """Run one phase; remember its transcript when output is kept."""
+                nonlocal transcript
+                if not capture_output:
+                    return self._dispatch_path(script_path, env)
+                exit_code, output = self._dispatch_path(
+                    script_path, env, capture_output=True
+                )
+                if output:
+                    transcript += f"$ {phase}\n{output}\n"
+                return exit_code
+
             pre_path = self._new_override_script(overrides, "pre")
             if pre_path:
                 override_paths.append(pre_path)
-                exit_code = self._dispatch_path(pre_path, env)
+                exit_code = dispatch(pre_path, "pre-install hook")
                 if exit_code != 0:
                     self._finish_job(registry_name, transmap_path, exit_code)
-                    return exit_code
+                    return (exit_code, transcript) if capture_output else exit_code
 
             dependency_path = self._new_dependency_script(
                 script_info.get("appstream_dependencies")
             )
             if dependency_path:
                 override_paths.append(dependency_path)
-                exit_code = self._dispatch_path(dependency_path, env)
+                exit_code = dispatch(dependency_path, "dependencies")
                 if exit_code != 0:
                     self._finish_job(registry_name, transmap_path, exit_code)
-                    return exit_code
+                    return (exit_code, transcript) if capture_output else exit_code
 
             # Keep the ordinary AppStream installation completely unchanged.
             # Overlay hooks/dependencies are separate runner phases around it rather
             # than being folded into the generated AppStream installation script.
-            exit_code = self._dispatch_path(script_info.get("path", "true"), env)
+            exit_code = dispatch(script_info.get("path", "true"), "install")
             if exit_code != 0:
                 self._finish_job(registry_name, transmap_path, exit_code)
-                return exit_code
+                return (exit_code, transcript) if capture_output else exit_code
 
             # Permission overrides only make sense for the Flatpak source. Native
             # alternatives still receive pre/post hooks but skip this phase.
@@ -1361,21 +1456,21 @@ class AppStreamRunner:
                 flatpak_path = self._new_override_script(overrides, "flatpak")
                 if flatpak_path:
                     override_paths.append(flatpak_path)
-                    exit_code = self._dispatch_path(flatpak_path, env)
+                    exit_code = dispatch(flatpak_path, "flatpak permissions")
                     if exit_code != 0:
                         self._finish_job(registry_name, transmap_path, exit_code)
-                        return exit_code
+                        return (exit_code, transcript) if capture_output else exit_code
 
             post_path = self._new_override_script(overrides, "post")
             if post_path:
                 override_paths.append(post_path)
-                exit_code = self._dispatch_path(post_path, env)
+                exit_code = dispatch(post_path, "post-install hook")
                 if exit_code != 0:
                     self._finish_job(registry_name, transmap_path, exit_code)
-                    return exit_code
+                    return (exit_code, transcript) if capture_output else exit_code
 
             self._finish_job(registry_name, transmap_path, 0)
-            return 0
+            return (0, transcript) if capture_output else 0
         finally:
             for path in override_paths:
                 try:
@@ -1670,6 +1765,41 @@ class AppStreamRunner:
         callback = getattr(self.parent, "_on_appstream_queue_changed", None)
         if callback is not None:
             GLib.idle_add(callback)
+
+    # Background jobs have no terminal to read after the fact (the AppStream
+    # runner drives a hidden PTY), so every job keeps its own transcript on
+    # disk, the way the terminal viewer keeps a scrollback buffer. The log is
+    # what bug reports and the failure dialog read (see appstream_logs).
+
+    @staticmethod
+    def _transcript_path(name):
+        return appstream_log_path(name)
+
+    def _append_transcript(self, name, text):
+        """Append one job transcript and prune old ones. Never raises."""
+        append_appstream_log(name, text)
+
+    def _transcript_header(self, script_info):
+        """Lead every transcript with the identity of the app it belongs to."""
+        return (
+            f"App: {script_info.get('name') or 'unknown'}\n"
+            f"Source: {script_info.get('appstream_source') or 'local package'}\n"
+            f"Entry: {script_info.get('path') or ''}\n\n"
+        )
+
+    @staticmethod
+    def _failure_reason_from_output(fallback, output):
+        """Best short explanation from a captured script transcript.
+
+        The library's die/fatal helpers write their message as the last
+        non-empty line before the script exits, so prefer that over the bare
+        exit status the queue would otherwise show.
+        """
+        lines = [line.strip() for line in (output or "").splitlines() if line.strip()]
+        tail = lines[-1] if lines else ""
+        if not tail or len(tail) > 300 or re.fullmatch(r"[\W_]+", tail):
+            return fallback
+        return tail
 
     @staticmethod
     def _new_transmap():
