@@ -111,17 +111,17 @@ class TerminalRunner:
         current_script = self.script_queue.pop(0)
         self.vbox_main._update_header_labels(current_script)
 
-        # Refuse to dispatch a script that would enter a native package
-        # transaction while another package-manager process is already
-        # running: the helpers share filesystem locks with it and would fail
-        # opaquely mid-run (see package_guard). Instead of refusing outright,
-        # wait for the running operation to finish (bounded); only after the
-        # timeout does the wait report that the operation is taking too long.
+        # A run that can reach a native package transaction must not start
+        # while another package-manager process is already running: the helpers
+        # share filesystem locks with it and would fail opaquely mid-run (see
+        # package_guard). Only wait when a manager is actually present — a
+        # script that is merely *capable* of a transaction on an idle system
+        # runs immediately, with no "waiting" flash or terminal lock.
         if not dev_mode.is_dev_mode_enabled():
             if package_guard.script_enters_native_transaction(
                 current_script.get("path", "true"),
                 os.environ.get("SCRIPT_DIR", ""),
-            ):
+            ) and package_guard.busy_native_manager_process() is not None:
                 self._begin_busy_wait(current_script)
                 return
 

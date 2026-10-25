@@ -75,6 +75,46 @@ _RAW_MANAGER_WORDS = frozenset({
 
 _NATIVE_TRANSACTION_WORDS = _NATIVE_HELPER_WORDS | _RAW_MANAGER_WORDS
 
+# Helpers that reach a native package transaction only on some hosts: their
+# primary work (an AppImage, an npm package) is manager-free, but their
+# internals install a small native dependency (fuse, npm) through pkg_install
+# when it is missing. On hosts where that dependency path is taken they are a
+# native transaction; on hosts where it is not they are not. This mirrors the
+# per-distro branches in libs/packages.bash (pkg_appimage installs fuse/libfuse2,
+# pkg_npm installs npm).
+_CONDITIONAL_NATIVE_HELPER_WORDS = frozenset({
+    "pkg_appimage", "pkg_npm",
+})
+
+
+def helper_reaches_native_manager(name):
+    """Whether a library helper can reach a native package transaction.
+
+    ``pkg_install``/``pkg_remove``/``pkg_fromfile``/``pkg_make`` always can.
+    ``pkg_appimage``/``pkg_npm`` only when their native-dependency install
+    branch applies to this host (the fuse / npm package). Pure AppImage and
+    npm installs on hosts without that branch never touch the native manager,
+    so gating them would wrongly refuse a run whenever any manager process
+    happens to be present.
+    """
+    if name in _NATIVE_HELPER_WORDS:
+        return True
+    if name in _CONDITIONAL_NATIVE_HELPER_WORDS:
+        return _conditional_helper_installs_native_dep(name)
+    return False
+
+
+def _conditional_helper_installs_native_dep(name):
+    """Whether pkg_appimage/pkg_npm install a native dependency on this host."""
+    family = _native_manager_family()
+    if name == "pkg_appimage":
+        # fuse/libfuse2 branches: debian, fedora/ostree/rhel, arch, solus.
+        return family in {"debian", "fedora", "ostree", "arch", "solus"}
+    if name == "pkg_npm":
+        # pkg_npm installs the npm package itself wherever it is missing.
+        return family != ""
+    return False
+
 # Command wrappers whose presence on a line means the manager call runs inside
 # a container/VM and never touches the host's package manager. Matching is
 # word-boundary, case-insensitive.
@@ -203,22 +243,63 @@ def _native_manager_family():
 #
 # Names are matched against /proc/<pid>/comm exactly, and comm is truncated to
 # 15 characters, so entries use the truncated form where that matters
-# (e.g. "apt.systemd.dai" for "apt.systemd.daily"). PackageKit (packagekitd/
-# pkcon) is included because it holds the apt/dpkg locks while a parallel native
-# transaction would collide with it — PackageKit is how GUI software centres and
-# derivative updaters (e.g. Zorin) drive apt. apt's download helpers (http/https)
-# are deliberately NOT watched: their names are too generic and would match
-# unrelated processes.
+# (e.g. "apt.systemd.dai" for "apt.systemd.daily").
+#
+# A bare process name is NOT sufficient evidence of a busy manager: several of
+# these are RESIDENT daemons that are alive whenever a software centre or an
+# auto-update timer is installed, yet only hold the package lock during a real
+# transaction. packagekitd (PackageKit — GNOME Software / Discover / pamac),
+# unattended-upgr, apt.systemd.dai, pamac-daemon, dnf-automatic and zypp-refresh
+# all run constantly on their distros. Counting them as "busy" makes the guard
+# fire on every install — the reported over-trigger. So names are split into
+# transaction tools (a running instance IS a transaction) and resident daemons
+# (only count when they actively hold the package lock, below).
 _FAMILY_MANAGER_PROCESSES = {
-    "debian": (
-        "apt", "apt-get", "apt-key", "dpkg", "dpkg-deb", "unattended-upgr",
-        "apt.systemd.dai", "packagekitd", "pkcon",
-    ),
-    "arch": ("pacman", "paru", "pamac", "pamac-daemon", "yay"),
+    "debian": ("apt", "apt-get", "dpkg", "dpkg-deb", "pkcon"),
+    "arch": ("pacman", "paru", "pamac", "yay"),
     "ostree": ("rpm-ostree",),
-    "fedora": ("dnf", "dnf5", "dnf-automatic"),
-    "suse": ("zypper", "zypp-refresh"),
+    "fedora": ("dnf", "dnf5"),
+    "suse": ("zypper",),
     "solus": ("eopkg",),
+}
+
+# Resident daemons per family: alive most of the time, but only evidence of a
+# transaction when they hold the package lock. Matched the same way (comm, 15
+# chars) but gated on an active lock below.
+_FAMILY_DAEMON_PROCESSES = {
+    "debian": ("unattended-upgr", "apt.systemd.dai", "packagekitd", "apt-key"),
+    "arch": ("pamac-daemon",),
+    # rpm-ostree-automatic drives unattended rpm-ostree staging/deploys on
+    # Universal Blue / Silverblue / Kinoite / Bazzite hosts. Its comm truncates
+    # to "rpm-ostree-auto", distinct from the "rpm-ostree" transaction tool, so
+    # it needs its own entry or an auto-update would be invisible to the guard.
+    "ostree": ("rpm-ostree-auto",),
+    "fedora": ("dnf-automatic",),
+    "suse": ("zypp-refresh",),
+    "solus": (),
+}
+
+# Lock files / markers that mean "a transaction is in progress" per family.
+# These mirror pacman_lock_guard/interrupted_apt_guard in libs/packages.bash.
+# A present lock is necessary but not sufficient — a stale lock after a crash
+# should not block forever — so a lock only counts as busy when some process
+# actually holds it (see _lock_actively_held).
+_FAMILY_LOCK_FILES = {
+    "debian": (
+        "/var/lib/dpkg/lock-frontend", "/var/lib/dpkg/lock",
+        "/var/lib/apt/lists/lock", "/var/cache/apt/archives/lock",
+    ),
+    "arch": ("/var/lib/pacman/db.lck",),
+    # rpm-ostree holds a sysroot lock for the duration of a deploy/layering
+    # transaction. The staged-deployment dir being freshly written is a useful
+    # secondary signal, but the lock is the authoritative one; a missing marker
+    # simply means the daemon is idle (or the host uses a different layout), in
+    # which case the guard falls back to the transaction-tool match.
+    "ostree": ("/run/ostree.lock", "/run/rpm-ostree.lock",
+               "/sysroot/ostree/repo/objects/lock"),
+    "fedora": ("/var/lib/dnf/rpmdb.lock", "/run/dnf.pid", "/var/lib/dnf/lock"),
+    "suse": ("/run/zypp.pid", "/var/run/zypp.pid"),
+    "solus": (),
 }
 
 
@@ -227,17 +308,13 @@ def native_manager_process_names():
     return _FAMILY_MANAGER_PROCESSES.get(_native_manager_family(), ())
 
 
-def busy_native_manager_process():
-    """Return the process name of a running native package manager, else None."""
-    names = native_manager_process_names()
-    if not names:
-        return None
-
+def _running_comm_names():
+    """Set of comm names currently present in /proc (15-char, casefolded)."""
+    found = set()
     try:
         entries = list(os.scandir("/proc"))
     except OSError:
-        return None
-
+        return found
     for entry in entries:
         if not entry.name.isdigit():
             continue
@@ -247,8 +324,91 @@ def busy_native_manager_process():
                 comm = handle.readline().strip().casefold()
         except OSError:
             continue
-        if comm in names:
-            return comm
+        if comm:
+            found.add(comm)
+    return found
+
+
+def _lock_actively_held(path):
+    """Whether a package lock is held by a live process right now.
+
+    A lock file merely existing is not evidence of a transaction (a crash can
+    leave a stale lock behind). The reliable signal is an open file descriptor
+    held by another process — the same test pacman_lock_guard uses with lsof.
+    We read /proc/<pid>/fd directly so no external tool is required.
+    """
+    try:
+        stat = os.stat(path)
+    except OSError:
+        return False
+
+    target = (stat.st_dev, stat.st_ino)
+    try:
+        entries = list(os.scandir("/proc"))
+    except OSError:
+        return False
+
+    for entry in entries:
+        if not entry.name.isdigit():
+            continue
+        fd_dir = os.path.join(entry.path, "fd")
+        try:
+            fds = list(os.scandir(fd_dir))
+        except OSError:
+            continue
+        for fd in fds:
+            try:
+                link = os.readlink(fd.path)
+            except OSError:
+                continue
+            # Symlink resolves to the inode we care about.
+            if link == path or link == f"{path} (deleted)":
+                return True
+            try:
+                fd_stat = os.stat(fd.path)
+            except OSError:
+                continue
+            if (fd_stat.st_dev, fd_stat.st_ino) == target:
+                return True
+    return False
+
+
+def _family_lock_held(family):
+    """Whether any of the family's package locks is actively held."""
+    for path in _FAMILY_LOCK_FILES.get(family, ()):
+        if _lock_actively_held(path):
+            return True
+    return False
+
+
+def busy_native_manager_process():
+    """Return the name of a running native package manager, else None.
+
+    Reports a manager only when a transaction is genuinely in progress: either
+    a transaction tool (apt, pacman, dnf, ...) is running, or a resident daemon
+    (packagekitd, unattended-upgr, ...) is running AND actively holding the
+    package lock. A resident daemon on its own is idle and must not block a run.
+    """
+    family = _native_manager_family()
+    if not family:
+        return None
+
+    tools = set(_FAMILY_MANAGER_PROCESSES.get(family, ()))
+    daemons = set(_FAMILY_DAEMON_PROCESSES.get(family, ()))
+    if not tools and not daemons:
+        return None
+
+    running = _running_comm_names()
+
+    # A running transaction tool is itself proof of a transaction.
+    for name in sorted(tools & running):
+        return name
+
+    # A resident daemon only counts while it holds the package lock.
+    if (daemons & running) and _family_lock_held(family):
+        for name in sorted(daemons & running):
+            return name
+
     return None
 
 
@@ -319,13 +479,41 @@ def script_enters_native_transaction(script_path, script_dir):
         # does today; the guard never blocks on its own broken setup.
         return False
 
-    # Helper calls are always transactions (their internals reach the manager).
-    if referenced & _NATIVE_HELPER_WORDS:
-        return True
+    # Helper calls: unconditional helpers always reach the manager; conditional
+    # ones (pkg_appimage/pkg_npm) only when their native-dependency branch runs
+    # on this host. This is what keeps a pure AppImage/npm install from being
+    # gated on an unrelated manager process.
+    for word in referenced:
+        if helper_reaches_native_manager(word):
+            return True
 
     # Raw manager commands need per-line review to skip container-scoped and
     # read-only calls.
     cleaned = _strip_comments(text)
+    for line in cleaned.splitlines():
+        if _line_enters_native_transaction(line):
+            return True
+    return False
+
+
+def job_enters_native_transaction(command_text):
+    """Statically decide whether a generated job command reaches a native
+    transaction.
+
+    Used by the AppStream/queue dispatcher, which builds the concrete command
+    (``pkg_install X``, ``pkg_appimage /path``, ``pkg_fromfile /path``) rather
+    than a script path. Falls back to a line scan so raw manager commands in a
+    generated body are still seen.
+    """
+    if not command_text:
+        return False
+
+    words = set(re.findall(r"[A-Za-z_][A-Za-z0-9_]*", command_text))
+    for word in words:
+        if helper_reaches_native_manager(word):
+            return True
+
+    cleaned = _strip_comments(command_text)
     for line in cleaned.splitlines():
         if _line_enters_native_transaction(line):
             return True

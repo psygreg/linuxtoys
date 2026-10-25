@@ -540,7 +540,13 @@ class AppStreamRunner:
 
     def _native_transaction_conflict(self, record):
         """Return a running native package-manager process name when dispatching
-        this queued record would enter a native package transaction, else None."""
+        this queued record would enter a native package transaction, else None.
+
+        Every job is classified by the concrete command it will run (not by a
+        coarse source label), so an AppImage or npm job that never reaches the
+        native manager on this host is not gated on an unrelated manager
+        process being present.
+        """
         action = record.get("action")
         info = record.get("info") or {}
 
@@ -554,19 +560,24 @@ class AppStreamRunner:
             return None
 
         source = str(info.get("appstream_source") or "")
-        if info.get("is_local_package") or source in ("aur", "appimage", "native"):
-            # pkg_fromfile/pkg_appimage internals and the generated AUR and
-            # native-install scripts reach the native managers directly.
-            return package_guard.busy_native_manager_process()
 
+        # Native dependencies always reach the manager, whatever the source.
         for dependency in info.get("appstream_dependencies") or []:
             if isinstance(dependency, dict) \
                     and str(dependency.get("type") or "") == "native":
                 return package_guard.busy_native_manager_process()
 
-        # Inspect the actual script when it exists: flatpak/snap installs and
-        # generated removals never touch native managers unless their body
-        # says so (reviewed pre/post overlays included).
+        # Classify the concrete command this job will run. Only gate when that
+        # command can actually reach a native transaction on this host.
+        command = self._job_command_text(action, info, source)
+        if command is not None:
+            if package_guard.job_enters_native_transaction(command):
+                return package_guard.busy_native_manager_process()
+            return None
+
+        # Unknown shape: inspect the actual script when it exists (flatpak/snap
+        # installs and generated removals never touch native managers unless
+        # their body says so — reviewed pre/post overlays included).
         script_path = None
         if action == "remove":
             script_path = (record.get("remove_info") or {}).get("path")
@@ -576,6 +587,26 @@ class AppStreamRunner:
             return package_guard.native_transaction_conflict(
                 script_path, os.environ.get("SCRIPT_DIR", "")
             )
+        return None
+
+    def _job_command_text(self, action, info, source):
+        """The command a queued job will run, as static-analysis input.
+
+        Returns the single command line the dispatcher generates (mirroring
+        _run_local_package_job / _run_aur_job / create_install_script), or None
+        when the job has no simple command and the caller should inspect the
+        script instead.
+        """
+        if info.get("is_local_package"):
+            kind = str(info.get("local_package_kind") or "")
+            function = "pkg_appimage" if kind == "appimage" else "pkg_fromfile"
+            path = str(info.get("local_package_path") or info.get("path") or "")
+            return f"{function} {path}"
+        if source == "appimage":
+            return "pkg_appimage"
+        if source in ("aur", "native"):
+            package = str(info.get("package-name") or "")
+            return f"pkg_install {package}"
         return None
 
     def _worker(self):
