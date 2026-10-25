@@ -790,8 +790,13 @@ class ScriptRunnerMixin:
         await asyncio.to_thread(installed_packages.refresh)
         await asyncio.to_thread(refresh_removable_state)
 
-        if not self._nav_stack or self._aur_view_active():
+        if not self._nav_stack:
             return
+        if self._aur_view_active():
+            self._set_items_loading(True)
+            self.run_worker(
+                self._load_aur_items(), exclusive=True, group="aur-items"
+            )
 
         if self._homebrew_view_active():
             self._set_items_loading(True)
