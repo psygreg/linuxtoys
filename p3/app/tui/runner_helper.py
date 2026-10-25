@@ -12,12 +12,7 @@ from typing import Any
 from textual.css.query import NoMatches
 from textual.widgets import Input
 
-from app import (
-    appstream_cache,
-    aur_cache,
-    homebrew_catalog,
-    installed_packages,
-)
+from app import aur_cache, homebrew_catalog, installed_packages
 from app.compat import get_revert_capability, get_system_compat_keys
 from app.easy_cli import (
     _cleanup_tmp_noram_dirs,
@@ -792,11 +787,18 @@ class ScriptRunnerMixin:
 
     async def _refresh_removable_state(self) -> None:
         """Atualiza o cache e redesenha a categoria aberta."""
+        await asyncio.to_thread(installed_packages.refresh)
         await asyncio.to_thread(refresh_removable_state)
+
         if not self._nav_stack or self._aur_view_active():
             return
+
         if self._homebrew_view_active():
-            appstream_cache.refresh_homebrew_cache()
+            self._set_items_loading(True)
+
+            if is_homebrew_catalog_valid():
+                self._homebrew_awaiting_refresh = False
+                self._load_homebrew_items()
         current_path, _ = self._nav_stack[-1]
         await self._render_items(self._items_for_path(current_path))
 
