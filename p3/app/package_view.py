@@ -1,6 +1,6 @@
 import os
 
-from .gtk_common import Gtk, GLib
+from .gtk_common import Gtk, GLib, resolve_symbolic_icon
 from gi.repository import Pango
 from . import gui_rs
 
@@ -151,26 +151,26 @@ class PackageView(Gtk.Box):
 
         if state == "queued":
             label = self.parent.translations.get("app_page_queued", "Queued")
-            icon = "appointment-soon-symbolic"
+            icon = resolve_symbolic_icon("appointment-soon-symbolic")
             sensitive = False
         elif state == "running":
             label = self.parent.translations.get("update_status_updating", "Installing…")
-            icon = "folder-download-symbolic"
+            icon = resolve_symbolic_icon("folder-download-symbolic")
             sensitive = False
         elif state == "success":
             label = self.parent.translations.get("package_view_completed", "Completed")
-            icon = "emblem-ok-symbolic"
+            icon = resolve_symbolic_icon("emblem-ok-symbolic")
             sensitive = False
             if self._return_source is None:
                 self._return_source = GLib.timeout_add(2000, self._return_after_success)
         elif state == "failed":
             label = self.parent.translations.get("skills_install_label", "Install")
-            icon = "emblem-system-symbolic"
+            icon = resolve_symbolic_icon("emblem-system-symbolic")
             sensitive = True
             self.job_id = None
         else:
             label = self.parent.translations.get("skills_install_label", "Install")
-            icon = "emblem-system-symbolic"
+            icon = resolve_symbolic_icon("emblem-system-symbolic")
             sensitive = True
             context.add_class("suggested-action")
 

@@ -3,7 +3,7 @@
 import os
 
 from . import appstream_cache, get_icon_path, gui_rs
-from .gtk_common import Gtk
+from .gtk_common import Gtk, resolve_symbolic_icon
 
 
 class AppStreamExtensionsView(Gtk.ScrolledWindow):
@@ -89,6 +89,8 @@ class AppStreamExtensionsView(Gtk.ScrolledWindow):
             if path and os.path.isfile(path):
                 icon_path = path
                 icon_name = "application-x-executable"
+        else:
+            icon_name = resolve_symbolic_icon(icon_value)
 
         tr = self.parent_window.translations
         if state == "available":
@@ -97,11 +99,11 @@ class AppStreamExtensionsView(Gtk.ScrolledWindow):
             tooltip = tr.get("skills_install_label", "Install")
         elif state == "installed":
             secondary = tr.get("app_page_installed", "Installed")
-            status_icon, spinner, action_kind, destructive = "emblem-ok-symbolic", False, 2, True
+            status_icon, spinner, action_kind, destructive = resolve_symbolic_icon("emblem-ok-symbolic"), False, 2, True
             tooltip = tr.get("term_view_remove", "Remove installed components")
         elif state == "queued":
             secondary = tr.get("queued", "Waiting to install")
-            status_icon, spinner, action_kind, destructive = "appointment-soon-symbolic", False, 1, False
+            status_icon, spinner, action_kind, destructive = resolve_symbolic_icon("appointment-soon-symbolic"), False, 1, False
             tooltip = tr.get("cancel_btn_label", "Cancel")
         elif state == "removing":
             secondary = tr.get("skills_removing", "Removing…")

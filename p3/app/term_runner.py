@@ -4,7 +4,7 @@ import subprocess
 import threading
 
 from . import dev_mode, package_guard, reboot_helper
-from .gtk_common import GLib, Gtk, Vte
+from .gtk_common import GLib, Gtk, Vte, resolve_symbolic_icon
 from .gtk_dialogs import run_message_dialog
 from .term_registry import ExecutionRegistry
 from .antenna import antenna
@@ -65,7 +65,7 @@ class TerminalRunner:
             done_text = self.translations.get("term_view_done_text", "Done")
             self.vbox_main.button_run.set_label(done_label)
             self.vbox_main.button_run.set_image(
-                Gtk.Image.new_from_icon_name("emblem-ok-symbolic", Gtk.IconSize.BUTTON)
+                Gtk.Image.new_from_icon_name(resolve_symbolic_icon("emblem-ok-symbolic"), Gtk.IconSize.BUTTON)
             )
             self.vbox_main.progress_bar.set_text(done_text)
             handler_id = getattr(self, "_run_button_handler_id", None)

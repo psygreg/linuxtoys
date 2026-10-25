@@ -21,6 +21,55 @@ DEFAULT_ICON_SIZE = 38
 # Cache decoded/scaled pixbufs for the current file revision.
 _PIXBUF_CACHE = {}
 
+# Symbolic icons. These ship in Adwaita's deprecated `symbolic/legacy` tree,
+# which newer GNOME no longer installs, so they go missing on many desktops.
+# XSI (xapp-symbolic-icons) is a theme-independent (hicolor) replacement built
+# for GTK apps outside GNOME. We prefer the `xsi-` name and fall back to the
+# original Adwaita name so the icon resolves wherever either set is present.
+#
+# Mappings are transcribed from XSI's authoritative data file
+# (`/usr/share/xapp/xsi-adwaita-symbolic.info`): entries not listed keep the
+# same suffix (e.g. emblem-ok -> xsi-emblem-ok-symbolic); the four renamed
+# below map to a different XSI suffix.
+XSI_ICON_MAP = {
+    "application-x-addon": "addon",
+    "system-reboot": "reboot",
+    "system-search": "search",
+    # No XSI "web"/globe icon exists; a link glyph is the closest match for the
+    # commerce (buy / subscribe / website) button.
+    "emblem-web": "insert-link",
+}
+
+# Memoized availability of each candidate icon name.
+_ICON_AVAILABILITY: dict[str, bool] = {}
+
+def _has_icon(icon_name: str) -> bool:
+    """Return whether the active icon theme can resolve ``icon_name``."""
+    cached = _ICON_AVAILABILITY.get(icon_name)
+    if cached is None:
+        try:
+            cached = bool(Gtk.IconTheme.get_default().has_icon(icon_name))
+        except Exception:
+            cached = False
+        _ICON_AVAILABILITY[icon_name] = cached
+    return cached
+
+def resolve_symbolic_icon(name: str) -> str:
+    """Return the best available icon name for a ``*-symbolic`` icon.
+
+    Prefers the XSI equivalent (``xsi-<map>-symbolic``) and falls back to the
+    original Adwaita name when XSI is not installed. Non-symbolic names are
+    returned unchanged.
+    """
+    if not name or not name.endswith("-symbolic"):
+        return name
+
+    base = name[: -len("-symbolic")]
+    xsi_name = "xsi-{}-symbolic".format(XSI_ICON_MAP.get(base, base))
+    if _has_icon(xsi_name):
+        return xsi_name
+    return name
+
 def get_toplevel_window(widget: Gtk.Widget) -> Optional[Gtk.Window]:
     """Return the widget's top-level GTK window when available."""
     toplevel = widget.get_toplevel()
@@ -145,6 +194,7 @@ __all__ = [
     "DEFAULT_ICON_NAME",
     "DEFAULT_FLOWBOX_COLUMNS",
     "DEFAULT_ICON_SIZE",
+    "XSI_ICON_MAP",
     "clear_container",
     "clear_pixbuf_cache",
     "create_flowbox",
@@ -152,4 +202,5 @@ __all__ = [
     "escape_markup",
     "get_toplevel_window",
     "load_scaled_pixbuf",
+    "resolve_symbolic_icon",
 ]

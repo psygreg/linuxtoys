@@ -111,7 +111,6 @@ path_link() {
         esac
     done
 
-    local target="$1"
     local bin_dir="$HOME/.local/bin"
     local link_name link_path resolved_target
 

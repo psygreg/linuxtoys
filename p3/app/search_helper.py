@@ -24,6 +24,7 @@ from .compat import (
     should_enable_manual_revert,
 )
 from .lang_utils import detect_system_language
+from .gtk_common import resolve_symbolic_icon
 from .revert_helper import _get_executed_script_names
 from .official_index import is_verified_script, is_verified_name
 
@@ -625,7 +626,7 @@ class CategoryCache:
                 info = {
                     "name": translations.get(leaf, leaf.replace("_", " ").title()),
                     "description": "",
-                    "icon": "folder-symbolic",
+                    "icon": resolve_symbolic_icon("folder-symbolic"),
                     "type": "category",
                     "is_script": False,
                     "is_subcategory": True,

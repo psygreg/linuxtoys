@@ -5,7 +5,7 @@ Action Registry viewer - displays all script execution records from the registry
 import os
 import shutil
 from gi.repository import GLib
-from .gtk_common import Gtk
+from .gtk_common import Gtk, resolve_symbolic_icon
 from .gtk_dialogs import run_message_dialog
 from .lang_utils import create_translator, load_translations
 from .registry_utils import normalize_registry_content, parse_registry_file, search_registry_entries
@@ -262,7 +262,7 @@ class ActionRegistryDialog(Gtk.Dialog):
         self.export_button_box.set_halign(Gtk.Align.CENTER)
         self.export_button_box.set_valign(Gtk.Align.CENTER)
         self.export_button_icon = Gtk.Image.new_from_icon_name(
-            "document-save-symbolic", Gtk.IconSize.BUTTON
+            resolve_symbolic_icon("document-save-symbolic"), Gtk.IconSize.BUTTON
         )
         self.export_button_label = Gtk.Label(
             label=self.translations.get("export", "Export")
@@ -402,7 +402,7 @@ class ActionRegistryDialog(Gtk.Dialog):
         style_context = button.get_style_context()
         button.set_sensitive(False)
         self.export_button_icon.set_from_icon_name(
-            "emblem-ok-symbolic", Gtk.IconSize.BUTTON
+            resolve_symbolic_icon("emblem-ok-symbolic"), Gtk.IconSize.BUTTON
         )
         style_context.add_class("suggested-action")
         button.show_all()
@@ -412,7 +412,7 @@ class ActionRegistryDialog(Gtk.Dialog):
             # was visible. Avoid touching a destroyed widget in that case.
             if button.get_parent() is not None:
                 self.export_button_icon.set_from_icon_name(
-                    "document-save-symbolic", Gtk.IconSize.BUTTON
+                    resolve_symbolic_icon("document-save-symbolic"), Gtk.IconSize.BUTTON
                 )
                 button.set_sensitive(True)
                 # Keep the normal clickable Export state highlighted.
