@@ -21,6 +21,7 @@ GUI_PACKAGE_SUFFIXES = (
     ".pkg.tar.lz4",
 )
 
+GUI_FLAGS = ("-g", "--gui")
 
 def is_gui_external_request(argument):
     """Return True for external requests that must be handled by the GUI."""
@@ -44,16 +45,23 @@ def is_gui_external_request(argument):
     path = os.path.expanduser(path)
     return os.path.isfile(path) and path.casefold().endswith(GUI_PACKAGE_SUFFIXES)
 
-
 def configure_launch_flags():
-    """Apply global flags before initializing the application."""
+    """Apply global flags before initializing the application.
+
+    Returns True when the GUI was explicitly requested.
+    """
     launch_flags = {
         "--devmode": "DEV_MODE",
         "--debug": "LT_DEBUG",
     }
+    gui_requested = False
     remaining_args = [sys.argv[0]]
 
     for argument in sys.argv[1:]:
+        if argument in GUI_FLAGS:
+            gui_requested = True
+            continue
+
         environment_variable = launch_flags.get(argument)
         if environment_variable:
             os.environ[environment_variable] = "1"
@@ -61,9 +69,45 @@ def configure_launch_flags():
             remaining_args.append(argument)
 
     sys.argv = remaining_args
+    return gui_requested
+
+
+def is_interactive_terminal():
+    """Return True when both stdin and stdout are attached to a terminal."""
+    return sys.stdin.isatty() and sys.stdout.isatty()
+
+
+def resolve_default_interface(gui_requested):
+    """Choose the interface when the user did not pick a CLI action.
+
+    - ``--gui`` forces the GUI and only accepts external requests
+      (URI or package file) as extra arguments.
+    - A bare ``linuxtoys`` opens the TUI when running in a terminal.
+      Without a terminal (desktop launchers) it falls back to the GUI.
+    - Explicit ``EASY_CLI``/``UPD_SERVICE`` environments are respected.
+    """
+    arguments = sys.argv[1:]
+
+    if gui_requested:
+        if any(argument.startswith("-") for argument in arguments):
+            print("Error: --gui cannot be combined with CLI options.")
+            sys.exit(2)
+        os.environ.pop("EASY_CLI", None)
+        return
+
+    if arguments:
+        return
+
+    if os.environ.get("EASY_CLI") == "1" or os.environ.get("UPD_SERVICE") == "1":
+        return
+
+    if is_interactive_terminal():
+        sys.argv.append("--tui")
+
 
 if __name__ == "__main__":
-    configure_launch_flags()
+    gui_requested = configure_launch_flags()
+    resolve_default_interface(gui_requested=gui_requested)
 
     # LinuxToys install URIs and supported local package files are graphical
     # activation requests, never EASY_CLI install targets.
@@ -147,7 +191,7 @@ if __name__ == "__main__":
     if not cli_mode:
         if not os.environ.get('DISPLAY') and not os.environ.get('WAYLAND_DISPLAY'):
             print("Error: No display server detected. Please run in a graphical environment.")
-            print("For CLI mode, set EASY_CLI=1 and run with appropriate arguments.")
+            print("Run 'linuxtoys' in a terminal to use the TUI, or set EASY_CLI=1 for CLI mode.")
             sys.exit(1)
 
     # --- SCRIPTS INITIALIZATION ---

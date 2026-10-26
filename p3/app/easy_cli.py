@@ -28,7 +28,7 @@ CLI_OPTIONS = frozenset({
     "-m", "--manifest", "-p", "--package", "--packages",
     "-s", "--script", "--scripts", "-f", "--flatpak", "--flatpaks", "--snap", "--snaps",
     "-v", "--version", "-y", "--yes", "--check-updates", "--export-manifest",
-    "-t", "--tui",
+    "-t", "--tui", "-g", "--gui",
 })
 
 def _wait_for_package_manager_cli():
@@ -1068,10 +1068,16 @@ def easy_cli_help_message():
     print("\nLinuxToys CLI Mode Usage:")
     print("=" * 60)
     print("\nUsage:")
+    print("  linuxtoys       Open the TUI (in a terminal)")
+    print("  linuxtoys --gui [URI | package file]      Open the GUI")
     print("  linuxtoys --install [Option] <item1> <item2> ...")
     print("  linuxtoys --install <item1> <item2> ...  (smart mode)")
     print("  linuxtoys --uninstall [Option] <item1> <item2> ...")
     print("  linuxtoys --uninstall <item1> <item2> ...  (smart mode)")
+    print()
+    print("Interface:")
+    print("  -g, --gui          Open the graphical interface (GTK)")
+    print("  -t, --tui          Open the terminal interface (default in a terminal)")
     print()
     print("Functions:")
     print("  -i, --install      Install selected options (scripts, packages)")

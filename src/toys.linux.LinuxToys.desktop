@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=LinuxToys
 Type=Application
-Exec=/usr/bin/linuxtoys %U
+Exec=/usr/bin/linuxtoys --gui %U
 Terminal=false
 Icon=linuxtoys
 Comment=For everything Linux.
