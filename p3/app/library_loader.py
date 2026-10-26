@@ -247,6 +247,30 @@ def script_environment(script_info, base_env=None):
         env.pop("LINUXTOYS_REPO_APP_ID", None)
         env.pop("LINUXTOYS_REPO_URL", None)
 
+    # AppImage release metadata resolved by the AppStream runner
+    # (appimage_catalog.download_for_install). When present, pkg_appimage records
+    # it alongside the install so version tracking can find it later — the same
+    # role APP_GIT_VERSION / LINUXTOYS_REPO_APP_ID play for git-release entries.
+    appimage_release = script_info.get("appimage_release")
+    if isinstance(appimage_release, dict):
+        for source_key, env_key in (
+            ("app_id", "LINUXTOYS_APPIMAGE_ID"),
+            ("version", "LINUXTOYS_APPIMAGE_VERSION"),
+            ("repository", "LINUXTOYS_APPIMAGE_REPO"),
+        ):
+            value = str(appimage_release.get(source_key) or "").strip()
+            if value:
+                env[env_key] = value
+            else:
+                env.pop(env_key, None)
+    else:
+        for env_key in (
+            "LINUXTOYS_APPIMAGE_ID",
+            "LINUXTOYS_APPIMAGE_VERSION",
+            "LINUXTOYS_APPIMAGE_REPO",
+        ):
+            env.pop(env_key, None)
+
     return env
 
 def script_command(script_path, script_dir):

@@ -402,6 +402,24 @@ def _release_asset(assets):
         "the upstream release does not identify a single installable AppImage"
     )
 
+def tracked_app_id(info):
+    """Stable registry identity for one AppImage app.
+
+    Mirrors the key the git-release tracker uses so version records line up
+    with an app across installs. The catalog ``id`` (``appimage.community.*``)
+    is stable across refreshes; fall back to a slug of the display name for any
+    entry lacking it. Returns "" when no stable identity can be derived.
+    """
+    app_id = str(info.get("id") or "").strip()
+    if app_id:
+        return app_id
+    name = str(info.get("name") or "").strip()
+    if not name:
+        return ""
+    slug = "".join(c if c.isalnum() else "-" for c in name.casefold()).strip("-")
+    return "appimage.community." + slug if slug else ""
+
+
 def resolve_download(info):
     """Return (asset URL, repository URL, release tag) with on-demand API calls.
 
@@ -440,32 +458,83 @@ def resolve_download(info):
         raise ValueError("No installable AppImage release found — " + " | ".join(failures))
     raise ValueError("No supported direct AppImage download or GitHub/Codeberg release link")
 
+def _download_appimage(url, dest_path):
+    """Download one AppImage to dest_path and validate it as an ELF AppImage."""
+    req = Request(url, headers={"User-Agent": "LinuxToys AppImage Installer"})
+    try:
+        with urlopen(req, timeout=40) as response, dest_path.open("wb") as target:
+            total = 0
+            while True:
+                chunk = response.read(1024 * 1024)
+                if not chunk:
+                    break
+                total += len(chunk)
+                if total > MAX_APPIMAGE_BYTES:
+                    raise ValueError("AppImage download exceeds 4 GiB")
+                target.write(chunk)
+    except ValueError:
+        raise
+    except Exception as exc:
+        raise ValueError(_http_failure_text(url, exc)) from exc
+    if dest_path.stat().st_size < 4096:
+        raise ValueError("Downloaded AppImage is unexpectedly small")
+    with dest_path.open("rb") as handle:
+        header = handle.read(4)
+    if header != b"\x7fELF":
+        raise ValueError("Downloaded asset is not an ELF AppImage")
+
 @contextlib.contextmanager
 def download_for_install(info):
     url, repository, version = resolve_download(info)
     with tempfile.TemporaryDirectory(prefix="linuxtoys-appimage-") as directory:
         safe_name = re.sub(r"[^A-Za-z0-9._-]+", "-", str(info.get("name") or "AppImage")).strip(".-")[:80]
         path = Path(directory) / f"{safe_name or 'AppImage'}.AppImage"
-        req = Request(url, headers={"User-Agent": "LinuxToys AppImage Installer"})
+        _download_appimage(url, path)
+        yield str(path), {
+            "repository": repository,
+            "version": version,
+            "download_url": url,
+            "app_id": tracked_app_id(info),
+        }
+
+
+def resolve_for_update(app_id, repository, output_path):
+    """Resolve and download the latest AppImage for a tracked app to output_path.
+
+    Used by the system updater to refresh a previously installed AppImage. The
+    repository alone is enough to re-resolve the newest release; ``app_id`` only
+    re-labels the metadata so the recorded identity stays stable. Returns the
+    release dict (repository, version, download_url, app_id).
+    """
+    info = {
+        "id": app_id,
+        "name": app_id,
+        "appimage_links": [repository],
+    }
+    url, resolved_repo, version = resolve_download(info)
+    dest = Path(output_path)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    _download_appimage(url, dest)
+    return {
+        "repository": resolved_repo or repository,
+        "version": version,
+        "download_url": url,
+        "app_id": app_id,
+    }
+
+
+if __name__ == "__main__":
+    import sys
+
+    # CLI used by the system updater to refresh one tracked AppImage.
+    #   appimage_catalog.py --resolve-for-update APP_ID REPOSITORY OUTPUT_PATH
+    # Prints the resolved version on stdout; the caller installs OUTPUT_PATH.
+    if len(sys.argv) == 5 and sys.argv[1] == "--resolve-for-update":
         try:
-            with urlopen(req, timeout=40) as response, path.open("wb") as target:
-                total = 0
-                while True:
-                    chunk = response.read(1024 * 1024)
-                    if not chunk:
-                        break
-                    total += len(chunk)
-                    if total > MAX_APPIMAGE_BYTES:
-                        raise ValueError("AppImage download exceeds 4 GiB")
-                    target.write(chunk)
-        except ValueError:
-            raise
+            release = resolve_for_update(sys.argv[2], sys.argv[3], sys.argv[4])
         except Exception as exc:
-            raise ValueError(_http_failure_text(url, exc)) from exc
-        if path.stat().st_size < 4096:
-            raise ValueError("Downloaded AppImage is unexpectedly small")
-        with path.open("rb") as handle:
-            header = handle.read(4)
-        if header != b"\x7fELF":
-            raise ValueError("Downloaded asset is not an ELF AppImage")
-        yield str(path), {"repository": repository, "version": version, "download_url": url}
+            print(f"{exc}", file=sys.stderr)
+            sys.exit(1)
+        print(release.get("version") or "")
+        sys.exit(0)
+    sys.exit(2)

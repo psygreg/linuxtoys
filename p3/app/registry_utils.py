@@ -285,10 +285,68 @@ def shell_git_release_exports(registry_data=None):
     return "\n".join(lines)
 
 
+def get_appimage_release_apps(registry_data=None):
+    """Return latest registered AppImage release metadata keyed by tracked app id.
+
+    Mirrors get_git_release_apps so the system updater can track AppImage
+    versions the same way it tracks git-release apps. Operations are written by
+    pkg_appimage as ``appimage-release <APP_ID> <VERSION> <REPO>``.
+    """
+    if registry_data is None:
+        registry_data = parse_registry_file()
+
+    apps = {}
+    # Tracked app ids are catalog ids ('appimage.community.*') or a slug of the
+    # display name; both are safe path-ish tokens without whitespace.
+    app_id_re = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
+    repo_re = re.compile(r"^https://(?:github\.com|codeberg\.org|gitlab\.com)/[^/]+/[^/]+/?$")
+
+    for _script_name, executions in registry_data.items():
+        for timestamp, operations in executions:
+            for operation in operations:
+                if not operation.startswith("appimage-release "):
+                    continue
+                parts = operation.split(None, 3)
+                if len(parts) != 4:
+                    continue
+                _kind, app_id, version, repo = parts
+                if not app_id_re.fullmatch(app_id) or not version or not repo_re.fullmatch(repo):
+                    continue
+                previous = apps.get(app_id)
+                if previous is None or str(timestamp or "") >= previous["timestamp"]:
+                    apps[app_id] = {
+                        "version": version,
+                        "repo": repo,
+                        "timestamp": str(timestamp or ""),
+                    }
+
+    return apps
+
+
+def shell_appimage_release_exports(registry_data=None):
+    """Render safe Bash assignments for registered AppImage release apps."""
+    import shlex
+
+    apps = get_appimage_release_apps(registry_data)
+    app_ids = sorted(apps)
+    lines = ["APPIMAGE_APPS=(" + " ".join(shlex.quote(app_id) for app_id in app_ids) + ")"]
+    for app_id in app_ids:
+        data = apps[app_id]
+        # Bash variable-safe form of the app id (dots/dashes are not valid in
+        # identifiers), so the caller can read APPIMAGE_<SAFE>_VERSION.
+        safe = re.sub(r"[^A-Za-z0-9_]", "_", app_id)
+        lines.append(f"export APPIMAGE_{safe}_VERSION={shlex.quote(data['version'])}")
+        lines.append(f"export APPIMAGE_{safe}_REPO={shlex.quote(data['repo'])}")
+    return "\n".join(lines)
+
+
 if __name__ == "__main__":
     import sys
 
     if len(sys.argv) == 2 and sys.argv[1] == "--export-git-releases":
         print(shell_git_release_exports())
+        sys.exit(0)
+    if len(sys.argv) == 2 and sys.argv[1] == "--export-appimage-releases":
+        print(shell_appimage_release_exports())
         sys.exit(0)
     sys.exit(2)

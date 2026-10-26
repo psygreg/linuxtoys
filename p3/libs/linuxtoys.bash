@@ -646,6 +646,19 @@ git_app_versions() {
     eval "$exports"
 }
 
+# Expose AppImage release applications tracked from the Action Registry. Mirrors
+# git_app_versions: APPIMAGE_APPS holds tracked app ids, and each app exposes
+# APPIMAGE_<SAFE_ID>_VERSION / APPIMAGE_<SAFE_ID>_REPO where SAFE_ID is the app
+# id with non-identifier characters folded to underscores.
+appimage_app_versions() {
+    local exports
+    exports=$(python3 "$SCRIPT_DIR/app/registry_utils.py" --export-appimage-releases) || {
+        APPIMAGE_APPS=()
+        return 1
+    }
+    eval "$exports"
+}
+
 # Flatpak component IDs are reverse-DNS names: at least three dot-separated
 # labels (e.g. it.mijorus.gearlever, org.gnome.Calculator). Native AppStream
 # IDs usually carry a .desktop suffix, and display names passed to

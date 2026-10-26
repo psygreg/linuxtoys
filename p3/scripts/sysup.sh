@@ -210,6 +210,31 @@ if [[ "$UPD_SERVICE" != "1" ]] && git_app_versions; then
     done
 fi
 
+# Update AppImages installed from the AppImage catalog. Tracked apps record the
+# resolved release (id, tag, repository) at install time; a changed stable tag
+# from the same repository is enough to trigger a refresh. Tags are compared
+# literally and are not assumed to follow semantic-version ordering.
+if [[ "$UPD_SERVICE" != "1" ]] && appimage_app_versions; then
+    for app in "${APPIMAGE_APPS[@]}"; do
+        safe_app=$(printf '%s' "$app" | tr -c 'A-Za-z0-9_' '_')
+        version_var="APPIMAGE_${safe_app}_VERSION"
+        repo_var="APPIMAGE_${safe_app}_REPO"
+        installed_version="${!version_var}"
+        release_repo="${!repo_var}"
+        [[ -n "$release_repo" ]] || continue
+
+        latest_version=$(latest_release_version "$release_repo") || {
+            warn "Failed to check release updates for $app"
+            continue
+        }
+
+        if [[ "$latest_version" != "$installed_version" ]]; then
+            echo "Updating $app: $installed_version -> $latest_version"
+            pkg_appimage_update "$app" "$release_repo" "$installed_version" || warn "Failed to update $app"
+        fi
+    done
+fi
+
 if needs_reboot; then
     if [ "$UPD_SERVICE" = "1" ]; then
         echo "$sysup_rebootreq"
