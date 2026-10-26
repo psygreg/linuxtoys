@@ -58,7 +58,28 @@ _zenity_run() {
 }
 # Wrapper for scripts that call zenity directly after sourcing this library.
 zenity() {
-    _zenity_run "$@"
+    local -a _zargs=()
+    local _arg _val _prev=""
+    for _arg in "$@"; do
+        case "$_arg" in
+            --text=*)
+                _val="${_arg#--text=}"
+                _zargs+=("--text=$(_msg_unescape "$_val")")
+                ;;
+            --text)
+                _zargs+=("--text")
+                ;;
+            *)
+                if [ "$_prev" = "--text" ]; then
+                    _zargs+=("$(_msg_unescape "$_arg")")
+                else
+                    _zargs+=("$_arg")
+                fi
+                ;;
+        esac
+        _prev="$_arg"
+    done
+    _zenity_run "${_zargs[@]}"
 }
 
 # privilege escalation
@@ -366,10 +387,18 @@ sudo_() {
     fi
 }
 
+# Convert escape sequences callers embed in message text (e.g. "\n") into
+# real characters. Zenity and plain echo do not interpret these escapes, so
+# without this the sequences would be shown literally to the user.
+_msg_unescape() {
+    printf '%b' "${1-}"
+}
+
 # Unified message handler
 _msg() {
     local type="$1"
-    local text="$2"
+    local text
+    text="$(_msg_unescape "$2")"
     local title="${3:-LinuxToys}"
 
     if [[ "$DISABLE_ZENITY" == "1" ]]; then
@@ -398,7 +427,8 @@ _msg() {
 # message presets
 question() {
     local title="$1"
-    local text="$2"
+    local text
+    text="$(_msg_unescape "$2")"
     local width="${3:-360}"
     local height="${4:-300}"
     local _reply
@@ -483,7 +513,7 @@ listselect() {
 info() {
     { { [ -n "$CALLED_SCRIPT" ] && { [ "$1" = "$finishmsg" ] || [ "$1" = "$rebootmsg" ]; }; } && return 0; } || true
     if [ -n "$CHECKLIST_RUN" ]; then
-        echo "$1";
+        _msg_unescape "$1"; echo
     else
         _msg info "$1";
     fi
@@ -492,21 +522,21 @@ warn() {
     # Always echo so the warning is captured in the terminal buffer for bug
     # reporting, even when a GUI dialog is shown (matches how error() behaves).
     if [ -n "$CHECKLIST_RUN" ]; then
-        echo "WARN: $1"
+        echo -n "WARN: "; _msg_unescape "$1"; echo
     else
-        echo "$1"
+        _msg_unescape "$1"; echo
     fi
     _zenity_can_run || return 0
     [ -n "$CHECKLIST_RUN" ] && return 0
     _msg warning "$1"
 }
 error() {
-    _zenity_can_run || { echo "$1" && return 1; }
+    _zenity_can_run || { _msg_unescape "$1"; echo; return 1; }
     _msg error "$1" "Error"
     return 1
 }
 die() {
-    _zenity_can_run || { echo "$1" && exit 1; }
+    _zenity_can_run || { _msg_unescape "$1"; echo; exit 1; }
     _msg error "$1" "Fatal Error"
     exit 1
 }
