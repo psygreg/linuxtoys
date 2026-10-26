@@ -99,8 +99,17 @@ check_disk_space () {
 	fi
 
 	local required_space_kb=$((required_space_gb * 1024 * 1024))
+
+	# On immutable OSes using composeFS (and similar), / is a tiny read-only
+	# mount with no usable space; the writable root lives at /var. Detect this
+	# and check /var instead of / as the 'root' partition.
+	local root_path="/"
+	if [ -d /var ] && { [ -f /run/ostree-booted ] || findmnt -n -o FSTYPE --target / 2>/dev/null | grep -qiE 'composefs|erofs|overlay'; }; then
+		root_path="/var"
+	fi
+
 	home_available_kb=$(df --output=avail -k "$HOME" | tail -n 1 | tr -d ' ')
-	root_available_kb=$(df --output=avail -k / | tail -n 1 | tr -d ' ')
+	root_available_kb=$(df --output=avail -k "$root_path" | tail -n 1 | tr -d ' ')
 
 	# check home directory
 	if [ "$home_available_kb" -lt "$required_space_kb" ]; then
@@ -109,7 +118,7 @@ check_disk_space () {
 
 	# check root filesystem
 	if [ "$root_available_kb" -lt "$required_space_kb" ]; then
-		fatal "$outofspace\n/ 'root' -- $required_space_gb GB"
+		fatal "$outofspace\n$root_path 'root' -- $required_space_gb GB"
 	fi
 }
 
