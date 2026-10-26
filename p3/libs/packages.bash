@@ -1785,20 +1785,27 @@ EOF
         fi
         local output
         # Snapshot ~/AppImages before integration so the exact new file can be
-        # identified after. The old mtime-newest heuristic could grab the wrong
-        # AppImage when another one landed in between.
+        # identified after. Record each file's identity (inode, mtime, size)
+        # alongside its name, not just the name: Gear Lever names integrated
+        # files from the AppImage's internal metadata, so a re-install or a
+        # same-version update OVERWRITES an existing file of the same name
+        # instead of adding a new one. A plain name set-difference cannot see
+        # that overwrite and came up empty ("Could not determine integrated
+        # AppImage filename."), skipping the registry record; comparing
+        # identity too makes a replaced file show up as a change.
         local _pre_list
         _pre_list=$(mktemp) || return 1
-        find "$HOME/AppImages" -maxdepth 1 -type f -printf '%f\n' 2>/dev/null | sort > "$_pre_list"
+        find "$HOME/AppImages" -maxdepth 1 -type f -printf '%f\t%i\t%T@\t%s\n' 2>/dev/null | sort > "$_pre_list"
         if output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "$@" 2>&1); then
-            # Record the one filename newly added to ~/AppImages by this call.
-            # Gear Lever names the integrated file from the AppImage's internal
-            # metadata, so we observe the actual result rather than guessing it.
+            # Record the one file whose identity is new or changed after this
+            # call (added name, or a same-name overwrite). Observing the actual
+            # result beats guessing the name Gear Lever chose.
             local appimage_name=""
             appimage_name=$(
                 comm -13 "$_pre_list" \
-                    <(find "$HOME/AppImages" -maxdepth 1 -type f -printf '%f\n' 2>/dev/null | sort) |
-                    head -n1
+                    <(find "$HOME/AppImages" -maxdepth 1 -type f -printf '%f\t%i\t%T@\t%s\n' 2>/dev/null | sort) |
+                    head -n1 |
+                    cut -f1
             )
             rm -f "$_pre_list"
             if [[ -n "$appimage_name" ]]; then
