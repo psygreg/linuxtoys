@@ -1,3 +1,25 @@
+"""Modal dialogs of the TUI.
+
+Each dialog is a ``ModalScreen`` that reports its outcome through
+``dismiss()``. Confirmations return a bool, information dialogs return
+None, and ``SudoPasswordScreen`` and ``LanguageSelectorDialog`` return a
+value or None. Texts come from the translations mapping, with English
+defaults. Most dialogs bind Escape to ``cancel``, labeled with the
+``script_runner_close`` translation. Those bindings are evaluated at
+import time, so they do not follow a later language change.
+
+Groups:
+
+- Script run: ``ConfirmScriptScreen``, ``RemoveScriptScreen``,
+  ``SudoPasswordScreen``, ``SuccessDialog``, ``ErrorDialog``,
+  ``CancelledDialog`` and ``RebootDialog``.
+- Registry: ``ConfirmCleanupDialog``.
+- AUR: ``AurConsentDialog``, ``AurHelperDialog`` and
+  ``AurSecurityDialog``.
+- App: ``ReportBugDialog``, ``LanguageSelectorDialog``,
+  ``UpdateAvailableDialog`` and ``UpdateCompleteDialog``.
+"""
+
 from textual import on, work
 from textual.app import ComposeResult
 from textual.binding import Binding
@@ -26,8 +48,16 @@ from .my_widgets import LanguageListItem
 
 
 class ConfirmScriptScreen(ModalScreen[bool]):
-    """Modal exibido antes de rodar um script, com a descrição e
-    dois botões: Cancelar e Executar. Retorna True/False via dismiss()."""
+    """Ask for confirmation before running a script.
+
+    Shows the script description and two buttons, Cancel and Execute.
+    Focus starts on Execute. Dismisses with True on Execute, and False
+    on Cancel or Escape.
+
+    Args:
+        name: Script name, used in the title.
+        description: Text shown in the scrollable body.
+    """
 
     BINDINGS = [
         Binding("escape", "cancel", translations.get("script_runner_close"))
@@ -41,7 +71,7 @@ class ConfirmScriptScreen(ModalScreen[bool]):
     def compose(self) -> ComposeResult:
         with Vertical(id="confirm-dialog"):
             yield Static(
-                f"{translations.get('term_view_execute', 'Cancel')} '{self.script_name}'?",
+                f"{translations.get('term_view_execute', 'Execute')} '{self.script_name}'?",
                 id="confirm-title",
             )
             with VerticalScroll(id="confirm-description"):
@@ -70,7 +100,20 @@ class ConfirmScriptScreen(ModalScreen[bool]):
 
 
 class ConfirmCleanupDialog(ModalScreen[bool]):
-    """Diálogo modal de confirmação para remoção de registro."""
+    """Ask for confirmation before removing a registry entry.
+
+    The message states that the entry and its backup files will be
+    deleted, and that the script's operations can no longer be undone
+    from the app afterwards. Dismisses with True on Remove, and False on
+    Cancel. It has no Escape binding.
+
+    Args:
+        script_name: Script whose registry entry will be removed.
+        backup_count: Number of backup files that will be deleted.
+        name: Screen name, forwarded to ``ModalScreen``.
+        id: Screen id, forwarded to ``ModalScreen``.
+        classes: CSS classes, forwarded to ``ModalScreen``.
+    """
 
     def __init__(
         self,
@@ -119,8 +162,18 @@ class ConfirmCleanupDialog(ModalScreen[bool]):
 
 
 class RemoveScriptScreen(ModalScreen[bool]):
-    """Modal exibido antes de rodar um script, com a descrição e
-    dois botões: Cancelar e Executar. Retorna True/False via dismiss()."""
+    """Ask for confirmation before removing a script.
+
+    Shows the description and two buttons, Cancel and a confirm button
+    (Remove by default). Focus starts on the confirm button. Dismisses
+    with True on confirm, and False on Cancel or Escape.
+
+    Args:
+        name: Script name, used in the default title.
+        description: Text shown in the scrollable body.
+        title: Heading that replaces the default ``Remove '<name>'?``.
+        confirm_label: Label that replaces the default Remove label.
+    """
 
     BINDINGS = [
         Binding("escape", "cancel", translations.get("script_runner_close"))
@@ -176,7 +229,14 @@ class RemoveScriptScreen(ModalScreen[bool]):
 
 
 class SuccessDialog(ModalScreen[None]):
-    """Diálogo exibido quando um script termina com exit code 0."""
+    """Tell the user that a script finished with exit code 0.
+
+    Dismisses with None on Done or Escape.
+
+    Args:
+        script_name: Name of the script.
+        action: Past-tense verb for the message, e.g. ``"installed"``.
+    """
 
     BINDINGS = [
         Binding("escape", "cancel", translations.get("script_runner_close"))
@@ -208,6 +268,13 @@ class SuccessDialog(ModalScreen[None]):
 
 
 class RebootDialog(ModalScreen[bool]):
+    """Tell the user that a system reboot is required.
+
+    Shown after a script that requires a reboot, because other features
+    must not be installed before it. Dismisses with None (not the
+    declared bool) on Done or Escape.
+    """
+
     BINDINGS = [
         Binding("escape", "cancel", translations.get("script_runner_close"))
     ]
@@ -236,9 +303,18 @@ class RebootDialog(ModalScreen[bool]):
 
 
 class ErrorDialog(ModalScreen[bool]):
-    """Diálogo exibido quando um script termina com um exit code de
-    erro de verdade (não cancelamento nem Ctrl+C). Retorna True via
-    dismiss() se o usuário pediu pra reportar o bug, False caso contrário."""
+    """Report a script that failed with a real error exit code.
+
+    Not used for cancellations or Ctrl+C. Dismisses with True if the
+    user pressed Report bug, and False on Done or Escape.
+
+    Args:
+        script_name: Name of the script.
+        exit_code: Exit code shown in the message, or None if the
+            script did not return one.
+        action: Verb in the infinitive for the message, e.g.
+            ``"install"``.
+    """
 
     BINDINGS = [
         Binding("escape", "cancel", translations.get("script_runner_close"))
@@ -278,9 +354,18 @@ class ErrorDialog(ModalScreen[bool]):
 
 
 class SudoPasswordScreen(ModalScreen[str | None]):
-    """Modal pra coletar a senha sudo dentro do próprio TUI (nunca via
-    /dev/tty, pra não brigar com o Textual pela leitura do terminal).
-    Retorna a senha via dismiss(), ou None se cancelado."""
+    """Collect the sudo password inside the TUI.
+
+    The password is read here and never from ``/dev/tty``, so the dialog
+    does not compete with Textual for the terminal input. Enter submits.
+    Dismisses with the password, or None if the user cancels or submits
+    an empty password.
+
+    Args:
+        script_name: Script that needs sudo, shown in the title.
+        error_message: Optional message shown above the field, e.g.
+            after a wrong password.
+    """
 
     BINDINGS = [
         Binding("escape", "cancel", translations.get("script_runner_close"))
@@ -340,9 +425,15 @@ class SudoPasswordScreen(ModalScreen[str | None]):
 
 
 class CancelledDialog(ModalScreen[None]):
-    """Diálogo exibido quando a execução é cancelada (código 100 —
-    convenção do LinuxToys pra cancelamento, seja injetado por nós ao
-    cancelar o prompt de senha, seja gerado pelo próprio script)."""
+    """Tell the user that a run was cancelled.
+
+    Exit code 100 is the LinuxToys convention for cancellation. It is
+    injected by the TUI when the password prompt is cancelled, or
+    produced by the script itself. Dismisses with None.
+
+    Args:
+        script_name: Name of the cancelled script.
+    """
 
     BINDINGS = [
         Binding("escape", "cancel", translations.get("script_runner_close"))
@@ -371,6 +462,15 @@ class CancelledDialog(ModalScreen[None]):
 
 
 class ReportBugDialog(ModalScreen[bool]):
+    """Form to report a bug.
+
+    Shows an application selector (LinuxToys first, then the entries
+    from ``get_bug_report_entries``), a description field and the system
+    information. OK submits the report in a thread worker. Dismisses
+    with None on Cancel, Escape or after a successful submission
+    (the declared bool is never used).
+    """
+
     BINDINGS = [
         Binding("escape", "cancel", translations.get("script_runner_close"))
     ]
@@ -426,14 +526,14 @@ class ReportBugDialog(ModalScreen[bool]):
     def handle_cancel(self) -> None:
         self.dismiss()
 
-    # 2. Trata o clique no botão OK / Enviar
+    # Handle the OK / Send button
     @on(Button.Pressed, "#execute-btn-bug")
     def handle_execute(self) -> None:
-        # Resgata os valores diretamente dos widgets
+        # Read the values directly from the widgets
         comment = self.query_one("#bug-description", TextArea).text.strip()
         selected_app = self.query_one("#select-app", Select).value
 
-        # Validação simples para não enviar vazio
+        # Simple validation to avoid sending an empty report
         if not comment:
             self.notify(
                 translations.get(
@@ -444,13 +544,11 @@ class ReportBugDialog(ModalScreen[bool]):
             )
             return
 
-        # Desabilita o botão para evitar múltiplos cliques enquanto envia
+        # Disable the button to avoid repeated clicks while sending
         self.query_one("#execute-btn-bug", Button).disabled = True
 
-        # Dispara o worker em segundo plano
         self._submit_bug_report(comment, selected_app)
 
-    # 3. Worker assíncrono do Textual (substitui threading.Thread e GLib)
     @work(thread=True)
     def _submit_bug_report(self, comment: str, selected_app=None) -> None:
         """Envia o relatório de bug em uma thread de segundo plano."""
@@ -465,7 +563,6 @@ class ReportBugDialog(ModalScreen[bool]):
                 infer_related_app=False,
             )
 
-            # Notificação de Sucesso na thread principal
             self.app.call_from_thread(
                 self.notify,
                 translations.get(
@@ -476,18 +573,15 @@ class ReportBugDialog(ModalScreen[bool]):
                 severity="information",
             )
 
-            # Fecha a janela modal após envio
             self.app.call_from_thread(self.dismiss)
 
         except Exception as e:
-            # Notificação de Erro na thread principal
             self.app.call_from_thread(
                 self.notify,
-                f"{translations.get('bug_report_failed', 'Failed to submit bug report: ')}: {e}",
+                f"{translations.get('bug_report_failed', 'Failed to submit bug report: ')} {e}",
                 title="Erro",
                 severity="error",
             )
-            # Reabilita o botão para permitir nova tentativa
             self.app.call_from_thread(
                 setattr,
                 self.query_one("#execute-btn-bug", Button),
@@ -497,6 +591,14 @@ class ReportBugDialog(ModalScreen[bool]):
 
 
 class LanguageSelectorDialog(ModalScreen[str | None]):
+    """Pick the interface language from a searchable list.
+
+    Lists the available languages with their localized names. The
+    search box filters by language code or by name, ignoring case.
+    Dismisses with the selected language code, or None on Cancel or
+    Escape. Select does nothing if no item is highlighted.
+    """
+
     BINDINGS = [
         Binding("escape", "cancel", translations.get("script_runner_close"))
     ]
@@ -554,11 +656,9 @@ class LanguageSelectorDialog(ModalScreen[str | None]):
         list_view = self.query_one("#language-list", ListView)
 
         for item in list_view.query(LanguageListItem):
-            # Lê direto das propriedades salvas na instância
             code_match = query in item.code.casefold()
             name_match = query in item.display_name.casefold()
 
-            # Exibe se bater com o código OU com o nome exibido
             item.display = code_match or name_match
 
     def action_cancel(self) -> None:
@@ -566,6 +666,16 @@ class LanguageSelectorDialog(ModalScreen[str | None]):
 
 
 class UpdateAvailableDialog(ModalScreen[bool]):
+    """Offer a new LinuxToys version.
+
+    Shows the version and the changelog. Dismisses with True on Install
+    Update, and False on Ignore.
+
+    Args:
+        tag: Version tag of the update, shown in the message.
+        changelog: Release notes shown in the scrollable body.
+    """
+
     BINDINGS = [
         Binding("escape", "cancel", translations.get("script_runner_close"))
     ]
@@ -593,6 +703,12 @@ class UpdateAvailableDialog(ModalScreen[bool]):
 
 
 class UpdateCompleteDialog(ModalScreen[None]):
+    """Tell the user that the update is installed.
+
+    Offers a single button, which dismisses with None. The caller is
+    responsible for restarting the application.
+    """
+
     BINDINGS = [
         Binding("escape", "cancel", translations.get("script_runner_close"))
     ]
@@ -618,8 +734,17 @@ class UpdateCompleteDialog(ModalScreen[None]):
 
 
 class AurSecurityDialog(ModalScreen[None]):
-    """Diálogo de bloqueio/indisponibilidade da verificação de segurança
-    AUR, exibido antes de qualquer instalação ser sequer iniciada."""
+    """Explain why an AUR install was stopped by the security check.
+
+    Shown before any installation starts. Dismisses with None.
+
+    Args:
+        script_name: Name of the script.
+        blocked: True if the sources look unsafe, False if they could
+            not be verified.
+        detail: Findings or reason, as returned by
+            ``check_aur_package_security``.
+    """
 
     BINDINGS = [
         Binding("escape", "cancel", translations.get("script_runner_close"))
@@ -662,7 +787,11 @@ class AurSecurityDialog(ModalScreen[None]):
 
 
 class AurConsentDialog(ModalScreen[bool]):
-    """Aviso antes de habilitar o AUR. Retorna True se o usuário aceitar."""
+    """Warn about the risks of the AUR before enabling it.
+
+    Focus starts on Return, the safe choice. Dismisses with True on
+    Enable AUR, and False on Return or Escape.
+    """
 
     BINDINGS = [
         Binding("escape", "cancel", translations.get("script_runner_close"))
@@ -708,7 +837,11 @@ class AurConsentDialog(ModalScreen[bool]):
 
 
 class AurHelperDialog(ModalScreen[bool]):
-    """Pergunta se o Paru (helper do AUR) deve ser instalado agora."""
+    """Ask whether to install paru, the AUR helper, now.
+
+    Focus starts on No. Dismisses with True on Yes, and False on No or
+    Escape.
+    """
 
     BINDINGS = [
         Binding("escape", "cancel", translations.get("script_runner_close"))

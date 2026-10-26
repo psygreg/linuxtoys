@@ -87,11 +87,18 @@ TRANSMAP_PATH = "/tmp/linuxtoys/transmap"
 
 
 class ScriptRunnerMixin:
-    """Instalação/desinstalação de scripts.
+    """Run LinuxToys scripts and own the state shared by every run.
 
-    Também mantém o estado de execução comum e os helpers/handlers
-    compartilhados (terminal, limpeza, ``on_script_finished``).
-    """
+    Mixin for the main app class. Besides installing and removing
+    scripts, it holds the run state used by the other runner mixins, the
+    terminal helpers and ``on_script_finished``, which handles the end of
+    every run. It also browses the dynamic categories (Specials,
+    Homebrew, AppImage and AUR) and keeps the breadcrumb.
+
+    Install flow: ``handle_desc_button`` -> ``_handle_script_button`` ->
+    confirmation dialog -> ``run_script`` -> ``_execute_script_info`` ->
+    terminal -> ``on_script_finished`` -> result dialog ->
+    ``_finish_script_run``. Removal goes through ``run_uninstall``."""
 
     _running_button: InfoButton | None = None
     _running_script_info: dict | None = None
@@ -117,7 +124,7 @@ class ScriptRunnerMixin:
 
     @staticmethod
     def _read_removal_state(button: InfoButton) -> tuple[dict, bool]:
-        """Leituras de arquivo que não devem rodar na thread da UI."""
+        """Read the registry and check if the script is removable."""
         registry_data = parse_registry_file()
         is_script = button.is_script
         removable = is_removable(
@@ -131,10 +138,17 @@ class ScriptRunnerMixin:
         return registry_data, removable
 
     async def _handle_script_button(self, button: InfoButton) -> None:
-        """Handle script button actions based on its execution state.
+        """Ask for the right confirmation for a script.
 
-        Push the confirmation screen if it is the script's first run,
-        otherwise push the installation reversal screen.
+        A script that was never run, or that cannot be removed, asks to
+        run it (``ConfirmScriptScreen``). A registered, removable script
+        asks to remove it: items that other software depends on are
+        blocked with a notification, and a script with an internal
+        removal (``_revert_capability``) asks to run it again, because
+        the script removes itself. File reads run in threads.
+
+        Args:
+            button: Button of the script.
         """
         script_name = str(button.label)
         registry_data, removable = await asyncio.to_thread(
@@ -199,6 +213,7 @@ class ScriptRunnerMixin:
     def _notify_removal_blocked(
         self, script_name: str, blockers: list[str]
     ) -> None:
+        """Warn that installed software still depends on an item."""
         message = translations.get(
             "dependency_block_message",
             "Installed software still depends on '{name}'. "
@@ -235,6 +250,12 @@ class ScriptRunnerMixin:
         self.run_uninstall(button, script_info)
 
     async def _navigate_to_category(self, button: InfoButton) -> None:
+        """Open a category.
+
+        The AUR category asks for consent first, and Homebrew and
+        AppImage use their own loaders. Any other category is pushed on
+        the navigation stack, rendered and shown in the breadcrumb.
+        """
         if button.info.get("is_aur_category"):
             await self._activate_aur_category(button)
             return
@@ -252,6 +273,7 @@ class ScriptRunnerMixin:
         self._update_breadcrumb()
 
     def _items_for_path(self, path: str) -> list[dict]:
+        """Return the items of a category path."""
         if is_specials_path(path):
             return get_specials_items(path)
         if is_homebrew_path(path):
@@ -392,7 +414,12 @@ class ScriptRunnerMixin:
         self._request_homebrew_refresh()
 
     async def _sync_homebrew_availability(self) -> None:
-        """Reconcilia a UI com homebrew_catalog.enabled()."""
+        """Reconcile the UI with ``homebrew_catalog.enabled()``.
+
+        If the Homebrew view is open and Homebrew is gone, warns and goes
+        back to the home. On the home itself, redraws it so the Homebrew
+        entry follows the availability.
+        """
         if self._homebrew_view_active() and not homebrew_catalog.enabled():
             self._homebrew_awaiting_refresh = False
             self.notify(
@@ -406,6 +433,14 @@ class ScriptRunnerMixin:
             await self.action_reset_to_home()
 
     def run_script(self, button: InfoButton) -> None:
+        """Run the script of a button in the terminal.
+
+        Does nothing if the terminal is busy. The button is kept in
+        ``_running_button``.
+
+        Args:
+            button: Button whose ``info`` is run.
+        """
         if not self._ensure_terminal_free():
             return
 
@@ -413,6 +448,23 @@ class ScriptRunnerMixin:
         self._execute_script_info(button.info)
 
     def _execute_script_info(self, script_info: dict) -> None:
+        """Run a script in the embedded terminal.
+
+        Repository entries are materialized first. On failure an error
+        is shown, the button is cleared and, during a manifest run, the
+        failure is reported to ``_manifest_start_failed``. In dev mode
+        the original script runs directly. Otherwise a copy made by
+        ``create_temp_file`` runs, and the transmap file is emptied.
+
+        Side effects: sets ``DISABLE_ZENITY=1`` in the process
+        environment and shows the terminal. The environment has the
+        common variables, the app identity variables and, in a manifest
+        run, the manifest variables. It does not check whether the
+        terminal accepted the command.
+
+        Args:
+            script_info: Script info dict.
+        """
         if not self._ensure_terminal_free():
             return
         if script_info.get("is_repo_entry"):
@@ -465,20 +517,31 @@ class ScriptRunnerMixin:
 
     @staticmethod
     def _app_identity_env(script_info: dict) -> dict[str, str]:
-        """Identidade canônica do app (LINUXTOYS_APP_*), igual à da GUI.
+        """Return the app identity variables (``LINUXTOYS_APP_*``).
 
-        `script_environment` devolve um ambiente completo. Parte-se de um
-        `base_env` mínimo para que só as variáveis acrescentadas por ele
-        sejam injetadas via `env K=V` no terminal.
+        Same as the GUI. ``script_environment`` returns a full
+        environment, so it starts from a minimal base and drops
+        ``SCRIPT_DIR``, because the script preamble already exports it.
+        Only the variables it adds are injected into the terminal.
+
+        Args:
+            script_info: Script info dict.
+
+        Returns:
+            The extra variables.
         """
         base_env = {"SCRIPT_DIR": os.environ.get("SCRIPT_DIR", "")}
         env = script_environment(script_info, base_env=base_env)
-        env.pop("SCRIPT_DIR", None)  # o preâmbulo do script já o exporta
+        env.pop("SCRIPT_DIR", None)
         return env
 
     @staticmethod
     def _script_env(script_name: str, **extra: str) -> dict[str, str]:
-        """Ambiente comum a instalação, remoção e AppStream."""
+        """Return the environment shared by every kind of run.
+
+        Contains ``LINUXTOYS_SCRIPT_NAME``, ``DISABLE_ZENITY=1`` and,
+        when ``SCRIPT_DIR`` is set, ``CACHE_DIR`` (``<SCRIPT_DIR>/scripts``).
+        """
         env = {
             "LINUXTOYS_SCRIPT_NAME": script_name or "unknown",
             "DISABLE_ZENITY": "1",
@@ -490,7 +553,11 @@ class ScriptRunnerMixin:
         return env
 
     def _ensure_terminal_free(self) -> bool:
-        """Evita sobrescrever o estado de uma execução em andamento."""
+        """Return True if the terminal is free.
+
+        If a run is in progress, it warns the user and returns False, so
+        the state of the running script is never overwritten.
+        """
         if self.query_one("#terminal", Terminal).is_busy:
             self.notify(
                 "Já existe uma execução em andamento.", severity="warning"
@@ -512,7 +579,16 @@ class ScriptRunnerMixin:
 
     @staticmethod
     def _revert_capability(script_info: dict):
-        """Capacidade de revert do script (roda em thread)."""
+        """Return the revert capability of a script.
+
+        BLOCKING: file access, so run it in a thread.
+
+        Only existing LinuxToys script files are inspected. Non-scripts,
+        repository entries, AppStream entries and missing paths return
+        ``"yes"`` without reading anything. For the others, the answer
+        comes from ``get_revert_capability``. ``"internal"`` means the
+        script has its own removal method.
+        """
         path = script_info.get("path", "")
         if (
             not script_info.get("is_script")
@@ -525,7 +601,7 @@ class ScriptRunnerMixin:
         return get_revert_capability(path, get_system_compat_keys())
 
     def run_uninstall(self, button: InfoButton, script_info: dict) -> None:
-        """Valida e prepara a desinstalação sem bloquear o event loop."""
+        """Start the removal of a script without blocking the UI."""
         terminal = self.query_one("#terminal", Terminal)
         if self._preparing_run or terminal.is_busy:
             self.notify(
@@ -580,10 +656,11 @@ class ScriptRunnerMixin:
         uninstall_entry: dict,
         command: list[str],
     ) -> bool:
-        """Configura o estado de execução e dispara o comando no terminal.
+        """Set the run state and start the removal in the terminal.
 
-        Retorna False se o terminal não aceitou o comando; a limpeza do
-        script temporário fica por conta de ``_prepare_uninstall``.
+        If the terminal does not accept the command, the run is closed
+        and the user is warned. The cleanup of the temporary script is
+        left to ``_prepare_uninstall``.
         """
         if not self._ensure_terminal_free():
             return False
@@ -629,6 +706,29 @@ class ScriptRunnerMixin:
         menu.display = True
 
     async def on_script_finished(self, message: ScriptFinished) -> None:
+        """Handle the end of any run in the terminal.
+
+        An update run goes to ``_finish_update_run`` and a manifest run to
+        ``_on_manifest_item_finished``. Otherwise the exit code is
+        classified:
+
+        - Success: outside dev mode, a script install is saved to the
+          registry from the transmap. The temporary file is deleted, and
+          ``RebootDialog`` or ``SuccessDialog`` is shown.
+        - Cancelled: the transmap is discarded and ``CancelledDialog``
+          is shown.
+        - Terminal closed: warns that a new session was started.
+        - Error: an AppStream install is still saved to the registry. A
+          regular install tries an automatic revert and notifies the
+          result. Extensions need nothing. Then ``ErrorDialog`` offers a
+          bug report.
+
+        AppStream runs also redraw the app page. Dialogs call
+        ``_finish_script_run`` when closed.
+
+        Args:
+            message: The ``ScriptFinished`` message with ``exit_code``.
+        """
         if self._running_is_update:
             self._running_is_update = False
             self._finish_update_run(message.exit_code)
@@ -668,7 +768,7 @@ class ScriptRunnerMixin:
 
             if is_appstream:
                 await self._refresh_app_page_after_run(
-                    script_info, is_uninstall
+                    script_info, is_uninstall, succeeded=True
                 )
             if reboot:
                 self.app.push_screen(
@@ -686,7 +786,7 @@ class ScriptRunnerMixin:
             self._cleanup_temp_file(temp_path, dev_mode)
             if is_appstream:
                 await self._refresh_app_page_after_run(
-                    script_info, is_uninstall
+                    script_info, is_uninstall, succeeded=False
                 )
             self.app.push_screen(
                 CancelledDialog(script_name), callback=self._finish_script_run
@@ -701,7 +801,7 @@ class ScriptRunnerMixin:
             self._cleanup_temp_file(temp_path, dev_mode)
             if is_appstream:
                 await self._refresh_app_page_after_run(
-                    script_info, is_uninstall
+                    script_info, is_uninstall, succeeded=False
                 )
             self._finish_script_run()
 
@@ -734,7 +834,7 @@ class ScriptRunnerMixin:
 
             if is_appstream:
                 await self._refresh_app_page_after_run(
-                    script_info, is_uninstall
+                    script_info, is_uninstall, succeeded=False
                 )
 
             terminal = self.query_one("#terminal", Terminal)
@@ -949,11 +1049,19 @@ class ScriptRunnerMixin:
 
     @staticmethod
     def _is_extension_entry(entry: Mapping[str, Any] | None) -> bool:
-        """Extensões Flatpak carregam ``parent_id`` (appstream_cache)."""
+        """Return True for a Flatpak extension.
+        Extensions have a ``parent_id`` (set by ``appstream_cache``).
+        """
         return bool((entry or {}).get("parent_id"))
 
     def _reset_app_page_buttons(self) -> None:
-        """Reabilita os controles da página após erro/cancelamento."""
+        """Re-enable the app page controls after an error or a cancel.
+
+        Extension runs refresh the extension list. For other runs, the
+        control that matches the running AppStream action is reset:
+        Remove for ``uninstall``, Revert for ``revert`` and Install for
+        everything else. Does nothing without an app page.
+        """
         page = self._current_app_page()
         if page is None:
             return
@@ -969,7 +1077,11 @@ class ScriptRunnerMixin:
             page.reset_install_button()
 
     async def _refresh_app_page_after_run(
-        self, script_info: dict, is_uninstall: bool
+        self,
+        script_info: dict,
+        is_uninstall: bool,
+        *,
+        succeeded: bool,
     ) -> None:
         page = self._current_app_page()
         if page is None:
@@ -978,15 +1090,19 @@ class ScriptRunnerMixin:
             self.query_one("#terminal-conteiner").display = False
             page.refresh_extensions()
             return
+        if not succeeded:
+            self._reset_app_page_buttons()
+            return
         await show_app_page(
             self,
-            script_info,
+            page.script_info,
             translations=translations,
             featured=None,
             installed=not is_uninstall,
         )
 
     def _schedule_homebrew_search(self, query: str) -> None:
+        """Run a Homebrew search after 0.2 s without new input."""
         if self._homebrew_search_timer:
             self._homebrew_search_timer.stop()
         self._homebrew_search_timer = self.set_timer(
@@ -1019,7 +1135,6 @@ class ScriptRunnerMixin:
                 )
             return
 
-        # Resultado obsoleto: saiu da categoria ou o texto já mudou.
         current = self.query_one("#search-input", Input).value.strip()
         if not self._homebrew_view_active() or current != query:
             return
@@ -1140,7 +1255,6 @@ class ScriptRunnerMixin:
         )
 
     async def _open_aur_category(self, button: InfoButton) -> None:
-        # Navega já, para o download pendente ter um destino visível.
         self._aur_category_path = button.path
         self._nav_stack.append((button.path, str(button.label)))
         self._update_breadcrumb()
@@ -1153,11 +1267,24 @@ class ScriptRunnerMixin:
 
     @staticmethod
     def _fetch_aur_items():
-        """BLOQUEANTE (rede, pacman, catálogo): rodar em thread."""
+        """Refresh the AUR metadata if stale and return the entries.
+
+        BLOCKING: network, pacman and the catalog, so run it in a
+        thread.
+
+        Returns:
+            The entries to browse.
+        """
         aur_cache.refresh_if_stale()
         return aur_cache.browse_entries()
 
     async def _load_aur_items(self) -> None:
+        """Load the AUR entries and render them.
+
+        Reads in a thread. An error shows its detail as a message, and an
+        empty result shows the "unavailable" message. A late result is
+        ignored if the user already left the category, as in the GUI.
+        """
         unavailable = translations.get(
             "aur_refresh_failed_title", "AUR metadata unavailable"
         )
@@ -1167,8 +1294,6 @@ class ScriptRunnerMixin:
             if self._aur_view_active():
                 await self._show_items_message(f"{unavailable}\n\n{exc}")
             return
-        # Voltar ou abrir outra categoria nunca deve ser desfeito por
-        # uma conclusão tardia (mesma proteção da GUI).
         if not self._aur_view_active():
             return
         if not items:
@@ -1178,7 +1303,13 @@ class ScriptRunnerMixin:
 
 
 class AppstreamRunnerMixin:
-    """Instalação, remoção e reversão de itens via AppStream."""
+    """Install, remove and revert AppStream items in the embedded terminal.
+
+    Mixin for the main app class. Each ``run_appstream_*`` method
+    prepares a temporary script (or an argv list), fills the ``_running_*``
+    state and starts it in the terminal with ``pause_on_exit=False``. The
+    host handles the end of the run (``_finish_script_run``), reading that
+    state and using ``_running_appstream_action`` to tell the cases apart."""
 
     _running_is_appstream: bool = False
     _running_appstream_action: str | None = None
@@ -1195,7 +1326,7 @@ class AppstreamRunnerMixin:
         return not entry.get("is_appstream_entry")
 
     async def _run_plain_script_from_page(self, entry: dict) -> None:
-        """Item com app_page que não é AppStream (ex.: tar): usa o fluxo comum."""
+        """Run a non-AppStream entry that has an app page."""
         button = InfoButton(
             entry["name"],
             entry.get("description", ""),
@@ -1358,7 +1489,14 @@ class AppstreamRunnerMixin:
     def _resolve_appstream_removal(
         entry: dict,
     ) -> tuple[dict | None, list[str]]:
-        """Decide como remover um item AppStream (roda em thread)."""
+        """Decide how to remove an AppStream item.
+
+        BLOCKING: runs in a thread.
+
+        Order: items that other packages depend on are blocked. An item
+        that is not in the LinuxToys registry but is found on the system
+        gets an external removal. Any other item gets the standard
+        uninstall entry."""
         blockers = installed_packages.dependency_blockers(entry)
         if blockers:
             return None, blockers
@@ -1375,6 +1513,7 @@ class AppstreamRunnerMixin:
         return build_uninstall_script_entry(entry, translations), []
 
     async def _prepare_appstream_uninstall(self, entry: dict) -> None:
+        """Prepare and start the removal of an item."""
         name = entry.get("name", "")
         cleanup_path: str | None = None
         started = False
@@ -1510,6 +1649,7 @@ class AppstreamRunnerMixin:
         )
 
     def _refresh_extensions_page(self) -> None:
+        """Refresh the extension list of the current app page, if any."""
         page = self._current_app_page()
         if page is not None:
             page.refresh_extensions()
@@ -1548,7 +1688,7 @@ class AppstreamRunnerMixin:
             self._refresh_extensions_page()
 
     async def _run_appimage_install(self, entry: dict) -> None:
-        """Baixa o AppImage só agora e o instala, sem abrir o terminal."""
+        """Download an AppImage and start its installation."""
         from app import appimage_catalog
 
         stack = ExitStack()
@@ -1617,16 +1757,18 @@ class AppstreamRunnerMixin:
 
     @staticmethod
     def _aur_helper_missing() -> bool:
-        """pkg_install usa o paru para pacotes do AUR (pamac no Manjaro)."""
+        """Return True if installing an AUR package needs paru and it is missing."""
         if "manjaro" in get_system_compat_keys():
             return False
         return shutil.which("paru") is None
 
     def _on_aur_helper_answer(self, accepted: bool) -> None:
+        """Install paru if the user accepted ``AurHelperDialog``."""
         if accepted:
             self.run_worker(self._install_aur_helper())
 
     async def _install_aur_helper(self) -> None:
+        """Run the ``Paru`` script through the common script flow."""
         info = await find_script_by_name_async("Paru", translations)
         if info is None:
             self.notify("✗ Script 'Paru' not found.", severity="warning")
@@ -1644,7 +1786,46 @@ class AppstreamRunnerMixin:
 
 
 class ManifestRunnerMixin:
-    """Instalação de scripts via manifesto."""
+    """Run a manifest: resolve it, confirm the plan and execute the items.
+
+    Mixin for the main app class. Flow:
+
+    1. ``on_manifest_chosen`` receives the file picked in
+       ``ManifestDialog``.
+    2. ``_classify_manifest`` (worker thread) loads and resolves it into
+       a ``ManifestPlan``, and ``_on_manifest_resolved`` routes the plan.
+    3. A missing prerequisite (Flatpak/Flathub or Homebrew) is offered
+       for setup in the terminal, and then the manifest is resolved
+       again.
+    4. ``_review_manifest_plan`` asks for confirmation. A dry run
+       validates the items, and a real run builds a queue and executes it
+       one item at a time through the host's ``_execute_script_info``.
+    5. Each ``ScriptFinished`` reaches ``_on_manifest_item_finished`` and
+       ``_advance_manifest`` decides what happens next. The run ends with
+       ``ManifestReportDialog``.
+
+    ``StartupRecommendationsMixin`` reuses ``_prepare_queue_script``,
+    ``_start_manifest_queue`` and ``_discard_manifest_temp_files``.
+
+    The host must provide ``notify``, ``run_worker``, ``app``,
+    ``_execute_script_info``, ``_show_terminal``, ``_hide_terminal``,
+    ``_cleanup_temp_file``, ``_remove_transmap``, ``_running_button``,
+    ``_running_script_info``, ``_running_temp_path``,
+    ``_running_dev_mode`` and ``_is_startup``.
+
+    Attributes:
+        _manifest_queue: Items waiting to run, in order.
+        _manifest_results: Result dicts of the items already run.
+        _manifest_temp_files: Generated scripts to delete when the run
+            ends.
+        _manifest_bootstrap: State of a prerequisite setup in progress
+            (``path``, ``kind`` and ``attempted``), or None.
+        _is_manifest_run: True while a run or a prerequisite setup is
+            active. The host uses it to route ``ScriptFinished`` to
+            ``_on_manifest_item_finished``.
+        _MANIFEST_BOOTSTRAP_LABELS: Display name of each prerequisite
+            kind.
+    """
 
     _manifest_queue: list[dict] = []
     _manifest_results: list[dict] = []
@@ -1676,6 +1857,7 @@ class ManifestRunnerMixin:
         attempted: tuple[str, ...] = (),
         refresh_appstream: bool = False,
     ) -> None:
+        """Resolve the manifest in an exclusive thread worker."""
         self.run_worker(
             lambda: self._classify_manifest(
                 manifest_path, attempted, refresh_appstream
@@ -1691,7 +1873,7 @@ class ManifestRunnerMixin:
         attempted: tuple[str, ...] = (),
         refresh_appstream: bool = False,
     ) -> None:
-        """Resolve the manifest off the UI thread, then hand over the plan."""
+        """Load and resolve the manifest off the UI thread."""
         from app.manifest_helper import load_manifest
 
         from .manifest_resolver import (
@@ -1745,6 +1927,7 @@ class ManifestRunnerMixin:
     def _on_manifest_resolved(
         self, plan, manifest_path: str, attempted: tuple[str, ...]
     ) -> None:
+        """Route the resolved plan, on the main thread."""
         if plan.bootstrap is None:
             self._review_manifest_plan(plan)
             return
@@ -1773,6 +1956,7 @@ class ManifestRunnerMixin:
     def _offer_manifest_bootstrap(
         self, plan, manifest_path: str, attempted: tuple[str, ...]
     ) -> None:
+        """Ask whether to set up the missing prerequisite."""
         label = self._MANIFEST_BOOTSTRAP_LABELS[plan.bootstrap]
         self.app.push_screen(
             ManifestPlanDialog(
@@ -1983,6 +2167,7 @@ class ManifestRunnerMixin:
 
     @staticmethod
     def _shell_words(names: list[str]) -> str:
+        """Join names into one shell-quoted, space-separated string."""
         return " ".join(shlex.quote(name) for name in names)
 
     def _batch_item(self, name: str, lines: list[str]) -> dict:
@@ -2221,6 +2406,7 @@ class ManifestRunnerMixin:
         }
 
     def _finish_manifest_dry_run(self, results: list[dict]) -> None:
+        """Show the dry-run report, on the main thread."""
         self.app.push_screen(ManifestReportDialog(results, dry_run=True))
 
     def _start_manifest_queue(self, items: list[dict]) -> None:
@@ -2239,20 +2425,33 @@ class ManifestRunnerMixin:
 
 
 class UpdateRunnerMixin:
-    """Atualização do projeto."""
+    """Check for LinuxToys updates and run the installer in the terminal.
+
+    Mixin for the main app class. Flow: ``_trigger_update_check`` starts
+    a worker thread, ``_check_for_update`` asks ``UpdateHelper`` for the
+    latest release, ``_on_update_checked`` opens ``UpdateAvailableDialog``
+    and ``_on_update_decision`` runs the official installer in the
+    embedded terminal. When that run ends, the host is expected to call
+    ``_finish_update_run``, which restarts the app on success.
+
+    The host must provide ``notify``, ``run_worker``, ``app``,
+    ``_show_terminal``, ``_hide_terminal`` and a ``Terminal`` widget with
+    id ``#terminal``.
+
+    Attributes:
+        _running_is_update: True while the terminal is running the update
+            script, so the host can tell it apart from a normal script.
+    """
 
     _running_is_update: bool = False
 
     def _trigger_update_check(self) -> None:
-        """Inicia a verificação de atualização em uma thread de trabalho."""
+        """Start the update check in a worker thread."""
         self.notify("LinuxToys Update Checker...")
         self.run_worker(self._check_for_update, thread=True, exclusive=True)
 
     def _check_for_update(self) -> None:
-        """
-        Executa a verificação de atualização e chama o callback na thread principal.
-        (Este método roda em uma thread de trabalho)
-        """
+        """Query the latest release and report back to the main thread."""
         helper = UpdateHelper()
         available = helper._update_available()
         self.app.call_from_thread(self._on_update_checked, helper, available)
@@ -2260,10 +2459,7 @@ class UpdateRunnerMixin:
     def _on_update_checked(
         self, helper: UpdateHelper, available: bool
     ) -> None:
-        """
-        Callback executado após a verificação de atualização.
-        Abre o diálogo de confirmação se uma atualização estiver disponível.
-        """
+        """Handle the result of the update check, on the main thread."""
         if not available:
             self.notify("✓ It's already on the latest available version")
             return
@@ -2274,7 +2470,7 @@ class UpdateRunnerMixin:
         )
 
     def _on_update_decision(self, wants_update: bool | None) -> None:
-        """Inicia o processo de atualização se o usuário confirmar."""
+        """Run the installer if the user accepted the update."""
         if not wants_update:
             return
 
@@ -2282,10 +2478,11 @@ class UpdateRunnerMixin:
         self._show_terminal()
         terminal = self.query_one("#terminal", Terminal)
         terminal.run_script(
-            ["sh", "-c", "curl -fsSL https://linux.toys/install.sh | bash"]
+            ["bash", "-c", "curl -fsSL https://linux.toys/install.sh | bash"]
         )
 
     def _finish_update_run(self, exit_code: int | None) -> None:
+        """Handle the end of the update script."""
         if exit_code == 0:
             self.app.push_screen(
                 UpdateCompleteDialog(), callback=self._restart_app
@@ -2297,6 +2494,7 @@ class UpdateRunnerMixin:
             )
 
     def _restart_app(self, _result: None = None) -> None:
+        """Restart the application in place, loading the updated code."""
         import sys
 
         self.app.exit()

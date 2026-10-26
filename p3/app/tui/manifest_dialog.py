@@ -1,3 +1,10 @@
+"""Modal screens for running a manifest in the TUI.
+
+``ManifestDialog`` picks a manifest file, ``ManifestPlanDialog`` shows
+the resolved plan and asks for confirmation, and ``ManifestReportDialog``
+summarizes the result of a run.
+"""
+
 from __future__ import annotations
 
 from collections.abc import Iterable
@@ -15,6 +22,16 @@ from .helper import translations
 
 
 class FilteredDirectoryTree(DirectoryTree):
+    """Directory tree that shows only manifest candidates.
+
+    Lists directories and ``.txt`` files, hides dotfiles and common
+    noise directories (``node_modules``, ``__pycache__``, ``.venv``,
+    ``venv``, ``.git``), and filters by ``search_query``.
+
+    Attributes:
+        search_query: Text to filter by. Empty shows everything allowed.
+    """
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.search_query: str = ""
@@ -73,6 +90,18 @@ class FilteredDirectoryTree(DirectoryTree):
 
 
 class ManifestDialog(ModalScreen[str | None]):
+    """Modal file picker for a manifest (``.txt``) file.
+
+    Shows the home directory in a filterable tree with a search box,
+    debounced by 0.3 s. The Select button is enabled only while a
+    ``.txt`` file is selected. Dismisses with the file path, or None on
+    cancel or Escape.
+
+    Attributes:
+        selected_path: Path of the last selected ``.txt`` file. It only
+            exists after a file has been chosen.
+    """
+
     BINDINGS = [
         Binding("escape", "cancel", translations.get("script_runner_close"))
     ]
@@ -152,6 +181,20 @@ class ManifestDialog(ModalScreen[str | None]):
 
 
 class ManifestReportDialog(ModalScreen[None]):
+    """Modal that summarizes the result of a manifest run.
+
+    Shows the ``ok/total`` count and, when they exist, three sections:
+    failed items with the reason, simulated items (dry-run) and items
+    that did not run. Dismisses with None when OK is pressed.
+
+    Args:
+        results: Result dicts with ``name``, ``success``, ``status``
+            (optional: ``"cancelled"``, ``"closed"`` or
+            ``"simulated"``) and ``exit_code``.
+        dry_run: True if the run was only a validation.
+        not_run: Names of items that never started.
+    """
+
     BINDINGS = [
         Binding("escape", "cancel", translations.get("script_runner_close"))
     ]

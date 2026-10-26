@@ -1,3 +1,25 @@
+"""Entry point of the LinuxToys TUI.
+
+``LinuxToys`` is the Textual app. It shows ``SplashScreen`` while the
+search and category index is built in a background thread, then switches
+to ``HomeScreen``, which holds almost all the interface and is composed of
+the mixins from the other modules.
+
+Run it as a module, because the imports are relative.
+
+Constants:
+    HOMEBREW_WATCH_INTERVAL: Seconds between checks for a change in
+        Homebrew availability.
+    HOMEBREW_STARTUP_DELAY: Seconds after startup before the first
+        Homebrew catalog refresh.
+    HOMEBREW_PAGE_SIZE: Items mounted per page in lazy lists. It is used
+        by every lazy list (Homebrew, AppImage and AUR), not only by
+        Homebrew.
+    RENDER_CHUNK_SIZE: Items mounted per batch while rendering.
+    SCROLL_LOAD_MARGIN: Distance from the end of the list, in rows,
+        that triggers loading the next page.
+"""
+
 import asyncio
 from functools import partial
 
@@ -287,6 +309,18 @@ class HomeScreen(
         )
 
     async def _render_items(self, items, *, lazy: bool = False) -> None:
+        """Replace the items panel with new items.
+
+        Only the latest request renders. A call that was superseded while
+        waiting for the lock returns at once, and one in progress stops at
+        its next chunk. The loading state is cleared and the registry is
+        read again. Items are mounted in batches of ``RENDER_CHUNK_SIZE``.
+
+        Args:
+            items: Item dicts to show.
+            lazy: True to mount only the first ``HOMEBREW_PAGE_SIZE``
+                items and load the rest on scroll.
+        """
         self._render_generation += 1
         generation = self._render_generation
 
@@ -308,7 +342,12 @@ class HomeScreen(
     async def _mount_range(
         self, items, start: int, stop: int, generation: int
     ) -> None:
-        """Monta items[start:stop] em lotes. Deve rodar com _render_lock."""
+        """Mount ``items[start:stop]`` in batches.
+
+        Must run with ``_render_lock`` held. Stops as soon as
+        ``generation`` is no longer current, and updates ``_lazy_loaded``
+        after each batch.
+        """
         left_panel = self.query_one("#left-panel-home", VerticalScroll)
         for lo in range(start, stop, RENDER_CHUNK_SIZE):
             if generation != self._render_generation:
@@ -322,7 +361,12 @@ class HomeScreen(
             self._lazy_loaded = hi
 
     def _on_items_scroll(self, scroll_y: float) -> None:
-        """Dispara a próxima página ao chegar perto do fim da lista."""
+        """Load the next page when the list is scrolled near its end.
+
+        Only lazy lists are paged. The load runs in an exclusive worker
+        of the ``items-page`` group, and an error in it does not close
+        the app.
+        """
         if self._lazy_items is None or self._lazy_loaded >= len(
             self._lazy_items
         ):
@@ -352,7 +396,7 @@ class HomeScreen(
         self.query_one("#left-panel-home", VerticalScroll).loading = loading
 
     async def _show_items_message(self, text: str) -> None:
-        """Esvazia o painel e mostra uma mensagem persistente."""
+        """Empty the items panel and show a persistent message."""
         await self._render_items([])
         await self.query_one("#left-panel-home", VerticalScroll).mount(
             Static(text)
@@ -416,16 +460,24 @@ class HomeScreen(
     async def on_app_page_widget_back_requested(
         self, message: AppPageWidget.BackRequested
     ) -> None:
+        """Go back when the app page asks to leave (same as Escape)."""
         await self.action_go_back()
 
     def on_app_page_widget_url_requested(
         self, message: AppPageWidget.UrlRequested
     ) -> None:
+        """Open the requested URL in the default browser."""
         self.app.open_url(message.url)
 
     def on_app_page_widget_translate_requested(
         self, message: AppPageWidget.TranslateRequested
     ) -> None:
+        """Translate the page description in a thread worker.
+
+        The worker is exclusive in the ``translate`` group. The target
+        language comes from ``detect_system_language``, and
+        ``message.target_language`` is not used.
+        """
         page = self.query_one(AppPageWidget)
         self.run_worker(
             partial(self._translate_description, page, message.blocks),
@@ -435,7 +487,9 @@ class HomeScreen(
         )
 
     def _translate_description(self, page: AppPageWidget, blocks) -> None:
-        """Roda em thread: não bloqueia a interface durante as requisições."""
+        """Translate a description and deliver it to the page.
+        BLOCKING: thread worker (network).
+        """
         target = (
             detect_system_language().split("-")[0].split("_")[0].casefold()
         )
@@ -461,6 +515,7 @@ class HomeScreen(
     async def _on_app_page_install_requested(
         self, message: AppPageWidget.InstallRequested
     ) -> None:
+        """Start the install requested by the app page."""
         if type(message) is not AppPageWidget.InstallRequested:
             return
         entry = message.script_info
@@ -473,6 +528,7 @@ class HomeScreen(
     def _on_app_page_uninstall_requested(
         self, message: AppPageWidget.UninstallRequested
     ) -> None:
+        """Start the removal requested by the app page."""
         self.run_appstream_uninstall(message.script_info)
 
     async def on_input_changed(self, event: Input.Changed) -> None:
@@ -517,9 +573,12 @@ class HomeScreen(
                 view.focus_results()
 
     def _schedule_skills_search(self, query: str) -> None:
+        """Run a skills search after 0.4 s without new input.
+        The delay is longer than the other searches because each skills
+        search is a network call.
+        """
         if self._skills_search_timer:
             self._skills_search_timer.stop()
-        # Debounce maior que o dos botões: cada busca é uma chamada de rede.
         self._skills_search_timer = self.set_timer(
             0.4, partial(self._run_skills_search, query)
         )
@@ -532,12 +591,17 @@ class HomeScreen(
     def _on_app_page_extension_install_requested(
         self, message: AppPageWidget.ExtensionInstallRequested
     ) -> None:
+        """Install the extension requested by the app page."""
         self.run_appstream_extension(message.info, remove=False)
 
     @on(AppPageWidget.ExtensionRemoveRequested)
     def _on_app_page_extension_remove_requested(
         self, message: AppPageWidget.ExtensionRemoveRequested
     ) -> None:
+        """Remove the extension requested by the app page.
+
+        ``message.record_id`` is not used.
+        """
         self.run_appstream_extension(message.info, remove=True)
 
     def _execute_search_worker(self, query: str) -> None:
@@ -615,6 +679,13 @@ class HomeScreen(
         self._update_breadcrumb()
 
     async def _refresh_fixed_ui_labels(self) -> None:
+        """Rebuild the translated fixed texts.
+
+        Redraws the search placeholder, the home menu and the link bar
+        with the current translations, so a language change applies
+        without restarting. Texts fixed at import time, such as the key
+        bindings, are not refreshed.
+        """
         self.query_one("#search-input", Input).placeholder = translations.get(
             "search_placeholder", "Search"
         )
@@ -622,37 +693,35 @@ class HomeScreen(
         await menu.remove_children()
         await menu.mount(
             ListItem(
-                Label(
-                    f"📃 {translations.get('load_manifest', 'Load manifest')}"
-                ),
+                Label(f"{translations.get('load_manifest', 'Load manifest')}"),
                 id="manifest",
             )
         )
         await menu.mount(
             ListItem(
                 Label(
-                    f"💬 {translations.get('select_language', 'Select language')}"
+                    f"{translations.get('select_language', 'Select language')}"
                 ),
                 id="language",
             )
         )
         await menu.mount(
             ListItem(
-                Label(f"🐧 {translations.get('about', 'About')}"),
+                Label(f"{translations.get('about', 'About')}"),
                 id="about",
             )
         )
         await menu.mount(
             ListItem(
-                Label(f"🗂️ {translations.get('action_registry')}"),
+                Label(f"{translations.get('action_registry')}"),
                 id="registry",
             )
         )
-        await menu.mount(ListItem(Label("🔃 Update LinuxToys"), id="update"))
+        await menu.mount(ListItem(Label("Update LinuxToys"), id="update"))
         await menu.mount(
             ListItem(
                 Label(
-                    f"🔄 {translations.get('scripts_resync', 'Scripts resync')}"
+                    f"{translations.get('scripts_resync', 'Scripts resync')}"
                 ),
                 id="scripts_resync",
             )
@@ -688,7 +757,10 @@ class HomeScreen(
 
 
 class SplashScreen(Screen):
-    """Tela mínima exibida enquanto o cache de busca é montado."""
+    """Minimal screen shown while the search cache is built.
+
+    Shows a loading indicator and the translated "loading" text.
+    """
 
     DEFAULT_CSS = """
     SplashScreen { align: center middle; }
@@ -704,6 +776,12 @@ class SplashScreen(Screen):
 
 
 class LinuxToys(App):
+    """Textual app of the LinuxToys TUI.
+
+    Shows ``SplashScreen``, builds the search and category index in a
+    background thread and then switches to ``HomeScreen``.
+    """
+
     CSS_PATH = "style.tcss"
     TITLE = "LinuxToys"
 
@@ -713,10 +791,15 @@ class LinuxToys(App):
 
     @work(thread=True, exclusive=True, group="boot")
     def _boot(self) -> None:
+        """Build the search and category index.
+
+        BLOCKING: thread worker. A failure is logged and does not stop
+        the app: without the cache, search is slower. It always goes on
+        to ``_show_home``.
+        """
         try:
             warm_search_and_category_index(translations)
         except Exception as e:  # noqa: BLE001
-            # Sem cache a busca fica mais lenta, mas o app precisa abrir.
             self.log.error(f"warm index failed: {e}")
         self.call_from_thread(self._show_home)
 
