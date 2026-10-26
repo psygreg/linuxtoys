@@ -1525,6 +1525,55 @@ pkg_remove () {
 }
 pkg_rm () { pkg_remove "$@"; }
 
+# Whether the Gear Lever Flatpak is installed in any usable scope.
+_pkg_appimage_gearlever_installed () {
+    command -v flatpak &>/dev/null || return 1
+    flatpak info --user it.mijorus.gearlever &>/dev/null && return 0
+    flatpak info --system it.mijorus.gearlever &>/dev/null && return 0
+    flatpak list --app --columns=application 2>/dev/null | grep -Fxq it.mijorus.gearlever
+}
+
+# Install the Gear Lever Flatpak. Prefer the AppStream-driven call_script path
+# (it records the transaction), but verify the result and fall back to a direct
+# Flatpak install when the catalog cannot resolve the Flathub component (cold or
+# starter-only catalogs on a fresh install). Never report success unless the
+# Flatpak is actually installed afterwards.
+_pkg_appimage_install_gearlever () {
+    local scope
+
+    # Best-effort catalog path; its exit status alone is not proof of install.
+    call_script it.mijorus.gearlever || true
+
+    _pkg_appimage_gearlever_installed && return 0
+
+    # Direct install: same mechanism pkg_flat/install.sh use, independent of the
+    # AppStream catalog. Reuse the Flathub remote that is already configured.
+    if flatpak remote-list --user 2>/dev/null | grep -q flathub; then
+        scope="--user"
+    elif flatpak remote-list --system 2>/dev/null | grep -q flathub; then
+        scope="--system"
+    else
+        call_script flathub || true
+        if flatpak remote-list --user 2>/dev/null | grep -q flathub; then
+            scope="--user"
+        elif flatpak remote-list --system 2>/dev/null | grep -q flathub; then
+            scope="--system"
+        fi
+    fi
+
+    if [[ -n "${scope:-}" ]]; then
+        if [[ "$scope" == "--user" ]]; then
+            flatpak install --or-update --user -y flathub it.mijorus.gearlever || \
+                sudo_ flatpak install --or-update --system -y flathub it.mijorus.gearlever || true
+        else
+            sudo_ flatpak install --or-update --system -y flathub it.mijorus.gearlever || \
+                flatpak install --or-update --user -y flathub it.mijorus.gearlever || true
+        fi
+    fi
+
+    _pkg_appimage_gearlever_installed
+}
+
 _pkg_appimage_gearlever_previous () {
     local app_name="${LINUXTOYS_APP_NAME:-}"
     [[ -n "$app_name" ]] || return 0
@@ -1589,6 +1638,49 @@ except (OSError, ValueError) as error:
     print(f"Cannot resolve previous AppImage: {error}", file=sys.stderr)
     sys.exit(1)
 PY
+}
+
+# Record AppImage release metadata alongside an install so the system updater
+# can track versions the same way it tracks git-release apps. The AppStream
+# runner resolves a concrete release (id, tag, repository) before installing and
+# passes it in via the LINUXTOYS_APPIMAGE_* variables (see
+# library_loader.script_environment). Mirrors the 'git-release' operation
+# written by pkg_fromrelease; only recorded after a successful install.
+_pkg_appimage_release_record () {
+    local app_id="${LINUXTOYS_APPIMAGE_ID:-}" version="${LINUXTOYS_APPIMAGE_VERSION:-}" repo="${LINUXTOYS_APPIMAGE_REPO:-}"
+    [[ -n "$app_id" && -n "$repo" ]] || return 0
+    [[ "$repo" =~ ^https://(github\.com|codeberg\.org|gitlab\.com)/[^/]+/[^/]+/?$ ]] || return 0
+    _append_transmap "appimage-release $app_id ${version:-0} $repo"
+}
+
+# Refresh a previously installed AppImage to the latest upstream release.
+# Mirrors how the git-release updater re-runs an app's install: this re-resolves
+# the tracked repository's newest release, downloads it, and hands it to
+# pkg_appimage (which swaps out the previous AppImage and records the new
+# release). Requires the release metadata the AppStream runner resolved at
+# install time to have been recorded (see _pkg_appimage_release_record).
+# Usage: pkg_appimage_update APP_ID REPO CURRENT_VERSION
+pkg_appimage_update () {
+    [[ $# -eq 3 ]] || die "Usage: pkg_appimage_update APP_ID REPO CURRENT_VERSION"
+    local app_id="$1" repo="$2" current_version="$3"
+    local out_dir out_path new_version
+    out_dir=$(mktemp -d) || die "Failed to create AppImage update directory"
+    out_path="$out_dir/update.AppImage"
+    # Resolve and download the latest release through the same catalog resolver
+    # the installer uses. The recorded identity stays the tracked app id.
+    new_version=$(python3 "$SCRIPT_DIR/app/appimage_catalog.py" \
+        --resolve-for-update "$app_id" "$repo" "$out_path") || {
+        local status=$?
+        rm -rf "$out_dir"
+        return "$status"
+    }
+    # Feed pkg_appimage the release metadata so it records the new appimage-release
+    # operation; the previous AppImage is swapped out inside pkg_appimage.
+    LINUXTOYS_APPIMAGE_ID="$app_id" \
+    LINUXTOYS_APPIMAGE_VERSION="${new_version:-$current_version}" \
+    LINUXTOYS_APPIMAGE_REPO="$repo" \
+        pkg_appimage "$out_path" || { rm -rf "$out_dir"; return 1; }
+    rm -rf "$out_dir"
 }
 
 pkg_appimage () {
@@ -1687,26 +1779,33 @@ EOF
     # Prefer Gear Lever on systemd systems. If it cannot inspect/integrate an
     # otherwise valid AppImage, fall back to LinuxToys' own simple integration.
     if is_systemd; then
-        if ! flatpak list | grep -q "it.mijorus.gearlever"; then
+        if ! _pkg_appimage_gearlever_installed; then
             info "$gearlevermsg"
-            call_script it.mijorus.gearlever
+            _pkg_appimage_install_gearlever
         fi
         local output
         # Snapshot ~/AppImages before integration so the exact new file can be
-        # identified after. The old mtime-newest heuristic could grab the wrong
-        # AppImage when another one landed in between.
+        # identified after. Record each file's identity (inode, mtime, size)
+        # alongside its name, not just the name: Gear Lever names integrated
+        # files from the AppImage's internal metadata, so a re-install or a
+        # same-version update OVERWRITES an existing file of the same name
+        # instead of adding a new one. A plain name set-difference cannot see
+        # that overwrite and came up empty ("Could not determine integrated
+        # AppImage filename."), skipping the registry record; comparing
+        # identity too makes a replaced file show up as a change.
         local _pre_list
         _pre_list=$(mktemp) || return 1
-        find "$HOME/AppImages" -maxdepth 1 -type f -printf '%f\n' 2>/dev/null | sort > "$_pre_list"
+        find "$HOME/AppImages" -maxdepth 1 -type f -printf '%f\t%i\t%T@\t%s\n' 2>/dev/null | sort > "$_pre_list"
         if output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "$@" 2>&1); then
-            # Record the one filename newly added to ~/AppImages by this call.
-            # Gear Lever names the integrated file from the AppImage's internal
-            # metadata, so we observe the actual result rather than guessing it.
+            # Record the one file whose identity is new or changed after this
+            # call (added name, or a same-name overwrite). Observing the actual
+            # result beats guessing the name Gear Lever chose.
             local appimage_name=""
             appimage_name=$(
                 comm -13 "$_pre_list" \
-                    <(find "$HOME/AppImages" -maxdepth 1 -type f -printf '%f\n' 2>/dev/null | sort) |
-                    head -n1
+                    <(find "$HOME/AppImages" -maxdepth 1 -type f -printf '%f\t%i\t%T@\t%s\n' 2>/dev/null | sort) |
+                    head -n1 |
+                    cut -f1
             )
             rm -f "$_pre_list"
             if [[ -n "$appimage_name" ]]; then
@@ -1714,6 +1813,7 @@ EOF
             else
                 warn "Could not determine integrated AppImage filename."
             fi
+            _pkg_appimage_release_record
             return 0
         fi
         rm -f "$_pre_list"
@@ -1742,6 +1842,9 @@ EOF
         desktop_shortcut "\"$target_appimage\""
         _append_transmap "appimage $appimage_basename"
     done
+
+    # Persist the resolved release identity for version tracking (best-effort).
+    _pkg_appimage_release_record
 }
 
 pkg_appimage_rm () {

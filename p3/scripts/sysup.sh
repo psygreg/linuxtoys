@@ -4,14 +4,24 @@
 # icon: topgrade.svg
 # revert: no
 # registry: no
-# compat: !ostree, !ublue, !steamos
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 [ ! -n "$UPD_SERVICE" ] && sudo_rq
 
 needs_reboot() {
-    if is_fedora || is_rhel; then
+    if is_ostree || is_ublue || is_gregos; then
+        # rpm-ostree stages a new deployment that only takes effect on reboot.
+        # The 'staged' flag marks the deployment queued to boot next.
+        local status_json
+        if [ "$UPD_SERVICE" = "1" ]; then
+            status_json=$(rpm-ostree status --json 2>/dev/null)
+        else
+            status_json=$(sudo_ rpm-ostree status --json 2>/dev/null)
+        fi
+        printf '%s' "$status_json" | grep -q '"staged"[[:space:]]*:[[:space:]]*true'
+        return $?
+    elif is_fedora || is_rhel; then
         # 'dnf needs-restarting -r' exits 0 when NO reboot is required and 1 when
         # a reboot IS required. Treat "reboot required" as a recommendation to
         # return 0 (reboot recommended), matching the other branches below.
@@ -82,15 +92,35 @@ flatpak_update_installation() {
     done < <(flatpak remotes "$scope" --columns=name 2>/dev/null)
 }
 
+# Update Homebrew formulae when Homebrew is installed. 'brew update' refreshes
+# the formula metadata, then 'brew upgrade' upgrades every installed formula.
+# Homebrew lives in the user's prefix and needs no elevation. Best-effort: a
+# failure here should not abort the rest of the system update.
+brew_update() {
+    local brew_bin
+    brew_bin=$(_brew_executable) || return 0
+    "$brew_bin" update || { warn "Failed to refresh Homebrew metadata"; return 0; }
+    "$brew_bin" upgrade || warn "Failed to upgrade Homebrew formulae"
+}
+
 if [ "$UPD_SERVICE" = "1" ] && [ "$(id -u)" -ne 0 ]; then
     flatpak uninstall --user --unused --delete-data -y || warn "Failed to remove orphaned user Flatpaks"
     flatpak_update_installation --user ""
+    brew_update
     echo "$sysup_completed"
     exit 0
 fi
 
 echo "$sysup_starting"
-if is_fedora || is_rhel; then
+if is_steamos; then
+    # SteamOS-style immutables manage their packages through the OS image, so
+    # there is nothing to do here. Flatpaks, Homebrew and git apps still update.
+    :
+elif is_ostree || is_ublue || is_gregos; then
+    # rpm-ostree based immutables: pull and stage a new deployment. The staged
+    # deployment is applied on the next reboot (see needs_reboot below).
+    { [ "$UPD_SERVICE" = "1" ] && rpm-ostree update; } || sudo_ rpm-ostree update || fatal "Failed to update system image"
+elif is_fedora || is_rhel; then
     { { [ "$UPD_SERVICE" = "1" ] && dnf autoremove -y && dnf clean all && dnf -y makecache --refresh; } || \
         { sudo_ dnf autoremove -y && sudo_ dnf clean all && sudo_ dnf -y makecache --refresh; }; } || die "Failed to remove orphaned packages"
     { [ "$UPD_SERVICE" = "1" ] && dnf --refresh upgrade -y --setopt=throttle=2M; } || sudo_ dnf --refresh upgrade -y || fatal "Failed to upgrade packages"
@@ -155,6 +185,9 @@ if command -v snap >/dev/null 2>&1 && command -v snapd >/dev/null 2>&1; then
     { [ "$UPD_SERVICE" = "1" ] && snap refresh; } || sudo_ snap refresh || warn "Failed to upgrade snap packages"
 fi
 
+# Update Homebrew formulae on any system where Homebrew is installed.
+brew_update
+
 # Update applications installed directly from GitHub/Codeberg releases through
 # repository-list pkg_fromrelease transactions. A changed stable tag is enough;
 # release tags are not assumed to follow semantic-version ordering.
@@ -173,6 +206,31 @@ if [[ "$UPD_SERVICE" != "1" ]] && git_app_versions; then
         if [[ "$latest_version" != "$installed_version" ]]; then
             echo "Updating $app: $installed_version -> $latest_version"
             call_script "$app" || warn "Failed to update $app"
+        fi
+    done
+fi
+
+# Update AppImages installed from the AppImage catalog. Tracked apps record the
+# resolved release (id, tag, repository) at install time; a changed stable tag
+# from the same repository is enough to trigger a refresh. Tags are compared
+# literally and are not assumed to follow semantic-version ordering.
+if [[ "$UPD_SERVICE" != "1" ]] && appimage_app_versions; then
+    for app in "${APPIMAGE_APPS[@]}"; do
+        safe_app=$(printf '%s' "$app" | tr -c 'A-Za-z0-9_' '_')
+        version_var="APPIMAGE_${safe_app}_VERSION"
+        repo_var="APPIMAGE_${safe_app}_REPO"
+        installed_version="${!version_var}"
+        release_repo="${!repo_var}"
+        [[ -n "$release_repo" ]] || continue
+
+        latest_version=$(latest_release_version "$release_repo") || {
+            warn "Failed to check release updates for $app"
+            continue
+        }
+
+        if [[ "$latest_version" != "$installed_version" ]]; then
+            echo "Updating $app: $installed_version -> $latest_version"
+            pkg_appimage_update "$app" "$release_repo" "$installed_version" || warn "Failed to update $app"
         fi
     done
 fi

@@ -19,9 +19,11 @@ from . import (
     appstream_cache,
     appstream_extensions,
     gui_rs,
+    gtk_dialogs,
     installed_packages,
     _catalog_rs,
 )
+from .gtk_dialogs import run_message_dialog
 from .lang_utils import detect_system_language
 
 
@@ -2978,8 +2980,47 @@ class AppPageView(Gtk.Box):
             if remover is not None:
                 remover(_button, self._selected_install_info)
             return
+        if not self._confirm_install_available():
+            return
         if self.on_install_callback:
             self.on_install_callback(self._selected_install_info)
+
+    def _confirm_install_available(self):
+        """Stop an install the upstream source can no longer serve.
+
+        AppImage community entries carry forge links that may have been
+        deleted or renamed since the feed was published (Fluxer-World's
+        repository is one such case). Checking here costs at most one release
+        lookup for the single entry the user is installing — never a bulk scan,
+        which would hit forge rate limits — and turns a doomed install with no
+        explanation into an immediate, explicit answer.
+        """
+        info = self._selected_install_info
+        if not isinstance(info, dict) or info.get("appstream_source") != "appimage":
+            return True
+        try:
+            from . import appimage_catalog
+
+            if not appimage_catalog.repository_gone(info):
+                return True
+        except Exception:
+            return True
+        run_message_dialog(
+            self.parent,
+            title=self.translations.get(
+                "appimage_upstream_gone_title", "AppImage no longer available"
+            ),
+            secondary_text=self.translations.get(
+                "appimage_upstream_gone_message",
+                "The upstream repository for '{name}' no longer exists, so there "
+                "is nothing to download. The project was likely renamed or "
+                "removed after this app was listed.",
+            ).format(name=info.get("name", "")),
+            message_type=Gtk.MessageType.ERROR,
+            buttons=[("OK", Gtk.ResponseType.OK)],
+            default_response=Gtk.ResponseType.OK,
+        )
+        return False
 
     def _open_url(self, _button, url):
         try:

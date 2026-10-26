@@ -12,6 +12,7 @@ import platform
 import re
 import tempfile
 import shutil
+import urllib.error
 from urllib.parse import urlparse, quote, urlsplit, urlunsplit
 import logging
 import os
@@ -285,11 +286,85 @@ def file_signature(path):
 
 def _get_json(url):
     req = Request(url, headers={"User-Agent": "LinuxToys AppImage Installer", "Accept": "application/json"})
-    with urlopen(req, timeout=20) as response:
-        data = response.read(4 * 1024 * 1024 + 1)
+    try:
+        with urlopen(req, timeout=20) as response:
+            data = response.read(4 * 1024 * 1024 + 1)
+    except Exception as exc:
+        raise ValueError(_http_failure_text(url, exc)) from exc
     if len(data) > 4 * 1024 * 1024:
         raise ValueError("Release metadata too large")
-    return json.loads(data)
+    try:
+        return json.loads(data)
+    except ValueError as exc:
+        raise ValueError(f"Release metadata is not valid JSON ({url})") from exc
+
+
+def _http_failure_text(url, exc):
+    """One actionable sentence for a failed release/download request.
+
+    Resolution failures used to surface as raw urllib exceptions ("HTTP Error
+    404: Not Found"), which told the user nothing about which remote side broke
+    or why the install could not continue. Translate the status instead. A
+    definite "the forge has no such repository" is raised right away so the
+    caller can tell a vanished upstream from a flaky network: the ValueError
+    keeps the HTTP error as its cause for that check.
+    """
+    status = getattr(exc, "code", None)
+    if isinstance(status, int) and 400 <= status < 500:
+        host = urlparse(url).hostname or "the remote server"
+        if status == 404:
+            error = ValueError(
+                f"The remote repository or release for this AppImage is gone "
+                f"({host} returned 404 for {url}). The upstream project was "
+                "likely renamed or removed; nothing can be installed until it "
+                "publishes an AppImage again."
+            )
+            raise error from exc
+        return f"The remote server refused the request ({host} returned {status} for {url})"
+    if isinstance(exc, TimeoutError):
+        return f"Timed out contacting {urlparse(url).hostname or 'the remote repository'}"
+    return f"Could not reach the remote repository: {exc}"
+
+
+def repository_gone(info):
+    """Whether every link of this entry is a forge repository that no longer exists.
+
+    The community feed is the only catalog source here and it carries no
+    liveness data, so this is evaluated for one entry at a time, from the exact
+    release lookup the installer performs anyway — never as a bulk scan, which
+    would hammer the forge APIs and hit rate limits. A negative answer is kept
+    out of the cache: repositories do come back (renames, outages), so a "gone"
+    verdict must be re-checked the next time someone tries to install.
+    """
+    links = info.get("appimage_links") or []
+    checked = False
+    for raw in links:
+        url = str(raw)
+        parsed = urlparse(url)
+        if parsed.scheme != "https" or re.search(r"(?i)\.appimage$", parsed.path):
+            return False
+        parts = [p for p in parsed.path.split("/") if p]
+        if parsed.hostname in ("github.com", "www.github.com") and len(parts) >= 2:
+            api = f"https://api.github.com/repos/{parts[0]}/{parts[1]}/releases/latest"
+        elif parsed.hostname == "codeberg.org" and len(parts) >= 2:
+            api = f"https://codeberg.org/api/v1/repos/{parts[0]}/{parts[1]}/releases/latest"
+        else:
+            return False
+        if not all(re.fullmatch(r"[A-Za-z0-9_.-]+", x) for x in parts[:2]):
+            return False
+        checked = True
+        try:
+            _get_json(api)
+        except ValueError as exc:
+            # Only a definite "the forge has no such repository" counts. A
+            # missing release, a rate limit or a network hiccup does not prove
+            # the project is gone and must not hide the app.
+            status = getattr(getattr(exc, "__cause__", None), "code", None)
+            if status != 404:
+                return False
+        else:
+            return False
+    return checked
 
 def _arch_match(filename):
     name = filename.lower()
@@ -313,13 +388,48 @@ def _release_asset(assets):
             continue
         if _arch_match(name):
             candidates.append((name, url))
-    if len(candidates) != 1:
-        raise ValueError(f"Expected one compatible AppImage release asset; found {len(candidates)}")
-    return candidates[0][1]
+    if len(candidates) == 1:
+        return candidates[0][1]
+    host_arch = platform.machine().lower()
+    if not candidates:
+        raise ValueError(
+            f"Expected one compatible AppImage release asset; found 0 "
+            f"(host architecture: {host_arch})"
+        )
+    raise ValueError(
+        "Expected one compatible AppImage release asset; found "
+        f"{len(candidates)} ({', '.join(name for name, _ in candidates)}); "
+        "the upstream release does not identify a single installable AppImage"
+    )
+
+def tracked_app_id(info):
+    """Stable registry identity for one AppImage app.
+
+    Mirrors the key the git-release tracker uses so version records line up
+    with an app across installs. The catalog ``id`` (``appimage.community.*``)
+    is stable across refreshes; fall back to a slug of the display name for any
+    entry lacking it. Returns "" when no stable identity can be derived.
+    """
+    app_id = str(info.get("id") or "").strip()
+    if app_id:
+        return app_id
+    name = str(info.get("name") or "").strip()
+    if not name:
+        return ""
+    slug = "".join(c if c.isalnum() else "-" for c in name.casefold()).strip("-")
+    return "appimage.community." + slug if slug else ""
+
 
 def resolve_download(info):
-    """Return (asset URL, repository URL, release tag) with on-demand API calls."""
+    """Return (asset URL, repository URL, release tag) with on-demand API calls.
+
+    A link whose forge repository no longer exists must not abort the whole
+    resolution: community feed entries routinely carry several links and only
+    one of them has to still publish an AppImage. If none does, the combined
+    failure is raised so the caller can report why nothing was installable.
+    """
     links = info.get("appimage_links") or []
+    failures = []
     for raw in links:
         url = str(raw)
         parsed = urlparse(url)
@@ -328,28 +438,31 @@ def resolve_download(info):
         if re.search(r"(?i)\.appimage$", parsed.path):
             return url, "", ""
         parts = [p for p in parsed.path.split("/") if p]
-        if parsed.hostname in ("github.com", "www.github.com") and len(parts) >= 2:
-            owner, repo = parts[:2]
-            if not all(re.fullmatch(r"[A-Za-z0-9_.-]+", x) for x in (owner, repo)):
-                continue
-            release = _get_json(f"https://api.github.com/repos/{owner}/{repo}/releases/latest")
-            return _release_asset(release.get("assets", [])), f"https://github.com/{owner}/{repo}", str(release.get("tag_name") or "")
-        if parsed.hostname == "codeberg.org" and len(parts) >= 2:
-            owner, repo = parts[:2]
-            if not all(re.fullmatch(r"[A-Za-z0-9_.-]+", x) for x in (owner, repo)):
-                continue
-            release = _get_json(f"https://codeberg.org/api/v1/repos/{owner}/{repo}/releases/latest")
-            return _release_asset(release.get("assets", [])), f"https://codeberg.org/{owner}/{repo}", str(release.get("tag_name") or "")
+        try:
+            if parsed.hostname in ("github.com", "www.github.com") and len(parts) >= 2:
+                owner, repo = parts[:2]
+                if not all(re.fullmatch(r"[A-Za-z0-9_.-]+", x) for x in (owner, repo)):
+                    continue
+                release = _get_json(f"https://api.github.com/repos/{owner}/{repo}/releases/latest")
+                return _release_asset(release.get("assets", [])), f"https://github.com/{owner}/{repo}", str(release.get("tag_name") or "")
+            if parsed.hostname == "codeberg.org" and len(parts) >= 2:
+                owner, repo = parts[:2]
+                if not all(re.fullmatch(r"[A-Za-z0-9_.-]+", x) for x in (owner, repo)):
+                    continue
+                release = _get_json(f"https://codeberg.org/api/v1/repos/{owner}/{repo}/releases/latest")
+                return _release_asset(release.get("assets", [])), f"https://codeberg.org/{owner}/{repo}", str(release.get("tag_name") or "")
+        except ValueError as exc:
+            failures.append(f"{url}: {exc}")
+            continue
+    if failures:
+        raise ValueError("No installable AppImage release found — " + " | ".join(failures))
     raise ValueError("No supported direct AppImage download or GitHub/Codeberg release link")
 
-@contextlib.contextmanager
-def download_for_install(info):
-    url, repository, version = resolve_download(info)
-    with tempfile.TemporaryDirectory(prefix="linuxtoys-appimage-") as directory:
-        safe_name = re.sub(r"[^A-Za-z0-9._-]+", "-", str(info.get("name") or "AppImage")).strip(".-")[:80]
-        path = Path(directory) / f"{safe_name or 'AppImage'}.AppImage"
-        req = Request(url, headers={"User-Agent": "LinuxToys AppImage Installer"})
-        with urlopen(req, timeout=40) as response, path.open("wb") as target:
+def _download_appimage(url, dest_path):
+    """Download one AppImage to dest_path and validate it as an ELF AppImage."""
+    req = Request(url, headers={"User-Agent": "LinuxToys AppImage Installer"})
+    try:
+        with urlopen(req, timeout=40) as response, dest_path.open("wb") as target:
             total = 0
             while True:
                 chunk = response.read(1024 * 1024)
@@ -359,10 +472,69 @@ def download_for_install(info):
                 if total > MAX_APPIMAGE_BYTES:
                     raise ValueError("AppImage download exceeds 4 GiB")
                 target.write(chunk)
-        if path.stat().st_size < 4096:
-            raise ValueError("Downloaded AppImage is unexpectedly small")
-        with path.open("rb") as handle:
-            header = handle.read(4)
-        if header != b"\x7fELF":
-            raise ValueError("Downloaded asset is not an ELF AppImage")
-        yield str(path), {"repository": repository, "version": version, "download_url": url}
+    except ValueError:
+        raise
+    except Exception as exc:
+        raise ValueError(_http_failure_text(url, exc)) from exc
+    if dest_path.stat().st_size < 4096:
+        raise ValueError("Downloaded AppImage is unexpectedly small")
+    with dest_path.open("rb") as handle:
+        header = handle.read(4)
+    if header != b"\x7fELF":
+        raise ValueError("Downloaded asset is not an ELF AppImage")
+
+@contextlib.contextmanager
+def download_for_install(info):
+    url, repository, version = resolve_download(info)
+    with tempfile.TemporaryDirectory(prefix="linuxtoys-appimage-") as directory:
+        safe_name = re.sub(r"[^A-Za-z0-9._-]+", "-", str(info.get("name") or "AppImage")).strip(".-")[:80]
+        path = Path(directory) / f"{safe_name or 'AppImage'}.AppImage"
+        _download_appimage(url, path)
+        yield str(path), {
+            "repository": repository,
+            "version": version,
+            "download_url": url,
+            "app_id": tracked_app_id(info),
+        }
+
+
+def resolve_for_update(app_id, repository, output_path):
+    """Resolve and download the latest AppImage for a tracked app to output_path.
+
+    Used by the system updater to refresh a previously installed AppImage. The
+    repository alone is enough to re-resolve the newest release; ``app_id`` only
+    re-labels the metadata so the recorded identity stays stable. Returns the
+    release dict (repository, version, download_url, app_id).
+    """
+    info = {
+        "id": app_id,
+        "name": app_id,
+        "appimage_links": [repository],
+    }
+    url, resolved_repo, version = resolve_download(info)
+    dest = Path(output_path)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    _download_appimage(url, dest)
+    return {
+        "repository": resolved_repo or repository,
+        "version": version,
+        "download_url": url,
+        "app_id": app_id,
+    }
+
+
+if __name__ == "__main__":
+    import sys
+
+    # CLI used by the system updater to refresh one tracked AppImage.
+    #   appimage_catalog.py --resolve-for-update APP_ID REPOSITORY OUTPUT_PATH
+    # Prints the resolved version on stdout; the caller installs OUTPUT_PATH.
+    if len(sys.argv) == 5 and sys.argv[1] == "--resolve-for-update":
+        try:
+            release = resolve_for_update(sys.argv[2], sys.argv[3], sys.argv[4])
+        except Exception as exc:
+            print(f"{exc}", file=sys.stderr)
+            sys.exit(1)
+        print(release.get("version") or "")
+        sys.exit(0)
+    sys.exit(2)

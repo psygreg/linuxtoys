@@ -70,7 +70,7 @@ class AppStreamQueueView(Gtk.ScrolledWindow):
         return {
             "key": str(record["id"]),
             "name": record.get("name", ""),
-            "secondary": self._status_text(state),
+            "secondary": self._status_text(state, record),
             "secondary_visible": True,
             "icon_path": icon_path,
             "icon_name": icon_name,
@@ -94,7 +94,7 @@ class AppStreamQueueView(Gtk.ScrolledWindow):
         removal_info["_appstream_queue_record_id"] = record_id
         self.parent_window._on_item_remove_clicked(_button, removal_info)
 
-    def _status_text(self, state):
+    def _status_text(self, state, record=None):
         translations = self.parent_window.translations
         status_keys = {
             "queued": ("queued", "Waiting to install"),
@@ -104,7 +104,13 @@ class AppStreamQueueView(Gtk.ScrolledWindow):
             "cancelled": ("cancelled", "Cancelled"),
         }
         key, fallback = status_keys.get(state, (None, state))
-        return translations.get(key, fallback) if key else fallback
+        text = translations.get(key, fallback) if key else fallback
+        # A failed background job has no terminal to read afterwards; show the
+        # recorded reason on the row itself instead of only "Installation failed".
+        reason = str((record or {}).get("failure_reason") or "").strip()
+        if state == "failed" and reason:
+            text = f"{text} — {reason}"
+        return text
 
     @staticmethod
     def _status_icon(state):

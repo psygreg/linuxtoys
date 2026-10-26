@@ -860,6 +860,17 @@ def submit_issue(
         if registry_content:
             logs = logs + "\n" + registry_content
 
+    # Background AppStream installs run without any terminal; their per-job
+    # transcripts are the only output a report can carry for them.
+    try:
+        from .appstream_logs import appstream_log_context
+
+        appstream_logs = appstream_log_context()
+    except Exception:
+        appstream_logs = ""
+    if appstream_logs:
+        logs = logs + "\n\n" + appstream_logs
+
     # Handle upstream developer tagging
     validated_app = None
     if related_app:

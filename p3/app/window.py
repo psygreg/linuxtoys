@@ -12,6 +12,7 @@ from . import (
     action_registry,
     appstream_cache,
     homebrew_catalog,
+    appstream_logs,
     appstream_parser,
     aur_cache,
     appstream_queue,
@@ -3608,6 +3609,37 @@ class AppWindow(
                 "aur_operation_failed_message",
                 "The operation for '{name}' failed. Terminal output:\n\n{output}",
             ).format(name=name, output=(output or "").strip()),
+            message_type=Gtk.MessageType.ERROR,
+            buttons=[("OK", Gtk.ResponseType.OK)],
+            default_response=Gtk.ResponseType.OK,
+        )
+        return False
+
+    def _show_installation_failure(self, name, reason):
+        """Explain a failed background installation instead of a bare failure.
+
+        Background jobs run without a terminal, so without this the user only
+        ever sees "Installation failed" and cannot tell an upstream problem
+        (a dead repository, no release asset) from a local one. The job's own
+        transcript backs the reason up.
+        """
+        details = (reason or "").strip()
+        if not details:
+            details = self.translations.get(
+                "skills_error_install", "Installation failed."
+            )
+        log_tail = appstream_logs.latest_appstream_log_tail(name)
+        if log_tail:
+            details = f"{details}\n\n{log_tail}"
+        gtk_dialogs.run_message_dialog(
+            self,
+            title=self.translations.get(
+                "installation_failed_title", "Installation failed"
+            ),
+            secondary_text=self.translations.get(
+                "installation_failed_message",
+                "The installation of '{name}' failed:\n\n{details}",
+            ).format(name=name, details=details),
             message_type=Gtk.MessageType.ERROR,
             buttons=[("OK", Gtk.ResponseType.OK)],
             default_response=Gtk.ResponseType.OK,
