@@ -127,7 +127,8 @@ def warm_search_and_category_index(trans=None) -> SearchEngine:
         _script_cache = scr_cache
         _search_engine = engine
 
-        appstream_cache.refresh_cache()
+        if appstream_cache.cache_needs_refresh():
+            appstream_cache.refresh_cache()
 
         return _search_engine
 
