@@ -107,7 +107,9 @@ APPSTREAM_OMIT = (
      "!ublue": "appimage.community.virtualbox-kvm",
      "!steamos": "appimage.community.virtualbox-kvm"},
     "appimage.community.Winboat",
-    "homebrew.rust"
+    "homebrew.rust",
+    {"gregos": "com.raggesilver.BlackBox"},
+    {"gregos": "io.snapcraft.steam"}
 )
 
 # AppStream uses the freedesktop.org Desktop Menu category registry. Keep Main
