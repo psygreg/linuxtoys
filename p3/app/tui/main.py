@@ -679,7 +679,7 @@ class HomeScreen(
         bindings, are not refreshed.
         """
         self.query_one("#search-input", Input).placeholder = translations.get(
-            "search_placeholder", "Search"
+            "search_placeholder", "Search features"
         )
         menu = self.query_one("#home-menu", ListView)
         await menu.remove_children()
@@ -799,6 +799,11 @@ class LinuxToys(App):
         self.switch_screen(HomeScreen())
 
 
+def main() -> int:
+    """Run the TUI and return the process exit code."""
+    LinuxToys().run()
+    return 0
+
+
 if __name__ == "__main__":
-    app = LinuxToys()
-    app.run()
+    raise SystemExit(main())

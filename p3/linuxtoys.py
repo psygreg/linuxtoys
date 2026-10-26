@@ -75,6 +75,9 @@ if __name__ == "__main__":
     if len(sys.argv) == 2 and sys.argv[1] in ("export-manifest", "--export-manifest"):
         os.environ["EASY_CLI"] = "1"
 
+    if len(sys.argv) == 2 and sys.argv[1] in ("-t", "--tui"):
+        os.environ["EASY_CLI"] = "1"
+
     if len(sys.argv) == 2 and sys.argv[1] in ("-v", "--version", "-h", "--help", "help"):
         from app.easy_cli import easy_cli_help_message, print_version
 

@@ -28,6 +28,7 @@ CLI_OPTIONS = frozenset({
     "-m", "--manifest", "-p", "--package", "--packages",
     "-s", "--script", "--scripts", "-f", "--flatpak", "--flatpaks", "--snap", "--snaps",
     "-v", "--version", "-y", "--yes", "--check-updates", "--export-manifest",
+    "-t", "--tui",
 })
 
 def _wait_for_package_manager_cli():
@@ -1139,6 +1140,27 @@ def print_version():
         version = __version__
     print(f"{version}")
 
+def _launch_tui() -> int:
+    """Start the Textual TUI from the CLI.
+
+    The TUI is imported only here, so the plain CLI keeps working
+    without Textual installed.
+
+    Returns:
+        Process exit code: 0 on a normal exit, 1 if the TUI cannot
+        start.
+    """
+    if not (sys.stdin.isatty() and sys.stdout.isatty()):
+        print("✗ The TUI needs an interactive terminal.")
+        return 1
+    try:
+        from app.tui.main import main as tui_main  # adjust the path
+    except ImportError as exc:
+        print(f"✗ Could not load the TUI: {exc}")
+        print("  It needs the 'textual' and 'rich' packages.")
+        return 1
+    return tui_main()
+
 # --- MAIN EASY CLI HANDLER ---
 def easy_cli_handler(translations=None):
     """
@@ -1201,6 +1223,12 @@ def easy_cli_handler(translations=None):
         print("✗ No arguments provided.\n")
         easy_cli_help_message()
         return 0
+
+    if args[0] in ("-t", "--tui"):
+        if len(args) > 1:
+            print("✗ '-t' | '--tui' takes no other arguments.")
+            return 1
+        return _launch_tui()
     
     if args[0][0] == "-" and args[0][1] != "-" and len(args[0]) > 2:
         # Split combined flags (-isy to -i -s -y)
