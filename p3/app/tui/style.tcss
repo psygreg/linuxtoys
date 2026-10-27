@@ -1,0 +1,587 @@
+Screen {
+  align: center middle;
+}
+
+/* --------------------- HOME CSS -------------------------------*/
+#body-home {
+  height: 1fr;
+}
+
+#left-column-home {
+  width: 1fr;
+  height: 1fr;
+}
+
+#search-input {
+  margin-bottom: 1;
+}
+
+#left-panel-home {
+  width: 100%;
+  height: 1fr;
+  border: round $primary;
+  border-title-color: $text;
+  padding: 1 2;
+  background: transparent;
+}
+
+#menu-panel {
+  width: 2fr;
+  height: 1fr;
+  border: round $accent;
+  padding: 1 2;
+  align: center middle;
+}
+
+#logo {
+  width: 100%;
+  height: auto;
+  content-align: center middle;
+  background: transparent;
+}
+
+#menu-panel #logo {
+  width: 100%;
+  height: auto;
+  content-align: center middle;
+}
+
+#home-menu {
+  background: transparent;
+  width: 100%;
+  height: auto;
+  margin-top: 2;
+}
+
+#home-menu Label {
+  width: 100%;
+  content-align: center middle;
+}
+
+.home-links > *{
+  width: auto;
+  height: 1;
+  margin: 0 2;
+  text-align: center;
+  color: $accent;
+}
+
+.home-links {
+  dock: bottom;
+  width: 100%;
+  height: 3;
+  align: center middle;
+  padding: 1 0;
+}
+
+.link-sep {
+    margin: 0 1;
+    color: $text-muted;
+}
+/* --------------------- END -------------------------------*/
+
+/* --------------------- ABOUT CSS -------------------------------*/
+#about-container {
+    width: 100%;
+    height: 100%;
+    content-align: center middle;
+}
+
+#logo_lt {
+  width: 100%;
+  height: auto;
+  content-align: center middle;
+  background: transparent;
+}
+
+#license-scroll {
+    max-width: 100%;
+    height: 1fr;
+    align: center middle;
+}
+
+.about-scroll {
+  width: 100%;
+  height: 1fr;
+  align: center top;
+  padding: 1 2;
+}
+
+#header-row, #leader-row {
+    height: auto;
+    margin-bottom: 1;
+}
+
+#header-row > Static, #leader-row > Static {
+    width: auto;
+    height: auto;
+    margin-right: 2;
+}
+
+.profile-text {
+    width: 100%;
+    height: auto;
+    align: center middle;
+    margin-bottom: 1;
+}
+
+.profile-text Static {
+    width: 100%;
+    text-align: center;
+    content-align: center middle;
+}
+
+Rule {
+  margin: 1 0;
+}
+
+.section-title {
+    width: 100%;
+    height: auto;
+    align: center middle;
+    margin-bottom: 1;
+}
+
+.section-title Static {
+    width: 100%;
+    text-align: center;
+    content-align: center middle;
+}
+
+.contributors-grid {
+    layout: grid;
+    grid-size: 3;
+    grid-columns: 1fr 1fr 1fr;
+    grid-gutter: 1 0;
+    padding: 1 0;
+    width: 100%;
+    height: auto;
+}
+
+.contributors-grid Static {
+    content-align: center middle;
+    text-align: center;
+    width: 100%;
+}
+
+.license-text {
+  width: 100%;
+  height: auto;
+  content-align: center middle;
+}
+/* ------------------------------ END -------------------- */
+
+/* ------------------------------ REGISTRY CSS -------------------- */
+#body {
+  height: 1fr;
+}
+
+#right-panel {
+  width: 2fr;
+  height: 1fr;
+  border: round $accent;
+  padding: 1 2;
+  border-title-color: $text;
+  background: transparent;
+}
+
+#left-column {
+  width: 1fr;
+  height: 1fr;
+}
+
+#left-panel {
+  width: 100%;
+  height: 1fr;
+  border: round $primary;
+  border-title-color: $text;
+  padding: 1 2;
+  background: transparent;
+}
+
+#search-registry {
+  margin-bottom: 1;
+}
+
+#registry-list {
+  height: 1fr;
+  background: transparent;
+}
+
+#registry-details {
+  height: 100%;
+  # border: round $accent;
+  padding: 1 2;
+  content-align: left top;
+  background: transparent;
+  overflow-y: auto;
+}
+/* ------------------------------ END -------------------- */
+
+/* ------------------------------ MANIFEST CSS -------------------- */
+ManifestDialog {
+    align: center middle;
+}
+
+#manifest-container {
+    width: 90%;
+    height: 90%;
+    background: $surface;
+    border: round $primary;
+    padding: 1 2;
+}
+
+#manifest-header {
+    height: 3;
+    align-vertical: middle;
+    margin-bottom: 1;
+}
+
+#manifest-title {
+    width: 1fr;
+    height: 3;
+    content-align: center middle;
+    text-style: bold;
+    color: $text-muted;
+}
+
+#manifest-search {
+    width: 30;
+    margin-right: 1;
+}
+
+#cancel-btn-manifest, #execute-btn-manifest {
+    min-width: 16;
+}
+
+#manifest-tree {
+    height: 1fr;
+    background: $boost;
+    border: solid $panel;
+    padding: 1;
+}
+/* ------------------------------ END -------------------- */
+
+/* ------------------------------ DIALOG CSS -------------------- */
+ModalScreen {
+  align: center middle;
+}
+
+ConfirmCleanupDialog {
+  background: $background 70%;
+}
+
+#confirm-dialog {
+  width: 70;
+  max-width: 95%;
+  height: auto;
+  max-height: 95%;
+  border: thick $primary;
+  background: $surface;
+  padding: 1 2;
+}
+
+#confirm-dialog Label,
+#confirm-dialog Static {
+  width: 100%;
+}
+
+#confirm-title,
+#dialog-title {
+  text-style: bold;
+  text-align: center;
+  margin-bottom: 1;
+}
+
+#dialog-message {
+  color: $text-muted;
+  margin-bottom: 1;
+}
+
+#confirm-description,
+#aur-security-detail,
+#changelog {
+  border: round $accent;
+  padding: 0 1;
+  margin-bottom: 1;
+  height: auto;
+  max-height: 40vh;
+}
+
+#confirm-buttons,
+#dialog-buttons {
+  width: 100%;
+  height: auto;
+  align: center middle;
+}
+
+#confirm-buttons Button,
+#dialog-buttons Button {
+  margin: 0 1;
+  min-width: 12;
+}
+
+#sudo-error {
+  color: $error;
+  text-style: bold;
+  text-align: center;
+  margin-bottom: 1;
+}
+
+#sudo-password-input {
+  margin-bottom: 1;
+}
+
+ConfirmCleanupDialog #cancel-btn {
+  background: transparent;
+  border: round $primary;
+  color: $text;
+}
+
+ConfirmCleanupDialog #remove-btn {
+  background: #4a192c;
+  border: round #a32a49;
+  color: #f38ba8;
+}
+/* ------------------------------ END -------------------- */
+
+/* ------------------------------ LANGUAGE CSS -------------------- */
+#lang-dialog-container {
+    max-width: 60%;
+    height: 60%;
+    padding: 1 2;
+    background: $surface;
+    border: round $primary;
+}
+
+.lang-label {
+    height: auto;
+    margin-bottom: 1;
+    text-style: bold;
+}
+
+#search-language {
+    margin-bottom: 1;
+    border: round $primary;
+}
+
+#language-list {
+    width: 1fr;
+    height: 1fr;
+    background: $boost;
+    border: none;
+    scrollbar-size-vertical: 1;
+}
+
+#language-list ListItem {
+    width: 1fr;
+    overflow: hidden;
+}
+
+LanguageListItem Label {
+  padding: 0 1;
+  width: 1fr;
+  text-overflow: ellipsis;
+}
+/* ------------------------------ END -------------------- */
+
+/* ------------------------------ REPORT BUG -------------------- */
+#dialog-container {
+    width: 76;
+    height: auto;
+    padding: 1 2;
+    background: $surface;
+    border: round $primary;
+}
+
+.form-row {
+    height: auto;
+    align-vertical: middle;
+    margin-bottom: 1;
+}
+
+.label-inline {
+    width: 1fr;
+    content-align: left middle;
+    height: 3;
+}
+
+.field-label {
+    margin-bottom: 1;
+}
+
+TextArea#bug-description {
+    height: 8;
+    margin-bottom: 1;
+    background: $boost;
+    border: none;
+}
+
+#system-info-text {
+    color: $text-muted;
+    height: auto;
+    margin-bottom: 1;
+}
+
+#buttons-aligh-right {
+    height: 3;
+    align-horizontal: right;
+}
+
+#confirm-buttons Button {
+    margin-left: 1;
+    min-width: 12;
+}
+
+#cancel-btn {
+    background: transparent;
+    border: round $error;
+}
+
+#execute-btn {
+    border: round $primary;
+}
+
+#select-app {
+    width: 32;
+    height: 3;
+}
+
+.field-label {
+  margin-top: 1;
+  margin-bottom: 1;
+}
+/* ------------------------------ END -------------------- */
+
+/* ------------------------------ MY_WIDGETS CSS -------------------- */
+#terminal-conteiner {
+  width: 2fr;
+  height: 1fr;
+}
+
+Terminal {
+  width: 100%;
+  height: 100%;
+}
+
+.report-bug {
+    color: $accent;
+}
+
+.report-bug:hover {
+    color: $accent-lighten-2;
+}
+
+.report-bug:focus {
+  text-style: reverse;
+}
+
+ReportBugDialog {
+    align: center middle;
+}
+
+InfoButton {
+  width: 1fr;
+  margin-bottom: 1;
+  border: round $primary;
+  background: transparent;
+}
+/* ------------------------------ END -------------------- */
+
+/* ------------------------------ UPDATE CSS -------------------- */
+UpdateAvailableDialog { 
+  align: center middle;
+}
+
+UpdateAvailableDialog > Vertical {
+  width: 70; 
+  height: 25; 
+  padding: 1 2;
+  border: solid $primary;
+}
+
+UpdateAvailableDialog #changelog { 
+  height: 1fr; 
+  border: round $primary-darken-1; 
+  margin: 1 0; 
+}
+
+UpdateCompleteDialog { 
+  align: center middle;
+}
+
+UpdateCompleteDialog > Vertical {
+  width: 60;
+  height: auto;
+  padding: 1 2;
+  border: solid $success;
+}
+
+UpdateCompleteDialog Label { 
+  width: 100%; 
+  content-align: center middle; 
+  margin-bottom: 1;
+}
+
+UpdateCompleteDialog Button { 
+  width: 100%;
+}
+/* ------------------------------ END -------------------- */
+/* ----------------------- AppPageWidget CSS ------------------- */
+AppPageWidget { height: 100%; padding: 0 1; }
+AppPageWidget #app-top { height: 3; }
+AppPageWidget #app-back { min-width: 5; width: 5; margin-right: 1; }
+AppPageWidget #app-name { width: 1fr; height: 3; content-align: left middle; color: $accent; }
+AppPageWidget #app-developer,
+AppPageWidget #app-meta { height: 1; }
+AppPageWidget .app-row { height: auto; margin-top: 1; }
+AppPageWidget .app-row > Button { margin-right: 1; }
+AppPageWidget .act-select { width: 28; margin-right: 1; }
+AppPageWidget #app-actions { overflow-x: auto; }
+AppPageWidget #app-rating { height: auto; }
+AppPageWidget #app-rating Label { height: 3; content-align: left middle; margin-right: 1; }
+AppPageWidget #app-rating Button { min-width: 5; width: 5; }
+AppPageWidget #app-tabs { height: 1fr; margin-top: 1; }
+AppPageWidget #app-content { height: 1fr; margin-top: 1; }
+AppPageWidget TabPane { padding: 0; }
+AppPageWidget #app-description { height: auto; }
+AppPageWidget #app-translate-row { height: auto; align-horizontal: right; }
+AppPageWidget #app-description-text { height: auto; }
+AppPageWidget #app-featured { height: auto; margin-top: 1; }
+AppPageWidget #app-featured-title { text-style: bold; color: $accent; margin: 1 0; }
+AppPageWidget #featured-grid { height: auto; grid-gutter: 0 1; }
+AppPageWidget .ext-item { height: auto; margin-bottom: 1; }
+#app-description-short {
+    color: $text-muted;
+}
+
+FeaturedCard { height: 5; padding: 0 1; overflow: hidden; border: round $primary 60%; }
+FeaturedCard:hover,
+FeaturedCard:focus { border: round $accent; background: $boost; }
+/* ------------------------------ END -------------------- */
+
+/* ----------------------- MODAIS (skills, recomendações) ------------------- */
+.lt-modal {
+    align: center middle;
+}
+
+.lt-modal > Vertical {
+    width: 64;
+    max-width: 95%;
+    height: auto;
+    max-height: 95%;
+    overflow-y: auto;
+    padding: 1 2;
+    border: thick $primary;
+    background: $surface;
+}
+
+.lt-modal .dialog-title { text-style: bold; margin-bottom: 1; }
+.lt-modal .dialog-text  { color: $text-muted; margin-bottom: 1; }
+.lt-modal VerticalScroll { height: auto; max-height: 10; margin-bottom: 1; }
+.lt-modal Horizontal { height: auto; align-horizontal: right; }
+.lt-modal Button { margin-left: 1; min-width: 10; }
+
+/* específico do diálogo de agentes */
+AgentChoiceDialog OptionList { height: auto; max-height: 8; margin-bottom: 1; }
+/* ------------------------------------ END ---------------------------------- */
