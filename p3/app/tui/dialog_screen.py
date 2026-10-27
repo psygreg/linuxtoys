@@ -267,6 +267,31 @@ class SuccessDialog(ModalScreen[None]):
         self.dismiss()
 
 
+class RebootSystemDialog(ModalScreen[None]):
+    BINDINGS = [
+        Binding("escape", "cancel", translations.get("script_runner_close"))
+    ]
+
+    def compose(self) -> ComposeResult:
+        with Vertical(id="confirm-dialog"):
+            yield Label(
+                translations.get("reboot_required_message", "Reboot Required")
+            )
+            with Horizontal(id="confirm-buttons"):
+                yield Button(
+                    translations.get("term_view_done", "Done"),
+                    id="execute-btn",
+                    variant="success",
+                )
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "execute-btn":
+            self.dismiss()
+
+    def action_cancel(self) -> None:
+        self.dismiss()
+
+
 class RebootDialog(ModalScreen[bool]):
     """Tell the user that a system reboot is required.
 

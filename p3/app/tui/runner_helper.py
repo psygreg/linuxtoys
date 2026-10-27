@@ -47,6 +47,7 @@ from .dialog_screen import (
     ConfirmScriptScreen,
     ErrorDialog,
     RebootDialog,
+    RebootSystemDialog,
     RemoveScriptScreen,
     SuccessDialog,
     SudoPasswordScreen,
@@ -108,6 +109,7 @@ class ScriptRunnerMixin:
     _running_appimage_stack: ExitStack | None = None
     _preparing_run: bool = False
     _aur_category_path: str | None = None
+    _reboot_system: bool = False
 
     async def handle_desc_button(self, button: InfoButton) -> None:
         """Call a function based on is script or not."""
@@ -118,6 +120,9 @@ class ScriptRunnerMixin:
         ):
             pass
         elif button.is_script:
+            if self._reboot_system:
+                self.app.push_screen(RebootSystemDialog())
+                return
             await self._handle_script_button(button)
         else:
             await self._navigate_to_category(button)
@@ -774,6 +779,7 @@ class ScriptRunnerMixin:
                 self.app.push_screen(
                     RebootDialog(), callback=self._finish_script_run
                 )
+                _reboot_system = True
             else:
                 self.app.push_screen(
                     SuccessDialog(script_name, action=action_done),
