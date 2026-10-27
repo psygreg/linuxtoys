@@ -112,7 +112,8 @@
         "description_tag": "hgl_desc",
         "repo": "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher",
         "category": "game",
-        "icon": "heroic.svg"
+        "icon": "heroic.svg",
+        "os": "!gregos"
     },
     {
         "name": "MangoJuice",

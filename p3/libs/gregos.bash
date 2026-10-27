@@ -20,6 +20,9 @@ sudo_ flatpak override --system socket=fallback-x11
 # fix flatpak theming
 call_script flattheme
 
+# fix GTK4 app rendering for Intel Arc and Nvidia
+call_script gtk-bmg-fix
+
 # opencode setup
 pkg_brew bun
 bun install -g --trust @opencode/cli

@@ -23,6 +23,7 @@ import functools
 import os
 import re
 import shutil
+import subprocess
 import time
 from pathlib import Path
 
@@ -254,6 +255,13 @@ def _native_manager_family():
 # fire on every install — the reported over-trigger. So names are split into
 # transaction tools (a running instance IS a transaction) and resident daemons
 # (only count when they actively hold the package lock, below).
+#
+# The "ostree" family must be decided differently still: its transaction tool
+# and the resident system daemon share ONE comm name ("rpm-ostree" — the daemon
+# is spawned by the same binary: rpm-ostreed.service runs `rpm-ostree
+# start-daemon`), so process presence alone can never separate an idle rpm-ostree
+# host from a busy one. busy_native_manager_process() asks the daemon's own
+# state instead (see _rpm_ostree_transaction_active).
 _FAMILY_MANAGER_PROCESSES = {
     "debian": ("apt", "apt-get", "dpkg", "dpkg-deb", "pkcon"),
     "arch": ("pacman", "paru", "pamac", "yay"),
@@ -271,8 +279,11 @@ _FAMILY_DAEMON_PROCESSES = {
     "arch": ("pamac-daemon",),
     # rpm-ostree-automatic drives unattended rpm-ostree staging/deploys on
     # Universal Blue / Silverblue / Kinoite / Bazzite hosts. Its comm truncates
-    # to "rpm-ostree-auto", distinct from the "rpm-ostree" transaction tool, so
-    # it needs its own entry or an auto-update would be invisible to the guard.
+    # to "rpm-ostree-auto". Presence alone is not busy: like every rpm-ostree
+    # process it is classified through the daemon-state probe in
+    # busy_native_manager_process, because all of them share the "rpm-ostree"
+    # comm and the sysroot locks they hold live inside the daemon's private
+    # mount namespace (MountFlags=slave), invisible to the host's /proc.
     "ostree": ("rpm-ostree-auto",),
     "fedora": ("dnf-automatic",),
     "suse": ("zypp-refresh",),
@@ -290,13 +301,12 @@ _FAMILY_LOCK_FILES = {
         "/var/lib/apt/lists/lock", "/var/cache/apt/archives/lock",
     ),
     "arch": ("/var/lib/pacman/db.lck",),
-    # rpm-ostree holds a sysroot lock for the duration of a deploy/layering
-    # transaction. The staged-deployment dir being freshly written is a useful
-    # secondary signal, but the lock is the authoritative one; a missing marker
-    # simply means the daemon is idle (or the host uses a different layout), in
-    # which case the guard falls back to the transaction-tool match.
-    "ostree": ("/run/ostree.lock", "/run/rpm-ostree.lock",
-               "/sysroot/ostree/repo/objects/lock"),
+    # No "ostree" entry on purpose: the sysroot locks rpm-ostree holds during a
+    # transaction live inside the daemon's private mount namespace
+    # (MountFlags=slave in rpm-ostreed.service), so host-visible lock paths are
+    # not observable and a lock check would silently see "idle" during a real
+    # transaction. This family is decided by the daemon's own state instead
+    # (see _rpm_ostree_transaction_active).
     "fedora": ("/var/lib/dnf/rpmdb.lock", "/run/dnf.pid", "/var/lib/dnf/lock"),
     "suse": ("/run/zypp.pid", "/var/run/zypp.pid"),
     "solus": (),
@@ -381,6 +391,48 @@ def _family_lock_held(family):
     return False
 
 
+def _rpm_ostree_transaction_active(timeout=25.0):
+    """Whether the rpm-ostree daemon itself reports a transaction in progress.
+
+    The only authoritative busy signal for the "ostree" family: client,
+    system daemon and read-only status readers share one process name, and
+    the sysroot locks the daemon holds live inside its private mount
+    namespace (MountFlags=slave in rpm-ostreed.service), so neither process
+    presence nor host-visible lock files can separate an idle rpm-ostree
+    host from a busy one.
+
+    ``rpm-ostree status`` is a read-only client call: it needs no elevation,
+    works in every daemon state and is safe to issue while a transaction is
+    running. Its header line carries the daemon's own classification —
+    "State: idle" when nothing is running (a staged deployment merely
+    awaiting a reboot still reports idle) and "State: busy" (plus a
+    "Transaction:" line) while an install, upgrade, rebase or an
+    automatic stage/apply update drives the sysroot.
+
+    Any failure to read a clear state (missing binary, timeout, unexpected
+    output) counts as NOT busy: the guard never blocks on its own broken
+    machinery.
+    """
+    try:
+        result = subprocess.run(
+            ["rpm-ostree", "status"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            timeout=timeout,
+            check=False,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return False
+    if result.returncode != 0:
+        return False
+    header = result.stdout.decode("utf-8", errors="replace")
+    for line in header.splitlines():
+        stripped = line.strip()
+        if stripped.lower().startswith("state:"):
+            return "busy" in stripped.lower()
+    return False
+
+
 def busy_native_manager_process():
     """Return the name of a running native package manager, else None.
 
@@ -388,6 +440,9 @@ def busy_native_manager_process():
     a transaction tool (apt, pacman, dnf, ...) is running, or a resident daemon
     (packagekitd, unattended-upgr, ...) is running AND actively holding the
     package lock. A resident daemon on its own is idle and must not block a run.
+
+    On the "ostree" family the tool and daemon share one comm, so the verdict
+    is the daemon's own busy state instead (see _rpm_ostree_transaction_active).
     """
     family = _native_manager_family()
     if not family:
@@ -399,6 +454,15 @@ def busy_native_manager_process():
         return None
 
     running = _running_comm_names()
+
+    # rpm-ostree: process presence alone is meaningless for this family (the
+    # transaction tool and the always-startable system daemon share the same
+    # comm, and read-only status callers keep the daemon resident). Gate on
+    # what the daemon says about itself.
+    if family == "ostree":
+        if not (tools | daemons) & running:
+            return None
+        return "rpm-ostree" if _rpm_ostree_transaction_active() else None
 
     # A running transaction tool is itself proof of a transaction.
     for name in sorted(tools & running):

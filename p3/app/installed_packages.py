@@ -156,7 +156,12 @@ def _collect_native(manager):
             packages.add(line.split("/", 1)[0])
         return packages
     if manager == "dnf":
-        output = _run(["dnf", "repoquery", "--leaves", "--userinstalled", "--qf", "%{name}"])
+        # DNF5 applies the query format verbatim: without an explicit newline
+        # every package lands on one concatenated line, which would turn the
+        # whole snapshot into a single bogus name and break installed-state
+        # matching. Keep the format newline-terminated; extra blank lines are
+        # ignored below.
+        output = _run(["dnf", "repoquery", "--leaves", "--userinstalled", "--qf", "%{name}\n"])
         return {line.strip() for line in output.splitlines() if line.strip() and not line.startswith("Updating")}
     if manager == "zypper":
         output = _run([

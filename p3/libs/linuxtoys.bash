@@ -519,16 +519,18 @@ info() {
     fi
 }
 warn() {
-    # Always echo so the warning is captured in the terminal buffer for bug
-    # reporting, even when a GUI dialog is shown (matches how error() behaves).
+    # Mirror info(): _msg prints the text itself before showing the dialog,
+    # so echoing here too would duplicate the line (as zeny dialogs showed,
+    # the message reached the terminal buffer twice for one call).
     if [ -n "$CHECKLIST_RUN" ]; then
         echo -n "WARN: "; _msg_unescape "$1"; echo
+        return 0
+    fi
+    if _zenity_can_run; then
+        _msg warning "$1"
     else
         _msg_unescape "$1"; echo
     fi
-    _zenity_can_run || return 0
-    [ -n "$CHECKLIST_RUN" ] && return 0
-    _msg warning "$1"
 }
 error() {
     _zenity_can_run || { _msg_unescape "$1"; echo; return 1; }
