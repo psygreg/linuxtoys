@@ -123,20 +123,29 @@ def _pacman_reverse_dependencies(package):
 
 
 def _dnf_reverse_dependencies(package):
-    """Query hard reverse dependencies from DNF5 or DNF4 repositories."""
+    """Query hard reverse dependencies from DNF5 or DNF4 repositories.
+
+    DNF5 applies the query format verbatim and adds no implicit separator
+    between packages, so '%{name}' alone concatenates every match into a
+    single token (on Ultramarine's Terra repos that produced a bogus
+    "gamescope-session-steamsteam-arch-transition" candidate, which then got
+    promoted as the package to install). Keep an explicit newline in the
+    format so each package is printed on its own line; DNF4/rpm-style
+    formats honor the same escape and extra blank lines are ignored below.
+    """
     if shutil.which("dnf5"):
         output = _run([
             "dnf5", "--quiet", "repoquery",
             "--whatrequires", package,
             "--exactdeps",
-            "--qf", "%{name}",
+            "--qf", "%{name}\n",
         ])
     elif shutil.which("dnf"):
         output = _run([
             "dnf", "--quiet", "repoquery",
             "--whatrequires", package,
             "--exactdeps",
-            "--qf", "%{name}",
+            "--qf", "%{name}\n",
         ])
     else:
         return ()
