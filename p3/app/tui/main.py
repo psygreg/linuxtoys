@@ -123,11 +123,11 @@ class HomeScreen(
     _SKILLS_HIDDEN = ("#logo_lt", "#home-menu", "#terminal-conteiner")
 
     BINDINGS = [
-        Binding("q", "app.quit", "Sair"),
-        Binding("tab", "app.focus_next", "Navegar"),
-        Binding("shift+tab", "app.focus_previous", "Anterior"),
+        Binding("q", "app.quit", "Exit"),
+        Binding("tab", "app.focus_next", "Next"),
+        Binding("shift+tab", "app.focus_previous", "Previous"),
         Binding("h", "reset_to_home", "Home"),
-        Binding("escape", "go_back", "Voltar"),
+        Binding("escape", "go_back", "Go Back"),
         Binding("f1", "noop", "🔴 Uninstall   🟡 New", key_display=" "),
     ]
 

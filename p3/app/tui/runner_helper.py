@@ -560,7 +560,7 @@ class ScriptRunnerMixin:
         """
         if self.query_one("#terminal", Terminal).is_busy:
             self.notify(
-                "Já existe uma execução em andamento.", severity="warning"
+                "An execution is already underway.", severity="warning"
             )
             return False
         return True
@@ -605,7 +605,7 @@ class ScriptRunnerMixin:
         terminal = self.query_one("#terminal", Terminal)
         if self._preparing_run or terminal.is_busy:
             self.notify(
-                "Já existe uma execução em andamento.", severity="warning"
+                "An execution is already underway.", severity="warning"
             )
             return
         self._preparing_run = True
@@ -681,7 +681,7 @@ class ScriptRunnerMixin:
         if not started:
             self._finish_script_run()
             self.notify(
-                "Já existe uma execução em andamento.", severity="warning"
+                "An execution is already underway.", severity="warning"
             )
         return started
 
@@ -794,8 +794,8 @@ class ScriptRunnerMixin:
 
         elif result is ScriptResult.TERMINAL_CLOSED:
             self.notify(
-                "O terminal encerrou inesperadamente; uma nova sessão foi "
-                "iniciada automaticamente.",
+                "The terminal closed unexpectedly; a new session was started "
+                "automatically.",
                 severity="warning",
             )
             self._cleanup_temp_file(temp_path, dev_mode)
@@ -950,31 +950,31 @@ class ScriptRunnerMixin:
                 issue_number = result.get("issue_number", "")
                 self.app.call_from_thread(
                     self.notify,
-                    f"Bug reportado com sucesso (issue #{issue_number}).",
+                    f"Bug successfully reported (issue #{issue_number}).",
                     severity="information",
                 )
             else:
                 self.app.call_from_thread(
                     self.notify,
-                    "Não foi possível enviar o relatório de bug.",
+                    "It was not possible to send the bug report.",
                     severity="error",
                 )
         except ConnectionError:
             self.app.call_from_thread(
                 self.notify,
-                "Sem conexão com a internet — não foi possível reportar o bug.",
+                "Without an internet connection, it was not possible to report the bug.",
                 severity="error",
             )
         except Timeout:
             self.app.call_from_thread(
                 self.notify,
-                "Tempo esgotado ao tentar reportar o bug.",
+                "Timed out while trying to report the bug.",
                 severity="error",
             )
         except Exception as exc:
             self.app.call_from_thread(
                 self.notify,
-                f"Erro ao reportar bug: {exc}",
+                f"Error while reporting the bug: {exc}",
                 severity="error",
             )
 
@@ -1844,11 +1844,11 @@ class ManifestRunnerMixin:
         # resolve_script_dir()
         if self._is_manifest_run:
             self.notify(
-                "Já existe uma execução de manifesto em andamento.",
+                "A manifest execution is already in progress.",
                 severity="warning",
             )
             return
-        self.notify("Carregando manifesto...", timeout=3)
+        self.notify("loading manifest...", timeout=3)
         self._start_manifest_classify(manifest_path)
 
     def _start_manifest_classify(
@@ -1890,7 +1890,7 @@ class ManifestRunnerMixin:
             except Exception as exc:  # mirrors the CLI bootstrap helper
                 self.app.call_from_thread(
                     self.notify,
-                    f"Falha ao atualizar o AppStream: {exc}",
+                    f"Failed to update AppStream: {exc}",
                     severity="error",
                 )
                 return
@@ -1900,14 +1900,14 @@ class ManifestRunnerMixin:
         except (OSError, ValueError):  # ValueError covers UnicodeDecodeError
             self.app.call_from_thread(
                 self.notify,
-                "Não foi possível ler o manifesto.",
+                "Unable to read the manifest.",
                 severity="error",
             )
             return
 
         if not names:
             self.app.call_from_thread(
-                self.notify, "Manifesto vazio ou inválido.", severity="warning"
+                self.notify, "Empty or invalid manifest.", severity="warning"
             )
             return
 
@@ -1916,7 +1916,7 @@ class ManifestRunnerMixin:
         except Exception as exc:  # worker boundary: never let it kill the TUI
             self.app.call_from_thread(
                 self.notify,
-                f"Erro ao validar o manifesto: {exc}",
+                f"Error validating the manifest: {exc}",
                 severity="error",
             )
             return
@@ -1984,7 +1984,7 @@ class ManifestRunnerMixin:
         confirmed: bool | None,
     ) -> None:
         if not confirmed:
-            self.notify("Operação cancelada.", timeout=3)
+            self.notify("Operation cancelled.", timeout=3)
             return
 
         # Both run in the terminal: they may need sudo.
@@ -1996,7 +1996,7 @@ class ManifestRunnerMixin:
                 item = self._batch_item("Flatpak/Flathub", ["pkg_flat"])
             except OSError as exc:
                 self.notify(
-                    f"Não foi possível preparar o script: {exc}",
+                    f"It was not possible to prepare the script: {exc}",
                     severity="error",
                 )
                 return
@@ -2021,7 +2021,7 @@ class ManifestRunnerMixin:
 
         label = self._MANIFEST_BOOTSTRAP_LABELS[state["kind"]]
         if result is ScriptResult.SUCCESS:
-            self.notify("Validando manifesto...", timeout=3)
+            self.notify("Validating manifest...", timeout=3)
             self._start_manifest_classify(
                 state["path"],
                 state["attempted"],
@@ -2029,11 +2029,11 @@ class ManifestRunnerMixin:
             )
         elif result is ScriptResult.CANCELLED:
             self.notify(
-                f"Configuração do {label} cancelada.", severity="warning"
+                f"{label} configuration cancelled.", severity="warning"
             )
         elif result is ScriptResult.ERROR:
             self.notify(
-                f"Falha ao configurar {label} (código {exit_code}).",
+                f"failed to configure {label} (code {exit_code}).",
                 severity="error",
             )
 
@@ -2042,9 +2042,9 @@ class ManifestRunnerMixin:
         if not plan.is_valid:
             self.app.push_screen(
                 ManifestPlanDialog(
-                    "Manifesto inválido. Nada será instalado.",
+                    "invalid manifest. Nothing will be installed.",
                     [f"✗ {error}" for error in plan.errors],
-                    cancel_label="Fechar",
+                    cancel_label="Close",
                 )
             )
             return
@@ -2053,14 +2053,14 @@ class ManifestRunnerMixin:
             if plan.warnings:
                 self.app.push_screen(
                     ManifestPlanDialog(
-                        "Nenhum item para executar",
+                        "No items to execute",
                         [f"- {warning}" for warning in plan.warnings],
-                        cancel_label="Fechar",
+                        cancel_label="Close",
                     )
                 )
             else:
                 self.notify(
-                    "Nenhum item compatível encontrado no manifesto.",
+                    "No compatible item found in the manifest.",
                     severity="warning",
                 )
             return
@@ -2130,7 +2130,7 @@ class ManifestRunnerMixin:
             values = self._shell_words(plan.packages)
             queue.append(
                 self._batch_item(
-                    f"Pacotes ({len(plan.packages)})",
+                    f"Packages ({len(plan.packages)})",
                     ["askpass", f"pkg_install {values}"],
                 )
             )
@@ -2228,7 +2228,7 @@ class ManifestRunnerMixin:
 
     def _on_manifest_item_finished(self, message) -> None:
         script_info = self._running_script_info or {}
-        script_name = script_info.get("name", "item desconhecido")
+        script_name = script_info.get("name", "unknown")
         exit_code = message.exit_code
         result = _classify_exit_code(exit_code)
         temp_path = self._running_temp_path
@@ -2245,8 +2245,8 @@ class ManifestRunnerMixin:
 
         if result is ScriptResult.TERMINAL_CLOSED:
             self.notify(
-                "O terminal encerrou inesperadamente; uma nova sessão foi "
-                "iniciada automaticamente.",
+                "The terminal closed unexpectedly; a new session was started "
+                "automatically.",
                 severity="warning",
             )
 
@@ -2340,7 +2340,7 @@ class ManifestRunnerMixin:
             )
 
     def _start_manifest_dry_run(self, plan) -> None:
-        self.notify("Validando itens (dry-run)...", timeout=3)
+        self.notify("Evaluating items (dry-run)...", timeout=3)
         self.run_worker(
             lambda: self._dry_run_manifest(plan),
             thread=True,
@@ -2399,7 +2399,7 @@ class ManifestRunnerMixin:
                 except OSError:
                     pass
         return {
-            "name": script.get("name", "item desconhecido"),
+            "name": script.get("name", "unknown"),
             "exit_code": 0 if ok else 1,
             "success": ok,
             "status": "success" if ok else "error",
@@ -2489,9 +2489,7 @@ class UpdateRunnerMixin:
             )
         else:
             self._hide_terminal()
-            self.notify(
-                "A atualização falhou ou foi cancelada.", severity="error"
-            )
+            self.notify("The update failed or was canceled.", severity="error")
 
     def _restart_app(self, _result: None = None) -> None:
         """Restart the application in place, loading the updated code."""
