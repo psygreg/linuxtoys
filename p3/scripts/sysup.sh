@@ -100,7 +100,7 @@ brew_update() {
     local brew_bin
     brew_bin=$(_brew_executable) || return 0
     "$brew_bin" update || { warn "Failed to refresh Homebrew metadata"; return 0; }
-    "$brew_bin" upgrade || warn "Failed to upgrade Homebrew formulae"
+    "$brew_bin" upgrade -y || warn "Failed to upgrade Homebrew formulae"
 }
 
 if [ "$UPD_SERVICE" = "1" ] && [ "$(id -u)" -ne 0 ]; then
