@@ -779,7 +779,7 @@ class ScriptRunnerMixin:
                 self.app.push_screen(
                     RebootDialog(), callback=self._finish_script_run
                 )
-                _reboot_system = True
+                self._reboot_system = True
             else:
                 self.app.push_screen(
                     SuccessDialog(script_name, action=action_done),

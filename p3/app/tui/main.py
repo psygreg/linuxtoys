@@ -28,6 +28,8 @@ from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.screen import Screen
+from textual.theme import Theme
+from textual.timer import Timer
 from textual.widgets import (
     Button,
     Footer,
@@ -79,6 +81,7 @@ from .runner_helper import (
     UpdateRunnerMixin,
 )
 from .startup_recommendation import StartupRecommendationsMixin
+from .theme_store import load_theme, save_theme
 from .tui_app_page import AppPageWidget, hide_app_page, show_app_page
 
 HOMEBREW_WATCH_INTERVAL = 3.0
@@ -776,10 +779,30 @@ class LinuxToys(App):
 
     CSS_PATH = "style.tcss"
     TITLE = "LinuxToys"
+    _theme_save_timer: Timer | None = None
 
     def on_mount(self) -> None:
+        """Restore the saved theme, show the splash and start the boot."""
+        saved = load_theme()
+        if saved in self.available_themes:
+            self.theme = saved
+        self.theme_changed_signal.subscribe(self, self._on_theme_changed)
         self.push_screen(SplashScreen())
         self._boot()
+
+    def _on_theme_changed(self, _theme: Theme) -> None:
+        """Save the theme shortly after it changes.
+
+        The command palette previews a theme on every highlighted row, so
+        the save is debounced (0.5 s) to write only the final choice.
+        """
+        if self._theme_save_timer is not None:
+            self._theme_save_timer.stop()
+        self._theme_save_timer = self.set_timer(0.5, self._save_theme)
+
+    def _save_theme(self) -> None:
+        """Write the current theme name to disk."""
+        save_theme(self.theme)
 
     @work(thread=True, exclusive=True, group="boot")
     def _boot(self) -> None:
