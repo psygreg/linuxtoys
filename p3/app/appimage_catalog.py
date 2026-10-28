@@ -1,7 +1,9 @@
 """Cached discovery metadata from the AppImage community feed.
 
 This module does not resolve releases or download AppImages. Network access is
-limited to one feed request when the cache is stale.
+limited to one feed request when the cache is stale. Entries are classified
+against LinuxToys' finer categories from their own name and description so
+swept-in feed taxonomy does not misplace them.
 """
 from __future__ import annotations
 
@@ -169,6 +171,531 @@ def _developer_names(authors):
     return ", ".join(names)
 
 
+# ---------------------------------------------------------------------------
+# Intent classification for community feed entries.
+#
+# The feed carries upstream-written categories that are far broader than the
+# LinuxToys tree, and the resolver maps those broad tags literally (a CAD
+# package tagged "Graphics" would land under creative instead of office/eng,
+# the canonical complaint). Instead of pinning individual app IDs, entries are
+# classified from their own name and description with weighted keyword
+# patterns per destination, offline and deterministically:
+#
+# - Name evidence (weight 3.0) outranks description evidence; names are short
+#   and product-specific. CamelCase names are split so tokens like CAD in
+#   "LibreCAD"/"QymCAD" still match.
+# - Unambiguous multi-token phrases score 3.0, ordinary phrases 2.0 and loose
+#   single tokens 1.0. A destination wins only at >= 2.5: a lone loose phrase
+#   can never flip an entry on its own.
+# - At most one destination emits per entry (the highest-scoring spec, spec
+#   order breaking ties): the classifier picks the app's one evident purpose
+#   rather than accumulating every topic it mentions.
+# - Guards veto a whole spec when a contradicting context matches (terminal
+#   emulators, QEMU/virtualization vs games, "video downloader" vs video
+#   editing, AI-farm chat clients vs messaging, ...). Silence beats a
+#   misclassification.
+# - Inferred tags are appended, never replaced: the AppStream resolver's own
+#   specificity engine (cross-main rules, generic-vs-specific priority) then
+#   decides. A precise feed main category ("Game") therefore outranks weak
+#   inference, while a vague bucket ("Utility", "None", toolkit tags) is
+#   legitimately overturned by strong evidence.
+#
+# Every emitted tag is routed by the AppStream category config in
+# appstream_parser (mirroring snap_catalog._CATEGORY_MAP), so no resolver
+# change is needed; tuples such as ("Network", "P2P") deliberately pair a Main
+# and Additional tag so an expression refines a generic feed main.
+# ---------------------------------------------------------------------------
+
+_INTENT_NAME_WEIGHT = 3.0
+_INTENT_STRONG_WEIGHT = 3.0
+_INTENT_PHRASE_WEIGHT = 2.0
+_INTENT_TERM_WEIGHT = 1.0
+_INTENT_THRESHOLD = 2.5
+
+# (destination tags, name patterns, strong phrases, phrases, terms, guards).
+# Order matters only for score ties: the earlier spec wins.
+_INTENT_SPECS = (
+    # Engineering: CAD, CAM/3D printing, PCB/EDA.
+    (
+        ("Engineering",),
+        (r"\bcad\b", r"cad$", r"openscad", r"kicad"),
+        (
+            r"computer[- ]aided",
+            r"\bcad\b",
+            r"3d print",
+            r"\bslicer\b",
+            r"\bg[- ]?code\b",
+            r"parametric (model|design|part|cad)",
+            r"pcb design",
+            r"solid model",
+            r"mechanical (design|engineering|cad)",
+            r"technical drawing",
+            r"engineering\b",
+            r"\bcam\b",
+            r"finite element",
+            r"\bcnc\b",
+            r"circuit (design|simulat)",
+            r"schematic",
+            r"\bpcb\b",
+            r"verilog",
+            r"vhdl",
+            r"\bfpga\b",
+            r"\beda\b",
+            r"\bgerber\b",
+        ),
+        (r"\btoolpath\b", r"logic analyzer"),
+        (r"\bdwg\b", r"\bdxf\b", r"\biges\b", r"\bstl\b", r"\bspice\b"),
+        (r"software engineer", r"reverse engineering", r"web ?cam|camera", r"coding"),
+    ),
+    # Music production / audio editing (not playback).
+    (
+        ("Audio",),
+        (r"\bsynth\b", r"\bsequencer\b", r"\bmidi\b"),
+        (
+            r"digital audio workstation",
+            r"\bdaw\b",
+            r"audio (edit|editor|editing)",
+            r"music production",
+            r"\bmidi\b",
+            r"synthesizer",
+            r"sound design",
+            r"vst",
+            r"multitrack",
+            r"\boscilloscope\b",
+        ),
+        (r"music (studio|tool|tools|software)",),
+        (r"\bwaveform\b", r"\bsample library\b"),
+        (r"video.{0,12}audio|audio.{0,12}video", r"video (edit|editing|editor)"),
+    ),
+    # Video creation: editors, recorders, streamers, converters.
+    (
+        ("AudioVideo", "AudioVideoEditing"),
+        (),
+        (
+            r"video[/ !]?(?:and |/?)(?:edit|editing|editor)",
+            r"video[/ ]audio",
+            r"non[- ]linear (edit|editing|editor)",
+            r"\bnle\b",
+            r"screen (record|recording|recorder)",
+            r"screencast",
+            r"stop[- ]motion",
+            r"chroma key",
+            r"subtitle editor",
+            r"animation (studio|software|tools?)",
+            r"green screen",
+            r"live streaming",
+            r"video converter",
+        ),
+        (r"\bvfx\b", r"(video|clip) (cutter|trimmer)", r"(video|clip) trim"),
+        (r"\bffmpeg\b", r"\bmp4\b", r"\bwebm\b"),
+        (r"downloader",),
+    ),
+    # Photo workflows.
+    (
+        ("Graphics", "Photography"),
+        (),
+        (
+            r"photo (editing|editor|retouch|workflow|manag)",
+            r"(raw|dng) (processing|develop|editing|converter)",
+            r"image (edit|editing|editor)",
+            r"\bhdr\b",
+            r"focus stacking",
+            r"photography",
+            r"darkroom",
+            r"portrait retouch",
+            r"film (emul|simulation)",
+        ),
+        (r"image toolbox", r"photo filter"),
+        (r"\bdng\b", r"\bexif\b"),
+        (),
+    ),
+    # Digital art / drawing / painting (never CAD; never screenshots).
+    (
+        ("Graphics", "2DGraphics"),
+        (),
+        (
+            r"digital paint",
+            r"drawing (software|app|tool|tablet|pad|program)",
+            r"(picture|painting|art) tablet",
+            r"comic (book|panel|creator)",
+            r"vector (draw|graphics editor)",
+            r"image generat",
+        ),
+        (r"\bpainting\b", r"\bsketch\b", r"pixel art", r"\bdraw\b", r"illustrat"),
+        (r"\bbrush(es)?\b",),
+        (r"screenshot",),
+    ),
+    # Transfers: torrent and other download/transfer clients.
+    (
+        ("Network", "P2P"),
+        (),
+        (
+            r"torrent (client|downloader|search|manager)",
+            r"\btorrents?\b",
+            r"magnet link",
+            r"peer[- ]to[- ]peer",
+            r"file sharing",
+            r"\bftp\b",
+            r"video downloader",
+        ),
+        (r"share files", r"download manager", r"download videos"),
+        (r"\bmagnet\b", r"\bseeding\b"),
+        (),
+    ),
+    # Messaging and social apps (mail clients included; AI bots excluded).
+    (
+        ("Chat",),
+        (r"\bmessenger\b",),
+        (
+            r"messenger",
+            r"chat (client|app|service)",
+            r"instant messaging",
+            r"whatsapp",
+            r"telegram",
+            r"discord",
+            r"matrix (client|protocol|homeserver)",
+            r"irc client",
+            r"e[- ]?mail (client|app|service)",
+            r"voip",
+            r"sip client",
+            r"team communication",
+        ),
+        (r"\bchat\b", r"\bsocial\b"),
+        (),
+        (
+            r"chat ?bot",
+            r"\bgpt\b",
+            r"\bllm\b",
+            r"ai (assistant|agent|chat|bots?)",
+            r"claude",
+            r"anthropic",
+            r"openai",
+            r"gemini",
+        ),
+    ),
+    # Web browsers.
+    (
+        ("Network", "WebBrowser"),
+        (r"\bbrowser\b",),
+        (
+            r"web browser",
+            r"browsing (experience|needs)",
+            r"privacy[- ]focused browser",
+        ),
+        (r"\bbrowser\b", r"ad block"),
+        (r"\bchromium\b", r"\bgecko\b"),
+        (r"browser (automation|framework|e?xtensi)", r"(web|site) scraping"),
+    ),
+    # Remote access and desktop sharing.
+    (
+        ("RemoteAccess",),
+        (),
+        (
+            r"remote (desktop|control|management|access|session)",
+            r"\bvnc\b",
+            r"\brdp\b",
+            r"ssh client",
+            r"desktop sharing",
+            r"screen (mirroring|share)",
+        ),
+        (r"\bremote\b", r"\bssh\b"),
+        (),
+        (r"(git|github|repository) remote", r"remote (repo|database|administration)"),
+    ),
+    # Terminal emulators and shells.
+    (
+        ("TerminalEmulator",),
+        (r"\bterminal\b",),
+        (
+            r"terminal emulator",
+            r"terminal (multiplexer|session)",
+            r"\bash\b",
+        ),
+        (r"\bterminal\b", r"command[- ]line"),
+        (r"\bshell\b", r"\btty\b"),
+        (),
+    ),
+    # Document viewers/editors: PDF, ebooks, word processing, notes.
+    (
+        ("WordProcessor",),
+        (r"\bnotes?\b",),
+        (
+            r"pdf (reader|viewer|editor|converter)",
+            r"e[- ]?book reader",
+            r"word processor",
+            r"markdown (editor|notes|writer)",
+            r"note[- ]taking",
+            r"taking notes",
+            r"spreadsheet",
+            r"latex (editor|typesetting)",
+            r"writing (tool|app|platform)",
+            r"digital book reader",
+            r"organize notes",
+        ),
+        (r"documents? (reader|viewer)", r"\bepub\b", r"read documents"),
+        (r"\bpdf\b", r"\bodt\b"),
+        (),
+    ),
+    # Planning, boards and scheduling (not system task managers).
+    (
+        ("Office", "ProjectManagement"),
+        (r"\bcalendar\b",),
+        (
+            r"project management",
+            r"\bkanban\b",
+            r"\bgantt\b",
+            r"task (management|tracking)",
+            r"to[- ]?do (list|app)",
+            r"time track",
+            r"\bagile\b",
+            r"\bscrum\b",
+        ),
+        (
+            r"plan(?:n?er|ning)",
+            r"\bcalendar\b",
+            r"task (tracker|list|planner)",
+            r"organize (tasks|projects)",
+            r"habit track",
+        ),
+        (),
+        # Task managers that mean process/system monitors are not planners.
+        (
+            r"task manager",
+            r"system monitor",
+            r"\bprocess(es)?\b",
+            r"\bcpu\b",
+            r"\bwine\b",
+            r"windows (software|apps?)",
+        ),
+    ),
+    # Personal finance.
+    (
+        ("Finance",),
+        (r"\bwallet\b",),
+        (
+            r"\bbudget(s|ing)?\b",
+            r"\bwallet\b",
+            r"invoic",
+            r"accounting",
+            r"expense (track|manag)",
+            r"money (manager|management)",
+            r"personal finance",
+            r"stock (portfolio|trading)",
+            r"crypto (wallet|portfolio|tracking)",
+            r"bank",
+        ),
+        (r"trading", r"currency", r"portfolio"),
+        (r"\btax\b",),
+        (r"mining",),
+    ),
+    # Health and self-care.
+    (
+        ("HealthFitness",),
+        (),
+        (
+            r"fitness",
+            r"workout",
+            r"exercis",
+            r"\bdiet\b",
+            r"nutrition",
+            r"calorie",
+            r"wellness",
+            r"medication",
+            r"symptom",
+            r"period track",
+            r"pregnancy",
+            r"sleep (track|analysis)",
+        ),
+        (),
+        (r"\bdaylio\b",),
+        (),
+    ),
+    # Accessibility tooling.
+    (
+        ("HealthFitness", "Accessibility"),
+        (),
+        (
+            r"screen reader",
+            r"screen magnifier",
+            r"\bbraille\b",
+            r"dyslexia",
+            r"assistive",
+            r"accessibility (tool|feature|features|app|apps)",
+        ),
+        (),
+        (),
+        (),
+    ),
+    # Astronomy.
+    (
+        ("Science", "Astronomy"),
+        (),
+        (
+            r"astronomy",
+            r"planetarium",
+            r"telescope",
+            r"star map",
+            r"observator",
+        ),
+        (),
+        (r"\bplanets?\b", r"\bspace\b"),
+        (),
+    ),
+    # AI assistants and agents (not image/media AI features).
+    (
+        ("ArtificialIntelligence",),
+        (r"\bgpt\b", r"\bollama\b"),
+        (
+            r"ai (assistant|agent|agents|coding|chat|model|toolkit)",
+            r"\bllms?\b",
+            r"large language model",
+            r"\bchatbot\b",
+            r"\bclaude\b",
+            r"\bopenai\b",
+            r"machine learning (model|framework)",
+        ),
+        (),
+        (),
+        (),
+    ),
+    # Emulators and ROM management (never terminal emulation, VMs or film
+    # simulation; "BitTorrent ratio emulator" stays a transfer utility).
+    (
+        ("Emulator",),
+        (),
+        (
+            r"\bemulat(e|es|ion|or|ors)\b",
+            r"console emulation",
+            r"retro (gaming|console)",
+        ),
+        (r"\broms?\b", r"\bnes\b", r"\bsnes\b", r"\bgba\b"),
+        (r"dreamcast", r"playstation"),
+        (
+            r"virtual(ization|isation| )?machin",
+            r"virtualiz",
+            r"\bqemu\b",
+            r"virtualbox",
+            r"windows (app|applications?)",
+            r"\bfilm\b",
+            r"terminal",
+            r"torrent",
+        ),
+    ),
+    # Passwords, keys and firewalls (not crypto libraries).
+    (
+        ("Security",),
+        (),
+        (
+            r"password (manager|vault|safe|protection)",
+            r"password (vault|safe)",
+            r"authenticator",
+            r"two[- ]factor",
+            r"\b2fa\b",
+            r"\bfirewall\b",
+            r"password",
+        ),
+        (r"secure", r"\bencrypt(ed|ion)\b", r"\bkeystore\b"),
+        (r"\bgpg\b", r"\bpgp\b", r"\botp\b"),
+        (r"cryptography (library|after)",),
+    ),
+    # Archives, compression and encryption of one's own files (not media).
+    (
+        ("Archiving",),
+        (),
+        (
+            r"compress(ion|or|\b)",
+            r"archiv(er|ing|e manager)",
+            r"extract(ing)? files",
+            r"7[- ]?zip",
+            r"encrypt",
+            r"\bencrypt(ed|ion)\b",
+        ),
+        (r"\bzip\b", r"\brar\b", r"\bgpg\b"),
+        (),
+        (r"compress(ing|es)? (your |the )?(image|photo|video|audio)",),
+    ),
+)
+
+_INTENT_COMPILED = tuple(
+    (
+        tags,
+        [re.compile(pattern, re.I) for pattern in name],
+        [re.compile(pattern, re.I) for pattern in strong],
+        [re.compile(pattern, re.I) for pattern in phrase],
+        [re.compile(pattern, re.I) for pattern in term],
+        [re.compile(pattern, re.I) for pattern in guard],
+    )
+    for tags, name, strong, phrase, term, guard in _INTENT_SPECS
+)
+
+_CAMEL_SPLIT = re.compile(r"[A-Z]+(?![a-z])|[A-Z][a-z]+|[0-9]+")
+_INTENT_TAG_MARKUP = re.compile(r"<(?!\s)[^>]+>")
+_INTENT_WHITESPACE = re.compile(r"\s+")
+
+
+def _intent_name_variants(name):
+    """Original name plus a camel-case split copy, for token-style matches."""
+    name = name.strip()
+    if not name:
+        return ""
+    tokens = _CAMEL_SPLIT.findall(name)
+    if tokens:
+        return f"{name.lower()} {' '.join(token.lower() for token in tokens)}"
+    return name.lower()
+
+
+def _intent_about_text(description):
+    """Feed description reduced to plain searchable text."""
+    text = _INTENT_TAG_MARKUP.sub(" ", description or "")
+    return _INTENT_WHITESPACE.sub(" ", text).strip()
+
+
+def _best_intent(name, description):
+    """Return the winning (tags, score) destination for one entry, or None.
+
+    Guards veto a whole destination before scoring; at most one destination
+    passes and only at the threshold. Spec order resolves score ties.
+    """
+    hay_name = _intent_name_variants(name)
+    about = _intent_about_text(description)
+    if not hay_name and not about:
+        return None
+    best = None
+    for tags, patterns_name, patterns_strong, patterns_phrase, patterns_term, patterns_guard in _INTENT_COMPILED:
+        if any(pattern.search(hay_name) or pattern.search(about) for pattern in patterns_guard):
+            continue
+        score = 0.0
+        score += _INTENT_NAME_WEIGHT * sum(1 for pattern in patterns_name if pattern.search(hay_name))
+        score += _INTENT_STRONG_WEIGHT * sum(1 for pattern in patterns_strong if pattern.search(about))
+        score += _INTENT_PHRASE_WEIGHT * sum(1 for pattern in patterns_phrase if pattern.search(about))
+        score += _INTENT_TERM_WEIGHT * sum(1 for pattern in patterns_term if pattern.search(about))
+        if score >= _INTENT_THRESHOLD and (best is None or score > best[1]):
+            best = (tags, score)
+    return best
+
+
+def refine_entry_categories(categories, name, description):
+    """Append this entry's inferred destination tags to its feed categories.
+
+    Returns a new list; the original feed tags are always preserved. Inference
+    must never break a feed build, so any unexpected failure keeps the entry
+    exactly as the feed supplied it.
+    """
+    try:
+        best = _best_intent(name, description)
+    except Exception:  # pragma: no cover - defensive, see docstring
+        logging.debug("AppImage intent classification failed", exc_info=True)
+        return categories
+    if not best:
+        return categories
+    tags, _score = best
+    refined = list(categories)
+    for tag in tags:
+        if tag not in refined:
+            refined.append(tag)
+    return refined
+
+
 def normalize(feed):
     """Normalize conservative, directly supported presentation fields.
 
@@ -221,6 +748,10 @@ def normalize(feed):
             categories = [raw_categories.strip()]
         else:
             categories = []
+        # Refined routing: the resolver maps tags literally, so entries whose
+        # feed tags are too broad to state their purpose (CAD under Graphics,
+        # media tools under Utility) gain the classifier's steering tags too.
+        categories = refine_entry_categories(categories, name, description)
         result.append({
             "id": "appimage.community." + "".join(c if c.isalnum() else "-" for c in key).strip("-"),
             "name": name,
