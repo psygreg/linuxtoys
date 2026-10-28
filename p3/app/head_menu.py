@@ -6,7 +6,15 @@ from . import action_registry
 from . import get_icon_path
 from . import git_scripts_manager
 from . import compat
-from .lang_utils import create_translator, get_automatic_updates, save_automatic_updates
+from .lang_utils import (
+    create_translator,
+    get_automatic_updates,
+    save_automatic_updates,
+    get_automatic_error_reports,
+    save_automatic_error_reports,
+    get_mcp_server_enabled,
+    save_mcp_server_enabled,
+)
 from .gtk_dialogs import WaitDialog
 import threading
 import asyncio
@@ -127,7 +135,8 @@ class MenuButton(Gtk.MenuButton):
 		separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
 		# Add auto error reports checkbox
 		self.auto_error_reports = Gtk.CheckButton(label=_("auto_error_reports"))
-		self.auto_error_reports.set_active(False)  # Disabled by default
+		# Persisted like automatic updates: the MCP server can also toggle it.
+		self.auto_error_reports.set_active(get_automatic_error_reports())
 		self.auto_error_reports.connect("toggled", self.__on_auto_error_reports_toggled)
 
 		# Translators: automatic_updates = "Automatic updates"
@@ -145,6 +154,22 @@ class MenuButton(Gtk.MenuButton):
 			self.auto_updates.set_active(get_automatic_updates())
 		self.auto_updates.connect("toggled", self.__on_auto_updates_toggled)
 
+		# Opt-in MCP agent server. The toggle installs/enables the systemd
+		# --user service (`linuxtoys-mcp.service`) that the app ships but never
+		# enables on its own. When systemd user services are unavailable the
+		# checkbox mirrors the stored preference only.
+		mcp_label = _("mcp_agent_server")
+		if mcp_label == "mcp_agent_server":
+			mcp_label = "MCP Agent Server"
+		self.mcp_server_toggle = Gtk.CheckButton(label=mcp_label)
+		self.mcp_server_toggle.set_tooltip_text(_("mcp_agent_server_tooltip"))
+		self._mcp_applying = False
+		# Fast preference first; the real service state lands on the checkbox
+		# from a background probe (systemctl calls must not delay startup).
+		self.mcp_server_toggle.set_active(get_mcp_server_enabled())
+		self.mcp_server_toggle.connect("toggled", self.__on_mcp_toggled)
+		threading.Thread(target=self.__mcp_state_probe, daemon=True).start()
+
 		vbox.pack_start(self.load_manifest, True, True, 0)
 		vbox.pack_start(self.language_select, True, True, 0)
 		vbox.pack_start(self.about_item, True, True, 0)
@@ -153,6 +178,7 @@ class MenuButton(Gtk.MenuButton):
 		vbox.pack_start(separator, False, False, 0)
 		vbox.pack_start(self.auto_error_reports, False, False, 0)
 		vbox.pack_start(self.auto_updates, False, False, 0)
+		vbox.pack_start(self.mcp_server_toggle, False, False, 0)
 		vbox.show_all()
 
 		pop.add(vbox)
@@ -170,11 +196,89 @@ class MenuButton(Gtk.MenuButton):
 		self.auto_error_reports.set_label(_("auto_error_reports"))
 		auto_updates_label = _("autosysup")
 		self.auto_updates.set_label("Automatic updates" if auto_updates_label == "autosysup" else auto_updates_label)
+		mcp_label = _("mcp_agent_server")
+		self.mcp_server_toggle.set_label("MCP Agent Server" if mcp_label == "mcp_agent_server" else mcp_label)
+
+	def __mcp_initial_state(self):
+		"""Service enablement is the source of truth; the stored preference is
+		only the fallback when systemd user services cannot be queried."""
+		try:
+			from . import mcp_server
+			status = mcp_server.service_status()
+			if status.get("available"):
+				return bool(status.get("enabled"))
+		except Exception:
+			pass
+		return get_mcp_server_enabled()
+
+	def __mcp_state_probe(self):
+		state = self.__mcp_initial_state()
+		GLib.idle_add(self.__mcp_state_probe_done, state)
+
+	def __mcp_state_probe_done(self, state):
+		if not self.mcp_server_toggle.get_sensitive() or self.mcp_server_toggle.get_active() == state:
+			return False
+		self._mcp_applying = True
+		self.mcp_server_toggle.set_active(state)
+		self._mcp_applying = False
+		return False
+
+	def __on_mcp_toggled(self, widget):
+		"""Install/enable or disable the MCP agent server systemd service."""
+		if self._mcp_applying:
+			return  # Programmatic state restore, not a user action.
+		self._mcp_applying = True
+		is_enabled = widget.get_active()
+		save_mcp_server_enabled(is_enabled)
+		widget.set_sensitive(False)
+		threading.Thread(
+			target=self.__mcp_service_worker,
+			args=(is_enabled,),
+			daemon=True,
+		).start()
+
+	def __mcp_service_worker(self, is_enabled):
+		error = ""
+		try:
+			from . import mcp_server
+			ok, message = mcp_server.apply_service_state(is_enabled, session_env=os.environ)
+			if not ok:
+				error = message
+			elif is_enabled:
+				mcp_server.install_agent_skill()
+		except Exception as exc:
+			error = str(exc)
+		GLib.idle_add(self.__mcp_service_done, is_enabled, error)
+
+	def __mcp_service_done(self, is_enabled, error):
+		self.mcp_server_toggle.set_sensitive(True)
+		if error:
+			_ = create_translator()
+			dialog = Gtk.MessageDialog(
+				transient_for=self.get_toplevel(),
+				flags=0,
+				message_type=Gtk.MessageType.ERROR,
+				buttons=Gtk.ButtonsType.OK,
+				text=_("mcp_service_failed_title"),
+			)
+			dialog.format_secondary_text(error)
+			dialog.run()
+			dialog.destroy()
+			# Reflect the actual state after a failed transition, without
+			# re-triggering the service operation.
+			actual = self.__mcp_initial_state()
+			if self.mcp_server_toggle.get_active() != actual:
+				self.mcp_server_toggle.handler_block_by_func(self.__on_mcp_toggled)
+				self.mcp_server_toggle.set_active(actual)
+				self.mcp_server_toggle.handler_unblock_by_func(self.__on_mcp_toggled)
+		self._mcp_applying = False
+		return False
 
 	def __on_auto_error_reports_toggled(self, widget):
 		"""Handle auto error reports checkbox toggle"""
 		is_enabled = widget.get_active()
-		# Store the preference on parent window
+		# Persist the preference and apply it to the current window.
+		save_automatic_error_reports(is_enabled)
 		if self.parent_window:
 			self.parent_window.auto_error_reports_enabled = is_enabled
 

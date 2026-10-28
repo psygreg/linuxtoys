@@ -95,6 +95,16 @@ makepkg -si
 
 You may use the AppImage available at the latest release to use LinuxToys without requiring installation. For SteamOS, the automatic installer will integrate this AppImage using *Gear Lever*.
 
+## MCP Agent Server
+
+LinuxToys ships with an opt-in **MCP (Model Context Protocol) server** that lets AI agents use the app on your behalf, like a user would: browse and search the catalog, read app pages (descriptions, screenshots, donation and purchase links), install and remove apps, translate descriptions, and change settings such as automatic updates, automatic bug reports and language.
+
+- **Off by default.** Turn it on from the app menu (☰) with the *MCP Agent Server* toggle, or let an agent do it following the bundled `linuxtoys-mcp` agent skill.
+- **Runs as a systemd user service** (`linuxtoys-mcp.service`): installed with the app, enabled only when you toggle it, and started automatically with your session from then on. It never registers the GUI's application identity, so the app keeps launching normally through every other method.
+- **Your credentials stay yours.** When an installation needs root, the usual `askpass` password dialog appears on *your* screen — the agent never sees or handles credentials. The server listens only on `127.0.0.1`, and agents authenticate with a per-install token stored at `~/.config/linuxtoys/mcp-token`.
+
+Agents connect over MCP Streamable HTTP at `http://127.0.0.1:7420/mcp` (port configurable in `~/.config/linuxtoys/settings.conf`, `[mcp] port`). The bundled skill teaches agents how to enable the server and use every tool; you can also install it manually to any agent that supports skills — it is bundled inside the app (`/usr/share/linuxtoys/app/mcp_skill/SKILL.md`) and written to detected agents' skill directories when you enable the server.
+
 ## Suggestions, feature requests and other topics
 
 For suggestions, feature requests and issue reports that for any reason are not possible to send through the LinuxToys bug reporting system, please refer to the [Discussions](https://github.com/psygreg/linuxtoys/discussions).

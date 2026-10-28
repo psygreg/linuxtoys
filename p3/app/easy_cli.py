@@ -1104,6 +1104,7 @@ def easy_cli_help_message():
     print("  -h, --help         Show this help message")
     print("  -l, --list         List all available scripts")
     print("  -m, --manifest     Enable manifest mode features")
+    print("  --mcp              Run the MCP server for AI agents (systemd service mode)")
     print("  export-manifest    Export registered operations to ~/linuxtoys-manifest.txt")
     print("  -v, --version      Show version information")
     print("  -y, --yes          Skip confirmation prompts (recommended as the last argument)")

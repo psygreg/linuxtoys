@@ -90,6 +90,96 @@ def save_automatic_updates(enabled):
         print(f"Error saving automatic update preference: {e}")
         return False
 
+
+def get_automatic_error_reports():
+    """Return whether failed scripts submit bug reports automatically (default: False)."""
+    config_file = os.path.join(get_config_dir(), "settings.conf")
+    if not os.path.exists(config_file):
+        return False
+
+    try:
+        config = configparser.ConfigParser()
+        config.read(config_file)
+        return config.getboolean("reports", "automatic", fallback=False)
+    except Exception:
+        return False
+
+
+def save_automatic_error_reports(enabled):
+    """Persist the automatic bug report preference."""
+    config_file = os.path.join(get_config_dir(), "settings.conf")
+    config = configparser.ConfigParser()
+
+    try:
+        if os.path.exists(config_file):
+            config.read(config_file)
+        if not config.has_section("reports"):
+            config.add_section("reports")
+        config.set("reports", "automatic", "true" if enabled else "false")
+        with open(config_file, "w") as f:
+            config.write(f)
+        return True
+    except Exception as e:
+        print(f"Error saving automatic bug report preference: {e}")
+        return False
+
+
+def get_mcp_server_enabled():
+    """Return whether the MCP agent server service is enabled (default: False)."""
+    config_file = os.path.join(get_config_dir(), "settings.conf")
+    if not os.path.exists(config_file):
+        return False
+
+    try:
+        config = configparser.ConfigParser()
+        config.read(config_file)
+        return config.getboolean("mcp", "enabled", fallback=False)
+    except Exception:
+        return False
+
+
+def save_mcp_server_enabled(enabled):
+    """Persist the MCP agent server preference."""
+    config_file = os.path.join(get_config_dir(), "settings.conf")
+    config = configparser.ConfigParser()
+
+    try:
+        if os.path.exists(config_file):
+            config.read(config_file)
+        if not config.has_section("mcp"):
+            config.add_section("mcp")
+        config.set("mcp", "enabled", "true" if enabled else "false")
+        with open(config_file, "w") as f:
+            config.write(f)
+        return True
+    except Exception as e:
+        print(f"Error saving MCP server preference: {e}")
+        return False
+
+
+def get_mcp_server_port():
+    """Return the MCP agent server port (default: 7420).
+
+    ``LINUXTOYS_MCP_PORT`` overrides the stored preference for the current
+    process (used by tests and development).
+    """
+    override = os.environ.get("LINUXTOYS_MCP_PORT")
+    if override and override.isdigit() and 1 <= int(override) <= 65535:
+        return int(override)
+    config_file = os.path.join(get_config_dir(), "settings.conf")
+    if not os.path.exists(config_file):
+        return 7420
+
+    try:
+        config = configparser.ConfigParser()
+        config.read(config_file)
+        port = config.getint("mcp", "port", fallback=7420)
+        if 1 <= port <= 65535:
+            return port
+        return 7420
+    except Exception:
+        return 7420
+
 @lru_cache(maxsize=1)
 def detect_system_language():
     """

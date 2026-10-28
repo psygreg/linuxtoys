@@ -1,0 +1,31 @@
+# LinuxToys MCP Agent Server — systemd user service template.
+#
+# This file ships inside the application (p3/systemd/) and is installed as a
+# systemd --user unit by the app's "MCP Agent Server" header toggle (or by an
+# agent following the bundled skill). It is never enabled by default: installing
+# the app only makes the unit available.
+#
+# At install time the app fills in the ExecStart placeholder with the launcher
+# for the current installation kind (package, AppImage or source tree) and
+# appends Environment= lines for the graphical session (DISPLAY,
+# WAYLAND_DISPLAY, XAUTHORITY, DBUS session address, ...) so askpass password
+# dialogs and package-manager prompts reach the user's screen.
+#
+# The service runs headless and deliberately does NOT register the
+# toys.linux.LinuxToys GUI application identity: the app keeps launching
+# normally through the desktop, TUI and CLI while this server is running.
+
+[Unit]
+Description=LinuxToys MCP Agent Server
+Documentation=https://linux.toys
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=@EXEC_START@
+Restart=on-failure
+RestartSec=5s
+@ENVIRONMENT_LINES@
+[Install]
+WantedBy=graphical-session.target

@@ -53,7 +53,11 @@ from .featured_scripts import FeaturedCtl
 from .local_scripts import LocalScriptsCtl
 from .updater.update_dialog import UpdateDialog
 from .updater.update_helper import UpdateHelper, run_background_update
-from .lang_utils import get_automatic_updates, create_translator
+from .lang_utils import (
+    get_automatic_updates,
+    get_automatic_error_reports,
+    create_translator,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -148,8 +152,8 @@ class AppWindow(
         # Checklist
         self.check_buttons = []
 
-        # Auto error reporting preference
-        self.auto_error_reports_enabled = False
+        # Auto error reporting preference (persisted; toggled in the menu).
+        self.auto_error_reports_enabled = get_automatic_error_reports()
 
         # Automatic self-update state. Missing preferences intentionally default on.
         # GregOS ships LinuxToys inside its image, so self-updating is forced off

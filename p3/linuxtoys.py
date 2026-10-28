@@ -32,6 +32,12 @@ GUI_PACKAGE_SUFFIXES = (
 
 GUI_FLAGS = ("-g", "--gui")
 
+# MCP_AGENT_SERVER_FLAG: `linuxtoys --mcp` runs the headless MCP server for AI
+# agents (also the systemd user service ExecStart). It never registers the GUI
+# application identity, so the app keeps launching normally through every other
+# method while the server is running.
+MCP_FLAGS = ("--mcp",)
+
 # Set when the resolved target interface is the TUI (bare launch in a
 # terminal or an explicit ``--tui``), so launch-time network work can be
 # deferred to the TUI's own background workers.
@@ -74,6 +80,10 @@ def configure_launch_flags():
     for argument in sys.argv[1:]:
         if argument in GUI_FLAGS:
             gui_requested = True
+            continue
+
+        if argument in MCP_FLAGS:
+            os.environ["LINUXTOYS_MCP"] = "1"
             continue
 
         environment_variable = launch_flags.get(argument)
@@ -185,6 +195,16 @@ if __name__ == "__main__":
         print_dev_mode_banner()
     except ImportError:
         pass  # dev_mode not available
+
+    # --- MCP SERVER MODE ---
+    # The headless MCP agent server must bypass the GUI display check, the CLI
+    # update check and the EASY_CLI interface entirely: it is a separate
+    # service process that never registers the GUI application identity.
+    # An explicit --gui request always wins over the server.
+    if os.environ.get('LINUXTOYS_MCP') == '1' and not gui_requested:
+        os.environ.pop('EASY_CLI', None)
+        from app.mcp_server import run_service
+        sys.exit(run_service())
 
     # --- UPDATE CHECK ---
     # Check for updates only in CLI mode (EASY_CLI=1) and display feedback in the terminal.
