@@ -21,6 +21,7 @@ Constants:
 """
 
 import asyncio
+import os
 from functools import partial
 
 from textual import on, work
@@ -59,6 +60,7 @@ from .helper import (
     get_categories,
     get_specials_root_item,
     homebrew_category_info,
+    invalidate_search_caches,
     is_appimage_path,
     is_registered_entry,
     is_search_ready,
@@ -810,13 +812,68 @@ class LinuxToys(App):
 
         BLOCKING: thread worker. A failure is logged and does not stop
         the app: without the cache, search is slower. It always goes on
-        to ``_show_home``.
+        to ``_show_home``, and then kicks off the background scripts
+        synchronization.
         """
         try:
             warm_search_and_category_index(translations)
         except Exception as e:  # noqa: BLE001
             self.log.error(f"warm index failed: {e}")
         self.call_from_thread(self._show_home)
+        self._sync_scripts_after_boot()
+
+    @work(thread=True, exclusive=True, group="boot-sync")
+    def _sync_scripts_after_boot(self) -> None:
+        """Synchronize the scripts tree after the TUI is running.
+
+        BLOCKING: thread worker. Mirrors the GUI launch sequence: startup
+        never waits for network or git, so the launch picked the best
+        immediately available tree and the interval-based synchronization
+        runs here. When it brings a new tree, the caches are invalidated,
+        the index is re-warmed and an untouched home list is refreshed.
+        """
+        from app import git_scripts_manager, parser
+
+        try:
+            result = git_scripts_manager.synchronize_scripts()
+            if not result.get("success") or not result.get("changed"):
+                return
+
+            new_root = os.path.abspath(result.get("path") or "")
+            if not new_root or not os.path.isdir(new_root):
+                return
+
+            parser.set_scripts_dir(new_root)
+            os.environ["CACHE_DIR"] = new_root
+
+            invalidate_search_caches()
+            try:
+                warm_search_and_category_index(translations)
+            except Exception as e:  # noqa: BLE001
+                self.log.error(f"index re-warm failed: {e}")
+        except Exception as e:  # noqa: BLE001
+            self.log.error(f"background scripts sync failed: {e}")
+            return
+        self.call_from_thread(self._refresh_home_after_sync)
+
+    def _refresh_home_after_sync(self) -> None:
+        """Re-render the home list after a boot sync changed the scripts tree.
+
+        Runs on the UI thread. Navigation, search results and app pages keep
+        the tree they were built from; only an untouched home list is
+        refreshed.
+        """
+        try:
+            screen = self.screen
+            if not isinstance(screen, HomeScreen):
+                return
+            if screen._nav_stack or screen._is_app_page_showing:
+                return
+            if screen.query_one("#search-input", Input).value.strip():
+                return
+            screen.run_worker(screen._render_items(screen._home_items()))
+        except Exception as e:  # noqa: BLE001
+            self.log.error(f"home refresh after sync failed: {e}")
 
     def _show_home(self) -> None:
         self.switch_screen(HomeScreen())

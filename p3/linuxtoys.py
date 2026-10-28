@@ -23,6 +23,11 @@ GUI_PACKAGE_SUFFIXES = (
 
 GUI_FLAGS = ("-g", "--gui")
 
+# Set when the resolved target interface is the TUI (bare launch in a
+# terminal or an explicit ``--tui``), so launch-time network work can be
+# deferred to the TUI's own background workers.
+tui_requested = False
+
 def is_gui_external_request(argument):
     """Return True for external requests that must be handled by the GUI."""
     if not isinstance(argument, str) or not argument:
@@ -86,6 +91,7 @@ def resolve_default_interface(gui_requested):
       Without a terminal (desktop launchers) it falls back to the GUI.
     - Explicit ``EASY_CLI``/``UPD_SERVICE`` environments are respected.
     """
+    global tui_requested
     arguments = sys.argv[1:]
 
     if gui_requested:
@@ -103,6 +109,7 @@ def resolve_default_interface(gui_requested):
 
     if is_interactive_terminal():
         sys.argv.append("--tui")
+        tui_requested = True
 
 
 if __name__ == "__main__":
@@ -121,6 +128,7 @@ if __name__ == "__main__":
 
     if len(sys.argv) == 2 and sys.argv[1] in ("-t", "--tui"):
         os.environ["EASY_CLI"] = "1"
+        tui_requested = True
 
     if len(sys.argv) == 2 and sys.argv[1] in ("-v", "--version", "-h", "--help", "help"):
         from app.easy_cli import easy_cli_help_message, print_version
@@ -171,7 +179,9 @@ if __name__ == "__main__":
 
     # --- UPDATE CHECK ---
     # Check for updates only in CLI mode (EASY_CLI=1) and display feedback in the terminal.
-    if os.environ.get('EASY_CLI') == '1':
+    # TUI launches skip it: the TUI owns update checks through its own menu, and
+    # its startup must not block on the network before the first screen appears.
+    if os.environ.get('EASY_CLI') == '1' and not tui_requested:
         from app.manifest_helper import run_update_check_cli
         run_update_check_cli()
         # If running as UPD_SERVICE, run system update after app update completes
@@ -198,12 +208,13 @@ if __name__ == "__main__":
     try:
         from app.scripts_loader import initialize_scripts, prepare_scripts
 
-        if cli_mode:
+        if cli_mode and not tui_requested:
             # CLI/headless mode keeps synchronous synchronization semantics.
             initialize_scripts()
         else:
-            # GUI startup must never wait for network or git. AppWindow starts
-            # repository synchronization after the GTK application is running.
+            # GUI and TUI startup must never wait for network or git. Each
+            # interface starts repository synchronization from its own
+            # background worker once it is running.
             prepare_scripts()
 
     except ImportError:

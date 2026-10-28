@@ -47,6 +47,13 @@ if os.environ.get('EASY_CLI') != '1':
 
             if len(extra_args) != 1:
                 print("Error: LinuxToys accepts only one URI request at a time.")
+                if self.window:
+                    self.window.show_external_install_error(
+                        self.translations.get(
+                            "uri_single_request_message",
+                            "LinuxToys accepts only one URI request at a time.",
+                        )
+                    )
                 return 2
 
             request = extra_args[0]
