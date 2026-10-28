@@ -245,7 +245,19 @@ class MenuButton(Gtk.MenuButton):
 			if not ok:
 				error = message
 			elif is_enabled:
-				mcp_server.install_agent_skill()
+				# Noninteractive skill fetch: primary path is `bun x skills add`
+				# through the hidden AppStream PTY (queued, serialized, visible
+				# in the queue view); the script itself ends with an offline
+				# bundled-copy fallback when bun or every source is unavailable.
+				runner = getattr(self.parent_window, "_appstream_runner", None)
+				if runner is not None:
+					try:
+						runner.enqueue_skill_install(mcp_server.skill_install_script())
+					except Exception as skill_error:
+						print(f"MCP skill install could not be queued: {skill_error}")
+						mcp_server.install_agent_skill()
+				else:
+					mcp_server.install_agent_skill()
 		except Exception as exc:
 			error = str(exc)
 		GLib.idle_add(self.__mcp_service_done, is_enabled, error)

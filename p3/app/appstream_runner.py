@@ -215,6 +215,36 @@ class AppStreamRunner:
         return added
 
 
+    def enqueue_skill_install(self, script_text, label="Install LinuxToys MCP skill"):
+        """Queue the agent-skill installer through the hidden PTY.
+
+        Runs the noninteractive script built by ``mcp_server.skill_install_script()``
+        (bun fetch with mirror fallback, offline bundled-copy last resort). This is
+        a quick, non-package procedure: no transmap, no registry, no package-manager
+        gating — it only writes skill files into the detected agents' directories.
+        """
+        self._ensure_started()
+        record = {
+            "id": uuid.uuid4().hex,
+            "info": {
+                "name": label,
+                "icon": resolve_symbolic_icon("puzzle-piece-symbolic"),
+            },
+            "name": label,
+            "icon": resolve_symbolic_icon("puzzle-piece-symbolic"),
+            "status": "queued",
+            "exit_code": None,
+            "failure_reason": "",
+            "action": "skill_install",
+            "script": script_text,
+        }
+        with self._condition:
+            self._records.append(record)
+            self._jobs.append(record)
+            self._condition.notify()
+        self._notify_changed()
+        return record["id"]
+
     def enqueue_local_package(self, package_path, metadata=None):
         """Queue a local package through the same hidden PTY used by AppStream."""
         package_path = os.path.realpath(os.fspath(package_path))
@@ -689,6 +719,8 @@ class AppStreamRunner:
                     exit_code, failure_reason = self._run_local_package_job(record["info"])
                 elif record.get("action") == "apt_refresh":
                     exit_code = self._run_apt_refresh_job()
+                elif record.get("action") == "skill_install":
+                    exit_code, failure_reason = self._run_skill_install_job(record)
                 else:
                     exit_code = self._run_job(record["info"])
 
@@ -1226,6 +1258,52 @@ class AppStreamRunner:
             env = script_environment({"name": "Refresh package metadata"}, os.environ.copy())
             env.pop("LINUXTOYS_RUNNER_STATE", None)
             return self._dispatch_path(path, env)
+        finally:
+            try:
+                os.remove(path)
+            except OSError:
+                pass
+
+    def _run_skill_install_job(self, record):
+        """Run the agent-skill installer script through the hidden PTY.
+
+        The script is noninteractive by construction (``CI=1``, ``-y``, an
+        explicit ``--skill``, no ``--agent``, and a ``timeout`` bound per
+        source), because the hidden PTY has nobody to answer prompts. The
+        transcript is captured for the failure dialog and bug reports. No
+        transmap/registry: writing agent skill files is not a system
+        transaction.
+        """
+        if self._process is None or self._process.poll() is not None:
+            self._close_pty()
+            self._spawn_shell()
+
+        directory = "/tmp/linuxtoys/appstream-overrides"
+        os.makedirs(directory, mode=0o700, exist_ok=True)
+        fd, path = tempfile.mkstemp(
+            prefix="skill-install-", suffix=".sh", dir=directory, text=True
+        )
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                handle.write(str(record.get("script") or ""))
+            os.chmod(path, 0o700)
+            env = script_environment(
+                {"name": record.get("name", "skill install")}, os.environ.copy()
+            )
+            env.pop("LINUXTOYS_RUNNER_STATE", None)
+            exit_code, output = self._dispatch_path(path, env, capture_output=True)
+            self._append_transcript(
+                record.get("name", "skill install"), output or ""
+            )
+            if exit_code != 0:
+                reason = self._failure_reason_from_output(
+                    "The LinuxToys skill could not be installed for your agents. "
+                    "Install it manually with: bun x skills add psygreg/linuxtoys "
+                    "--skill linuxtoys-mcp -g -y",
+                    output,
+                )
+                return exit_code, reason
+            return exit_code, output
         finally:
             try:
                 os.remove(path)

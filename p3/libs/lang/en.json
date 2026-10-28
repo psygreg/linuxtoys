@@ -406,6 +406,7 @@
   "mcp_agent_server": "MCP Agent Server",
   "mcp_agent_server_tooltip": "Let AI agents use LinuxToys (browse, install, remove, settings) through a local MCP server. Runs as a systemd user service; password prompts stay on your screen.",
   "mcp_service_failed_title": "MCP Agent Server",
+  "mcp_skill_installed": "Agent skill installed",
   "waylume_desc": "Minimalist wallpaper manager for GNOME/Wayland. Automatically sets daily wallpapers from Bing, Unsplash, NASA APOD and Wikimedia POTD.",
   "scripts_init_title": "Initializing LinuxToys",
   "scripts_init_fetching": "Fetching scripts repository...",

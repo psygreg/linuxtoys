@@ -37,7 +37,9 @@ class AppStreamQueueView(Gtk.ScrolledWindow):
         state = record["status"]
         if state == "queued":
             action.connect("clicked", self._cancel, record["id"])
-        elif state == "success":
+        elif state == "success" and record.get("action") != "skill_install":
+            # A skill install writes agent skill files; there is nothing the
+            # queue's "remove installed components" flow could take back.
             action.connect("clicked", self._remove, record["id"], record["info"])
 
     def _row_spec(self, record):
@@ -59,10 +61,12 @@ class AppStreamQueueView(Gtk.ScrolledWindow):
             icon_name = resolve_symbolic_icon(icon_value)
 
         action_kind = 1 if state == "queued" else 2 if state == "success" else 0
+        if state == "success" and record.get("action") == "skill_install":
+            action_kind = 0
         tooltip = ""
         if state == "queued":
             tooltip = self.parent_window.translations.get("cancel_btn_label", "Cancel")
-        elif state == "success":
+        elif state == "success" and record.get("action") != "skill_install":
             tooltip = self.parent_window.translations.get(
                 "term_view_remove", "Remove installed components"
             )
@@ -96,13 +100,22 @@ class AppStreamQueueView(Gtk.ScrolledWindow):
 
     def _status_text(self, state, record=None):
         translations = self.parent_window.translations
-        status_keys = {
-            "queued": ("queued", "Waiting to install"),
-            "running": ("app_page_queued", "Queued"),
-            "success": ("app_page_installed", "Installed"),
-            "failed": ("skills_error_install", "Installation failed"),
-            "cancelled": ("cancelled", "Cancelled"),
-        }
+        if (record or {}).get("action") == "skill_install":
+            status_keys = {
+                "queued": ("queued", "Waiting to install"),
+                "running": ("app_page_queued", "Queued"),
+                "success": ("mcp_skill_installed", "Agent skill installed"),
+                "failed": ("skills_error_install", "Installation failed"),
+                "cancelled": ("cancelled", "Cancelled"),
+            }
+        else:
+            status_keys = {
+                "queued": ("queued", "Waiting to install"),
+                "running": ("app_page_queued", "Queued"),
+                "success": ("app_page_installed", "Installed"),
+                "failed": ("skills_error_install", "Installation failed"),
+                "cancelled": ("cancelled", "Cancelled"),
+            }
         key, fallback = status_keys.get(state, (None, state))
         text = translations.get(key, fallback) if key else fallback
         # A failed background job has no terminal to read afterwards; show the
