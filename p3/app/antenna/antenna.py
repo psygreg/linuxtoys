@@ -283,6 +283,40 @@ def _get_desktop_info() -> dict:
     }
 
 
+def _get_interface_mode() -> str:
+    """Report which interface the app was running when the report was made.
+
+    Some issues only reproduce in one interface, so reports carry this label.
+    Interfaces are resolved from loaded modules because launch flows blur the
+    environment: the CLI starts the TUI in-process and the MCP server reuses
+    TUI helper modules, so environment variables alone cannot tell them apart.
+
+    Checks are ordered so the more specific match wins:
+
+    - ``app.tui.main`` loads only when the Textual interface is running.
+    - ``app.window`` loads only when the GTK interface runs (app.main skips it
+      in CLI mode).
+    - ``LINUXTOYS_MCP=1`` marks the headless MCP agent server.
+    - ``EASY_CLI``/``UPD_SERVICE`` mark the terminal interfaces (the TUI is
+      matched above first, as its launcher sets EASY_CLI too).
+    """
+    import os
+
+    if "app.tui.main" in sys.modules:
+        return "TUI"
+
+    if "app.window" in sys.modules:
+        return "GUI"
+
+    if os.environ.get("LINUXTOYS_MCP") == "1":
+        return "MCP server"
+
+    if os.environ.get("EASY_CLI") == "1" or os.environ.get("UPD_SERVICE") == "1":
+        return "CLI"
+
+    return "unknown"
+
+
 def get_system_context() -> str:
     """Build a system info context string for bug reports."""
     os_info = _get_os_info()
@@ -301,6 +335,7 @@ def get_system_context() -> str:
         context_parts.append(f"Environment: {wsl_info}")
 
     context_parts.append(f"linuxtoys {get_current_version()}")
+    context_parts.append(f"Interface: {_get_interface_mode()}")
 
     if init_system and init_system != "unknown":
         context_parts.append(f"Init: {init_system}")
@@ -943,10 +978,20 @@ def submit_issue(
 def _exception_hook(exc_type, exc_value, exc_tb):
     tb_str = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
     print(tb_str)
+
+    # Unhandled exceptions bypass the manual-report dialogs, so assemble the
+    # standard report shape here as well: crash output goes into logs and the
+    # system context (including the interface label) into context.
+    try:
+        system_context = get_system_context()
+    except Exception:
+        system_context = ""  # Crash-path safety: context gathering must never raise.
+
     try:
         submit_issue(
             title=f"Unhandled Exception: {exc_type.__name__}: {exc_value}",
-            context=tb_str,
+            logs=tb_str,
+            context=system_context,
         )
     except Exception:
         pass  # Silently fail to avoid infinite recursion
