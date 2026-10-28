@@ -1509,7 +1509,11 @@ pkg_remove () {
         sudo_ rpm-ostree uninstall "${pkg_found[@]}" \
             || fatal "Failed to remove packages: $to_remove"
     elif is_fedora || is_rhel; then
-        sudo_ dnf remove -y "${pkg_found[@]}" \
+        # --noautoremove: a revert must only remove the packages it recorded.
+        # dnf's default dependency cleanup (clean_requirements_on_remove) would
+        # also strip dep-reasoned packages (hwdata/pciutils/etc.), which can
+        # silently break host tooling the probes and other software rely on.
+        sudo_ dnf remove -y --noautoremove "${pkg_found[@]}" \
             || fatal "Failed to remove packages: $to_remove"
     elif is_suse; then
         sudo_ zypper rm -y "${pkg_found[@]}" \

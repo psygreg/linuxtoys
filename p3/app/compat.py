@@ -596,6 +596,32 @@ def get_system_compat_keys():
     return set(keys)
 
 
+def _sysfs_gpu_vendor_ids():
+    """
+    Vendors of PCI display controllers, read straight from sysfs.
+
+    lspci is a userspace binary whose pciutils/hwdata packages can disappear
+    with other software (reverts can trigger the package manager's dependency
+    cleanup). sysfs is always present and keeps GPU detection alive on such
+    hosts.
+    """
+    import glob
+
+    vendors = set()
+    for device in glob.glob("/sys/bus/pci/devices/*"):
+        try:
+            with open(f"{device}/vendor", encoding="utf-8") as f:
+                vendor = f.read().strip().lower()
+            with open(f"{device}/class", encoding="utf-8") as f:
+                if not f.read().strip().startswith("0x03"):
+                    continue
+        except OSError:
+            continue
+        if vendor:
+            vendors.add(vendor)
+    return vendors
+
+
 def get_gpu_compat_keys():
     """
     Get the GPU compatibility keys based on detected GPUs.
@@ -604,41 +630,62 @@ def get_gpu_compat_keys():
            set: Set of GPU compatibility keys ('gpu', 'gpu-amd', 'gpu-intel',
                'gpu-nvidia', 'gpu-rocm', 'gpu-rusticl', 'gpu-xe', 'hybridgpu')
     """
-    keys = set()
-    try:
-        import subprocess
+    import subprocess
 
+    keys = set()
+
+    # lspci output carries friendly device names, but the probe must never be
+    # all-or-nothing: a missing lspci (pciutils removed) or a missing hwdata
+    # ID database (lspci then exits 0 with numeric-only output) must not
+    # silently report "no GPU", which would hide every '# gpu:' script from
+    # the catalog. Each source is isolated; sysfs vendor IDs are the fallback.
+    lspci_output = ""
+    try:
         result = subprocess.run(["lspci"], capture_output=True, text=True, timeout=10)
         lspci_output = result.stdout.lower()
-
-        has_amd = "radeon" in lspci_output or "rx" in lspci_output
-        has_intel = False
-        has_nvidia = "nvidia" in lspci_output
-
-        # Check Intel GPU by ensuring 'intel' and ('vga' or '3d') are in the same line
-        for line in lspci_output.split("\n"):
-            if "intel" in line and ("vga" in line or "3d" in line):
-                has_intel = True
-                break
-
-        if has_amd or has_intel or has_nvidia:
-            keys.add("gpu")
-        if has_amd:
-            keys.add("gpu-amd")
-        if has_intel:
-            keys.add("gpu-intel")
-        if has_nvidia:
-            keys.add("gpu-nvidia")
-        if _is_rocm_capable():
-            keys.add("gpu-rocm")
-        if _is_rusticl_capable():
-            keys.add("gpu-rusticl")
-        if _is_icr_capable():
-            keys.add("gpu-xe")
-        if has_nvidia and (has_amd or has_intel):
-            keys.add("hybridgpu")
     except Exception:
         pass
+
+    has_amd = "radeon" in lspci_output or "rx" in lspci_output
+    has_intel = False
+    has_nvidia = "nvidia" in lspci_output
+
+    # Check Intel GPU by ensuring 'intel' and ('vga' or '3d') are in the same line
+    for line in lspci_output.split("\n"):
+        if "intel" in line and ("vga" in line or "3d" in line):
+            has_intel = True
+            break
+
+    if not (has_amd or has_intel or has_nvidia):
+        # lspci unavailable or unresolvable (no ID database); detect display
+        # controllers from sysfs PCI vendor IDs instead.
+        vendors = _sysfs_gpu_vendor_ids()
+        has_nvidia = "0x10de" in vendors
+        has_amd = "0x1002" in vendors
+        has_intel = "0x8086" in vendors
+
+    if has_amd or has_intel or has_nvidia:
+        keys.add("gpu")
+    if has_amd:
+        keys.add("gpu-amd")
+    if has_intel:
+        keys.add("gpu-intel")
+    if has_nvidia:
+        keys.add("gpu-nvidia")
+    # Capability probes are independent of lspci; keep each one isolated so a
+    # failure in one can never take the remaining GPU keys down with it.
+    for probe, probe_key in (
+        (_is_rocm_capable, "gpu-rocm"),
+        (_is_rusticl_capable, "gpu-rusticl"),
+        (_is_icr_capable, "gpu-xe"),
+    ):
+        try:
+            if probe():
+                keys.add(probe_key)
+        except Exception:
+            pass
+    if has_nvidia and (has_amd or has_intel):
+        keys.add("hybridgpu")
     return keys
 
 
