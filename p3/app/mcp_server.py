@@ -401,9 +401,14 @@ def _app_links(entry):
 def _appstream_context():
     """Resolve the AppStream universe exactly like the GUI catalog views.
 
+    Uses the fuller curated set (repository entries plus curated scripts) so
+    MCP search results match the GUI's duplicate suppression.
+
     ``category_paths`` must be included: without it the Rust category mapping
     drops every non-Homebrew component, and a derived-cache rebuild triggered
-    by this server would publish that incomplete generation.
+    by this server would publish that incomplete generation. (_runtime_catalog
+    now also defaults a missing context to the indexed paths, so this stays
+    correct even if the explicit context is lost.)
     """
     translations = _translations()
     return (

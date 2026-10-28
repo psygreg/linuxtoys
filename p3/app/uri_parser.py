@@ -59,8 +59,19 @@ def _appstream_entry_id(entry):
 
 
 def _appstream_entries_context(translations=None):
-    """Return arguments needed to resolve the same AppStream universe as the UI."""
-    return parser.SCRIPTS_DIR, parser.get_repo_entries(translations)
+    """Return arguments needed to resolve the same AppStream universe as the UI.
+
+    The tuple is ``(scripts_dir, curated_entries, category_paths)``. The
+    category paths are required: without them the Rust category mapping drops
+    every non-Homebrew component, so a URI resolution would miss entries the
+    UI offers — and a background derived-cache rebuild triggered here would
+    publish that incomplete generation for every other reader.
+    """
+    return (
+        parser.SCRIPTS_DIR,
+        parser.get_repo_entries(translations),
+        parser._indexed_category_paths(),
+    )
 
 
 def find_appstream_entry_by_id(appstream_id, translations=None):
@@ -70,11 +81,12 @@ def find_appstream_entry_by_id(appstream_id, translations=None):
 
     from . import appstream_parser
 
-    scripts_dir, curated_entries = _appstream_entries_context(translations)
+    scripts_dir, curated_entries, category_paths = _appstream_entries_context(translations)
     return appstream_parser.find_entry_by_id(
         scripts_dir,
         appstream_id,
         curated_entries,
+        category_paths,
     )
 
 
@@ -85,11 +97,12 @@ def find_appstream_entry_by_name(name, translations=None):
 
     from . import appstream_parser
 
-    scripts_dir, curated_entries = _appstream_entries_context(translations)
+    scripts_dir, curated_entries, category_paths = _appstream_entries_context(translations)
     return appstream_parser.find_entry_by_name(
         scripts_dir,
         name,
         curated_entries,
+        category_paths,
     )
 
 

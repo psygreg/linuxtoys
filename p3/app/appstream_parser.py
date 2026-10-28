@@ -769,6 +769,19 @@ def _runtime_catalog(
     """Return the Rust-owned, indexed AppStream runtime catalog."""
     global _LAST_LOAD_CONTEXT
 
+    if category_paths is None:
+        # Callers that omit the category context must never receive — or
+        # publish — a degenerate generation: the Rust category mapping drops
+        # every non-Homebrew component when no category paths exist, and a
+        # stale-key derived rebuild would persist that generation. Default to
+        # the managed tree's indexed paths (lazy import: parser imports this
+        # module). Explicit empty tuples remain explicit.
+        try:
+            from .parser import _indexed_category_paths
+            category_paths = _indexed_category_paths()
+        except Exception:
+            category_paths = ()
+
     scripts_dir = os.path.realpath(scripts_dir)
     _LAST_LOAD_CONTEXT = (
         scripts_dir,
