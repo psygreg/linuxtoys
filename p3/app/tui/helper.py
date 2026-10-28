@@ -103,6 +103,11 @@ def invalidate_search_caches() -> None:
 def warm_search_and_category_index(trans=None) -> SearchEngine:
     """Populates CategoryCache concurrently, links ScriptCache in memory,
     and warms the Rust SearchIndex. Thread-safe and reusable.
+
+    Deliberately local-only: the AppStream catalog build stays off this
+    path so callers can show the interface first and schedule the catalog
+    refresh on a background worker afterwards, mirroring the GUI launch
+    sequence.
     """
     global _category_cache, _script_cache, _search_engine
     active_translations = trans or translations
@@ -126,9 +131,6 @@ def warm_search_and_category_index(trans=None) -> SearchEngine:
         _category_cache = cat_cache
         _script_cache = scr_cache
         _search_engine = engine
-
-        if appstream_cache.cache_needs_refresh():
-            appstream_cache.refresh_cache()
 
         return _search_engine
 

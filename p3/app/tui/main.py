@@ -813,7 +813,7 @@ class LinuxToys(App):
         BLOCKING: thread worker. A failure is logged and does not stop
         the app: without the cache, search is slower. It always goes on
         to ``_show_home``, and then kicks off the background scripts
-        synchronization.
+        synchronization and the AppStream catalog build.
         """
         try:
             warm_search_and_category_index(translations)
@@ -821,6 +821,7 @@ class LinuxToys(App):
             self.log.error(f"warm index failed: {e}")
         self.call_from_thread(self._show_home)
         self._sync_scripts_after_boot()
+        self._start_appstream_after_boot()
 
     @work(thread=True, exclusive=True, group="boot-sync")
     def _sync_scripts_after_boot(self) -> None:
@@ -855,6 +856,33 @@ class LinuxToys(App):
             self.log.error(f"background scripts sync failed: {e}")
             return
         self.call_from_thread(self._refresh_home_after_sync)
+
+    @work(thread=True, exclusive=True, group="appstream-cache")
+    def _start_appstream_after_boot(self) -> None:
+        """Refresh the AppStream catalog on a background worker.
+
+        Mirrors the GUI launch sequence: the catalog build never blocks
+        the first screen. A first launch publishes the local-only starter
+        catalog (network-free except a 3 s capped ratings fetch) so app
+        pages become usable quickly, and the full enrichment then runs
+        here, still off the UI thread. A slow or failed build only means
+        fewer catalog entries; nothing else waits on it.
+        """
+        from app import appstream_cache
+
+        try:
+            initial_build = not appstream_cache.CATALOG_PATH.is_file()
+            result = appstream_cache.refresh_cache(starter=initial_build)
+            if not result.get("success"):
+                self.log.error(
+                    "appstream cache build failed: "
+                    f"{result.get('error', 'unknown error')}"
+                )
+                return
+            if initial_build and result.get("starter"):
+                appstream_cache.refresh_cache(force=True)
+        except Exception as e:  # noqa: BLE001
+            self.log.error(f"appstream cache refresh failed: {e}")
 
     def _refresh_home_after_sync(self) -> None:
         """Re-render the home list after a boot sync changed the scripts tree.
