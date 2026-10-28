@@ -195,6 +195,36 @@ build_linuxtoys_rust() {
     install -Dm755 "$gui_library" "$APP_BIN/app/liblinuxtoys_gui.so"
 }
 
+# The TUI (p3/app/tui) is built on Textual and renders its embedded terminal
+# with pyte. These dependencies ship in-tree under p3/vendor, pinned in
+# p3/requirements.txt, so no native packages are required on the build host.
+# Verify the vendored stack early, before spending time on any heavy build.
+verify_python_tui_deps() {
+    local vendor_dir="$ROOT_DIR/p3/vendor"
+    local probe
+    if ! probe="$(PYTHONPATH="$vendor_dir" python3 -c 'import textual.app, pyte, rich; from importlib.metadata import version; t = version("textual"); p = version("pyte"); print(f"textual {t}, pyte {p}")' 2>&1)"; then
+        _msg error "The vendored TUI stack in p3/vendor failed to import:"
+        _msg error "$probe"
+        _msg error "Materialize it from the pinned requirements and rebuild:"
+        _msg error "  ./build-rust.sh vendor"
+        exit 1
+    fi
+    _msg info "Vendored TUI stack OK ($probe)."
+}
+
+# The vendored TUI stack must survive the copy into the AppDir and import
+# cleanly from its final location before the AppImage is generated.
+verify_bundled_python_tui_deps() {
+    local probe
+    if ! probe="$(PYTHONPATH="$APP_BIN/vendor" python3 -c 'import textual.app, pyte, rich' 2>&1)"; then
+        _msg error "The vendored TUI stack failed to import from the AppDir:"
+        _msg error "$probe"
+        _msg error "Materialize p3/vendor with './build-rust.sh vendor' and rebuild."
+        exit 1
+    fi
+    _msg info "Vendored TUI stack present in the AppDir."
+}
+
 replace_upstream_glycin() {
     _msg info "Replacing upstream Glycin deployment with glycin-ng..."
 
@@ -267,6 +297,8 @@ else
 fi
 chmod +x "$QUICK_SHARUN"
 
+verify_python_tui_deps
+
 build_glycin_ng
 
 # Build directly from the official source tree. This replaces pkgforge's
@@ -281,6 +313,7 @@ find "$APP_BIN" -type d -name __pycache__ -prune -exec rm -rf {} + 2>/dev/null |
 find "$APP_BIN" -type f -name '*.pyc' -delete 2>/dev/null || true
 [[ -f "$APP_BIN/app/_catalog_rs.abi3.so" ]] || { _msg error "Rust catalog extension missing from AppDir."; exit 1; }
 [[ -f "$APP_BIN/app/liblinuxtoys_gui.so" ]] || { _msg error "Rust native GTK library missing from AppDir."; exit 1; }
+verify_bundled_python_tui_deps
 
 # LinuxToys launcher for the AppImage runtime. quick-sharun/uruntime provides
 # APPDIR, so no host /usr/share/linuxtoys path is involved.

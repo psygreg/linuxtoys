@@ -11,4 +11,8 @@ AGENTS.md
 # Python bytecode/cache
 __pycache__/
 *.py[cod]
+
+# Vendored TUI dependencies, materialized by dev/build/vendor_deps.sh at
+# build time (release or develop runs); never committed.
+p3/vendor/
 dev/test-skills/

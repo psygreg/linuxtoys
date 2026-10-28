@@ -8,6 +8,10 @@ urllib3>=1.26.0
 certifi>=2021.5.25
 
 # TUI dependencies
+# These are vendored into p3/vendor (gitignored, materialized at build time by
+# dev/build/vendor_deps.sh and inserted ahead of site-packages by
+# linuxtoys.py), so no distribution package is required at runtime. Keep the
+# pins exact (==) and re-run `./build-rust.sh vendor` after bumping them.
 textual==8.2.8
 pyte==0.8.2
 

@@ -5,6 +5,15 @@ import subprocess
 import sys
 from urllib.parse import unquote, urlparse
 
+# Vendored TUI dependencies (textual, pyte and their runtime stack) ship
+# in-tree so every platform runs the same pinned version, including
+# distributions without textual 8.x packaging and the AppImage. The vendor
+# directory is inserted ahead of site-packages on purpose: it must win over
+# any older copy a distribution happens to have installed.
+_VENDOR_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vendor")
+if os.path.isdir(_VENDOR_DIR):
+    sys.path.insert(0, _VENDOR_DIR)
+
 
 GUI_PACKAGE_SUFFIXES = (
     ".deb",

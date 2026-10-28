@@ -12,11 +12,16 @@ usage() {
 Usage:
       ./build-rust.sh [build|develop] [--debug] [--out DIR]
       ./build-rust.sh release VERSION
+      ./build-rust.sh vendor
 
 Commands:
   build       Build the catalog wheel and native GUI library (default).
-  develop     Build both Rust components and deploy their libraries into p3/app.
-  release     Build all packages except for Solus for release
+  develop     Build both Rust components, deploy their libraries into p3/app
+              and vendor the TUI dependencies for running from source.
+  release     Build all packages except for Solus for release. The TUI
+              dependencies are vendored into p3/vendor beforehand.
+  vendor      Materialize the vendored TUI dependencies into p3/vendor
+              (reads the pins from p3/requirements.txt).
 
 Options:
   --debug     Build without --release.
@@ -67,13 +72,18 @@ while [[ $# -gt 0 ]]; do
 done
 
 case "$COMMAND" in
-    build|develop|release) ;;
+    build|develop|release|vendor) ;;
     *)
-        echo "error: command must be 'build', 'develop' or 'release'" >&2
+        echo "error: command must be 'build', 'develop', 'release' or 'vendor'" >&2
         usage >&2
         exit 2
         ;;
 esac
+
+# Vendoring needs no Rust toolchain, so handle it before those checks.
+if [[ "$COMMAND" == "vendor" ]]; then
+    exec "$ROOT/dev/build/vendor_deps.sh"
+fi
 
 command -v maturin >/dev/null 2>&1 || {
     echo "error: maturin was not found in PATH" >&2
@@ -171,6 +181,10 @@ build_gui_component() {
 }
 
 if [[ "$COMMAND" == "release" ]]; then
+    # The container builds stage the source tree as-is, so materialize the
+    # vendored TUI dependencies first; every package then ships them.
+    "$ROOT/dev/build/vendor_deps.sh"
+
     COMMAND="build"
     build_python_component "_catalog_rs" "${ROOT}/src/catalog-rs"
     build_gui_component
@@ -196,6 +210,11 @@ if [[ "$COMMAND" == "release" ]]; then
 
     echo "All packages done."
 else
+    if [[ "$COMMAND" == "develop" ]]; then
+        # The TUI must be runnable from source right after a develop run.
+        "$ROOT/dev/build/vendor_deps.sh"
+    fi
+
     build_python_component "_catalog_rs" "${ROOT}/src/catalog-rs"
     build_gui_component
 
