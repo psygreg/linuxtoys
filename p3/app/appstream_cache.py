@@ -1100,18 +1100,18 @@ def _flatpak_eol_app_ids(source):
 
 
 def _refresh_missing_flatpak_appstream():
-    """Refresh Flathub AppStream metadata when a configured installation has none.
+    """Refresh FlatPark/Flathub AppStream metadata when an installation has none.
 
     Flatpak normally refreshes this metadata itself, but a newly added remote can
     exist before its local AppStream database has been populated. Keep this as a
-    narrow safeguard: only installations with a configured Flathub remote and no
-    local Flathub AppStream directory are refreshed.
+    narrow safeguard: only installations with a configured catalog remote and no
+    local AppStream directory for it are refreshed.
     """
     if not _flatpak_supported_host() or not shutil.which("flatpak"):
         return
 
     for remote in _configured_flatpak_remotes():
-        if remote["remote"] != "flathub":
+        if remote["remote"] not in ("flathub", "flatpark"):
             continue
         if (remote["root"] / "appstream" / remote["remote"]).is_dir():
             continue
@@ -1146,9 +1146,11 @@ def _flatpak_appstream_sources():
 
     sources = []
     for remote in _configured_flatpak_remotes():
-        # LinuxToys' pkg_flat currently installs from Flathub explicitly. Do not
-        # publish apps from another remote until that installer accepts a remote.
-        if remote["remote"] != "flathub":
+        # LinuxToys installs from the remotes below (pkg_flat accepts --remote
+        # and bootstraps each through call_script <remote>). Every other
+        # user-configured Flatpak remote stays out of the catalog until its
+        # install source is supported here.
+        if remote["remote"] not in ("flathub", "flatpark"):
             continue
         base = remote["root"] / "appstream" / remote["remote"]
         if not base.is_dir():

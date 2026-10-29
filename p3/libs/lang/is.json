@@ -148,6 +148,7 @@
   "modsign": "Kjarnaeining undirritun",
   "modsign_desc": "Virkjar undirritun kjarnaeininga og rekla með Machine Owner Key fyrir Secure Boot.",
   "flat_desc": "Aðalganga fyrir Flatpak forrit, með mörgum einkaréttum forritum.",
+  "flatpark_desc": "FlatPark er samfélags-Flatpak-miðstöð með forritum sem framleiðendur þeirra pakka sjálfir, ásamt Flathub fyrir runtimes.",
   "brew_desc": "CLI verkfæra pakka stjórnandi fyrir macOS/Linux.",
   "chaotic_desc": "Samfélagsdrifin geymsla fyrir Arch Linux notendur.",
   "rpmfusion_desc": "Geymsla sem býður upp á viðbótar pakka fyrir Fedora og RHEL.",

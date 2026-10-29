@@ -149,6 +149,7 @@
   "modsign": "Çekirdek modülü imzalama",
   "modsign_desc": "Secure Boot için Machine Owner Key ile çekirdek modüllerini ve sürücüleri imzalamayı etkinleştirir.",
   "flat_desc": "Birçok özel uygulamaya sahip Flatpak uygulamaları için ana depo.",
+  "flatpark_desc": "FlatPark — uygulamaları üreticileri tarafından paketlenen topluluk Flatpak hub'ı, runtimes için Flathub'un yanında.",
   "brew_desc": "macOS/Linux için CLI araçları paket yöneticisi.",
   "chaotic_desc": "Arch Linux kullanıcıları için topluluk odaklı depo.",
   "rpmfusion_desc": "Fedora ve RHEL için ek paketler sağlayan depo.",

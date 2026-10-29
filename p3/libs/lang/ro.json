@@ -148,6 +148,7 @@
   "modsign": "Semnarea modulelor kernel",
   "modsign_desc": "Activează semnarea modulelor kernel și driverelor cu o cheie Machine Owner pentru Secure Boot.",
   "flat_desc": "Depozitul de referință pentru aplicații Flatpak, având multe aplicații exclusive.",
+  "flatpark_desc": "FlatPark — un hub Flatpak comunitar cu aplicații împachetate de chiar producătorii lor, alături de Flathub pentru runtime-uri.",
   "brew_desc": "Un manager de pachete pentru instrumente CLI pentru macOS/Linux.",
   "chaotic_desc": "Un depozit condus de comunitate pentru utilizatorii Arch Linux.",
   "rpmfusion_desc": "Un depozit care oferă pachete suplimentare pentru Fedora și RHEL.",

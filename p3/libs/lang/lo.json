@@ -148,6 +148,7 @@
   "modsign": "ການເຊັນມອດຈູນ kernel",
   "modsign_desc": "ເປີດໃຊ້ການເຊັນມອດຈູນ kernel ແລະໄດເວີດ້ວຍ Machine Owner Key ສໍາລັບ Secure Boot.",
   "flat_desc": "ທີ່ຈັດເກັບທີ່ດີທີ່ສຸດສໍາລັບແອັບພລິເກຊັນ Flatpak, ມີແອັບສະເພາະຫຼາຍຕົວ.",
+  "flatpark_desc": "FlatPark ເປັນສູນກາງ Flatpak ຂອງຊຸມຊົນ ສໍາລັບ ແອັບ ທີ່ຜູ້ສະຫນອງສ້າງຕົວເອງ, ໃຊ້ຄຽງຄູ່ກັບ Flathub runtimes.",
   "brew_desc": "ຕົວຈັດການແພັກເກດເຄື່ອງມື CLI ສໍາລັບ macOS/Linux.",
   "chaotic_desc": "ທີ່ຈັດເກັບທີ່ຂັບເຄື່ອນດ້ວຍຊຸມຊົນສໍາລັບຜູ້ໃຊ້ Arch Linux.",
   "rpmfusion_desc": "ທີ່ຈັດເກັບທີ່ສະຫນອງແພັກເກດເພີ່ມເຕີມສໍາລັບ Fedora ແລະ RHEL.",

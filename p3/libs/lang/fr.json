@@ -149,6 +149,7 @@
   "modsign": "Signature des modules noyau",
   "modsign_desc": "Active la signature des modules noyau et pilotes avec une clé propriétaire de machine (MOK) pour Secure Boot.",
   "flat_desc": "Le dépôt de référence pour les applications Flatpak, avec de nombreuses applications exclusives.",
+  "flatpark_desc": "FlatPark, un hub Flatpak communautaire d'applis packagées par leurs éditeurs eux-mêmes, avec Flathub pour les runtimes.",
   "brew_desc": "Un gestionnaire de paquets d'outils CLI pour macOS/Linux.",
   "chaotic_desc": "Un dépôt communautaire pour les utilisateurs d'Arch Linux.",
   "rpmfusion_desc": "Un dépôt fournissant des paquets supplémentaires pour Fedora et RHEL.",

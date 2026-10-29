@@ -149,6 +149,7 @@
   "modsign": "Kernel module signing",
   "modsign_desc": "Nagbibigay-daan sa pag-sign ng kernel modules at drivers gamit ang Machine Owner Key para sa Secure Boot.",
   "flat_desc": "Go-to repository para sa Flatpak applications, maraming exclusive apps.",
+  "flatpark_desc": "FlatPark, hub ng komunidad para sa mga app na i-package mismo ng vendor nila, kasama ang Flathub para sa mga runtime.",
   "brew_desc": "CLI tools package manager para sa macOS/Linux.",
   "chaotic_desc": "Community-driven repository para sa mga Arch Linux users.",
   "rpmfusion_desc": "Repository na nagbibigay ng karagdagang packages para sa Fedora at RHEL.",

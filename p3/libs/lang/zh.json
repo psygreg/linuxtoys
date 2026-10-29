@@ -151,6 +151,7 @@
   "modsign": "内核模块签名",
   "modsign_desc": "启用使用机器所有者密钥为Secure Boot签名内核模块和驱动程序。",
   "flat_desc": "Flatpak应用程序的首选存储库，拥有许多独家应用程序。",
+  "flatpark_desc": "FlatPark —— 由供应商自行封装应用的社区 Flatpak 软件源，运行时依赖 Flathub。",
   "brew_desc": "macOS/Linux的CLI工具包管理器。",
   "chaotic_desc": "Arch Linux用户的社区驱动存储库。",
   "rpmfusion_desc": "为Fedora和RHEL提供额外软件包的存储库。",

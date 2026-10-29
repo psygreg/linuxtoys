@@ -269,6 +269,7 @@ _PROVIDER_DEPENDENCIES = {
     "brew": "homebrew",
     "homebrew": "homebrew",
     "flathub": "flatpak",
+    "flatpark": "flatpak",
     "snap": "snap",
     "snapcraft": "snap",
     "paru": "aur",

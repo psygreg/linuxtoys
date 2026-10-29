@@ -1641,14 +1641,25 @@ class AppPageView(Gtk.Box):
         button.get_style_context().add_class("suggested-action")
         return button
 
+    # Remote display names for the Flatpak sources LinuxToys installs from.
+    # Unknown remotes fall back to a capitalized name.
+    _FLATPAK_SOURCE_LABELS = {"flathub": "Flathub", "flatpark": "FlatPark"}
+
+    @classmethod
+    def _flatpak_remote_label(cls, remote):
+        remote = str(remote or "").strip() or "flathub"
+        return cls._FLATPAK_SOURCE_LABELS.get(remote.casefold()) or remote.capitalize()
+
     def _source_label(self, entry):
         source = str(entry.get("appstream_source", "") or "").strip()
         if source == "flatpak":
             scope = str(entry.get("flatpak_scope", "") or "").strip()
+            remote = str(entry.get("flatpak_remote", "") or "").strip()
+            label = self._flatpak_remote_label(remote)
             if scope == "system" and self._has_multiple_flatpak_scopes():
                 system = self.translations.get("app_page_source_system", "system")
-                return f"Flathub ({system})"
-            return "Flathub"
+                return f"{label} ({system})"
+            return label
         if source == "native":
             return self.translations.get("app_page_source_native", "Native")
         if source == "snap":
@@ -1681,7 +1692,8 @@ class AppPageView(Gtk.Box):
             return source
         scope = str(entry.get("flatpak_scope", "") or "").strip()
         installation = str(entry.get("flatpak_installation", "") or "").strip()
-        return f"flatpak:{scope}:{installation}"
+        remote = str(entry.get("flatpak_remote", "") or "").strip()
+        return f"flatpak:{scope}:{installation}:{remote}"
 
     def _has_multiple_flatpak_scopes(self):
         options = self.script_info.get("source_options") or ()

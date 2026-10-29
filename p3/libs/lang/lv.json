@@ -148,6 +148,7 @@
   "modsign": "Kodola moduļa parakstīšana",
   "modsign_desc": "Iespējo kodola moduļu un draiveru parakstīšanu ar Machine Owner Key Secure Boot.",
   "flat_desc": "Galvenā krātuve Flatpak lietotnēm, ar daudzām ekskluzīvām lietotnēm.",
+  "flatpark_desc": "FlatPark — kopienas Flatpak hub ar lietotnēm, kuras iepako paši ražotāji, blakus Flathub runtime videi.",
   "brew_desc": "CLI rīku pakotņu pārvaldnieks macOS/Linux.",
   "chaotic_desc": "Kopienas vadīta krātuve Arch Linux lietotājiem.",
   "rpmfusion_desc": "Krātuve, kas nodrošina papildu pakotnes Fedora un RHEL.",

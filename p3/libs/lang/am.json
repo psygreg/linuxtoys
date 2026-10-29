@@ -149,6 +149,7 @@
   "modsign": "የከርነል ሞጁል ፈረመ",
   "modsign_desc": "ለSecure Boot በMachine Owner Key ከርነል ሞጁሎችን እና አንቀሳቃሾችን ፈረመን ያስችላል።",
   "flat_desc": "ለFlatpak መተግበሪያዎች የሚሄድበት ማከማቻ፣ ብዙ ልዩ መተግበሪያዎች አሉት።",
+  "flatpark_desc": "FlatPark ማኅበረሰባዊ Flatpak ማዕከል ሲሆን መተግበሪያዎችን በራሳቸው አቅራቢዎች የተጠበቀ ያካትታል፤ runtimes ከFlathub ጋር ይጠቀማል።",
   "brew_desc": "ለmacOS/Linux CLI መሳሪያዎች ፓኬጅ አስተዳዳሪ።",
   "chaotic_desc": "ለArch Linux ተጠቃሚዎች የማህበረሰብ-የሚመራ ማከማቻ።",
   "rpmfusion_desc": "ለFedora እና RHEL ተጨማሪ ፓኬጆችን የሚያቀርብ ማከማቻ።",

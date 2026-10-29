@@ -148,6 +148,7 @@
   "modsign": "Kjernemodul-signering",
   "modsign_desc": "Aktiverer signering av kjernemoduler og drivere med Machine Owner Key for Secure Boot.",
   "flat_desc": "Gå-til-repositoriet for Flatpak-applikasjoner, med mange eksklusive apper.",
+  "flatpark_desc": "FlatPark, et fellesskapsdrevet Flatpak-nav med apper pakket av leverandørene selv, og Flathub for runtimes.",
   "brew_desc": "En CLI-verktøy pakkebehandler for macOS/Linux.",
   "chaotic_desc": "Et fellesskapsdrevet repositorium for Arch Linux-brukere.",
   "rpmfusion_desc": "Et repositorium som gir tilleggspakker for Fedora og RHEL.",

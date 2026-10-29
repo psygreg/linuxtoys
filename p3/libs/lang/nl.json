@@ -149,6 +149,7 @@
   "modsign": "Kernel module ondertekening",
   "modsign_desc": "Schakelt ondertekening van kernel modules en drivers in met een Machine Owner Key voor Secure Boot.",
   "flat_desc": "De go-to repository voor Flatpak applicaties, met veel exclusieve apps.",
+  "flatpark_desc": "FlatPark, een community-Flatpak-hub met apps die hun leveranciers zelf verpakken, naast Flathub voor de runtimes.",
   "brew_desc": "Een CLI tools pakketbeheerder voor macOS/Linux.",
   "chaotic_desc": "Een community-gedreven repository voor Arch Linux gebruikers.",
   "rpmfusion_desc": "Een repository die aanvullende pakketten biedt voor Fedora en RHEL.",

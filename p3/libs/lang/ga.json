@@ -148,6 +148,7 @@
   "modsign": "Síniú modúl eithne",
   "modsign_desc": "Cumasaíonn síniú modúl eithne agus tiománaithe le hEochair Úinéara Meaisín le haghaidh Tosaithe Slán.",
   "flat_desc": "An stór go-to le haghaidh feidhmchlár Flatpak, le go leor aipeanna eisiacha.",
+  "flatpark_desc": "FlatPark, Flatpak-hub pobail le feidhmchláir ó na déantóirí féin, in éind le Flathub do runtimes.",
   "brew_desc": "Bainisteoir pacáiste uirlisí CLI do macOS/Linux.",
   "chaotic_desc": "Stór pobail-tiomáinte le haghaidh úsáideoirí Arch Linux.",
   "rpmfusion_desc": "Stór a sholáthraíonn pacáistí breise le haghaidh Fedora agus RHEL.",

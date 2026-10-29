@@ -5,7 +5,6 @@
 # icon: lsw.svg
 # reboot: yes
 # nocontainer
-# compat:
 # repo: https://github.com/TibixDev/winboat
 # systemd: yes
 # wsl: no

@@ -149,6 +149,7 @@
   "modsign": "Kernel-moduulien allekirjoitus",
   "modsign_desc": "Ottaa käyttöön kernel-moduulien ja ajurien allekirjoituksen Machine Owner Key:llä Secure Bootille.",
   "flat_desc": "Mene-varasto Flatpak-sovelluksille, jossa on monia eksklusiivisia sovelluksia.",
+  "flatpark_desc": "FlatPark on yhteisön Flatpak-repo valmistajien itse paketoimille sovelluksille; ajoympäristöt tulevat Flathubista.",
   "brew_desc": "CLI-työkalupaketinhallinnoija macOS/Linuxille.",
   "chaotic_desc": "Yhteisön ajama varasto Arch Linux -käyttäjille.",
   "rpmfusion_desc": "Varasto, joka tarjoaa lisäpaketteja Fedoraan ja RHEL:iin.",

@@ -402,27 +402,61 @@ _flatpak_runtime_extension_delta() {
 }
 
 pkg_flat() {
+    # --remote selects the Flatpak destination: "flathub" by default, any other
+    # configured-through-LinuxToys remote (FlatPark) once given by name. The
+    # remote's bootstrap script configures it (plus whatever runtimes it needs)
+    # and owns its own session idempotency.
     local _skip_user=0
+    local _next_remote=0
+    local _remote="flathub"
     local -a _flatpak_args=()
     for arg in "$@"; do
+        if [[ $_next_remote -eq 1 ]]; then
+            _remote="$arg"
+            _next_remote=0
+            continue
+        fi
         if [[ "$arg" == "--skip-user" ]]; then
             _skip_user=1
+        elif [[ "$arg" == "--remote" ]]; then
+            _next_remote=1
         else
             _flatpak_args+=("$arg")
         fi
     done
-    if ! command -v flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
-        call_script flathub
-        # Installing Flatpak or adding Flathub changes the AppStream source universe.
-        # Keep the last completed catalog usable, but force the next AppStream check
-        # to rebuild it against the newly available source.
-        rm -f "$HOME/.cache/linuxtoys/appstream/state.json"
+    [[ $_next_remote -eq 0 ]] || die "pkg_flat --remote requires a remote name"
+    if [[ "$_remote" != "flathub" ]]; then
+        [[ "$_remote" =~ ^[a-z0-9][a-z0-9._-]*$ ]] \
+            || die "pkg_flat: unsupported Flatpak remote: $_remote"
+    fi
+
+    if [[ "$_remote" == "flathub" ]]; then
+        if ! command -v flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
+            call_script flathub
+            # Installing Flatpak or adding Flathub changes the AppStream source universe.
+            # Keep the last completed catalog usable, but force the next AppStream check
+            # to rebuild it against the newly available source.
+            rm -f "$HOME/.cache/linuxtoys/appstream/state.json"
+        fi
+    else
+        if ! command -v flatpak &>/dev/null || ! flatpak remote-list | grep -Fxq "$_remote"; then
+            call_script "$_remote"
+            # A newly configured remote can add an AppStream source (and the
+            # whole Flatpak stack on first use), so the next catalog check
+            # must rebuild against the newly available universe.
+            rm -f "$HOME/.cache/linuxtoys/appstream/state.json"
+        fi
     fi
     local flatpak_scope="--user"
     if [[ $_skip_user -eq 1 ]]; then
         flatpak_scope="--system"
-    elif flatpak remote-list --system 2>/dev/null | grep -q flathub && \
-       ! flatpak remote-list --user 2>/dev/null | grep -q flathub; then
+    elif [[ "$_remote" == "flathub" ]]; then
+        if flatpak remote-list --system 2>/dev/null | grep -q flathub && \
+           ! flatpak remote-list --user 2>/dev/null | grep -q flathub; then
+            flatpak_scope="--system"
+        fi
+    elif flatpak remote-list --system 2>/dev/null | grep -Fxq "$_remote" && \
+         ! flatpak remote-list --user 2>/dev/null | grep -Fxq "$_remote"; then
         flatpak_scope="--system"
     fi
 
@@ -440,13 +474,13 @@ pkg_flat() {
             _flatpak_runtime_extension_refs "$flatpak_scope" > "$_runtime_before"
 
             if [[ "$flatpak_scope" == "--user" ]]; then
-                flatpak install --or-update "$flatpak_scope" -y flathub "$arg" || {
+                flatpak install --or-update "$flatpak_scope" -y "$_remote" "$arg" || {
                     rm -f "$_runtime_before"
                     fatal "Failed to install flatpak package $arg"
                 }
             else
-                flatpak install --or-update "$flatpak_scope" -y flathub "$arg" 2>/dev/null || {
-                    sudo_ flatpak install --or-update "$flatpak_scope" -y flathub "$arg"
+                flatpak install --or-update "$flatpak_scope" -y "$_remote" "$arg" 2>/dev/null || {
+                    sudo_ flatpak install --or-update "$flatpak_scope" -y "$_remote" "$arg"
                 } || {
                     rm -f "$_runtime_before"
                     fatal "Failed to install flatpak package $arg"
@@ -470,11 +504,11 @@ pkg_flat() {
     # Keep the existing batched path for ordinary applications/runtimes.
     if [[ ${#_flatpak_normal[@]} -gt 0 ]]; then
         if [[ "$flatpak_scope" == "--user" ]]; then
-            flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_normal[@]}" || \
+            flatpak install --or-update "$flatpak_scope" -y "$_remote" "${_flatpak_normal[@]}" || \
                 fatal "Failed to install flatpak packages ${_flatpak_normal[*]}"
         else
-            flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_normal[@]}" 2>/dev/null || \
-                { sudo_ flatpak install --or-update "$flatpak_scope" -y flathub "${_flatpak_normal[@]}"; } || \
+            flatpak install --or-update "$flatpak_scope" -y "$_remote" "${_flatpak_normal[@]}" 2>/dev/null || \
+                { sudo_ flatpak install --or-update "$flatpak_scope" -y "$_remote" "${_flatpak_normal[@]}"; } || \
                 fatal "Failed to install flatpak packages ${_flatpak_normal[*]}"
         fi
 

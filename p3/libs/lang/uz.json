@@ -147,6 +147,7 @@
   "modsign": "Yadro moduli imzolash",
   "modsign_desc": "Xavfsizlik Boot uchun Machine Owner Key bilan yadro modullar va drayverlarni imzolashni yoqadi.",
   "flat_desc": "Flatpak ilovalari uchun asosiy repozitoriya, ko'plab eksklyuziv ilovalarga ega.",
+  "flatpark_desc": "FlatPark — Flatpakning jamoat hubi: ilovalarni ularning vendorlari o'zi paketlaydi, runtimes esa Flathubdan olinadi.",
   "brew_desc": "macOS/Linux uchun CLI vositalar paket menejeri.",
   "chaotic_desc": "Arch Linux foydalanuvchilari uchun jamoa boshqaruvidagi repozitoriya.",
   "rpmfusion_desc": "Fedora va RHEL uchun qo'shimcha paketlar ta'minlovchi repozitoriya.",

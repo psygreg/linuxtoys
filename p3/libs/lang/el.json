@@ -148,6 +148,7 @@
   "modsign": "Υπογραφή modules πυρήνα",
   "modsign_desc": "Ενεργοποιεί την υπογραφή modules πυρήνα και οδηγών με ένα Machine Owner Key για Secure Boot.",
   "flat_desc": "Το κύριο αποθετήριο για εφαρμογές Flatpak, με πολλές αποκλειστικές εφαρμογές.",
+  "flatpark_desc": "Το FlatPark — ένα κοινοτικό hub Flatpak με εφαρμογές που πακετάρουν οι ίδιοι οι εκδότες τους, δίπλα στο Flathub για τα runtimes.",
   "brew_desc": "Ένας διαχειριστής πακέτων εργαλείων CLI για macOS/Linux.",
   "chaotic_desc": "Ένα αποθετήριο οδηγούμενο από την κοινότητα για χρήστες Arch Linux.",
   "rpmfusion_desc": "Ένα αποθετήριο που παρέχει πρόσθετα πακέτα για Fedora και RHEL.",

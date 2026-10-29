@@ -147,6 +147,7 @@
   "modsign": "Nüvə moduli imzalanması",
   "modsign_desc": "Nüvə modullarını və drayverləri Machine Owner Key ilə Secure Boot üçün imzalamağı aktivləşdirir.",
   "flat_desc": "Flatpak tətbiqləri üçün əsas repozitoriya, çoxlu eksklyuziv tətbiqlərə malikdir.",
+  "flatpark_desc": "FlatPark — icma Flatpak mərkəzi: tətbiqləri öz istehsalçıları paketləyir, runtimes üçün Flathub ilə birlikdə işləyir.",
   "brew_desc": "macOS/Linux üçün CLI vasitələr paket meneceri.",
   "chaotic_desc": "Arch Linux istifadəçiləri üçün icma idarəetmə repozitoriyası.",
   "rpmfusion_desc": "Fedora və RHEL üçün əlavə paketlər təmin edən repozitoriya.",

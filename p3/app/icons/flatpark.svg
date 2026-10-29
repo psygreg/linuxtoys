@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="FlatPark">
+  <defs>
+    <linearGradient id="fp-g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4a90e8"/>
+      <stop offset="1" stop-color="#1c71d8"/>
+    </linearGradient>
+  </defs>
+  <rect x="6" y="6" width="52" height="52" rx="14" fill="url(#fp-g)"/>
+  <path d="M32 15 46.7 23.5V40.5L32 49 17.3 40.5V23.5Z" fill="#fff"/>
+  <rect x="25.5" y="25.5" width="13" height="13" rx="3" fill="#2f7fe0"/>
+</svg>

@@ -7,7 +7,8 @@ import os
 # Supports both normal LinuxToys scripts and repository-list entries.
 NEW_FEATURES = {
     "G-Helper",
-    "Photon Studio"
+    "Photon Studio",
+    "FlatPark"
 }
 _NEW_FEATURE_NAMES = frozenset(item.casefold() for item in NEW_FEATURES)
 

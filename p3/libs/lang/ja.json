@@ -149,6 +149,7 @@
   "modsign": "カーネルモジュール署名",
   "modsign_desc": "Secure Boot用のMachine Owner Keyでカーネルモジュールとドライバーの署名を有効化。",
   "flat_desc": "多くの独占アプリを持つFlatpakアプリケーションの定番リポジトリ。",
+  "flatpark_desc": "ベンダー自身がパッケージしたアプリを集めるコミュニティ Flatpak ハブ FlatPark。ランタイムは Flathub と併用します。",
   "brew_desc": "macOS/Linux用CLIツールパッケージマネージャー。",
   "chaotic_desc": "Arch Linuxユーザー用のコミュニティ駆動リポジトリ。",
   "rpmfusion_desc": "FedoraとRHEL用の追加パッケージを提供するリポジトリ。",

@@ -151,6 +151,7 @@
   "modsign": "Penandatanganan modul kernel",
   "modsign_desc": "Mengaktifkan penandatanganan modul kernel dan driver dengan Machine Owner Key untuk Secure Boot.",
   "flat_desc": "Repository utama untuk aplikasi Flatpak, memiliki banyak aplikasi eksklusif.",
+  "flatpark_desc": "FlatPark, hub Flatpak komunitas untuk aplikasi yang dikemas langsung oleh vendor-nya, bersama Flathub untuk runtime.",
   "brew_desc": "Package manager alat CLI untuk macOS/Linux.",
   "chaotic_desc": "Repository yang digerakkan komunitas untuk pengguna Arch Linux.",
   "rpmfusion_desc": "Repository yang menyediakan paket tambahan untuk Fedora dan RHEL.",

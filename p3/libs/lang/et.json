@@ -148,6 +148,7 @@
   "modsign": "Kernel mooduli allkirjastamine",
   "modsign_desc": "Lubab kernel moodulite ja draiverite allkirjastamise Machine Owner Key-ga Secure Boot'i jaoks.",
   "flat_desc": "Flatpak rakenduste peamine repositoorium, millel on palju eksklusiivseid rakendusi.",
+  "flatpark_desc": "FlatPark on kogukonna Flatpak-hub rakendustega, mille on pakendanud tootjad ise; koos Flathub runtimedega.",
   "brew_desc": "CLI tööriistade paketihaldur macOS/Linux jaoks.",
   "chaotic_desc": "Kogukonna juhitud repositoorium Arch Linux kasutajatele.",
   "rpmfusion_desc": "Repositoorium, mis pakub täiendavaid pakette Fedora ja RHEL jaoks.",

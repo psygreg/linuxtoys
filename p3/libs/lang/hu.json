@@ -148,6 +148,7 @@
   "modsign": "Kernel modul aláírás",
   "modsign_desc": "Engedélyezi kernel modulok és illesztőprogramok aláírását Machine Owner Key-vel Secure Boot-hoz.",
   "flat_desc": "A fő tároló Flatpak alkalmazásokhoz, sok exkluzív app-pal.",
+  "flatpark_desc": "A FlatPark közösségi Flatpak-hub, amelyen a gyártók maguk csomagolják az alkalmazásokat, Flathub mellett a futtatókörnyezetekhez.",
   "brew_desc": "CLI eszközök csomagmenedzser macOS/Linux-ra.",
   "chaotic_desc": "Közösségi-dráva tároló Arch Linux felhasználóknak.",
   "rpmfusion_desc": "Tároló további csomagok biztosítására Fedora és RHEL számára.",

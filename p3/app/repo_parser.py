@@ -1096,11 +1096,16 @@ def create_install_script(entry):
         compat_keys = get_system_compat_keys()
         packages = _resolve_package_names(entry, compat_keys)
         if not packages:
-            raise ValueError("No Flathub package name matches this operating system")
+            raise ValueError("No Flatpak package name matches this operating system")
 
+        # AppStream entries carry the Flatpak remote their metadata came from
+        # (flathub, flatpark); the default stays flathub so repo-list entries
+        # and hand-built entries keep their existing behavior.
+        remote = str(entry.get("flatpak_remote") or "").strip()
+        remote_flag = f" --remote {shlex.quote(remote)}" if remote and remote.casefold() != "flathub" else ""
         skip_user_flag = " --skip-user" if _skip_user_override(entry) else ""
         command = "\n".join(
-            f"pkg_flat{skip_user_flag} {shlex.quote(package)}"
+            f"pkg_flat{remote_flag}{skip_user_flag} {shlex.quote(package)}"
             for package in packages
         )
 

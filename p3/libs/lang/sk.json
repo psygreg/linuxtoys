@@ -148,6 +148,7 @@
   "modsign": "Podpisovanie kernel modulov",
   "modsign_desc": "Povolí podpisovanie kernel modulov a ovládačov s Machine Owner Key pre Secure Boot.",
   "flat_desc": "Hlavný repozitár pre Flatpak aplikácie, má mnoho exkluzívnych aplikácií.",
+  "flatpark_desc": "FlatPark — komunitný hub Flatpak s aplikáciami, ktoré balia samotní výrobcovia, vedľa Flathubu pre runtimes.",
   "brew_desc": "Manažér balíkov CLI nástrojov pre macOS/Linux.",
   "chaotic_desc": "Komunitne riadený repozitár pre Arch Linux používateľov.",
   "rpmfusion_desc": "Repozitár poskytujúci dodatočné balíky pre Fedora a RHEL.",

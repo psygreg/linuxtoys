@@ -149,6 +149,7 @@
   "modsign": "Ký module kernel",
   "modsign_desc": "Cho phép ký các module kernel và trình điều khiển với Machine Owner Key cho Secure Boot.",
   "flat_desc": "Kho chính cho các ứng dụng Flatpak, có nhiều ứng dụng độc quyền.",
+  "flatpark_desc": "FlatPark, hub Flatpak cộng đồng với các ứng dụng do chính nhà cung cấp đóng gói, dùng cùng Flathub cho môi trường runtime.",
   "brew_desc": "Trình quản lý gói công cụ CLI cho macOS/Linux.",
   "chaotic_desc": "Kho do cộng đồng điều khiển cho người dùng Arch Linux.",
   "rpmfusion_desc": "Kho cung cấp các gói bổ sung cho Fedora và RHEL.",

@@ -149,6 +149,7 @@
   "modsign": "커널 모듈 서명",
   "modsign_desc": "Secure Boot를 위해 Machine Owner Key로 커널 모듈과 드라이버를 서명할 수 있게 합니다.",
   "flat_desc": "많은 독점 앱이 있는 Flatpak 애플리케이션의 주요 저장소입니다.",
+  "flatpark_desc": "공급자가 직접 패키지한 앱을 모은 커뮤니티 Flatpak 허브 FlatPark으로, 런타임은 Flathub과 함께 사용합니다.",
   "brew_desc": "macOS/Linux용 CLI 도구 패키지 관리자입니다.",
   "chaotic_desc": "Arch Linux 사용자를 위한 커뮤니티 주도 저장소입니다.",
   "rpmfusion_desc": "Fedora와 RHEL을 위한 추가 패키지를 제공하는 저장소입니다.",

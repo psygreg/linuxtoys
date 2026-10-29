@@ -149,6 +149,7 @@
   "modsign": "Podpisywanie modułów jądra",
   "modsign_desc": "Włącza podpisywanie modułów jądra i sterowników Machine Owner Key dla Secure Boot.",
   "flat_desc": "Główne repozytorium aplikacji Flatpak, mające wiele ekskluzywnych aplikacji.",
+  "flatpark_desc": "FlatPark — społecznościowy hub Flatpak z aplikacjami pakowanymi przez ich producentów, obok Flathub dla środowisk uruchomieniowych.",
   "brew_desc": "Menedżer pakietów narzędzi CLI dla macOS/Linux.",
   "chaotic_desc": "Repozytorium społecznościowe dla użytkowników Arch Linux.",
   "rpmfusion_desc": "Repozytorium dostarczające dodatkowe pakiety dla Fedory i RHEL.",

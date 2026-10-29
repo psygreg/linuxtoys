@@ -290,7 +290,7 @@ fn adapt_appstream_maps_values(components:Vec<serde_json::Map<String,Value>>, ca
         let (name,_)=localized(&m,"localized_names",lang,m.get("name").cloned().unwrap_or(Value::String(String::new())));let(summary,_)=localized(&m,"localized_summaries",lang,m.get("summary").cloned().unwrap_or(Value::String(String::new())));let(dev,_)=localized(&m,"localized_developers",lang,m.get("developer").cloned().unwrap_or(Value::String(String::new())));let(blocks,bloc)=localized(&m,"localized_descriptions",lang,m.get("description_blocks").cloned().unwrap_or_else(||Value::Array(vec![])));let shots=clean_screens(m.get("screenshots"));let source=m.get("source").and_then(Value::as_str).unwrap_or("native");let flat=source=="flatpak";let snap=source=="snap";let origin=m.get("origin").and_then(Value::as_str).unwrap_or("");let scope=m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("");let long=flatten_blocks(&blocks);
         let mut e=serde_json::Map::new();macro_rules! s { ($k:expr, $v:expr) => {{ let _ = e.insert($k.into(), Value::String($v.to_string())); }} }
         s!("id",id);e.insert("name".into(),name);s!("appstream_canonical_name",m.get("name").and_then(Value::as_str).unwrap_or(id));e.insert("description".into(),summary);s!("description_tag","");e.insert("description_localized".into(),Value::Bool(has_localized(&m,"localized_summaries",lang)));s!("long_description",long);e.insert("long_description_blocks".into(),blocks);s!("long_description_locale",bloc);s!("long_description_tag","");s!("long_description_format",if snap{"markdown"}else{"appstream"});e.insert("screenshots".into(),shots.clone());
-        for(k,src)in [("homepage_url","homepage"),("donate","donation"),("donate_url","donation"),("license","license")]{s!(k,m.get(src).and_then(Value::as_str).unwrap_or(""));}e.insert("developer".into(),dev);s!("icon",if brew{"brewpkg.webp"}else{m.get("icon").and_then(Value::as_str).unwrap_or("application-x-executable")});s!("category",category);s!("type",if flat{"flathub"}else if snap{"snap"}else if brew{"homebrew"}else if source=="appimage"{"appimage"}else{"native"});e.insert("package-name".into(),if flat||snap||brew||source=="appimage"{Value::String(packages.first().cloned().unwrap_or_else(||id.into()))}else{Value::Array(packages.iter().cloned().map(Value::String).collect())});s!("repo",if origin.is_empty(){"appstream"}else{origin});for(k,v)in [("revert","yes"),("reboot","no")]{s!(k,v)}for k in ["is_script","is_repo_entry","is_appstream_entry"]{e.insert(k.into(),Value::Bool(true));}e.insert("is_subcategory".into(),Value::Bool(false));s!("appstream_id",id);s!("appstream_launchable",m.get("launchable").and_then(Value::as_str).unwrap_or(""));s!("appstream_source",source);s!("appstream_origin",origin);for k in ["flatpak_remote","flatpak_scope","flatpak_installation","flatpak_ref","flatpak_arch","flatpak_branch"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}for k in ["snap_name","snap_id","snap_channel","snap_confinement"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}e.insert("overrides".into(),if flat&&scope=="system"{serde_json::json!({"skip-user":true})}else{serde_json::json!({})});for k in ["review_rating","review_count"]{e.insert(k.into(),m.get(k).cloned().unwrap_or(Value::Null));}s!("appstream_version",m.get("version").and_then(Value::as_str).unwrap_or(""));s!("repo_app_id",id);e.insert("is_new".into(),Value::Bool(false));e.insert("is_verified".into(),Value::Bool(flat&&m.get("verified").and_then(Value::as_bool).unwrap_or(false)));s!("native_distro_badge",if flat||snap||brew||source=="appimage"{""}else{native_badge});s!("appstream_badge",if flat{"distros/flathub.webp"}else if snap{"snapbadge.webp"}else if brew{"brew.png"}else if source=="appimage"{"appimages.webp"}else{""});e.insert("has_app_page".into(),Value::Bool(brew||source=="appimage"||!long.is_empty()||shots.as_array().is_some_and(|a|!a.is_empty())));s!("path",format!("appstream://{source}/{id}"));
+        for(k,src)in [("homepage_url","homepage"),("donate","donation"),("donate_url","donation"),("license","license")]{s!(k,m.get(src).and_then(Value::as_str).unwrap_or(""));}e.insert("developer".into(),dev);s!("icon",if brew{"brewpkg.webp"}else{m.get("icon").and_then(Value::as_str).unwrap_or("application-x-executable")});s!("category",category);s!("type",if flat{"flathub"}else if snap{"snap"}else if brew{"homebrew"}else if source=="appimage"{"appimage"}else{"native"});e.insert("package-name".into(),if flat||snap||brew||source=="appimage"{Value::String(packages.first().cloned().unwrap_or_else(||id.into()))}else{Value::Array(packages.iter().cloned().map(Value::String).collect())});s!("repo",if origin.is_empty(){"appstream"}else{origin});for(k,v)in [("revert","yes"),("reboot","no")]{s!(k,v)}for k in ["is_script","is_repo_entry","is_appstream_entry"]{e.insert(k.into(),Value::Bool(true));}e.insert("is_subcategory".into(),Value::Bool(false));s!("appstream_id",id);s!("appstream_launchable",m.get("launchable").and_then(Value::as_str).unwrap_or(""));s!("appstream_source",source);s!("appstream_origin",origin);for k in ["flatpak_remote","flatpak_scope","flatpak_installation","flatpak_ref","flatpak_arch","flatpak_branch"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}for k in ["snap_name","snap_id","snap_channel","snap_confinement"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}e.insert("overrides".into(),if flat&&scope=="system"{serde_json::json!({"skip-user":true})}else{serde_json::json!({})});for k in ["review_rating","review_count"]{e.insert(k.into(),m.get(k).cloned().unwrap_or(Value::Null));}s!("appstream_version",m.get("version").and_then(Value::as_str).unwrap_or(""));s!("repo_app_id",id);e.insert("is_new".into(),Value::Bool(false));e.insert("is_verified".into(),Value::Bool(flat&&m.get("verified").and_then(Value::as_bool).unwrap_or(false)));s!("native_distro_badge",if flat||snap||brew||source=="appimage"{""}else{native_badge});s!("appstream_badge",if flat{if origin=="flatpark"{"distros/flatpark.webp"}else{"distros/flathub.webp"}}else if snap{"snapbadge.webp"}else if brew{"brew.png"}else if source=="appimage"{"appimages.webp"}else{""});e.insert("has_app_page".into(),Value::Bool(brew||source=="appimage"||!long.is_empty()||shots.as_array().is_some_and(|a|!a.is_empty())));s!("path",format!("appstream://{source}/{id}"));
         if source=="appimage" {
             e.insert("appimage_links".into(),m.get("appimage_links").cloned().unwrap_or(Value::Array(vec![])));
             e.insert("appimage_needs_resolution".into(),Value::Bool(true));
@@ -317,7 +317,8 @@ fn source_option_key_rs(item: &serde_json::Map<String, Value>) -> String {
     if source != "flatpak" { return source.to_string(); }
     let scope = item.get("flatpak_scope").and_then(Value::as_str).unwrap_or("");
     let installation = item.get("flatpak_installation").and_then(Value::as_str).unwrap_or("");
-    format!("flatpak:{scope}:{installation}")
+    let remote = item.get("flatpak_remote").and_then(Value::as_str).unwrap_or("");
+    format!("flatpak:{scope}:{installation}:{remote}")
 }
 fn component_identity_rs(item:&serde_json::Map<String,Value>)->(String,String){
     (normalize_id(item.get("id").and_then(Value::as_str).unwrap_or("")), item.get("name").and_then(Value::as_str).unwrap_or("").trim().to_lowercase())
@@ -456,7 +457,12 @@ fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths
     }
     let mut out=pass;
     for (_,raw) in groups {let mut group=if by_name_pass{expand_source_group_rs(&raw)}else{raw};if let Some(l)=locked_system_flatpak_rs(&group,locks){out.push(l);continue}
-        let mut flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).cloned().collect();let natives:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").cloned().collect();let snaps:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("snap")).cloned().collect();let appimages:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("appimage")).cloned().collect();flat.sort_by_key(|m|(m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("")!="user",m.get("flatpak_installation").and_then(Value::as_str).unwrap_or("").to_string()));group=natives.iter().cloned().chain(flat.iter().cloned()).chain(snaps.iter().cloned()).chain(appimages.iter().cloned()).collect();
+        let mut flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).cloned().collect();let natives:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").cloned().collect();let snaps:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("snap")).cloned().collect();let appimages:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("appimage")).cloned().collect();
+        // User scope first, then the primary installation, and out of equal
+        // scopes prefer the established default remote (flathub) over newly
+        // added sources so the default selection stays stable when a hub like
+        // FlatPark serves the same app.
+        flat.sort_by_key(|m|(m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("")!="user",m.get("flatpak_installation").and_then(Value::as_str).unwrap_or("").to_string(),m.get("flatpak_remote").and_then(Value::as_str).unwrap_or("flathub")!="flathub",m.get("flatpak_remote").and_then(Value::as_str).unwrap_or("").to_string()));group=natives.iter().cloned().chain(flat.iter().cloned()).chain(snaps.iter().cloned()).chain(appimages.iter().cloned()).collect();
         if natives.is_empty()&&flat.len()>1{out.push(with_source_options_rs(&flat[0],&group));continue}let sources:std::collections::HashSet<_>=group.iter().map(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")).collect();if sources.len()<2{if !appimages.is_empty(){out.extend(appimages)}else{out.extend(group)}continue}
         if let Some(pref)=explicit_group_preference_rs(&group,prefs,host_os){let mut selected:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")==pref).cloned().collect();if !selected.is_empty(){if matches!(pref.as_str(),"flatpak"|"appimage"){selected.truncate(1)}out.extend(selected.iter().map(|m|with_source_options_rs(m,&group)));continue}}
         // Whole-category native policy is a default-source decision and outranks
@@ -2222,6 +2228,19 @@ mod appimage_source_tests {
         .clone()
     }
 
+    fn flatpak_component(id: &str, remote: &str, scope: &str, installation: &str) -> serde_json::Map<String, Value> {
+        serde_json::json!({
+            "id": id, "name": "App", "summary": "App summary",
+            "packages": [id], "categories": ["Utility"], "source": "flatpak",
+            "origin": remote, "verified": false,
+            "flatpak_remote": remote, "flatpak_scope": scope,
+            "flatpak_installation": installation
+        })
+        .as_object()
+        .unwrap()
+        .clone()
+    }
+
     fn collapse(entries: Vec<serde_json::Map<String, Value>>, prefs: Value) -> Vec<serde_json::Map<String, Value>> {
         let paths: Vec<String> = vec!["/scripts/creative/audio".into(), "/scripts/devs".into()];
         let cfg = serde_json::json!({"main": {"Game": ("game",)}, "additional": {}});
@@ -2321,6 +2340,81 @@ mod appimage_source_tests {
         assert_eq!(preference_value_rs(&serde_json::json!("appimage"), &host_os), Some("appimage".into()));
         assert_eq!(preference_value_rs(&serde_json::json!({"all": "appimage"}), &host_os), Some("appimage".into()));
         assert_eq!(preference_value_rs(&serde_json::json!("bogus"), &host_os), None);
+    }
+
+    #[test]
+    fn flatpak_source_option_keys_separate_remotes() {
+        assert_eq!(
+            source_option_key_rs(&flatpak_component("org.example.App", "flathub", "user", "user")),
+            "flatpak:user:user:flathub"
+        );
+        assert_ne!(
+            source_option_key_rs(&flatpak_component("org.example.App", "flathub", "user", "user")),
+            source_option_key_rs(&flatpak_component("org.example.App", "flatpark", "user", "user"))
+        );
+        // Same-remote copies still coalesce for dedupe purposes.
+        assert_eq!(
+            source_option_key_rs(&flatpak_component("org.example.App", "flatpark", "user", "user")),
+            source_option_key_rs(&flatpak_component("org.example.App", "flatpark", "user", "user"))
+        );
+    }
+
+    #[test]
+    fn multiple_flatpak_remotes_stay_selectable_with_stable_flathub_default() {
+        let entries = vec![
+            component("native.example", "Unrelated", "native", &["Office"]),
+            flatpak_component("org.example.App", "flatpark", "user", "user"),
+            flatpak_component("org.example.App", "flathub", "user", "user"),
+        ];
+        let prefs = serde_json::json!({"default": "flatpak", "apps": {}});
+        let selected = collapse(entries, prefs);
+        assert_eq!(selected.len(), 2, "{selected:?}");
+
+        let app = selected.iter()
+            .find(|entry| entry.get("id").and_then(Value::as_str) == Some("org.example.App"))
+            .unwrap();
+        assert_eq!(app.get("source").and_then(Value::as_str), Some("flatpak"));
+        // The default selection stays the established remote even when the
+        // FlatPark copy arrived first in the group.
+        assert_eq!(
+            app.get("flatpak_remote").and_then(Value::as_str),
+            Some("flathub"),
+            "{app:?}"
+        );
+        // Both remotes remain reachable through the source selector.
+        let remote_keys: Vec<String> = std::iter::once(app.clone())
+            .chain(
+                app.get("_source_alternatives").and_then(Value::as_array)
+                    .unwrap()
+                    .iter()
+                    .filter_map(|v| v.as_object().cloned()),
+            )
+            .map(|m| source_option_key_rs(&m))
+            .collect();
+        assert!(remote_keys.contains(&"flatpak:user:user:flathub".to_string()), "{remote_keys:?}");
+        assert!(remote_keys.contains(&"flatpak:user:user:flatpark".to_string()), "{remote_keys:?}");
+    }
+
+    #[test]
+    fn flatpark_system_scope_options_keep_scope_labeling_data() {
+        let groups = vec![
+            flatpak_component("org.example.App", "flathub", "user", "user"),
+            flatpak_component("org.example.App", "flatpark", "system", "default"),
+        ];
+        let prefs = serde_json::json!({"default": "flatpak", "apps": {}});
+        let selected = collapse(groups, prefs);
+        assert_eq!(selected.len(), 1, "{selected:?}");
+        let keys: Vec<String> = std::iter::once(selected[0].clone())
+            .chain(
+                selected[0].get("_source_alternatives").and_then(Value::as_array)
+                    .unwrap()
+                    .iter()
+                    .filter_map(|v| v.as_object().cloned()),
+            )
+            .map(|m| source_option_key_rs(&m))
+            .collect();
+        assert!(keys.contains(&"flatpak:user:user:flathub".to_string()), "{keys:?}");
+        assert!(keys.contains(&"flatpak:system:default:flatpark".to_string()), "{keys:?}");
     }
 }
 

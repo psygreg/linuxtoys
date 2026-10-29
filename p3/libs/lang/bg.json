@@ -148,6 +148,7 @@
   "modsign": "Подписване на kernel модули",
   "modsign_desc": "Активира подписване на kernel модули и драйвери с Machine Owner Key за Secure Boot.",
   "flat_desc": "Основното хранилище за Flatpak приложения, имайки много ексклузивни приложения.",
+  "flatpark_desc": "FlatPark — общностен Flatpak хъб с приложения, пакетирани от самите им издатели, до Flathub за runtimes.",
   "brew_desc": "Мениджър на пакети за CLI инструменти за macOS/Linux.",
   "chaotic_desc": "Общностно-движено хранилище за Arch Linux потребители.",
   "rpmfusion_desc": "Хранилище, предоставящо допълнителни пакети за Fedora и RHEL.",

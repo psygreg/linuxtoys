@@ -148,6 +148,7 @@
   "modsign": "Nënshkrimi i modulit bërthamë",
   "modsign_desc": "Aktivizon nënshkrimin e moduleve bërthamë dhe drajverave me Machine Owner Key për Secure Boot.",
   "flat_desc": "Depoja kryesore për aplikimet Flatpak, duke pasur shumë aplikime ekskluzive.",
+  "flatpark_desc": "FlatPark — hub komunitar i Flatpak me aplikacione të paketuara nga vetë prodhuesit e tyre, pranë Flathub për runtime.",
   "brew_desc": "Një menaxher paketash mjetesh CLI për macOS/Linux.",
   "chaotic_desc": "Një depo e drejtuar nga komuniteti për përdoruesit e Arch Linux.",
   "rpmfusion_desc": "Një depo që ofron paketa shtesë për Fedora dhe RHEL.",

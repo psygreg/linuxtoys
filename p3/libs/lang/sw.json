@@ -149,6 +149,7 @@
   "modsign": "Kutia sahihi moduli za kernel",
   "modsign_desc": "Inawezesha kutia sahihi moduli za kernel na viendeshaji na Ufunguo wa Mmiliki wa Mashine kwa Ufunga Salama.",
   "flat_desc": "Ghala la kwenda-kwa la programu za Flatpak, likiwa na programu nyingi za kipekee.",
+  "flatpark_desc": "FlatPark ni kituo cha jumuiya cha Flatpak kwa apps zilizopakiwa na wauzaji wenyewe, pamoja na Flathub kwa runtimes.",
   "brew_desc": "Msimamizi wa vifurushi vya zana za CLI kwa macOS/Linux.",
   "chaotic_desc": "Ghala linaloendelea na jamii kwa watumiaji wa Arch Linux.",
   "rpmfusion_desc": "Ghala linaloongeza vifurushi vya ziada kwa Fedora na RHEL.",

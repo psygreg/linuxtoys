@@ -148,6 +148,7 @@
   "modsign": "Branduolio modulio pasirašymas",
   "modsign_desc": "Įjungia branduolio modulių ir tvarkyklių pasirašymą Machine Owner Key Secure Boot.",
   "flat_desc": "Pagrindinė saugykla Flatpak programoms, turinti daug išskirtinių programų.",
+  "flatpark_desc": "FlatPark — bendruomeninis Flatpak hub su programomis, paketuotomis pačių gamintojų, šalia Flathub runtime reikmėms.",
   "brew_desc": "CLI įrankių paketų tvarkyklė macOS/Linux.",
   "chaotic_desc": "Bendruomenės vadovaujama saugykla Arch Linux vartotojams.",
   "rpmfusion_desc": "Saugykla, teikianti papildomus paketus Fedora ir RHEL.",

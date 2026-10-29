@@ -149,6 +149,7 @@
   "modsign": "การลงนามโมดูลเคอร์เนล",
   "modsign_desc": "เปิดใช้งานการลงนามโมดูลเคอร์เนลและไดรเวอร์ด้วย Machine Owner Key สำหรับ Secure Boot",
   "flat_desc": "ที่เก็บหลักสำหรับแอปพลิเคชัน Flatpak มีแอปเฉพาะมากมาย",
+  "flatpark_desc": "FlatPark คือฮับ Flatpak ของชุมชนสำหรับแอปที่ผู้ให้บริการแพ็กเกจเอง โดยใช้ runtimes คู่กับ Flathub",
   "brew_desc": "ตัวจัดการแพ็กเกจเครื่องมือ CLI สำหรับ macOS/Linux",
   "chaotic_desc": "ที่เก็บที่ขับเคลื่อนโดยชุมชนสำหรับผู้ใช้ Arch Linux",
   "rpmfusion_desc": "ที่เก็บที่ให้แพ็กเกจเพิ่มเติมสำหรับ Fedora และ RHEL",

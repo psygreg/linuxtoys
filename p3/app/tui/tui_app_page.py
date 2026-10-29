@@ -427,14 +427,23 @@ class AppPageWidget(Vertical):
             or ""
         )
 
+    # Remote display names for the Flatpak sources LinuxToys installs from.
+    _FLATPAK_SOURCE_LABELS = {"flathub": "Flathub", "flatpark": "FlatPark"}
+
+    @classmethod
+    def _flatpak_remote_label(cls, remote: str) -> str:
+        remote = str(remote or "").strip() or "flathub"
+        return cls._FLATPAK_SOURCE_LABELS.get(remote.casefold()) or remote.capitalize()
+
     @staticmethod
     def _source_key(entry: Mapping[str, Any]) -> str:
         source = str(entry.get("appstream_source", "") or "").strip()
         if source != "flatpak":
             return source
-        return "flatpak:{}:{}".format(
+        return "flatpak:{}:{}:{}".format(
             str(entry.get("flatpak_scope", "") or "").strip(),
             str(entry.get("flatpak_installation", "") or "").strip(),
+            str(entry.get("flatpak_remote", "") or "").strip(),
         )
 
     def _has_multiple_flatpak_scopes(self) -> bool:
@@ -450,11 +459,13 @@ class AppPageWidget(Vertical):
         source = str(entry.get("appstream_source", "") or "").strip()
         if source == "flatpak":
             scope = str(entry.get("flatpak_scope", "") or "").strip()
+            remote = str(entry.get("flatpak_remote", "") or "").strip()
+            label = self._flatpak_remote_label(remote)
             if scope == "system" and self._has_multiple_flatpak_scopes():
                 return (
-                    f"Flathub ({self._t('app_page_source_system', 'system')})"
+                    f"{label} ({self._t('app_page_source_system', 'system')})"
                 )
-            return "Flathub"
+            return label
         if source == "native":
             return self._t("app_page_source_native", "Native")
         if source == "snap":
