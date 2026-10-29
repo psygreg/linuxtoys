@@ -505,6 +505,15 @@ def _app_details(entry):
         details["description_locale"] = str(entry.get("long_description_locale") or "")
     if entry.get("summary"):
         details["summary"] = str(entry.get("summary"))
+    if str(entry.get("appstream_source") or "") == "flatpak":
+        # Flathub addon/extension components published next to the app catalog.
+        # Cheap signal so agents know list_app_extensions is worth calling.
+        try:
+            details["extensions_available"] = bool(
+                appstream_cache.get_flatpak_extensions(entry)
+            )
+        except Exception:
+            details["extensions_available"] = False
     return details
 
 
@@ -736,6 +745,120 @@ def inspect_local_package(path):
 
 
 # ---------------------------------------------------------------------------
+# Flathub app extensions (addon components, GUI app-page parity)
+# ---------------------------------------------------------------------------
+#
+# Several Flathub applications ship optional extension/addon components
+# (org.videolan.VLC.Plugin.*, com.valvesoftware.Steam.Compatibilitytool.*, ...).
+# They are AppStream components with <extends>, published by the cache into
+# extensions.json keyed by their parent app — never part of the app catalog.
+# The GUI installs/removes them with plain `flatpak install/uninstall` through
+# the queue runner; the MCP server mirrors that (no transmap/registry, since
+# extension refs are not Action Registry transactions there either).
+
+
+def _flatpak_extension_records(app_id):
+    """(parent entry, extension list) for one app's Flathub addons, or ValueError."""
+    entry = _resolve_entry(app_id)
+    if entry is None:
+        raise ValueError(f"Unknown app id '{app_id}'. Use search_apps to list valid IDs.")
+    if str(entry.get("appstream_source") or "") != "flatpak":
+        name = str(entry.get("name") or app_id)
+        raise ValueError(
+            f"'{name}' has no Flathub extensions. Extensions exist only for apps "
+            "installed from a Flatpak source."
+        )
+    if not shutil.which("flatpak"):
+        raise ValueError("Flatpak is not available on this system.")
+    return entry, appstream_cache.get_flatpak_extensions(entry)
+
+
+def _find_app_extension(extension_records, extension):
+    """Resolve one extension by component id or flatpak ref, or ValueError."""
+    target = str(extension or "").strip().casefold()
+    if not target:
+        raise ValueError("An extension component id (or flatpak ref) is required.")
+    matches = [
+        record for record in extension_records
+        if str(record.get("id") or "").casefold() == target
+        or str(record.get("flatpak_ref") or "").casefold() == target
+    ]
+    if not matches:
+        # Tolerate the compact ref form ("org.../x86_64/3-25.08") and the
+        # bare id embedded in a canonical ref ("runtime/org.../x86_64/branch").
+        stripped = target
+        for prefix in ("runtime/", "app/"):
+            if stripped.startswith(prefix):
+                stripped = stripped[len(prefix):]
+                matches = [
+                    record for record in extension_records
+                    if str(record.get("flatpak_ref") or "").casefold() == stripped
+                ]
+        if not matches:
+            ref_parts = target.split("/")
+            if len(ref_parts) >= 3 and ref_parts[1]:
+                matches = [
+                    record for record in extension_records
+                    if str(record.get("id") or "").casefold() == ref_parts[1].casefold()
+                ]
+    if not matches:
+        raise ValueError(
+            f"'{extension}' is not an extension of this app. Use "
+            "list_app_extensions to see the available ones."
+        )
+    if len(matches) > 1:
+        refs = ", ".join(sorted(str(item.get("flatpak_ref") or "") for item in matches))
+        raise ValueError(
+            f"'{extension}' matches {len(matches)} extensions ({refs}). Pass the full flatpak ref."
+        )
+    return matches[0]
+
+
+def _extension_record_public(record, installed_refs):
+    ref = str(record.get("flatpak_ref") or "")
+    return {
+        "id": str(record.get("id") or ""),
+        "name": str(record.get("name") or record.get("id") or ref),
+        "summary": str(record.get("summary") or ""),
+        "flatpak_ref": ref,
+        "installed": bool(ref) and ref in installed_refs,
+        "flatpak_scope": str(record.get("flatpak_scope") or ""),
+        "flatpak_remote": str(record.get("flatpak_remote") or ""),
+    }
+
+
+def _installed_extension_refs(entry):
+    """Refs of this app's extensions currently installed (read-only flatpak)."""
+    try:
+        return appstream_cache.installed_flatpak_extension_refs(entry)
+    except Exception:
+        return set()
+
+
+def _extension_parent_hint(app_id):
+    """Name of the app owning an extension id, for install error hints."""
+    folded = str(app_id or "").strip().casefold()
+    if "." not in folded:
+        return ""
+    try:
+        with open(appstream_cache.EXTENSIONS_PATH, "r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+    except (OSError, ValueError, TypeError):
+        return ""
+    if not isinstance(payload, list):
+        return ""
+    for record in payload:
+        if isinstance(record, dict) and str(record.get("id") or "").casefold() == folded:
+            parent = str(record.get("parent_id") or "").strip()
+            if parent:
+                return (
+                    f"'{folded}' is a Flathub extension of '{parent}': install it "
+                    "with install_app_extension on that app."
+                )
+    return ""
+
+
+# ---------------------------------------------------------------------------
 # Job manager: serialized install/remove runs with GUI askpass
 # ---------------------------------------------------------------------------
 
@@ -819,6 +942,22 @@ class JobManager:
         self._queue.put((job, spec))
         return job
 
+    def submit_extension(self, entry, extension, remove=False):
+        """Queue a Flathub app extension install/uninstall.
+
+        ``extension`` is the catalog extension payload (self-sufficient: its
+        own flatpak_ref/remote/scope/installation). Mirrors the GUI's queue
+        runner: no transmap, no Action Registry state.
+        """
+        extension = dict(extension or {})
+        job = Job("extension_remove" if remove else "extension_install", _stable_id(entry))
+        job.name = str(
+            extension.get("name") or extension.get("flatpak_ref") or "Flatpak extension"
+        )
+        self._register(job)
+        self._queue.put((job, extension))
+        return job
+
     def _register(self, job):
         with self._lock:
             self._jobs[job.id] = job
@@ -854,11 +993,19 @@ class JobManager:
         job.started = time.time()
         try:
             try:
-                antenna.add_script_to_history(str(job.name))
+                # Extension installs/uninstalls never enter the bug-report
+                # history in the GUI either: they are flatpak-level addon
+                # operations, not app scripts.
+                if job.kind not in ("extension_install", "extension_remove"):
+                    antenna.add_script_to_history(str(job.name))
             except Exception:
                 pass  # Bug-report context is best effort.
             if job.kind == "install_file":
                 code, reason = self._install_file(job, entry)
+            elif job.kind in ("extension_install", "extension_remove"):
+                code, reason = self._run_extension(
+                    job, entry, remove=job.kind == "extension_remove"
+                )
             elif job.kind == "install":
                 code, reason = self._install(job, entry)
             else:
@@ -1098,6 +1245,43 @@ class JobManager:
             f"{function} exited with status {code}. See the job log for details."
         )
 
+    def _run_extension(self, job, spec, remove=False):
+        """flatpak install/uninstall of one Flathub app extension.
+
+        Mirrors the GUI's extension runner: the scope (user/`--installation`
+        /system) comes from the extension payload, installs pin the app's
+        remote (default flathub), and system-scope operations may raise a
+        polkit password dialog on the user's screen. Extensions are not
+        Action Registry transactions, so no transmap/registry bookkeeping.
+        """
+        ref = str(spec.get("flatpak_ref") or "").strip()
+        if not ref:
+            return 2, "Extension has no flatpak ref."
+
+        scope = str(spec.get("flatpak_scope") or "").strip()
+        installation = str(spec.get("flatpak_installation") or "").strip()
+        if scope == "user":
+            scope_args = ["--user"]
+        elif installation and installation != "default":
+            scope_args = [f"--installation={installation}"]
+        else:
+            scope_args = ["--system"]
+
+        argv = ["flatpak", *scope_args]
+        if remove:
+            argv += ["uninstall", "-y", ref]
+        else:
+            remote = str(spec.get("flatpak_remote") or "flathub").strip() or "flathub"
+            argv += ["install", "-y", remote, ref]
+
+        code, output = self._run_command(job, argv, {})
+        if code == 0:
+            return 0, ""
+        action = "uninstall" if remove else "install"
+        return code, self._failure_reason(output) or (
+            f"flatpak {action} exited with status {code}. See the job log for details."
+        )
+
     def _remove(self, job, entry):
         blockers = installed_packages.dependency_blockers(entry)
         if blockers:
@@ -1281,6 +1465,9 @@ class _LazyJobs:
     def submit_file(self, spec):
         return self._get().submit_file(spec)
 
+    def submit_extension(self, entry, extension, remove=False):
+        return self._get().submit_extension(entry, extension, remove)
+
     def get(self, job_id):
         return self._get().get(job_id)
 
@@ -1420,6 +1607,52 @@ def tool_schemas():
                     "path": {"type": "string", "description": "Path of the package file (absolute or ~-prefixed)"},
                 },
                 "required": ["path"],
+            },
+        },
+        {
+            "name": "install_app_extension",
+            "description": (
+                "Install one Flathub extension/addon of an app (VLC plugins, "
+                "Steam compatibility tools, ...). Identify it with "
+                "list_app_extensions. Returns a job id — poll get_job."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "app_id": {"type": "string", "description": "Stable catalog ID of the app the extension belongs to"},
+                    "extension": {"type": "string", "description": "Extension component id (e.g. org.videolan.VLC.Plugin.bdj) or its full flatpak ref"},
+                },
+                "required": ["app_id", "extension"],
+            },
+        },
+        {
+            "name": "remove_app_extension",
+            "description": (
+                "Remove one installed Flathub extension/addon of an app. "
+                "Returns a job id — poll get_job."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "app_id": {"type": "string", "description": "Stable catalog ID of the app the extension belongs to"},
+                    "extension": {"type": "string", "description": "Extension component id or its full flatpak ref"},
+                },
+                "required": ["app_id", "extension"],
+            },
+        },
+        {
+            "name": "list_app_extensions",
+            "description": (
+                "List the Flathub extensions/addons of one app, each with its "
+                "installed state. Only apps whose get_app_details reports "
+                "extensions_available have them."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "app_id": {"type": "string", "description": "Stable catalog ID"},
+                },
+                "required": ["app_id"],
             },
         },
         {
@@ -1629,7 +1862,13 @@ def _tool_get_screenshot(app_id, index=0):
 
 
 def _tool_install(app_id):
-    job = JOBS.submit("install", app_id)
+    try:
+        job = JOBS.submit("install", app_id)
+    except ValueError as exc:
+        hint = _extension_parent_hint(app_id)
+        if hint:
+            raise ValueError(f"{exc} {hint}")
+        raise
     return {
         "job_id": job.id,
         "name": job.name,
@@ -1778,6 +2017,53 @@ def _tool_install_package_file(path):
             "The install runs exactly like a package-view install. If it needs "
             "root, the password dialog appears on the user's screen — wait for "
             "them to type it. Poll get_job for the outcome."
+        ),
+    }
+
+
+def _tool_list_app_extensions(app_id):
+    """Every Flathub extension of one app, with its installed state."""
+    entry, records = _flatpak_extension_records(app_id)
+    installed = _installed_extension_refs(entry)
+    return {
+        "app": _app_details(entry),
+        "extensions": [
+            _extension_record_public(record, installed) for record in records
+        ],
+    }
+
+
+def _tool_install_app_extension(app_id, extension):
+    entry, records = _flatpak_extension_records(app_id)
+    target = _find_app_extension(records, extension)
+    job = JOBS.submit_extension(entry, target, remove=False)
+    return {
+        "job_id": job.id,
+        "app": _stable_id(entry),
+        "extension": str(target.get("id") or target.get("flatpak_ref")),
+        "name": job.name,
+        "state": job.state,
+        "note": (
+            "The extension runs through flatpak like a GUI extension install. "
+            "System-scope installs may show a password dialog on the user's "
+            "screen. Poll get_job for the outcome; verify with list_app_extensions."
+        ),
+    }
+
+
+def _tool_remove_app_extension(app_id, extension):
+    entry, records = _flatpak_extension_records(app_id)
+    target = _find_app_extension(records, extension)
+    job = JOBS.submit_extension(entry, target, remove=True)
+    return {
+        "job_id": job.id,
+        "app": _stable_id(entry),
+        "extension": str(target.get("id") or target.get("flatpak_ref")),
+        "name": job.name,
+        "state": job.state,
+        "note": (
+            "Removal runs flatpak uninstall for that extension ref. Poll get_job "
+            "for the outcome; verify with list_app_extensions."
         ),
     }
 
@@ -1990,6 +2276,16 @@ def dispatch_tool(name, arguments):
         return _tool_get_package_file_details(arguments.get("path"))
     if name == "install_package_file":
         return _tool_install_package_file(arguments.get("path"))
+    if name == "install_app_extension":
+        return _tool_install_app_extension(
+            arguments.get("app_id"), arguments.get("extension")
+        )
+    if name == "remove_app_extension":
+        return _tool_remove_app_extension(
+            arguments.get("app_id"), arguments.get("extension")
+        )
+    if name == "list_app_extensions":
+        return _tool_list_app_extensions(arguments.get("app_id"))
     if name == "remove_app":
         return _tool_remove(arguments.get("app_id"))
     if name == "get_job":
@@ -2085,9 +2381,12 @@ def _initialize_result(requested_version):
             "downloaded package file (.deb, .rpm, .appimage, ...) can be "
             "installed the same guarded way: get_package_file_details -> "
             "install_package_file, with fetch_package_url for downloads. "
-            "Installs that need root show the password dialog on the user's "
-            "screen; never ask the user to hand you credentials. Descriptions "
-            "and screenshots can be read and translated with translate_text / "
+            "Flathub apps may offer extensions/addons: when get_app_details "
+            "reports extensions_available, use list_app_extensions / "
+            "install_app_extension / remove_app_extension. Installs that need "
+            "root show the password dialog on the user's screen; never ask "
+            "the user to hand you credentials. Descriptions and screenshots "
+            "can be read and translated with translate_text / "
             "translate_app_description."
         ),
     }

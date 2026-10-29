@@ -1,6 +1,6 @@
 ---
 name: linuxtoys-mcp
-description: Enable and drive the LinuxToys MCP server to manage Linux apps on the user's machine like a user would - search the catalog, read app pages (descriptions, screenshots, donation links), install and remove apps, install local package files (.deb, .rpm, .appimage and more, optionally downloaded from a URL), change LinuxToys settings, and translate descriptions. Use when the user asks to install or remove software through LinuxToys, asks to install a package file, change its settings, or when configuring AI agent access to LinuxToys.
+description: Enable and drive the LinuxToys MCP server to manage Linux apps on the user's machine like a user would - search the catalog, read app pages (descriptions, screenshots, donation links), install and remove apps, install local package files (.deb, .rpm, .appimage and more, optionally downloaded from a URL), install and remove Flathub app extensions/addons, change LinuxToys settings, and translate descriptions. Use when the user asks to install or remove software through LinuxToys, asks to install a package file or app extension, change its settings, or when configuring AI agent access to LinuxToys.
 ---
 
 # LinuxToys MCP
@@ -92,6 +92,9 @@ After connecting, call `server_info` once to confirm the session works.
 | `fetch_package_url(url)` | Download a package file (.deb/.rpm/.pkg.tar.*/.pacman/.eopkg/.flatpak/.flatpakref/.snap/.appimage) from an http(s) URL into a private staging directory; returns its local path |
 | `get_package_file_details(path)` | Inspect a local package file like the GUI's package view does: name, version, architecture, maintainer, description, size, format, and whether that package type is supported on this system |
 | `install_package_file(path)` | Queue the install of a local package file through the same guarded machinery; returns a `job_id` |
+| `list_app_extensions(app_id)` | List a Flathub app's extensions/addons (VLC plugins, Steam compatibility tools, ...), each with its installed state |
+| `install_app_extension(app_id, extension)` | Install one extension of an app by its component id or full flatpak ref; returns a `job_id` |
+| `remove_app_extension(app_id, extension)` | Remove one installed extension of an app; returns a `job_id` |
 | `remove_app(app_id)` | Queue a removal; returns a `job_id` |
 | `get_job(job_id, tail_lines?)` | Job state (`queued`/`running`/`success`/`error`), exit code, log tail |
 | `list_jobs()` | Recent jobs |
@@ -119,6 +122,16 @@ confirm → `install_package_file(path)` → poll `get_job`. It goes through the
 same guarded machinery as a package-view install, so the usual root password
 dialog appears on the user's screen when needed.
 
+**Flathub app extensions (VLC plugins, Steam compatibility tools, ...):**
+when `get_app_details` reports `extensions_available`, run
+`list_app_extensions` (each entry shows its installed state) → tell the user
+which one you will add or remove → confirm → `install_app_extension` /
+`remove_app_extension` (pass the component id or full flatpak ref from the
+list) → poll `get_job` → verify with `list_app_extensions`. These are plain
+`flatpak install/uninstall` operations: system-scope ones may pop a password
+dialog on the user's screen, and unlike app installs they are not recorded in
+the Action Registry — the installed state comes from `list_app_extensions`.
+
 **Remove something:** check `get_registry_entries` / `get_app_details`
 (install state) → confirm with the user → `remove_app` → poll `get_job`.
 
@@ -138,6 +151,10 @@ for arbitrary strings).
   file the user pointed you at, after showing them what the inspection found.
   Never install a package type that the host-compatibility guard refuses, and
   never pick a package URL yourself for an install the user did not ask for.
+- App extensions (`list_app_extensions` / `install_app_extension` /
+  `remove_app_extension`) work the same way: only touch the extension the
+  user asked about, and never install extensions as a side effect of an app
+  install.
 - Never ask for or accept the user's password; privilege prompts appear on
   their screen on their own.
 - Installs are serialized: one job runs at a time. Poll `get_job` rather than
