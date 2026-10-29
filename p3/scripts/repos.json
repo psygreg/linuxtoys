@@ -68,7 +68,7 @@
         "category": "game",
         "icon": "gaming.svg",
         "type": "native",
-        "os": [ "fedora", "arch", "ubuntu", "debian", "suse", "ostree", "solus" ],
+        "os": [ "fedora", "arch", "ubuntu", "debian", "suse", "ostree", "!ublue", "solus" ],
         "package-name": "gamemode",
         "overrides": {
           "pre": "{ { is_arch && summon_helpers; } && multilib_chk; } || true"
