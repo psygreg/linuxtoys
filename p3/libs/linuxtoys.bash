@@ -2,6 +2,7 @@
 # core modules automatically sourced
 
 source "$SCRIPT_DIR/libs/sysinfo.bash"
+source "$SCRIPT_DIR/libs/timefix.bash"
 [ -n "$FS_OPS" ] && source "$SCRIPT_DIR/libs/fsops.bash"
 [ -n "$PACKAGE_OPS" ] && source "$SCRIPT_DIR/libs/packages.bash"
 [ -n "$BOOT_OPS" ] && source "$SCRIPT_DIR/libs/boot.bash"
@@ -157,6 +158,7 @@ askpass() {
             # Only the active privilege helper can confirm whether the current
             # authorization is still valid. The marker must not bypass this check.
             if "$sudo_cmd" -n true 2>/dev/null; then
+                timefix_afterauth || true
                 return 0
             fi
 
@@ -178,6 +180,8 @@ askpass() {
                     touch "$marker"
                 fi
 
+                timefix_afterauth || true
+
                 return 0
             fi
 
@@ -192,6 +196,8 @@ askpass() {
                         if [[ -n ${LINUXTOYS_CHECKLIST:-} ]]; then
                             touch "$marker"
                         fi
+
+                        timefix_afterauth || true
 
                         return 0
                     fi
@@ -243,6 +249,8 @@ askpass() {
             if [[ -n ${LINUXTOYS_CHECKLIST:-} ]]; then
                 touch "$marker"
             fi
+
+            timefix_afterauth || true
 
             return 0
             ;;
@@ -895,3 +903,14 @@ _linuxtoys_prepare_session() (
     runner_unlock
     return "$mirror_status"
 )
+
+# --- Once-per-boot silent clock enforcement ---
+# This file is sourced by every launch path (GUI, CLI, checklist batches,
+# revert dialogs, root services), which is exactly "app launch" from the
+# shell layer; the boot-scoped stamp makes all but the first run of a boot
+# no-ops. Skewed clocks would fail Debian 13+/Ubuntu 25.10+ sqv signature
+# verification ('Not live until') downstream. Corrections prefer the system's
+# NTP service and fall back to an HTTP Date step; runs that would need a
+# privilege prompt are stamped "pending" and finished right after the first
+# successful authorization through askpass's timefix_afterauth hook.
+timefix_bootguard || true
