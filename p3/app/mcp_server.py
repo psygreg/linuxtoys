@@ -61,7 +61,7 @@ if __package__:
     from . import parser
     from . import registry_utils
     from . import translate_helper
-    from .compat import get_linuxtoys_cache_dir, script_is_compatible
+    from .compat import get_linuxtoys_cache_dir, get_system_compat_keys, script_is_compatible
     from .lang_utils import (
         create_translator,
         detect_system_language,
@@ -93,7 +93,7 @@ else:
     from app import parser
     from app import registry_utils
     from app import translate_helper
-    from app.compat import get_linuxtoys_cache_dir, script_is_compatible
+    from app.compat import get_linuxtoys_cache_dir, get_system_compat_keys, script_is_compatible
     from app.lang_utils import (
         create_translator,
         detect_system_language,
@@ -531,6 +531,211 @@ def _fetch_screenshot(url):
 
 
 # ---------------------------------------------------------------------------
+# Local package files (Package View parity, GTK-free)
+# ---------------------------------------------------------------------------
+#
+# The GUI accepts package files through the Package View: an inspector fills
+# name/version/architecture/... for the file, a per-kind host guard decides
+# whether that package format is installable on this system, and the install
+# runs a generated ``pkg_fromfile``/``pkg_appimage`` one-liner through the
+# shared script machinery (askpass dialog on the user's screen, native-manager
+# busy waits, transmap, Action Registry, auto-revert). The MCP server mirrors
+# exactly that flow with a GTK-free inspector: same accepted extensions, same
+# probe commands and same fallback to filename-derived metadata.
+
+PACKAGE_STAGING_SUBDIR = "mcp-packages"
+# Upper bound for downloads fetched by agents. Generous — driver bundles and
+# multi-rpm meta-packages exceed 200 MiB — but never unbounded.
+MAX_PACKAGE_DOWNLOAD_BYTES = 4 * 1024 * 1024 * 1024
+PACKAGE_KIND_EXTENSIONS = (
+    (".deb", "deb"), (".rpm", "rpm"), (".pacman", "arch"),
+    (".eopkg", "eopkg"), (".flatpakref", "flatpakref"),
+    (".flatpak", "flatpak"), (".snap", "snap"), (".appimage", "appimage"),
+)
+PACKAGE_KIND_LABELS = {
+    "deb": "Debian package",
+    "rpm": "RPM package",
+    "arch": "Arch Linux package",
+    "eopkg": "Solus package",
+    "flatpakref": "Flatpak reference",
+    "flatpak": "Flatpak bundle",
+    "snap": "Snap package",
+    "appimage": "AppImage",
+}
+SUPPORTED_PACKAGE_KINDS_TEXT = (
+    ".deb, .rpm, .pkg.tar.*/.pacman, .eopkg, .flatpak, .flatpakref, "
+    ".snap, .appimage"
+)
+
+
+def package_staging_dir():
+    directory = os.path.join(_tmp_dir(), PACKAGE_STAGING_SUBDIR)
+    os.makedirs(directory, mode=0o700, exist_ok=True)
+    return directory
+
+
+def package_file_kind(path):
+    """Package kind accepted for a local file, or None (window.py parity)."""
+    name = os.path.basename(os.fspath(path)).lower()
+    if re.fullmatch(r".+\.pkg\.tar\.(?:zst|xz|gz|lz4)", name):
+        return "arch"
+    for suffix, kind in PACKAGE_KIND_EXTENSIONS:
+        if name.endswith(suffix):
+            return kind
+    return None
+
+
+def package_kind_supported_on_host(kind):
+    """Same per-kind host guard the GUI applies before opening a package file."""
+    keys = get_system_compat_keys()
+    if kind == "snap":
+        return not keys & {"steamos", "dakota", "gnomeos", "kde-linux"}
+    if kind in ("flatpak", "flatpakref"):
+        return "systemd" in keys
+    if kind == "appimage":
+        return True
+    if kind == "deb":
+        return bool(keys & {"debian", "ubuntu"})
+    if kind == "rpm":
+        return bool(keys & {"fedora", "rhel", "suse", "ostree"})
+    if kind == "arch":
+        return bool(keys & {"arch", "cachy", "manjaro"})
+    if kind == "eopkg":
+        return "solus" in keys
+    return False
+
+
+def package_file_signature(path):
+    """Identify one exact file version, the way the GUI queue guards re-runs."""
+    stat = os.stat(path)
+    return (stat.st_dev, stat.st_ino, stat.st_size, stat.st_mtime_ns)
+
+
+def _package_probe_output(argv, timeout=30):
+    """Best-effort stdout of a package metadata probe; "" on any failure."""
+    try:
+        result = subprocess.run(
+            argv,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+            text=True,
+            errors="replace",
+            timeout=timeout,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired, ValueError):
+        return ""
+    return (result.stdout or "").strip()
+
+
+def _control_field_value(control, field):
+    """Read a control-style field, merging indented continuation lines."""
+    prefix = field + ":"
+    value = ""
+    collecting = False
+    for line in (control or "").splitlines():
+        if collecting:
+            if line.startswith((" ", "\t")):
+                part = line.strip()
+                if part and part != ".":
+                    value = f"{value} {part}" if value else part
+                continue
+            break
+        if line.startswith(prefix):
+            value = line[len(prefix):].strip()
+            collecting = True
+    return value
+
+
+def _pkginfo_field_value(text, key):
+    """Read a `key = value` line from a .PKGINFO payload."""
+    prefix = key + " = "
+    for line in (text or "").splitlines():
+        if line.startswith(prefix):
+            return line[len(prefix):].strip()
+    return ""
+
+
+def inspect_local_package(path):
+    """Package View metadata for one local package file (GTK-free).
+
+    Mirrors the native inspector: same extension mapping, same probe commands
+    and the same fallback to filename-derived values. The GUI's icon caching
+    is intentionally not part of this flow.
+    """
+    real = os.path.realpath(os.fspath(path))
+    basename = os.path.basename(real)
+    name = os.path.splitext(basename)[0]
+    kind = package_file_kind(real)
+    if kind is None:
+        return None
+    version = architecture = maintainer = description = ""
+    try:
+        size = os.path.getsize(real)
+    except OSError:
+        size = 0
+
+    if kind == "deb":
+        control = _package_probe_output(["dpkg-deb", "-f", real])
+        if control:
+            value = _control_field_value(control, "Package")
+            if value:
+                name = value
+            version = _control_field_value(control, "Version")
+            architecture = _control_field_value(control, "Architecture")
+            maintainer = _control_field_value(control, "Maintainer")
+            description = _control_field_value(control, "Description")
+    elif kind == "rpm":
+        fields = _package_probe_output([
+            "rpm", "-qp", "--qf",
+            "%{NAME}\\x1f%{VERSION}-%{RELEASE}\\x1f%{ARCH}"
+            "\\x1f%{PACKAGER}\\x1f%{SUMMARY}",
+            real,
+        ]).split("\x1f")
+        if fields and fields[0]:
+            name = fields[0]
+        version = fields[1] if len(fields) > 1 else ""
+        architecture = fields[2] if len(fields) > 2 else ""
+        maintainer = fields[3] if len(fields) > 3 else ""
+        description = fields[4] if len(fields) > 4 else ""
+    elif kind == "arch":
+        pkginfo = _package_probe_output(["bsdtar", "-xOf", real, ".PKGINFO"])
+        if pkginfo:
+            value = _pkginfo_field_value(pkginfo, "pkgname")
+            if value:
+                name = value
+            version = _pkginfo_field_value(pkginfo, "pkgver")
+            architecture = _pkginfo_field_value(pkginfo, "arch")
+            maintainer = _pkginfo_field_value(pkginfo, "packager")
+            description = _pkginfo_field_value(pkginfo, "pkgdesc")
+    elif kind == "flatpakref":
+        try:
+            with open(real, "r", encoding="utf-8", errors="replace") as handle:
+                for line in handle:
+                    if line.startswith("Name="):
+                        name = line[len("Name="):].strip()
+                    elif line.startswith("Title=") and line[len("Title="):].strip():
+                        name = line[len("Title="):].strip()
+                    elif line.startswith("Comment="):
+                        description = line[len("Comment="):].strip()
+        except OSError:
+            pass
+    elif kind == "appimage" and len(basename) > 9:
+        name = basename[:-len(".appimage")].rstrip(".")
+
+    return {
+        "kind": kind,
+        "format_label": PACKAGE_KIND_LABELS.get(kind, kind),
+        "name": name or basename,
+        "version": version,
+        "architecture": architecture,
+        "maintainer": maintainer,
+        "description": description,
+        "size": size,
+    }
+
+
+# ---------------------------------------------------------------------------
 # Job manager: serialized install/remove runs with GUI askpass
 # ---------------------------------------------------------------------------
 
@@ -593,12 +798,32 @@ class JobManager:
             raise ValueError(f"No installable entry found for '{app_id}'. Use search_apps to list valid IDs.")
         job = Job(kind, app_id)
         job.name = str(entry.get("name") or app_id)
+        self._register(job)
+        self._queue.put((job, entry))
+        return job
+
+    def submit_file(self, spec):
+        """Queue a package-file install (Package View parity).
+
+        ``spec`` carries path, kind, display metadata and the exact-file
+        signature captured before queueing. Run order stays serialized with
+        every other job.
+        """
+        spec = dict(spec or {})
+        path = str(spec.get("path") or "")
+        if not os.path.isfile(path):
+            raise ValueError(f"No package file found at '{path}'.")
+        job = Job("install_file", path)
+        job.name = str(spec.get("name") or os.path.basename(path))
+        self._register(job)
+        self._queue.put((job, spec))
+        return job
+
+    def _register(self, job):
         with self._lock:
             self._jobs[job.id] = job
             while len(self._jobs) > 100:
                 self._jobs.popitem(last=False)
-        self._queue.put((job, entry))
-        return job
 
     def get(self, job_id):
         with self._lock:
@@ -632,7 +857,9 @@ class JobManager:
                 antenna.add_script_to_history(str(job.name))
             except Exception:
                 pass  # Bug-report context is best effort.
-            if job.kind == "install":
+            if job.kind == "install_file":
+                code, reason = self._install_file(job, entry)
+            elif job.kind == "install":
                 code, reason = self._install(job, entry)
             else:
                 code, reason = self._remove(job, entry)
@@ -822,6 +1049,55 @@ class JobManager:
         except (OSError, ValueError, RuntimeError) as exc:
             return 1, f"AppImage installation failed: {exc}"
 
+    def _install_file(self, job, spec):
+        """Install one local package file through the Package View machinery.
+
+        Mirrors the GUI's local-package job: re-verify the exact file that was
+        inspected at queue time (dev/ino/size/mtime signature), then run a
+        generated ``pkg_fromfile``/``pkg_appimage`` one-liner through
+        `_execute_script`, so askpass, native-manager waits, the registry and
+        automatic reversion behave exactly like a user install.
+        """
+        spec = dict(spec or {})
+        path = str(spec.get("path") or "")
+        kind = str(spec.get("kind") or "")
+        function = "pkg_appimage" if kind == "appimage" else "pkg_fromfile"
+
+        try:
+            current = package_file_signature(path)
+        except OSError as exc:
+            return 1, f"The package file disappeared before installation: {exc}"
+        expected = tuple(spec.get("signature") or ())
+        if expected and current != expected:
+            return 1, f"The package file changed before installation: {path}"
+
+        directory = _tmp_dir()
+        fd, script_path = tempfile.mkstemp(prefix="mcp-package-", suffix=".sh", dir=directory, text=True)
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                handle.write("#!/usr/bin/env bash\n")
+                handle.write(f"{function} {shlex_quote(path)}\n")
+            os.chmod(script_path, 0o700)
+            payload = {
+                "name": str(spec.get("name") or os.path.basename(path)),
+                "description": str(spec.get("description") or ""),
+                "icon": "package-x-generic",
+                "registry_name": str(spec.get("registry_name") or spec.get("name") or os.path.basename(path)),
+                "path": script_path,
+                "is_local_package": True,
+            }
+            code, reason = self._execute_script(job, payload, transmap_mark="manifest-export skip")
+        finally:
+            try:
+                os.remove(script_path)
+            except OSError:
+                pass
+        if code == 0:
+            return 0, ""
+        return code, reason or (
+            f"{function} exited with status {code}. See the job log for details."
+        )
+
     def _remove(self, job, entry):
         blockers = installed_packages.dependency_blockers(entry)
         if blockers:
@@ -1002,6 +1278,9 @@ class _LazyJobs:
     def submit(self, kind, app_id):
         return self._get().submit(kind, app_id)
 
+    def submit_file(self, spec):
+        return self._get().submit_file(spec)
+
     def get(self, job_id):
         return self._get().get(job_id)
 
@@ -1092,6 +1371,55 @@ def tool_schemas():
                 "type": "object",
                 "properties": {"app_id": {"type": "string", "description": "Stable catalog ID"}},
                 "required": ["app_id"],
+            },
+        },
+        {
+            "name": "fetch_package_url",
+            "description": (
+                "Download a package file (.deb, .rpm, .pkg.tar.*, .pacman, .eopkg, "
+                ".flatpak, .flatpakref, .snap, .appimage) from an http(s) URL into "
+                "LinuxToys' private staging directory and return its local path. "
+                "Inspect the path with get_package_file_details before installing."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "url": {"type": "string", "description": "http(s) URL of the package file"},
+                },
+                "required": ["url"],
+            },
+        },
+        {
+            "name": "get_package_file_details",
+            "description": (
+                "Inspect a local package file exactly like the GUI's package view: "
+                "name, version, architecture, maintainer, description, size and "
+                "format, plus whether that package type is supported on this "
+                "system (same compatibility guards as the GUI)."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "Path of the package file (absolute or ~-prefixed)"},
+                },
+                "required": ["path"],
+            },
+        },
+        {
+            "name": "install_package_file",
+            "description": (
+                "Queue the install of a local package file (.deb, .rpm, "
+                ".pkg.tar.*, .pacman, .eopkg, .flatpak, .flatpakref, .snap, "
+                ".appimage) through the same guarded machinery the GUI's package "
+                "view uses. When root is needed the password dialog appears on "
+                "the user's screen. Returns a job id — poll get_job."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "Path of the package file (absolute or ~-prefixed)"},
+                },
+                "required": ["path"],
             },
         },
         {
@@ -1314,6 +1642,146 @@ def _tool_install(app_id):
     }
 
 
+def _tool_fetch_package_url(url):
+    """Download one package file into the private staging directory."""
+    if not isinstance(url, str) or not url.strip():
+        raise ValueError("A package file URL is required.")
+    url = url.strip()
+    parts = urlsplit(url)
+    if parts.scheme.lower() not in ("http", "https") or not parts.netloc:
+        raise ValueError("Only http(s) URLs can be fetched.")
+
+    name = parts.path.rsplit("/", 1)[-1] if parts.path else ""
+    sanitized = "".join(
+        char if (char.isalnum() or char in "._-") else "_" for char in name
+    ).strip("._")[:120]
+    if not sanitized or package_file_kind(sanitized) is None:
+        raise ValueError(
+            "The URL name does not look like a supported package file. "
+            f"Supported package file types: {SUPPORTED_PACKAGE_KINDS_TEXT}"
+        )
+    target = os.path.join(package_staging_dir(), sanitized)
+
+    request = Request(url, headers={"User-Agent": "LinuxToys MCP"})
+    tmp_path = target + ".part"
+    try:
+        with urlopen(request, timeout=60) as response:
+            with open(tmp_path, "wb") as handle:
+                received = 0
+                while True:
+                    chunk = response.read(1024 * 1024)
+                    if not chunk:
+                        break
+                    received += len(chunk)
+                    if received > MAX_PACKAGE_DOWNLOAD_BYTES:
+                        limit_mib = MAX_PACKAGE_DOWNLOAD_BYTES / (1024 * 1024)
+                        limit_text = (
+                            f"{limit_mib / 1024:g} GiB"
+                            if limit_mib >= 1024
+                            else f"{limit_mib:g} MiB"
+                        )
+                        raise ValueError(
+                            "The package file is too large to download (limit: "
+                            f"{limit_text})."
+                        )
+                    handle.write(chunk)
+        os.chmod(tmp_path, 0o600)
+        os.replace(tmp_path, target)
+    except OSError as exc:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
+        raise ValueError(f"Could not download the package file: {exc}")
+    except ValueError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
+        raise
+
+    try:
+        details = _package_details_payload(target)
+    except ValueError:
+        details = {"name": sanitized, "kind": package_file_kind(target)}
+    details["path"] = target
+    details["url"] = url
+    # "note" stays the compatibility guard's refusal message when present;
+    # the download context goes into its own field.
+    details["download_note"] = (
+        "Downloaded into LinuxToys' staging directory (cleared with /tmp on "
+        "reboot). Inspect it with get_package_file_details before installing."
+    )
+    return details
+
+
+def _package_details_payload(path):
+    """Metadata + host guards for one package file path, Package View parity."""
+    if not isinstance(path, str) or not path.strip():
+        raise ValueError("A package file path is required.")
+    requested = path.strip()
+    real = os.path.realpath(os.path.expanduser(requested))
+    if not os.path.isfile(real):
+        raise ValueError(f"No file found at '{requested}'.")
+    kind = package_file_kind(real)
+    if kind is None:
+        raise ValueError(
+            "Unsupported package file type. Supported package file types: "
+            + SUPPORTED_PACKAGE_KINDS_TEXT
+        )
+    metadata = inspect_local_package(real) or {
+        "kind": kind,
+        "format_label": PACKAGE_KIND_LABELS.get(kind, kind),
+        "name": os.path.splitext(os.path.basename(real))[0],
+    }
+    metadata["path"] = real
+    metadata["kind"] = kind
+    metadata["format_label"] = PACKAGE_KIND_LABELS.get(kind, kind)
+    supported = package_kind_supported_on_host(kind)
+    metadata["supported_on_host"] = supported
+    if not supported:
+        metadata["note"] = (
+            "This system does not support this package type, so installing it "
+            "is refused — the same guard the GUI applies before opening a "
+            "package file."
+        )
+    return metadata
+
+
+def _tool_get_package_file_details(path):
+    """Inspect one local package file (name, version, host compatibility)."""
+    return _package_details_payload(path)
+
+
+def _tool_install_package_file(path):
+    details = _package_details_payload(path)
+    if not details.get("supported_on_host"):
+        raise ValueError(
+            details.get("note") or "This package type is not supported on this system."
+        )
+    real = details["path"]
+    spec = {
+        "path": real,
+        "kind": details["kind"],
+        "name": details["name"],
+        "description": details.get("description") or "",
+        "signature": package_file_signature(real),
+    }
+    job = JOBS.submit_file(spec)
+    return {
+        "job_id": job.id,
+        "name": job.name,
+        "path": real,
+        "kind": details["kind"],
+        "state": job.state,
+        "note": (
+            "The install runs exactly like a package-view install. If it needs "
+            "root, the password dialog appears on the user's screen — wait for "
+            "them to type it. Poll get_job for the outcome."
+        ),
+    }
+
+
 def _tool_remove(app_id):
     job = JOBS.submit("remove", app_id)
     return {
@@ -1516,6 +1984,12 @@ def dispatch_tool(name, arguments):
         return _tool_get_screenshot(arguments.get("app_id"), arguments.get("index", 0))
     if name == "install_app":
         return _tool_install(arguments.get("app_id"))
+    if name == "fetch_package_url":
+        return _tool_fetch_package_url(arguments.get("url"))
+    if name == "get_package_file_details":
+        return _tool_get_package_file_details(arguments.get("path"))
+    if name == "install_package_file":
+        return _tool_install_package_file(arguments.get("path"))
     if name == "remove_app":
         return _tool_remove(arguments.get("app_id"))
     if name == "get_job":
@@ -1607,10 +2081,14 @@ def _initialize_result(requested_version):
         },
         "instructions": (
             "LinuxToys is a cross-distro app manager. Typical flow: search_apps "
-            "-> get_app_details -> install_app, then poll get_job. Installs that "
-            "need root show the password dialog on the user's screen; never ask "
-            "the user to hand you credentials. Descriptions and screenshots can "
-            "be read and translated with translate_text / translate_app_description."
+            "-> get_app_details -> install_app, then poll get_job. A local or "
+            "downloaded package file (.deb, .rpm, .appimage, ...) can be "
+            "installed the same guarded way: get_package_file_details -> "
+            "install_package_file, with fetch_package_url for downloads. "
+            "Installs that need root show the password dialog on the user's "
+            "screen; never ask the user to hand you credentials. Descriptions "
+            "and screenshots can be read and translated with translate_text / "
+            "translate_app_description."
         ),
     }
 

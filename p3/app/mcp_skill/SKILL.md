@@ -1,6 +1,6 @@
 ---
 name: linuxtoys-mcp
-description: Enable and drive the LinuxToys MCP server to manage Linux apps on the user's machine like a user would - search the catalog, read app pages (descriptions, screenshots, donation links), install and remove apps, change LinuxToys settings, and translate descriptions. Use when the user asks to install or remove software through LinuxToys, change its settings, or when configuring AI agent access to LinuxToys.
+description: Enable and drive the LinuxToys MCP server to manage Linux apps on the user's machine like a user would - search the catalog, read app pages (descriptions, screenshots, donation links), install and remove apps, install local package files (.deb, .rpm, .appimage and more, optionally downloaded from a URL), change LinuxToys settings, and translate descriptions. Use when the user asks to install or remove software through LinuxToys, asks to install a package file, change its settings, or when configuring AI agent access to LinuxToys.
 ---
 
 # LinuxToys MCP
@@ -89,6 +89,9 @@ After connecting, call `server_info` once to confirm the session works.
 | `get_app_details(app_id)` | App page: description, screenshots URLs, homepage/donate/purchase links, version, install state |
 | `get_screenshot(app_id, index?)` | Returns an image so you can see the app's screenshots |
 | `install_app(app_id)` | Queue an install; returns a `job_id` |
+| `fetch_package_url(url)` | Download a package file (.deb/.rpm/.pkg.tar.*/.pacman/.eopkg/.flatpak/.flatpakref/.snap/.appimage) from an http(s) URL into a private staging directory; returns its local path |
+| `get_package_file_details(path)` | Inspect a local package file like the GUI's package view does: name, version, architecture, maintainer, description, size, format, and whether that package type is supported on this system |
+| `install_package_file(path)` | Queue the install of a local package file through the same guarded machinery; returns a `job_id` |
 | `remove_app(app_id)` | Queue a removal; returns a `job_id` |
 | `get_job(job_id, tail_lines?)` | Job state (`queued`/`running`/`success`/`error`), exit code, log tail |
 | `list_jobs()` | Recent jobs |
@@ -108,6 +111,14 @@ report the outcome (and the log tail on error). Installs that need root pop
 the password dialog on the user's screen; tell the user to expect it and wait
 for them to finish — do not ask them to paste the password to you.
 
+**Install a package file (the user gave you a link or a local file such as
+.deb/.rpm/.appimage):** `fetch_package_url(url)` when the file still needs
+downloading → `get_package_file_details(path)` → tell the user what the file
+is (name, version, format) and stop if it is not supported on this system →
+confirm → `install_package_file(path)` → poll `get_job`. It goes through the
+same guarded machinery as a package-view install, so the usual root password
+dialog appears on the user's screen when needed.
+
 **Remove something:** check `get_registry_entries` / `get_app_details`
 (install state) → confirm with the user → `remove_app` → poll `get_job`.
 
@@ -122,10 +133,16 @@ for arbitrary strings).
 
 - Always tell the user what you are about to install or remove, and do it only
   when they asked for it or confirmed.
+- Package files (`get_package_file_details` / `install_package_file` /
+  `fetch_package_url`) follow the same rule: install only the URL or local
+  file the user pointed you at, after showing them what the inspection found.
+  Never install a package type that the host-compatibility guard refuses, and
+  never pick a package URL yourself for an install the user did not ask for.
 - Never ask for or accept the user's password; privilege prompts appear on
   their screen on their own.
 - Installs are serialized: one job runs at a time. Poll `get_job` rather than
   re-submitting the same app.
 - Jobs are in-memory; if the service restarts mid-way, re-check the app's
-  state with `get_app_details` before retrying.
+  state with `get_app_details` before retrying. For package files, re-check
+  the file path: the install re-verifies the exact file that was inspected.
 - If an action fails, read the job log tail and report it; don't blindly retry.
