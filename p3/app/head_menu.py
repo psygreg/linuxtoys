@@ -1,4 +1,4 @@
-from .gtk_common import Gtk, GLib, resolve_symbolic_icon
+from .gtk_common import Gdk, Gtk, GLib, resolve_symbolic_icon
 from . import manifest_helper
 from . import language_selector
 from . import about_helper
@@ -162,7 +162,23 @@ class MenuButton(Gtk.MenuButton):
 		if mcp_label == "mcp_agent_server":
 			mcp_label = "MCP Agent Server"
 		self.mcp_server_toggle = Gtk.CheckButton(label=mcp_label)
-		self.mcp_server_toggle.set_tooltip_text(_("mcp_agent_server_tooltip"))
+		# GTK tooltips and nested popovers both open a separate surface, which
+		# misplaces or fails inside this menu popover on Wayland. The hint is
+		# a revealer inside the menu instead, shown while the pointer is over
+		# the checkbox.
+		self.mcp_server_tooltip_label = Gtk.Label(label=_("mcp_agent_server_tooltip"), xalign=0)
+		self.mcp_server_tooltip_label.set_line_wrap(True)
+		self.mcp_server_tooltip_label.set_max_width_chars(40)
+		self.mcp_server_tooltip_label.set_margin_start(24)
+		self.mcp_server_tooltip_label.get_style_context().add_class("dim-label")
+		self.mcp_server_tooltip = Gtk.Revealer()
+		self.mcp_server_tooltip.set_transition_type(Gtk.RevealerTransitionType.SLIDE_DOWN)
+		self.mcp_server_tooltip.add(self.mcp_server_tooltip_label)
+		self.mcp_server_toggle.add_events(
+			Gdk.EventMask.ENTER_NOTIFY_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK
+		)
+		self.mcp_server_toggle.connect("enter-notify-event", self.__on_mcp_hover)
+		self.mcp_server_toggle.connect("leave-notify-event", self.__on_mcp_leave)
 		self._mcp_applying = False
 		# Fast preference first; the real service state lands on the checkbox
 		# from a background probe (systemctl calls must not delay startup).
@@ -179,11 +195,24 @@ class MenuButton(Gtk.MenuButton):
 		vbox.pack_start(self.auto_error_reports, False, False, 0)
 		vbox.pack_start(self.auto_updates, False, False, 0)
 		vbox.pack_start(self.mcp_server_toggle, False, False, 0)
+		vbox.pack_start(self.mcp_server_tooltip, False, False, 0)
 		vbox.show_all()
 
 		pop.add(vbox)
 
 		self.set_popover(pop)
+		pop.connect("closed", self.__on_menu_closed)
+
+	def __on_mcp_hover(self, widget, event):
+		self.mcp_server_tooltip.set_reveal_child(True)
+		return False
+
+	def __on_mcp_leave(self, widget, event):
+		self.mcp_server_tooltip.set_reveal_child(False)
+		return False
+
+	def __on_menu_closed(self, popover):
+		self.mcp_server_tooltip.set_reveal_child(False)
 
 	def refresh_menu_translations(self):
 		"""Refresh menu items with new translations"""
@@ -198,6 +227,7 @@ class MenuButton(Gtk.MenuButton):
 		self.auto_updates.set_label("Automatic updates" if auto_updates_label == "autosysup" else auto_updates_label)
 		mcp_label = _("mcp_agent_server")
 		self.mcp_server_toggle.set_label("MCP Agent Server" if mcp_label == "mcp_agent_server" else mcp_label)
+		self.mcp_server_tooltip_label.set_label(_("mcp_agent_server_tooltip"))
 
 	def __mcp_initial_state(self):
 		"""Service enablement is the source of truth; the stored preference is
