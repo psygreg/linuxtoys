@@ -1,23 +1,178 @@
 # --- Package Management ---
 
 # Guards against pacman and apt database locks
+
+# File-descriptor link lines under /proc, used by both manager lock scans.
+# The scan is elevated only when cached sudo credentials make it free: `sudo
+# -n` never prompts and succeeds only with an already-held ticket — which
+# every guard call site has, because the pkg_* helpers authenticate (askpass)
+# and sysup elevates (sudo_rq) before their guards run, and the updater
+# service runs as root outright. Root-owned holders — packagekitd,
+# unattended-upgr, pacman, pamac-daemon — are invisible to an unprivileged
+# scan, which would misread a live lock as a stale one; with no ticket
+# available the plain scan keeps package_guard's best-effort behavior.
+_proc_fd_links () {
+    # `find || true`: /proc vanishes PIDs under the scan on busy systems and
+    # find reports that as a nonzero exit even with the errors silenced; the
+    # scan exists to feed grep on the next pipe stage only, and its own status
+    # must not abort generated bodies that run under set -o pipefail.
+    if [ "$(id -u)" -eq 0 ]; then
+        find /proc/[0-9]*/fd -maxdepth 1 -type l -printf '%l\n' 2>/dev/null || true
+        return 0
+    fi
+    if sudo -n true >/dev/null 2>&1; then
+        sudo -n find /proc/[0-9]*/fd -maxdepth 1 -type l -printf '%l\n' 2>/dev/null || true
+        return 0
+    fi
+    find /proc/[0-9]*/fd -maxdepth 1 -type l -printf '%l\n' 2>/dev/null || true
+    return 0
+}
+
+# Whether the pacman database lock is verifiably held open by a live process
+# right now (the bash-side equivalent of package_guard._lock_actively_held).
+# Used to safety-check the stale-removal branch below: alpm refuses new
+# transactions while the lock file exists, but a file being held open by a
+# helper outside the recognized tool list (an AUR/unknown tool that uses
+# libalpm directly) is a live lock, never a removable leftover.
+_pacman_lock_actively_held () {
+    _proc_fd_links |
+        grep -Eq '^/var/lib/pacman/db\.lck( \(deleted\))?$'
+}
+
+# Echo the name of the pacman-family manager currently busy, else fail (empty
+# output). Mirrors package_guard.busy_native_manager_process() for the arch
+# family: transaction tools (pacman and the AUR helpers that drive it) are
+# proof of a transaction on their own, while the resident pamac-daemon only
+# counts when it plausibly holds the package lock — otherwise the permanent
+# daemon on pamac-installed systems would mark every install busy. Holders
+# are not always visible (an unprivileged scan cannot read root descriptors
+# and cached sudo tickets may be absent), so a daemon plus an existing lock
+# file counts as busy: failing toward waiting beats the alternative of
+# declaring a lock stale that a live transaction is holding.
+_pacman_busy_manager () {
+    local _name
+    for _name in pacman paru pamac yay; do
+        if pgrep -x "$_name" >/dev/null 2>&1; then
+            echo "$_name"
+            return 0
+        fi
+    done
+    if pgrep -x pamac-daemon >/dev/null 2>&1 && [ -e /var/lib/pacman/db.lck ]; then
+        echo "pamac-daemon"
+        return 0
+    fi
+    return 1
+}
+
+# Seconds to wait for a busy pacman-family manager before giving up, mirroring
+# package_guard.BUSY_WAIT_TIMEOUT_SECONDS so both layers behave alike.
+PACMAN_BUSY_WAIT_TIMEOUT=300
+
+# Bounded wait for the native package manager to go idle. The dispatch-time
+# preflight in package_guard runs only once: a manager starting afterward —
+# after the sudo prompt, a mirror sync, a background queue job — still holds
+# the alpm database lock in every transaction below, so it must be waited for
+# here as well, not collided with.
+pacman_busy_wait () {
+    local _manager
+    if ! _manager=$(_pacman_busy_manager); then
+        return 0
+    fi
+    info "Another package operation is in progress (${_manager}). Waiting for it to finish..."
+    local _waited=0
+    while _manager=$(_pacman_busy_manager); do
+        if (( _waited >= PACMAN_BUSY_WAIT_TIMEOUT )); then
+            die "Another package operation (${_manager}) is still running and is taking too long. Please wait for it to finish, then try again."
+        fi
+        sleep 3
+        _waited=$((_waited + 3))
+    done
+    # The idle exit probes the manager once more and its failed assignment is
+    # nonzero; scripts commonly run under set -e (the TUI runner generates
+    # 'set -eo pipefail'), so the success path must end with success.
+    return 0
+}
+
 pacman_lock_guard () {
-    local PACMAN_ACTIVE=false
+    pacman_busy_wait
     if [ -f /var/lib/pacman/db.lck ]; then
-        if pgrep -x pacman >/dev/null 2>&1; then
-            PACMAN_ACTIVE=true
-        elif command -v lsof >/dev/null 2>&1 && lsof /var/lib/pacman/db.lck >/dev/null 2>&1; then
-            PACMAN_ACTIVE=true
+        if _pacman_lock_actively_held; then
+            # A verifiably live holder outside the recognized tool list: the
+            # lock must never be removed. alpm fails cleanly on a live lock,
+            # so dying with guidance is the safe recovery.
+            die "Another process is holding the pacman database lock (/var/lib/pacman/db.lck). Please wait for it to finish or close it, then try again. If no package operation is running, remove the lock manually: sudo rm /var/lib/pacman/db.lck"
         fi
-        if [ "$PACMAN_ACTIVE" = true ]; then
-            die "Another package operation is in progress (pacman is running). Please wait for it to finish, or close it manually and retry."
-        else
-            warn "Stale pacman lock detected. Removing /var/lib/pacman/db.lck"
-            { { [ "$UPD_SERVICE" = "1" ] && rm -f /var/lib/pacman/db.lck; } || sudo_ rm -f /var/lib/pacman/db.lck; } || die "Failed to remove stale lock. Run: sudo_ rm /var/lib/pacman/db.lck"
-        fi
+        # The wait above only returns when no live manager is detected, so a
+        # remaining lock file is a crash leftover; recovery is removing it
+        # rather than surfacing an opaque pacman lock failure later.
+        warn "Stale pacman lock detected. Removing /var/lib/pacman/db.lck"
+        { { [ "$UPD_SERVICE" = "1" ] && rm -f /var/lib/pacman/db.lck; } || sudo_ rm -f /var/lib/pacman/db.lck; } || die "Failed to remove stale lock. Run: sudo_ rm /var/lib/pacman/db.lck"
     fi
 }
+
+# Whether any apt/dpkg lock is held open by a live process right now.
+# A lock file merely existing is stale evidence (crash leftovers); this is the
+# bash-side equivalent of package_guard._lock_actively_held: fd links under
+# /proc/<pid>/fd are matched against the lock paths, no lsof required.
+_apt_lock_actively_held () {
+    _proc_fd_links |
+        grep -Eq '^(/var/lib/dpkg/lock(-frontend)?|/var/lib/apt/lists/lock|/var/cache/apt/archives/lock)( \(deleted\))?$'
+}
+
+# Echo the name of the native manager currently busy, else fail (empty output).
+# Mirrors package_guard.busy_native_manager_process() for the debian family:
+# transaction tools (apt, dpkg, ...) are proof of a transaction on their own,
+# while resident daemons (packagekitd, unattended-upgr, ...) only count when
+# they actively hold a package lock — those run permanently on their distros,
+# so presence alone would mark every install busy.
+_apt_busy_manager () {
+    local _name
+    for _name in apt apt-get dpkg dpkg-deb pkcon; do
+        if pgrep -x "$_name" >/dev/null 2>&1; then
+            echo "$_name"
+            return 0
+        fi
+    done
+    for _name in unattended-upgr apt.systemd.dai packagekitd apt-key; do
+        if pgrep -x "$_name" >/dev/null 2>&1 && _apt_lock_actively_held; then
+            echo "$_name"
+            return 0
+        fi
+    done
+    return 1
+}
+
+# Seconds to wait for a busy apt/dpkg before giving up, mirroring
+# package_guard.BUSY_WAIT_TIMEOUT_SECONDS so both layers behave alike.
+APT_BUSY_WAIT_TIMEOUT=300
+
+# Bounded wait for the native package manager to go idle. The dispatch-time
+# preflight in package_guard runs only once: a manager starting afterward —
+# after the sudo prompt, a metadata refresh, a background queue job — still
+# shares the dpkg locks with every repair and transaction below, so it must
+# be waited for here as well, not collided with.
+apt_busy_wait () {
+    local _manager
+    if ! _manager=$(_apt_busy_manager); then
+        return 0
+    fi
+    info "Another package operation is in progress (${_manager}). Waiting for it to finish..."
+    local _waited=0
+    while _manager=$(_apt_busy_manager); do
+        if (( _waited >= APT_BUSY_WAIT_TIMEOUT )); then
+            die "Another package operation (${_manager}) is still running and is taking too long. Please wait for it to finish, then try again."
+        fi
+        sleep 3
+        _waited=$((_waited + 3))
+    done
+    # The idle exit probes the manager once more and its failed assignment is
+    # nonzero; scripts commonly run under set -e (the TUI runner generates
+    # 'set -eo pipefail'), so the success path must end with success.
+    return 0
+}
+
 interrupted_apt_guard () {
+    apt_busy_wait
     local needs_repair=0
 
     if [ -n "$(dpkg --audit 2>/dev/null)" ]; then
@@ -27,14 +182,37 @@ interrupted_apt_guard () {
         needs_repair=1
     fi
     if ! { { [ "$UPD_SERVICE" = "1" ] && apt-get check; } || sudo_ apt-get check; } >/dev/null 2>&1; then
-        info "Broken package dependencies were detected. Attempting recovery..."
-        needs_repair=1
+        # A failing apt-get check is ambiguous: broken dependencies look the
+        # same as a dpkg lock held by a manager that started between the
+        # dispatch preflight and this guard. After the wait below, only an
+        # idle-manager failure counts as breakage — so a repair is never
+        # misdiagnosed from (or raced against) a live lock, which is how a
+        # healthy system got the "manual intervention required" failure.
+        apt_busy_wait
+        if ! { { [ "$UPD_SERVICE" = "1" ] && apt-get check; } || sudo_ apt-get check; } >/dev/null 2>&1; then
+            if _apt_lock_actively_held; then
+                # The lock is held by a process outside the recognized tool
+                # list (an AUR/unknown helper), so the wait could not see it.
+                # Dying honestly beats misreading lock errors as breakage and
+                # running a repair against a live lock.
+                die "Another process is locking the package manager database. Please wait for it to finish or close it, then try again."
+            fi
+            info "Broken package dependencies were detected. Attempting recovery..."
+            needs_repair=1
+        fi
     fi
 
     if [ "$needs_repair" -eq 1 ]; then
-        { { [ "$UPD_SERVICE" = "1" ] && apt-get --fix-broken install -y; } ||
-            sudo_ apt-get --fix-broken install -y; } || die "Failed to fix broken packages. Manual user intervention required."
-        apt-get check >/dev/null 2>&1 || die "Package dependencies remain broken. Manual user intervention required."
+        apt_busy_wait
+        if ! { { [ "$UPD_SERVICE" = "1" ] && apt-get --fix-broken install -y; } ||
+                sudo_ apt-get --fix-broken install -y; }; then
+            if _apt_lock_actively_held; then
+                die "Another process is locking the package manager database. Please wait for it to finish or close it, then try again."
+            fi
+            die "Failed to fix broken packages. Manual user intervention required."
+        fi
+        { { [ "$UPD_SERVICE" = "1" ] && apt-get check; } || sudo_ apt-get check; } >/dev/null 2>&1 || \
+            die "Package dependencies remain broken. Manual user intervention required."
     fi
 }
 
@@ -138,6 +316,7 @@ pkg_install () {
         # check for lock before installing
         if [ -n "$to_install_pacman" ]; then
             if is_manjaro; then
+                pacman_lock_guard
                 sudo_ pamac install --no-confirm "${_pacman_pkgs[@]}" || fatal "Failed to install $to_install_pacman"
                 [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_pacman"
             else
@@ -149,6 +328,7 @@ pkg_install () {
         if [ -n "$to_install_paru" ]; then
             if is_manjaro; then
                 (( _bypass )) || runner_unlock
+                pacman_lock_guard
                 pamac build --no-confirm "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
                 (( _bypass )) || runner_lock "package-transaction"
             else
@@ -572,6 +752,7 @@ pkg_fromfile () {
             fi
         fi
     elif is_manjaro; then
+        pacman_lock_guard
         { sudo_ pamac install --no-confirm "./${*}" && _append_transmap "pkg file $*"; } || fatal "Failed to install package $*"
     elif is_ostree; then
         sudo_ rpm-ostree install "${@}" || fatal "Failed to install $*"
@@ -1503,6 +1684,7 @@ pkg_remove () {
         sudo_ pacman -Rsn --noconfirm "${pkg_found[@]}" \
             || fatal "Failed to remove packages: $to_remove"
     elif is_manjaro; then
+        pacman_lock_guard
         pamac remove --no-confirm "${pkg_found[@]}" \
             || fatal "Failed to remove packages: $to_remove"
     elif is_ostree; then

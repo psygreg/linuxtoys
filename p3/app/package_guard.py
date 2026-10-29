@@ -12,8 +12,9 @@ message.
 The detection is deliberately conservative in both directions. It only counts
 a script as a native transaction when it actually reaches a *transactional*
 manager command, and it ignores container-scoped and read-only manager calls.
-Like the helpers' own pacman_lock_guard and interrupted_apt_guard, the scan is
-a best-effort preflight; it cannot close the race between the check and the
+Like the helpers' own pacman_lock_guard and interrupted_apt_guard (each
+bounded-waits its manager through pacman_busy_wait/apt_busy_wait), the scan is
+a best-effort preflight; it cannot close every race between the check and the
 package-manager call itself.
 """
 
@@ -344,7 +345,10 @@ def _lock_actively_held(path):
 
     A lock file merely existing is not evidence of a transaction (a crash can
     leave a stale lock behind). The reliable signal is an open file descriptor
-    held by another process — the same test pacman_lock_guard uses with lsof.
+    held by another process — the same /proc fd-link test the bash-side
+    _apt_lock_actively_held/_pacman_lock_actively_held helpers use. (The bash
+    arch busy gate keys on presence plus the lock file existing — see
+    _pacman_busy_manager; the fd test vets its stale-removal recovery.)
     We read /proc/<pid>/fd directly so no external tool is required.
     """
     try:

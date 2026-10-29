@@ -153,6 +153,7 @@ elif { is_arch || is_cachy; } && ! is_manjaro; then
         sudo_ pacman -Syu --noconfirm || fatal "Failed to upgrade packages"
     fi
 elif is_manjaro; then
+    pacman_lock_guard
     pamac remove --orphans --no-confirm || fatal "Failed to remove orphaned packages"
     pamac update --no-confirm || fatal "Failed to upgrade packages"
 elif is_suse; then
