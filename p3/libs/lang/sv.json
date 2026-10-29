@@ -1,5 +1,5 @@
 {
-  "subtitle": "För allt som rör Linux.",
+  "subtitle": "För allt som rör Linux - verktyg, finjusteringar och programvaruhanterare - redo för AI-eran.",
   "install_btn_label": "Installera",
   "cancel_btn_label": "Avbryt",
   "ok_btn_label": "OK",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Väntar på pakethanteraren",
   "package_manager_busy_message": "En annan paketåtgärd pågår just nu, så LinuxToys väntar tills den är klar. Pakethanterare stöder inte parallella åtgärder. Du behöver inte göra något — din åtgärd startar automatiskt så snart den pågående är slutförd.",
   "package_manager_timeout_title": "Paketåtgärden tar för lång tid",
-  "package_manager_timeout_message": "En annan paketåtgärd pågår fortfarande och tar för lång tid. Vänta tills den pågående åtgärden är klar och försök igen."
+  "package_manager_timeout_message": "En annan paketåtgärd pågår fortfarande och tar för lång tid. Vänta tills den pågående åtgärden är klar och försök igen.",
+  "mcp_agent_server": "MCP-agentserver",
+  "mcp_agent_server_tooltip": "Låter AI-agenter använda LinuxToys (bläddra, installera, ta bort, inställningar) via en lokal MCP-server. Körs som en systemd-användartjänst; lösenordsförfrågningar stannar på din skärm.",
+  "mcp_service_failed_title": "MCP-agentserver",
+  "mcp_skill_installed": "Agentfärdighet installerad"
 }

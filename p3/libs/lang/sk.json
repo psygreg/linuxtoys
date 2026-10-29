@@ -1,5 +1,5 @@
 {
-  "subtitle": "Pre všetko okolo Linuxu.",
+  "subtitle": "Na všetko okolo Linuxu - nástroje, doladenie a správca softvéru - pripravené na éru AI.",
   "install_btn_label": "Inštalovať",
   "cancel_btn_label": "Zrušiť",
   "reboot_required_title": "Vyžaduje sa reštart",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Čakám na správcu balíkov",
   "package_manager_busy_message": "Práve prebieha iná operácia s balíkmi, takže LinuxToys čaká na jej dokončenie. Správcovia balíkov nepodporujú paralelné operácie. Nemusíte nič robiť — vaša operácia sa spustí automaticky po dokončení tej aktuálnej.",
   "package_manager_timeout_title": "Operácia s balíkmi trvá príliš dlho",
-  "package_manager_timeout_message": "Iná operácia s balíkmi stále prebieha a trvá príliš dlho. Počkajte na dokončenie prebiehajúcej operácie a skúste to znova."
+  "package_manager_timeout_message": "Iná operácia s balíkmi stále prebieha a trvá príliš dlho. Počkajte na dokončenie prebiehajúcej operácie a skúste to znova.",
+  "mcp_agent_server": "Server agentov MCP",
+  "mcp_agent_server_tooltip": "Umožňuje agentom AI používať LinuxToys (prehliadanie, inštalácia, odstraňovanie, nastavenia) prostredníctvom lokálneho servera MCP. Beží ako používateľská služba systemd; výzvy na heslo zostávajú na vašej obrazovke.",
+  "mcp_service_failed_title": "Server agentov MCP",
+  "mcp_skill_installed": "Zručnosť agenta nainštalovaná"
 }

@@ -1,7 +1,7 @@
 Name:           linuxtoys
 Version:        7.8
 Release:        1
-Summary:        For everything Linux.
+Summary:        For everything Linux - tools, tweaks and software manager - ready for the age of AI.
 BuildArch:      x86_64
 
 License:        GPL3

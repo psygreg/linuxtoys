@@ -1,5 +1,5 @@
 {
-  "subtitle": "Para todo lo relacionado con Linux.",
+  "subtitle": "Para todo lo relacionado con Linux - herramientas, ajustes y gestor de software - listo para la era de la IA.",
   "install_btn_label": "Instalar",
   "cancel_btn_label": "Cancelar",
   "ok_btn_label": "OK",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Esperando al gestor de paquetes",
   "package_manager_busy_message": "Ahora mismo se está ejecutando otra operación de paquetes, por lo que LinuxToys está a la espera hasta que finalice. Los gestores de paquetes no admiten operaciones en paralelo. No hace falta hacer nada: tu operación comenzará automáticamente en cuanto termine la actual.",
   "package_manager_timeout_title": "La operación de paquetes está tardando demasiado",
-  "package_manager_timeout_message": "Otra operación de paquetes sigue en ejecución y está tardando demasiado. Espera a que termine la operación en curso y vuelve a intentarlo."
+  "package_manager_timeout_message": "Otra operación de paquetes sigue en ejecución y está tardando demasiado. Espera a que termine la operación en curso y vuelve a intentarlo.",
+  "mcp_agent_server": "Servidor de Agentes MCP",
+  "mcp_agent_server_tooltip": "Permite que los agentes de IA usen LinuxToys (navegar, instalar, eliminar, ajustes) a través de un servidor MCP local. Se ejecuta como servicio de usuario de systemd; las solicitudes de contraseña permanecen en tu pantalla.",
+  "mcp_service_failed_title": "Servidor de Agentes MCP",
+  "mcp_skill_installed": "Habilidad del agente instalada"
 }

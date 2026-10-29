@@ -1,5 +1,5 @@
 {
-  "subtitle": "Kaikkeen Linuxiin liittyvään.",
+  "subtitle": "Kaikkeen Linuxiin liittyvään - työkalut, hienosäädöt ja ohjelmistohallinta - valmis tekoälyn aikaan.",
   "install_btn_label": "Asenna",
   "cancel_btn_label": "Peruuta",
   "ok_btn_label": "OK",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Odotetaan paketinhallintaa",
   "package_manager_busy_message": "Toinen pakettoiminto on juuri nyt käynnissä, joten LinuxToys odottaa sen valmistumista. Paketinhallintaohjelmat eivät tue rinnakkaisia toimintoja. Sinun ei tarvitse tehdä mitään — toimintosi käynnistyy automaattisesti, heti kun nykyinen valmistuu.",
   "package_manager_timeout_title": "Paketointi kestää liian kauan",
-  "package_manager_timeout_message": "Toinen paketointi on yhä käynnissä ja kestää liian kauan. Odota, että käynnissä oleva toiminto valmistuu, ja yritä uudelleen."
+  "package_manager_timeout_message": "Toinen paketointi on yhä käynnissä ja kestää liian kauan. Odota, että käynnissä oleva toiminto valmistuu, ja yritä uudelleen.",
+  "mcp_agent_server": "MCP-agenttipalvelin",
+  "mcp_agent_server_tooltip": "Antaa tekoälyagenttien käyttää LinuxToysia (selaa, asenna, poista, asetukset) paikallisen MCP-palvelimen kautta. Toimii systemd-käyttäjäpalveluna; salasanakehotukset pysyvät näytölläsi.",
+  "mcp_service_failed_title": "MCP-agenttipalvelin",
+  "mcp_skill_installed": "Agenttitaito asennettu"
 }

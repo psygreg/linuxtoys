@@ -141,9 +141,7 @@ Depends: ${shlibs:Depends},
  gir1.2-appstream-1.0,
  webp-pixbuf-loader,
  sudo | sudo-rs
-Description: A set of tools for Linux presented in a user-friendly way.
- .
- A menu with various handy tools for Linux gaming, optimization and other tweaks.
+Description: For everything Linux - tools, tweaks and software manager - ready for the age of AI.
 EOF
 
 # Create debian/rules

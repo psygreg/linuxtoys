@@ -1,5 +1,5 @@
 {
-  "subtitle": "Voor alles wat met Linux te maken heeft.",
+  "subtitle": "Voor alles rond Linux - tools, tweaks en softwarebeheer - klaar voor het tijdperk van AI.",
   "install_btn_label": "Installeren",
   "cancel_btn_label": "Annuleren",
   "ok_btn_label": "OK",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Wachten op de pakketbeheerder",
   "package_manager_busy_message": "Er wordt op dit moment een andere pakketbewerking uitgevoerd, dus LinuxToys wacht tot deze klaar is. Pakketbeheerders ondersteunen geen parallelle bewerkingen. Je hoeft niets te doen — je bewerking start automatisch zodra de huidige is voltooid.",
   "package_manager_timeout_title": "Pakketbewerking duurt te lang",
-  "package_manager_timeout_message": "Er wordt nog een andere pakketbewerking uitgevoerd en deze duurt te lang. Wacht tot de lopende bewerking is voltooid en probeer het opnieuw."
+  "package_manager_timeout_message": "Er wordt nog een andere pakketbewerking uitgevoerd en deze duurt te lang. Wacht tot de lopende bewerking is voltooid en probeer het opnieuw.",
+  "mcp_agent_server": "MCP-agentserver",
+  "mcp_agent_server_tooltip": "Laat AI-agents LinuxToys gebruiken (bladeren, installeren, verwijderen, instellingen) via een lokale MCP-server. Draait als systemd-gebruikersdienst; wachtwoordvragen blijven op je scherm.",
+  "mcp_service_failed_title": "MCP-agentserver",
+  "mcp_skill_installed": "Agentvaardigheid geïnstalleerd"
 }

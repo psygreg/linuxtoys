@@ -1,5 +1,5 @@
 {
-  "subtitle": "Viskam, kas susiję su Linux.",
+  "subtitle": "Viskam, kas susiję su Linux - įrankiai, derinimas ir programinės įrangos tvarkytuvė - pasiruošę AI erai.",
   "install_btn_label": "Įdiegti",
   "cancel_btn_label": "Atšaukti",
   "reboot_required_title": "Reikalingas perkrovimas",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Laukiu paketų tvarkyklės",
   "package_manager_busy_message": "Šiuo metu vykdoma kita paketų operacija, todėl LinuxToys laukia, kol ji baigsis. Paketų tvarkyklės nepalaiko lygiagrečių operacijų. Jums nieko daryti nereikia — jūsų operacija bus automatiškai pradėta, kai tik dabartinė baigsis.",
   "package_manager_timeout_title": "Paketų operacija trunka per ilgai",
-  "package_manager_timeout_message": "Kita paketų operacija vis dar vykdoma ir trunka per ilgai. Palaukite, kol dabartinė operacija baigsis, ir bandykite dar kartą."
+  "package_manager_timeout_message": "Kita paketų operacija vis dar vykdoma ir trunka per ilgai. Palaukite, kol dabartinė operacija baigsis, ir bandykite dar kartą.",
+  "mcp_agent_server": "MCP agentų serveris",
+  "mcp_agent_server_tooltip": "Leidžia DI agentams naudotis LinuxToys (naršyti, įdiegti, šalinti, nustatymai) per vietinį MCP serverį. Veikia kaip systemd naudotojo tarnyba; slaptažodžio užklausos lieka jūsų ekrane.",
+  "mcp_service_failed_title": "MCP agentų serveris",
+  "mcp_skill_installed": "Agento įgūdis įdiegtas"
 }

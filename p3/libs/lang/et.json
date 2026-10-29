@@ -1,5 +1,5 @@
 {
-  "subtitle": "Kõigeks, mis puudutab Linuxit.",
+  "subtitle": "Kõigeks, mis puudutab Linuxit - tööriistad, häälestused ja tarkvarahaldur - valmis tehisajastuks.",
   "install_btn_label": "Installi",
   "cancel_btn_label": "Tühista",
   "reboot_required_title": "Taaskäivitamine nõutud",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Ootan paketihaldurit",
   "package_manager_busy_message": "Praegu töötab teine paketioperatsioon, seega LinuxToys ootab selle lõppemist. Paketihaldurid ei toeta paralleelseid operatsioone. Te ei pea midagi tegema — teie operatsioon algab automaatselt niipea, kui praegune lõpeb.",
   "package_manager_timeout_title": "Paketioperatsioon võtab liiga kaua aega",
-  "package_manager_timeout_message": "Teine paketioperatsioon on endiselt käimas ja võtab liiga kaua aega. Palun oodake, kuni käimasolev operatsioon lõpeb, ja proovige uuesti."
+  "package_manager_timeout_message": "Teine paketioperatsioon on endiselt käimas ja võtab liiga kaua aega. Palun oodake, kuni käimasolev operatsioon lõpeb, ja proovige uuesti.",
+  "mcp_agent_server": "MCP agentide server",
+  "mcp_agent_server_tooltip": "Võimaldab tehisintellekti agentidel kasutada LinuxToys'i (sirvimine, paigaldamine, eemaldamine, sätted) kohaliku MCP serveri kaudu. Töötab systemd kasutajateenusena; paroolipäringud jäävad teie ekraanile.",
+  "mcp_service_failed_title": "MCP agentide server",
+  "mcp_skill_installed": "Agendi oskus paigaldatud"
 }

@@ -1,5 +1,5 @@
 {
-  "subtitle": "Do wszystkiego, co związane z Linuxem.",
+  "subtitle": "Do wszystkiego związanego z Linuksem - narzędzia, dostrajania i menedżer oprogramowania - gotowy na erę sztucznej inteligencji.",
   "install_btn_label": "Zainstaluj",
   "cancel_btn_label": "Anuluj",
   "ok_btn_label": "OK",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Czekam na menedżera pakietów",
   "package_manager_busy_message": "W tej chwili trwa inna operacja na pakietach, więc LinuxToys czeka na jej zakończenie. Menedżery pakietów nie obsługują operacji równoległych. Nie musisz nic robić — Twoja operacja rozpocznie się automatycznie po zakończeniu bieżącej.",
   "package_manager_timeout_title": "Operacja na pakietach trwa zbyt długo",
-  "package_manager_timeout_message": "Inna operacja na pakietach nadal trwa i trwa zbyt długo. Poczekaj na zakończenie bieżącej operacji, a następnie spróbuj ponownie."
+  "package_manager_timeout_message": "Inna operacja na pakietach nadal trwa i trwa zbyt długo. Poczekaj na zakończenie bieżącej operacji, a następnie spróbuj ponownie.",
+  "mcp_agent_server": "Serwer agentów MCP",
+  "mcp_agent_server_tooltip": "Pozwala agentom AI korzystać z LinuxToys (przeglądanie, instalowanie, usuwanie, ustawienia) przez lokalny serwer MCP. Działa jako usługa użytkownika systemd; monity hasła pozostają na Twoim ekranie.",
+  "mcp_service_failed_title": "Serwer agentów MCP",
+  "mcp_skill_installed": "Zainstalowano umiejętność agenta"
 }

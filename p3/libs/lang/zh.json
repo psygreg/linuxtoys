@@ -1,5 +1,5 @@
 {
-  "subtitle": "满足您对 Linux 的一切需求。",
+  "subtitle": "满足你对 Linux 的一切需求 —— 工具、优化与软件管理器，为 AI 时代而准备。",
   "install_btn_label": "安装",
   "cancel_btn_label": "取消",
   "ok_btn_label": "确定",
@@ -745,5 +745,9 @@
   "package_manager_busy_title": "正在等待软件包管理器",
   "package_manager_busy_message": "当前有另一个软件包操作正在运行，LinuxToys 正在等待其完成。软件包管理器不支持并行操作。无需任何操作——当前操作完成后，您的操作会自动开始。",
   "package_manager_timeout_title": "软件包操作耗时过长",
-  "package_manager_timeout_message": "另一个软件包操作仍在运行，耗时过长。请等待正在进行的操作完成后再试。"
+  "package_manager_timeout_message": "另一个软件包操作仍在运行，耗时过长。请等待正在进行的操作完成后再试。",
+  "mcp_agent_server": "MCP 智能体服务器",
+  "mcp_agent_server_tooltip": "让 AI 智能体通过本地 MCP 服务器使用 LinuxToys（浏览、安装、卸载、设置）。以 systemd 用户服务运行；密码提示始终显示在你的屏幕上。",
+  "mcp_service_failed_title": "MCP 智能体服务器",
+  "mcp_skill_installed": "智能体技能已安装"
 }

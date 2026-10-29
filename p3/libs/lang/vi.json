@@ -1,5 +1,5 @@
 {
-  "subtitle": "Cho mọi thứ về Linux.",
+  "subtitle": "Cho mọi thứ về Linux - công cụ, tinh chỉnh và trình quản lý phần mềm - sẵn sàng cho kỷ nguyên AI.",
   "install_btn_label": "Cài đặt",
   "cancel_btn_label": "Hủy bỏ",
   "ok_btn_label": "Đồng ý",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Đang chờ trình quản lý gói",
   "package_manager_busy_message": "Hiện có một thao tác gói khác đang chạy nên LinuxToys đang chờ cho đến khi nó hoàn tất. Các trình quản lý gói không hỗ trợ thao tác song song. Bạn không cần làm gì — thao tác của bạn sẽ tự động bắt đầu ngay khi thao tác hiện tại hoàn tất.",
   "package_manager_timeout_title": "Thao tác gói mất quá nhiều thời gian",
-  "package_manager_timeout_message": "Một thao tác gói khác vẫn đang được thực hiện và mất quá nhiều thời gian. Vui lòng đợi thao tác đang diễn ra hoàn tất, sau đó thử lại."
+  "package_manager_timeout_message": "Một thao tác gói khác vẫn đang được thực hiện và mất quá nhiều thời gian. Vui lòng đợi thao tác đang diễn ra hoàn tất, sau đó thử lại.",
+  "mcp_agent_server": "Máy chủ Tác nhân MCP",
+  "mcp_agent_server_tooltip": "Cho phép các tác nhân AI sử dụng LinuxToys (duyệt, cài đặt, gỡ cài đặt, cài đặt) qua máy chủ MCP cục bộ. Chạy dưới dạng dịch vụ người dùng systemd; lời nhắc mật khẩu luôn hiển thị trên màn hình của bạn.",
+  "mcp_service_failed_title": "Máy chủ Tác nhân MCP",
+  "mcp_skill_installed": "Đã cài đặt kỹ năng tác nhân"
 }

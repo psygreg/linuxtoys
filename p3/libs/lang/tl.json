@@ -1,5 +1,5 @@
 {
-  "subtitle": "Para sa lahat ng tungkol sa Linux.",
+  "subtitle": "Para sa lahat ng tungkol sa Linux - mga tool, tweaks at software manager - handa na sa panahon ng AI.",
   "install_btn_label": "I-install",
   "cancel_btn_label": "Kanselahin",
   "ok_btn_label": "OK",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Naghihintay sa package manager",
   "package_manager_busy_message": "May ibang operasyon ng pakete na tumatakbo sa kasalukuyan, kaya naghihintay ang LinuxToys hanggang matapos ito. Hindi sumusuporta ang mga package manager sa sabay-sabay na operasyon. Hindi kailangang gumawa ng anuman — awtomatikong magsisimula ang iyong operasyon kapag natapos ang kasalukuyan.",
   "package_manager_timeout_title": "Masyadong matagal ang operasyon ng pakete",
-  "package_manager_timeout_message": "May isa pang operasyon ng pakete na tumatakbo pa rin at masyadong matagal. Mangyaring hintayin ang operasyon na nagpapatuloy na matapos, pagkatapos ay subukan muli."
+  "package_manager_timeout_message": "May isa pang operasyon ng pakete na tumatakbo pa rin at masyadong matagal. Mangyaring hintayin ang operasyon na nagpapatuloy na matapos, pagkatapos ay subukan muli.",
+  "mcp_agent_server": "MCP Agent Server",
+  "mcp_agent_server_tooltip": "Hinahayaan ang mga AI agent na gamitin ang LinuxToys (mag-browse, mag-install, mag-alis, mga setting) sa pamamagitan ng lokal na MCP server. Tumatakbo bilang systemd user service; nananatili sa iyong screen ang mga hiling ng password.",
+  "mcp_service_failed_title": "MCP Agent Server",
+  "mcp_skill_installed": "Na-install ang agent skill"
 }

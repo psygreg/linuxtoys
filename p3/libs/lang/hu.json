@@ -1,5 +1,5 @@
 {
-  "subtitle": "Mindenhez, ami Linux.",
+  "subtitle": "Mindenhez, ami Linux - eszközök, finomhangolás és szoftverkezelő - kész az MI korára.",
   "install_btn_label": "Telepítés",
   "cancel_btn_label": "Mégse",
   "reboot_required_title": "Újraindítás szükséges",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Várakozás a csomagkezelőre",
   "package_manager_busy_message": "Jelenleg egy másik csomagművelet fut, ezért a LinuxToys megvárja a befejezését. A csomagkezelők nem támogatják a párhuzamos műveleteket. Nem kell tennie semmit — a művelete automatikusan elindul, amint a jelenlegi befejeződik.",
   "package_manager_timeout_title": "A csomagművelet túl sokáig tart",
-  "package_manager_timeout_message": "Egy másik csomagművelet még mindig fut, és túl sokáig tart. Kérjük, várja meg a folyamatban lévő művelet befejezését, majd próbálja újra."
+  "package_manager_timeout_message": "Egy másik csomagművelet még mindig fut, és túl sokáig tart. Kérjük, várja meg a folyamatban lévő művelet befejezését, majd próbálja újra.",
+  "mcp_agent_server": "MCP-ügynökszerver",
+  "mcp_agent_server_tooltip": "Lehetővé teszi, hogy az MI-ügynökök a LinuxToys-t (böngészés, telepítés, eltávolítás, beállítások) helyi MCP-szerveren keresztül használják. systemd felhasználói szolgáltatásként fut; a jelszókérések a képernyődön maradnak.",
+  "mcp_service_failed_title": "MCP-ügynökszerver",
+  "mcp_skill_installed": "Ügynök-készség telepítve"
 }

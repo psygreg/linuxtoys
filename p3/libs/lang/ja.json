@@ -1,5 +1,5 @@
 {
-  "subtitle": "Linux のすべてに。",
+  "subtitle": "Linux のすべてに —— ツール、調整、ソフトウェアマネージャー。AI の時代に向けて。",
   "install_btn_label": "インストール",
   "cancel_btn_label": "キャンセル",
   "ok_btn_label": "OK",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "パッケージマネージャーを待機中",
   "package_manager_busy_message": "現在、別のパッケージ操作が実行中です。LinuxToys は完了するまで待機しています。パッケージマネージャーは並行操作をサポートしていないためです。操作の必要はありません。現在の操作が完了し次第、自動的に開始されます。",
   "package_manager_timeout_title": "パッケージ操作に時間がかかっています",
-  "package_manager_timeout_message": "別のパッケージ操作がまだ実行中で、時間がかかっています。実行中の操作が完了するまでお待ちいただき、もう一度お試しください。"
+  "package_manager_timeout_message": "別のパッケージ操作がまだ実行中で、時間がかかっています。実行中の操作が完了するまでお待ちいただき、もう一度お試しください。",
+  "mcp_agent_server": "MCP エージェントサーバー",
+  "mcp_agent_server_tooltip": "AI エージェントがローカルの MCP サーバー経由で LinuxToys（閲覧、インストール、削除、設定）を使えるようにします。systemd のユーザーサービスとして動作し、パスワードの入力は常に自分の画面に表示されます。",
+  "mcp_service_failed_title": "MCP エージェントサーバー",
+  "mcp_skill_installed": "エージェントスキルをインストールしました"
 }

@@ -1,5 +1,5 @@
 {
-  "subtitle": "Linux bilan bog‘liq barcha narsalar uchun.",
+  "subtitle": "Linux bilan bog‘liq hamma narsa uchun - vositalar, sozlamalar va dastur menejeri - AI davri uchun tayyor.",
   "install_btn_label": "O'rnatish",
   "cancel_btn_label": "Bekor qilish",
   "reboot_required_title": "Qayta ishga tushirish talab qilinadi",
@@ -742,5 +742,9 @@
   "package_manager_busy_title": "Paket menejerini kutyapmiz",
   "package_manager_busy_message": "Hozir boshqa paket operatsiyasi bajarilmoqda, shuning uchun LinuxToys uning tugashini kutyapti. Paket menejerlari parallel operatsiyalarni qo'llab-quvvatlamaydi. Hech narsa qilish shart emas — joriy operatsiya tugashi bilan sizning operatsiyangiz avtomatik boshlanadi.",
   "package_manager_timeout_title": "Paket operatsiyasi juda uzoq ketmoqda",
-  "package_manager_timeout_message": "Boshqa paket operatsiyasi hali ham davom etmoqda va juda uzoq ketmoqda. Iltimos, davom etayotgan operatsiya tugashini kutib, keyin qayta urinib ko'ring."
+  "package_manager_timeout_message": "Boshqa paket operatsiyasi hali ham davom etmoqda va juda uzoq ketmoqda. Iltimos, davom etayotgan operatsiya tugashini kutib, keyin qayta urinib ko'ring.",
+  "mcp_agent_server": "MCP agent serveri",
+  "mcp_agent_server_tooltip": "Sun'iy intellekt agentlariga mahalliy MCP serveri orqali LinuxToys'dan (ko'rish, o'rnatish, o'chirish, sozlamalar) foydalanish imkonini beradi. systemd foydalanuvchi xizmati sifatida ishlaydi; parol so'rovlari ekranningizda qoladi.",
+  "mcp_service_failed_title": "MCP agent serveri",
+  "mcp_skill_installed": "Agent mahorati o'rnatildi"
 }

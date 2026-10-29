@@ -1,5 +1,5 @@
 {
-  "subtitle": "Visam, kas saistīts ar Linux.",
+  "subtitle": "Visam, kas saistīts ar Linux - rīki, pielāgojumi un programmatūras pārvaldnieks - gatavs AI ērai.",
   "install_btn_label": "Instalēt",
   "cancel_btn_label": "Atcelt",
   "reboot_required_title": "Nepieciešama pārstartēšana",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Gaidu paku pārvaldnieku",
   "package_manager_busy_message": "Pašlaik notiek cita paku darbība, tāpēc LinuxToys gaida tās beigas. Paku pārvaldnieki neatbalsta paralēlas darbības. Nav jādara nekas — jūsu darbība sāksies automātiski, tiklīdz pašreizējā būs beigusies.",
   "package_manager_timeout_title": "Paku darbība aizņem pārāk ilgu laiku",
-  "package_manager_timeout_message": "Cita paku darbība joprojām notiek un aizņem pārāk ilgu laiku. Lūdzu, pagaidiet, līdz notiekošā darbība beidzas, un mēģiniet vēlreiz."
+  "package_manager_timeout_message": "Cita paku darbība joprojām notiek un aizņem pārāk ilgu laiku. Lūdzu, pagaidiet, līdz notiekošā darbība beidzas, un mēģiniet vēlreiz.",
+  "mcp_agent_server": "MCP aģentu serveris",
+  "mcp_agent_server_tooltip": "Ļauj MI aģentiem izmantot LinuxToys (pārlūkot, instalēt, noņemt, iestatījumus), izmantojot lokālo MCP serveri. Darbojas kā systemd lietotāja pakalpojums; paroļu pieprasījumi paliek jūsu ekrānā.",
+  "mcp_service_failed_title": "MCP aģentu serveris",
+  "mcp_skill_installed": "Aģenta prasme instalēta"
 }

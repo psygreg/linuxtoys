@@ -1,5 +1,5 @@
 {
-  "subtitle": "Za sve vezano uz Linux.",
+  "subtitle": "Za sve vezano uz Linux - alati, prilagodbe i upravitelj softvera - spremno za eru AI.",
   "install_btn_label": "Instaliraj",
   "cancel_btn_label": "Otkaži",
   "reboot_required_title": "Potreban restart",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Čekam na upravitelja paketa",
   "package_manager_busy_message": "Trenutačno se izvodi druga radnja s paketima, pa LinuxToys čeka da završi. Upravitelji paketa ne podržavaju paralelne radnje. Ne morate ništa poduzeti — vaša će se radnja automatski pokrenuti čim se trenutačna dovrši.",
   "package_manager_timeout_title": "Radnja s paketima traje predugo",
-  "package_manager_timeout_message": "Druga radnja s paketima još se izvodi i traje predugo. Pričekajte da trenutačna radnja završi, pa pokušajte ponovno."
+  "package_manager_timeout_message": "Druga radnja s paketima još se izvodi i traje predugo. Pričekajte da trenutačna radnja završi, pa pokušajte ponovno.",
+  "mcp_agent_server": "MCP poslužitelj agenata",
+  "mcp_agent_server_tooltip": "Omogućuje AI agentima korištenje LinuxToysa (pregledavanje, instalacija, uklanjanje, postavke) putem lokalnog MCP poslužitelja. Radi kao systemd korisnička usluga; zahtjevi za lozinku ostaju na vašem zaslonu.",
+  "mcp_service_failed_title": "MCP poslužitelj agenata",
+  "mcp_skill_installed": "Vještina agenta instalirana"
 }

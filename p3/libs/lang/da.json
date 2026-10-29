@@ -1,5 +1,5 @@
 {
-  "subtitle": "Til alt inden for Linux.",
+  "subtitle": "Til alt om Linux - værktøjer, justeringer og softwarehåndtering - klar til AI-tidsalderen.",
   "install_btn_label": "Installer",
   "cancel_btn_label": "Annuller",
   "reboot_required_title": "Genstart påkrævet",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Venter på pakkehåndteringen",
   "package_manager_busy_message": "En anden pakkehandling kører i øjeblikket, så LinuxToys venter, til den er færdig. Pakkehåndteringer understøtter ikke parallelle handlinger. Du skal ikke gøre noget — din handling starter automatisk, så snart den aktuelle er fuldført.",
   "package_manager_timeout_title": "Pakkehåndtering tager for lang tid",
-  "package_manager_timeout_message": "En anden pakkehandling kører stadig og tager for lang tid. Vent på, at den igangværende handling er fuldført, og prøv igen."
+  "package_manager_timeout_message": "En anden pakkehandling kører stadig og tager for lang tid. Vent på, at den igangværende handling er fuldført, og prøv igen.",
+  "mcp_agent_server": "MCP-agentserver",
+  "mcp_agent_server_tooltip": "Lader AI-agenter bruge LinuxToys (gennemse, installere, fjerne, indstillinger) via en lokal MCP-server. Kører som en systemd-brugertjeneste; adgangskodeforespørgsler forbliver på din skærm.",
+  "mcp_service_failed_title": "MCP-agentserver",
+  "mcp_skill_installed": "Agentfærdighed installeret"
 }

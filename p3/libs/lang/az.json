@@ -1,5 +1,5 @@
 {
-  "subtitle": "Linux ilə bağlı hər şey üçün.",
+  "subtitle": "Linux ilə bağlı hər şey üçün - alətlər, tənzimləmələr və proqram təminatı meneceri - süni intellekt dövrünə hazırdır.",
   "install_btn_label": "Quraşdır",
   "cancel_btn_label": "Ləğv et",
   "reboot_required_title": "Yenidən başlatma tələb olunur",
@@ -742,5 +742,9 @@
   "package_manager_busy_title": "Paket menecerini gözləyirik",
   "package_manager_busy_message": "Hazırda başqa bir paket əməliyyatı icra olunur, buna görə LinuxToys onun bitməsini gözləyir. Paket menecerləri paralel əməliyyatları dəstəkləmir. Heç bir tədbir görmək lazım deyil — cari əməliyyat bitən kimi sizin əməliyyatınız avtomatik başlayacaq.",
   "package_manager_timeout_title": "Paket əməliyyatı çox uzun çəkir",
-  "package_manager_timeout_message": "Başqa bir paket əməliyyatı hələ də davam edir və çox uzun çəkir. Zəhmət olmasa davam edən əməliyyatın bitməsini gözləyin, sonra yenidən cəhd edin."
+  "package_manager_timeout_message": "Başqa bir paket əməliyyatı hələ də davam edir və çox uzun çəkir. Zəhmət olmasa davam edən əməliyyatın bitməsini gözləyin, sonra yenidən cəhd edin.",
+  "mcp_agent_server": "MCP Agent Serveri",
+  "mcp_agent_server_tooltip": "Süni intellekt agentlərinə lokal MCP serveri vasitəsilə LinuxToys-dan (baxmaq, quraşdırmaq, silmək, tənzimləmələr) istifadə etməyə imkan verir. systemd istifadəçi xidməti kimi işləyir; şifrə sorğuları ekranınızda qalır.",
+  "mcp_service_failed_title": "MCP Agent Serveri",
+  "mcp_skill_installed": "Agent bacarığı quraşdırıldı"
 }

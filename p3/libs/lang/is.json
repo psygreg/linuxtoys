@@ -1,5 +1,5 @@
 {
-  "subtitle": "Fyrir allt sem tengist Linux.",
+  "subtitle": "Fyrir allt sem tengist Linux - verkfæri, stillingar og hugbúnaðarstjóri - tilbúið fyrir gervigreindaröldina.",
   "install_btn_label": "Setja upp",
   "cancel_btn_label": "Hætta við",
   "reboot_required_title": "Endurræsing nauðsynleg",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Bíð eftir pakkastjóra",
   "package_manager_busy_message": "Önnur pakkaaðgerð er í gangi núna, svo LinuxToys bíður eftir að hún klárist. Pakkastjórar styðja ekki samhliðaaðgerðir. Þú þarft ekki að gera neitt — aðgerðin þín hefst sjálfkrafa um leið og sú núverandi lýkur.",
   "package_manager_timeout_title": "Pakkaaðgerðin tek of lengi",
-  "package_manager_timeout_message": "Önnur pakkaaðgerð er enn í gangi og tekur of lengi. Bíddu eftir að aðgerðin sem er í gangi klárist og reyndu svo aftur."
+  "package_manager_timeout_message": "Önnur pakkaaðgerð er enn í gangi og tekur of lengi. Bíddu eftir að aðgerðin sem er í gangi klárist og reyndu svo aftur.",
+  "mcp_agent_server": "MCP umboðsþjónn",
+  "mcp_agent_server_tooltip": "Leyfir gervigreindarumboðum að nota LinuxToys (fletta, setja upp, fjarlægja, stillingar) í gegnum staðbundinn MCP-þjón. Keyrir sem systemd notandaþjónusta; lykilorðabeiðnir verða áfram á skjánum þínum.",
+  "mcp_service_failed_title": "MCP umboðsþjónn",
+  "mcp_skill_installed": "Umboðshæfni uppsett"
 }

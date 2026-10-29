@@ -1,5 +1,5 @@
 {
-  "subtitle": "Kwa kila kitu kuhusu Linux.",
+  "subtitle": "Kwa kila kitu kuhusu Linux - zana, marekebisho na kidhibiti cha programu - tayari kwa enzi ya AI.",
   "install_btn_label": "Sakinisha",
   "cancel_btn_label": "Ghairi",
   "ok_btn_label": "Sawa",
@@ -741,5 +741,9 @@
   "package_manager_busy_title": "Inasubiri kidhibiti vifurushi",
   "package_manager_busy_message": "Kwa sasa kuna operesheni nyingine ya vifurushi inaendelea, kwa hivyo LinuxToys inasubiri hadi ikamilike. Kidhibiti vifurushi hakitumii operesheni sambamba. Hakuna kinachohitajika kufanywa — operesheni yako itaanza kiotomatiki mara tu ya sasa itakapokamilika.",
   "package_manager_timeout_title": "Operesheni ya vifurushi inachukua muda mrefu sana",
-  "package_manager_timeout_message": "Operesheni nyingine ya vifurushi bado inaendelea na inachukua muda mrefu sana. Tafadhali subiri operesheni inayoendelea ikamilike, kisha jaribu tena."
+  "package_manager_timeout_message": "Operesheni nyingine ya vifurushi bado inaendelea na inachukua muda mrefu sana. Tafadhali subiri operesheni inayoendelea ikamilike, kisha jaribu tena.",
+  "mcp_agent_server": "Seva ya Wakala wa MCP",
+  "mcp_agent_server_tooltip": "Inaruhusu mawakala wa AI kutumia LinuxToys (kuvinjari, kusakinisha, kuondoa, mipangilio) kupitia seva ya MCP ya ndani. Inafanya kazi kama huduma ya mtumiaji wa systemd; maombi ya nenosiri hubaki kwenye skrini yako.",
+  "mcp_service_failed_title": "Seva ya Wakala wa MCP",
+  "mcp_skill_installed": "Ujuzi wa wakala umesakinishwa"
 }

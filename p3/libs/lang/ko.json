@@ -1,5 +1,5 @@
 {
-  "subtitle": "Linux의 모든 것을 위해.",
+  "subtitle": "Linux의 모든 것을 위해 - 도구, 트윅, 소프트웨어 관리자 - AI 시대를 위한 준비.",
   "install_btn_label": "설치",
   "cancel_btn_label": "취소",
   "ok_btn_label": "확인",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "패키지 관리자 대기 중",
   "package_manager_busy_message": "현재 다른 패키지 작업이 실행 중이므로 LinuxToys가 완료될 때까지 기다리고 있습니다. 패키지 관리자는 병렬 작업을 지원하지 않습니다. 아무 조치도 필요하지 않습니다. 현재 작업이 끝나면 작업이 자동으로 시작됩니다.",
   "package_manager_timeout_title": "패키지 작업이 너무 오래 걸리고 있습니다",
-  "package_manager_timeout_message": "다른 패키지 작업이 아직 실행 중이며 너무 오래 걸리고 있습니다. 진행 중인 작업이 끝날 때까지 기다린 후 다시 시도해 주세요."
+  "package_manager_timeout_message": "다른 패키지 작업이 아직 실행 중이며 너무 오래 걸리고 있습니다. 진행 중인 작업이 끝날 때까지 기다린 후 다시 시도해 주세요.",
+  "mcp_agent_server": "MCP 에이전트 서버",
+  "mcp_agent_server_tooltip": "AI 에이전트가 로컬 MCP 서버를 통해 LinuxToys(탐색, 설치, 제거, 설정)를 사용할 수 있게 합니다. systemd 사용자 서비스로 실행되며 비밀번호 요청은 항상 내 화면에 표시됩니다.",
+  "mcp_service_failed_title": "MCP 에이전트 서버",
+  "mcp_skill_installed": "에이전트 스킬이 설치되었습니다"
 }

@@ -1,5 +1,5 @@
 {
-  "subtitle": "ለሁሉም የLinux ነገር።",
+  "subtitle": "ለሁሉም ነገር Linux - መሳሪያዎች፣ ማስተካከያዎች እና ሶፍትዌር አስተዳዳሪ - የAI ዘመን ምንጭ።",
   "install_btn_label": "ጫን",
   "cancel_btn_label": "ሰርዝ",
   "ok_btn_label": "እሺ",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "የጥቅል አስተዳዳሪ በመጠበቅ ላይ",
   "package_manager_busy_message": "በአሁኑ ጊዜ ሌላ የጥቅል ሥራ እየተከናወነ ስለሆነ፣ LinuxToys እስኪጨርስ በመጠበቅ ላይ ነው። የጥቅል አስተዳዳሪዎች ትይዩ ሥራዎችን አይደግፉም። ምንም እርምጃ አያስፈልግም — አሁን ያለው ሥራ ከጨረሰ በኋላ የእርስዎ ሥራ በራስ-ሰር ይጀምራል።",
   "package_manager_timeout_title": "የጥቅል ሥራው በጣም ረጅም ጊዜ ይወስዳል",
-  "package_manager_timeout_message": "ሌላ የጥቅል ሥራ አሁንም እየተከናወነ ነው፣ በጣም ረጅም ጊዜ ይወስዳል። እባክዎ እየተከናወነ ያለው ሥራ እስኪጨረስ ይጠብቁ፣ ከዚያ እንደገና ይሞክሩ።"
+  "package_manager_timeout_message": "ሌላ የጥቅል ሥራ አሁንም እየተከናወነ ነው፣ በጣም ረጅም ጊዜ ይወስዳል። እባክዎ እየተከናወነ ያለው ሥራ እስኪጨረስ ይጠብቁ፣ ከዚያ እንደገና ይሞክሩ።",
+  "mcp_agent_server": "የMCP ወኪል አገልጋይ",
+  "mcp_agent_server_tooltip": "የAI ወኪሎች LinuxToys (መቃኘት፣ መግጠም፣ ማስወገድ፣ ቅንብሮች) በአካባቢ የMCP አገልጋይ አማካኝነት እንዲጠቀሙ ያደርጋል። እንደ systemd ተጠቃሚ አገልጋይ ይሰራል፤ የይለፍ ቃል ጥያቄዎች በእርስዎ መመልከቻ ላይ ይቀራሉ።",
+  "mcp_service_failed_title": "የMCP ወኪል አገልጋይ",
+  "mcp_skill_installed": "የወኪል ክህሎት ተገጥሟል"
 }

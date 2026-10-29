@@ -1,5 +1,5 @@
 {
-  "subtitle": "Untuk segala hal tentang Linux.",
+  "subtitle": "Untuk segala hal tentang Linux - alat, penyesuaian, dan manajer perangkat lunak - siap untuk era AI.",
   "install_btn_label": "Instal",
   "cancel_btn_label": "Batal",
   "ok_btn_label": "OK",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Menunggu pengelola paket",
   "package_manager_busy_message": "Operasi paket lain sedang berjalan saat ini, jadi LinuxToys menunggu hingga selesai. Manajer paket tidak mendukung operasi paralel. Tidak perlu tindakan apa pun — operasi Anda akan dimulai secara otomatis setelah yang sedang berjalan selesai.",
   "package_manager_timeout_title": "Operasi paket memakan waktu terlalu lama",
-  "package_manager_timeout_message": "Operasi paket lain masih berjalan dan memakan waktu terlalu lama. Mohon tunggu operasi yang sedang berjalan selesai, lalu coba lagi."
+  "package_manager_timeout_message": "Operasi paket lain masih berjalan dan memakan waktu terlalu lama. Mohon tunggu operasi yang sedang berjalan selesai, lalu coba lagi.",
+  "mcp_agent_server": "Server Agen MCP",
+  "mcp_agent_server_tooltip": "Memungkinkan agen AI menggunakan LinuxToys (menjelajah, memasang, menghapus, pengaturan) melalui server MCP lokal. Berjalan sebagai layanan pengguna systemd; permintaan kata sandi tetap di layar Anda.",
+  "mcp_service_failed_title": "Server Agen MCP",
+  "mcp_skill_installed": "Keterampilan agen terpasang"
 }

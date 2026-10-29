@@ -1,5 +1,5 @@
 {
-  "subtitle": "Për gjithçka që lidhet me Linux.",
+  "subtitle": "Për gjithçka rreth Linux-it - mjete, rregullime dhe menaxher softuerësh - gati për epokën e AI.",
   "install_btn_label": "Instalo",
   "cancel_btn_label": "Anulo",
   "reboot_required_title": "Rinisja e Kërkuar",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Në pritje të menaxherit të paketave",
   "package_manager_busy_message": "Një veprim tjetër me paketa është duke u ekzekutuar momentalisht, ndaj LinuxToys po pret që ai të përfundojë. Menaxherët e paketave nuk mbështesin veprime paralele. Nuk duhet të bëni asgjë — veprimi juaj do të fillojë automatikisht sapo ai aktual të përfundojë.",
   "package_manager_timeout_title": "Veprimi me paketa po zgjat shumë",
-  "package_manager_timeout_message": "Një veprim tjetër me paketa është ende në ekzekutim dhe po zgjat shumë. Ju lutem prisni që veprimi në zhvillim të përfundojë, pastaj provoni përsëri."
+  "package_manager_timeout_message": "Një veprim tjetër me paketa është ende në ekzekutim dhe po zgjat shumë. Ju lutem prisni që veprimi në zhvillim të përfundojë, pastaj provoni përsëri.",
+  "mcp_agent_server": "Server agjentësh MCP",
+  "mcp_agent_server_tooltip": "U lejon agjentëve të AI të përdorin LinuxToys (shfletim, instalim, heqje, rregullime) nëpërmjet një serveri lokal MCP. Funksionon si shërbim përdoruesi i systemd; kërkesat e fjalëkalimit qëndrojnë në ekranin tuaj.",
+  "mcp_service_failed_title": "Server agjentësh MCP",
+  "mcp_skill_installed": "Aftësia e agjentit u instalua"
 }

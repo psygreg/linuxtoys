@@ -1,5 +1,5 @@
 {
-  "subtitle": "Für alles rund um Linux.",
+  "subtitle": "Für alles rund um Linux - Tools, Tweaks und Software-Manager - bereit für das Zeitalter der KI.",
   "install_btn_label": "Installieren",
   "cancel_btn_label": "Abbrechen",
   "ok_btn_label": "OK",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Warte auf die Paketverwaltung",
   "package_manager_busy_message": "Derzeit läuft eine andere Paketoperation, daher wartet LinuxToys, bis sie abgeschlossen ist. Paketverwaltungen unterstützen keine parallelen Operationen. Du musst nichts tun — deine Operation startet automatisch, sobald die aktuelle abgeschlossen ist.",
   "package_manager_timeout_title": "Paketoperation dauert zu lange",
-  "package_manager_timeout_message": "Eine andere Paketoperation läuft noch und dauert zu lange. Bitte warte, bis der laufende Vorgang abgeschlossen ist, und versuche es dann erneut."
+  "package_manager_timeout_message": "Eine andere Paketoperation läuft noch und dauert zu lange. Bitte warte, bis der laufende Vorgang abgeschlossen ist, und versuche es dann erneut.",
+  "mcp_agent_server": "MCP-Agentenserver",
+  "mcp_agent_server_tooltip": "Ermöglicht KI-Agenten die Nutzung von LinuxToys (durchsuchen, installieren, entfernen, Einstellungen) über einen lokalen MCP-Server. Läuft als systemd-Benutzerdienst; Passwortabfragen bleiben auf deinem Bildschirm.",
+  "mcp_service_failed_title": "MCP-Agentenserver",
+  "mcp_skill_installed": "Agenten-Skill installiert"
 }

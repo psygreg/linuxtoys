@@ -1,5 +1,5 @@
 {
-  "subtitle": "Pentru tot ce ține de Linux.",
+  "subtitle": "Pentru tot ce ține de Linux - instrumente, ajustări și manager de software - pregătit pentru era AI.",
   "install_btn_label": "Instalează",
   "cancel_btn_label": "Anulează",
   "reboot_required_title": "Repornire Necesară",
@@ -743,5 +743,9 @@
   "package_manager_busy_title": "Se așteaptă administratorul de pachete",
   "package_manager_busy_message": "În acest moment rulează altă operațiune cu pachete, așa că LinuxToys așteaptă finalizarea ei. Administratorii de pachete nu suportă operațiuni în paralelu. Nu trebuie să faceți nimic — operațiunea dvs. va începe automat de îndată ce se încheie cea curentă.",
   "package_manager_timeout_title": "Operațiunea de pachete durează prea mult",
-  "package_manager_timeout_message": "O altă operațiune de pachete rulează încă și durează prea mult. Vă rugăm să așteptați finalizarea operațiunii în curs, apoi încercați din nou."
+  "package_manager_timeout_message": "O altă operațiune de pachete rulează încă și durează prea mult. Vă rugăm să așteptați finalizarea operațiunii în curs, apoi încercați din nou.",
+  "mcp_agent_server": "Server de agenți MCP",
+  "mcp_agent_server_tooltip": "Permite agenților AI să folosească LinuxToys (răsfoire, instalare, eliminare, setări) printr-un server MCP local. Rulează ca serviciu de utilizator systemd; solicitările de parolă rămân pe ecranul tău.",
+  "mcp_service_failed_title": "Server de agenți MCP",
+  "mcp_skill_installed": "Abilitatea agentului instalată"
 }
