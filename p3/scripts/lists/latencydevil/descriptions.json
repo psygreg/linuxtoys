@@ -1,0 +1,181 @@
+{
+  "description_tag": "latencydevil_desc",
+  "long-description": "md/en.md",
+  "description_long_tag": "latencydevil_long",
+  "en": {
+    "latencydevil_long": "md/en.md",
+    "latencydevil_desc": "A GPU-aware launcher wrapper that sets low latency modes for gaming."
+  },
+  "pt": {
+    "latencydevil_long": "md/pt.md",
+    "latencydevil_desc": "Um wrapper de lançador que considera a GPU e define modos de baixa latência para jogos."
+  },
+  "am": {
+    "latencydevil_desc": "ግንዛቤ GPU አስነሳሽ መፀበሪያ ለጨዋታ ዝቅተኛ latency ሞዶችን ይወስናል።"
+  },
+  "ar": {
+    "latencydevil_desc": "غلاف تشغيل يراعي وحدة معالجة الرسومات ويضبط أوضاع زمن الاستجابة المنخفض للألعاب."
+  },
+  "az": {
+    "latencydevil_desc": "GPU-nu nəzərə alan başladıcı örtük, oyunlar üçün aşağı gecikmə rejimlərini tətbiq edir."
+  },
+  "bg": {
+    "latencydevil_desc": "Обвивка за стартиране, която отчита GPU-то и задава режими с ниска латентност за игри."
+  },
+  "bn": {
+    "latencydevil_desc": "GPU-সচেতন লঞ্চার র‍্যাপার, যা গেমিংয়ের জন্য কম লেটেন্সি মোড সেট করে।"
+  },
+  "bs": {
+    "latencydevil_desc": "Omot za pokretanje koji vodi računa o GPU-u i postavlja režime niske latencije za igre."
+  },
+  "cs": {
+    "latencydevil_desc": "Obal spouštěče, který zohledňuje GPU a nastavuje režimy s nízkou latencí pro hraní."
+  },
+  "da": {
+    "latencydevil_desc": "En launcher-wrapper, der tager højde for GPU'et og aktiverer tilstande med lav latenstid til spil."
+  },
+  "de": {
+    "latencydevil_desc": "Ein GPU-bewusster Launcher-Wrapper, der niedrige Latenz-Modi für Gaming setzt."
+  },
+  "el": {
+    "latencydevil_desc": "Ένα wrapper εκκίνησης που λαμβάνει υπόψη το GPU και ενεργοποιεί λειτουργίες χαμηλής καθυστέρησης για παιχνίδι."
+  },
+  "es": {
+    "latencydevil_desc": "Un envoltorio de lanzador que tiene en cuenta la GPU y activa modos de baja latencia para jugar."
+  },
+  "et": {
+    "latencydevil_desc": "Käivitamise mähis, mis arvestab GPU-d ja seab mängimiseks madala latentsusega režiimid."
+  },
+  "fa": {
+    "latencydevil_desc": "یک پوشش راه‌انداز که GPU را در نظر می‌گیرد و برای بازی حالت‌های تأخیر کم را تنظیم می‌کند."
+  },
+  "fi": {
+    "latencydevil_desc": "GPU:ta huomioiva käynnistyskääre, joka ottaa pelaamiseen käyttöön matalan viiveen tilat."
+  },
+  "fr": {
+    "latencydevil_desc": "Un wrapper de lancement qui prend en compte le GPU et active des modes à faible latence pour le jeu."
+  },
+  "ga": {
+    "latencydevil_desc": "Folaigh seolaithe GPU-chomhfhiosach a shocraíonn módanna latéinte íseal do chluichí."
+  },
+  "he": {
+    "latencydevil_desc": "מעטפת הפעלה שמודעת ל-GPU ומגדירה מצבי השהיה נמוכה לצורך משחק."
+  },
+  "hi": {
+    "latencydevil_desc": "GPU को ध्यान में रखने वाला लॉन्चर रैपर, जो गेमिंग के लिए कम लेटेंसी वाले मोड सेट करता है।"
+  },
+  "hr": {
+    "latencydevil_desc": "Omot za pokretanje koji vodi računa o GPU-u i postavlja načine niske latencije za igre."
+  },
+  "hu": {
+    "latencydevil_desc": "GPU-t figyelembe vevő indítóburkoló, amely alacsony késleltetésű módokat állít be a játékhoz."
+  },
+  "hy": {
+    "latencydevil_desc": "GPU-ն հաշվի առնող մեկնարկիչ-փաթեթ, որը խաղերի համար սահմանում է ցածր հապավումով ռեժիմներ։"
+  },
+  "id": {
+    "latencydevil_desc": "Pembungkus peluncur yang memperhitungkan GPU dan menyetel mode latensi rendah untuk bermain gim."
+  },
+  "is": {
+    "latencydevil_desc": "Ræsivafri sem tekur tillit til GPU og stillir ham með stutta seinkun fyrir leiki."
+  },
+  "it": {
+    "latencydevil_desc": "Un wrapper di avvio che tiene conto della GPU e imposta modalità a bassa latenza per il gaming."
+  },
+  "ja": {
+    "latencydevil_desc": "ゲーム向けに低レイテンシモードを設定する、GPU を考慮したランチャー用ラッパーです。"
+  },
+  "ka": {
+    "latencydevil_desc": "GPU-ს გათვალისწინებით მოქმედი ინსტრუმენტი გასაშვებად, რომელიც თამაშებისთვის დაბალი latency რეჟიმებს აყენებს."
+  },
+  "km": {
+    "latencydevil_desc": "កម្មវិធីព័ទ្ធការចាប់ផ្តើមដែលគិតគូរពី GPU និងកំណត់របៀបពន្លះទាបសម្រាប់ការលេងហ្គេម។"
+  },
+  "ko": {
+    "latencydevil_desc": "GPU를 고려하는 런처 래퍼로, 게이밍을 위해 낮은 지연 시간 모드를 설정합니다."
+  },
+  "lo": {
+    "latencydevil_desc": "ຕົວຫຸ້ມຕົວເປີດທີ່ຮັດກຽວ GPU ແລະຕັ້ງຄ່າຮູບແບບຄວາມຊັກຊ້າຕໍ່າສຳລັບການຫຼິ້ນເກມ."
+  },
+  "lt": {
+    "latencydevil_desc": "Paleidimo įvyniojimas, atsižvelgiantis į GPU ir nustatantis žaidimams žemos delsos režimus."
+  },
+  "lv": {
+    "latencydevil_desc": "Palaišanas ietinums, kas rēķinās ar GPU un iestata spēlēm zemas latences režīmus."
+  },
+  "mn": {
+    "latencydevil_desc": "GPU-г харгалзан тоглоомын хугацааны горимыг тохируулдаг эхлүүлэгч боодол."
+  },
+  "ms": {
+    "latencydevil_desc": "Pembungkus pelancar yang memperhitungkan GPU dan menetapkan mod latensi rendah untuk permainan."
+  },
+  "my": {
+    "latencydevil_desc": "GPU ကို ဂရုပြုသည့် လော့န်ချာ ရှမ်းပါးဖြင့် ဂိမ်းအတွက် latency နိမ့်မုဒ်များ တင်ပေးသည်။"
+  },
+  "nb": {
+    "latencydevil_desc": "En start-wrapper som tar hensyn til GPU-en og setter moduser med lav latens for spilling."
+  },
+  "ne": {
+    "latencydevil_desc": "GPU जागरूक लन्चर र्यापर, जसले गेमिङका लागि कम लेटेन्सी मोड सेट गर्दछ।"
+  },
+  "nl": {
+    "latencydevil_desc": "Een launcher-wrapper die rekening houdt met de GPU en modi met lage latentie instelt voor gaming."
+  },
+  "pl": {
+    "latencydevil_desc": "Otoka do launchera, która uwzględnia GPU i ustawia tryby niskich opóźnień dla gier."
+  },
+  "ro": {
+    "latencydevil_desc": "Un înveliș lansator care are în vedere GPU-ul și configurează moduri cu latență redusă pentru joc."
+  },
+  "ru": {
+    "latencydevil_desc": "Оболочка для запуска, учитывающая GPU и включающая режимы низкой задержки для игр."
+  },
+  "sk": {
+    "latencydevil_desc": "Obal spúšťača, ktorý zohľadňuje GPU a nastavuje režimy s nízkou latenciou pre hranie."
+  },
+  "sl": {
+    "latencydevil_desc": "Zavijalec zagona, ki upošteva GPU in nastavlja načine z nizko zakasnitvijo za igre."
+  },
+  "sq": {
+    "latencydevil_desc": "Mbështjellës i nisjes që merr në konsideratë GPU-në dhe përcakton mënyra me vonesë të ulët për lojëra."
+  },
+  "sr": {
+    "latencydevil_desc": "Омот покретача који води рачуна о GPU-у и поставља режиме малог кашњења за игре."
+  },
+  "sv": {
+    "latencydevil_desc": "En startomslutning som tar hänsyn till GPU och ställer in lägen med låg latens för spelande."
+  },
+  "sw": {
+    "latencydevil_desc": "Kifaa cha kuanzisha kinachozingatia GPU na kuweka hali za latency ndogo kwa michezo."
+  },
+  "ta": {
+    "latencydevil_desc": "GPU-ஐ கருத்தில் கொள்ளும் லான்சர் ரேப்பர், கேமிங்கிற்கு குறைந்த லேட்டன்ஸி பயன்முறைகளை அமைக்கும்."
+  },
+  "tg": {
+    "latencydevil_desc": "Басти иҷро, ки GPU-ро назар мегиҷад ва барои бозиҳо реҷаҳои таъхири камро танзим мекунад."
+  },
+  "th": {
+    "latencydevil_desc": "ตัวห่อสำหรับตัวเรียกใช้ที่คำนึงถึง GPU และตั้งค่าโหมดความหน่วงต่ำสำหรับการเล่นเกม"
+  },
+  "tl": {
+    "latencydevil_desc": "Wrapper para sa launcher na may pag-unawa sa GPU, at nagtatakda ng mga low latency mode para sa gaming."
+  },
+  "tr": {
+    "latencydevil_desc": "GPU'yu dikkate alan bir başlatıcı sarmalayıcı, oyunlar için düşük gecikme modlarını ayarlar."
+  },
+  "uk": {
+    "latencydevil_desc": "Оболочка запуску, яка враховує GPU і вмикає режими низької затримки для ігор."
+  },
+  "ur": {
+    "latencydevil_desc": "لانچر ریپر جو GPU کی پرواہ کرتا ہے اور گیمنگ کے لیے کم لیٹنسی موڈ سیٹ کرتا ہے۔"
+  },
+  "uz": {
+    "latencydevil_desc": "GPU'ni hisobga olgan ishga tushiruvchi o'ram, o'yinlar uchun past kechikish rejimlarini sozlaydi."
+  },
+  "vi": {
+    "latencydevil_desc": "Bao bọc trình khởi chạy có lưu ý đến GPU, cài đặt các chế độ trễ thấp dành cho chơi game."
+  },
+  "zh": {
+    "latencydevil_desc": "考虑 GPU 的启动器包装器，为游戏设置低延迟模式。"
+  }
+}

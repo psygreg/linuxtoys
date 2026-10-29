@@ -1,0 +1,19 @@
+[
+    {
+        "name": "LatencyDevil",
+        "description": "A GPU-aware launcher wrapper that sets low latency modes for gaming.",
+        "developer": "psygreg",
+        "description_tag": "latencydevil_desc",
+        "repo": "https://github.com/psygreg/latencydevil",
+        "category": "game",
+        "icon": "gaming.svg",
+        "license": "Apache-2.0",
+        "descriptions": "descriptions.json",
+        "type": "bin",
+        "package-name": "latencydevil",
+        "os": [ "!gregos" ],
+        "overrides": {
+            "post": "path_link \"$LINUXTOYS_BIN_DIR/latencydevil\""
+        }
+    }
+]

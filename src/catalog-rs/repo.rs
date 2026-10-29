@@ -215,6 +215,66 @@ fn validate_hook_json(v: &Value) -> bool {
     }
 }
 
+// Helpers a post hook may call anywhere without touching the system: they only
+// integrate the installed software into the user's own environment.
+const USER_LEVEL_HOOK_CMDS_RS: &[&str] = &["path_link", "desktop_shortcut"];
+
+// A user-level hook is a plain command sequence joined only by &&, ||, ; or
+// line breaks, whose commands all come from the user-level vocabulary. Pipes,
+// redirections, grouping, backgrounding, comments and command substitution are
+// rejected rather than interpreted, so a mis-split quoted argument can only
+// ever cause a false rejection, never a false acceptance.
+fn user_level_hook_rs(hook: &Value) -> bool {
+    // Script-file hooks are opaque to static analysis, so only inline strings
+    // qualify.
+    let Value::String(line) = hook else { return false; };
+    let text = line.trim();
+    if text.is_empty() { return false; }
+    let chars: Vec<char> = text.chars().collect();
+    let parse = |chars: &[char]| -> Option<Vec<String>> {
+        let mut segments: Vec<String> = Vec::new();
+        let mut current = String::new();
+        let mut i = 0usize;
+        while i < chars.len() {
+            let c = chars[i];
+            let next = chars.get(i + 1).copied();
+            if (c == '&' && next == Some('&')) || (c == '|' && next == Some('|')) {
+                segments.push(std::mem::take(&mut current));
+                i += 2;
+                continue;
+            }
+            match c {
+                ';' => { segments.push(std::mem::take(&mut current)); },
+                '\n' | '\r' => if !current.trim().is_empty() { segments.push(std::mem::take(&mut current)); },
+                '&' | '|' | '<' | '>' | '(' | ')' | '{' | '}' | '`' | '#' => return None,
+                _ => current.push(c),
+            }
+            i += 1;
+        }
+        segments.push(current);
+        Some(segments)
+    };
+    let Some(segments) = parse(&chars) else { return false; };
+    let mut any = false;
+    for segment in segments {
+        let segment = segment.trim();
+        if segment.is_empty() { continue; }
+        let Some(command) = segment.split_whitespace().next() else { return false; };
+        if !USER_LEVEL_HOOK_CMDS_RS.contains(&command) { return false; }
+        any = true;
+    }
+    any
+}
+
+// Post hooks that only integrate the install into the user's own environment
+// (PATH links, desktop entries) need neither root nor systemd, so SteamOS and
+// immutable-host listings may keep them.
+fn steamos_user_level_post_hook_rs(entry: &serde_json::Map<String, Value>) -> bool {
+    entry.get("overrides").and_then(Value::as_object)
+        .and_then(|o| o.get("post"))
+        .is_some_and(user_level_hook_rs)
+}
+
 
 fn valid_release_selector_rs(v: Option<&Value>) -> bool {
     fn one(s:&str)->bool { let s=s.trim(); !s.is_empty() && s!="." && s!=".." && !s.contains('/') && !s.contains('\\') }
@@ -372,7 +432,11 @@ fn runtime_compatible_rs(entry:&serde_json::Map<String,Value>, keys:&[String], t
         let user_make=ty=="make"&&!make_uses_sudo_rs(entry);
         match ty {"git"|"flathub"|"tar"|"bin"|"external"=>{},"make" if user_make=>{},"url" if matches!(resolve_url_kind_rs(entry,keys),Some("flatpak"|"appimage"|"tar"|"bin"))=>{},_=>return false}
         if !user_make && entry.get("dependencies").and_then(Value::as_array).is_some_and(|a|a.iter().any(|d|d.get("type").and_then(Value::as_str)==Some("native"))) {return false}
-        if let Some(o)=entry.get("overrides").and_then(Value::as_object) { if o.get("pre").is_some(){return false} if o.get("post").is_some() && ty!="tar" && !(ty=="url"&&resolve_url_kind_rs(entry,keys)==Some("tar")){return false} }
+        if let Some(o)=entry.get("overrides").and_then(Value::as_object) {
+            if o.get("pre").is_some(){return false}
+            let tar_post=ty=="tar" || (ty=="url"&&resolve_url_kind_rs(entry,keys)==Some("tar"));
+            if o.get("post").is_some() && !tar_post && !steamos_user_level_post_hook_rs(entry){return false}
+        }
         if !services_empty_rs(entry){return false}
     }
     if let Some(os)=entry.get("os") {
@@ -813,5 +877,90 @@ mod runtime_compat_tests {
         // Word boundaries: a label inside a longer alphanumeric run is not one.
         assert_eq!(git_asset_architectures("ax64.tar.gz"), Vec::<String>::new());
         assert_eq!(git_asset_architectures("no-arch-here.flatpak"), Vec::<String>::new());
+    }
+
+    fn bin_entry_with_post(post: Value) -> serde_json::Map<String, Value> {
+        let mut e = entry(serde_json::json!({
+            "name": "Test Binary",
+            "repo": "https://github.com/example/repo",
+            "category": "game",
+            "description": "Test",
+            "type": "bin",
+            "package-name": "tool"
+        }));
+        if !post.is_object() || !post.as_object().map(|m| m.is_empty()).unwrap_or(false) {
+            e.insert("overrides".into(), serde_json::json!({"post": post}));
+        }
+        e
+    }
+
+    fn bin_entry_without_post() -> serde_json::Map<String, Value> {
+        bin_entry_with_post(serde_json::json!({}))
+    }
+
+    #[test]
+    fn user_level_post_hook_stays_listed_on_immutable_hosts() {
+        let e = bin_entry_with_post(serde_json::json!(
+            "path_link \"$LINUXTOYS_BIN_DIR/tool\""
+        ));
+        assert!(runtime_compatible_rs(&e, &keys(&["steamos", "systemd"]), "bin", false, false, false, false));
+        assert!(runtime_compatible_rs(&e, &keys(&["dakota", "systemd"]), "bin", false, false, false, false));
+        assert!(runtime_compatible_rs(&e, &keys(&["gnomeos", "systemd"]), "bin", false, false, false, false));
+        assert!(runtime_compatible_rs(&e, &keys(&["kde-linux", "systemd"]), "bin", false, false, false, false));
+        assert!(runtime_compatible_rs(&e, &keys(&["ubuntu", "systemd"]), "bin", false, false, false, false));
+        // Still listed where hooks were always acceptable.
+        assert!(runtime_compatible_rs(&bin_entry_without_post(), &keys(&["steamos", "systemd"]), "bin", false, false, false, false));
+    }
+
+    #[test]
+    fn chained_user_level_commands_stay_listed() {
+        let chained = serde_json::json!(
+            "desktop_shortcut --class \"com.example.Tool\" \"$LINUXTOYS_BIN_DIR/tool\" && path_link \"$LINUXTOYS_BIN_DIR/tool\""
+        );
+        let e = bin_entry_with_post(chained);
+        assert!(runtime_compatible_rs(&e, &keys(&["steamos", "systemd"]), "bin", false, false, false, false));
+
+        let sequenced = serde_json::json!(
+            "path_link \"$LINUXTOYS_BIN_DIR/tool\"; desktop_shortcut \"$LINUXTOYS_BIN_DIR/tool\""
+        );
+        let e = bin_entry_with_post(sequenced);
+        assert!(runtime_compatible_rs(&e, &keys(&["kde-linux", "systemd"]), "bin", false, false, false, false));
+
+        // Split across lines is the same plain command sequence.
+        let lines = serde_json::json!(
+            "path_link \"$LINUXTOYS_BIN_DIR/tool\"\ndesktop_shortcut \"$LINUXTOYS_BIN_DIR/tool\""
+        );
+        let e = bin_entry_with_post(lines);
+        assert!(runtime_compatible_rs(&e, &keys(&["ubuntu", "systemd"]), "bin", false, false, false, false));
+    }
+
+    #[test]
+    fn system_like_post_hooks_stay_hidden_on_immutable_hosts() {
+        for post in [
+            serde_json::json!("sudo sysctl fs.inotify.max_user_instances=1024"),
+            serde_json::json!("pkg_install foo"),
+            serde_json::json!("systemctl enable foo"),
+            serde_json::json!("path_link \"$LINUXTOYS_BIN_DIR/tool\" && askpass && sudo pkg_install build-base"),
+            serde_json::json!("path_link \"$LINUXTOYS_BIN_DIR/tool\" | sudo tee /etc/config"),
+            serde_json::json!("path_link \"$(sudo cat /etc/passwd)\""),
+            serde_json::json!("path_link x; sudo dnf config-manager --add-repo y"),
+        ] {
+            let e = bin_entry_with_post(post);
+            for host in ["steamos", "dakota", "gnomeos", "kde-linux"] {
+                assert!(
+                    !runtime_compatible_rs(&e, &keys(&[host, "systemd"]), "bin", false, false, false, false),
+                    "post hook should hide the entry on {host}: {:?}",
+                    e.get("overrides")
+                );
+            }
+            // Unchanged behaviour on regular hosts: the entry stays listed.
+            assert!(runtime_compatible_rs(&e, &keys(&["fedora", "systemd"]), "bin", false, false, false, false));
+        }
+    }
+
+    #[test]
+    fn script_file_post_hooks_stay_hidden_on_immutable_hosts() {
+        let e = bin_entry_with_post(serde_json::json!({"script": "./post.sh"}));
+        assert!(!runtime_compatible_rs(&e, &keys(&["steamos", "systemd"]), "bin", false, false, false, false));
     }
 }
