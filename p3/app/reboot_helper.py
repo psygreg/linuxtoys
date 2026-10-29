@@ -293,6 +293,9 @@ def show_ostree_package_deployment_info_dialog(parent_window, translations):
     Args:
         parent_window: The parent GTK window for the dialog
         translations: Dictionary containing translation keys
+
+    Returns:
+        bool: True if the user ticked "Don't remind me again", False otherwise
     """
     # Import GTK only when needed for GUI functionality
     import gi
@@ -309,9 +312,10 @@ def show_ostree_package_deployment_info_dialog(parent_window, translations):
     dialog.set_resizable(False)
 
     # Add OK button to dismiss
-    dialog.add_button(
+    ok_button = dialog.add_button(
         translations.get("ok_btn", "OK"), Gtk.ResponseType.OK
     )
+    dialog.set_default_response(Gtk.ResponseType.OK)
 
     # Create message content
     content_area = dialog.get_content_area()
@@ -344,10 +348,20 @@ def show_ostree_package_deployment_info_dialog(parent_window, translations):
     hbox.pack_start(message_label, True, True, 0)
 
     content_area.pack_start(hbox, True, True, 0)
+
+    dont_remind = Gtk.CheckButton.new_with_label(
+        translations.get("ostree_info_dont_remind", "Don't remind me again")
+    )
+    content_area.pack_start(dont_remind, False, False, 0)
+
+    dialog.set_focus(ok_button)
     dialog.show_all()
 
-    response = dialog.run()
+    dialog.run()
+    dont_remind_checked = dont_remind.get_active()
     dialog.destroy()
+
+    return dont_remind_checked
 
 
 def show_flatpak_installed_info_dialog(parent_window, translations):

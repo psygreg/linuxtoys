@@ -56,6 +56,8 @@ from .updater.update_helper import UpdateHelper, run_background_update
 from .lang_utils import (
     get_automatic_updates,
     get_automatic_error_reports,
+    get_ostree_deployment_info_hidden,
+    save_ostree_deployment_info_hidden,
     create_translator,
 )
 
@@ -2405,8 +2407,8 @@ class AppWindow(
         # Get system compatibility keys
         system_compat_keys = compat.get_system_compat_keys()
 
-        # Only show on ostree-based systems
-        if {"ostree", "ublue"} & system_compat_keys:
+        # Only show on ostree-based systems that have not opted out of this notice
+        if {"ostree", "ublue"} & system_compat_keys and not get_ostree_deployment_info_hidden():
             # Use GLib.idle_add to ensure the dialog shows after the window is fully initialized
             GLib.idle_add(self._show_ostree_package_deployment_info)
         return False  # Remove from idle callbacks
@@ -2417,9 +2419,11 @@ class AppWindow(
         Called via GLib.idle_add to ensure proper timing.
         Non-blocking informational dialog.
         """
-        reboot_helper.show_ostree_package_deployment_info_dialog(
+        dont_remind = reboot_helper.show_ostree_package_deployment_info_dialog(
             self, self.translations
         )
+        if dont_remind:
+            save_ostree_deployment_info_hidden(True)
         return False  # Remove from idle callbacks
 
     def _check_deepin_immutability_on_startup(self):

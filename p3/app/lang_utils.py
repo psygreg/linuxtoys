@@ -180,6 +180,39 @@ def get_mcp_server_port():
     except Exception:
         return 7420
 
+
+def get_ostree_deployment_info_hidden():
+    """Return whether the ostree package deployment info dialog is hidden (default: False)."""
+    config_file = os.path.join(get_config_dir(), "settings.conf")
+    if not os.path.exists(config_file):
+        return False
+
+    try:
+        config = configparser.ConfigParser()
+        config.read(config_file)
+        return config.getboolean("ostree", "deployment_info_hidden", fallback=False)
+    except Exception:
+        return False
+
+
+def save_ostree_deployment_info_hidden(hidden):
+    """Persist whether the ostree package deployment info dialog stays hidden."""
+    config_file = os.path.join(get_config_dir(), "settings.conf")
+    config = configparser.ConfigParser()
+
+    try:
+        if os.path.exists(config_file):
+            config.read(config_file)
+        if not config.has_section("ostree"):
+            config.add_section("ostree")
+        config.set("ostree", "deployment_info_hidden", "true" if hidden else "false")
+        with open(config_file, "w") as f:
+            config.write(f)
+        return True
+    except Exception as e:
+        print(f"Error saving ostree deployment info preference: {e}")
+        return False
+
 @lru_cache(maxsize=1)
 def detect_system_language():
     """
