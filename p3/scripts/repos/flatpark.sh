@@ -4,7 +4,7 @@
 # description: flatpark_desc
 # icon: flatpark.svg
 # repo: https://flatpark.org
-# compat: !solus
+# compat: !gregos
 # systemd: yes
 
 # --- Start of the script code ---
