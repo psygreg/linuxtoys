@@ -17,6 +17,7 @@ if [ -f "$HOME/.zshrc" ]; then
 else
     prep_create "$HOME/.zshrc"
 fi
+prep_tmp_noram
 (
 	sh -c "$(curl -fsSL https://install.ohmyz.sh/) --unattended" && {
 		shell_change "$(type -p zsh)";
