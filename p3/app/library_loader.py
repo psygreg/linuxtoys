@@ -436,6 +436,35 @@ def _refresh_cold_appstream_catalog():
     return True
 
 
+def _resolution_scripts_trees(script_dir):
+    """Return the scripts trees nested call_script resolution may consume.
+
+    Nested call_script materialization must see the same repository apps the
+    GUI lists and call_script's own physical scan searches: the ACTIVE scripts
+    source from git_scripts_manager (the synced git cache in normal runs, the
+    bundled copy in developer mode or before a first successful clone). The
+    caller-provided app bundles tree stays as the fallback so resolution still
+    reaches an entry whose app build is newer than the scripts cache, or whose
+    listing reached the cache before the app rebuilt. Active tree first: it is
+    the source the user actually sees.
+    """
+    trees = []
+    try:
+        # Absolute import: this helper also serves direct CLI execution of
+        # library_loader.py, where relative imports have no package context.
+        from app.git_scripts_manager import get_available_scripts_dir
+
+        active = get_available_scripts_dir()
+    except Exception:
+        active = None
+    if active and os.path.isdir(active):
+        trees.append(active)
+    bundled = os.path.join(os.path.abspath(script_dir), "scripts")
+    if bundled not in trees and os.path.isdir(bundled):
+        trees.append(bundled)
+    return trees
+
+
 def materialize_appstream_by_target(target, script_dir):
     """Resolve and materialize an AppStream app for nested call_script execution.
 
@@ -451,7 +480,7 @@ def materialize_appstream_by_target(target, script_dir):
 
     from app import appstream_parser, repo_parser
 
-    scripts_dir = os.path.join(script_dir, "scripts")
+    scripts_dir = _resolution_scripts_trees(script_dir)[0]
     curated_entries = repo_parser.load_repo_entries(scripts_dir, translations=None)
     category_paths = []
     for root, dirs, _files in os.walk(scripts_dir):
@@ -544,7 +573,12 @@ def materialize_appstream_by_target(target, script_dir):
 
 
 def materialize_repo_by_app_id(app_id, script_dir):
-    """Resolve a compatible repository-list entry by repo_app_id."""
+    """Resolve a compatible repository-list entry by repo_app_id.
+
+    Resolution walks the resolution trees (active source first, bundled copy as
+    fallback) and accepts exactly one unambiguous match. A faulty tree is
+    skipped so one broken source can never hide an otherwise resolvable app.
+    """
     import sys
 
     script_dir = os.path.abspath(script_dir)
@@ -557,12 +591,17 @@ def materialize_repo_by_app_id(app_id, script_dir):
     if not re.fullmatch(r"[A-Z_][A-Z0-9_]*", target):
         return None
 
-    entries = load_repo_entries(os.path.join(script_dir, "scripts"), translations=None)
-    matches = [entry for entry in entries if entry.get("repo_app_id") == target]
-    if len(matches) != 1:
-        return None
-
-    return materialize_repo_script(matches[0])
+    for tree in _resolution_scripts_trees(script_dir):
+        try:
+            entries = load_repo_entries(tree, translations=None) or []
+        except Exception:
+            continue
+        matches = [entry for entry in entries if entry.get("repo_app_id") == target]
+        if len(matches) == 1:
+            return materialize_repo_script(matches[0])
+        if len(matches) > 1:
+            return None
+    return None
 
 
 if __name__ == "__main__":
