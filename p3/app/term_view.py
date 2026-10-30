@@ -346,6 +346,23 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
 
         super().on_child_exit(term, status)
 
+        if removal_succeeded:
+            # The uninstall script mutated the registry; refresh the removable
+            # state of the item the user invoked the removal from, so the app
+            # page and cards stop offering "Remove" immediately. Recomputing
+            # from the executed script alone would update its temporary path
+            # key and leave the original item's cached state stale.
+            cache = getattr(self.parent, "script_cache", None)
+            if (
+                cache is not None
+                and getattr(cache, "is_populated", False)
+                and self.removable_script_info
+            ):
+                try:
+                    cache.update_removable_for_script(self.removable_script_info)
+                except Exception:
+                    pass
+
         if removal_succeeded and record_id:
             runner = getattr(self.parent, "_appstream_runner", None)
             if runner is not None:
@@ -390,5 +407,16 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
         if hasattr(self.parent, 'script_cache') and self.parent.script_cache.is_populated:
             for script_info in getattr(self, 'executed_scripts', []):
                 self.parent.script_cache.update_removable_for_script(script_info)
+
+            # Removal runs execute the generated uninstall script, whose
+            # temporary path key is meaningless to the UI's item cache. The
+            # generated script already deleted the install transaction from the
+            # registry, so refreshing the *invoked item* here stops the app
+            # page and cards from offering "Remove" for something that is no
+            # longer installed until the next full cache rebuild.
+            if self._current_action_is_removal and self.removable_script_info:
+                self.parent.script_cache.update_removable_for_script(
+                    self.removable_script_info
+                )
 
         self.parent.on_back_button_clicked(None)

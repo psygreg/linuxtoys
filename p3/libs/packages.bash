@@ -2053,7 +2053,12 @@ EOF
         local _pre_list
         _pre_list=$(mktemp) || return 1
         find "$HOME/AppImages" -maxdepth 1 -type f -printf '%f\t%i\t%T@\t%s\n' 2>/dev/null | sort > "$_pre_list"
-        if output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "$@" 2>&1); then
+        # --yes skips Gear Lever's interactive questions: a piped "y" cannot
+        # answer a second Keep-both/Replace prompt (name conflict with a still
+        # integrated version), and that EOF crash used to fail the whole
+        # integration. With --yes the conflict resolves by Gear Lever's default
+        # keep-both rule and the snapshot diff below records the concrete file.
+        if output=$(echo "y" | flatpak run it.mijorus.gearlever --yes --integrate "$@" 2>&1); then
             # Record the one file whose identity is new or changed after this
             # call (added name, or a same-name overwrite). Observing the actual
             # result beats guessing the name Gear Lever chose.
@@ -2104,6 +2109,57 @@ EOF
     _pkg_appimage_release_record
 }
 
+# Remove the launch artifacts tied to one AppImage target: PATH links in
+# ~/.local/bin bound to the AppImage path and desktop entries whose Exec
+# references it (both the LinuxToys fallback integration's linuxtoys-<id>.desktop
+# and Gear Lever-managed entries), plus icons LinuxToys persisted for that entry.
+# Best effort and safe to call for targets that were already removed: a removal
+# must never leave a dead launcher behind, and a skip here would keep the
+# fallback integration's menu entry alive for an AppImage that no longer exists.
+_pkg_appimage_cleanup_artifacts () {
+    local appimage_file="${1:-}"
+    [[ -n "$appimage_file" ]] || return 0
+    appimage_file="${appimage_file##*/}"
+    local target_path="$HOME/AppImages/$appimage_file"
+
+    # PATH links point directly at the AppImage (path_link --useappid).
+    if [[ -d "$HOME/.local/bin" ]]; then
+        local link_path link_target
+        for link_path in "$HOME/.local/bin"/*; do
+            [[ -L "$link_path" ]] || continue
+            link_target=$(readlink -f -- "$link_path" 2>/dev/null) || continue
+            [[ "$link_target" == "$target_path" ]] || continue
+            rm -f -- "$link_path" 2>/dev/null || true
+        done
+    fi
+
+    local applications_dir="$HOME/.local/share/applications"
+    if [[ -d "$applications_dir" ]]; then
+        local desktop_file exec_line icon_value
+        for desktop_file in "$applications_dir"/*.desktop; do
+            [[ -f "$desktop_file" ]] || continue
+            exec_line=$(sed -n 's/^Exec=//p' "$desktop_file" | head -n1) || true
+            # Substring match covers quoted and unquoted Exec forms alike;
+            # the absolute AppImage path is unique to this one target.
+            [[ "$exec_line" == *"$target_path"* ]] || continue
+
+            # Fallback integration persists icons in a dedicated per-app
+            # directory; dropping the desktop file orphans them.
+            icon_value=$(sed -n 's/^Icon=//p' "$desktop_file" | head -n1) || true
+            if [[ "$icon_value" == "$HOME/.local/share/linuxtoys/icons"/* \
+                && "$icon_value" != "$HOME/.local/share/linuxtoys/icons" ]]; then
+                rm -rf -- "$icon_value" 2>/dev/null || true
+            fi
+            rm -f -- "$desktop_file" 2>/dev/null || true
+
+            if command -v update-desktop-database >/dev/null 2>&1; then
+                update-desktop-database "$applications_dir" >/dev/null 2>&1 || true
+            fi
+        done
+    fi
+    return 0
+}
+
 pkg_appimage_rm () {
     local skip_appends=0 appimage_file
     if [[ "${1:-}" == --skip-appends ]]; then
@@ -2112,10 +2168,15 @@ pkg_appimage_rm () {
     fi
     [[ $# -gt 0 ]] || return 0
 
-    # Normalize each operand to a bare basename that actually exists in
-    # ~/AppImages. Accept a full path or ./name on input but strip it down;
-    # reject only genuinely unsafe values (option injection / traversal).
-    local -a _targets=()
+    # Normalize each operand to a bare basename that exists in ~/AppImages.
+    # Accept a full path or ./name on input but strip it down; reject only
+    # genuinely unsafe values (option injection / traversal).
+    # A recorded name with no matching file is NOT an error: the removal's
+    # desired end state is already reached, so converge as a no-op. Failing
+    # here would abort the generating uninstall script (set -eo pipefail)
+    # before its registry cleanup step and leave the app permanently
+    # "installed/removable", making the user retry a finished removal forever.
+    local -a _targets=() _absent=() _names=()
     for appimage_file in "$@"; do
         [[ "$appimage_file" != -* ]] || return 1
         appimage_file="${appimage_file##*/}"
@@ -2124,46 +2185,98 @@ pkg_appimage_rm () {
         if [[ ! -e "$HOME/AppImages/$appimage_file" ]]; then
             # Self-heal: the recorded name may be stale (Gear Lever renames by
             # internal metadata). Match a single AppImage case-insensitively.
+            # `|| true` inside both pipelines: when ~/AppImages does not exist
+            # at all, find's nonzero status must not trip set -eo pipefail and
+            # abort the uninstall script mid-removal.
             local _resolved
             _resolved=$(
                 find "$HOME/AppImages" -maxdepth 1 -type f \
                     \( -iname '*.appimage' -o -iname '*.AppImage' \) \
                     -iname "$appimage_file" -printf '%f\n' 2>/dev/null | head -n1
+                true
             )
             if [[ -z "$_resolved" ]]; then
                 _resolved=$(
                     find "$HOME/AppImages" -maxdepth 1 -type f \
                         -iname '*.appimage' -printf '%f\n' 2>/dev/null |
                         awk -v target="${appimage_file%.*}" \
-                            'BEGIN{IGNORECASE=1} { base=$0; sub(/\.[^.]*$/, "", base); if (base == target) { print $0; exit } }'
+                            'BEGIN{IGNORECASE=1} { base=$0; sub(/\.[^.]*$/, "", base); if (base == target) { print $0; exit } }' 2>/dev/null
+                    true
                 )
             fi
-            [[ -n "$_resolved" ]] || return 1
-            appimage_file="$_resolved"
+            if [[ -n "$_resolved" ]]; then
+                appimage_file="$_resolved"
+            else
+                # Gear Lever's CLI can only remove an existing file, so there
+                # is nothing left to uninstall; keep the name recorded below.
+                _absent+=("$appimage_file")
+                _names+=("$appimage_file")
+                continue
+            fi
         fi
         _targets+=("$appimage_file")
+        _names+=("$appimage_file")
     done
 
-    if is_systemd; then
-        # Use Gear Lever for removal on systemd systems
+    # Scrub launch artifacts for every target, present or already gone. The
+    # generated uninstall script runs under `set -eo pipefail`, so every
+    # statement here must be failure-tolerant: any unguarded probe or tool
+    # failure would abort the script before its registry cleanup step and
+    # resurrect exactly the stale-"Remover" loop this removal path exists to
+    # converge. Keep guards on *every* fallible line below.
+    for appimage_file in "${_names[@]}"; do
+        _pkg_appimage_cleanup_artifacts "$appimage_file" || true
+    done
+
+    local _gearlever_status=0
+    if is_systemd && [[ ${#_targets[@]} -gt 0 ]]; then
+        # Use Gear Lever for removal on systemd systems. Its CLI is strict: a
+        # file it does not currently integrate (Gear Lever reinstall/config
+        # reset, fallback-integrated or re-downloaded file) fails with
+        # "Error: AppImage not integrated" and keeps the file on disk. Never
+        # propagate that failure: verify the actual result and fall back to
+        # LinuxToys' own removal so the operation converges instead of
+        # failing identically on every retry.
         (
             cd "$HOME/AppImages" || exit 1
-            echo "y" | flatpak run it.mijorus.gearlever --remove "${_targets[@]}"
-        ) || return $?
+            echo "y" | flatpak run it.mijorus.gearlever -y --remove "${_targets[@]}"
+        ) || _gearlever_status=$?
+
+        local _still_present=0
         for appimage_file in "${_targets[@]}"; do
-            [[ ! -e "$HOME/AppImages/$appimage_file" && ! -L "$HOME/AppImages/$appimage_file" ]] || return 1
+            if [[ -e "$HOME/AppImages/$appimage_file" || -L "$HOME/AppImages/$appimage_file" ]]; then
+                _still_present=1
+            fi
         done
-        [[ $skip_appends -eq 1 ]] || _append_transmap "appimage rm ${_targets[*]}"
-    else
+
+        if [[ $_still_present -eq 1 ]]; then
+            warn "Gear Lever could not remove the AppImage (not integrated or unavailable). Removing it directly."
+            for appimage_file in "${_targets[@]}"; do
+                if [[ -e "$HOME/AppImages/$appimage_file" || -L "$HOME/AppImages/$appimage_file" ]]; then
+                    rm -f -- "$HOME/AppImages/$appimage_file" || return $?
+                fi
+            done
+        fi
+
+        # Nothing may remain: any survivor means the removal failed.
+        for appimage_file in "${_targets[@]}"; do
+            if [[ -e "$HOME/AppImages/$appimage_file" || -L "$HOME/AppImages/$appimage_file" ]]; then
+                return 1
+            fi
+        done
+    elif [[ ${#_targets[@]} -gt 0 ]]; then
         # Manual removal for non-systemd systems
         for appimage_file in "${_targets[@]}"; do
             # Remove from AppImages directory
             if [[ -e "$HOME/AppImages/$appimage_file" || -L "$HOME/AppImages/$appimage_file" ]]; then
                 rm -f -- "$HOME/AppImages/$appimage_file" || return $?
-                [[ $skip_appends -eq 1 ]] || _append_transmap "appimage rm $appimage_file"
             fi
         done
     fi
+
+    # Record the removal so the transaction stays descriptive, even when the
+    # target had already disappeared upstream.
+    [[ $skip_appends -eq 1 ]] || _append_transmap "appimage rm ${_names[*]}"
     return 0
 }
 

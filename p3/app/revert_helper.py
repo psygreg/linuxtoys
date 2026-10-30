@@ -1162,8 +1162,18 @@ def build_uninstall_script_entry(script_info, translations=None):
     if not reverse_commands:
         return None
 
-    reverted_registry_indices = {parent_index}
-    reverted_registry_indices.update(child_indices)
+    # Match reverted transactions by their exact stored name. Registry entries
+    # keep only the newest execution per name, so name equality identifies the
+    # same transactions the old index arithmetic selected while staying immune
+    # to registry writes (other runs, prunes) that shift entry indices between
+    # script generation and execution.
+    reverted_registry_names = {str(parent_entry["name"]).strip()}
+    for child_index in child_indices:
+        if 0 <= child_index < len(registry_entries):
+            reverted_registry_names.add(
+                str(registry_entries[child_index]["name"]).strip()
+            )
+    reverted_names_repr = repr(tuple(sorted(reverted_registry_names)))
 
     script_dir = os.environ.get('SCRIPT_DIR', os.path.dirname(os.path.dirname(__file__)))
 
@@ -1193,23 +1203,22 @@ def build_uninstall_script_entry(script_info, translations=None):
     lines.append("")
     lines.append("")
     lines.append("# Remove reverted transactions from action registry")
-    reverted_indices_repr = repr(sorted(reverted_registry_indices))
 
     lines.append("python3 - <<'PY'")
     lines.append("import os")
     lines.append("import re")
     lines.append(f"reg = {os.path.join(get_linuxtoys_cache_dir(), 'registry')!r}")
-    lines.append(f"remove_indices = set({reverted_indices_repr})")
+    lines.append(f"remove_names = {reverted_names_repr}")
     lines.append("")
-    lines.append("if os.path.exists(reg):")
+    lines.append("if remove_names and os.path.exists(reg):")
     lines.append("    with open(reg, 'r') as f:")
     lines.append("        content = f.read()")
     lines.append("")
     lines.append("    # Rebuild entries from header matches so legacy glued writes")
-    lines.append("    # (missing trailing newlines) cannot shift the entry indices.")
+    lines.append("    # (missing trailing newlines) cannot shift the entry bounds.")
     lines.append("    pattern = re.compile(r'\\[\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[^\\]]*\\] Script: ')")
     lines.append("    matches = list(pattern.finditer(content))")
-    lines.append("    entries = []")
+    lines.append("    kept_entries = []")
     lines.append("    for index, match in enumerate(matches):")
     lines.append("        start = match.start()")
     lines.append("        end = matches[index + 1].start() if index + 1 < len(matches) else len(content)")
@@ -1218,17 +1227,13 @@ def build_uninstall_script_entry(script_info, translations=None):
     lines.append("            text = text[:-3].rstrip()")
     lines.append("        if not text:")
     lines.append("            continue")
-    lines.append("        # Skip noise transactions so indices stay aligned with the")
-    lines.append("        # normalized readers (registry_utils.REGISTRY_DROPPED_NAMES).")
+    lines.append("        # Drop by exact transaction name: every execution per name is the")
+    lines.append("        # one context (removals and reinstalls replace each other), and")
+    lines.append("        # names are stable under concurrent index shifts.")
     lines.append("        name = text[len(match.group(0)):].split('\\n', 1)[0].strip()")
-    lines.append("        if name.strip().casefold() in ('sysup',):")
+    lines.append("        if name in remove_names:")
     lines.append("            continue")
-    lines.append("        entries.append(text)")
-    lines.append("")
-    lines.append("    kept_entries = [")
-    lines.append("        text for index, text in enumerate(entries)")
-    lines.append("        if index not in remove_indices")
-    lines.append("    ]")
+    lines.append("        kept_entries.append(text)")
     lines.append("")
     lines.append("    if kept_entries:")
     lines.append("        cleaned_content = '\\n---\\n\\n'.join(kept_entries) + '\\n---\\n\\n'")
@@ -1316,7 +1321,14 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
     if not reverse_commands:
         return None
 
-    reverted_registry_indices = child_indices
+    # Match reverted child transactions by their exact stored name —
+    # same rationale as build_uninstall_script_entry: names are stable
+    # where index arithmetic is not, and each name keeps only its newest
+    # execution in the registry.
+    reverted_registry_names = set()
+    for child_index in child_indices:
+        if 0 <= child_index < len(registry_entries):
+            reverted_registry_names.add(str(registry_entries[child_index]["name"]).strip())
 
     script_dir = os.environ.get('SCRIPT_DIR', os.path.dirname(os.path.dirname(__file__)))
 
@@ -1345,23 +1357,23 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
     lines.extend(reverse_commands)
     lines.append("")
     lines.append("# Remove reverted child transactions from action registry")
-    reverted_indices_repr = repr(sorted(reverted_registry_indices))
+    reverted_names_repr = repr(tuple(sorted(reverted_registry_names)))
 
     lines.append("python3 - <<'PY'")
     lines.append("import os")
     lines.append("import re")
     lines.append(f"reg = {os.path.join(get_linuxtoys_cache_dir(), 'registry')!r}")
-    lines.append(f"remove_indices = set({reverted_indices_repr})")
+    lines.append(f"remove_names = {reverted_names_repr}")
     lines.append("")
-    lines.append("if remove_indices and os.path.exists(reg):")
+    lines.append("if remove_names and os.path.exists(reg):")
     lines.append("    with open(reg, 'r') as f:")
     lines.append("        content = f.read()")
     lines.append("")
     lines.append("    # Rebuild entries from header matches so legacy glued writes")
-    lines.append("    # (missing trailing newlines) cannot shift the entry indices.")
+    lines.append("    # (missing trailing newlines) cannot shift the entry bounds.")
     lines.append("    pattern = re.compile(r'\\[\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[^\\]]*\\] Script: ')")
     lines.append("    matches = list(pattern.finditer(content))")
-    lines.append("    entries = []")
+    lines.append("    kept_entries = []")
     lines.append("    for index, match in enumerate(matches):")
     lines.append("        start = match.start()")
     lines.append("        end = matches[index + 1].start() if index + 1 < len(matches) else len(content)")
@@ -1370,17 +1382,11 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
     lines.append("            text = text[:-3].rstrip()")
     lines.append("        if not text:")
     lines.append("            continue")
-    lines.append("        # Skip noise transactions so indices stay aligned with the")
-    lines.append("        # normalized readers (registry_utils.REGISTRY_DROPPED_NAMES).")
+    lines.append("        # Drop by exact transaction name (see build_uninstall_script_entry).")
     lines.append("        name = text[len(match.group(0)):].split('\\n', 1)[0].strip()")
-    lines.append("        if name.strip().casefold() in ('sysup',):")
+    lines.append("        if name in remove_names:")
     lines.append("            continue")
-    lines.append("        entries.append(text)")
-    lines.append("")
-    lines.append("    kept_entries = [")
-    lines.append("        text for index, text in enumerate(entries)")
-    lines.append("        if index not in remove_indices")
-    lines.append("    ]")
+    lines.append("        kept_entries.append(text)")
     lines.append("")
     lines.append("    if kept_entries:")
     lines.append("        cleaned_content = '\\n---\\n\\n'.join(kept_entries) + '\\n---\\n\\n'")
