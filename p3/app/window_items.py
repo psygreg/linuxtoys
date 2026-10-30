@@ -651,6 +651,21 @@ class ItemWidgetFactory:
                 event_box, self._is_script_removable(item_info)
             )
 
+    def _refresh_search_result_removable_states(self):
+        """Refresh removal controls on cards shown in the search results view.
+
+        Search keeps its result cards alive across terminal/back navigation,
+        like every other view. A removal that completes underneath it (an
+        AppStream queue job, or any state change while the search view sits
+        visible) must update these cards in place, or the stale "Remove"
+        affordance would survive until a future search re-renders them.
+        """
+        flowboxes = getattr(self, "_search_result_flowboxes", None)
+        if not flowboxes:
+            return
+        for flowbox in list(flowboxes):
+            self._refresh_flowbox_removable_states(flowbox)
+
     def _on_item_remove_clicked(self, button, item_info):
         """Handle remove button click on a script item."""
         # Check if reboot is required before proceeding

@@ -2081,6 +2081,12 @@ class AppWindow(
         if app_page is not None and hasattr(app_page, "refresh_install_state"):
             app_page.refresh_install_state()
 
+        # A queue-driven removal mutates removable state while other views sit
+        # visible in front: the search results keep their cards alive, and the
+        # Installed Features view is likewise still rendered when visible.
+        self._refresh_search_result_removable_states()
+        self._refresh_installed_features_view()
+
         context = self.appstream_queue_button.get_style_context()
         if not records:
             context.remove_class("suggested-action")
@@ -5187,6 +5193,12 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         if refresh_cache and self.script_cache.is_populated:
             self.script_cache.refresh_removable_cache()
         self._invalidate_featured_eligibility_cache()
+
+        # The search results view keeps its cards alive across navigation.
+        # Something (a removal started from a search card included) may have
+        # changed removable state underneath it, so it participates in the same
+        # zero-rebuild, in-place refresh as the category cards.
+        self._refresh_search_result_removable_states()
 
         # Card hierarchies now always contain a hidden removal control. Updating
         # state therefore requires no parser work, card reconstruction, or FlowBox
