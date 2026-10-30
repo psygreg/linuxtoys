@@ -1,5 +1,5 @@
 Name:           linuxtoys
-Version:        7.8
+Version:        7.9
 Release:        1
 Summary:        For everything Linux - tools, tweaks and software manager - ready for the age of AI.
 BuildArch:      x86_64
@@ -84,6 +84,6 @@ test -f %{buildroot}/usr/share/linuxtoys/app/liblinuxtoys_gui.so
 /usr/share/metainfo/toys.linux.LinuxToys.metainfo.xml
 
 %changelog
-* Wed Oct 28 2026 Victor Gregory <psygreg@pm.me> - 7.8
+* Fri Oct 30 2026 Victor Gregory <psygreg@pm.me> - 7.9
 - Added proper file permissions for all scripts
 - Updated dependencies for current requirements
