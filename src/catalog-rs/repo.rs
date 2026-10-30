@@ -333,6 +333,12 @@ fn validate_static_entry(entry: &serde_json::Map<String, Value>, compat: &[Strin
         let Some(s)=v.as_str() else { return None; };
         if !matches!(s.trim().to_ascii_lowercase().as_str(),"yes"|"no") { return None; }
     }
+    // Single-binary installs normally register a .desktop shortcut; CLI-only
+    // binaries may opt out. Boolean only: false skips the shortcut, true and
+    // absence keep the default.
+    if let Some(v)=entry.get("desktop-shortcut") {
+        if !v.is_boolean() { return None; }
+    }
     if let Some(v)=entry.get("desktop") {
         let vals: Vec<&Value> = match v { Value::String(_) => vec![v], Value::Array(a) if !a.is_empty()=>a.iter().collect(), _=>return None };
         if !vals.iter().all(|x| x.as_str().map(str::trim).is_some_and(|s| DESKTOP_KEYS_RS.contains(&s.to_ascii_lowercase().as_str()))) { return None; }
@@ -956,6 +962,30 @@ mod runtime_compat_tests {
             // Unchanged behaviour on regular hosts: the entry stays listed.
             assert!(runtime_compatible_rs(&e, &keys(&["fedora", "systemd"]), "bin", false, false, false, false));
         }
+    }
+
+    #[test]
+    fn desktop_shortcut_field_is_boolean() {
+        fn accepted(value: Value) -> bool {
+            let mut e = entry(serde_json::json!({
+                "name": "Test Binary",
+                "repo": "https://github.com/example/repo",
+                "category": "game",
+                "description": "Test",
+                "type": "bin",
+                "package-name": "tool"
+            }));
+            if !value.is_null() {
+                e.insert("desktop-shortcut".into(), value);
+            }
+            validate_static_entry(&e, &keys(&["ubuntu", "systemd"]), false, false).is_some()
+        }
+        // Absent, true and false all keep the entry; non-boolean values are
+        // listing bugs and must not be tolerated.
+        assert!(accepted(serde_json::json!(true)));
+        assert!(accepted(serde_json::json!(false)));
+        assert!(!accepted(serde_json::json!("no")));
+        assert!(!accepted(serde_json::json!(1)));
     }
 
     #[test]

@@ -1134,9 +1134,13 @@ def create_install_script(entry):
 
     elif install_type == "bin":
         asset_name = entry.get("package-name", "").strip()
+        # Single-binary installs normally register a desktop shortcut for the
+        # bundled app identity; CLI-only listing entries may opt out with
+        # "desktop-shortcut": false.
+        shortcut_flag = " --no-shortcut" if entry.get("desktop-shortcut") is False else ""
         command = (
-            f"pkg_fromrelease --bin {shlex.quote(repo)} "
-            f"{shlex.quote(asset_name)}"
+            f"pkg_fromrelease --bin{shortcut_flag} "
+            f"{shlex.quote(repo)} {shlex.quote(asset_name)}"
         )
 
     elif install_type == "flathub":

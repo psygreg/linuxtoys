@@ -932,13 +932,29 @@ pkg_tarball () {
 }
 
 pkg_binary () {
-    [ "$#" -eq 1 ] || die "Usage: pkg_binary BINARY_FILE"
+    local _no_shortcut=0
+    local -a binary_args=()
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --no-shortcut)
+                _no_shortcut=1
+                ;;
+            --*)
+                die "pkg_binary: unknown option: $1"
+                ;;
+            *)
+                binary_args+=("$1")
+                ;;
+        esac
+        shift
+    done
+    [ "${#binary_args[@]}" -eq 1 ] || die "Usage: pkg_binary [--no-shortcut] BINARY_FILE"
 
     # Avoid exposing a stale path if a later binary operation fails before
     # completing successfully.
     unset LINUXTOYS_BIN_DIR
 
-    local binary="$1"
+    local binary="${binary_args[0]}"
     local app_name="${LINUXTOYS_APP_NAME:-}"
     local apps_dir="$HOME/.local/linuxtoys/apps"
     local target_dir target_file
@@ -974,13 +990,18 @@ pkg_binary () {
     # running later in the same LinuxToys script.
     export LINUXTOYS_BIN_DIR="$target_dir"
 
-    desktop_shortcut "\"$target_file\""
+    # CLI-only binaries can skip the desktop entry (repository listing field
+    # "desktop-shortcut": false): the registered integration is then only the
+    # app directory plus whatever the caller's post hook does.
+    if [ "$_no_shortcut" -eq 0 ]; then
+        desktop_shortcut "\"$target_file\""
+    fi
 }
 
 pkg_fromurl () {
     [[ $# -gt 0 ]] || die "No package URLs provided"
 
-    local _tarball=0 _binary=0 _skip_user=0 arg
+    local _tarball=0 _binary=0 _skip_user=0 _no_shortcut=0 arg
     local -a urls=()
     for arg in "$@"; do
         case "$arg" in
@@ -989,6 +1010,9 @@ pkg_fromurl () {
                 ;;
             --bin|--binary)
                 _binary=1
+                ;;
+            --no-shortcut)
+                _no_shortcut=1
                 ;;
             --skip-user)
                 _skip_user=1
@@ -1001,6 +1025,7 @@ pkg_fromurl () {
     [[ ${#urls[@]} -gt 0 ]] || die "No package URLs provided"
     [[ $_tarball -eq 0 || $_binary -eq 0 ]] || die "--tar and --bin cannot be used together"
     [[ $_binary -eq 0 || ${#urls[@]} -eq 1 ]] || die "pkg_fromurl --bin expects exactly one URL"
+    [[ $_no_shortcut -eq 0 || $_binary -eq 1 ]] || die "--no-shortcut only applies to --bin installs"
 
     local url filename download_dir package_dir package_file
     local effective_url content_disposition metadata_file temp_file
@@ -1093,7 +1118,11 @@ pkg_fromurl () {
 
     for package_file in "${package_files[@]}"; do
         if [[ $_binary -eq 1 ]]; then
-            pkg_binary "$package_file"
+            if [[ $_no_shortcut -eq 1 ]]; then
+                pkg_binary --no-shortcut "$package_file"
+            else
+                pkg_binary "$package_file"
+            fi
             continue
         fi
 
@@ -1366,7 +1395,7 @@ PY2
 }
 
 pkg_fromrelease () {
-    local _tarball=0 _binary=0 _make=0 _snap=0 arg make_command="sudo make install"
+    local _tarball=0 _binary=0 _make=0 _snap=0 _no_shortcut=0 arg make_command="sudo make install"
     local -a release_args=() make_dependencies=()
     while [[ $# -gt 0 ]]; do
         case "$1" in
@@ -1375,6 +1404,9 @@ pkg_fromrelease () {
                 ;;
             --bin|--binary)
                 _binary=1
+                ;;
+            --no-shortcut)
+                _no_shortcut=1
                 ;;
             --snap)
                 _snap=1
@@ -1408,6 +1440,7 @@ pkg_fromrelease () {
     [[ $_make -eq 0 || $_binary -eq 0 ]] || die "--make and --bin cannot be used together"
     [[ $_make -eq 0 || $_snap -eq 0 ]] || die "--make and --snap cannot be used together"
     [[ $_binary -eq 0 || $# -eq 2 ]] || die "pkg_fromrelease --bin requires the exact release asset name"
+    [[ $_no_shortcut -eq 0 || $_binary -eq 1 ]] || die "--no-shortcut only applies to --bin installs"
 
     local native_type="" package_url snap_release_allowed=0
     local -a release_selection
@@ -1620,7 +1653,11 @@ PY
         done
         pkg_make "${make_args[@]}" --url "$package_url"
     elif [[ $_binary -eq 1 ]]; then
-        pkg_fromurl --bin "$package_url"
+        if [[ $_no_shortcut -eq 1 ]]; then
+            pkg_fromurl --bin --no-shortcut "$package_url"
+        else
+            pkg_fromurl --bin "$package_url"
+        fi
     elif [[ $_tarball -eq 1 ]]; then
         pkg_fromurl --tar "$package_url"
     elif [[ $_snap -eq 1 ]]; then
