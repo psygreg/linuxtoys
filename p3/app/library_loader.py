@@ -428,7 +428,19 @@ def _refresh_cold_appstream_catalog():
         if appstream_cache.cache_needs_refresh():
             print("call_script: the AppStream catalog is not ready yet; refreshing it now...",
                   file=sys.stderr)
-            appstream_cache.refresh_cache()
+            # A cold rebuild can run for tens of seconds (longer while Flathub's
+            # AppStream metadata is being downloaded). Print the rebuild's
+            # phase progress in the caller's terminal: a silent rebuild inside
+            # a nested call_script is indistinguishable from a hung install.
+            previous_progress = os.environ.get("LINUXTOYS_CATALOG_PROGRESS")
+            os.environ["LINUXTOYS_CATALOG_PROGRESS"] = "1"
+            try:
+                appstream_cache.refresh_cache()
+            finally:
+                if previous_progress is None:
+                    os.environ.pop("LINUXTOYS_CATALOG_PROGRESS", None)
+                else:
+                    os.environ["LINUXTOYS_CATALOG_PROGRESS"] = previous_progress
     except Exception:
         # A failed refresh keeps the previous published generation. The retry
         # below resolves against whatever generation exists afterwards.

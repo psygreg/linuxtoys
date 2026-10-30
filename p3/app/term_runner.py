@@ -2,6 +2,7 @@ import sys
 import os
 import subprocess
 import threading
+import traceback
 
 from . import dev_mode, package_guard, reboot_helper
 from .gtk_common import GLib, Gtk, Vte, resolve_symbolic_icon
@@ -63,20 +64,30 @@ class TerminalRunner:
             # Use translatable done text
             done_label = self.translations.get("term_view_done", " Done ")
             done_text = self.translations.get("term_view_done_text", "Done")
-            self.vbox_main.button_run.set_label(done_label)
-            self.vbox_main.button_run.set_image(
-                Gtk.Image.new_from_icon_name(resolve_symbolic_icon("emblem-ok-symbolic"), Gtk.IconSize.BUTTON)
-            )
-            self.vbox_main.progress_bar.set_text(done_text)
-            handler_id = getattr(self, "_run_button_handler_id", None)
-            if handler_id is not None:
-                try:
-                    self.vbox_main.button_run.disconnect(handler_id)
-                except (TypeError, ValueError):
-                    pass
-            self._run_button_handler_id = self.vbox_main.button_run.connect(
-                "clicked", self.on_done_clicked
-            )
+            try:
+                self.vbox_main.button_run.set_label(done_label)
+                self.vbox_main.button_run.set_image(
+                    Gtk.Image.new_from_icon_name(resolve_symbolic_icon("emblem-ok-symbolic"), Gtk.IconSize.BUTTON)
+                )
+                self.vbox_main.progress_bar.set_text(done_text)
+                handler_id = getattr(self, "_run_button_handler_id", None)
+                if handler_id is not None:
+                    try:
+                        self.vbox_main.button_run.disconnect(handler_id)
+                    except (TypeError, ValueError):
+                        pass
+                self._run_button_handler_id = self.vbox_main.button_run.connect(
+                    "clicked", self.on_done_clicked
+                )
+            except Exception:
+                # A crash while refreshing the completion widgets must never
+                # leave the session marked as running: the Run button would
+                # stay disabled forever, later runs would be refused, and Back
+                # would keep warning about a running script. GTK swallows
+                # signal-handler exceptions silently, so surface the traceback
+                # in the terminal (the reportable surface) and reset the run
+                # state below regardless.
+                self._report_completion_crash()
             self.parent._script_running = False
             self._clear_runner_lock()
             self.vbox_main.button_run.set_sensitive(True)
@@ -302,10 +313,40 @@ class TerminalRunner:
         """
         return (int(exit_code) & 0xFF) << 8
 
+    def _report_completion_crash(self):
+        """Surface a completion-path exception to the user and bug reports.
+
+        GTK prints signal-handler exceptions to stderr, which no GUI user ever
+        sees. Print the traceback there (for terminal launches) and feed it
+        into the VTE buffer, so the copy/bug-report button picks it up and the
+        next report contains the actual cause.
+        """
+        details = traceback.format_exc()
+        print(details, file=sys.stderr)
+        terminal = getattr(self, "terminal", None)
+        if terminal is not None:
+            try:
+                terminal.feed(f"\r\n{details}\r\n".encode())
+            except Exception:
+                pass
+
     def on_child_exit(self, term, status):
         # A dying child must never leave navigation locked, including fatal/exit 100 paths.
         self._clear_runner_lock()
 
+        try:
+            self._on_child_exit_body(term, status)
+        except Exception:
+            # Nothing in the completion path may strand the session in
+            # "running" mode: an exception here would keep _script_running
+            # set, leave the Run button disabled, refuse every later run and
+            # block Back with the cancel-script warning. Report the crash and
+            # force the queue to continue through the fail-safe done branch.
+            self._report_completion_crash()
+            self.scripts_executed += 1
+            self._run_next_script()
+
+    def _on_child_exit_body(self, term, status):
         if getattr(self, "_cleanup_script_path", None):
             try:
                 if os.path.exists(self._cleanup_script_path):

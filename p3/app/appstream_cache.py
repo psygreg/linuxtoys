@@ -15,6 +15,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import tarfile
 import threading
 import time
@@ -48,6 +49,29 @@ ODRS_USER_SALT = "linuxtoys-odrs-v1"
 SNAP_VOTED_PATH = Path(os.path.expanduser("~/.config/linuxtoys/snap-ratings.json"))
 
 _LOCK = threading.RLock()
+
+
+def _catalog_progress_enabled() -> bool:
+    """Whether catalog rebuild phases should print terminal-visible progress."""
+    return os.environ.get("LINUXTOYS_CATALOG_PROGRESS") == "1"
+
+
+def _progress(message: str) -> None:
+    """Print one rebuild phase note to stderr, when progress output is on.
+
+    GUI refreshes surface status through ``status_callback`` and must stay
+    silent. A nested ``call_script`` rebuild runs in a terminal (or the hidden
+    AppStream PTY) with no callback, where a silent multi-second catalog
+    rebuild is indistinguishable from a hung install. Callers opt in through
+    ``LINUXTOYS_CATALOG_PROGRESS=1``; every phase line also resets the hidden
+    PTY's stall watchdog, which would otherwise abort jobs whose rebuild runs
+    longer than the idle timeout.
+
+    Timefix uses the same ``[linuxtoys]`` stderr prefix.
+    """
+    if not _catalog_progress_enabled():
+        return
+    print(f"[linuxtoys] {message}", file=sys.stderr, flush=True)
 
 
 def _snap_supported_host() -> bool:
@@ -1125,11 +1149,20 @@ def _refresh_missing_flatpak_appstream():
             cmd.append(f"--installation={remote['installation']}")
         cmd += ["update", "--appstream", remote["remote"]]
 
+        # With terminal progress enabled, let flatpak's own output through: the
+        # metadata download can legitimately take most of the command's timeout
+        # and a bare silent wait looks like a stall. Nested call_script rebuilds
+        # want that visibility; GUI background refreshes stay silent.
+        show_output = _catalog_progress_enabled()
+        _progress(
+            f"downloading {remote['remote']} Flatpak AppStream metadata "
+            "(this can take a while)..."
+        )
         try:
             subprocess.run(
                 cmd,
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
+                stdout=None if show_output else subprocess.DEVNULL,
+                stderr=None if show_output else subprocess.DEVNULL,
                 timeout=60,
                 check=False,
             )
@@ -1637,15 +1670,30 @@ def refresh_cache(force=False, status_callback=None, *, starter=False):
             ratings_thread.start()
 
             native_supported = _native_appstream_supported_host()
+            _progress("reading native AppStream catalogs...")
             components = _load_appstream_components()
             if native_supported:
+                native_total = len(components)
+                _progress(f"indexing {native_total} native components...")
+                show_batches = _catalog_progress_enabled() and native_total > CHECKPOINT_EVERY
                 for start in range(0, len(components), CHECKPOINT_EVERY):
                     batch = components[start:start + CHECKPOINT_EVERY]
                     payloads = [_native_component_payload(component) for component in batch]
                     generation.add_native(payloads)
                     generation.write_partial(os.fspath(PARTIAL_PATH), CACHE_SCHEMA)
+                    if show_batches:
+                        done = min(start + len(batch), native_total)
+                        print(
+                            f"\r[linuxtoys] indexed {done}/{native_total} native components",
+                            end="",
+                            file=sys.stderr,
+                            flush=True,
+                        )
+                if show_batches:
+                    print(file=sys.stderr, flush=True)
 
             _refresh_missing_flatpak_appstream()
+            _progress("reading Flatpak AppStream catalogs...")
             _flatpak_catalog_sources = _load_flatpak_components(generation)
 
             # Snap Store metadata is normalized into the same source-neutral catalog.
@@ -1653,6 +1701,7 @@ def refresh_cache(force=False, status_callback=None, *, starter=False):
             # native/Flatpak publication.
             # AppImage community discovery is feed-only: no per-app release calls.
             # A failed fetch uses the last valid snapshot and cannot block AppStream.
+            _progress("updating the AppImage discovery feed...")
             appimage_components = appimage_catalog.load_or_refresh(
                 APPIMAGE_CATALOG_PATH, force=force
             )
@@ -1661,6 +1710,7 @@ def refresh_cache(force=False, status_callback=None, *, starter=False):
 
             snap_components = []
             if _snap_supported_host():
+                _progress("loading Snap Store metadata...")
                 snap_components = snap_catalog.load_or_refresh(
                     SNAP_CATALOG_PATH,
                     force=force,
@@ -1689,6 +1739,7 @@ def refresh_cache(force=False, status_callback=None, *, starter=False):
                     except Exception:
                         snap_ratings = None
 
+            _progress("fetching review ratings...")
             ratings_thread.join()
             ratings = ratings_box["value"]
             generation.apply_review_summaries(
@@ -1698,6 +1749,7 @@ def refresh_cache(force=False, status_callback=None, *, starter=False):
                 snap_ratings is not None,
             )
 
+            _progress("publishing the AppStream catalog...")
             generation.publish_extensions(os.fspath(EXTENSIONS_PATH))
             changed, published_count = generation.publish(
                 os.fspath(CATALOG_PATH),
@@ -1738,6 +1790,7 @@ def refresh_cache(force=False, status_callback=None, *, starter=False):
 
             if status_callback:
                 status_callback("ready")
+            _progress(f"AppStream catalog ready ({int(published_count)} components).")
             return {"success": True, "changed": bool(changed), "count": int(published_count)}
         except Exception as error:
             # The published catalog/state were never invalidated, so a failed delta
@@ -1745,6 +1798,7 @@ def refresh_cache(force=False, status_callback=None, *, starter=False):
             # is retained only as diagnostic/resume-friendly working state.
             if status_callback:
                 status_callback("error")
+            _progress(f"AppStream catalog refresh failed: {error}")
             return {
                 "success": False,
                 "changed": False,
