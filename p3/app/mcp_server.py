@@ -219,6 +219,33 @@ def _entry_kind(entry):
     return "script"
 
 
+def _version_gate_refusal():
+    """Refusal message when the outdated-version gate blocks script runs, else None.
+
+    Mirrors every other runner surface (GUI terminal, TUI, CLI): a LinuxToys
+    too far behind the newest published release refuses script runs. The
+    check itself is cache-only and fails open, so an unreachable release
+    service can never brick installs.
+    """
+    try:
+        from .updater import version_gate
+        gate = version_gate.check()
+    except Exception:
+        return None
+    if not gate.get("blocked"):
+        return None
+    message = version_gate.refusal_message(gate) or (
+        "This LinuxToys installation is too far behind the newest release; "
+        "script jobs are disabled until it is updated."
+    )
+    return (
+        f"{message} Call get_update_status, let the user approve "
+        "update_linuxtoys, and retry once the app is updated. Package "
+        "installs (Flathub/Snap, AppImages, AUR, Homebrew, local files) are "
+        "not affected."
+    )
+
+
 def _iter_script_entries():
     """All catalog entries LinuxToys would show: scripts, repo and AppStream."""
     translations = _translations()
@@ -919,10 +946,43 @@ class JobManager:
         entry = _resolve_entry(app_id)
         if entry is None:
             raise ValueError(f"No installable entry found for '{app_id}'. Use search_apps to list valid IDs.")
+        # Outdated-version gate: LinuxToys script jobs (plain scripts, repo
+        # scripts and registry removals) are refused while the installed
+        # release is more than two published releases behind. Package
+        # transactions keep working and the check fails open.
+        if self._gate_applies(kind, entry):
+            refusal = _version_gate_refusal()
+            if refusal:
+                raise ValueError(refusal)
         job = Job(kind, app_id)
         job.name = str(entry.get("name") or app_id)
         self._register(job)
         self._queue.put((job, entry))
+        return job
+
+    def submit_update(self):
+        """Queue LinuxToys' self-update (the GUI's silent updater machinery).
+
+        Serialized with every other job. Refused while any work is active so
+        package operations never race the installation being replaced.
+        """
+        with self._lock:
+            busy = [
+                job for job in self._jobs.values()
+                if job.state in ("queued", "running")
+            ]
+        if busy:
+            names = ", ".join(
+                f"{job.id} ({job.name or job.kind})" for job in busy[:3]
+            )
+            raise ValueError(
+                "The update cannot start while LinuxToys jobs are active: "
+                f"{names}. Poll get_job until they finish, then retry."
+            )
+        job = Job("update", "linuxtoys")
+        job.name = "LinuxToys"
+        self._register(job)
+        self._queue.put((job, None))
         return job
 
     def submit_file(self, spec):
@@ -973,6 +1033,27 @@ class JobManager:
             jobs = list(self._jobs.values())[-max(1, int(limit)):]
         return [job.public() for job in reversed(jobs)]
 
+    @staticmethod
+    def _gate_applies(kind, entry=None):
+        """Whether the outdated-version gate governs this job kind.
+
+        Only LinuxToys script logic is gated: plain scripts, repo scripts and
+        registry removals (which run generated uninstall scripts). AppStream,
+        Snap/Flatpak, AppImage, AUR and Homebrew instalments and local package
+        files are package pipelines and stay ungated — the same split every
+        other runner surface uses.
+        """
+        if kind == "remove":
+            return True
+        if kind != "install":
+            return False
+        entry = entry or {}
+        if str(entry.get("appstream_source") or "").strip():
+            return False
+        if entry.get("is_appstream_entry"):
+            return False
+        return True
+
     def shutdown(self):
         self._shutdown = True
         self._queue.put(None)
@@ -993,14 +1074,28 @@ class JobManager:
         job.started = time.time()
         try:
             try:
-                # Extension installs/uninstalls never enter the bug-report
-                # history in the GUI either: they are flatpak-level addon
-                # operations, not app scripts.
-                if job.kind not in ("extension_install", "extension_remove"):
+                # Extension installs/uninstalls and app updates never enter
+                # the bug-report history in the GUI either: they are flatpak
+                # addon operations and the app's own update, not app scripts.
+                if job.kind not in ("extension_install", "extension_remove", "update"):
                     antenna.add_script_to_history(str(job.name))
             except Exception:
                 pass  # Bug-report context is best effort.
-            if job.kind == "install_file":
+
+            # The gate can tighten while a job waits in the queue: re-check it
+            # right before the script starts, mirroring the GUI's run gate.
+            if job.kind in ("install", "remove") and self._gate_applies(job.kind, entry):
+                refusal = _version_gate_refusal()
+                if refusal:
+                    self._log(job, refusal)
+                    job.exit_code = 1
+                    job.reason = refusal
+                    job.state = "error"
+                    return
+
+            if job.kind == "update":
+                code, reason = self._update_app(job)
+            elif job.kind == "install_file":
                 code, reason = self._install_file(job, entry)
             elif job.kind in ("extension_install", "extension_remove"):
                 code, reason = self._run_extension(
@@ -1432,6 +1527,38 @@ class JobManager:
             return ""
         return tail
 
+    def _update_app(self, job):
+        """Run the official self-updater in this worker thread.
+
+        Delegates to ``run_background_update`` — the GUI's silent update
+        path: ``askpass`` pops the password dialog on the user's screen on
+        native package hosts, SteamOS uses the user-level AppImage/Gear Lever
+        updater, and install.sh runs with ``LINUXTOYS_NONINTERACTIVE=1``.
+        """
+        try:
+            # The updater sources the shell library relative to SCRIPT_DIR;
+            # resolve_script_dir() also writes it into os.environ.
+            _script_dir()
+        except Exception as exc:
+            return 1, f"Could not resolve the LinuxToys installation directory to update: {exc}"
+
+        try:
+            from .updater.update_helper import run_background_update
+        except Exception as exc:
+            return 1, f"The updater is unavailable: {exc}"
+
+        self._log(job, "Running the official LinuxToys updater (install.sh)...")
+        success, error = run_background_update()
+        if success:
+            return 0, (
+                "LinuxToys updated successfully. Restart the linuxtoys-mcp "
+                "service (systemctl --user restart linuxtoys-mcp.service) and "
+                "reopen the GUI to switch to the new version."
+            )
+        if "cancel" in (error or "").casefold():
+            return 100, "Update cancelled on the user's screen (password dialog)."
+        return 1, error or "The background updater failed without a message."
+
     @staticmethod
     def _finish_transmap(transmap_path):
         easy_cli._cleanup_tmp_noram_dirs(transmap_path)
@@ -1461,6 +1588,9 @@ class _LazyJobs:
 
     def submit(self, kind, app_id):
         return self._get().submit(kind, app_id)
+
+    def submit_update(self):
+        return self._get().submit_update()
 
     def submit_file(self, spec):
         return self._get().submit_file(spec)
@@ -1503,6 +1633,27 @@ def tool_schemas():
         {
             "name": "list_categories",
             "description": "List LinuxToys catalog categories (system tools, tweaking, etc.).",
+            "inputSchema": {"type": "object", "properties": {}},
+        },
+        {
+            "name": "get_update_status",
+            "description": (
+                "Check for LinuxToys app updates (performs a network check): "
+                "running version, newest published release, releases behind, "
+                "whether the app can update itself on this host, and whether "
+                "script jobs are blocked by the outdated-version gate."
+            ),
+            "inputSchema": {"type": "object", "properties": {}},
+        },
+        {
+            "name": "update_linuxtoys",
+            "description": (
+                "Run the official LinuxToys self-update as a tracked job — "
+                "the same silent updater the GUI uses. Always get the user's "
+                "approval first. A password dialog may appear on the user's "
+                "screen. Poll get_job; afterwards restart the linuxtoys-mcp "
+                "service so it runs the new version."
+            ),
             "inputSchema": {"type": "object", "properties": {}},
         },
         {
@@ -1797,6 +1948,19 @@ def tool_schemas():
 
 def _tool_server_info():
     status = service_status()
+    gate_summary = None
+    try:
+        from .updater import version_gate
+        gate = version_gate.check()
+        if gate.get("applicable"):
+            gate_summary = {
+                "scripts_blocked": bool(gate.get("blocked")),
+                "releases_behind": int(gate.get("behind") or 0),
+                "latest_cached": str(gate.get("latest") or "") or None,
+                "fresh_check": "Use get_update_status for a networked check.",
+            }
+    except Exception:
+        pass
     return {
         "server": SERVER_NAME,
         "version": __version__,
@@ -1811,6 +1975,114 @@ def _tool_server_info():
         ),
         "askpass": (
             "installs that need root show the password dialog on the user's screen"
+        ),
+        "version_gate": gate_summary,
+    }
+
+
+def _tool_get_update_status():
+    """Networked LinuxToys release check plus the local script-gate state."""
+    from .compat import self_updates_disabled
+    from .updater import version_gate
+    from .updater.update_helper import (
+        UpdateHelper,
+        get_current_version,
+        is_from_repository,
+    )
+
+    current = get_current_version()
+    helper = UpdateHelper()
+    latest = helper._get_latest_version()
+    latest_tag = str(latest.get("tag_name") or "")
+
+    result = {
+        "current_version": current,
+        "latest_version": latest_tag or None,
+        "update_available": bool(latest_tag and helper._compare_versions(current, latest_tag) == 1),
+        "can_self_update": not (self_updates_disabled() or is_from_repository()),
+        "release_notes": str(latest.get("body") or "")[:2000] or None,
+    }
+    if not latest_tag:
+        result["check_note"] = (
+            "The release check failed (both sources unreachable). Retry later; "
+            "an update can still be run."
+        )
+    if self_updates_disabled():
+        result["self_update_note"] = (
+            "LinuxToys ships inside the GregOS image; it only changes when "
+            "the system image updates."
+        )
+    elif is_from_repository():
+        result["self_update_note"] = (
+            "This installation is owned by a system repository (PPA/Copr/git "
+            "checkout); update it through that package manager instead of "
+            "install.sh."
+        )
+
+    # The script gate is cache-only; warm it for this and future calls.
+    version_gate.refresh()
+    gate = version_gate.check()
+    result["scripts_blocked"] = bool(gate.get("blocked"))
+    result["script_gate"] = {
+        "applicable": bool(gate.get("applicable")),
+        "blocked": bool(gate.get("blocked")),
+        "releases_behind": int(gate.get("behind") or 0),
+        "grace_releases": version_gate.GATE_GRACE_RELEASES,
+        "fetched": bool(gate.get("fetched")),
+    }
+    if gate.get("blocked"):
+        result["blocked_note"] = (
+            "install_app/remove_app of LinuxToys scripts are refused until "
+            "LinuxToys is updated; run update_linuxtoys (with the user's "
+            "approval) and retry afterwards. Package installs (Flathub/Snap, "
+            "AppImages, AUR, Homebrew, local files) keep working."
+        )
+    return result
+
+
+def _tool_update_linuxtoys():
+    """Run the official self-update as a tracked job."""
+    from .compat import self_updates_disabled
+    from .updater.update_helper import UpdateHelper, get_current_version, is_from_repository
+
+    if self_updates_disabled():
+        raise ValueError(
+            "LinuxToys ships inside the GregOS image; update the system image "
+            "itself and LinuxToys follows it. There is nothing to install here."
+        )
+    if is_from_repository():
+        raise ValueError(
+            "This LinuxToys installation is owned by a system repository "
+            "(PPA/Copr/git checkout); update it through that package manager "
+            "instead of running install.sh, then restart the service."
+        )
+
+    # Refuse a pointless run when the release check is reachable and current.
+    current = get_current_version()
+    helper = UpdateHelper()
+    latest_tag = str(helper._get_latest_version().get("tag_name") or "")
+    if latest_tag and helper._compare_versions(current, latest_tag) != 1:
+        raise ValueError(
+            f"LinuxToys is already on the latest published version ({latest_tag})."
+        )
+
+    try:
+        job = JOBS.submit_update()
+    except ValueError:
+        raise
+    except Exception as exc:
+        raise ValueError(f"Could not queue the update: {exc}")
+
+    return {
+        "job_id": job.id,
+        "name": job.name,
+        "state": job.state,
+        "note": (
+            "The official updater runs the same flow as the app's silent "
+            "update: a password dialog may pop on the user's screen for the "
+            "grant — wait for them to type it, never ask for the password. "
+            "Poll get_job; on success restart the service (systemctl --user "
+            "restart linuxtoys-mcp.service) so it runs the new version."
         ),
     }
 
@@ -2262,6 +2534,10 @@ def dispatch_tool(name, arguments):
         return _tool_server_info()
     if name == "list_categories":
         return _tool_categories()
+    if name == "get_update_status":
+        return _tool_get_update_status()
+    if name == "update_linuxtoys":
+        return _tool_update_linuxtoys()
     if name == "search_apps":
         return {"results": _search_catalog(arguments.get("query"), arguments.get("limit", 20))}
     if name == "get_app_details":
@@ -2387,7 +2663,12 @@ def _initialize_result(requested_version):
             "root show the password dialog on the user's screen; never ask "
             "the user to hand you credentials. Descriptions and screenshots "
             "can be read and translated with translate_text / "
-            "translate_app_description."
+            "translate_app_description. The app updates itself: "
+            "get_update_status, then update_linuxtoys with the user's "
+            "approval (poll get_job and restart the linuxtoys-mcp service "
+            "afterwards). When install_app or remove_app is refused because "
+            "the installed version is too far behind the newest release, "
+            "update LinuxToys first — package installs keep working."
         ),
     }
 
@@ -2928,6 +3209,13 @@ def _background_warmup():
         pass
     try:
         parser.set_scripts_dir(parser.SCRIPTS_DIR)
+    except Exception:
+        pass
+    # Warm the outdated-version gate cache so install_app/remove_app and the
+    # status tool have release data ready (the check itself fails open).
+    try:
+        from .updater import version_gate
+        version_gate.refresh()
     except Exception:
         pass
     try:

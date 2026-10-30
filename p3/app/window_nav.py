@@ -3,6 +3,7 @@ from .window_items import ItemWidgetFactory
 from .window_search import SearchCtl
 from .featured_scripts import FeaturedCtl
 from .local_scripts import LocalScriptsCtl
+from .updater.update_dialog import scripts_blocked_by_version
 from . import app_page, term_view, skills_view, get_icon_path, header, gui_rs
 
 class NavCtl:
@@ -545,6 +546,18 @@ class NavCtl:
         # Check if any script has auto_run flag set in its info dict
         if not auto_run and infos:
             auto_run = any(script.get("auto_run", False) for script in infos)
+
+        # Refuse to open a run entirely when LinuxToys is too far behind the
+        # newest release: script runs (including auto-runs launched from menu
+        # actions and links) are blocked until the app is updated. Self-update
+        # runs and AppStream-only transactions stay allowed.
+        if scripts_blocked_by_version(
+            self,
+            self.translations,
+            infos=infos,
+            removable_script_info=removable_script_info,
+        ):
+            return
 
         run_box = term_view.TermRunScripts(
             infos, self, self.translations, removable_script_info=removable_script_info, auto_run=auto_run

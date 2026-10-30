@@ -49,7 +49,7 @@ class DialogError(DialogBase):
 
 
 class UpdateDialog(Gtk.Dialog):
-    def __init__(self, changelog, parent):
+    def __init__(self, changelog, parent, allow_ignore=True):
         super().__init__(title="Update Available")
         self.set_default_size(450, 350)
         self.set_decorated(True)
@@ -61,7 +61,10 @@ class UpdateDialog(Gtk.Dialog):
         self.add_button(
             "Install Update", Gtk.ResponseType.OK
         ).get_style_context().add_class("suggested-action")
-        self.add_button("Ignore", Gtk.ResponseType.NO)
+        # Blocked-version runs open this dialog *without* Ignore: updating
+        # is the only way forward when LinuxToys refuses to run scripts.
+        if allow_ignore:
+            self.add_button("Ignore", Gtk.ResponseType.NO)
 
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         vbox.set_margin_start(18)
@@ -340,3 +343,56 @@ curl -fsSL https://linux.toys/install.sh | bash && touch {marker!r}
             insert("\n")
 
         return buffer
+
+
+def scripts_blocked_by_version(
+    parent,
+    translations=None,
+    infos=(),
+    removable_script_info=None,
+):
+    """Refuse a script run when LinuxToys is too far behind the newest release.
+
+    "Too far" means more published releases are newer than the installed one
+    than ``version_gate.GATE_GRACE_RELEASES`` allows. Only entries that are
+    LinuxToys scripts (``is_script``/``self_update``) count: AppStream
+    package transactions never go through the gate. Runs whose sole purpose
+    is updating LinuxToys itself (``self_update``) stay allowed even from a
+    blocked installation — otherwise the gate would leave no in-app way to
+    clear it.
+
+    On a refusal, shows the explaining dialog (an "Update now" choice opens
+    the changelog dialog without the Ignore option). Returns True when the
+    caller must not proceed with the run; the check itself is non-blocking
+    and fails open when release data is unavailable.
+    """
+    candidates = [
+        info
+        for info in (*infos, removable_script_info)
+        if info and (info.get("is_script") or info.get("self_update"))
+    ]
+    if not candidates:
+        return False
+    if all(info.get("self_update") for info in candidates):
+        return False
+
+    from . import version_gate
+    from ..gtk_dialogs import run_version_gate_dialog
+
+    gate = version_gate.check()
+    if not gate.get("blocked"):
+        return False
+
+    if run_version_gate_dialog(
+        parent,
+        translations=translations,
+        current=gate.get("current", ""),
+        latest=gate.get("latest", ""),
+        behind=gate.get("behind", 0),
+    ):
+        UpdateDialog(
+            {"tag_name": gate.get("latest", ""), "body": gate.get("latest_body", "")},
+            parent,
+            allow_ignore=False,
+        ).show()
+    return True

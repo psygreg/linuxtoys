@@ -47,6 +47,7 @@ from textual.widgets import (
 from app import homebrew_catalog
 from app.lang_utils import detect_system_language
 from app.registry_utils import parse_registry_file
+from app.updater import version_gate
 
 from .about_helper import load_ansi_art
 from .app_page_translate import (
@@ -238,6 +239,15 @@ class HomeScreen(
             first_button.focus()
 
         self.call_after_refresh(self.check_startup_recommendations)
+
+        # Warm the outdated-version gate cache early so script runs later in
+        # the session have data ready; checks only ever read the cache.
+        self.run_worker(
+            version_gate.refresh,
+            thread=True,
+            exclusive=False,
+            group="version-gate-refresh",
+        )
 
     @property
     def _is_app_page_showing(self) -> bool:

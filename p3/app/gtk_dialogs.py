@@ -67,6 +67,47 @@ def show_information(
         default_response=Gtk.ResponseType.OK,
     )
 
+def run_version_gate_dialog(
+    parent: Optional[Gtk.Widget],
+    *,
+    translations: Optional[dict] = None,
+    current: str = "",
+    latest: str = "",
+    behind: int = 0,
+) -> bool:
+    """Explain a refused script run on an outdated LinuxToys installation.
+
+    The caller has already decided the run must not happen; this dialog only
+    explains why and offers the update. Returns True when the user chose
+    "Update now" so the caller can open the update flow.
+    """
+    t = translations or {}
+    message = t.get(
+        "version_block_message",
+        "This LinuxToys version (${current}) is ${count} releases behind the "
+        "latest published version (${latest}). Running scripts is disabled "
+        "until LinuxToys is updated.",
+    ).replace(
+        "${current}", current or "unknown"
+    ).replace(
+        "${count}", str(behind or 0)
+    ).replace(
+        "${latest}", latest or "unknown"
+    )
+
+    return run_message_dialog(
+        parent,
+        title=t.get("version_block_title", "Scripts Disabled"),
+        secondary_text=message,
+        message_type=Gtk.MessageType.WARNING,
+        buttons=[
+            (t.get("version_block_update_now_btn", "Update Now"), Gtk.ResponseType.OK),
+            (t.get("script_runner_close", "Close"), Gtk.ResponseType.CLOSE),
+        ],
+        default_response=Gtk.ResponseType.OK,
+    ) == Gtk.ResponseType.OK
+
+
 class WaitDialog(Gtk.Dialog):
 	def __init__(self, parent, message="Waiting..."):
 		_ = create_translator()

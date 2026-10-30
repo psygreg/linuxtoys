@@ -21,6 +21,7 @@ from .repo_parser import materialize_repo_script
 from .library_loader import script_command, script_environment
 from . import package_guard
 from .updater.update_helper import UpdateHelper
+from .updater import version_gate
 from .registry_utils import parse_registry_file
 
 
@@ -1002,6 +1003,16 @@ def run_manifest_mode(translations=None):
         return 0
     if args.check_updates:
         return 1 if run_update_check_cli(translations) else 0
+
+    # Outdated-version gate: CLI manifests mix scripts with package
+    # transactions; when scripts are blocked, the whole batch stays off so
+    # the run does not start half-updated. `linuxtoys update` above stays
+    # available in every case — it is the way out.
+    gate = version_gate.check()
+    message = version_gate.refusal_message(gate)
+    if message:
+        print(f"✗ {message}")
+        return 1
 
     manifest_path = args.manifest_path
 

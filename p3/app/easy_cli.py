@@ -8,7 +8,7 @@ import subprocess
 import re
 import shutil
 from .parser import get_categories, get_all_scripts_recursive, get_appstream_entries
-from .updater import __version__
+from .updater import __version__, version_gate
 from .manifest_helper import (
     run_manifest_mode, run_update_check_cli, find_script_by_name, 
     run_script, check_package_exists, install_packages, 
@@ -455,8 +455,25 @@ def execute_scripts_with_feedback(scripts_found):
                 break
 
 
+def _refuse_outdated_scripts() -> bool:
+    """Print the version-gate refusal when scripts must not run (CLI).
+
+    Returns True when the run was refused. Fails open like every other
+    surface: without usable release data LinuxToys never blocks scripts.
+    """
+    gate = version_gate.check()
+    message = version_gate.refusal_message(gate)
+    if message is None:
+        return False
+    print(f"✗ {message}")
+    return True
+
+
 def scripts_install(args: list, skip_confirmation, translations):
     """Handle script installation in EASY_CLI mode."""
+
+    if _refuse_outdated_scripts():
+        return 1
 
     # Filter out confirmation flags from the install list
     install_list = [arg for arg in args if arg not in ("-y", "--yes")]
@@ -507,6 +524,8 @@ def scripts_install(args: list, skip_confirmation, translations):
     # Ask user to confirm execution
     if skip_confirmation or confirm_action("Confirm script execution?"):
         execute_scripts_with_feedback(scripts_found_list)
+
+    return 0
 
 
 def _run_uninstall_entry(script_info, translations):
@@ -580,6 +599,9 @@ def execute_uninstalls_with_feedback(scripts_found, translations):
 
 
 def scripts_uninstall(args: list, skip_confirmation, translations):
+    if _refuse_outdated_scripts():
+        return 1
+
     uninstall_list = [arg for arg in args if arg not in ("-y", "--yes")]
 
     if not uninstall_list:
@@ -702,6 +724,11 @@ def smart_uninstall(args: list, skip_confirmation, translations):
             packages_to_remove.append(item_name)
             print(f"→ Treating as package: {item_name}")
 
+    # Smart-mode script removals respect the outdated-version gate; plain
+    # package removals stay transaction-based and remain available.
+    if scripts_found and _refuse_outdated_scripts():
+        return 1
+
     print()
 
     if skip_confirmation or confirm_action("Confirm removal?"):
@@ -807,6 +834,8 @@ def packages_install(args: list, skip_confirmation, translations):
     if skip_confirmation or confirm_action("Confirm package installation?"):
         install_packages_with_feedback(packages_found_list)
 
+    return 0
+
 
 def install_flatpaks_with_feedback(flatpaks_found):
     """Install flatpaks asynchronously and provide CLI feedback."""
@@ -902,6 +931,8 @@ def flatpaks_install(args: list, skip_confirmation, translations):
     if skip_confirmation or confirm_action("Confirm flatpak installation?"):
         install_flatpaks_with_feedback(flatpaks_found_list)
 
+    return 0
+
 
 def smart_install(args: list, skip_confirmation, translations):
     """Handle smart installation - checks for scripts first, then packages."""
@@ -970,6 +1001,12 @@ def smart_install(args: list, skip_confirmation, translations):
         print("✗ No valid items found. Aborting.")
         return 0
 
+    # Smart-mode script runs still respect the outdated-version gate;
+    # package and flatpak transactions do not, so they are skipped by the
+    # refusal only when a script was among the resolved items.
+    if scripts_found_list and _refuse_outdated_scripts():
+        return 1
+
     # Display summary
     if scripts_found_list:
         max_file_len = max(len(os.path.basename(s["path"])) for s in scripts_found_list)
@@ -1013,6 +1050,8 @@ def smart_install(args: list, skip_confirmation, translations):
             print("EXECUTING SCRIPTS")
             print("=" * 60)
             execute_scripts_with_feedback(scripts_found_list)
+
+    return 0
 
 
 def print_script_list(translations):
@@ -1190,6 +1229,10 @@ def easy_cli_handler(translations=None):
     if 'CACHE_DIR' not in os.environ:
         os.environ['CACHE_DIR'] = os.environ.get('SCRIPT_DIR', '') + '/scripts'
 
+    # Warm the outdated-version gate cache in the background: the check that
+    # script-install commands run reads only the local cache, never the net.
+    version_gate.refresh()
+
     # --- Developer Mode ---
     def dev_check(args):
         dev_flags = ("-D", "--DEV_MODE")
@@ -1263,27 +1306,25 @@ def easy_cli_handler(translations=None):
             return 0
 
         if args[1] in ("-s", "--script", "--scripts"):
-            scripts_install(args[2:], skip_confirmation(args), translations)
-            return 0
+            return scripts_install(args[2:], skip_confirmation(args), translations)
         
         elif args[1] in ("-p", "--package", "--packages"): # Para instalação de pacotes
-            packages_install(args[2:], skip_confirmation(args), translations)
-            return 0
+            return packages_install(args[2:], skip_confirmation(args), translations)
 
         elif args[1] in ("-f", "--flatpak", "--flatpaks"): # Para instalação de flatpaks
-            flatpaks_install(args[2:], skip_confirmation(args), translations)
-            return 0
+            return flatpaks_install(args[2:], skip_confirmation(args), translations)
 
         elif args[1] in ("--snap", "--snaps"):
             snap_names = args[2:]
             if not snap_names:
                 print("No Snap package names provided.")
-                return
+                return 0
             _found, missing = check_snaps(snap_names)
             if missing:
                 install_snaps_with_feedback(missing)
             else:
                 print("All requested Snaps are already installed.")
+            return 0
 
         elif args[1] in ("-l", "--list"):
             print_script_list(translations)
@@ -1291,8 +1332,7 @@ def easy_cli_handler(translations=None):
         
         else:
             # Smart install mode - checks by pattern (scripts, packages, flatpaks)
-            smart_install(args[1:], skip_confirmation(args), translations)
-            return 0
+            return smart_install(args[1:], skip_confirmation(args), translations)
         
     elif args[0] in ("-u", "--uninstall"):
         if len(args) < 2:

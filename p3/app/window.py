@@ -51,8 +51,9 @@ from .window_nav import NavCtl
 from .window_sidebar import SidebarCtl
 from .featured_scripts import FeaturedCtl
 from .local_scripts import LocalScriptsCtl
-from .updater.update_dialog import UpdateDialog
+from .updater.update_dialog import UpdateDialog, scripts_blocked_by_version
 from .updater.update_helper import UpdateHelper, run_background_update
+from .updater import version_gate
 from .lang_utils import (
     get_automatic_updates,
     get_automatic_error_reports,
@@ -1793,6 +1794,12 @@ class AppWindow(
         )
         if remove_info is None:
             return
+        # External removals still run a generated uninstall script, so the
+        # outdated-version gate applies before queueing them.
+        if scripts_blocked_by_version(
+            self, self.translations, removable_script_info=remove_info
+        ):
+            return
         record_id = info.get("_appstream_queue_record_id")
         self._appstream_runner.enqueue_removal(info, remove_info, record_id=record_id)
         app_page = self.main_stack.get_child_by_name("app_page")
@@ -2178,6 +2185,11 @@ class AppWindow(
         return False
 
     def _show_dialog_and_update(self):
+        # Race the release list in on this same background thread so the
+        # outdated-version gate has data ready before the user reaches a
+        # script run (checks themselves only read the cache, never the net).
+        version_gate.refresh()
+
         self._check = UpdateHelper()
         available = self._check._update_available()
 

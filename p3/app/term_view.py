@@ -7,6 +7,7 @@ from .term_header import InfosHead
 from .term_reporting import BugReporting
 from .term_runner import TerminalRunner
 from .revert_helper import build_uninstall_script_entry, _load_last_execution
+from .updater.update_dialog import scripts_blocked_by_version
 
 class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
     def __init__(
@@ -292,6 +293,18 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
         # Ignore repeated clicks or duplicate idle callbacks while a script is active.
         if self.parent._script_running:
             return False
+
+        # LinuxToys' own update run stays allowed even from a gated install:
+        # refusing it would leave no in-app way to clear the gate. Manual
+        # runs, auto-runs, removals and reverts all funnel through here, so
+        # every script execution the terminal view can start is covered.
+        if self.script_queue and not self.script_queue[0].get("self_update"):
+            if scripts_blocked_by_version(
+                self.parent,
+                self.translations,
+                removable_script_info=self.script_queue[0],
+            ):
+                return False
 
         self.vbox_main.button_run.set_sensitive(False)
 

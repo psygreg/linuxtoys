@@ -28,6 +28,7 @@ from app.parser import get_breadcrumb_path, script_requires_reboot
 from app.registry_utils import parse_registry_file
 from app.repo_parser import materialize_repo_script
 from app.revert_helper import build_uninstall_script_entry
+from app.updater import version_gate
 from app.updater.update_helper import UpdateHelper
 
 from .appstream_executor import (
@@ -53,6 +54,7 @@ from .dialog_screen import (
     SudoPasswordScreen,
     UpdateAvailableDialog,
     UpdateCompleteDialog,
+    VersionGateDialog,
 )
 from .helper import (
     SPECIALS_ROOT,
@@ -472,6 +474,25 @@ class ScriptRunnerMixin:
         """
         if not self._ensure_terminal_free():
             return
+        # Outdated-version gate: a LinuxToys that is more than two published
+        # releases behind refuses script runs (manual, manifest items and
+        # auto-runs alike) so installs never follow stale feature logic.
+        if not script_info.get("self_update"):
+            gate = version_gate.check()
+            if gate.get("blocked"):
+                self._running_button = None
+                if self._is_manifest_run:
+                    # One explanation for the whole manifest; each item is
+                    # then recorded as failed and the run drains normally.
+                    if not getattr(self, "_version_gate_screen_shown", False):
+                        self._version_gate_screen_shown = True
+                        self._show_version_gate_screen(gate)
+                    self._manifest_start_failed(
+                        str(script_info.get("name", "unknown")), 1
+                    )
+                else:
+                    self._show_version_gate_screen(gate)
+                return
         if script_info.get("is_repo_entry"):
             try:
                 script_info = materialize_repo_script(script_info)
@@ -570,6 +591,28 @@ class ScriptRunnerMixin:
             return False
         return True
 
+    def _show_version_gate_screen(self, gate: dict) -> None:
+        """Explain a refused script run and offer the update.
+
+        Runs are refused while the installed LinuxToys release is more than
+        two published releases behind the newest one. "Update Now" starts
+        the standard update flow (``UpdateRunnerMixin``); the refused run
+        itself already happened nowhere.
+        """
+
+        def after_gate_dialog(wants_update: bool | None) -> None:
+            if wants_update:
+                self._trigger_update_check()
+
+        self.app.push_screen(
+            VersionGateDialog(
+                str(gate.get("current", "")),
+                str(gate.get("latest", "")),
+                int(gate.get("behind", 0)),
+            ),
+            callback=after_gate_dialog,
+        )
+
     def _notify_removal_not_available(self) -> None:
         self.notify(
             translations.get(
@@ -612,6 +655,12 @@ class ScriptRunnerMixin:
             self.notify(
                 "An execution is already underway.", severity="warning"
             )
+            return
+        # Removals run uninstall scripts too: the gate applies before any
+        # preparation work starts.
+        gate = version_gate.check()
+        if gate.get("blocked"):
+            self._show_version_gate_screen(gate)
             return
         self._preparing_run = True
         self.run_worker(
@@ -1524,6 +1573,12 @@ class AppstreamRunnerMixin:
         cleanup_path: str | None = None
         started = False
         try:
+            # Removals run uninstall scripts too: refuse them before any
+            # package-manager work starts on an outdated installation.
+            gate = version_gate.check()
+            if gate.get("blocked"):
+                self._show_version_gate_screen(gate)
+                return
             remove_info, blockers = await asyncio.to_thread(
                 self._resolve_appstream_removal, entry
             )
@@ -2013,6 +2068,7 @@ class ManifestRunnerMixin:
             "attempted": (*attempted, plan.bootstrap),
         }
         self._is_manifest_run = True  # routes ScriptFinished to our handler
+        self._version_gate_screen_shown = False
         self._running_button = None
         self._execute_script_info(item)
 
@@ -2419,6 +2475,7 @@ class ManifestRunnerMixin:
         self._manifest_queue = items
         self._manifest_results = []
         self._is_manifest_run = True
+        self._version_gate_screen_shown = False
         self._run_next_manifest_item()
 
     def _run_next_manifest_item(self) -> None:

@@ -17,7 +17,8 @@ Groups:
 - AUR: ``AurConsentDialog``, ``AurHelperDialog`` and
   ``AurSecurityDialog``.
 - App: ``ReportBugDialog``, ``LanguageSelectorDialog``,
-  ``UpdateAvailableDialog`` and ``UpdateCompleteDialog``.
+  ``UpdateAvailableDialog``, ``VersionGateDialog`` and
+  ``UpdateCompleteDialog``.
 """
 
 from textual import on, work
@@ -725,6 +726,57 @@ class UpdateAvailableDialog(ModalScreen[bool]):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         self.dismiss(event.button.id == "yes")
+
+
+class VersionGateDialog(ModalScreen[bool]):
+    """Explain a refused run on an outdated LinuxToys installation.
+
+    The app refuses script runs while the installed release is more than
+    two published releases behind the newest one. Shown instead of the
+    run; dismisses True on "Update Now" so the caller can start the
+    update flow, and None/False on Close or Escape.
+    """
+
+    BINDINGS = [
+        Binding("escape", "cancel", translations.get("script_runner_close"))
+    ]
+
+    def __init__(self, current: str, latest: str, behind: int) -> None:
+        super().__init__()
+        self.current = current or "unknown"
+        self.latest = latest or "unknown"
+        self.behind = str(int(behind or 0))
+
+    def compose(self) -> ComposeResult:
+        with Vertical(id="confirm-dialog"):
+            yield Label(
+                translations.get("version_block_title", "Scripts Disabled")
+            )
+            yield Static(
+                translations.get(
+                    "version_block_message",
+                    "This LinuxToys version (${current}) is ${count} releases "
+                    "behind the latest published version (${latest}). Running "
+                    "scripts is disabled until LinuxToys is updated.",
+                ).replace("${current}", self.current)
+                .replace("${count}", self.behind)
+                .replace("${latest}", self.latest)
+            )
+            with Horizontal(id="confirm-buttons"):
+                yield Button(
+                    translations.get(
+                        "version_block_update_now_btn", "Update Now"
+                    ),
+                    id="update",
+                    variant="success",
+                )
+                yield Button(
+                    translations.get("script_runner_close", "Close"),
+                    id="close",
+                )
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        self.dismiss(event.button.id == "update")
 
 
 class UpdateCompleteDialog(ModalScreen[None]):

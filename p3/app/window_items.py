@@ -4,6 +4,7 @@ from .gtk_common import Gdk, GLib, Gtk, load_scaled_pixbuf
 from gi.repository import Pango
 from . import get_icon_path, compat, revert_helper, official_index, installed_packages
 from .gtk_dialogs import run_message_dialog
+from .updater.update_dialog import scripts_blocked_by_version
 from . import gui_rs
 
 
@@ -685,6 +686,13 @@ class ItemWidgetFactory:
         # AppStream removals use the same persistent hidden PTY as installs.
         # Keep every other removal on the existing terminal-view path.
         if item_info.get("is_appstream_entry"):
+            # Registry-managed AppStream removals run a generated uninstall
+            # script: the outdated-version gate applies before confirmation.
+            if scripts_blocked_by_version(
+                self, self.translations, removable_script_info=item_info
+            ):
+                return
+
             script_name = item_info.get("name", "Script")
             response = run_message_dialog(
                 self,

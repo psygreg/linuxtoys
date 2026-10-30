@@ -43,7 +43,7 @@ class UpdateHelper:
             return False
 
         if not os.environ.get("DEV_MODE") == "1":
-            if not self._is_from_repository():
+            if not is_from_repository():
                 return self._check_for_updates()
 
         return False
@@ -140,51 +140,63 @@ class UpdateHelper:
             print(f"Error fetching from {source_name}: {e}")
             return None
 
-    def __is_from_git(self, path=".") -> bool:
-        try:
-            return (
-                subprocess.call(
-                    ["git", "-C", path, "status"],
-                    stderr=subprocess.STDOUT,
-                    stdout=open(os.devnull, "w"),
-                )
-                == 0
-            )
-        except (FileNotFoundError, subprocess.CalledProcessError):
-            return False
-
-    def __is_from_ppa(self) -> bool:
-        try:
-            return any(
-                list(
-                    filter(
-                        lambda f: "linuxtoys" in f,
-                        os.listdir("/etc/apt/sources.list.d/"),
-                    )
-                )
-            )
-        except (FileNotFoundError, subprocess.CalledProcessError):
-            return False
-
-    def __is_from_copr(self) -> bool:
-        try:
-            return any(
-                list(
-                    filter(
-                        lambda f: "linuxtoys" in f,
-                        os.listdir("/etc/yum.repos.d/"),
-                    )
-                )
-            )
-        except (FileNotFoundError, subprocess.CalledProcessError):
-            return False
-
     def _is_from_repository(self):
-        return (
-            self.__is_from_ppa()
-            or self.__is_from_copr()
-            or self.__is_from_git(os.path.dirname(__file__))
+        return is_from_repository()
+
+
+def _is_from_ppa() -> bool:
+    try:
+        return any(
+            list(
+                filter(
+                    lambda f: "linuxtoys" in f,
+                    os.listdir("/etc/apt/sources.list.d/"),
+                )
+            )
         )
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return False
+
+
+def _is_from_copr() -> bool:
+    try:
+        return any(
+            list(
+                filter(
+                    lambda f: "linuxtoys" in f,
+                    os.listdir("/etc/yum.repos.d/"),
+                )
+            )
+        )
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return False
+
+
+def _is_from_git(path=".") -> bool:
+    try:
+        return (
+            subprocess.call(
+                ["git", "-C", path, "status"],
+                stderr=subprocess.STDOUT,
+                stdout=open(os.devnull, "w"),
+            )
+            == 0
+        )
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return False
+
+
+def is_from_repository(path=None) -> bool:
+    """Return whether the installation is owned by something other than
+    LinuxToys' self-updater (PPA, Copr or a git checkout).
+
+    The update dialog and the outdated-version script gate both stay
+    inactive on such hosts, because their updates arrive from the system
+    package manager or the checkout itself instead of install.sh.
+    """
+    if not path:
+        path = os.path.dirname(__file__)
+    return _is_from_ppa() or _is_from_copr() or _is_from_git(path)
 
 
 def get_latest_release_version() -> str | None:
