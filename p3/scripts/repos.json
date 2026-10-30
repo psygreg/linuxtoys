@@ -201,7 +201,7 @@
         "description": "Chromium-based minimalist web browser that takes a privacy-first approach with unbiased ad-blocking.",
         "description_tag": "helium_desc",
         "repo": "https://github.com/imputnet/helium-linux",
-        "category": "privacy",
+        "category": "browsers",
         "icon": "helium.png"
     },
     {
