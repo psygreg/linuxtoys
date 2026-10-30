@@ -842,6 +842,53 @@ def load_repo_entries(scripts_dir, translations=None):
         return [dict(entry) for entry in cached]
 
 
+def find_repo_entry_declarations(scripts_dir, target_app_id):
+    """Return raw repository-list entries declaring target_app_id.
+
+    Unlike load_repo_entries, this is compat-agnostic: repository listings are
+    the source of truth for whether a repository app exists at all, while the
+    resolved catalog only carries entries the current host could install. Raw
+    declarations keep their original listing fields (plus the parser-internal
+    ``_list_source``) and are not validated.
+    """
+    matches = []
+    for path in _get_repo_list_paths(scripts_dir):
+        for entry in _load_json_entries(path):
+            if not isinstance(entry, dict) or "appstream-name" in entry:
+                continue
+            name = entry.get("name")
+            if isinstance(name, str) and _repo_app_id(name) == target_app_id:
+                matches.append(entry)
+    return matches
+
+
+def repo_entry_statically_valid(entry):
+    """Return whether a raw listing entry is schema-valid on at least one host.
+
+    The prefilter pass runs with plain developer semantics (no COMPAT
+    simulation, container checks overridden), which reduces to static schema
+    validation — runtime host compatibility is skipped entirely. An entry that
+    fails here is broken for every host rather than merely incompatible with
+    this one, so callers can distinguish the two.
+    """
+    if not isinstance(entry, dict):
+        return False
+    try:
+        compat_keys = get_effective_compat_keys()
+        filtered = _rs.prefilter_repo_entries(
+            json.dumps([entry]),
+            sorted(compat_keys),
+            True,
+            False,
+            False,
+            False,
+            True,
+        )
+    except Exception:
+        return False
+    return bool(filtered)
+
+
 def get_entries_for_category(scripts_dir, category_path, translations=None):
     category = os.path.basename(os.path.normpath(category_path))
 

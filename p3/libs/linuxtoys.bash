@@ -737,11 +737,23 @@ PY
     else
         # Physical script not found: resolve a compatible repository-list entry
         # through its normalized repo_app_id (e.g. PRISM_LAUNCHER).
+        # Command substitution (not mapfile over process substitution) so the
+        # resolver's exit status is actually captured: PIPESTATUS cannot see a
+        # process substitution, and the resolver reports a distinct status for
+        # "declared but not installable on this host".
         local -a repo_selection=()
-        mapfile -t repo_selection < <(
-            python3 "$SCRIPT_DIR/app/library_loader.py" --materialize-repo "$script_name"
-        )
-        local resolve_status=${PIPESTATUS[0]}
+        local repo_output
+        repo_output=$(python3 "$SCRIPT_DIR/app/library_loader.py" --materialize-repo "$script_name")
+        local resolve_status=$?
+        [[ -n "$repo_output" ]] && mapfile -t repo_selection <<< "$repo_output"
+
+        if [[ $resolve_status -eq 4 ]]; then
+            # The repository listing declares this app, but not for this host.
+            # Skip exactly like an incompatible physical script instead of
+            # reporting "not found" (or consulting the AppStream resolver).
+            echo "'$script_name' is not compatible with this host, skipping. This is not an error."
+            return 2
+        fi
 
         if [[ $resolve_status -eq 0 && ${#repo_selection[@]} -eq 3 ]]; then
             found_script="${repo_selection[0]}"
@@ -753,10 +765,10 @@ PY
             # Repository-list resolution failed. AppStream is the final resolver;
             # it accepts a stable component ID or an exact display/canonical name.
             local -a appstream_selection=()
-            mapfile -t appstream_selection < <(
-                python3 "$SCRIPT_DIR/app/library_loader.py" --materialize-appstream "$script_name"
-            )
-            local appstream_status=${PIPESTATUS[0]}
+            local appstream_output
+            appstream_output=$(python3 "$SCRIPT_DIR/app/library_loader.py" --materialize-appstream "$script_name")
+            local appstream_status=$?
+            [[ -n "$appstream_output" ]] && mapfile -t appstream_selection <<< "$appstream_output"
 
             if [[ $appstream_status -ne 0 || ${#appstream_selection[@]} -ne 4 ]]; then
                 # Flatpak-backed AppStream IDs cannot resolve while Flatpak or
@@ -772,10 +784,10 @@ PY
                    { ! command -v flatpak &>/dev/null ||
                      ! flatpak remote-list 2>/dev/null | grep -q flathub; }; then
                     call_script flathub || die "call_script: Failed to prepare Flathub support for '$script_name'"
-                    mapfile -t appstream_selection < <(
-                        python3 "$SCRIPT_DIR/app/library_loader.py" --materialize-appstream "$script_name"
-                    )
-                    appstream_status=${PIPESTATUS[0]}
+                    appstream_output=$(python3 "$SCRIPT_DIR/app/library_loader.py" --materialize-appstream "$script_name")
+                    appstream_status=$?
+                    appstream_selection=()
+                    [[ -n "$appstream_output" ]] && mapfile -t appstream_selection <<< "$appstream_output"
                 fi
             fi
 

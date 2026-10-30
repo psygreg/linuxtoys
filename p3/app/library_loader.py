@@ -573,11 +573,23 @@ def materialize_appstream_by_target(target, script_dir):
 
 
 def materialize_repo_by_app_id(app_id, script_dir):
-    """Resolve a compatible repository-list entry by repo_app_id.
+    """Resolve a repository-list entry by repo_app_id for nested call_script.
 
-    Resolution walks the resolution trees (active source first, bundled copy as
-    fallback) and accepts exactly one unambiguous match. A faulty tree is
+    Returns a ``(status, entry)`` pair:
+
+    - ``"found"`` — entry is the execution-ready materialized script info.
+    - ``"incompatible"`` — a listing declares this app, but not for this host
+      (entry is None). Reported separately from "absent" so call_script can
+      skip like it does for incompatible physical scripts instead of dying
+      with "not found".
+    - ``"absent"`` — no usable listing declares this app id (entry is None).
+
+    Resolution walks the resolution trees (active source first, bundled copy
+    as fallback) and accepts exactly one unambiguous match. A faulty tree is
     skipped so one broken source can never hide an otherwise resolvable app.
+    A tree that declares the app at all delivers an authoritative verdict for
+    this host: an entry excluded by compatibility reports "incompatible"
+    without consulting older bundled copies of the same listing.
     """
     import sys
 
@@ -585,11 +597,16 @@ def materialize_repo_by_app_id(app_id, script_dir):
     if script_dir not in sys.path:
         sys.path.insert(0, script_dir)
 
-    from app.repo_parser import load_repo_entries, materialize_repo_script
+    from app.repo_parser import (
+        find_repo_entry_declarations,
+        load_repo_entries,
+        materialize_repo_script,
+        repo_entry_statically_valid,
+    )
 
     target = str(app_id or "").strip().upper()
     if not re.fullmatch(r"[A-Z_][A-Z0-9_]*", target):
-        return None
+        return "absent", None
 
     for tree in _resolution_scripts_trees(script_dir):
         try:
@@ -598,10 +615,19 @@ def materialize_repo_by_app_id(app_id, script_dir):
             continue
         matches = [entry for entry in entries if entry.get("repo_app_id") == target]
         if len(matches) == 1:
-            return materialize_repo_script(matches[0])
+            return "found", materialize_repo_script(matches[0])
         if len(matches) > 1:
-            return None
-    return None
+            # Unreachable per tree (the resolved catalog deduplicates repo app
+            # ids); kept as a defensive refusal rather than an arbitrary pick.
+            return "absent", None
+        # No compatible entry in this tree. If its listings declare the app at
+        # all — and at least one declaration is schema-valid, so a broken
+        # listing is not mistaken for a host restriction — this host cannot
+        # install it: report the incompatibility rather than "not found".
+        declarations = find_repo_entry_declarations(tree, target)
+        if any(repo_entry_statically_valid(item) for item in declarations):
+            return "incompatible", None
+    return "absent", None
 
 
 if __name__ == "__main__":
@@ -620,8 +646,15 @@ if __name__ == "__main__":
         sys.exit(0)
 
     if len(sys.argv) >= 3 and sys.argv[1] == "--materialize-repo":
-        entry = materialize_repo_by_app_id(sys.argv[2], os.environ["SCRIPT_DIR"])
-        if not entry:
+        status, entry = materialize_repo_by_app_id(
+            sys.argv[2], os.environ["SCRIPT_DIR"]
+        )
+        if status == "incompatible":
+            # Distinct from "not found": the listing declares this repository
+            # app, but the current host cannot install it. The Bash caller
+            # reports the same skip it uses for incompatible physical scripts.
+            sys.exit(4)
+        if status != "found" or not entry:
             sys.exit(3)
         print(entry["path"])
         print(entry.get("name", sys.argv[2]))
