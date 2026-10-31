@@ -177,14 +177,14 @@ jobs:
           fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
-      - name: Generate release notes (commit subjects since the last tag)
+      - name: Generate release notes (non-merge subjects since the last tag)
         if: inputs.test != true && steps.version.outputs.proceed != 'false'
         run: |
           prev_tag="$(git describe --tags --abbrev=0 2>/dev/null || true)"
           if [ -n "$prev_tag" ]; then
-              git log --format=%s "$prev_tag..$GITHUB_SHA" > release-notes.txt
+              git log --no-merges --skip=1 --format='- %s' "$prev_tag..$GITHUB_SHA" > release-notes.txt
           else
-              git log --format=%s > release-notes.txt
+              git log --no-merges --skip=1 --format='- %s' > release-notes.txt
           fi
           if [ ! -s release-notes.txt ]; then
               echo "No commits since tag ${prev_tag:-origin}." > release-notes.txt
@@ -536,6 +536,6 @@ jobs:
           gh release create "$LT_VERSION" \
               --repo "$GITHUB_REPOSITORY" \
               --target "$GITHUB_SHA" \
-              --title "LinuxToys $LT_VERSION" \
+              --title "$LT_VERSION" \
               --notes-file notes/release-notes.txt \
               dist/*
