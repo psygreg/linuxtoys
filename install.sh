@@ -180,7 +180,14 @@ osappimage() {
 		printf "\e[0;36m[INFO]\e[m Removing existing LinuxToys AppImage...\n"
 		(
 			cd "${HOME}/AppImages" || exit 1
-			echo "y" | flatpak run it.mijorus.gearlever --remove "${_installed_appimage}"
+			# --yes skips Gear Lever's prompt (the piped "y" covers older CLI
+			# builds without it); filter its benign GLib sandbox warnings the
+			# same way packages.bash's _gearlever_filter_output does.
+			# Absolute path: Gear Lever's CLI matches the file argument by exact
+			# string equality against the integrated desktop entry's path, so a
+			# bare name never matches even with cwd inside ~/AppImages.
+			_output=$(echo "y" | flatpak run it.mijorus.gearlever --remove --yes "${HOME}/AppImages/${_installed_appimage}" 2>&1) || exit $?
+			printf '%s\n' "${_output}" | grep -vE '^\*\* \([^)]+\): |^Gtk-Message: ' || true
 		) || error "Failed to remove existing LinuxToys AppImage: ${_installed_appimage}"
 
 		if [ -e "${HOME}/AppImages/${_installed_appimage}" ] || [ -L "${HOME}/AppImages/${_installed_appimage}" ]; then
@@ -189,8 +196,8 @@ osappimage() {
 	fi
 
 	printf "\e[0;36m[INFO]\e[m Integrating LinuxToys with Gear Lever...\n"
-	_output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate "${_appimage_file}" 2>&1) || {
-		printf '%s\n' "${_output}"
+	_output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate --yes "${_appimage_file}" 2>&1) || {
+		printf '%s\n' "${_output}" | grep -vE '^\*\* \([^)]+\): |^Gtk-Message: ' || true
 		error "Failed to integrate LinuxToys AppImage with Gear Lever."
 	}
 

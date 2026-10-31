@@ -1790,6 +1790,19 @@ _pkg_appimage_gearlever_installed () {
     flatpak list --app --columns=application 2>/dev/null | grep -Fxq it.mijorus.gearlever
 }
 
+# Strip benign sandbox plumbing noise from Gear Lever CLI output before it
+# reaches the terminal viewer. Gear Lever runs as a Flatpak, and starting its
+# sandbox can emit GLib/xdg-dbus-proxy warnings such as "** (process:1234):
+# WARNING **: Error writing credentials to socket: Error sending message:
+# Broken pipe" (an optional socket peer like the secret service or the
+# accessibility bus being absent) plus "Gtk-Message:" module notes. None of it
+# is actionable and it looks alarming to users; Gear Lever's own lines
+# ("<path> was integrated successfully", "<path> was removed sucessfully",
+# errors) are kept verbatim.
+_gearlever_filter_output () {
+    grep -vE '^\*\* \([^)]+\): |^Gtk-Message: ' || true
+}
+
 # Install the Gear Lever Flatpak. Prefer the AppStream-driven call_script path
 # (it records the transaction), but verify the result and fall back to a direct
 # Flatpak install when the catalog cannot resolve the Flathub component (cold or
@@ -2070,7 +2083,7 @@ EOF
             _file_output=""
             _file_output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate --yes "$appimage_file" 2>&1) \
                 || _integrate_status=$?
-            output+="${_file_output}"$'\n'
+            output+="$(printf '%s\n' "$_file_output" | _gearlever_filter_output)"$'\n'
         done
         if [[ $_integrate_status -eq 0 ]]; then
             # Record every file whose identity is new or changed after these
@@ -2261,13 +2274,18 @@ pkg_appimage_rm () {
     # builds without it. Never propagate a per-file failure: verify the actual
     # result and fall back to LinuxToys' own removal so the operation
     # converges instead of failing identically on every retry.
-    local _gearlever_status=0
+    local _gearlever_status=0 _remove_output
     if is_systemd && [[ ${#_targets[@]} -gt 0 ]]; then
         (
             cd "$HOME/AppImages" || exit 1
             for appimage_file in "${_targets[@]}"; do
-                echo "y" | flatpak run it.mijorus.gearlever --remove --yes \
-                    "$HOME/AppImages/$appimage_file" || true
+                # Capture and filter per file: Gear Lever's sandbox prints
+                # benign GLib warnings on every start, and its raw prompt or
+                # confirmation lines would otherwise leak unfiltered into the
+                # terminal viewer.
+                _remove_output=$(echo "y" | flatpak run it.mijorus.gearlever --remove --yes \
+                    "$HOME/AppImages/$appimage_file" 2>&1) || true
+                printf '%s\n' "$_remove_output" | _gearlever_filter_output
             done
         ) || _gearlever_status=$?
 
