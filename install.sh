@@ -256,7 +256,9 @@ installer() {
 	_appimage=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.AppImage' | head -n1)
 	_appimage_name=$(basename "${_appimage}")
 
-	_rpm=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.rpm')
+	# The release also ships a .src.rpm, which is only meant for COPR builds
+	# and cannot be installed as a standard package; keep the binary one.
+	_rpm=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.rpm' | grep -v '\.src\.rpm' | head -n1)
 	_rpm_name=$(basename "${_rpm}")
 
 	_deb=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.deb')
