@@ -112,6 +112,21 @@ if [ "$UPD_SERVICE" = "1" ] && [ "$(id -u)" -ne 0 ]; then
 fi
 
 echo "$sysup_starting"
+
+# The native package-manager transactions below (rpm-ostree, dnf, apt, pacman,
+# pamac, zypper, eopkg) are the one part of a system update that must not be
+# interrupted: a Ctrl+C or a navigation away mid-transaction can leave the
+# manager's databases or the system itself in a broken state. Hold the runner
+# navigation lock for the whole distro branch so the terminal runner disables
+# input (including Ctrl+C) and the Back button until the transactions finish.
+# A run that dies inside the section is covered by the runner's on_child_exit,
+# which always clears the lock. Only user-driven runs may take it: background
+# service runs (UPD_SERVICE=1) have no terminal runner to honor the lock, and
+# runner_lock's lazy CachyOS mirror preflight can exit a run outright on a
+# failed ranking — an unattended update must never die mid-script from that.
+# Outside the runner (LINUXTOYS_RUNNER_STATE unset) the lock is a no-op, so
+# plain CLI launches are unaffected.
+[ "$UPD_SERVICE" != "1" ] && runner_lock "package-transaction" ""
 if is_steamos; then
     # SteamOS-style immutables manage their packages through the OS image, so
     # there is nothing to do here. Flatpaks, Homebrew and git apps still update.
@@ -138,6 +153,13 @@ elif is_debian || is_ubuntu; then
     { [ "$UPD_SERVICE" = "1" ] && apt-get upgrade -y --allow-downgrades -o Acquire::http::Dl-Limit=2048 -o Acquire::https::Dl-Limit=2048; } || sudo_ apt-get upgrade -y --allow-downgrades || fatal "Failed to upgrade packages"
     if is_ubuntu && [[ "$ID" == "ubuntu" ]] && release_upgrade; then
         if offer_release_upgrade; then
+            # do-release-upgrade runs through sudo_, whose env_reset strips
+            # DISPLAY, so it falls back to its interactive text frontend and
+            # needs terminal input. Release the navigation lock for it: the
+            # upgrade was explicitly chosen through the dialog above, and a
+            # locked terminal could never answer its prompts. The unlock after
+            # the distro branch tolerates the already-released depth.
+            [ "$UPD_SERVICE" != "1" ] && runner_unlock
             sudo_ do-release-upgrade || fatal "Failed to start Ubuntu release upgrade"
         fi
     fi
@@ -145,7 +167,11 @@ elif { is_arch || is_cachy; } && ! is_manjaro; then
     pacman_lock_guard
     orphaned_packages=$(pacman -Qdtq 2>/dev/null || true)
     if [[ -n "$orphaned_packages" ]]; then
-        sudo_ pacman -Rns $orphaned_packages || fatal "Failed to remove orphaned packages"
+        # Orphan removal runs under the runner lock, where terminal input is
+        # disabled: auto-confirm like every other branch's removal (dnf/apt
+        # autoremove, zypper rm, pamac --no-confirm), otherwise the run sits
+        # forever on pacman's ":: Do you want to remove these packages?".
+        sudo_ pacman -Rns --noconfirm $orphaned_packages || fatal "Failed to remove orphaned packages"
     fi
     if [ "$ID" = "omarchy" ]; then
         omarchy-update -y
@@ -169,6 +195,11 @@ elif is_solus; then
     { [ "$UPD_SERVICE" = "1" ] && eopkg rmo -y; } || sudo_ eopkg rmo -y || fatal "Failed to remove orphaned packages"
     { [ "$UPD_SERVICE" = "1" ] && eopkg up -y; } || sudo_ eopkg up -y || fatal "Failed to upgrade packages"
 fi
+# Release the navigation lock before the interruptible remainder: Flatpak,
+# Snap, Homebrew and app updates are atomic or re-runnable. runner_unlock at
+# depth zero is a no-op, so this also covers the Ubuntu release-upgrade path
+# that already released the lock inside the branch above.
+[ "$UPD_SERVICE" != "1" ] && runner_unlock
 
 if command -v flatpak >/dev/null 2>&1; then
     if [ "$UPD_SERVICE" = "1" ]; then
