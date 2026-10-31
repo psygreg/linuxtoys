@@ -224,6 +224,7 @@ jobs:
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          GPG_OWNERTRUST: ${{ secrets.GPG_OWNERTRUST }}
         run: |
           mkdir -p ~/.gnupg
           chmod 700 ~/.gnupg
@@ -231,6 +232,24 @@ jobs:
           printf 'allow-loopback-pinentry\nallow-preset-passphrase\n' > ~/.gnupg/gpg-agent.conf
           gpgconf --kill gpg-agent || true
           printf '%s' "$GPG_PRIVATE_KEY" | gpg --batch --import
+          # Imported secret keys arrive with unknown ownertrust: the signature
+          # is cryptographically fine, but gpgme then yields a summary of
+          # zero ("SignatureVerifyError: 0" in dput's signature assertion) -
+          # gpg itself only calls it "[unknown]". A real ownertrust file
+          # (base64 of the same file the keys were minted with) restores the
+          # proper verdict so dput's strict gate reports
+          # "Valid signature from <fpr>" before the upload.
+          if [ -n "$GPG_OWNERTRUST" ]; then
+              echo "$GPG_OWNERTRUST" | base64 -d > "$HOME/.gnupg/ownertrust.tmp"
+              if [ -s "$HOME/.gnupg/ownertrust.tmp" ]; then
+                  gpg --batch --import-ownertrust < "$HOME/.gnupg/ownertrust.tmp"
+              else
+                  echo "::warning::GPG_OWNERTRUST present but not valid base64 - ownertrust not imported."
+              fi
+              rm -f "$HOME/.gnupg/ownertrust.tmp"
+          else
+              echo "::notice::GPG_OWNERTRUST not set - dput's local signature assert may log 'SignatureVerifyError: 0' (a benign gpgme verdict artifact on freshly imported keys). It does not block the upload; Launchpad remains the authoritative signature check."
+          fi
           if [ -n "$GPG_PASSPHRASE" ]; then
               hex="$(printf '%s' "$GPG_PASSPHRASE" | od -An -tx1 | tr -d ' \n')"
               while IFS= read -r keygrip; do
@@ -457,6 +476,7 @@ jobs:
         run: |
           set -e
           cd dist
+          ls -la
           sha256sum * > ../sha256sums.txt
           mv ../sha256sums.txt .
 
