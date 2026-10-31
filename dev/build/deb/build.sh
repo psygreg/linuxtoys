@@ -62,6 +62,42 @@ mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig"/.cargo
     cd "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig"
     cargo vendor --locked --manifest-path "$ROOT_DIR/Cargo.toml" vendor > .cargo/config.toml
 )
+
+# Prune the vendored crates' Cargo.toml.orig backups and their matching
+# entries from .cargo-checksum.json. dpkg and debhelper treat *.orig files in
+# the source tree as patch leftovers and can strip them from the build tree
+# while the orig tarball keeps them, which leaves cargo's vendored-source
+# checksums referencing files that no longer exist and aborts the local
+# binary build. Dropping both sides keeps the vendored source reproducibly
+# checksum-verified, removes nothing the crates need to compile, and slims
+# the Debian source upload.
+python3 - "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig" <<'PYVEND'
+import json, os, sys
+
+vendor = os.path.join(sys.argv[1], "vendor")
+if not os.path.isdir(vendor):
+    raise SystemExit("vendor directory missing after cargo vendor")
+for entry in sorted(os.listdir(vendor)):
+    crate = os.path.join(vendor, entry)
+    jpath = os.path.join(crate, ".cargo-checksum.json")
+    if not os.path.isfile(jpath):
+        continue
+    with open(jpath) as fh:
+        data = json.load(fh)
+    files = data.get("files", {})
+    pruned = False
+    for name in list(files):
+        if name.endswith(".orig"):
+            path = os.path.join(crate, name)
+            if os.path.exists(path):
+                os.remove(path)
+            del files[name]
+            pruned = True
+    if pruned:
+        with open(jpath, "w") as fh:
+            json.dump(data, fh, separators=(",", ":"), sort_keys=True)
+print("Vendored Cargo.toml.orig backups pruned from", vendor)
+PYVEND
 # Clean up Python cache files from the entire staged source tree
 find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig" -type d -name "__pycache__" -prune -exec rm -rf {} +
 find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig" -type f \( -name "*.pyc" -o -name "*.pyo" \) -delete
