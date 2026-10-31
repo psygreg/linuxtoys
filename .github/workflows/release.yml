@@ -37,10 +37,11 @@
 #     with an existing git tag are both rejected early.
 #   * Test runs (inputs.test) rebuild the last tag against the current
 #     source: the version must already exist as a git tag, no GitHub release
-#     is created and the PPA upload is always exercised - Launchpad is
-#     expected to reject it (duplicate version for the re-used release, or
-#     missing signature without the GPG secret) and the rejection does not
-#     fail the job. Artifacts stay uploaded to the run page for inspection.
+#     is created, and the PPA upload is probed only against versions
+#     Launchpad already holds (a duplicate re-upload gets rejected
+#     asynchronously; a probe on an unknown version would be published live
+#     and is skipped instead). Artifacts stay uploaded to the run page for
+#     inspection.
 
 name: Release
 
@@ -176,6 +177,7 @@ jobs:
     timeout-minutes: 60
     env:
       LT_VERSION: ${{ needs.prepare.outputs.version }}
+      LINUXTOYS_TEST_MODE: ${{ needs.prepare.outputs.test_mode }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -248,12 +250,14 @@ jobs:
           set -e
           mkdir -p .release-assets
           cp .out/deb/linuxtoys_"$LT_VERSION"-1_amd64.deb .release-assets/
+          ls -la .release-assets
+          echo "RELEASE_ASSETS_DIR=$(cd .release-assets && pwd)" >> "$GITHUB_ENV"
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-assets-deb
-          path: .release-assets
+          path: ${{ env.RELEASE_ASSETS_DIR }}
           if-no-files-found: error
 
   rpm:
@@ -293,12 +297,14 @@ jobs:
           mkdir -p .release-assets
           cp .out/rpm/RPMS/x86_64/linuxtoys-*.rpm .release-assets/
           cp .out/rpm/SRPMS/linuxtoys-*.src.rpm .release-assets/
+          ls -la .release-assets
+          echo "RELEASE_ASSETS_DIR=$(cd .release-assets && pwd)" >> "$GITHUB_ENV"
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-assets-rpm
-          path: .release-assets
+          path: ${{ env.RELEASE_ASSETS_DIR }}
           if-no-files-found: error
 
   arch-pkg:
@@ -348,12 +354,14 @@ jobs:
           cp .out/pkg/linuxtoys-"$LT_VERSION".tar.xz .release-assets/
           cp .out/pkg/PKGBUILD .release-assets/
           cp .out/pkg/linuxtoys-"$LT_VERSION"-1-x86_64.pkg.tar.zst .release-assets/
+          ls -la .release-assets
+          echo "RELEASE_ASSETS_DIR=$(cd .release-assets && pwd)" >> "$GITHUB_ENV"
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-assets-arch
-          path: .release-assets
+          path: ${{ env.RELEASE_ASSETS_DIR }}
           if-no-files-found: error
 
   appimage:
@@ -405,12 +413,14 @@ jobs:
           set -e
           mkdir -p .release-assets
           cp .out/appimage/LinuxToys-"$LT_VERSION"-x86_64.AppImage .release-assets/
+          ls -la .release-assets
+          echo "RELEASE_ASSETS_DIR=$(cd .release-assets && pwd)" >> "$GITHUB_ENV"
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-assets-appimage
-          path: .release-assets
+          path: ${{ env.RELEASE_ASSETS_DIR }}
           if-no-files-found: error
 
   release:

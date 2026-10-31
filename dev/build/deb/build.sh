@@ -258,10 +258,10 @@ usr/share/metainfo/toys.linux.LinuxToys.metainfo.xml /usr/share/metainfo/
 usr/share/icons/hicolor/scalable/apps/linuxtoys.svg /usr/share/icons/hicolor/scalable/apps/
 EOF
 
-# Test-mode PPA upload: Launchpad rejecting the re-used release version (or
-# the unsigned source when no signing key is configured) is the expected
-# outcome of the PPA integration probe, so the dput path is exercised with
-# the job kept green - the transfer log is dumped and annotated instead.
+# Test-mode PPA upload: the dput probe only proves the client-side transfer
+# into the Launchpad incoming queue; Launchpad validates duplicate versions
+# and signatures asynchronously (and answers by email), so the job stays
+# green either way and the transfer log is dumped with a clear annotation.
 ppa_test_upload () {
     local log rc
     log="$OUTPUT_PATH/dput-test-output.log"
@@ -269,36 +269,81 @@ ppa_test_upload () {
     dput ppa:psygreg/linuxtoys "../linuxtoys_$LT_VERSION-1_source.changes" >"$log" 2>&1
     rc=$?
     cat "$log"
-    if [ "$rc" -eq 0 ] && ! grep -qi 'reject\|denied\|unauthor\|unsigned\|duplicate\|refused' "$log"; then
-        echo "::warning::PPA appears to have ACCEPTED the test upload (test uploads are expected to be rejected)."
-    else
-        echo "::warning::PPA rejected the dput upload - the expected outcome of the PPA integration test."
-    fi
+    echo "::notice::Test-mode dput probe finished (rc=$rc). Launchpad only reports duplicate-version or signature rejections asynchronously through the PPA queue - check the queue/email for the authoritative outcome; 'Successfully uploaded' here is not a Launchpad acceptance."
     return 0
 }
+
+ppa_check_state () {
+    # Queries the public Launchpad API for linuxtoys <version> in the
+    # psygreg/linuxtoys PPA and prints "absent", a source status
+    # (Published/Superseded/...) or "error" when the API is unreachable.
+    python3 - "$1" <<'LPPY'
+import json, sys, urllib.request, urllib.parse
+version = sys.argv[1]
+url = "https://api.launchpad.net/1.0/~psygreg/+archive/ubuntu/linuxtoys" + "?" + urllib.parse.urlencode({
+    "ws.op": "getPublishedSources",
+    "exact_match": "true",
+    "source_name": "linuxtoys",
+    "version": version,
+})
+try:
+    with urllib.request.urlopen(url, timeout=30) as resp:
+        data = json.load(resp)
+except Exception:
+    print("error")
+    raise SystemExit(0)
+if int(data.get("total_size", 0)) < 1:
+    print("absent")
+else:
+    print((data.get("entries") or [{}])[0].get("status", "unknown"))
+LPPY
+}
+
+# Launchpad-side duplicate guard. dput "Successfully uploaded packages" only
+# means the transfer landed in the Launchpad incoming queue; duplicate
+# sources and signature problems are checked asynchronously afterwards, so a
+# failed upload would go unnoticed from here. Query the API instead:
+#  * test runs probe versions that are ALREADY on the PPA (their re-upload
+#    gets rejected asynchronously, harmless); an unknown version would be
+#    queued and PUBLISHED live, which a test must never do.
+#  * release runs refuse to proceed at all when the version already exists
+#    on the PPA (the upload would be rejected and wasted).
+ppa_state="$(ppa_check_state "$LT_VERSION-1")"
+if [ "$ppa_state" != "error" ]; then
+    if [ "${LINUXTOYS_TEST_MODE:-0}" = "1" ] && [ "$ppa_state" = "absent" ]; then
+        echo "::warning::Test run: linuxtoys $LT_VERSION-1 is not on the PPA yet. Skipping the dput probe - uploading a version Launchpad does not know would be queued and PUBLISHED to the PPA."
+        export LINUXTOYS_PPA_UPLOAD_SKIP=1
+    elif [ "${LINUXTOYS_TEST_MODE:-0}" != "1" ] && [ "$ppa_state" != "absent" ]; then
+        echo "::error::Launchpad PPA already contains linuxtoys $LT_VERSION-1 (status: $ppa_state). Duplicate sources are rejected by Launchpad; bump the version before releasing." >&2
+        exit 1
+    fi
+else
+    _msg warning "Could not query the Launchpad API - the duplicate-version guard is disabled for this run."
+fi
 
 # build and upload for PPA first - doesn't work if done after building the package
 (
     cd "$OUTPUT_PATH/linuxtoys-$LT_VERSION" || exit 1
-    if [ "${LINUXTOYS_SKIP_PPA_UPLOAD:-0}" != "1" ]; then
+    if [ -n "${LINUXTOYS_PPA_UPLOAD_SKIP:-}" ]; then
+        debuild -S -sa -us -uc
+        sleep 1
+    elif [ "${LINUXTOYS_TEST_MODE:-0}" = "1" ]; then
+        if [ "${LINUXTOYS_SKIP_PPA_UPLOAD:-0}" = "1" ]; then
+            debuild -S -sa -us -uc
+            sleep 1
+            ppa_test_upload
+            sleep 1
+        else
+            debuild -S -sa -kpsygreg@icloud.com
+            sleep 1
+            ppa_test_upload
+            sleep 1
+        fi
+    else
         debuild -S -sa -kpsygreg@icloud.com
         sleep 1
-        if [ "${LINUXTOYS_TEST_MODE:-0}" = "1" ]; then
-            ppa_test_upload
-        else
-            dput ppa:psygreg/linuxtoys "../linuxtoys_$LT_VERSION-1_source.changes"
-        fi
+        dput ppa:psygreg/linuxtoys "../linuxtoys_$LT_VERSION-1_source.changes"
         sleep 1
-    else
-        debuild -S -sa -us -uc
-        if [ "${LINUXTOYS_TEST_MODE:-0}" = "1" ]; then
-            # No signing key: probe Launchpad with the unsigned source so the
-            # dput path is still exercised; the rejection is expected and must
-            # not fail the build.
-            sleep 1
-            ppa_test_upload
-            sleep 1
-        fi
     fi
     # build package
     debuild -us -uc # this builder script requires devscripts!!
