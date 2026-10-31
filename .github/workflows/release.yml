@@ -1,0 +1,456 @@
+# Release pipeline for LinuxToys.
+#
+# Replicates the packaged release run of ./build-rust.sh release on GitHub
+# runners, producing every release artifact the local flow produced:
+#
+#   prepare    - resolves the release version, generates the release notes
+#                (commit subjects since the last tag, one per line) and
+#                vendors the TUI dependencies into p3/vendor (vendored into
+#                every package).
+#   deb-ppa    - dev/build/deb/build.sh      -> linuxtoys_<v>-1_amd64.deb,
+#                plus a signed source upload to the Launchpad PPA through
+#                dput (skipped when the required secrets are absent).
+#   rpm        - dev/build/copr/build.sh     -> .rpm and .src.rpm (the
+#                .src.rpm is fed into COPR by hand, as before).
+#   arch-pkg   - dev/build/pkg/build.sh      -> linuxtoys-<v>.tar.xz (AUR
+#                release source), an updated PKGBUILD with the tarball hash,
+#                and linuxtoys-<v>-1-x86_64.pkg.tar.zst. AUR push stays manual.
+#   appimage   - dev/build/appimage/build.sh -> LinuxToys-<v>-x86_64.AppImage.
+#   release    - creates the git tag (plain version, e.g. "7.9"), a GitHub
+#                release with the notes file and a sha256sums.txt asset.
+#
+# Notes and divergences from the local flow:
+#   * The worker containers stand in for the distrobox containers: Fedora and
+#     Arch jobs run inside their official container images, the DEB job runs
+#     on ubuntu-24.04 (noble, matching the debian/changelog target).
+#   * Before every packaging job, the Rust bits are built and deployed into
+#     p3/app exactly like the "develop" pass that ./build-rust.sh release
+#     performs before staging (sharun and distro builds rely on the shared
+#     target/ directories, so this is not wasted work).
+#   * GITHUB_REPOSITORY is emptied for the AppImage build: quick-sharun would
+#     otherwise embed a gh-releases-zsync update hint that local builds never
+#     embed (LinuxToys ships its own updater). Remove that env override to
+#     turn the embedded update information on.
+#   * Solus stays out of this pipeline, same as ./build-rust.sh release.
+#   * The PPA can only receive a given "<version>-1" source once; re-running
+#     the workflow for an already-uploaded version and re-using a version
+#     with an existing git tag are both rejected early.
+#   * Test runs (inputs.test) rebuild the last tag against the current
+#     source: the version must already exist as a git tag, no GitHub release
+#     is created and the PPA upload is always exercised - Launchpad is
+#     expected to reject it (duplicate version for the re-used release, or
+#     missing signature without the GPG secret) and the rejection does not
+#     fail the job. Artifacts stay uploaded to the run page for inspection.
+
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (falls back to src/ver when empty; must be an existing tag in test mode)'
+        required: false
+        default: ''
+      upload_ppa:
+        description: 'Upload the signed source package to the Launchpad PPA'
+        type: boolean
+        required: false
+        default: true
+      test:
+        description: 'Test run: rebuild the last tag, no GitHub release (PPA is expected to reject the upload)'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  # pip on Ubuntu/Fedora refuses --target installs when it finds the PEP 668
+  # EXTERNALLY-MANAGED marker. This env acts like --break-system-packages and
+  # keeps dev/build/vendor_deps.sh usable in those environments; it is a
+  # no-op for interpreters without the marker (Arch, venvs).
+  PIP_BREAK_SYSTEM_PACKAGES: "1"
+
+jobs:
+  prepare:
+    name: Version, release notes and vendored TUI deps
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      test_mode: ${{ steps.version.outputs.test_mode }}
+    steps:
+      - name: Check out repository (full history for the release notes)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve and validate the release version
+        id: version
+        env:
+          VERSION_INPUT: ${{ inputs.version }}
+          TEST_MODE: ${{ inputs.test }}
+        run: |
+          version="$VERSION_INPUT"
+          if [ "$TEST_MODE" == "true" ]; then
+              echo "test_mode=true" >> "$GITHUB_OUTPUT"
+              # A test run re-feeds an already released version against the
+              # current source: default to the last tag on the checkout.
+              if [ -z "$version" ]; then
+                  version="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+              fi
+              if [ -z "$version" ]; then
+                  echo "::error::No tags exist in this repository - test mode needs at least one release tag to re-feed." >&2
+                  exit 1
+              fi
+          else
+              echo "test_mode=false" >> "$GITHUB_OUTPUT"
+              if [ -z "$version" ]; then
+                  version="$(tr -d ' \t\r\n' < src/ver)"
+              fi
+          fi
+          # RPM does not accept dashes, keep the whole pipeline consistent.
+          if ! [[ "$version" =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
+              echo "::error::Version '$version' is not valid; use plain dotted numbers (e.g. 7.9)." >&2
+              exit 1
+          fi
+          if [ "$TEST_MODE" == "true" ]; then
+              if ! git rev-parse -q --verify "refs/tags/$version" >/dev/null 2>&1; then
+                  echo "::error::Test mode rebuilds an existing release - '$version' has no git tag. This guard also keeps a test from uploading a never-released version to the PPA." >&2
+                  exit 1
+              fi
+              echo "::notice::Test run: rebuilding '$version' against the current source. No GitHub release is created and the PPA upload is expected to be rejected by Launchpad."
+          else
+              if git rev-parse -q --verify "refs/tags/$version" >/dev/null 2>&1; then
+                  echo "::error::A git tag for '$version' already exists. Bump the version and try again." >&2
+                  exit 1
+              fi
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Generate release notes (commit subjects since the last tag)
+        if: inputs.test != true
+        run: |
+          prev_tag="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+          if [ -n "$prev_tag" ]; then
+              git log --format=%s "$prev_tag..$GITHUB_SHA" > release-notes.txt
+          else
+              git log --format=%s > release-notes.txt
+          fi
+          if [ ! -s release-notes.txt ]; then
+              echo "No commits since tag ${prev_tag:-origin}." > release-notes.txt
+          fi
+
+      - name: Vendor the TUI dependencies for packaging
+        run: |
+          if ! python3 -m pip --version >/dev/null 2>&1; then
+              sudo apt-get update -qq
+              sudo apt-get install -y -qq python3-pip
+          fi
+          bash dev/build/vendor_deps.sh
+
+      - name: Upload vendored TUI dependencies
+        uses: actions/upload-artifact@v4
+        with:
+          name: tui-vendor
+          path: p3/vendor
+          if-no-files-found: error
+
+      - name: Upload release notes
+        if: inputs.test != true
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes
+          path: release-notes.txt
+          if-no-files-found: error
+
+  deb-ppa:
+    name: DEB (ubuntu-24.04 / noble) and Launchpad PPA upload
+    runs-on: ubuntu-24.04
+    needs: prepare
+    timeout-minutes: 60
+    env:
+      LT_VERSION: ${{ needs.prepare.outputs.version }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download vendored TUI dependencies
+        uses: actions/download-artifact@v4
+        with:
+          name: tui-vendor
+          path: p3/vendor
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq \
+              build-essential debhelper dpkg-dev devscripts dput lintian gnupg \
+              cargo rustc python3-dev python3-maturin \
+              pkgconf libgtk-3-dev patchelf
+
+      # The source upload runs whenever the private GPG key is configured;
+      # no Launchpad-side credential is needed: classic dput uploads to the
+      # PPA anonymously and Launchpad verifies identity through the .changes
+      # OpenPGP signature. Test runs always exercise the upload: signed with
+      # the key (Launchpad rejects the re-used release version - the intended
+      # probe outcome), unsigned without it (rejected for the missing
+      # signature instead).
+      - name: Arm or skip the PPA upload
+        env:
+          TEST_MODE: ${{ inputs.test }}
+          UPLOAD_PPA: ${{ inputs.upload_ppa }}
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          if [[ "$TEST_MODE" == "true" ]]; then
+              if [[ -z "$GPG_PRIVATE_KEY" ]]; then
+                  echo "LINUXTOYS_SKIP_PPA_UPLOAD=1" >> "$GITHUB_ENV"
+                  echo "::warning::Test run without GPG_PRIVATE_KEY: dput will be attempted with an unsigned source and Launchpad is expected to reject it."
+              fi
+          elif [[ "$UPLOAD_PPA" != "true" || -z "$GPG_PRIVATE_KEY" ]]; then
+              echo "LINUXTOYS_SKIP_PPA_UPLOAD=1" >> "$GITHUB_ENV"
+              echo "::warning::PPA upload disabled - the toggle is off or GPG_PRIVATE_KEY is missing."
+          fi
+
+      - name: Import the GPG signing key
+        if: env.LINUXTOYS_SKIP_PPA_UPLOAD != '1'
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        run: |
+          mkdir -p ~/.gnupg
+          chmod 700 ~/.gnupg
+          printf 'pinentry-mode loopback\n' >> ~/.gnupg/gpg.conf
+          printf 'allow-loopback-pinentry\nallow-preset-passphrase\n' > ~/.gnupg/gpg-agent.conf
+          gpgconf --kill gpg-agent || true
+          printf '%s' "$GPG_PRIVATE_KEY" | gpg --batch --import
+          if [ -n "$GPG_PASSPHRASE" ]; then
+              hex="$(printf '%s' "$GPG_PASSPHRASE" | od -An -tx1 | tr -d ' \n')"
+              while IFS= read -r keygrip; do
+                  [ -n "$keygrip" ] || continue
+                  printf 'PRESET_PASSPHRASE %s 0 %s\n' "$keygrip" "$hex" \
+                      | gpg-connect-agent --quiet 2>/dev/null || true
+              done < <(gpg --list-secret-keys --with-colons --with-keygrip \
+                        | awk -F: '$1 == "grp" { print $10 }')
+          fi
+          gpg --list-secret-keys
+
+      - name: Build the .deb and upload the source package to the PPA
+        run: bash dev/build/deb/build.sh "$LT_VERSION" "$PWD/.out/deb"
+
+      - name: Collect release artifacts
+        run: |
+          set -e
+          mkdir -p .release-assets
+          cp .out/deb/linuxtoys_"$LT_VERSION"-1_amd64.deb .release-assets/
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-assets-deb
+          path: .release-assets
+          if-no-files-found: error
+
+  rpm:
+    name: RPM and src.rpm (Fedora container)
+    runs-on: ubuntu-24.04
+    needs: prepare
+    timeout-minutes: 60
+    env:
+      LT_VERSION: ${{ needs.prepare.outputs.version }}
+    container:
+      image: fedora:latest
+    steps:
+      # git must exist before the checkout step can run.
+      - name: Install build dependencies
+        run: |
+          dnf -y install git rpm-build gcc cargo rust python3-devel python3-pip xz \
+              maturin gtk3-devel pkgconf-pkg-config patchelf desktop-file-utils
+
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download vendored TUI dependencies
+        uses: actions/download-artifact@v4
+        with:
+          name: tui-vendor
+          path: p3/vendor
+
+      - name: Deploy the Rust bits into p3/app (same as ./build-rust.sh develop)
+        run: ./build-rust.sh develop
+
+      - name: Build the RPM and the .src.rpm bundle
+        run: bash dev/build/copr/build.sh "$LT_VERSION" "$PWD/.out/rpm"
+
+      - name: Collect release artifacts
+        run: |
+          set -e
+          mkdir -p .release-assets
+          cp .out/rpm/RPMS/x86_64/linuxtoys-*.rpm .release-assets/
+          cp .out/rpm/SRPMS/linuxtoys-*.src.rpm .release-assets/
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-assets-rpm
+          path: .release-assets
+          if-no-files-found: error
+
+  arch-pkg:
+    name: Arch tarball, PKGBUILD and package
+    runs-on: ubuntu-24.04
+    needs: prepare
+    timeout-minutes: 60
+    env:
+      LT_VERSION: ${{ needs.prepare.outputs.version }}
+    container:
+      image: archlinux:base-devel
+    steps:
+      # git must exist before the checkout step can run. fakeroot is required
+      # by makepkg, which refuses to run as root, so the build runs as a
+      # dedicated unprivileged user.
+      - name: Install build dependencies
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm --needed \
+              git rust cargo maturin python python-pip \
+              pkgconf patchelf gtk3 fakeroot
+
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download vendored TUI dependencies
+        uses: actions/download-artifact@v4
+        with:
+          name: tui-vendor
+          path: p3/vendor
+
+      - name: Hand the workspace over to the unprivileged builder
+        run: |
+          useradd -m -s /bin/bash builder
+          chown -R builder:builder "$GITHUB_WORKSPACE"
+
+      - name: Deploy the Rust bits into p3/app (same as ./build-rust.sh develop)
+        run: su builder -c "cd \"$GITHUB_WORKSPACE\" && ./build-rust.sh develop"
+
+      - name: Build the package (tarball, PKGBUILD, .pkg.tar.zst)
+        run: su builder -c "cd \"$GITHUB_WORKSPACE\" && bash dev/build/pkg/build.sh \"$LT_VERSION\" \"$GITHUB_WORKSPACE/.out/pkg\""
+
+      - name: Collect release artifacts
+        run: |
+          set -e
+          mkdir -p .release-assets
+          cp .out/pkg/linuxtoys-"$LT_VERSION".tar.xz .release-assets/
+          cp .out/pkg/PKGBUILD .release-assets/
+          cp .out/pkg/linuxtoys-"$LT_VERSION"-1-x86_64.pkg.tar.zst .release-assets/
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-assets-arch
+          path: .release-assets
+          if-no-files-found: error
+
+  appimage:
+    name: AppImage (Arch container)
+    runs-on: ubuntu-24.04
+    needs: prepare
+    timeout-minutes: 80
+    env:
+      LT_VERSION: ${{ needs.prepare.outputs.version }}
+    container:
+      image: archlinux:base-devel
+    steps:
+      # git must exist before the checkout step can run. xorg-server-xvfb
+      # provides xvfb-run, which quick-sharun needs to trace the dlopened
+      # libraries of GUI binaries; appstream supplies libappstream.so.5 and
+      # its GObject typelib, webp-pixbuf-loader is passed explicitly to
+      # quick-sharun, and zenity/util-linux are bundled into the AppDir.
+      - name: Install build dependencies
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm --needed \
+              git curl wget rust cargo maturin python python-pip \
+              pkgconf patchelf gtk3 appstream gobject-introspection \
+              zenity util-linux webp-pixbuf-loader xorg-server-xvfb \
+              adwaita-icon-theme
+
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Download vendored TUI dependencies
+        uses: actions/download-artifact@v4
+        with:
+          name: tui-vendor
+          path: p3/vendor
+
+      - name: Deploy the Rust bits into p3/app (same as ./build-rust.sh develop)
+        run: ./build-rust.sh develop
+
+      - name: Build the AppImage
+        # GITHUB_REPOSITORY is intentionally emptied for this step: set, it
+        # makes quick-sharun guess and embed an update hint that local builds
+        # never embed (LinuxToys ships its own background updater).
+        env:
+          GITHUB_REPOSITORY: ""
+        run: bash dev/build/appimage/build.sh "$LT_VERSION" "$PWD/.out/appimage"
+
+      - name: Collect release artifacts
+        run: |
+          set -e
+          mkdir -p .release-assets
+          cp .out/appimage/LinuxToys-"$LT_VERSION"-x86_64.AppImage .release-assets/
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-assets-appimage
+          path: .release-assets
+          if-no-files-found: error
+
+  release:
+    name: Create the GitHub release
+    runs-on: ubuntu-24.04
+    needs: [prepare, deb-ppa, rpm, arch-pkg, appimage]
+    if: needs.prepare.outputs.test_mode != 'true'
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    env:
+      LT_VERSION: ${{ needs.prepare.outputs.version }}
+    steps:
+      - name: Gather the built artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: release-assets-*
+          merge-multiple: true
+          path: dist
+
+      - name: Download the release notes
+        uses: actions/download-artifact@v4
+        with:
+          name: release-notes
+          path: notes
+
+      - name: Build the checksum file
+        run: |
+          set -e
+          cd dist
+          sha256sum * > ../sha256sums.txt
+          mv ../sha256sums.txt .
+
+      - name: Create the release with the tag
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$LT_VERSION" \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$GITHUB_SHA" \
+              --title "LinuxToys $LT_VERSION" \
+              --notes-file notes/release-notes.txt \
+              dist/*

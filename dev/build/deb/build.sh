@@ -258,13 +258,48 @@ usr/share/metainfo/toys.linux.LinuxToys.metainfo.xml /usr/share/metainfo/
 usr/share/icons/hicolor/scalable/apps/linuxtoys.svg /usr/share/icons/hicolor/scalable/apps/
 EOF
 
+# Test-mode PPA upload: Launchpad rejecting the re-used release version (or
+# the unsigned source when no signing key is configured) is the expected
+# outcome of the PPA integration probe, so the dput path is exercised with
+# the job kept green - the transfer log is dumped and annotated instead.
+ppa_test_upload () {
+    local log rc
+    log="$OUTPUT_PATH/dput-test-output.log"
+    echo "---- dput transfer log (test output) ----"
+    dput ppa:psygreg/linuxtoys "../linuxtoys_$LT_VERSION-1_source.changes" >"$log" 2>&1
+    rc=$?
+    cat "$log"
+    if [ "$rc" -eq 0 ] && ! grep -qi 'reject\|denied\|unauthor\|unsigned\|duplicate\|refused' "$log"; then
+        echo "::warning::PPA appears to have ACCEPTED the test upload (test uploads are expected to be rejected)."
+    else
+        echo "::warning::PPA rejected the dput upload - the expected outcome of the PPA integration test."
+    fi
+    return 0
+}
+
 # build and upload for PPA first - doesn't work if done after building the package
 (
     cd "$OUTPUT_PATH/linuxtoys-$LT_VERSION" || exit 1
-    debuild -S -sa -kpsygreg@icloud.com
-    sleep 1
-    dput ppa:psygreg/linuxtoys "../linuxtoys_$LT_VERSION-1_source.changes"
-    sleep 1
+    if [ "${LINUXTOYS_SKIP_PPA_UPLOAD:-0}" != "1" ]; then
+        debuild -S -sa -kpsygreg@icloud.com
+        sleep 1
+        if [ "${LINUXTOYS_TEST_MODE:-0}" = "1" ]; then
+            ppa_test_upload
+        else
+            dput ppa:psygreg/linuxtoys "../linuxtoys_$LT_VERSION-1_source.changes"
+        fi
+        sleep 1
+    else
+        debuild -S -sa -us -uc
+        if [ "${LINUXTOYS_TEST_MODE:-0}" = "1" ]; then
+            # No signing key: probe Launchpad with the unsigned source so the
+            # dput path is still exercised; the rejection is expected and must
+            # not fail the build.
+            sleep 1
+            ppa_test_upload
+            sleep 1
+        fi
+    fi
     # build package
     debuild -us -uc # this builder script requires devscripts!!
 )
