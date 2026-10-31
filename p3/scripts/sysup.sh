@@ -172,13 +172,31 @@ fi
 
 if command -v flatpak >/dev/null 2>&1; then
     if [ "$UPD_SERVICE" = "1" ]; then
-        flatpak uninstall --system --unused --delete-data -y || warn "Failed to remove orphaned system Flatpaks"
+        # Root context (background service). No --delete-data here or in the
+        # sudo_ call below: --unused only removes runtimes, which own no
+        # ~/.var/app data and no permission-store entries, so there is nothing
+        # for it to delete; worse, --delete-data makes flatpak connect to the
+        # session bus to reset portal permissions (org.freedesktop.impl.portal
+        # .PermissionStore) and no session bus exists in this branch — the
+        # uninstall would exit 1 right after the transaction completed.
+        flatpak uninstall --system --unused -y || warn "Failed to remove orphaned system Flatpaks"
         flatpak_update_installation --system ""
     else
         flatpak uninstall --user --unused --delete-data -y || warn "Failed to remove orphaned user Flatpaks"
         flatpak_update_installation --user ""
 
-        sudo_ flatpak uninstall --system --unused --delete-data -y || warn "Failed to remove orphaned system Flatpaks"
+        # Elevated flatpak must not use --delete-data either: sudo_ forwards
+        # the desktop session's DBUS_SESSION_BUS_ADDRESS, and --delete-data
+        # makes flatpak connect to the user's portal permission store over
+        # that bus as root. The user's message bus only accepts connections
+        # from that user, so it resets the root client's connection and
+        # flatpak exits 1 with "error: Error receiving data: Connection reset
+        # by peer" AFTER the uninstall transaction already completed — a
+        # successful cleanup misreported as a failure. --delete-data would
+        # also target root's $HOME here, not the invoking user's. The --user
+        # pass above keeps it: it runs inside the user's session, where both
+        # the data and the permission store are reachable.
+        sudo_ flatpak uninstall --system --unused -y || warn "Failed to remove orphaned system Flatpaks"
         flatpak_update_installation --system sudo
     fi
 fi
