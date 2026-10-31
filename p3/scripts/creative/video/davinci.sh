@@ -108,17 +108,32 @@ check_disk_space () {
 		root_path="/var"
 	fi
 
-	home_available_kb=$(df --output=avail -k "$HOME" | tail -n 1 | tr -d ' ')
-	root_available_kb=$(df --output=avail -k "$root_path" | tail -n 1 | tr -d ' ')
+	# --output=avail keeps the unit and the column layout stable regardless
+	# of DF_BLOCK_SIZE or POSIXLY_CORRECT, unlike parsing plain df.
+	local home_available_kb root_available_kb
+	home_available_kb=$(df --output=avail -k "$HOME" 2>/dev/null | tail -n 1 | tr -d ' ')
+	root_available_kb=$(df --output=avail -k "$root_path" 2>/dev/null | tail -n 1 | tr -d ' ')
+
+	# An unmeasurable filesystem must not pass the check silently: the tests
+	# below error out on an empty value and are then treated as false. Warn
+	# and skip only that path; later writes still fail loudly on their own.
+	if ! [[ "$home_available_kb" =~ ^[0-9]+$ ]]; then
+		warn "Could not determine available storage space on $HOME; skipping that check."
+		home_available_kb=""
+	fi
+	if ! [[ "$root_available_kb" =~ ^[0-9]+$ ]]; then
+		warn "Could not determine available storage space on $root_path; skipping that check."
+		root_available_kb=""
+	fi
 
 	# check home directory
-	if [ "$home_available_kb" -lt "$required_space_kb" ]; then
-		fatal "$outofspace\n$HOME -- $required_space_gb GB"
+	if [ -n "$home_available_kb" ] && [ "$home_available_kb" -lt "$required_space_kb" ]; then
+		fatal "$outofspace\n$HOME -- $required_space_gb GB (found $home_available_kb KB free)"
 	fi
 
 	# check root filesystem
-	if [ "$root_available_kb" -lt "$required_space_kb" ]; then
-		fatal "$outofspace\n$root_path 'root' -- $required_space_gb GB"
+	if [ -n "$root_available_kb" ] && [ "$root_available_kb" -lt "$required_space_kb" ]; then
+		fatal "$outofspace\n$root_path 'root' -- $required_space_gb GB (found $root_available_kb KB free)"
 	fi
 }
 
