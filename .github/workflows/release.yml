@@ -42,6 +42,11 @@
 #     asynchronously; a probe on an unknown version would be published live
 #     and is skipped instead). Artifacts stay uploaded to the run page for
 #     inspection.
+#   * Push trigger: a push to master that touches src/ver IS the release
+#     signal - the pipeline runs in full release mode against the committed
+#     version string with both the PPA upload and the GitHub release armed.
+#     If the pushed version is already tagged the run no-ops gracefully
+#     (green, packaging jobs skipped) instead of failing.
 
 name: Release
 
@@ -62,6 +67,16 @@ on:
         type: boolean
         required: false
         default: false
+  # Bumping src/ver on the release branch IS the release signal: a push that
+  # touches it runs the full pipeline against the committed version string
+  # with the PPA upload and the GitHub release armed (dispatch inputs do not
+  # exist for push events). A src/ver push that re-lands an already-tagged
+  # version no-ops gracefully instead of failing the run.
+  push:
+    branches:
+      - master
+    paths:
+      - src/ver
 
 permissions:
   contents: read
@@ -85,6 +100,8 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
       test_mode: ${{ steps.version.outputs.test_mode }}
+      upload_ppa: ${{ steps.version.outputs.upload_ppa }}
+      proceed: ${{ steps.version.outputs.proceed }}
     steps:
       - name: Check out repository (full history for the release notes)
         uses: actions/checkout@v4
@@ -96,23 +113,39 @@ jobs:
         env:
           VERSION_INPUT: ${{ inputs.version }}
           TEST_MODE: ${{ inputs.test }}
+          UPLOAD_PPA_INPUT: ${{ inputs.upload_ppa }}
+          EVENT_NAME: ${{ github.event_name }}
         run: |
-          version="$VERSION_INPUT"
-          if [ "$TEST_MODE" == "true" ]; then
-              echo "test_mode=true" >> "$GITHUB_OUTPUT"
-              # A test run re-feeds an already released version against the
-              # current source: default to the last tag on the checkout.
-              if [ -z "$version" ]; then
-                  version="$(git describe --tags --abbrev=0 2>/dev/null || true)"
-              fi
-              if [ -z "$version" ]; then
-                  echo "::error::No tags exist in this repository - test mode needs at least one release tag to re-feed." >&2
-                  exit 1
-              fi
-          else
+          # Push trigger (src/ver bumped on the branch): full release mode
+          # against the committed version string. Dispatch: explicit toggles,
+          # with empty API omissions defaulting to enabled.
+          if [ "$EVENT_NAME" = "push" ]; then
               echo "test_mode=false" >> "$GITHUB_OUTPUT"
-              if [ -z "$version" ]; then
-                  version="$(tr -d ' \t\r\n' < src/ver)"
+              echo "upload_ppa=true" >> "$GITHUB_OUTPUT"
+              version="$(tr -d ' \t\r\n' < src/ver)"
+          else
+              version="$VERSION_INPUT"
+              if [ "$TEST_MODE" == "true" ]; then
+                  echo "test_mode=true" >> "$GITHUB_OUTPUT"
+                  # A test run re-feeds an already released version against the
+                  # current source: default to the last tag on the checkout.
+                  if [ -z "$version" ]; then
+                      version="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+                  fi
+                  if [ -z "$version" ]; then
+                      echo "::error::No tags exist in this repository - test mode needs at least one release tag to re-feed." >&2
+                      exit 1
+                  fi
+                  echo "upload_ppa=true" >> "$GITHUB_OUTPUT"
+              else
+                  echo "test_mode=false" >> "$GITHUB_OUTPUT"
+                  if [ -z "$version" ]; then
+                      version="$(tr -d ' \t\r\n' < src/ver)"
+                  fi
+                  if [ -z "$UPLOAD_PPA_INPUT" ]; then
+                      UPLOAD_PPA_INPUT=true
+                  fi
+                  echo "upload_ppa=$UPLOAD_PPA_INPUT" >> "$GITHUB_OUTPUT"
               fi
           fi
           # RPM does not accept dashes, keep the whole pipeline consistent.
@@ -126,16 +159,26 @@ jobs:
                   exit 1
               fi
               echo "::notice::Test run: rebuilding '$version' against the current source. No GitHub release is created and the PPA upload is expected to be rejected by Launchpad."
+              echo "proceed=true" >> "$GITHUB_OUTPUT"
+          elif [ "$EVENT_NAME" = "push" ]; then
+              if git rev-parse -q --verify "refs/tags/$version" >/dev/null 2>&1; then
+                  echo "::notice::Pushed src/ver holds '$version', which is already released - nothing to do, skipping the run."
+                  echo "proceed=false" >> "$GITHUB_OUTPUT"
+                  exit 0
+              fi
+              echo "::notice::src/ver bump detected: releasing '$version' with the PPA upload and a GitHub release."
+              echo "proceed=true" >> "$GITHUB_OUTPUT"
           else
               if git rev-parse -q --verify "refs/tags/$version" >/dev/null 2>&1; then
                   echo "::error::A git tag for '$version' already exists. Bump the version and try again." >&2
                   exit 1
               fi
+              echo "proceed=true" >> "$GITHUB_OUTPUT"
           fi
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
       - name: Generate release notes (commit subjects since the last tag)
-        if: inputs.test != true
+        if: inputs.test != true && steps.version.outputs.proceed != 'false'
         run: |
           prev_tag="$(git describe --tags --abbrev=0 2>/dev/null || true)"
           if [ -n "$prev_tag" ]; then
@@ -148,6 +191,7 @@ jobs:
           fi
 
       - name: Vendor the TUI dependencies for packaging
+        if: steps.version.outputs.proceed != 'false'
         run: |
           if ! python3 -m pip --version >/dev/null 2>&1; then
               sudo apt-get update -qq
@@ -156,6 +200,7 @@ jobs:
           bash dev/build/vendor_deps.sh
 
       - name: Upload vendored TUI dependencies
+        if: steps.version.outputs.proceed != 'false'
         uses: actions/upload-artifact@v4
         with:
           name: tui-vendor
@@ -163,7 +208,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload release notes
-        if: inputs.test != true
+        if: inputs.test != true && steps.version.outputs.proceed != 'false'
         uses: actions/upload-artifact@v4
         with:
           name: release-notes
@@ -174,6 +219,7 @@ jobs:
     name: DEB (ubuntu-24.04 / noble) and Launchpad PPA upload
     runs-on: ubuntu-24.04
     needs: prepare
+    if: needs.prepare.outputs.proceed == 'true'
     timeout-minutes: 60
     env:
       LT_VERSION: ${{ needs.prepare.outputs.version }}
@@ -205,8 +251,8 @@ jobs:
       # signature instead).
       - name: Arm or skip the PPA upload
         env:
-          TEST_MODE: ${{ inputs.test }}
-          UPLOAD_PPA: ${{ inputs.upload_ppa }}
+          TEST_MODE: ${{ needs.prepare.outputs.test_mode }}
+          UPLOAD_PPA: ${{ needs.prepare.outputs.upload_ppa }}
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
         run: |
           if [[ "$TEST_MODE" == "true" ]]; then
@@ -286,6 +332,7 @@ jobs:
     name: RPM and src.rpm (Fedora container)
     runs-on: ubuntu-24.04
     needs: prepare
+    if: needs.prepare.outputs.proceed == 'true'
     timeout-minutes: 60
     env:
       LT_VERSION: ${{ needs.prepare.outputs.version }}
@@ -334,6 +381,7 @@ jobs:
     name: Arch tarball, PKGBUILD and package
     runs-on: ubuntu-24.04
     needs: prepare
+    if: needs.prepare.outputs.proceed == 'true'
     timeout-minutes: 60
     env:
       LT_VERSION: ${{ needs.prepare.outputs.version }}
@@ -392,6 +440,7 @@ jobs:
     name: AppImage (Arch container)
     runs-on: ubuntu-24.04
     needs: prepare
+    if: needs.prepare.outputs.proceed == 'true'
     timeout-minutes: 80
     env:
       LT_VERSION: ${{ needs.prepare.outputs.version }}
@@ -452,7 +501,7 @@ jobs:
     name: Create the GitHub release
     runs-on: ubuntu-24.04
     needs: [prepare, deb-ppa, rpm, arch-pkg, appimage]
-    if: needs.prepare.outputs.test_mode != 'true'
+    if: needs.prepare.outputs.proceed == 'true' && needs.prepare.outputs.test_mode != 'true'
     timeout-minutes: 15
     permissions:
       contents: write
