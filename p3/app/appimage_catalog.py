@@ -989,11 +989,22 @@ def resolve_download(info):
         raise ValueError("No installable AppImage release found — " + " | ".join(failures))
     raise ValueError("No supported direct AppImage download or GitHub/Codeberg release link")
 
-def _download_appimage(url, dest_path):
-    """Download one AppImage to dest_path and validate it as an ELF AppImage."""
+def _download_appimage(url, dest_path, progress=None):
+    """Download one AppImage to dest_path and validate it as an ELF AppImage.
+
+    ``progress`` is an optional ``progress(done, total)`` callback invoked after
+    every chunk, where ``done`` is the byte count so far and ``total`` is the
+    advertised Content-Length (or ``None`` when the server sends none). The
+    AppImage download otherwise produces no output at all, which makes a
+    multi-minute GUI install look like nothing is happening.
+    """
     req = Request(url, headers={"User-Agent": "LinuxToys AppImage Installer"})
     try:
         with urlopen(req, timeout=40) as response, dest_path.open("wb") as target:
+            try:
+                total_length = int(response.headers.get("Content-Length") or "")
+            except ValueError:
+                total_length = None
             total = 0
             while True:
                 chunk = response.read(1024 * 1024)
@@ -1003,6 +1014,11 @@ def _download_appimage(url, dest_path):
                 if total > MAX_APPIMAGE_BYTES:
                     raise ValueError("AppImage download exceeds 4 GiB")
                 target.write(chunk)
+                if progress is not None:
+                    try:
+                        progress(total, total_length)
+                    except Exception:
+                        progress = None
     except ValueError:
         raise
     except Exception as exc:
@@ -1015,12 +1031,19 @@ def _download_appimage(url, dest_path):
         raise ValueError("Downloaded asset is not an ELF AppImage")
 
 @contextlib.contextmanager
-def download_for_install(info):
+def download_for_install(info, progress=None):
     url, repository, version = resolve_download(info)
+    if progress is not None:
+        # Resolution can involve several API round-trips before the first
+        # byte arrives; let the caller say something before the silence.
+        try:
+            progress(0, None)
+        except Exception:
+            progress = None
     with tempfile.TemporaryDirectory(prefix="linuxtoys-appimage-") as directory:
         safe_name = re.sub(r"[^A-Za-z0-9._-]+", "-", str(info.get("name") or "AppImage")).strip(".-")[:80]
         path = Path(directory) / f"{safe_name or 'AppImage'}.AppImage"
-        _download_appimage(url, path)
+        _download_appimage(url, path, progress)
         yield str(path), {
             "repository": repository,
             "version": version,

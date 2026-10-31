@@ -1381,11 +1381,44 @@ class AppStreamRunner:
         """
         name = str(script_info.get("name") or "AppImage")
         transcript = self._transcript_header(script_info)
+        # The download runs Python-side before the hidden PTY script, so
+        # without this the job's log (and the terminal viewer that reads it)
+        # stays completely silent for the whole download: it looks like the
+        # AppImage was never fetched at all. Stream progress into the
+        # transcript as it happens, throttled to one line every few seconds.
+        download_state = {"last_time": 0.0, "announced": False}
+
+        def _report_download(done, total):
+            now = time.monotonic()
+            if not download_state["announced"]:
+                download_state["announced"] = True
+                download_state["last_time"] = now
+                self._append_transcript(
+                    name, transcript + "Downloading the AppImage release…\n"
+                )
+                return
+            if now - download_state["last_time"] < 3.0 and total and done < total:
+                return
+            download_state["last_time"] = now
+            if total:
+                self._append_transcript(
+                    name,
+                    f"Downloaded {done / 1048576:.1f} of {total / 1048576:.1f} MiB\n",
+                )
+            else:
+                self._append_transcript(name, f"Downloaded {done / 1048576:.1f} MiB\n")
+
         try:
-            with appimage_catalog.download_for_install(script_info) as (path, release):
+            with appimage_catalog.download_for_install(
+                script_info, progress=_report_download
+            ) as (path, release):
+                try:
+                    size_label = f" ({os.path.getsize(path) / 1048576:.1f} MiB)"
+                except OSError:
+                    size_label = ""
                 transcript += (
                     f"Resolved AppImage release {release.get('version') or '(untagged)'}\n"
-                    f"Downloaded {release.get('download_url') or path}\n"
+                    f"Downloaded {release.get('download_url') or path}{size_label}\n"
                 )
                 exit_code = self._run_local_package_job({
                     **dict(script_info),

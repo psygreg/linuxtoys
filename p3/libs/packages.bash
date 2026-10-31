@@ -2040,7 +2040,6 @@ EOF
             info "$gearlevermsg"
             _pkg_appimage_install_gearlever
         fi
-        local output
         # Snapshot ~/AppImages before integration so the exact new file can be
         # identified after. Record each file's identity (inode, mtime, size)
         # alongside its name, not just the name: Gear Lever names integrated
@@ -2053,32 +2052,55 @@ EOF
         local _pre_list
         _pre_list=$(mktemp) || return 1
         find "$HOME/AppImages" -maxdepth 1 -type f -printf '%f\t%i\t%T@\t%s\n' 2>/dev/null | sort > "$_pre_list"
-        # --yes skips Gear Lever's interactive questions: a piped "y" cannot
-        # answer a second Keep-both/Replace prompt (name conflict with a still
-        # integrated version), and that EOF crash used to fail the whole
-        # integration. With --yes the conflict resolves by Gear Lever's default
-        # keep-both rule and the snapshot diff below records the concrete file.
-        if output=$(echo "y" | flatpak run it.mijorus.gearlever --yes --integrate "$@" 2>&1); then
-            # Record the one file whose identity is new or changed after this
-            # call (added name, or a same-name overwrite). Observing the actual
+        # Gear Lever's CLI dispatch (Cli.from_options) only recognizes an
+        # option passed as the FIRST argument: `--yes --integrate FILE`
+        # leaves argv[1]="--yes", matches no CLI option, and launches the GTK
+        # GUI instead — a silent no-op behind a success-looking exit status.
+        # The invoked option must come first, with --yes (supported since
+        # Gear Lever 4.x CLI, including Flathub 4.6.2) after it to skip the
+        # interactive prompts. --integrate also accepts exactly ONE file per
+        # invocation, so loop over the inputs. Keep the piped "y" as a belt
+        # for older CLI builds without --yes: an unknown dash-flag is simply
+        # ignored while scanning for the file argument, and a prompt crash
+        # turns into a nonzero exit that reaches the fallback below instead
+        # of dropping the file.
+        local appimage_name appimage_file _file_output _integrate_status=0
+        local output=""
+        for appimage_file in "$@"; do
+            _file_output=""
+            _file_output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate --yes "$appimage_file" 2>&1) \
+                || _integrate_status=$?
+            output+="${_file_output}"$'\n'
+        done
+        if [[ $_integrate_status -eq 0 ]]; then
+            # Record every file whose identity is new or changed after these
+            # calls (added name, or a same-name overwrite). Observing the actual
             # result beats guessing the name Gear Lever chose.
-            local appimage_name=""
-            appimage_name=$(
+            local -a _integrated_names=()
+            mapfile -t _integrated_names < <(
                 comm -13 "$_pre_list" \
                     <(find "$HOME/AppImages" -maxdepth 1 -type f -printf '%f\t%i\t%T@\t%s\n' 2>/dev/null | sort) |
-                    head -n1 |
                     cut -f1
             )
             rm -f "$_pre_list"
-            if [[ -n "$appimage_name" ]]; then
-                _append_transmap "appimage $appimage_name"
-            else
-                warn "Could not determine integrated AppImage filename."
+            if [[ ${#_integrated_names[@]} -gt 0 ]]; then
+                # Surface Gear Lever's own confirmation lines (e.g. "<path>
+                # was integrated successfully") in the terminal viewer.
+                [[ -n "${output//[[:space:]]/}" ]] && echo "$output"
+                for appimage_name in "${_integrated_names[@]}"; do
+                    _append_transmap "appimage $appimage_name"
+                done
+                _pkg_appimage_release_record
+                return 0
             fi
-            _pkg_appimage_release_record
-            return 0
+            # Exit status alone cannot prove integration: Gear Lever's CLI
+            # fails open (unknown flags, refused input, prompt EOF) and can
+            # exit 0 without having touched ~/AppImages at all. Fall through
+            # to LinuxToys' own integration instead of recording a phantom
+            # install.
+        else
+            rm -f "$_pre_list"
         fi
-        rm -f "$_pre_list"
 
         echo "$output"
         warn "Gear Lever integration failed. Falling back to LinuxToys AppImage integration."
@@ -2218,28 +2240,35 @@ pkg_appimage_rm () {
         _names+=("$appimage_file")
     done
 
-    # Scrub launch artifacts for every target, present or already gone. The
-    # generated uninstall script runs under `set -eo pipefail`, so every
-    # statement here must be failure-tolerant: any unguarded probe or tool
-    # failure would abort the script before its registry cleanup step and
-    # resurrect exactly the stale-"Remover" loop this removal path exists to
-    # converge. Keep guards on *every* fallible line below.
-    for appimage_file in "${_names[@]}"; do
-        _pkg_appimage_cleanup_artifacts "$appimage_file" || true
-    done
-
+    # Use Gear Lever for removal on systemd systems, BEFORE scrubbing launch
+    # artifacts: Gear Lever's CLI identifies an integrated AppImage by scanning
+    # ~/.local/share/applications (list_installed matches the file argument
+    # against the desktop entry's TryExec path). _pkg_appimage_cleanup_artifacts
+    # deletes that very entry, so running it first unregisters the app under
+    # Gear Lever's feet and makes every --remove fail with
+    # "Error: AppImage not integrated" — the direct-rm fallback then fired on
+    # every single removal. Let Gear Lever trash the AppImage and its own
+    # desktop file/icons first; the artifact scrub below only needs to catch
+    # whatever is left.
+    # CLI constraints (verified against upstream Cli.py and Flathub 4.6.2,
+    # end-to-end on a live install): the invoked option must be the FIRST
+    # argument (`-y --remove` launches the GUI instead of removing);
+    # --remove accepts exactly ONE file per invocation, so loop over the
+    # targets; and the file must be passed as an ABSOLUTE path — the CLI
+    # matches it by exact string equality (a.file_path == g_file.get_path()),
+    # and a relative name never matches even when the file is integrated.
+    # --yes skips the interactive prompt; the piped "y" covers older CLI
+    # builds without it. Never propagate a per-file failure: verify the actual
+    # result and fall back to LinuxToys' own removal so the operation
+    # converges instead of failing identically on every retry.
     local _gearlever_status=0
     if is_systemd && [[ ${#_targets[@]} -gt 0 ]]; then
-        # Use Gear Lever for removal on systemd systems. Its CLI is strict: a
-        # file it does not currently integrate (Gear Lever reinstall/config
-        # reset, fallback-integrated or re-downloaded file) fails with
-        # "Error: AppImage not integrated" and keeps the file on disk. Never
-        # propagate that failure: verify the actual result and fall back to
-        # LinuxToys' own removal so the operation converges instead of
-        # failing identically on every retry.
         (
             cd "$HOME/AppImages" || exit 1
-            echo "y" | flatpak run it.mijorus.gearlever -y --remove "${_targets[@]}"
+            for appimage_file in "${_targets[@]}"; do
+                echo "y" | flatpak run it.mijorus.gearlever --remove --yes \
+                    "$HOME/AppImages/$appimage_file" || true
+            done
         ) || _gearlever_status=$?
 
         local _still_present=0
@@ -2273,6 +2302,18 @@ pkg_appimage_rm () {
             fi
         done
     fi
+
+    # Scrub launch artifacts for every target, present or already gone — AFTER
+    # the removal paths above, so Gear Lever can still see its own desktop
+    # entries while removing. The generated uninstall script runs under
+    # `set -eo pipefail`, so every statement here must be failure-tolerant:
+    # any unguarded probe or tool failure would abort the script before its
+    # registry cleanup step and resurrect exactly the stale-"Remover" loop
+    # this removal path exists to converge. Keep guards on *every* fallible
+    # line below.
+    for appimage_file in "${_names[@]}"; do
+        _pkg_appimage_cleanup_artifacts "$appimage_file" || true
+    done
 
     # Record the removal so the transaction stays descriptive, even when the
     # target had already disappeared upstream.
