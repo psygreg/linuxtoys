@@ -248,16 +248,19 @@ jobs:
       - name: Collect release artifacts
         run: |
           set -e
-          mkdir -p .release-assets
-          cp .out/deb/linuxtoys_"$LT_VERSION"-1_amd64.deb .release-assets/
-          ls -la .release-assets
-          echo "RELEASE_ASSETS_DIR=$(cd .release-assets && pwd)" >> "$GITHUB_ENV"
+          mkdir -p release-assets
+          cp .out/deb/linuxtoys_"$LT_VERSION"-1_amd64.deb release-assets/
+          ls -la release-assets
+          echo "RELEASE_ASSETS_DIR=$(cd release-assets && pwd)" >> "$GITHUB_ENV"
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-assets-deb
           path: ${{ env.RELEASE_ASSETS_DIR }}
+          # include-hidden-files guards against hidden-file filtering at the
+          # uploader, so the directory can stay dot-prefixed in the future.
+          include-hidden-files: true
           if-no-files-found: error
 
   rpm:
@@ -294,17 +297,18 @@ jobs:
       - name: Collect release artifacts
         run: |
           set -e
-          mkdir -p .release-assets
-          cp .out/rpm/RPMS/x86_64/linuxtoys-*.rpm .release-assets/
-          cp .out/rpm/SRPMS/linuxtoys-*.src.rpm .release-assets/
-          ls -la .release-assets
-          echo "RELEASE_ASSETS_DIR=$(cd .release-assets && pwd)" >> "$GITHUB_ENV"
+          mkdir -p release-assets
+          cp .out/rpm/RPMS/x86_64/linuxtoys-*.rpm release-assets/
+          cp .out/rpm/SRPMS/linuxtoys-*.src.rpm release-assets/
+          ls -la release-assets
+          echo "RELEASE_ASSETS_DIR=$(cd release-assets && pwd)" >> "$GITHUB_ENV"
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-assets-rpm
           path: ${{ env.RELEASE_ASSETS_DIR }}
+          include-hidden-files: true
           if-no-files-found: error
 
   arch-pkg:
@@ -350,18 +354,19 @@ jobs:
       - name: Collect release artifacts
         run: |
           set -e
-          mkdir -p .release-assets
-          cp .out/pkg/linuxtoys-"$LT_VERSION".tar.xz .release-assets/
-          cp .out/pkg/PKGBUILD .release-assets/
-          cp .out/pkg/linuxtoys-"$LT_VERSION"-1-x86_64.pkg.tar.zst .release-assets/
-          ls -la .release-assets
-          echo "RELEASE_ASSETS_DIR=$(cd .release-assets && pwd)" >> "$GITHUB_ENV"
+          mkdir -p release-assets
+          cp .out/pkg/linuxtoys-"$LT_VERSION".tar.xz release-assets/
+          cp .out/pkg/PKGBUILD release-assets/
+          cp .out/pkg/linuxtoys-"$LT_VERSION"-1-x86_64.pkg.tar.zst release-assets/
+          ls -la release-assets
+          echo "RELEASE_ASSETS_DIR=$(cd release-assets && pwd)" >> "$GITHUB_ENV"
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-assets-arch
           path: ${{ env.RELEASE_ASSETS_DIR }}
+          include-hidden-files: true
           if-no-files-found: error
 
   appimage:
@@ -411,16 +416,17 @@ jobs:
       - name: Collect release artifacts
         run: |
           set -e
-          mkdir -p .release-assets
-          cp .out/appimage/LinuxToys-"$LT_VERSION"-x86_64.AppImage .release-assets/
-          ls -la .release-assets
-          echo "RELEASE_ASSETS_DIR=$(cd .release-assets && pwd)" >> "$GITHUB_ENV"
+          mkdir -p release-assets
+          cp .out/appimage/LinuxToys-"$LT_VERSION"-x86_64.AppImage release-assets/
+          ls -la release-assets
+          echo "RELEASE_ASSETS_DIR=$(cd release-assets && pwd)" >> "$GITHUB_ENV"
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
           name: release-assets-appimage
           path: ${{ env.RELEASE_ASSETS_DIR }}
+          include-hidden-files: true
           if-no-files-found: error
 
   release:

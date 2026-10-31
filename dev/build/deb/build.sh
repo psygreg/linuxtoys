@@ -17,6 +17,14 @@ fi
 LT_VERSION="$1"
 OUTPUT_PATH="$2"
 
+# LINUXTOYS_TEST_MODE arrives as 1/0 from local runs and as true/false from
+# the release workflow; normalize it so every comparison in this script is
+# exact regardless of the caller.
+case "${LINUXTOYS_TEST_MODE:-0}" in
+    1|true|yes) PPA_TEST_MODE=1 ;;
+    *)          PPA_TEST_MODE=0 ;;
+esac
+
 _msg info "Building LinuxToys version $LT_VERSION for Debian/Ubuntu..."
 _msg info "Output path: $OUTPUT_PATH"
 
@@ -310,10 +318,10 @@ LPPY
 #    on the PPA (the upload would be rejected and wasted).
 ppa_state="$(ppa_check_state "$LT_VERSION-1")"
 if [ "$ppa_state" != "error" ]; then
-    if [ "${LINUXTOYS_TEST_MODE:-0}" = "1" ] && [ "$ppa_state" = "absent" ]; then
+    if [ "$PPA_TEST_MODE" = "1" ] && [ "$ppa_state" = "absent" ]; then
         echo "::warning::Test run: linuxtoys $LT_VERSION-1 is not on the PPA yet. Skipping the dput probe - uploading a version Launchpad does not know would be queued and PUBLISHED to the PPA."
         export LINUXTOYS_PPA_UPLOAD_SKIP=1
-    elif [ "${LINUXTOYS_TEST_MODE:-0}" != "1" ] && [ "$ppa_state" != "absent" ]; then
+    elif [ "$PPA_TEST_MODE" != "1" ] && [ "$ppa_state" != "absent" ]; then
         echo "::error::Launchpad PPA already contains linuxtoys $LT_VERSION-1 (status: $ppa_state). Duplicate sources are rejected by Launchpad; bump the version before releasing." >&2
         exit 1
     fi
@@ -327,7 +335,7 @@ fi
     if [ -n "${LINUXTOYS_PPA_UPLOAD_SKIP:-}" ]; then
         debuild -S -sa -us -uc
         sleep 1
-    elif [ "${LINUXTOYS_TEST_MODE:-0}" = "1" ]; then
+    elif [ "$PPA_TEST_MODE" = "1" ]; then
         if [ "${LINUXTOYS_SKIP_PPA_UPLOAD:-0}" = "1" ]; then
             debuild -S -sa -us -uc
             sleep 1
