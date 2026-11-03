@@ -103,10 +103,31 @@ brew_update() {
     "$brew_bin" upgrade -y || warn "Failed to upgrade Homebrew formulae"
 }
 
+# Update global Bun packages (bun install -g) for the invoking user. They live in
+# the user's own Bun prefix, so this never runs as root: a root service run would
+# update /root instead. Services start with a minimal PATH, so bun is also looked
+# up where pkg_bun and Homebrew install it. Best-effort, like brew_update.
+bun_update() {
+    [ "$(id -u)" -ne 0 ] || return 0
+    local bun_bin="" candidate
+    for candidate in "$(type -P bun)" "${BUN_INSTALL:+$BUN_INSTALL/bin/bun}" "$HOME/.bun/bin/bun" \
+        /home/linuxbrew/.linuxbrew/bin/bun "$HOME/.linuxbrew/bin/bun"; do
+        if [[ -n "$candidate" && -x "$candidate" ]]; then
+            bun_bin=$candidate
+            break
+        fi
+    done
+    [[ -n "$bun_bin" ]] || return 0
+    # bun exits 1 when no global packages were ever installed; that is not a failure.
+    [[ -f "${BUN_INSTALL:-$HOME/.bun}/install/global/package.json" ]] || return 0
+    "$bun_bin" update -g || warn "Failed to upgrade global Bun packages"
+}
+
 if [ "$UPD_SERVICE" = "1" ] && [ "$(id -u)" -ne 0 ]; then
     flatpak uninstall --user --unused --delete-data -y || warn "Failed to remove orphaned user Flatpaks"
     flatpak_update_installation --user ""
     brew_update
+    bun_update
     echo "$sysup_completed"
     exit 0
 fi
@@ -237,6 +258,9 @@ fi
 
 # Update Homebrew formulae on any system where Homebrew is installed.
 brew_update
+
+# Update global Bun packages on any system where Bun is installed.
+bun_update
 
 # Update applications installed directly from GitHub/Codeberg releases through
 # repository-list pkg_fromrelease transactions. A changed stable tag is enough;
