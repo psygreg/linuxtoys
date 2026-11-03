@@ -3,7 +3,7 @@ import os
 import random
 import threading
 
-from .gtk_common import Gdk, GLib
+from .gtk_common import Gdk, GLib, Gtk
 from . import parser, popularity, category_affinity, installed_packages, _catalog_rs
 from .revert_helper import _get_executed_script_names
 
@@ -1199,6 +1199,9 @@ class FeaturedCtl:
             getattr(self, "_featured_large_positions", set())
         )
         self._clear_random_scripts()
+        # Every previous card is destroyed here; a selection pointing at one
+        # would otherwise survive as a dangling (never-focusable) reference.
+        self._clear_featured_selection()
         existing_children = []
         same_geometry = False
 
@@ -1249,18 +1252,7 @@ class FeaturedCtl:
                 featured_large=large,
                 featured_height=large_height if large else 0,
             )
-            widget._featured_grid_large = large
-            description = script_info.get("description", "")
-            widget.set_tooltip_text(description or None)
-            widget.set_can_focus(True)
-            widget.connect("key-press-event", self._on_featured_card_key_press)
-            widget.add_events(
-                Gdk.EventMask.ENTER_NOTIFY_MASK
-                | Gdk.EventMask.LEAVE_NOTIFY_MASK
-            )
-            widget.connect("enter-notify-event", self._on_featured_card_enter)
-            widget.connect("leave-notify-event", self._on_featured_card_leave)
-            return widget
+            return self._bind_featured_card(widget, script_info, large=large)
 
         reusable_normals = {}
         if same_geometry:
@@ -1293,16 +1285,7 @@ class FeaturedCtl:
                 widget = prepare_widget(script_info, large=True)
                 self.random_scripts_flowbox.attach(widget, column, row, 1, 2)
             else:
-                widget._featured_grid_large = True
-                widget.set_tooltip_text(script_info.get("description", "") or None)
-                widget.set_can_focus(True)
-                widget.connect("key-press-event", self._on_featured_card_key_press)
-                widget.add_events(
-                    Gdk.EventMask.ENTER_NOTIFY_MASK
-                    | Gdk.EventMask.LEAVE_NOTIFY_MASK
-                )
-                widget.connect("enter-notify-event", self._on_featured_card_enter)
-                widget.connect("leave-notify-event", self._on_featured_card_leave)
+                self._bind_featured_card(widget, script_info, large=True)
 
         new_normals = []
         for script_info, position in normal_entries:
@@ -1325,16 +1308,7 @@ class FeaturedCtl:
                     native_widgets.append(widget)
             else:
                 for widget, (script_info, _position) in zip(native_widgets, new_normals):
-                    widget._featured_grid_large = False
-                    widget.set_tooltip_text(script_info.get("description", "") or None)
-                    widget.set_can_focus(True)
-                    widget.connect("key-press-event", self._on_featured_card_key_press)
-                    widget.add_events(
-                        Gdk.EventMask.ENTER_NOTIFY_MASK
-                        | Gdk.EventMask.LEAVE_NOTIFY_MASK
-                    )
-                    widget.connect("enter-notify-event", self._on_featured_card_enter)
-                    widget.connect("leave-notify-event", self._on_featured_card_leave)
+                    self._bind_featured_card(widget, script_info, large=False)
 
         # Defensive cleanup if selection/capacity ever leaves an old normal card
         # without a corresponding new item.
@@ -1622,11 +1596,244 @@ class FeaturedCtl:
         return False
 
     def _on_featured_card_key_press(self, widget, event):
-        """Keep keyboard activation available after moving Featured to Gtk.Grid."""
+        """Keep keyboard activation available on Featured cards."""
         if event.keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter, Gdk.KEY_space):
             self._activate_item(widget, event)
             return True
+
+        if event.keyval == Gdk.KEY_Escape:
+            # Escape only resets the Featured selection; when nothing is
+            # selected the window-level handler owns the usual Back logic.
+            if getattr(self, "_featured_selected_card", None) is not None:
+                self._clear_featured_selection()
+                return True
+            return False
+
+        key_map = {
+            Gdk.KEY_Left: "left",
+            Gdk.KEY_Right: "right",
+            Gdk.KEY_Up: "up",
+            Gdk.KEY_Down: "down",
+        }
+        direction = key_map.get(event.keyval)
+        if direction is None:
+            return False
+        return self._featured_navigate_from(widget, direction)
+
+    # Featured keyboard navigation. Featured cells live in plain containers
+    # (a main-menu Gtk.Grid, or an app page's FlowBox row plus lower Grid),
+    # so they are driven through the same selection/focus contract GTK gives
+    # FlowBoxes: arrows move the highlight, Enter/Space activate, Escape
+    # clears. Large cards occupy 1x2 spans and are navigated as whole cells.
+
+    def _featured_card_widget(self, container):
+        """Return the native card widget behind a container child, or None."""
+        widget = container
+        if isinstance(widget, Gtk.FlowBoxChild):
+            widget = widget.get_child()
+        return widget if getattr(widget, "info", None) is not None else None
+
+    def _featured_card_entries(self):
+        """Return (card, col0, row0, col1, row1) spans for the visible Featured."""
+        entries = []
+        visible = self.main_stack.get_visible_child_name()
+        if not self.all_scripts:
+            return entries
+        if visible == "app_page":
+            page = self.main_stack.get_child_by_name("app_page")
+            if page is None:
+                return entries
+            flow_row_count = 1
+            flowbox = getattr(page, "_featured_fill_flowbox", None)
+            if flowbox is not None:
+                index = 0
+                for flow_child in flowbox.get_children():
+                    card = self._featured_card_widget(flow_child)
+                    if card is None:
+                        continue
+                    entries.append((card, index, 0, index, 0))
+                    index += 1
+                if index:
+                    flow_row_count = index
+            grid = getattr(page, "_featured_fill_grid", None)
+            if grid is not None:
+                # The lower Grid belongs to the row(s) after the FlowBox row.
+                entries.extend(
+                    self._featured_grid_entries(grid, flow_row_count)
+                )
+        elif (
+            visible == "categories"
+            and self.current_category_info is None
+            and self.random_scripts_flowbox is not None
+        ):
+            entries.extend(
+                self._featured_grid_entries(self.random_scripts_flowbox, 0)
+            )
+        return entries
+
+    def _featured_grid_entries(self, grid, row_offset):
+        """Spans of the directly attached cards in a Featured Gtk.Grid."""
+        entries = []
+        for child in grid.get_children():
+            card = self._featured_card_widget(child)
+            if card is None:
+                continue
+            try:
+                left = grid.child_get_property(child, "left-attach")
+                top = grid.child_get_property(child, "top-attach")
+                width = grid.child_get_property(child, "width")
+                height = grid.child_get_property(child, "height")
+            except (AttributeError, TypeError, ValueError):
+                continue
+            col0 = int(left)
+            row0 = int(top) + row_offset
+            entries.append((
+                card, col0, row0,
+                col0 + int(width) - 1,
+                row0 + int(height) - 1,
+            ))
+        return entries
+
+    def _featured_neighbor_in_direction(self, entries, origin, direction):
+        """Find the single span adjacent to `origin` along one direction."""
+        _widget, c0, r0, c1, r1 = origin
+        best = None
+        for entry in entries:
+            widget, ec0, er0, ec1, er1 = entry
+            if widget is origin[0]:
+                continue
+            if direction == "left":
+                if ec1 >= c0 or er1 < r0 or er0 > r1:
+                    continue
+                if best is None or ec1 > best[3]:
+                    best = entry
+            elif direction == "right":
+                if ec0 <= c1 or er1 < r0 or er0 > r1:
+                    continue
+                if best is None or ec0 < best[1]:
+                    best = entry
+            elif direction == "up":
+                if er1 >= r0 or ec1 < c0 or ec0 > c1:
+                    continue
+                if best is None or er1 > best[3]:
+                    best = entry
+            elif direction == "down":
+                if er0 <= r1 or ec1 < c0 or ec0 > c1:
+                    continue
+                if best is None or er0 < best[2]:
+                    best = entry
+        return best
+
+    def _featured_navigate_from(self, widget, direction):
+        """Move the Featured selection one cell along a direction."""
+        if widget is None or not widget.get_visible():
+            return False
+        entries = self._featured_card_entries()
+        origin = next(
+            (entry for entry in entries if entry[0] is widget), None
+        )
+        if origin is None:
+            return False
+        target = self._featured_neighbor_in_direction(
+            entries, origin, direction
+        )
+        if target is None:
+            return False
+        target_widget = target[0]
+        self._set_featured_selected_card(target_widget)
+        if target_widget is not widget:
+            target_widget.grab_focus()
+        return True
+
+    def _on_featured_card_focus_in(self, widget, _event):
+        """Tab focus highlights the card with the same selection indicator."""
+        if getattr(widget, "info", None) is not None:
+            self._set_featured_selected_card(widget)
         return False
+
+    def _on_featured_card_focus_out(self, widget, _event):
+        """Drop the Featured highlight once focus leaves Featured.
+
+        The validation is deferred one idle pass: focus-out on the card
+        fires before the receiving widget's focus-in, so checking after
+        the move settled distinguishes navigation into another section
+        from card-to-card movement inside Featured.
+        """
+        GLib.idle_add(self._validate_featured_selection_focus)
+        return False
+
+    def _validate_featured_selection_focus(self):
+        try:
+            if getattr(self, "_featured_selected_card", None) is None:
+                return False
+            entries = self._featured_card_entries()
+            cards = {entry[0] for entry in entries}
+            if not cards:
+                # The section itself is gone (view navigation or rebuild).
+                self._clear_featured_selection()
+                return False
+            focus = self.get_focus()
+            if focus is None or focus is self._featured_selected_card:
+                # The window lost activation, or focus is mid-transfer.
+                return False
+            if not self._focus_within_featured_card(focus, cards):
+                self._clear_featured_selection()
+        except (AttributeError, RuntimeError):
+            # The page went away mid-transition; nothing left to hold.
+            self._clear_featured_selection()
+        return False
+
+    @staticmethod
+    def _focus_within_featured_card(widget, cards):
+        """Whether a widget (or its parent chain) belongs to a Featured card."""
+        node = widget
+        while node is not None:
+            if node in cards:
+                return True
+            try:
+                node = node.get_parent()
+            except (AttributeError, RuntimeError):
+                node = None
+        return False
+
+    def _clear_featured_selection(self):
+        card = getattr(self, "_featured_selected_card", None)
+        self._featured_selected_card = None
+        if card is None:
+            return
+        surface = getattr(card, "card_surface", None) or card
+        try:
+            surface.get_style_context().remove_class("script-item-selected")
+        except (AttributeError, RuntimeError):
+            pass
+
+    def _set_featured_selected_card(self, card):
+        if card is getattr(self, "_featured_selected_card", None):
+            return
+        self._clear_featured_selection()
+        self._featured_selected_card = card
+        surface = getattr(card, "card_surface", None) or card
+        try:
+            surface.get_style_context().add_class("script-item-selected")
+        except (AttributeError, RuntimeError):
+            pass
+
+    def _bind_featured_card(self, widget, script_info=None, *, large=False):
+        """One owner for the full Featured card interaction contract."""
+        widget._featured_grid_large = bool(large)
+        tooltip = (script_info or {}).get("description", "") or None
+        widget.set_tooltip_text(tooltip)
+        widget.set_can_focus(True)
+        widget.connect("key-press-event", self._on_featured_card_key_press)
+        widget.add_events(
+            Gdk.EventMask.ENTER_NOTIFY_MASK
+            | Gdk.EventMask.LEAVE_NOTIFY_MASK
+        )
+        widget.connect("enter-notify-event", self._on_featured_card_enter)
+        widget.connect("leave-notify-event", self._on_featured_card_leave)
+        widget.connect("focus-in-event", self._on_featured_card_focus_in)
+        widget.connect("focus-out-event", self._on_featured_card_focus_out)
+        return widget
 
     def _on_featured_card_enter(self, _widget, _event):
         """Pause Featured rotation while the pointer is over a card."""

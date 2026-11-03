@@ -2119,8 +2119,14 @@ class AppWindow(
         return False
 
     def _open_installed_features(self, _button=None):
-        """Open the system-wide list of features LinuxToys can currently remove."""
+        """Open the system-wide list of features LinuxToys can currently remove.
+
+        The header button acts as a toggle: when the view is already on
+        screen, a second click returns to the previous view, exactly like
+        the Back button's utility-view restore path.
+        """
         if self.main_stack.get_visible_child_name() == "installed_features":
+            self.on_back_button_clicked(None)
             return
 
         old = self.main_stack.get_child_by_name("installed_features")
@@ -2152,8 +2158,13 @@ class AppWindow(
         self.main_stack.set_visible_child_name("installed_features")
 
     def _open_appstream_queue(self, _button=None):
-        """Open the session history/queue attached to the persistent AppStream PTY."""
+        """Open the session history/queue attached to the persistent AppStream PTY.
+
+        Like Installed Features, this header button toggles: a second click
+        while the queue is visible returns to the previous view.
+        """
         if self.main_stack.get_visible_child_name() == "appstream_queue":
+            self.on_back_button_clicked(None)
             return
 
         old = self.main_stack.get_child_by_name("appstream_queue")
@@ -2260,11 +2271,19 @@ class AppWindow(
                     return True
                 return False
             if keyval == Gdk.KEY_Escape:
+                if getattr(self, "_featured_selected_card", None) is not None:
+                    self._clear_featured_selection()
+                    return True
                 self.on_back_button_clicked(None)
                 return True
             if page is not None and keyval in (Gdk.KEY_Left, Gdk.KEY_Right):
-                page.cycle_screenshot(-1 if keyval == Gdk.KEY_Left else 1)
-                return True
+                # Arrows belong to the screenshot carousel only while the
+                # viewer is in focus; everywhere else (featured cards above
+                # all) they stay available to the focused widget.
+                if page._screenshot_viewer_has_focus():
+                    page.cycle_screenshot(-1 if keyval == Gdk.KEY_Left else 1)
+                    return True
+                return False
             return False
 
         if current_view == "running_scripts":

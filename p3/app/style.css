@@ -43,7 +43,25 @@ button.installed-card-remove:active {
     background-position: left;
     border-radius: 10px;
 }
-flowboxchild:selected {
+/* Keyboard selection/focus visuals belong to the inset painted card
+   surface, not to the outer GtkFlowBoxChild allocation (which reserves
+   transparent room for a corner badge). Neutralize the theme's
+   FlowBoxChild chrome so the highlight cannot extend past the card edges
+   and toggle .script-item-selected on the card surface instead. */
+flowbox flowboxchild:selected,
+flowbox flowboxchild:selected:focus,
+flowbox flowboxchild:focus {
+    background-color: transparent;
+    background-image: none;
+    outline: none;
+}
+
+/* Card-shaped selection highlight, mirroring the hover treatment so
+   focus/selection indicators match the card's true size and radius. */
+.script-item-selected,
+.script-item-selected:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.9);
     border-radius: 10px;
 }
 
@@ -144,6 +162,13 @@ button.queue-remove:hover {
 /* Screenshot lightbox overlay: dims the app page underneath the zoomed shot. */
 .linuxtoys-screenshot-lightbox {
     background-color: rgba(0, 0, 0, 0.78);
+}
+
+/* Keyboard ownership of the app-page carousel: a visible ring on the
+   focused carousel canvas, so arrow-driven cycling reads as intentional. */
+eventbox.linuxtoys-screenshot-canvas-focus {
+    outline: 2px solid rgba(255, 255, 255, 0.85);
+    outline-offset: -3px;
 }
 
 /* Retractable category sidebar. Opaque drawer surface: the settled look of

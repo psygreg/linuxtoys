@@ -112,6 +112,8 @@ class AppPageView(Gtk.Box):
         self.screenshot_stack = None
         self.screenshot_counter = None
         self._screenshot_autoplay_source = None
+        self._screenshot_previous_button = None
+        self._screenshot_next_button = None
         self._destroyed = False
         self._featured_fill_source = None
         self._featured_fill_signature = None
@@ -407,6 +409,7 @@ class AppPageView(Gtk.Box):
         return False
 
     def _clear_featured_fill(self):
+        self.parent._clear_featured_selection()
         if self._featured_fill_flowbox is not None:
             for child in self._featured_fill_flowbox.get_children():
                 child.destroy()
@@ -642,14 +645,7 @@ class AppPageView(Gtk.Box):
         large_height = (2 * card_height) + row_spacing
 
         def finish_featured_widget(widget, script_info):
-            widget.set_tooltip_text(script_info.get("description") or None)
-            widget.set_can_focus(True)
-            widget.connect("key-press-event", parent._on_featured_card_key_press)
-            widget.add_events(
-                Gdk.EventMask.ENTER_NOTIFY_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK
-            )
-            widget.connect("enter-notify-event", parent._on_featured_card_enter)
-            widget.connect("leave-notify-event", parent._on_featured_card_leave)
+            parent._bind_featured_card(widget, script_info)
             prepared_widgets.append(widget)
             return widget
 
@@ -2445,6 +2441,19 @@ class AppPageView(Gtk.Box):
             click_box.set_tooltip_text(self.translations.get(
                 "app_page_screenshot_zoom", "Click to zoom"
             ))
+            # The carousel participates in keyboard navigation: arrows cycle
+            # it only while focus rests on the viewer (this canvas, one of the
+            # chrome arrows, or the zoomed lightbox).
+            click_box.set_can_focus(True)
+            click_box.get_style_context().add_class(
+                "linuxtoys-screenshot-canvas"
+            )
+            click_box.connect(
+                "focus-in-event", self._on_screenshot_canvas_focus, True
+            )
+            click_box.connect(
+                "focus-out-event", self._on_screenshot_canvas_focus, False
+            )
             click_box.connect(
                 "button-press-event", self._on_screenshot_clicked, frame
             )
@@ -2471,6 +2480,8 @@ class AppPageView(Gtk.Box):
         previous_button = chrome["previous"]
         next_button = chrome["next"]
         self.screenshot_counter = chrome["counter"]
+        self._screenshot_previous_button = previous_button
+        self._screenshot_next_button = next_button
         previous_button.connect("clicked", self._on_screenshot_nav_clicked, -1)
         next_button.connect("clicked", self._on_screenshot_nav_clicked, 1)
         self._update_screenshot_counter()
@@ -2710,6 +2721,62 @@ class AppPageView(Gtk.Box):
             self._screenshot_lightbox is not None
             and self._screenshot_lightbox.get_visible()
         )
+
+    def _screenshot_viewer_has_focus(self):
+        """Whether keyboard focus currently belongs to the screenshot viewer.
+
+        The carousel owns arrow keys only while focus rests on it (a
+        carousel canvas, one of the chrome navigation arrows) or on the
+        zoomed lightbox. Anywhere else on the page — featured cards above
+        all — the keys stay available to the focused widget.
+        """
+        if self.screenshot_stack is None:
+            return False
+        focus = self._window_focused_widget()
+        if focus is None:
+            return False
+        if self.is_screenshot_zoomed():
+            return True
+        for button in (
+            self._screenshot_previous_button,
+            self._screenshot_next_button,
+        ):
+            if button is not None and self._widget_in_subtree(focus, button):
+                return True
+        for click_box in self.screenshot_stack.get_children():
+            if self._widget_in_subtree(focus, click_box):
+                return True
+        return False
+
+    def _window_focused_widget(self):
+        toplevel = self.get_toplevel()
+        if toplevel is self:
+            return None
+        try:
+            return toplevel.get_focus()
+        except (AttributeError, RuntimeError):
+            return None
+
+    @staticmethod
+    def _widget_in_subtree(widget, root):
+        node = widget
+        while node is not None:
+            if node is root:
+                return True
+            try:
+                node = node.get_parent()
+            except (AttributeError, RuntimeError):
+                node = None
+        return False
+
+    def _on_screenshot_canvas_focus(self, click_box, _event, has_focus):
+        """Mark the focused carousel canvas so keyboard ownership is visible."""
+        style = click_box.get_style_context()
+        if has_focus:
+            style.add_class("linuxtoys-screenshot-canvas-focus")
+        else:
+            style.remove_class("linuxtoys-screenshot-canvas-focus")
+        return False
 
     def close_screenshot_lightbox(self):
         """Leave the zoomed screenshot view (Esc / click anywhere)."""

@@ -26,6 +26,20 @@ class ItemWidgetFactory:
 
         flowbox.set_selection_mode(Gtk.SelectionMode.SINGLE)
         flowbox.connect("key-press-event", self._on_flowbox_key_press)
+        flowbox.connect(
+            "selected-children-changed",
+            self._on_flowbox_selection_changed
+        )
+        # Keyboard selections live on the FlowBoxChild wrapper GTK creates
+        # around each card, so per-flowbox focus-out never fires. Track the
+        # window's focus widget instead: selecting a card and then moving
+        # focus to another section retires the retained highlight (mirrors
+        # the Featured contract).
+        if not getattr(self, "_flowbox_focus_exit_hooked", False):
+            self._flowbox_focus_exit_hooked = True
+            self._keyboard_selection_flowboxes = []
+            self.connect("set-focus", self._on_window_set_focus)
+        self._keyboard_selection_flowboxes.append(flowbox)
 
         flowbox.set_homogeneous(True)
         flowbox.set_margin_left(32)
@@ -72,6 +86,90 @@ class ItemWidgetFactory:
         flowbox = flowbox_child.get_parent()
         if isinstance(flowbox, Gtk.FlowBox):
             flowbox.select_child(flowbox_child)
+        return False
+
+    def _on_flowbox_selection_changed(self, flowbox):
+        """Repaint the selection indicator on the painted card surface.
+
+        GTK draws `flowboxchild:selected` chrome on the outer child
+        allocation, which is intentionally larger than the inset painted
+        card (space for the corner badge). The visible highlight therefore
+        moves onto the surface through this class.
+        """
+        if not isinstance(flowbox, Gtk.FlowBox):
+            return
+        selected_surfaces = list(
+            getattr(flowbox, "_selected_card_surfaces", ()) or ()
+        )
+        for surface in selected_surfaces:
+            try:
+                surface.get_style_context().remove_class(
+                    "script-item-selected"
+                )
+            except (AttributeError, RuntimeError):
+                continue
+        flowbox._selected_card_surfaces = []
+
+        for flowbox_child in flowbox.get_selected_children():
+            try:
+                event_box = flowbox_child.get_child()
+            except AttributeError:
+                continue
+            surface = getattr(event_box, "card_surface", None)
+            if surface is None:
+                continue
+            ctx = surface.get_style_context()
+            ctx.add_class("script-item-selected")
+            selected_surfaces.append(surface)
+        flowbox._selected_card_surfaces = selected_surfaces
+
+    def _on_window_set_focus(self, _window, focus_widget):
+        """Retire menu flowbox keyboard selections left by focus changes.
+
+        Runs on every focus transfer inside the window: a flowbox in
+        single-selection mode keeps its retained highlight only for as long
+        as focus stays on the FlowBox itself or inside its card subtree.
+        Batch-selection flowboxes (local scripts multi-select) are exempt so
+        deliberate multi-card selections survive unrelated focus moves.
+        """
+        tracked = list(getattr(self, "_keyboard_selection_flowboxes", ()) or ())
+        if not tracked:
+            return False
+        survivors = []
+        for flowbox in tracked:
+            try:
+                survivors.append(flowbox)
+                if (
+                    flowbox.get_selection_mode()
+                    is not Gtk.SelectionMode.SINGLE
+                    or not flowbox.get_selected_children()
+                ):
+                    continue
+                if focus_widget is None:
+                    # Transient clear while the toplevel loses focus.
+                    continue
+                if focus_widget is flowbox or self._widget_within(
+                    focus_widget, flowbox
+                ):
+                    continue
+                flowbox.unselect_all()
+            except RuntimeError:
+                # A destroyed flowbox cannot hold a selection; stop tracking.
+                survivors.pop()
+        self._keyboard_selection_flowboxes = survivors
+        return False
+
+    @staticmethod
+    def _widget_within(widget, root):
+        """Whether a widget is `root` or sits inside its subtree."""
+        node = widget
+        while node is not None:
+            if node is root:
+                return True
+            try:
+                node = node.get_parent()
+            except (AttributeError, RuntimeError):
+                node = None
         return False
 
     def animate_item_batch(

@@ -314,6 +314,11 @@ class SearchCtl:
                     "selected-children-changed",
                     self._on_search_result_selection_changed,
                 )
+                fb.connect(
+                    "selected-children-changed",
+                    self._on_flowbox_selection_changed,
+                )
+                self._keyboard_selection_flowboxes.append(fb)
                 self._search_result_flowboxes.append(fb)
                 group_flowboxes[group_index] = fb
                 return fb
