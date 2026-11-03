@@ -1916,12 +1916,12 @@ class ManifestRunnerMixin:
         self,
         manifest_path: str,
         attempted: tuple[str, ...] = (),
-        refresh_appstream: bool = False,
+        bootstrap: str = "",
     ) -> None:
         """Resolve the manifest in an exclusive thread worker."""
         self.run_worker(
             lambda: self._classify_manifest(
-                manifest_path, attempted, refresh_appstream
+                manifest_path, attempted, bootstrap
             ),
             thread=True,
             exclusive=True,
@@ -1932,23 +1932,35 @@ class ManifestRunnerMixin:
         self,
         manifest_path: str,
         attempted: tuple[str, ...] = (),
-        refresh_appstream: bool = False,
+        bootstrap: str = "",
     ) -> None:
         """Load and resolve the manifest off the UI thread."""
         from app.manifest_helper import load_manifest
 
         from .manifest_resolver import (
             refresh_appstream_after_flathub,
+            refresh_appstream_after_homebrew,
             resolve_manifest,
         )
 
         resolve_script_dir()
 
-        if refresh_appstream:
+        if bootstrap == "flatpak":
             # Flathub was just enabled: make its AppStream entries visible.
             try:
                 refresh_appstream_after_flathub()
             except Exception as exc:  # mirrors the CLI bootstrap helper
+                self.app.call_from_thread(
+                    self.notify,
+                    f"Failed to update AppStream: {exc}",
+                    severity="error",
+                )
+                return
+        elif bootstrap == "homebrew":
+            # Brew was just installed: make its Homebrew entries resolvable.
+            try:
+                refresh_appstream_after_homebrew()
+            except Exception as exc:
                 self.app.call_from_thread(
                     self.notify,
                     f"Failed to update AppStream: {exc}",
@@ -2087,7 +2099,7 @@ class ManifestRunnerMixin:
             self._start_manifest_classify(
                 state["path"],
                 state["attempted"],
-                refresh_appstream=state["kind"] == "flatpak",
+                bootstrap=state["kind"],
             )
         elif result is ScriptResult.CANCELLED:
             self.notify(

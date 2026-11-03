@@ -1,3 +1,4 @@
+import traceback
 from textual.app import ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal, Vertical
@@ -40,6 +41,7 @@ class RegistryScreen(Screen):
     def __init__(self) -> None:
         super().__init__()
         self.registry_data = parse_registry_file()
+        self._export_in_progress = False
 
     def compose(self) -> ComposeResult:
         yield Header()
@@ -239,23 +241,55 @@ class RegistryScreen(Screen):
             details_widget.update("Nenhum script foi executado ainda.")
 
     def action_export_registry(self) -> None:
+        """Start the export in a thread worker.
+
+        Building the manifest resolves registry identities against the
+        full script and AppStream catalogs; doing that work inline in the
+        event loop freezes the whole TUI while it runs.
+        """
+        if self._export_in_progress:
+            self.notify(
+                "A manifest export is already in progress.", severity="warning"
+            )
+            return
+        self._export_in_progress = True
+        self.run_worker(
+            self._export_registry_worker, thread=True, name="registry-export"
+        )
+
+    def _export_registry_worker(self) -> None:
         try:
             manifest_path, entry_count = export_registered_manifest(
                 registry_data=self.registry_data,
                 translations=translations,
             )
-            self.notify(
-                translations.get(
-                    "registry_export_success_message",
-                    "Exported {count} registered operation(s) to:\n{path}",
-                ).format(count=entry_count, path=manifest_path)
+        except OSError:
+            self.app.call_from_thread(self._registry_export_failed)
+        except Exception:
+            traceback.print_exc()
+            self.app.call_from_thread(self._registry_export_failed)
+        else:
+            self.app.call_from_thread(
+                self._registry_export_succeeded, manifest_path, entry_count
             )
-        except OSError as exc:
-            self.notify(
-                translations.get(
-                    "registry_export_error_title", "Manifest export failed"
-                )
-            )
+
+    def _registry_export_succeeded(self, manifest_path: str, entry_count: int) -> None:
+        self._export_in_progress = False
+        self.notify(
+            translations.get(
+                "registry_export_success_message",
+                "Exported {count} registered operation(s) to:\n{path}",
+            ).format(count=entry_count, path=manifest_path)
+        )
+
+    def _registry_export_failed(self) -> None:
+        self._export_in_progress = False
+        self.notify(
+            translations.get(
+                "registry_export_error_title", "Manifest export failed"
+            ),
+            severity="error",
+        )
 
 
 class RegistryOpenerMixin:

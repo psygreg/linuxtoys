@@ -12,6 +12,7 @@ Supported entry syntax:
 - ``package:<name>`` or ``pkg:<name>``: native package.
 - ``flatpak:<id>``, ``snap:<name>`` and ``homebrew:<formula>``.
 - ``require:flathub``: declares that Flathub must be ready.
+- ``require:homebrew``: declares that Homebrew must be ready.
 - Any other entry is auto-detected: LinuxToys script by name first, then
   Flatpak ID, then native package.
 
@@ -57,7 +58,7 @@ _ENTRY_PREFIXES = frozenset(
     {"script", "package", "pkg", "flatpak", "snap", "homebrew", "require"}
 )
 _SOURCE_OVERRIDES = frozenset({"native", "flatpak", "snap", "homebrew"})
-_SUPPORTED_REQUIREMENTS = frozenset({"flathub"})
+_SUPPORTED_REQUIREMENTS = frozenset({"flathub", "homebrew"})
 _FORMULA_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9+_.@-]*")
 
 
@@ -176,6 +177,40 @@ def refresh_appstream_after_flathub() -> None:
     appstream_parser.clear_runtime_cache()
 
 
+def refresh_appstream_after_homebrew() -> None:
+    """Make Homebrew entries resolvable right after a Brew bootstrap.
+
+    BLOCKING: call from a worker thread (subprocess-free but performs a
+    full AppStream runtime rebuild and possibly a snapshot download).
+
+    Call it after the Homebrew bootstrap and before resolving the
+    manifest again. It merges the formula snapshot into the on-disk
+    catalog when possible, then rebuilds the runtime cache synchronously:
+    Homebrew-sourced ``script:`` entries only exist once Brew is enabled,
+    and a persisted AppStream generation built before the install does
+    not contain them. Best effort: problems are reported on stdout and
+    never raised, so the caller's re-resolution keeps going.
+    """
+    if not homebrew_catalog.enabled():
+        return
+
+    try:
+        appstream_cache.refresh_homebrew_cache()
+    except Exception as exc:
+        print(f"Warning: Could not refresh the Homebrew AppStream source: {exc}")
+
+    try:
+        from app import parser
+        appstream_parser._runtime_catalog(
+            parser.SCRIPTS_DIR,
+            curated_entries=parser._get_appstream_curated_entries(),
+            category_paths=parser._indexed_category_paths(),
+        )
+        appstream_parser.prepare_runtime_cache()
+    except Exception as exc:
+        print(f"Warning: Could not rebuild the AppStream runtime cache: {exc}")
+
+
 def _flathub_ready() -> bool:
     """Return True when Flatpak is installed and the Flathub remote exists.
 
@@ -233,12 +268,12 @@ class _ManifestResolver:
     def resolve(self, names: list[str]) -> ManifestPlan:
         """Run the whole resolution pipeline and return the plan.
 
-        Stages, in order: parse, Flatpak prerequisite, Homebrew formulae,
-        native packages, snaps, explicit scripts, auto-detected items,
-        Flatpak batch check and de-duplication. The pipeline returns the
-        partial plan early when a prerequisite needs a bootstrap or when
-        Homebrew formulae are invalid. Errors from the later stages are
-        then not collected.
+        Stages, in order: parse, Flatpak prerequisite, Homebrew
+        prerequisite, Homebrew formulae, native packages, snaps, explicit
+        scripts, auto-detected items, Flatpak batch check and
+        de-duplication. The pipeline returns the partial plan early when a
+        prerequisite needs a bootstrap or when Homebrew formulae are
+        invalid. Errors from the later stages are then not collected.
 
         De-duplication keeps the first occurrence and the original
         order. Scripts are compared by ``(name, path)``.
@@ -252,6 +287,8 @@ class _ManifestResolver:
         entries = self._parse(names)
 
         if not self._flatpak_available(entries):
+            return self._plan
+        if not self._homebrew_available(entries):
             return self._plan
         if not self._add_homebrew(entries.homebrew):
             return self._plan
@@ -352,6 +389,42 @@ class _ManifestResolver:
             self._plan.bootstrap = "flatpak"
             return False
         return True
+
+    def _homebrew_available(self, entries: _Entries) -> bool:
+        """Check that Brew is ready when the manifest declares it.
+
+        ``homebrew_catalog.enabled()`` probes the filesystem only, so it
+        is cheap and needs no subprocess.
+
+        Homebrew is needed by ``require:homebrew``. If it is needed but
+        not ready, ``plan.bootstrap`` is set to ``"homebrew"`` and the
+        'brew' setup script is stored in ``plan.bootstrap_script``. The
+        gate runs before any script resolution because Homebrew-sourced
+        ``script:`` entries are absent from the AppStream catalog until
+        Brew is installed.
+
+        Args:
+            entries: The parsed entries.
+
+        Returns:
+            False if resolution must stop for a Homebrew bootstrap, True
+            otherwise.
+        """
+        if "homebrew" not in entries.requirements:
+            return True
+        if homebrew_catalog.enabled():
+            return True
+
+        brew_script = find_script_by_id("brew", self._translations)
+        if brew_script is None:
+            self._plan.errors.append(
+                "Não foi possível preparar o Homebrew exigido por este "
+                "manifesto: o script 'brew' não foi encontrado."
+            )
+            return False
+        self._plan.bootstrap = "homebrew"
+        self._plan.bootstrap_script = brew_script
+        return False
 
     def _add_homebrew(self, names: list[str]) -> bool:
         """Validate Homebrew formulae, then check that Brew is present.

@@ -4,6 +4,8 @@ Action Registry viewer - displays all script execution records from the registry
 
 import os
 import shutil
+import threading
+import traceback
 from gi.repository import GLib
 from .gtk_common import Gtk, resolve_symbolic_icon
 from .gtk_dialogs import run_message_dialog
@@ -296,6 +298,11 @@ class ActionRegistryDialog(Gtk.Dialog):
         self.export_button.connect("clicked", self.__on_export_clicked)
         self.cleanup_button.connect("clicked", self.__on_cleanup_clicked)
 
+        # Export bookkeeping: a GLib timeout restores the success flash, and
+        # a boolean flag guards a second click while the worker is running.
+        self._export_success_timeout_id = None
+        self._export_in_progress = False
+
         self.show_all()
 
     def __populate_scripts_list(self):
@@ -362,25 +369,42 @@ class ActionRegistryDialog(Gtk.Dialog):
         text_buffer.set_text("".join(lines))
 
     def __on_export_clicked(self, button):
-        """Export all registered operations to a manifest in the user's home."""
-        try:
-            manifest_path, entry_count = export_registered_manifest(
-                registry_data=self.registry_data,
-                translations=self.translations,
-            )
-        except OSError as exc:
-            run_message_dialog(
-                self,
-                title=self.translations.get(
-                    "registry_export_error_title",
-                    "Manifest export failed",
-                ),
-                secondary_text=str(exc),
-                message_type=Gtk.MessageType.ERROR,
-                buttons=[("OK", Gtk.ResponseType.OK)],
-                default_response=Gtk.ResponseType.OK,
-            )
+        """Export all registered operations to a manifest in the user's home.
+
+        Building the manifest resolves registry identities against the full
+        script and AppStream catalogs, so the work runs on a worker thread:
+        doing it on the UI thread froze the whole application until the
+        manifest was written.
+        """
+        if self._export_in_progress:
             return
+        self._export_in_progress = True
+        button.set_sensitive(False)
+
+        def worker():
+            try:
+                result = export_registered_manifest(
+                    registry_data=self.registry_data,
+                    translations=self.translations,
+                )
+            except OSError as exc:
+                GLib.idle_add(self.__show_export_error, exc)
+            except Exception:
+                traceback.print_exc()
+                GLib.idle_add(self.__show_export_error, None)
+            else:
+                GLib.idle_add(self.__on_export_succeeded, result)
+
+        threading.Thread(
+            target=worker,
+            daemon=True,
+            name="linuxtoys-manifest-export",
+        ).start()
+
+    def __on_export_succeeded(self, result):
+        """Handle a finished export on the GLib main loop."""
+        manifest_path, entry_count = result
+        self._export_in_progress = False
 
         if os.environ.get("LT_DEBUG") == "1":
             print(
@@ -390,10 +414,46 @@ class ActionRegistryDialog(Gtk.Dialog):
                 ).format(count=entry_count, path=manifest_path)
             )
 
-        self.__show_export_success(button)
+        if self.export_button.get_parent() is None:
+            # The dialog was closed while the export ran: no UI to update.
+            return False
+        self.__show_export_success(self.export_button)
+        return False
+
+    def __show_export_error(self, exc):
+        """Report a failed export on the GLib main loop."""
+        self._export_in_progress = False
+
+        if self.export_button.get_parent() is not None:
+            self.export_button_icon.set_from_icon_name(
+                resolve_symbolic_icon("document-save-symbolic"), Gtk.IconSize.BUTTON
+            )
+            self.export_button.set_sensitive(True)
+            run_message_dialog(
+                self,
+                title=self.translations.get(
+                    "registry_export_error_title",
+                    "Manifest export failed",
+                ),
+                secondary_text=(
+                    str(exc)
+                    if exc is not None
+                    else self.translations.get(
+                        "registry_export_error_message",
+                        "An unexpected error occurred while writing the manifest.",
+                    )
+                ),
+                message_type=Gtk.MessageType.ERROR,
+                buttons=[("OK", Gtk.ResponseType.OK)],
+                default_response=Gtk.ResponseType.OK,
+            )
+        return False
 
     def __show_export_success(self, button):
         """Briefly switch the Export button into a successful state."""
+        if button.get_parent() is None:
+            # The dialog may already have been closed (still running worker).
+            return
         source_id = getattr(self, "_export_success_timeout_id", None)
         if source_id is not None:
             GLib.source_remove(source_id)

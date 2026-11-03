@@ -297,23 +297,85 @@ def _appstream_entries(translations=None):
 
 
 
+def _entry_identity_names(entry, stable_name):
+    """Return every casefolded name a manifest lookup may match an entry by."""
+    return frozenset(
+        str(candidate or "").strip().casefold()
+        for candidate in (
+            entry.get("name"),
+            entry.get("canonical_name"),
+            entry.get("appstream_canonical_name"),
+            entry.get("registry_name"),
+            stable_name,
+        )
+    )
+
+
 def _entry_matches_name(entry, requested_name, stable_id=""):
     """Match a manifest name without tying it to the active UI language."""
     target = str(requested_name or "").strip().casefold()
     if not target:
         return False
+    return target in _entry_identity_names(entry, stable_id)
 
-    candidates = (
-        entry.get("name"),
-        entry.get("canonical_name"),
-        entry.get("appstream_canonical_name"),
-        entry.get("registry_name"),
-        stable_id,
-    )
-    return any(
-        str(candidate or "").strip().casefold() == target
-        for candidate in candidates
-    )
+
+def _registry_name_stream(translations=None):
+    """Yield ``(script_info, stable_name)`` pairs in find_script_by_name() order.
+
+    The sequence is: root scripts, then every category's scripts, then
+    repository entries, then AppStream entries. Consumers must keep this
+    order intact so batched lookups resolve exactly like the single-name
+    helper.
+    """
+    categories = get_categories(translations)
+    for category in categories:
+        if category.get("is_script"):
+            stable_name = os.path.splitext(os.path.basename(category["path"]))[0]
+            yield category, stable_name
+    for category in categories:
+        if not category.get("is_script"):
+            for script in get_all_scripts_recursive(category["path"], translations):
+                stable_name = os.path.splitext(os.path.basename(script["path"]))[0]
+                yield script, stable_name
+    for script in get_repo_entries(translations):
+        yield script, _entry_stable_id(script)
+    for script in _appstream_entries(translations):
+        yield script, _entry_stable_id(script)
+
+
+def _resolve_script_infos(names, translations=None):
+    """Resolve several registry identities in a single catalog traversal.
+
+    find_script_by_name() materializes the whole AppStream catalog on
+    every call (a quarter of a second or more), so resolving registry
+    exports in a loop freezes manifest export for tens of seconds. This
+    helper walks _registry_name_stream() exactly once and matches every
+    pending name against each entry by set membership. Because the
+    stream order is identical to find_script_by_name(), the first
+    matching entry per name is also identical.
+
+    Returns a dict keyed by the original name spelling; names that do
+    not resolve anywhere map to None.
+    """
+    targets = {}
+    for raw_name in names or ():
+        name = str(raw_name or "").strip()
+        key = name.casefold()
+        if key and key not in targets:
+            targets[key] = name
+
+    resolved = {name: None for name in targets.values()}
+    pending = set(targets)
+    if not pending:
+        return resolved
+    for entry, stable_name in _registry_name_stream(translations):
+        if not pending:
+            break
+        identities = _entry_identity_names(entry, stable_name)
+        for key in pending & identities:
+            resolved[targets[key]] = entry
+            pending.discard(key)
+    return resolved
 
 def find_script_by_name(script_name, translations=None):
     """
@@ -404,15 +466,13 @@ def find_script_by_id(script_id, translations=None):
 
 
 
-def _is_system_update_registry_entry(script_name, translations=None):
-    """Return True when a registry identity resolves to the system updater."""
-    normalized = str(script_name or "").strip().casefold()
-    if normalized in {"sysup", "system update", "system updates"}:
-        return True
+_SYSTEM_UPDATE_NAMES = frozenset({"sysup", "system update", "system updates"})
 
-    script_info = find_script_by_name(str(script_name or ""), translations)
+
+def _registry_script_ids(script_info):
+    """Return the casefolded identity candidates of one resolved script."""
     if not script_info:
-        return False
+        return set()
 
     candidate_ids = {
         str(script_info.get("id") or "").strip().casefold(),
@@ -422,8 +482,16 @@ def _is_system_update_registry_entry(script_name, translations=None):
         path = str(script_info.get(path_key) or "")
         if path and not path.startswith("repo://"):
             candidate_ids.add(os.path.splitext(os.path.basename(path))[0].casefold())
+    return candidate_ids
 
-    return "sysup" in candidate_ids
+
+def _is_system_update_registry_entry(script_name, translations=None):
+    """Return True when a registry identity resolves to the system updater."""
+    if str(script_name or "").strip().casefold() in _SYSTEM_UPDATE_NAMES:
+        return True
+
+    script_info = find_script_by_name(str(script_name or ""), translations)
+    return "sysup" in _registry_script_ids(script_info)
 
 
 def _is_removal_registry_entry(script_name, translations=None):
@@ -550,6 +618,13 @@ def build_registered_manifest_entries(registry_data=None, translations=None, inc
     System-update and registry-generated removal records are excluded. Scripts
     that appear as successful ``call_script`` children of another registered script are also excluded,
     because replaying the parent will invoke them again.
+
+    With ``include_requirements=True`` the returned dict additionally
+    reports which prerequisites the entries need on the replaying
+    system: ``flathub`` for any recorded Flatpak install, and
+    ``homebrew`` for every ``homebrew:<formula>`` registry identity, any
+    ``script:`` entry pinned to the Homebrew source, and any script
+    whose default source is Homebrew.
     """
     if registry_data is None:
         registry_data = parse_registry_file()
@@ -561,14 +636,24 @@ def build_registered_manifest_entries(registry_data=None, translations=None, inc
         key = name.casefold()
         if not name or key in seen or not valid_manifest_value(name):
             continue
-        if _is_system_update_registry_entry(name, translations):
-            continue
         if _is_removal_registry_entry(name, translations):
             continue
         if _registry_entry_blocks_manifest_export(registry_data.get(raw_name, [])):
             continue
         seen.add(key)
         candidates.append(name)
+
+    # One batched catalog traversal replaces the previous per-name
+    # find_script_by_name() scans, which materialized the whole AppStream
+    # catalog for every recorded transaction (~0.3 s each) and froze the
+    # export for tens of seconds on large registries.
+    script_infos = _resolve_script_infos(candidates, translations)
+
+    candidates = [
+        name for name in candidates
+        if str(name).strip().casefold() not in _SYSTEM_UPDATE_NAMES
+        and "sysup" not in _registry_script_ids(script_infos[name])
+    ]
 
     candidate_keys = {name.casefold(): name for name in candidates}
     called_children = set()
@@ -577,7 +662,7 @@ def build_registered_manifest_entries(registry_data=None, translations=None, inc
     # "called <registry identity>" in the caller transaction. Looking at
     # every retained caller also handles transitive chains (A -> B -> C).
     for caller in candidates:
-        for _timestamp, operations in registry_data.get(caller, []):
+        for _timestamp, operations in registry_data.get(caller, ()):
             for operation in operations:
                 operation = str(operation or "").strip()
                 prefix = "called "
@@ -594,6 +679,7 @@ def build_registered_manifest_entries(registry_data=None, translations=None, inc
     ]
 
     entries = []
+    requires_homebrew = False
     for name in exported_names:
         formulae = []
         for _timestamp, operations in registry_data.get(name, ()):
@@ -601,9 +687,10 @@ def build_registered_manifest_entries(registry_data=None, translations=None, inc
                 if str(operation).startswith("homebrew "):
                     formulae.extend(str(operation).split()[1:])
         if name.startswith("homebrew:") and formulae:
+            requires_homebrew = True
             entries.extend(f"homebrew:{formula}" for formula in dict.fromkeys(formulae))
             continue
-        script_info = find_script_by_name(name, translations)
+        script_info = script_infos[name]
         stable_id = _entry_stable_id(script_info) if script_info else ""
         entry = f"script:{stable_id or name}"
 
@@ -615,11 +702,22 @@ def build_registered_manifest_entries(registry_data=None, translations=None, inc
         if source_override:
             entry += f"@{source_override}"
 
+        if source_override == "homebrew" or (
+            script_info is not None
+            and str(script_info.get("appstream_source", "") or "").strip()
+            .casefold() == "homebrew"
+        ):
+            # A Homebrew-sourced entry can only replay when Brew is set up
+            # first: Homebrew entries are absent from the AppStream catalog
+            # until then.
+            requires_homebrew = True
+
         entries.append(entry)
 
     if include_requirements:
         requirements = {
             "flathub": _registry_export_requires_flathub(registry_data, exported_names),
+            "homebrew": requires_homebrew,
         }
         return entries, requirements
 
@@ -648,6 +746,8 @@ def export_registered_manifest(output_path=None, registry_data=None, translation
     requirement_lines = []
     if requirements.get("flathub"):
         requirement_lines.append("require:flathub")
+    if requirements.get("homebrew"):
+        requirement_lines.append("require:homebrew")
 
     lines = [
         "# LinuxToys Manifest File",
@@ -718,6 +818,52 @@ def load_manifest(manifest_path='manifest.txt'):
     return script_names
 
 
+def _publish_appstream_context():
+    """Force a synchronous AppStream runtime rebuild for the current system.
+
+    Mirrors the post-bootstrap refresh used by the TUI: after a source
+    gains entries, resolution must not depend on a stale persisted
+    AppStream generation. Best effort: warnings are printed, never raised.
+    """
+    try:
+        from . import parser
+        appstream_parser._runtime_catalog(
+            parser.SCRIPTS_DIR,
+            curated_entries=parser._get_appstream_curated_entries(),
+            category_paths=parser._indexed_category_paths(),
+        )
+        appstream_parser.prepare_runtime_cache()
+    except Exception as exc:
+        print(f"Warning: Could not rebuild the AppStream runtime cache: {exc}")
+
+
+def _bootstrap_homebrew_for_manifest(translations=None):
+    """Ensure Homebrew is installed, then make its AppStream entries resolvable.
+
+    Runs the same 'brew' setup script that Homebrew manifest entries use,
+    then merges the formula snapshot into the on-disk AppStream catalog so
+    Homebrew-sourced ``script:<id>`` entries can be resolved by this same
+    run. Best effort on the AppStream part: only the Brew install result
+    decides the return value.
+    """
+    from . import homebrew_catalog
+    if homebrew_catalog.enabled():
+        return True
+
+    brew_script = find_script_by_id("brew", translations)
+    if brew_script is None:
+        return False
+    if run_script(brew_script) != 0 or not homebrew_catalog.enabled():
+        return False
+
+    try:
+        appstream_cache.refresh_homebrew_cache()
+    except Exception as exc:
+        print(f"Warning: Could not refresh the Homebrew AppStream source: {exc}")
+    _publish_appstream_context()
+    return True
+
+
 def _prepare_homebrew_manifest_entries(formulae, translations=None):
     """Validate exact formula IDs before setup; replay without a catalog lookup."""
     formulae = list(dict.fromkeys(formulae))
@@ -727,10 +873,8 @@ def _prepare_homebrew_manifest_entries(formulae, translations=None):
     if not formulae:
         return []
     from . import homebrew_catalog
-    if not homebrew_catalog.enabled():
-        brew_script = find_script_by_id("brew", translations)
-        if brew_script is None or run_script(brew_script) != 0 or not homebrew_catalog.enabled():
-            raise ValueError("Could not prepare Homebrew required by this manifest.")
+    if not homebrew_catalog.enabled() and not _bootstrap_homebrew_for_manifest(translations):
+        raise ValueError("Could not prepare Homebrew required by this manifest.")
     return [{
         "name": formula, "registry_name": "homebrew:" + formula,
         "homebrew_name": formula, "package-name": formula,
@@ -970,6 +1114,7 @@ def print_cli_usage():
     print("  - script:<id> uses LinuxToys' portable internal ID (recommended)")
     print("  - script:<id>@native/@flatpak preserves an explicit non-default source choice")
     print("  - require:flathub ensures Flatpak/Flathub is available before resolution")
+    print("  - require:homebrew ensures Homebrew is available before resolution")
     print("  - package:<name>, flatpak:<id>, and homebrew:<formula> request exact source identifiers")
     print("  - Lines starting with # are comments")
     print("  - Empty lines are ignored")
@@ -1085,7 +1230,7 @@ def run_manifest_mode(translations=None):
                 explicit_snaps.append(name)
             elif prefix.lower() == 'require':
                 requirement = name.casefold()
-                if requirement == "flathub":
+                if requirement in {"flathub", "homebrew"}:
                     manifest_requirements.add(requirement)
                 else:
                     print(f"Error: unknown manifest requirement '{name}'.")
@@ -1112,6 +1257,22 @@ def run_manifest_mode(translations=None):
     ) and not _bootstrap_flatpak_for_manifest():
         print("Error: Could not prepare Flatpak/Flathub required by this manifest.")
         return 2
+
+    # Homebrew-sourced entries only exist in the AppStream catalog once Brew
+    # is enabled, so the prerequisite must be satisfied before any script
+    # resolution happens. Explicit homebrew:<formula> entries already
+    # bootstrap Brew through _prepare_homebrew_manifest_entries below.
+    if not explicit_homebrew:
+        needs_homebrew = (
+            "homebrew" in manifest_requirements
+            or any(
+                source_override == "homebrew"
+                for _script_id, source_override in explicit_scripts
+            )
+        )
+        if needs_homebrew and not _bootstrap_homebrew_for_manifest(translations):
+            print("Error: Could not prepare Homebrew required by this manifest.")
+            return 2
 
     if explicit_homebrew:
         try:
