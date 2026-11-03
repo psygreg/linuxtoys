@@ -353,6 +353,349 @@ interrupted_apt_guard () {
     fi
 }
 
+# Guards against dnf, zypper and eopkg collisions, mirroring the same
+# standby+timeout posture the runners take for these families:
+# "fedora" → dnf, "suse" → zypper, "solus" → eopkg in package_guard. Solus
+# has no standalone lock file to vet (package_guard keeps no lock entry for
+# it either), so eopkg is process-evidence only; dnf and zypper keep
+# actively-held lock scans so a late-starting manager still shows up.
+
+_dnf_lock_actively_held () {
+    _proc_fd_links |
+        grep -Eq '^(/var/lib/dnf/rpmdb\.lock|/run/dnf\.pid|/var/lib/dnf/lock)( \(deleted\))?$'
+}
+
+_dnf_busy_manager () {
+    local _name
+    for _name in dnf dnf5; do
+        if pgrep -x "$_name" >/dev/null 2>&1; then
+            echo "$_name"
+            return 0
+        fi
+    done
+    for _name in dnf-automatic; do
+        if pgrep -x "$_name" >/dev/null 2>&1 && _dnf_lock_actively_held; then
+            echo "$_name"
+            return 0
+        fi
+    done
+    return 1
+}
+
+DNF_BUSY_WAIT_TIMEOUT=300
+
+dnf_busy_wait () {
+    local _manager
+    if ! _manager=$(_dnf_busy_manager); then
+        return 0
+    fi
+    info "Another package operation is in progress (${_manager}). Waiting for it to finish..."
+    local _waited=0
+    while _manager=$(_dnf_busy_manager); do
+        if (( _waited >= DNF_BUSY_WAIT_TIMEOUT )); then
+            die "Another package operation (${_manager}) is still running and is taking too long. Please wait for it to finish, then try again."
+        fi
+        sleep 3
+        _waited=$((_waited + 3))
+    done
+    # The idle exit probes the manager once more and its failed assignment is
+    # nonzero; scripts commonly run under set -e (the TUI runner generates
+    # 'set -eo pipefail'), so the success path must end with success.
+    return 0
+}
+
+dnf_lock_standby () {
+    local _waited=0
+    while _dnf_lock_actively_held; do
+        if (( _waited >= DNF_BUSY_WAIT_TIMEOUT )); then
+            return 1
+        fi
+        sleep 3
+        _waited=$((_waited + 3))
+    done
+    # The idle exit probes the lock once more and its failed test is
+    # nonzero; scripts commonly run under set -e (the TUI runner generates
+    # 'set -eo pipefail'), so the success path must end with success.
+    return 0
+}
+
+# Run $@ as one native dnf transaction with the runners' standby+timeout
+# recovery: a manager or a lock holder that *starts* between the dispatch
+# preflight and this call still holds the package state when the transaction
+# runs, and dnf refuses it with an opaque error. Instead of surfacing that
+# refusal as a generic failure, stand by for the holder, then re-run the
+# transaction once the locks are free.
+#
+# Contract (callers run under set -eo pipefail):
+#   0            transaction completed
+#   nonzero      failed on its own; the caller's usual error message applies
+#                (nothing consumed the failure)
+#   die          a holder outlasted the bounded standby: the timeout
+#                message, never the caller's generic failure hint
+dnf_transaction () {
+    while true; do
+        local _status=0
+        "$@" || _status=$?
+        if [ "$_status" -eq 0 ]; then
+            return 0
+        fi
+        if _dnf_lock_actively_held || _dnf_busy_manager >/dev/null 2>&1; then
+            dnf_busy_wait
+            if _dnf_lock_actively_held; then
+                info "Another package operation is in progress. Waiting for it to finish..."
+                dnf_lock_standby || \
+                    die "Another package operation is still running and is taking too long. Please wait for the ongoing operation to finish, then try again."
+            fi
+            # The standby exits only once the locks are free; retry below.
+        else
+            # Not attributable to a lock; the caller's existing error
+            # message applies, with the same status a bare transaction call
+            # would have produced.
+            return "$_status"
+        fi
+    done
+}
+
+_zypper_lock_actively_held () {
+    _proc_fd_links |
+        grep -Eq '^(/run/zypp\.pid|/var/run/zypp\.pid)( \(deleted\))?$'
+}
+
+_zypper_busy_manager () {
+    local _name
+    for _name in zypper; do
+        if pgrep -x "$_name" >/dev/null 2>&1; then
+            echo "$_name"
+            return 0
+        fi
+    done
+    for _name in zypp-refresh; do
+        if pgrep -x "$_name" >/dev/null 2>&1 && _zypper_lock_actively_held; then
+            echo "$_name"
+            return 0
+        fi
+    done
+    return 1
+}
+
+ZYPPER_BUSY_WAIT_TIMEOUT=300
+
+zypper_busy_wait () {
+    local _manager
+    if ! _manager=$(_zypper_busy_manager); then
+        return 0
+    fi
+    info "Another package operation is in progress (${_manager}). Waiting for it to finish..."
+    local _waited=0
+    while _manager=$(_zypper_busy_manager); do
+        if (( _waited >= ZYPPER_BUSY_WAIT_TIMEOUT )); then
+            die "Another package operation (${_manager}) is still running and is taking too long. Please wait for it to finish, then try again."
+        fi
+        sleep 3
+        _waited=$((_waited + 3))
+    done
+    # The idle exit probes the manager once more and its failed assignment is
+    # nonzero; scripts commonly run under set -e (the TUI runner generates
+    # 'set -eo pipefail'), so the success path must end with success.
+    return 0
+}
+
+zypper_lock_standby () {
+    local _waited=0
+    while _zypper_lock_actively_held; do
+        if (( _waited >= ZYPPER_BUSY_WAIT_TIMEOUT )); then
+            return 1
+        fi
+        sleep 3
+        _waited=$((_waited + 3))
+    done
+    # The idle exit probes the lock once more and its failed test is
+    # nonzero; scripts commonly run under set -e (the TUI runner generates
+    # 'set -eo pipefail'), so the success path must end with success.
+    return 0
+}
+
+# Run $@ as one native zypper transaction with the runners' standby+timeout
+# recovery; same shape and contract as dnf_transaction. Zypper is also driven
+# through YaST and KDE's update applet, both of which hold the zypp lock like
+# any other client — the fd standby below covers someone the recognized list
+# cannot name, exactly like the pacman/apt wrappers do.
+zypper_transaction () {
+    while true; do
+        local _status=0
+        "$@" || _status=$?
+        if [ "$_status" -eq 0 ]; then
+            return 0
+        fi
+        if _zypper_lock_actively_held || _zypper_busy_manager >/dev/null 2>&1; then
+            zypper_busy_wait
+            if _zypper_lock_actively_held; then
+                info "Another package operation is in progress. Waiting for it to finish..."
+                zypper_lock_standby || \
+                    die "Another package operation is still running and is taking too long. Please wait for the ongoing operation to finish, then try again."
+            fi
+            # The standby exits only once the locks are free; retry below.
+        else
+            # Not attributable to a lock; the caller's existing error
+            # message applies, with the same status a bare transaction call
+            # would have produced.
+            return "$_status"
+        fi
+    done
+}
+
+# Echo the name of the eopkg manager currently busy, else fail (empty output).
+# Solus keeps no vettable lock file (package_guard._FAMILY_LOCK_FILES has no
+# "solus" entry on purpose), so a running eopkg IS the transaction evidence,
+# the same conservative signal the runner counts on.
+_eopkg_busy_manager () {
+    if pgrep -x eopkg >/dev/null 2>&1; then
+        echo "eopkg"
+        return 0
+    fi
+    return 1
+}
+
+EOPKG_BUSY_WAIT_TIMEOUT=300
+
+eopkg_busy_wait () {
+    local _manager
+    if ! _manager=$(_eopkg_busy_manager); then
+        return 0
+    fi
+    info "Another package operation is in progress (${_manager}). Waiting for it to finish..."
+    local _waited=0
+    while _manager=$(_eopkg_busy_manager); do
+        if (( _waited >= EOPKG_BUSY_WAIT_TIMEOUT )); then
+            die "Another package operation (${_manager}) is still running and is taking too long. Please wait for it to finish, then try again."
+        fi
+        sleep 3
+        _waited=$((_waited + 3))
+    done
+    # The idle exit probes the manager once more and its failed assignment is
+    # nonzero; scripts commonly run under set -e (the TUI runner generates
+    # 'set -eo pipefail'), so the success path must end with success.
+    return 0
+}
+
+# Run $@ as one native eopkg transaction with the runners' standby+timeout
+# recovery; same contract as dnf_transaction, without the fd standby (no
+# standalone lock file to probe on Solus).
+eopkg_transaction () {
+    while true; do
+        local _status=0
+        "$@" || _status=$?
+        if [ "$_status" -eq 0 ]; then
+            return 0
+        fi
+        if _eopkg_busy_manager >/dev/null 2>&1; then
+            eopkg_busy_wait
+            # Idles or dies with the parity timeout message; retry below.
+        else
+            # Not attributable to a running manager; the caller's existing
+            # error message applies, with the same status a bare transaction
+            # call would have produced.
+            return "$_status"
+        fi
+    done
+}
+
+# The "ostree" family cannot use the process/lock evidence pacman and apt
+# scan for: the transaction tool, the automatic-updater daemon (comm
+# "rpm-ostree-auto") and the startable system daemon (rpm-ostreed runs
+# `rpm-ostree start-daemon`) all share ONE comm name, and rpm-ostreed holds
+# its sysroot locks in a private mount namespace (MountFlags=slave), so
+# host-visible /proc never shows them. Mirrors
+# package_guard._rpm_ostree_transaction_active: presence merely gates the
+# authoritative `rpm-ostree status` probe, whose header carries the daemon's
+# own classification ("State: idle" between transactions, even with a staged
+# deployment pending reboot; "State: busy" while one runs).
+_rpm_ostree_status_busy () {
+    local _state _line
+    if command -v timeout >/dev/null 2>&1; then
+        # A hung status RPC would stall the wait loop; never block on the
+        # probe itself, exactly like the runner's 25s subprocess timeout.
+        _state=$(timeout 25 rpm-ostree status 2>/dev/null) || return 1
+    else
+        _state=$(rpm-ostree status 2>/dev/null) || return 1
+    fi
+    while IFS= read -r _line; do
+        # Same left-trim the runner's strip() applies before matching.
+        _line="${_line#"${_line%%[![:space:]]*}"}"
+        case "${_line,,}" in
+            state:*)
+                # The first State: line is the verdict; match loosely enough
+                # for future qualifiers ("State: busy (commit...)").
+                [[ "${_line,,}" == *"busy"* ]] && return 0
+                return 1
+                ;;
+        esac
+    done <<< "$_state"
+    return 1
+}
+
+# Echo the name of the rpm-ostree manager currently busy, else fail (empty
+# output). Mirrors package_guard.busy_native_manager_process() for the
+# "ostree" family: a comm-bearing process only licenses the daemon-state
+# probe, and the verdict is the daemon's own.
+_rpm_ostree_busy_manager () {
+    if ! pgrep -x rpm-ostree >/dev/null 2>&1 && \
+       ! pgrep -x rpm-ostree-auto >/dev/null 2>&1; then
+        return 1
+    fi
+    if _rpm_ostree_status_busy; then
+        echo "rpm-ostree"
+        return 0
+    fi
+    return 1
+}
+
+RPM_OSTREE_BUSY_WAIT_TIMEOUT=300
+
+rpm_ostree_busy_wait () {
+    local _manager
+    if ! _manager=$(_rpm_ostree_busy_manager); then
+        return 0
+    fi
+    info "Another package operation is in progress (${_manager}). Waiting for it to finish..."
+    local _waited=0
+    while _manager=$(_rpm_ostree_busy_manager); do
+        if (( _waited >= RPM_OSTREE_BUSY_WAIT_TIMEOUT )); then
+            die "Another package operation (${_manager}) is still running and is taking too long. Please wait for it to finish, then try again."
+        fi
+        sleep 3
+        _waited=$((_waited + 3))
+    done
+    # The idle exit probes the manager once more and its failed assignment is
+    # nonzero; scripts commonly run under set -e (the TUI runner generates
+    # 'set -eo pipefail'), so the success path must end with success.
+    return 0
+}
+
+# Run $@ as one rpm-ostree transaction with the runners' standby+timeout
+# recovery; same contract as eopkg_transaction, with the daemon's own busy
+# state as the only collision evidence (no fds or lock files to scan).
+# rpm-ostree transactions are re-runnable: a refused `install`/`update`
+# stages nothing, so the retried attempt is safe after the daemon goes idle.
+rpm_ostree_transaction () {
+    while true; do
+        local _status=0
+        "$@" || _status=$?
+        if [ "$_status" -eq 0 ]; then
+            return 0
+        fi
+        if _rpm_ostree_busy_manager >/dev/null 2>&1; then
+            rpm_ostree_busy_wait
+            # Idles or dies with the parity timeout message; retry below.
+        else
+            # Not attributable to the daemon; the caller's existing error
+            # message applies, with the same status a bare transaction call
+            # would have produced.
+            return "$_status"
+        fi
+    done
+}
+
 pkg_exists () {
     pkg_found=()
     pkg_notfound=()
@@ -492,7 +835,7 @@ pkg_install () {
             fi
         fi
     elif is_ostree; then
-        sudo_ rpm-ostree install "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
+        rpm_ostree_transaction sudo_ rpm-ostree install "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
         # Perform ostree check if requested and packages were actually installed
         if [[ $_ostreecheck -eq 1 && ${#pkg_notfound[@]} -gt 0 ]]; then
@@ -507,16 +850,16 @@ pkg_install () {
             echo 'fastestmirror=True' | sudo_ tee -a /etc/dnf/dnf.conf >/dev/null
         fi
         if [[ $_allowerasing -eq 1 ]]; then
-            sudo_ dnf install -y --allowerasing "${pkg_notfound[@]}" || die "Failed to install $to_install"
+            dnf_transaction sudo_ dnf install -y --allowerasing "${pkg_notfound[@]}" || die "Failed to install $to_install"
         else
-            sudo_ dnf install -y "${pkg_notfound[@]}" || die "Failed to install $to_install"
+            dnf_transaction sudo_ dnf install -y "${pkg_notfound[@]}" || die "Failed to install $to_install"
         fi
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     elif is_suse; then
-        sudo_ zypper in -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
+        zypper_transaction sudo_ zypper in -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     elif is_solus; then
-        sudo_ eopkg it -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
+        eopkg_transaction sudo_ eopkg it -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     fi
     (( _bypass )) || runner_unlock
@@ -934,7 +1277,7 @@ pkg_fromfile () {
         pacman_lock_guard
         { pacman_transaction sudo_ pamac install --no-confirm "./${*}" && _append_transmap "pkg file $*"; } || fatal "Failed to install package $*"
     elif is_ostree; then
-        sudo_ rpm-ostree install "${@}" || fatal "Failed to install $*"
+        rpm_ostree_transaction sudo_ rpm-ostree install "${@}" || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
         # Perform ostree check if requested
         if [[ $_ostreecheck -eq 1 ]]; then
@@ -942,13 +1285,13 @@ pkg_fromfile () {
             exit 100
         fi
     elif is_fedora || is_rhel; then
-        sudo_ dnf install -y "${@}" || fatal "Failed to install $*"
+        dnf_transaction sudo_ dnf install -y "${@}" || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
     elif is_suse; then
-        sudo_ zypper in -y "${@}" || fatal "Failed to install $*"
+        zypper_transaction sudo_ zypper in -y "${@}" || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
     elif is_solus; then
-        sudo_ eopkg it -y "${@}" || fatal "Failed to install $*"
+        eopkg_transaction sudo_ eopkg it -y "${@}" || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
     fi
     runner_unlock
@@ -1904,20 +2247,20 @@ pkg_remove () {
         pacman_transaction pamac remove --no-confirm "${pkg_found[@]}" \
             || fatal "Failed to remove packages: $to_remove"
     elif is_ostree; then
-        sudo_ rpm-ostree uninstall "${pkg_found[@]}" \
+        rpm_ostree_transaction sudo_ rpm-ostree uninstall "${pkg_found[@]}" \
             || fatal "Failed to remove packages: $to_remove"
     elif is_fedora || is_rhel; then
         # --noautoremove: a revert must only remove the packages it recorded.
         # dnf's default dependency cleanup (clean_requirements_on_remove) would
         # also strip dep-reasoned packages (hwdata/pciutils/etc.), which can
         # silently break host tooling the probes and other software rely on.
-        sudo_ dnf remove -y --noautoremove "${pkg_found[@]}" \
+        dnf_transaction sudo_ dnf remove -y --noautoremove "${pkg_found[@]}" \
             || fatal "Failed to remove packages: $to_remove"
     elif is_suse; then
-        sudo_ zypper rm -y "${pkg_found[@]}" \
+        zypper_transaction sudo_ zypper rm -y "${pkg_found[@]}" \
             || fatal "Failed to remove packages: $to_remove"
     elif is_solus; then
-        sudo_ eopkg rmf -y "${pkg_found[@]}" \
+        eopkg_transaction sudo_ eopkg rmf -y "${pkg_found[@]}" \
             || fatal "Failed to remove packages: $to_remove"
     fi
 

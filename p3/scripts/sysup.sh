@@ -155,15 +155,30 @@ if is_steamos; then
 elif is_ostree || is_ublue || is_gregos; then
     # rpm-ostree based immutables: pull and stage a new deployment. The staged
     # deployment is applied on the next reboot (see needs_reboot below).
-    { [ "$UPD_SERVICE" = "1" ] && rpm-ostree update; } || sudo_ rpm-ostree update || fatal "Failed to update system image"
+    if [ "$UPD_SERVICE" = "1" ]; then
+        rpm_ostree_transaction rpm-ostree update || fatal "Failed to update system image"
+    else
+        rpm_ostree_transaction sudo_ rpm-ostree update || fatal "Failed to update system image"
+    fi
 elif is_fedora || is_rhel; then
-    { { [ "$UPD_SERVICE" = "1" ] && dnf autoremove -y && dnf clean all && dnf -y makecache --refresh; } || \
-        { sudo_ dnf autoremove -y && sudo_ dnf clean all && sudo_ dnf -y makecache --refresh; }; } || die "Failed to remove orphaned packages"
-    { [ "$UPD_SERVICE" = "1" ] && dnf --refresh upgrade -y --setopt=throttle=2M; } || sudo_ dnf --refresh upgrade -y || fatal "Failed to upgrade packages"
+    if [ "$UPD_SERVICE" = "1" ]; then
+        dnf_transaction dnf autoremove -y || die "Failed to remove orphaned packages"
+        dnf_transaction dnf clean all || die "Failed to remove orphaned packages"
+        dnf_transaction dnf -y makecache --refresh || die "Failed to remove orphaned packages"
+    else
+        dnf_transaction sudo_ dnf autoremove -y || die "Failed to remove orphaned packages"
+        dnf_transaction sudo_ dnf clean all || die "Failed to remove orphaned packages"
+        dnf_transaction sudo_ dnf -y makecache --refresh || die "Failed to remove orphaned packages"
+    fi
+    if [ "$UPD_SERVICE" = "1" ]; then
+        dnf_transaction dnf --refresh upgrade -y --setopt=throttle=2M || fatal "Failed to upgrade packages"
+    else
+        dnf_transaction sudo_ dnf --refresh upgrade -y || fatal "Failed to upgrade packages"
+    fi
     is_fedora && { release_upgrade &&
             if offer_release_upgrade; then
-                sudo_ dnf system-upgrade download --releasever=$fedora_version -y || fatal "Failed to download Fedora $fedora_version upgrade"
-                sudo_ dnf system-upgrade reboot || fatal "Failed to reboot for Fedora $fedora_version upgrade"
+                dnf_transaction sudo_ dnf system-upgrade download --releasever=$fedora_version -y || fatal "Failed to download Fedora $fedora_version upgrade"
+                dnf_transaction sudo_ dnf system-upgrade reboot || fatal "Failed to reboot for Fedora $fedora_version upgrade"
             fi
     }
 elif is_debian || is_ubuntu; then
@@ -217,12 +232,17 @@ elif is_suse; then
         sed -n 's/.*<solvable[^>]*name="\([^"]*\)".*/\1/p'
     )
     if (( ${#orphaned_packages[@]} )); then
-        sudo_ zypper -n rm --clean-deps "${orphaned_packages[@]}" || die "Failed to remove orphaned packages"
+        zypper_transaction sudo_ zypper -n rm --clean-deps "${orphaned_packages[@]}" || die "Failed to remove orphaned packages"
     fi
-    sudo_ zypper dup --no-recommends -y || fatal "Failed to upgrade packages"
+    zypper_transaction sudo_ zypper dup --no-recommends -y || fatal "Failed to upgrade packages"
 elif is_solus; then
-    { [ "$UPD_SERVICE" = "1" ] && eopkg rmo -y; } || sudo_ eopkg rmo -y || fatal "Failed to remove orphaned packages"
-    { [ "$UPD_SERVICE" = "1" ] && eopkg up -y; } || sudo_ eopkg up -y || fatal "Failed to upgrade packages"
+    if [ "$UPD_SERVICE" = "1" ]; then
+        eopkg_transaction eopkg rmo -y || fatal "Failed to remove orphaned packages"
+        eopkg_transaction eopkg up -y || fatal "Failed to upgrade packages"
+    else
+        eopkg_transaction sudo_ eopkg rmo -y || fatal "Failed to remove orphaned packages"
+        eopkg_transaction sudo_ eopkg up -y || fatal "Failed to upgrade packages"
+    fi
 fi
 # Release the navigation lock before the interruptible remainder: Flatpak,
 # Snap, Homebrew and app updates are atomic or re-runnable. runner_unlock at
