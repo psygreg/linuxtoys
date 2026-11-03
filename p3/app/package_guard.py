@@ -15,7 +15,10 @@ manager command, and it ignores container-scoped and read-only manager calls.
 Like the helpers' own pacman_lock_guard and interrupted_apt_guard (each
 bounded-waits its manager through pacman_busy_wait/apt_busy_wait), the scan is
 a best-effort preflight; it cannot close every race between the check and the
-package-manager call itself.
+package-manager call itself. The library's apt_transaction/pacman_transaction
+wrappers stand by for (and re-run under) exactly that collision: a manager
+starting between the preflight and the transaction costs a wait and a retry,
+not a generic failure.
 """
 
 from __future__ import annotations

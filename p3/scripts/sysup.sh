@@ -169,9 +169,17 @@ elif is_fedora || is_rhel; then
 elif is_debian || is_ubuntu; then
     interrupted_apt_guard
     if { [ "$UPD_SERVICE" = "1" ] && apt-get -s autoremove 2>/dev/null | grep -q '^Remv '; } || sudo_ apt-get -s autoremove 2>/dev/null | grep -q '^Remv '; then
-        { [ "$UPD_SERVICE" = "1" ] && apt-get autoremove -y; } || sudo_ apt-get autoremove -y || fatal "Failed to remove orphaned packages"
+        if [ "$UPD_SERVICE" = "1" ]; then
+            apt_transaction apt-get autoremove -y || fatal "Failed to remove orphaned packages"
+        else
+            apt_transaction sudo_ apt-get autoremove -y || fatal "Failed to remove orphaned packages"
+        fi
     fi
-    { [ "$UPD_SERVICE" = "1" ] && apt-get upgrade -y --allow-downgrades -o Acquire::http::Dl-Limit=2048 -o Acquire::https::Dl-Limit=2048; } || sudo_ apt-get upgrade -y --allow-downgrades || fatal "Failed to upgrade packages"
+    if [ "$UPD_SERVICE" = "1" ]; then
+        apt_transaction apt-get upgrade -y --allow-downgrades -o Acquire::http::Dl-Limit=2048 -o Acquire::https::Dl-Limit=2048 || fatal "Failed to upgrade packages"
+    else
+        apt_transaction sudo_ apt-get upgrade -y --allow-downgrades || fatal "Failed to upgrade packages"
+    fi
     if is_ubuntu && [[ "$ID" == "ubuntu" ]] && release_upgrade; then
         if offer_release_upgrade; then
             # do-release-upgrade runs through sudo_, whose env_reset strips
@@ -192,17 +200,17 @@ elif { is_arch || is_cachy; } && ! is_manjaro; then
         # disabled: auto-confirm like every other branch's removal (dnf/apt
         # autoremove, zypper rm, pamac --no-confirm), otherwise the run sits
         # forever on pacman's ":: Do you want to remove these packages?".
-        sudo_ pacman -Rns --noconfirm $orphaned_packages || fatal "Failed to remove orphaned packages"
+        pacman_transaction sudo_ pacman -Rns --noconfirm $orphaned_packages || fatal "Failed to remove orphaned packages"
     fi
     if [ "$ID" = "omarchy" ]; then
         omarchy-update -y
     else
-        sudo_ pacman -Syu --noconfirm || fatal "Failed to upgrade packages"
+        pacman_transaction sudo_ pacman -Syu --noconfirm || fatal "Failed to upgrade packages"
     fi
 elif is_manjaro; then
     pacman_lock_guard
-    pamac remove --orphans --no-confirm || fatal "Failed to remove orphaned packages"
-    pamac update --no-confirm || fatal "Failed to upgrade packages"
+    pacman_transaction pamac remove --orphans --no-confirm || fatal "Failed to remove orphaned packages"
+    pacman_transaction pamac update --no-confirm || fatal "Failed to upgrade packages"
 elif is_suse; then
     mapfile -t orphaned_packages < <(
         zypper --xmlout packages --unneeded 2>/dev/null |

@@ -93,21 +93,90 @@ pacman_busy_wait () {
     return 0
 }
 
+# Bounded standby for the database lock file itself, mirroring the runners'
+# standby-then-timeout posture (package_guard.wait_for_idle): wait out a
+# verifiable live holder — including the ones the recognized manager list
+# cannot name (an AUR helper or another libalpm client) — so the usual
+# collision resolves on its own and only an operation that is STILL running
+# after the shared timeout stops the run.
+pacman_lock_standby () {
+    local _waited=0
+    while _pacman_lock_actively_held; do
+        if (( _waited >= PACMAN_BUSY_WAIT_TIMEOUT )); then
+            return 1
+        fi
+        sleep 3
+        _waited=$((_waited + 3))
+    done
+    # The idle exit probes the lock once more and its failed test is
+    # nonzero; scripts commonly run under set -e (the TUI runner generates
+    # 'set -eo pipefail'), so the success path must end with success.
+    return 0
+}
+
 pacman_lock_guard () {
     pacman_busy_wait
     if [ -f /var/lib/pacman/db.lck ]; then
         if _pacman_lock_actively_held; then
             # A verifiably live holder outside the recognized tool list: the
             # lock must never be removed. alpm fails cleanly on a live lock,
-            # so dying with guidance is the safe recovery.
-            die "Another process is holding the pacman database lock (/var/lib/pacman/db.lck). Please wait for it to finish or close it, then try again. If no package operation is running, remove the lock manually: sudo rm /var/lib/pacman/db.lck"
+            # so standing by for the holder (same standby+timeout posture as
+            # the runners) and carrying on once it releases is the safe
+            # recovery; only a holder that outlasts the wait stops the run.
+            info "Another package operation is in progress. Waiting for it to finish..."
+            pacman_lock_standby || \
+                die "Another package operation is still running and is taking too long. Please wait for the ongoing operation to finish, then try again."
+        else
+            # The wait above only returns when no live manager is detected, so a
+            # remaining lock file is a crash leftover; recovery is removing it
+            # rather than surfacing an opaque pacman lock failure later.
+            warn "Stale pacman lock detected. Removing /var/lib/pacman/db.lck"
+            { { [ "$UPD_SERVICE" = "1" ] && rm -f /var/lib/pacman/db.lck; } || sudo_ rm -f /var/lib/pacman/db.lck; } || die "Failed to remove stale lock. Run: sudo rm /var/lib/pacman/db.lck"
         fi
-        # The wait above only returns when no live manager is detected, so a
-        # remaining lock file is a crash leftover; recovery is removing it
-        # rather than surfacing an opaque pacman lock failure later.
-        warn "Stale pacman lock detected. Removing /var/lib/pacman/db.lck"
-        { { [ "$UPD_SERVICE" = "1" ] && rm -f /var/lib/pacman/db.lck; } || sudo_ rm -f /var/lib/pacman/db.lck; } || die "Failed to remove stale lock. Run: sudo_ rm /var/lib/pacman/db.lck"
     fi
+}
+
+# Run $@ as one native pacman-family transaction (pacman, pamac, paru) with
+# the runners' standby+timeout recovery for the residual race the entry
+# guards cannot close: a manager that *starts* between the guard and this
+# call still holds the alpm database lock when the transaction runs, and
+# alpm refuses it with an opaque lock error. Rather than surfacing that
+# refusal as a generic failure, stand by for the holder — the same posture
+# the runners take at dispatch — then re-run the transaction once the
+# database is free.
+#
+# Contract (callers run under set -eo pipefail):
+#   0            transaction completed
+#   nonzero      failed on its own; the caller's usual error message or
+#                install fallback applies (nothing consumed the failure)
+#   die          a holder outlasted the bounded standby: the timeout
+#                message, never the caller's generic failure hint
+pacman_transaction () {
+    while true; do
+        local _status=0
+        "$@" || _status=$?
+        if [ "$_status" -eq 0 ]; then
+            return 0
+        fi
+        if _pacman_lock_actively_held || _pacman_busy_manager >/dev/null 2>&1; then
+            pacman_busy_wait
+            if _pacman_lock_actively_held; then
+                info "Another package operation is in progress. Waiting for it to finish..."
+                pacman_lock_standby || \
+                    die "Another package operation is still running and is taking too long. Please wait for the ongoing operation to finish, then try again."
+            fi
+            # The standby exits only once the lock is free; retry below.
+        elif [ -f /var/lib/pacman/db.lck ]; then
+            # A crash leftover from a manager between the entry guard and
+            # this call: the same verified recovery, not a live hold.
+            pacman_lock_guard
+        else
+            # Not attributable to a lock; the caller's existing error
+            # message or install fallback applies, with the same status a
+            # bare transaction call would have produced.
+            return "$_status"
+        fi
+    done
 }
 
 # Whether any apt/dpkg lock is held open by a live process right now.
@@ -171,6 +240,65 @@ apt_busy_wait () {
     return 0
 }
 
+# Bounded standby for the dpkg/apt locks themselves, mirroring the runners'
+# standby-then-timeout posture (package_guard.wait_for_idle): wait out a
+# verifiable live holder — including the ones the recognized manager list
+# cannot name (a foreign helper or an unlisted frontend) — so the usual
+# collision resolves on its own and only an operation that is STILL running
+# after the shared timeout stops the run.
+apt_lock_standby () {
+    local _waited=0
+    while _apt_lock_actively_held; do
+        if (( _waited >= APT_BUSY_WAIT_TIMEOUT )); then
+            return 1
+        fi
+        sleep 3
+        _waited=$((_waited + 3))
+    done
+    # The idle exit probes the lock once more and its failed test is
+    # nonzero; scripts commonly run under set -e (the TUI runner generates
+    # 'set -eo pipefail'), so the success path must end with success.
+    return 0
+}
+
+# Run $@ as one native apt/dpkg transaction with the runners' standby+timeout
+# recovery for the residual race the entry guards cannot close: a manager
+# that *starts* between the guard and this call still holds a dpkg lock when
+# the transaction runs, and apt refuses it with an opaque lock error. Rather
+# than surfacing that refusal as a generic failure, stand by for the holder —
+# the same posture the runners take at dispatch — then re-run the transaction
+# once the locks are free.
+#
+# Contract (callers run under set -eo pipefail):
+#   0            transaction completed
+#   nonzero      failed on its own; the caller's usual error message or
+#                install fallback applies (nothing consumed the failure)
+#   die          a holder outlasted the bounded standby: the timeout
+#                message, never the caller's generic failure hint
+apt_transaction () {
+    while true; do
+        local _status=0
+        "$@" || _status=$?
+        if [ "$_status" -eq 0 ]; then
+            return 0
+        fi
+        if _apt_lock_actively_held || _apt_busy_manager >/dev/null 2>&1; then
+            apt_busy_wait
+            if _apt_lock_actively_held; then
+                info "Another package operation is in progress. Waiting for it to finish..."
+                apt_lock_standby || \
+                    die "Another package operation is still running and is taking too long. Please wait for the ongoing operation to finish, then try again."
+            fi
+            # The standby exits only once the locks are free; retry below.
+        else
+            # Not attributable to a lock; the caller's existing error
+            # message or install fallback applies, with the same status a
+            # bare transaction call would have produced.
+            return "$_status"
+        fi
+    done
+}
+
 interrupted_apt_guard () {
     apt_busy_wait
     local needs_repair=0
@@ -181,35 +309,44 @@ interrupted_apt_guard () {
             die "Failed to recover interrupted dpkg operation. Manual user intervention required."
         needs_repair=1
     fi
-    if ! { { [ "$UPD_SERVICE" = "1" ] && apt-get check; } || sudo_ apt-get check; } >/dev/null 2>&1; then
-        # A failing apt-get check is ambiguous: broken dependencies look the
-        # same as a dpkg lock held by a manager that started between the
-        # dispatch preflight and this guard. After the wait below, only an
-        # idle-manager failure counts as breakage — so a repair is never
-        # misdiagnosed from (or raced against) a live lock, which is how a
-        # healthy system got the "manual intervention required" failure.
+    # A failing apt-get check is ambiguous: broken dependencies look the
+    # same as a dpkg lock held by a manager that started between the
+    # dispatch preflight and this guard. Busy managers are waited out and
+    # live holders stood by for — standby-then-timeout, like the runners —
+    # with the verdict re-run after every wait; only an idle-manager
+    # failure counts as breakage, so a repair is never misdiagnosed from
+    # (or raced against) a live lock, which is how a healthy system got
+    # the "manual intervention required" failure.
+    while true; do
+        if { { [ "$UPD_SERVICE" = "1" ] && apt-get check; } || sudo_ apt-get check; } >/dev/null 2>&1; then
+            break
+        fi
         apt_busy_wait
+        if _apt_lock_actively_held; then
+            info "Another package operation is in progress. Waiting for it to finish..."
+            apt_lock_standby || \
+                die "Another package operation is still running and is taking too long. Please wait for the ongoing operation to finish, then try again."
+            # A holder released; re-verify the verdict against the now-free locks.
+            continue
+        fi
+        # The wait is over with no verifiable holder: re-run the verdict once,
+        # since the wait may have covered exactly the transaction that failed
+        # the previous attempt.
         if ! { { [ "$UPD_SERVICE" = "1" ] && apt-get check; } || sudo_ apt-get check; } >/dev/null 2>&1; then
-            if _apt_lock_actively_held; then
-                # The lock is held by a process outside the recognized tool
-                # list (an AUR/unknown helper), so the wait could not see it.
-                # Dying honestly beats misreading lock errors as breakage and
-                # running a repair against a live lock.
-                die "Another process is locking the package manager database. Please wait for it to finish or close it, then try again."
-            fi
             info "Broken package dependencies were detected. Attempting recovery..."
             needs_repair=1
         fi
-    fi
+        break
+    done
 
     if [ "$needs_repair" -eq 1 ]; then
         apt_busy_wait
-        if ! { { [ "$UPD_SERVICE" = "1" ] && apt-get --fix-broken install -y; } ||
-                sudo_ apt-get --fix-broken install -y; }; then
-            if _apt_lock_actively_held; then
-                die "Another process is locking the package manager database. Please wait for it to finish or close it, then try again."
-            fi
-            die "Failed to fix broken packages. Manual user intervention required."
+        if [ "$UPD_SERVICE" = "1" ]; then
+            apt_transaction apt-get --fix-broken install -y ||
+                die "Failed to fix broken packages. Manual user intervention required."
+        else
+            apt_transaction sudo_ apt-get --fix-broken install -y ||
+                die "Failed to fix broken packages. Manual user intervention required."
         fi
         { { [ "$UPD_SERVICE" = "1" ] && apt-get check; } || sudo_ apt-get check; } >/dev/null 2>&1 || \
             die "Package dependencies remain broken. Manual user intervention required."
@@ -283,9 +420,9 @@ pkg_install () {
     if is_debian || is_ubuntu; then
         interrupted_apt_guard
         if (( _no_recommends )); then
-            sudo_ apt-get install -y --no-install-recommends "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
+            apt_transaction sudo_ apt-get install -y --no-install-recommends "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         else
-            sudo_ apt-get install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
+            apt_transaction sudo_ apt-get install -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         fi
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     elif is_arch || is_cachy || is_manjaro; then
@@ -298,7 +435,7 @@ pkg_install () {
             # fix #1255
             if [[ ! -e /var/lib/pacman/sync/extra.db ]]; then
                 pacman_lock_guard
-                sudo_ pacman -Sy --noconfirm || die "Failed to synchronize package databases"
+                pacman_transaction sudo_ pacman -Sy --noconfirm || die "Failed to synchronize package databases"
             fi
         fi
         local _pacman_pkgs=()
@@ -317,11 +454,11 @@ pkg_install () {
         if [ -n "$to_install_pacman" ]; then
             if is_manjaro; then
                 pacman_lock_guard
-                sudo_ pamac install --no-confirm "${_pacman_pkgs[@]}" || fatal "Failed to install $to_install_pacman"
+                pacman_transaction sudo_ pamac install --no-confirm "${_pacman_pkgs[@]}" || fatal "Failed to install $to_install_pacman"
                 [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_pacman"
             else
                 pacman_lock_guard
-                sudo_ pacman -S --noconfirm "${_pacman_pkgs[@]}" || fatal "Failed to install $to_install_pacman"
+                pacman_transaction sudo_ pacman -S --noconfirm "${_pacman_pkgs[@]}" || fatal "Failed to install $to_install_pacman"
                 [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_pacman"
             fi
         fi
@@ -329,7 +466,7 @@ pkg_install () {
             if is_manjaro; then
                 (( _bypass )) || runner_unlock
                 pacman_lock_guard
-                pamac build --no-confirm "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
+                pacman_transaction pamac build --no-confirm "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
                 (( _bypass )) || runner_lock "package-transaction"
             else
                 (( _bypass )) || runner_unlock
@@ -349,7 +486,7 @@ pkg_install () {
                     call_script paru || die "Failed to repair paru"
                     paru --version >/dev/null 2>&1 || die "Paru is still unusable after reinstalling it"
                 fi
-                paru -S -a --noconfirm --skipreview "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
+                pacman_transaction paru -S -a --noconfirm --skipreview "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
                 [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_paru"
                 (( _bypass )) || runner_lock "package-transaction"
             fi
@@ -769,12 +906,20 @@ pkg_fromfile () {
     fi
 
     if is_debian || is_ubuntu; then
-        { sudo_ apt-get -o APT::Sandbox::User=root install -y "${@}" || sudo_ dpkg -i "${@}"; } || fatal "Failed to install $*"
+        # Wrapper only stands by (and retries) on lock collisions; a plain
+        # failure falls through to the dpkg fallback, as before.
+        if ! { apt_transaction sudo_ apt-get -o APT::Sandbox::User=root install -y "${@}" || \
+                apt_transaction sudo_ dpkg -i "${@}"; }; then
+            fatal "Failed to install $*"
+        fi
         _append_transmap "pkg file $*"
     elif { is_arch || is_cachy; } && ! is_manjaro; then
         # check for lock before installing local package
         pacman_lock_guard
-        if sudo_ pacman -U --noconfirm "${@}"; then
+        # The wrapper returns nonzero for an unlocked pacman failure, so the
+        # PKGBUILD fallback below keeps working; only the lock collision is
+        # absorbed into standby+retry.
+        if pacman_transaction sudo_ pacman -U --noconfirm "${@}"; then
             _append_transmap "pkg file $*"
         else
             if [ -f PKGBUILD ]; then
@@ -787,7 +932,7 @@ pkg_fromfile () {
         fi
     elif is_manjaro; then
         pacman_lock_guard
-        { sudo_ pamac install --no-confirm "./${*}" && _append_transmap "pkg file $*"; } || fatal "Failed to install package $*"
+        { pacman_transaction sudo_ pamac install --no-confirm "./${*}" && _append_transmap "pkg file $*"; } || fatal "Failed to install package $*"
     elif is_ostree; then
         sudo_ rpm-ostree install "${@}" || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
@@ -1748,15 +1893,15 @@ pkg_remove () {
     runner_lock "package-removal"
 
     if is_debian || is_ubuntu; then
-        sudo_ apt-get remove -y --allow-unauthenticated "${pkg_found[@]}" \
+        apt_transaction sudo_ apt-get remove -y --allow-unauthenticated "${pkg_found[@]}" \
             || fatal "Failed to remove packages: $to_remove"
     elif { is_arch || is_cachy; } && ! is_manjaro; then
         pacman_lock_guard
-        sudo_ pacman -Rsn --noconfirm "${pkg_found[@]}" \
+        pacman_transaction sudo_ pacman -Rsn --noconfirm "${pkg_found[@]}" \
             || fatal "Failed to remove packages: $to_remove"
     elif is_manjaro; then
         pacman_lock_guard
-        pamac remove --no-confirm "${pkg_found[@]}" \
+        pacman_transaction pamac remove --no-confirm "${pkg_found[@]}" \
             || fatal "Failed to remove packages: $to_remove"
     elif is_ostree; then
         sudo_ rpm-ostree uninstall "${pkg_found[@]}" \
@@ -2001,7 +2146,7 @@ pkg_appimage () {
                 die "Cannot enable Ubuntu universe: add-apt-repository is unavailable"
             sudo_ add-apt-repository -y universe || \
                 die "Failed to enable Ubuntu universe repository"
-            sudo_ apt-get update || die "Failed to refresh APT repositories after enabling universe"
+            apt_transaction sudo_ apt-get update || die "Failed to refresh APT repositories after enabling universe"
             if LC_ALL=C apt-cache policy libfuse2t64 | grep -Eq '^[[:space:]]*Candidate: [^ (]'; then
                 pkg_install libfuse2t64
             elif LC_ALL=C apt-cache policy libfuse2 | grep -Eq '^[[:space:]]*Candidate: [^ (]'; then
@@ -2026,7 +2171,7 @@ Package: libfuse2t64
 Pin: release n=trixie
 Pin-Priority: 990
 EOF
-            sudo_ apt-get update || die "Failed to refresh APT repositories for FUSE 2 compatibility"
+            apt_transaction sudo_ apt-get update || die "Failed to refresh APT repositories for FUSE 2 compatibility"
             pkg_install libfuse2t64
         else
             die "No FUSE 2 compatibility package is available from this system's APT repositories"
