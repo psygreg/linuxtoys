@@ -310,9 +310,12 @@ fn category_watermark_pixbuf(path: &str, width: i32, height: i32) -> Option<Pixb
     }
 
     let supersample = 2usize;
-    let icon_size = ((height as f64 * 1.70).round() as i32).max(1);
+    // Fit the watermark fully inside the card. The old 1.70× scale + negative
+    // X bleed cropped icons on short Fedora cards; keep a small left inset so
+    // the artwork reads as decoration without cutting the glyph.
+    let icon_size = ((height as f64 * 0.88).round() as i32).max(1);
     let icon_size_ss = icon_size.saturating_mul(supersample as i32);
-    let icon_x = (-height as f64 * 0.42).round() as isize;
+    let icon_x = ((height as f64 * 0.08).round() as isize).max(4);
     let icon_y = ((height - icon_size) as f64 / 2.0).round() as isize;
     let source = Pixbuf::from_file_at_scale(path, icon_size_ss, icon_size_ss, true).ok()?;
 
@@ -1246,7 +1249,9 @@ unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec, featured_height: 
     let category = spec.category != 0;
 
     let row = gtk::Box::new(gtk::Orientation::Horizontal, 12);
-    row.set_size_request(128, 52);
+    // 56 px leaves room for the 38 px icon plus theme chrome (Breeze on Fedora
+    // adds image padding that clipped icons when this was 52).
+    row.set_size_request(128, 56);
     row.set_hexpand(false);
     row.set_halign(gtk::Align::Fill);
 
@@ -1315,10 +1320,15 @@ unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec, featured_height: 
     icon.set_widget_name("linuxtoys-native-icon");
     icon.set_halign(gtk::Align::End);
     icon.set_valign(gtk::Align::Center);
+    // Pin the image's allocation so theme min-height/padding cannot shrink the
+    // drawing area below the pixbuf and crop the bottom of the icon.
+    icon.set_size_request(38, 38);
+    // Keep the glyph clear of the rounded right edge / corner badge.
+    icon.set_margin_end(8);
 
     if category {
         // Mirror the ordinary card geometry: reserve the 38 px icon slot on the
-        // left, keep its 20 px packing, and shift the old 22 px label compensation
+        // left, keep modest packing, and shift the old 22 px label compensation
         // to the right. The real category artwork is supplied by Python's
         // allocation-sized watermark layer.
         let slot = gtk::Box::new(gtk::Orientation::Horizontal, 0);
@@ -1326,7 +1336,7 @@ unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec, featured_height: 
         slot.set_size_request(38, 38);
         slot.set_halign(gtk::Align::Start);
         slot.set_valign(gtk::Align::Center);
-        row.pack_start(&slot, false, false, 20);
+        row.pack_start(&slot, false, false, 12);
         row.pack_start(&label, true, true, 0);
 
         // Keep the image alive and discoverable for the common Python/native API,
@@ -1335,7 +1345,9 @@ unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec, featured_height: 
         icon.hide();
     } else {
         row.pack_start(&label, true, true, 0);
-        row.pack_start(&icon, false, false, 20);
+        // Tighter packing than 20px: wide Featured columns were eating the right
+        // padding and clipping app icons against the card border.
+        row.pack_start(&icon, false, false, 10);
     }
 
     if category {
@@ -1353,6 +1365,7 @@ unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec, featured_height: 
         card_surface.style_context().add_class("script-item");
         if is_new { card_surface.style_context().add_class("script-item-new"); }
         card_surface.set_margin_top(4);
+        card_surface.set_margin_bottom(4);
         card_surface.set_margin_start(4);
         card_surface.set_margin_end(4);
 
@@ -1389,7 +1402,10 @@ unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec, featured_height: 
         ordinary_surface.set_widget_name("linuxtoys-native-surface");
         ordinary_surface.style_context().add_class("script-item");
         if is_new { ordinary_surface.style_context().add_class("script-item-new"); }
+        // Match the top/side badge inset on the bottom. Top-only margins pinned
+        // Featured cards short and clipped 38 px icons under Breeze/Fedora.
         ordinary_surface.set_margin_top(4);
+        ordinary_surface.set_margin_bottom(4);
         ordinary_surface.set_margin_start(4);
         ordinary_surface.set_margin_end(4);
         ordinary_surface.upcast::<gtk::Widget>()
@@ -1643,11 +1659,11 @@ unsafe fn create_featured_large_card_from_spec(
     row.set_margin_start(16);
     row.set_margin_end(16);
     // `outer_height` is the complete EventBox height. The row contributes 24 px
-    // of vertical margins, the card surface another 4 px top margin, and the
-    // script-item CSS border 2 px. Account for all three here so the large
+    // of vertical margins, the card surface 8 px of top+bottom badge inset, and
+    // the script-item CSS border 2 px. Account for all three here so the large
     // card's natural request is exactly the height of two ordinary rows plus
     // the GtkGrid row spacing; any excess would stretch every homogeneous row.
-    row.set_size_request(108, (outer_height - 30).max(1));
+    row.set_size_request(108, (outer_height - 34).max(1));
     row.pack_start(&icon, false, false, 0);
     row.pack_start(&text_box, true, true, 0);
 
@@ -1656,6 +1672,7 @@ unsafe fn create_featured_large_card_from_spec(
     surface.style_context().add_class("script-item");
     if spec.is_new != 0 { surface.style_context().add_class("script-item-new"); }
     surface.set_margin_top(4);
+    surface.set_margin_bottom(4);
     surface.set_margin_start(4);
     surface.set_margin_end(4);
     surface.pack_start(&row, true, true, 0);

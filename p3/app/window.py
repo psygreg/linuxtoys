@@ -3217,7 +3217,7 @@ class AppWindow(
             """
             Estimate one visible viewport of cards from the live allocation.
 
-            Card content has a 128x52 minimum request. Account for FlowBox margins,
+            Card content has a 128x56 minimum request. Account for FlowBox margins,
             card badge-edge space and row/column spacing. Once GTK has real child
             allocations, prefer those measurements over the fallback constants.
             """
@@ -3232,7 +3232,7 @@ class AppWindow(
                 viewport_height = max(1, int(allocation.height))
 
             card_width = 132
-            card_height = 56
+            card_height = 64
             children = flowbox.get_children()
             if children:
                 child_allocation = children[0].get_allocation()

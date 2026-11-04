@@ -1173,7 +1173,7 @@ class FeaturedCtl:
                 count,
             )
 
-        card_height = int(layout.get("card_height", 52))
+        card_height = int(layout.get("card_height", 64))
         row_spacing = int(layout.get("row_spacing", 12))
         if rows <= 0 or columns <= 0:
             return False

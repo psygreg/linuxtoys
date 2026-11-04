@@ -1,6 +1,6 @@
 import os
 
-from .gtk_common import Gdk, GLib, Gtk, load_scaled_pixbuf
+from .gtk_common import DEFAULT_ICON_SIZE, Gdk, GLib, Gtk, load_scaled_pixbuf
 from gi.repository import Pango
 from . import get_icon_path, compat, revert_helper, official_index, installed_packages
 from .gtk_dialogs import run_message_dialog
@@ -342,7 +342,7 @@ class ItemWidgetFactory:
         }
 
     def _finish_native_item_widget(
-        self, event_box, item_info, spec, *, allow_drag=False
+        self, event_box, item_info, spec, *, allow_drag=False, icon_size=DEFAULT_ICON_SIZE
     ):
         """Attach Python state/callbacks to a card already constructed by Rust."""
         event_box.info = item_info
@@ -350,11 +350,16 @@ class ItemWidgetFactory:
         # The native card constructor receives remote artwork as icon_name.
         # Rebind its Gtk.Image through the same URL-aware loader used by app
         # pages, rather than depending on icon-theme lookup of an HTTPS URL.
+        # Match the card's laid-out icon footprint (38 ordinary / 64 large).
+        # Loading ordinary remote icons at 48 clipped them inside the card.
         icon_url = str(item_info.get("icon") or "").strip()
         if icon_url.startswith(("https://", "http://")):
             native_icon = gui_rs.card_child(event_box, "linuxtoys-native-icon")
             if isinstance(native_icon, Gtk.Image):
-                gui_rs.set_image_source(native_icon, icon_name=icon_url, size=48)
+                gui_rs.set_image_source(
+                    native_icon, icon_name=icon_url, size=icon_size
+                )
+                native_icon.set_size_request(icon_size, icon_size)
 
         # Match the Python card contract: hover styling belongs to the inset
         # painted surface, not the outer EventBox whose allocation also reserves
@@ -362,6 +367,10 @@ class ItemWidgetFactory:
         card_surface = gui_rs.card_child(event_box, "linuxtoys-native-surface")
         if card_surface is not None:
             event_box.card_surface = card_surface
+            # Symmetric badge inset. Older native libs only set top/start/end;
+            # without a bottom margin, Featured pins clip the icon on Fedora.
+            if card_surface.get_margin_bottom() < 4:
+                card_surface.set_margin_bottom(4)
 
         if spec.get("checklist"):
             check = gui_rs.card_child(event_box, "linuxtoys-native-check")
@@ -470,7 +479,9 @@ class ItemWidgetFactory:
             return None
         if widget is None:
             return None
-        return self._finish_native_item_widget(widget, item_info, spec)
+        return self._finish_native_item_widget(
+            widget, item_info, spec, icon_size=64
+        )
 
     def update_native_featured_widget(self, widget, item_info):
         """Rebind one native ordinary Featured card in place."""

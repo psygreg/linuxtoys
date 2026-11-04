@@ -3,6 +3,16 @@
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 10px;
 }
+
+/* Theme chrome (Breeze on Fedora, etc.) can pad GtkImage enough that a
+   fixed-height card clips the bottom of the 38px app icon. Keep native card
+   icons size-neutral so the pixbuf fills its allocation fully. */
+#linuxtoys-native-icon {
+    padding: 0;
+    margin: 0;
+    min-height: 0;
+    min-width: 0;
+}
 .script-item-hover,
 .script-item:hover {
     background-color: rgba(255, 255, 255, 0.05);
