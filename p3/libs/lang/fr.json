@@ -752,5 +752,17 @@
   "mcp_agent_server": "Serveur d'agents MCP",
   "mcp_agent_server_tooltip": "Permet aux agents IA d'utiliser LinuxToys (parcourir, installer, supprimer, paramètres) via un serveur MCP local. Fonctionne comme un service utilisateur systemd ; les demandes de mot de passe restent sur votre écran.",
   "mcp_service_failed_title": "Serveur d'agents MCP",
-  "mcp_skill_installed": "Compétence de l'agent installée"
+  "mcp_skill_installed": "Compétence de l'agent installée",
+  "uri_single_request_message": "LinuxToys n'accepte qu'une seule requête URI à la fois.",
+  "pkg_guard_wait_named": "Une autre opération sur les paquets (${manager}) est en cours. Attente de sa fin...",
+  "pkg_guard_wait": "Une autre opération sur les paquets est en cours. Attente de sa fin...",
+  "pkg_guard_timeout_named": "Une autre opération sur les paquets (${manager}) est toujours en cours et prend trop de temps. Veuillez attendre qu'elle se termine, puis réessayez.",
+  "pkg_guard_timeout": "Une autre opération sur les paquets est toujours en cours et prend trop de temps. Veuillez attendre la fin de l'opération en cours, puis réessayez.",
+  "pkg_guard_stale_lock": "Un verrou obsolète de pacman a été détecté. Suppression de /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Impossible de supprimer le verrou obsolète. Exécutez : sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Une opération sur les paquets interrompue a été détectée. Tentative de récupération...",
+  "pkg_guard_audit_fail": "La récupération de l'opération dpkg interrompue a échoué. Une intervention manuelle de l'utilisateur est requise.",
+  "pkg_guard_broken": "Des dépendances de paquets cassées ont été détectées. Tentative de récupération...",
+  "pkg_guard_broken_fail": "Impossible de réparer les paquets cassés. Une intervention manuelle de l'utilisateur est requise.",
+  "pkg_guard_broken_pending": "Les dépendances des paquets sont toujours cassées. Une intervention manuelle de l'utilisateur est requise."
 }

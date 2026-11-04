@@ -752,5 +752,17 @@
   "mcp_agent_server": "MCP umboðsþjónn",
   "mcp_agent_server_tooltip": "Leyfir gervigreindarumboðum að nota LinuxToys (fletta, setja upp, fjarlægja, stillingar) í gegnum staðbundinn MCP-þjón. Keyrir sem systemd notandaþjónusta; lykilorðabeiðnir verða áfram á skjánum þínum.",
   "mcp_service_failed_title": "MCP umboðsþjónn",
-  "mcp_skill_installed": "Umboðshæfni uppsett"
+  "mcp_skill_installed": "Umboðshæfni uppsett",
+  "uri_single_request_message": "LinuxToys tekur aðeins á móti einni URI-beiðni í einu.",
+  "pkg_guard_wait_named": "Önnur pakkaaðgerð (${manager}) er í gangi. Bíðum eftir að hún klárist...",
+  "pkg_guard_wait": "Önnur pakkaaðgerð er í gangi. Bíðum eftir að hún klárist...",
+  "pkg_guard_timeout_named": "Önnur pakkaaðgerð (${manager}) er enn í gangi og tekur of langan tíma. Bíddu eftir að hún klárist og reyndu aftur eftir það.",
+  "pkg_guard_timeout": "Önnur pakkaaðgerð er enn í gangi og tekur of langan tíma. Bíddu eftir því að aðgerðin sem er í gangi ljúki og reyndu aftur eftir það.",
+  "pkg_guard_stale_lock": "Úrelt pacman-læsing fannst. Fjarlægum /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Notaðist ekki að fjarlægja úreltu læsingu. Keyrðu: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Fannst pakkaaðgerð sem var truflað. Reynt er að endurheimta...",
+  "pkg_guard_audit_fail": "Notaðist ekki að endurheimta truflaða dpkg-aðgerð. Notandi þarf að grípa handvirkt inn.",
+  "pkg_guard_broken": "Fannst biluð háð pakka. Reynt er að endurheimta...",
+  "pkg_guard_broken_fail": "Notaðist ekki að laga biluð pakka. Notandi þarf að grípa handvirkt inn.",
+  "pkg_guard_broken_pending": "Háð pakka eru enn biluð. Notandi þarf að grípa handvirkt inn."
 }

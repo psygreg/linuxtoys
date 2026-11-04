@@ -752,5 +752,17 @@
   "mcp_agent_server": "Serwer agentów MCP",
   "mcp_agent_server_tooltip": "Pozwala agentom AI korzystać z LinuxToys (przeglądanie, instalowanie, usuwanie, ustawienia) przez lokalny serwer MCP. Działa jako usługa użytkownika systemd; monity hasła pozostają na Twoim ekranie.",
   "mcp_service_failed_title": "Serwer agentów MCP",
-  "mcp_skill_installed": "Zainstalowano umiejętność agenta"
+  "mcp_skill_installed": "Zainstalowano umiejętność agenta",
+  "uri_single_request_message": "LinuxToys przyjmuje tylko jedno żądanie URI w tym samym czasie.",
+  "pkg_guard_wait_named": "W tej chwili trwa inna operacja na pakietach (${manager}). Czekamy na jej zakończenie...",
+  "pkg_guard_wait": "W tej chwili trwa inna operacja na pakietach. Czekamy na jej zakończenie...",
+  "pkg_guard_timeout_named": "Inna operacja na pakietach (${manager}) nadal trwa i zajmuje zbyt dużo czasu. Poczekaj na jej zakończenie, a następnie spróbuj ponownie.",
+  "pkg_guard_timeout": "Inna operacja na pakietach nadal trwa i zajmuje zbyt dużo czasu. Poczekaj na zakończenie bieżącej operacji, a następnie spróbuj ponownie.",
+  "pkg_guard_stale_lock": "Wykryto przedawnioną blokadę pacman. Usuwanie /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Nie udało się usunąć przedawnionej blokady. Uruchom: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Wykryto przerwaną operację na pakietach. Próba odzyskiwania...",
+  "pkg_guard_audit_fail": "Odzyskiwanie przerwanej operacji dpkg nie powiodło się. Wymagana ręczna interwencja użytkownika.",
+  "pkg_guard_broken": "Wykryto uszkodzone zależności pakietów. Próba odzyskiwania...",
+  "pkg_guard_broken_fail": "Naprawa uszkodzonych paketów nie powiodła się. Wymagana ręczna interwencja użytkownika.",
+  "pkg_guard_broken_pending": "Zależności pakietów nadal są uszkodzone. Wymagana ręczna interwencja użytkownika."
 }

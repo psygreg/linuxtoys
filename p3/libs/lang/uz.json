@@ -751,5 +751,17 @@
   "mcp_agent_server": "MCP agent serveri",
   "mcp_agent_server_tooltip": "Sun'iy intellekt agentlariga mahalliy MCP serveri orqali LinuxToys'dan (ko'rish, o'rnatish, o'chirish, sozlamalar) foydalanish imkonini beradi. systemd foydalanuvchi xizmati sifatida ishlaydi; parol so'rovlari ekranningizda qoladi.",
   "mcp_service_failed_title": "MCP agent serveri",
-  "mcp_skill_installed": "Agent mahorati o'rnatildi"
+  "mcp_skill_installed": "Agent mahorati o'rnatildi",
+  "uri_single_request_message": "LinuxToys bir vaqtda faqat bitta URI so'rovini qabul qiladi.",
+  "pkg_guard_wait_named": "Hozir boshqa paket operatsiyasi bajarilmoqda (${manager}). Tugashini kutib turilmoqda...",
+  "pkg_guard_wait": "Hozir boshqa paket operatsiyasi bajarilmoqda. Tugashini kutib turilmoqda...",
+  "pkg_guard_timeout_named": "Boshqa paket operatsiyasi (${manager}) hali bajarilmoqda va juda ko'p vaqt olmoqda. Iltimos, tugashini kuting, so'ng yana urinib ko'ring.",
+  "pkg_guard_timeout": "Boshqa paket operatsiyasi hali bajarilmoqda va juda ko'p vaqt olmoqda. Iltimos, joriy operatsiya tugashini kuting, so'ng yana urinib ko'ring.",
+  "pkg_guard_stale_lock": "Eski pacman qulfi aniqlandi. /var/lib/pacman/db.lck o'chirilmoqda",
+  "pkg_guard_stale_fail": "Eski qulfini o'chirish bajarilmadi. Ijro eting: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Uzilgan paket operatsiyasi aniqlandi. Tiklashga urinilmoqda...",
+  "pkg_guard_audit_fail": "Uzilgan dpkg operatsiyasini tiklash bajarilmadi. Foydalanuvchining qo'lda aralashuvi kerak.",
+  "pkg_guard_broken": "Buzilgan paket bog'liqliklari aniqlandi. Tiklashga urinilmoqda...",
+  "pkg_guard_broken_fail": "Buzilgan paketlarni tuzatish bajarilmadi. Foydalanuvchining qo'lda aralashuvi kerak.",
+  "pkg_guard_broken_pending": "Paket bog'liqliklari hali buzilgan holatda. Foydalanuvchining qo'lda aralashuvi kerak."
 }

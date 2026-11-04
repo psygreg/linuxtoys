@@ -752,5 +752,17 @@
   "mcp_agent_server": "שרת סוכני MCP",
   "mcp_agent_server_tooltip": "מאפשר לסוכני AI להשתמש ב-LinuxToys (עיון, התקנה, הסרה, הגדרות) דרך שרת MCP מקומי. פועל כשירות משתמש של systemd; בקשות הסיסמה נשארות במסך שלך.",
   "mcp_service_failed_title": "שרת סוכני MCP",
-  "mcp_skill_installed": "המיומנות של הסוכן הותקנה"
+  "mcp_skill_installed": "המיומנות של הסוכן הותקנה",
+  "uri_single_request_message": "LinuxToys מקבל בכל פעם בקשת URI אחת בלבד.",
+  "pkg_guard_wait_named": "מתבצעת פעולת חבילות נוספת (${manager}). בהמתנה להשלמתה...",
+  "pkg_guard_wait": "מתבצעת פעולת חבילות נוספת. בהמתנה להשלמתה...",
+  "pkg_guard_timeout_named": "פעולת חבילות נוספת (${manager}) עדיין מתבצעת ונמשכת זמן רב מדי. המתן עד שתסתיים ואז נסה שוב.",
+  "pkg_guard_timeout": "פעולת חבילות נוספת עדיין מתבצעת ונמשכת זמן רב מדי. המתן עד שהפעולה הנוכחית תסתיים ואז נסה שוב.",
+  "pkg_guard_stale_lock": "זוהתה נעילת pacman מיושנת. מתבצעת הסרה של /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "הסרת הנעילה המיושנת נכשלה. הרץ: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "זוהתה פעולת חבילות שהופסקה. מתבצע ניסיון שחזור...",
+  "pkg_guard_audit_fail": "לא ניתן היה לשחזר את הפעולה שהופסקה של dpkg. נדרשת התערבות ידנית של המשתמש.",
+  "pkg_guard_broken": "זוהו תלויות חבילות שבורות. מתבצע ניסיון שחזור...",
+  "pkg_guard_broken_fail": "לא ניתן היה לתקן את החבילות השבורות. נדרשת התערבות ידנית של המשתמש.",
+  "pkg_guard_broken_pending": "תלויות החבילות עדיין שבורות. נדרשת התערבות ידנית של המשתמש."
 }

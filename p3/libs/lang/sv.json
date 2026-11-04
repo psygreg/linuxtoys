@@ -752,5 +752,17 @@
   "mcp_agent_server": "MCP-agentserver",
   "mcp_agent_server_tooltip": "Låter AI-agenter använda LinuxToys (bläddra, installera, ta bort, inställningar) via en lokal MCP-server. Körs som en systemd-användartjänst; lösenordsförfrågningar stannar på din skärm.",
   "mcp_service_failed_title": "MCP-agentserver",
-  "mcp_skill_installed": "Agentfärdighet installerad"
+  "mcp_skill_installed": "Agentfärdighet installerad",
+  "uri_single_request_message": "LinuxToys accepterar endast en URI-förfrågan åt gången.",
+  "pkg_guard_wait_named": "En annan paketåtgärd (${manager}) pågår just nu. Väntar tills den är klar...",
+  "pkg_guard_wait": "En annan paketåtgärd pågår just nu. Väntar tills den är klar...",
+  "pkg_guard_timeout_named": "En annan paketåtgärd (${manager}) pågår fortfarande och tar för lång tid. Vänta tills den är klar och försök sedan igen.",
+  "pkg_guard_timeout": "En annan paketåtgärd pågår fortfarande och tar för lång tid. Vänta tills den pågående åtgärden är klar och försök sedan igen.",
+  "pkg_guard_stale_lock": "En inaktuell pacman-låsfil upptäcktes. Tar bort /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Kunde inte ta bort den inaktuella låsfilen. Kör: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "En avbruten paketåtgärd upptäcktes. Försöker återställa...",
+  "pkg_guard_audit_fail": "Kunde inte återställa den avbrutna dpkg-åtgärden. Manuellt ingripande från användaren krävs.",
+  "pkg_guard_broken": "Skadade paketberoenden upptäcktes. Försöker återställa...",
+  "pkg_guard_broken_fail": "Kunde inte reparera de skadade paketen. Manuellt ingripande från användaren krävs.",
+  "pkg_guard_broken_pending": "Paketberoendena är fortfarande skadade. Manuellt ingripande från användaren krävs."
 }

@@ -2,6 +2,92 @@
 
 # Guards against pacman and apt database locks
 
+# Localized strings for the guards, read from the same translation store the
+# GUI uses (libs/lang/<code>.json) so dialogs emitted while a package script
+# runs match the app's chosen language. Selection mirrors
+# lang_utils.detect_system_language(): the saved preference in
+# ~/.config/linuxtoys/language.conf wins, then $LANG[:2] (with nn→nb), and a
+# language only counts when its file exists; English is the floor.
+#
+# jq is the JSON reader (a runtime dependency of the app builds). One jq pass
+# merges the chosen language over en.json, so a language that has not
+# translated a newer key yet inherits the English line instead of an empty
+# dialog; keys resolving to nothing are skipped so the inline literals below
+# survive — those are also what every fallback degrades to (jq missing, JSON
+# unreadable, no lang tree), because a guard must never print an empty line.
+#
+# '@{key}' references are resolved by the Python side only; the guard strings
+# carry none. The '${manager}' splice follows the file's own '${version}'
+# placeholder convention and is filled by _pkg_guard_fmt at print time.
+_pkg_guard_fmt () {
+    printf '%s' "${1//\$\{manager\}/$2}"
+}
+
+_pkg_guard_l10n () {
+    [[ -n "${_PKG_GUARD_L10N_DONE:-}" ]] && return 0
+    _PKG_GUARD_L10N_DONE=1
+
+    local _langdir="$SCRIPT_DIR/libs/lang"
+    [[ -f "$_langdir/en.json" ]] || return 0
+    command -v jq >/dev/null 2>&1 || return 0
+
+    local _code=""
+    local _cfg="$HOME/.config/linuxtoys/language.conf"
+    if [[ -f "$_cfg" ]]; then
+        _code=$(sed -n 's/^[[:space:]]*code[[:space:]]*=[[:space:]]*\([A-Za-z0-9_]*\).*$/\1/p' "$_cfg" | tail -n 1) || _code=""
+    fi
+    if [[ -z "$_code" || ! -f "$_langdir/$_code.json" ]]; then
+        _code="${LANG:0:2}"
+        [[ "$_code" == "nn" ]] && _code="nb"
+        [[ -f "$_langdir/$_code.json" ]] || _code="en"
+    fi
+
+    local _pairs
+    _pairs=$(jq -r -sr '
+        (.[1] * .[0]) as $t |
+        [
+            ["PKG_GUARD_WAIT_NAMED", "pkg_guard_wait_named"],
+            ["PKG_GUARD_WAIT", "pkg_guard_wait"],
+            ["PKG_GUARD_TIMEOUT_NAMED", "pkg_guard_timeout_named"],
+            ["PKG_GUARD_TIMEOUT", "pkg_guard_timeout"],
+            ["PKG_GUARD_STALE_LOCK", "pkg_guard_stale_lock"],
+            ["PKG_GUARD_STALE_FAIL", "pkg_guard_stale_fail"],
+            ["PKG_GUARD_AUDIT", "pkg_guard_audit"],
+            ["PKG_GUARD_BROKEN", "pkg_guard_broken"],
+            ["PKG_GUARD_AUDIT_FAIL", "pkg_guard_audit_fail"],
+            ["PKG_GUARD_BROKEN_FAIL", "pkg_guard_broken_fail"],
+            ["PKG_GUARD_BROKEN_PENDING", "pkg_guard_broken_pending"]
+        ] as $m |
+        $m[]
+        | (.[0] as $var | ($t[.[1]]) as $v
+          | if ($v | type) == "string" and ($v | length) > 0
+            then ($var + "=" + ($v | @sh))
+            else empty end)
+    ' "$_langdir/$_code.json" "$_langdir/en.json") || return 0
+    eval "$_pairs" || return 0
+    return 0
+}
+
+# Inline English floor: used verbatim when jq or the language files are
+# unavailable, and the base any empty/untranslated key keeps. Single-quoted:
+# these strings carry the literal '${manager}' placeholder, which double
+# quotes would expand away when unbound at assignment time.
+PKG_GUARD_WAIT_NAMED='Another package operation is in progress (${manager}). Waiting for it to finish...'
+PKG_GUARD_WAIT='Another package operation is in progress. Waiting for it to finish...'
+PKG_GUARD_TIMEOUT_NAMED='Another package operation (${manager}) is still running and is taking too long. Please wait for it to finish, then try again.'
+PKG_GUARD_TIMEOUT='Another package operation is still running and is taking too long. Please wait for the ongoing operation to finish, then try again.'
+PKG_GUARD_STALE_LOCK='Stale pacman lock detected. Removing /var/lib/pacman/db.lck'
+PKG_GUARD_STALE_FAIL='Failed to remove stale lock. Run: sudo rm /var/lib/pacman/db.lck'
+PKG_GUARD_AUDIT='An interrupted package operation was detected. Attempting recovery...'
+PKG_GUARD_BROKEN='Broken package dependencies were detected. Attempting recovery...'
+PKG_GUARD_AUDIT_FAIL='Failed to recover interrupted dpkg operation. Manual user intervention required.'
+PKG_GUARD_BROKEN_FAIL='Failed to fix broken packages. Manual user intervention required.'
+PKG_GUARD_BROKEN_PENDING='Package dependencies remain broken. Manual user intervention required.'
+
+# Strings load once at library source time; every return path of the loader is
+# guarded, so a broken environment cannot abort the run under set -e.
+_pkg_guard_l10n
+
 # File-descriptor link lines under /proc, used by both manager lock scans.
 # The scan is elevated only when cached sudo credentials make it free: `sudo
 # -n` never prompts and succeeds only with an already-held ticket — which
@@ -78,11 +164,11 @@ pacman_busy_wait () {
     if ! _manager=$(_pacman_busy_manager); then
         return 0
     fi
-    info "Another package operation is in progress (${_manager}). Waiting for it to finish..."
+    info "$(_pkg_guard_fmt "$PKG_GUARD_WAIT_NAMED" "$_manager")"
     local _waited=0
     while _manager=$(_pacman_busy_manager); do
         if (( _waited >= PACMAN_BUSY_WAIT_TIMEOUT )); then
-            die "Another package operation (${_manager}) is still running and is taking too long. Please wait for it to finish, then try again."
+            die "$(_pkg_guard_fmt "$PKG_GUARD_TIMEOUT_NAMED" "$_manager")"
         fi
         sleep 3
         _waited=$((_waited + 3))
@@ -123,15 +209,15 @@ pacman_lock_guard () {
             # so standing by for the holder (same standby+timeout posture as
             # the runners) and carrying on once it releases is the safe
             # recovery; only a holder that outlasts the wait stops the run.
-            info "Another package operation is in progress. Waiting for it to finish..."
+            info "$PKG_GUARD_WAIT"
             pacman_lock_standby || \
-                die "Another package operation is still running and is taking too long. Please wait for the ongoing operation to finish, then try again."
+                die "$PKG_GUARD_TIMEOUT"
         else
             # The wait above only returns when no live manager is detected, so a
             # remaining lock file is a crash leftover; recovery is removing it
             # rather than surfacing an opaque pacman lock failure later.
-            warn "Stale pacman lock detected. Removing /var/lib/pacman/db.lck"
-            { { [ "$UPD_SERVICE" = "1" ] && rm -f /var/lib/pacman/db.lck; } || sudo_ rm -f /var/lib/pacman/db.lck; } || die "Failed to remove stale lock. Run: sudo rm /var/lib/pacman/db.lck"
+            warn "$PKG_GUARD_STALE_LOCK"
+            { { [ "$UPD_SERVICE" = "1" ] && rm -f /var/lib/pacman/db.lck; } || sudo_ rm -f /var/lib/pacman/db.lck; } || die "$PKG_GUARD_STALE_FAIL"
         fi
     fi
 }
@@ -161,9 +247,9 @@ pacman_transaction () {
         if _pacman_lock_actively_held || _pacman_busy_manager >/dev/null 2>&1; then
             pacman_busy_wait
             if _pacman_lock_actively_held; then
-                info "Another package operation is in progress. Waiting for it to finish..."
+                info "$PKG_GUARD_WAIT"
                 pacman_lock_standby || \
-                    die "Another package operation is still running and is taking too long. Please wait for the ongoing operation to finish, then try again."
+                    die "$PKG_GUARD_TIMEOUT"
             fi
             # The standby exits only once the lock is free; retry below.
         elif [ -f /var/lib/pacman/db.lck ]; then
@@ -225,11 +311,11 @@ apt_busy_wait () {
     if ! _manager=$(_apt_busy_manager); then
         return 0
     fi
-    info "Another package operation is in progress (${_manager}). Waiting for it to finish..."
+    info "$(_pkg_guard_fmt "$PKG_GUARD_WAIT_NAMED" "$_manager")"
     local _waited=0
     while _manager=$(_apt_busy_manager); do
         if (( _waited >= APT_BUSY_WAIT_TIMEOUT )); then
-            die "Another package operation (${_manager}) is still running and is taking too long. Please wait for it to finish, then try again."
+            die "$(_pkg_guard_fmt "$PKG_GUARD_TIMEOUT_NAMED" "$_manager")"
         fi
         sleep 3
         _waited=$((_waited + 3))
@@ -285,9 +371,9 @@ apt_transaction () {
         if _apt_lock_actively_held || _apt_busy_manager >/dev/null 2>&1; then
             apt_busy_wait
             if _apt_lock_actively_held; then
-                info "Another package operation is in progress. Waiting for it to finish..."
+                info "$PKG_GUARD_WAIT"
                 apt_lock_standby || \
-                    die "Another package operation is still running and is taking too long. Please wait for the ongoing operation to finish, then try again."
+                    die "$PKG_GUARD_TIMEOUT"
             fi
             # The standby exits only once the locks are free; retry below.
         else
@@ -304,9 +390,9 @@ interrupted_apt_guard () {
     local needs_repair=0
 
     if [ -n "$(dpkg --audit 2>/dev/null)" ]; then
-        info "An interrupted package operation was detected. Attempting recovery..."
+        info "$PKG_GUARD_AUDIT"
         { { [ "$UPD_SERVICE" = "1" ] && dpkg --configure -a; } || sudo_ dpkg --configure -a; } || \
-            die "Failed to recover interrupted dpkg operation. Manual user intervention required."
+            die "$PKG_GUARD_AUDIT_FAIL"
         needs_repair=1
     fi
     # A failing apt-get check is ambiguous: broken dependencies look the
@@ -323,9 +409,9 @@ interrupted_apt_guard () {
         fi
         apt_busy_wait
         if _apt_lock_actively_held; then
-            info "Another package operation is in progress. Waiting for it to finish..."
+            info "$PKG_GUARD_WAIT"
             apt_lock_standby || \
-                die "Another package operation is still running and is taking too long. Please wait for the ongoing operation to finish, then try again."
+                die "$PKG_GUARD_TIMEOUT"
             # A holder released; re-verify the verdict against the now-free locks.
             continue
         fi
@@ -333,7 +419,7 @@ interrupted_apt_guard () {
         # since the wait may have covered exactly the transaction that failed
         # the previous attempt.
         if ! { { [ "$UPD_SERVICE" = "1" ] && apt-get check; } || sudo_ apt-get check; } >/dev/null 2>&1; then
-            info "Broken package dependencies were detected. Attempting recovery..."
+            info "$PKG_GUARD_BROKEN"
             needs_repair=1
         fi
         break
@@ -343,13 +429,13 @@ interrupted_apt_guard () {
         apt_busy_wait
         if [ "$UPD_SERVICE" = "1" ]; then
             apt_transaction apt-get --fix-broken install -y ||
-                die "Failed to fix broken packages. Manual user intervention required."
+                die "$PKG_GUARD_BROKEN_FAIL"
         else
             apt_transaction sudo_ apt-get --fix-broken install -y ||
-                die "Failed to fix broken packages. Manual user intervention required."
+                die "$PKG_GUARD_BROKEN_FAIL"
         fi
         { { [ "$UPD_SERVICE" = "1" ] && apt-get check; } || sudo_ apt-get check; } >/dev/null 2>&1 || \
-            die "Package dependencies remain broken. Manual user intervention required."
+            die "$PKG_GUARD_BROKEN_PENDING"
     fi
 }
 
@@ -389,11 +475,11 @@ dnf_busy_wait () {
     if ! _manager=$(_dnf_busy_manager); then
         return 0
     fi
-    info "Another package operation is in progress (${_manager}). Waiting for it to finish..."
+    info "$(_pkg_guard_fmt "$PKG_GUARD_WAIT_NAMED" "$_manager")"
     local _waited=0
     while _manager=$(_dnf_busy_manager); do
         if (( _waited >= DNF_BUSY_WAIT_TIMEOUT )); then
-            die "Another package operation (${_manager}) is still running and is taking too long. Please wait for it to finish, then try again."
+            die "$(_pkg_guard_fmt "$PKG_GUARD_TIMEOUT_NAMED" "$_manager")"
         fi
         sleep 3
         _waited=$((_waited + 3))
@@ -442,9 +528,9 @@ dnf_transaction () {
         if _dnf_lock_actively_held || _dnf_busy_manager >/dev/null 2>&1; then
             dnf_busy_wait
             if _dnf_lock_actively_held; then
-                info "Another package operation is in progress. Waiting for it to finish..."
+                info "$PKG_GUARD_WAIT"
                 dnf_lock_standby || \
-                    die "Another package operation is still running and is taking too long. Please wait for the ongoing operation to finish, then try again."
+                    die "$PKG_GUARD_TIMEOUT"
             fi
             # The standby exits only once the locks are free; retry below.
         else
@@ -485,11 +571,11 @@ zypper_busy_wait () {
     if ! _manager=$(_zypper_busy_manager); then
         return 0
     fi
-    info "Another package operation is in progress (${_manager}). Waiting for it to finish..."
+    info "$(_pkg_guard_fmt "$PKG_GUARD_WAIT_NAMED" "$_manager")"
     local _waited=0
     while _manager=$(_zypper_busy_manager); do
         if (( _waited >= ZYPPER_BUSY_WAIT_TIMEOUT )); then
-            die "Another package operation (${_manager}) is still running and is taking too long. Please wait for it to finish, then try again."
+            die "$(_pkg_guard_fmt "$PKG_GUARD_TIMEOUT_NAMED" "$_manager")"
         fi
         sleep 3
         _waited=$((_waited + 3))
@@ -530,9 +616,9 @@ zypper_transaction () {
         if _zypper_lock_actively_held || _zypper_busy_manager >/dev/null 2>&1; then
             zypper_busy_wait
             if _zypper_lock_actively_held; then
-                info "Another package operation is in progress. Waiting for it to finish..."
+                info "$PKG_GUARD_WAIT"
                 zypper_lock_standby || \
-                    die "Another package operation is still running and is taking too long. Please wait for the ongoing operation to finish, then try again."
+                    die "$PKG_GUARD_TIMEOUT"
             fi
             # The standby exits only once the locks are free; retry below.
         else
@@ -563,11 +649,11 @@ eopkg_busy_wait () {
     if ! _manager=$(_eopkg_busy_manager); then
         return 0
     fi
-    info "Another package operation is in progress (${_manager}). Waiting for it to finish..."
+    info "$(_pkg_guard_fmt "$PKG_GUARD_WAIT_NAMED" "$_manager")"
     local _waited=0
     while _manager=$(_eopkg_busy_manager); do
         if (( _waited >= EOPKG_BUSY_WAIT_TIMEOUT )); then
-            die "Another package operation (${_manager}) is still running and is taking too long. Please wait for it to finish, then try again."
+            die "$(_pkg_guard_fmt "$PKG_GUARD_TIMEOUT_NAMED" "$_manager")"
         fi
         sleep 3
         _waited=$((_waited + 3))
@@ -657,11 +743,11 @@ rpm_ostree_busy_wait () {
     if ! _manager=$(_rpm_ostree_busy_manager); then
         return 0
     fi
-    info "Another package operation is in progress (${_manager}). Waiting for it to finish..."
+    info "$(_pkg_guard_fmt "$PKG_GUARD_WAIT_NAMED" "$_manager")"
     local _waited=0
     while _manager=$(_rpm_ostree_busy_manager); do
         if (( _waited >= RPM_OSTREE_BUSY_WAIT_TIMEOUT )); then
-            die "Another package operation (${_manager}) is still running and is taking too long. Please wait for it to finish, then try again."
+            die "$(_pkg_guard_fmt "$PKG_GUARD_TIMEOUT_NAMED" "$_manager")"
         fi
         sleep 3
         _waited=$((_waited + 3))

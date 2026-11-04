@@ -752,5 +752,17 @@
   "mcp_agent_server": "Strežnik agentov MCP",
   "mcp_agent_server_tooltip": "Omogoča agentom AI uporabo LinuxToys (brskanje, nameščanje, odstranjevanje, nastavitve) prek krajevnega strežnika MCP. Deluje kot uporabniška storitev systemd; pozivi za geslo ostanejo na vašem zaslonu.",
   "mcp_service_failed_title": "Strežnik agentov MCP",
-  "mcp_skill_installed": "Sposobnost agenta nameščena"
+  "mcp_skill_installed": "Sposobnost agenta nameščena",
+  "uri_single_request_message": "LinuxToys sprejme na enkrat samo eno zahtevo URI.",
+  "pkg_guard_wait_named": "Trenutno poteka druga operacija s paketi (${manager}). Čaka se, da se konča...",
+  "pkg_guard_wait": "Trenutno poteka druga operacija s paketi. Čaka se, da se konča...",
+  "pkg_guard_timeout_named": "Druga operacija s paketi (${manager}) še poteka in traja predolgo. Počakajte, da se konča, in poskusite znova.",
+  "pkg_guard_timeout": "Druga operacija s paketi še poteka in traja predolgo. Počakajte, da se trenutna operacija konča, in poskusite znova.",
+  "pkg_guard_stale_lock": "Zaznan zastareli zaklep pacman. Odstranjuje se /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Odstranitev zastarelega zaklepa ni uspela. Zaženite: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Zaznana je bila prekinjena operacija s paketi. Poteka poskus obnove...",
+  "pkg_guard_audit_fail": "Obnova prekinjene dpkg operacije ni uspela. Potreben je ročni poseg uporabnika.",
+  "pkg_guard_broken": "Zaznane so bile poškodovane odvisnosti paketov. Poteka poskus obnove...",
+  "pkg_guard_broken_fail": "Popravljanje poškodovanih paketov ni uspelo. Potreben je ročni poseg uporabnika.",
+  "pkg_guard_broken_pending": "Odvisnosti paketov so še vedno poškodovane. Potreben je ročni poseg uporabnika."
 }

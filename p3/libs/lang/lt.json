@@ -752,5 +752,17 @@
   "mcp_agent_server": "MCP agentų serveris",
   "mcp_agent_server_tooltip": "Leidžia DI agentams naudotis LinuxToys (naršyti, įdiegti, šalinti, nustatymai) per vietinį MCP serverį. Veikia kaip systemd naudotojo tarnyba; slaptažodžio užklausos lieka jūsų ekrane.",
   "mcp_service_failed_title": "MCP agentų serveris",
-  "mcp_skill_installed": "Agento įgūdis įdiegtas"
+  "mcp_skill_installed": "Agento įgūdis įdiegtas",
+  "uri_single_request_message": "LinuxToys priima tik vieną URI užklausą vienu metu.",
+  "pkg_guard_wait_named": "Šiuo metu vykdoma kita paketų operacija (${manager}). Laukiama jos pabaigos...",
+  "pkg_guard_wait": "Šiuo metu vykdoma kita paketų operacija. Laukiama jos pabaigos...",
+  "pkg_guard_timeout_named": "Kita paketų operacija (${manager}) vis dar vyksta ir užima per daug laiko. Palaukite, kol ji baigsis, ir bandykite dar kartą.",
+  "pkg_guard_timeout": "Kita paketų operacija vis dar vyksta ir užima per daug laiko. Palaukite, kol baigsis dabartinė operacija, ir bandykite dar kartą.",
+  "pkg_guard_stale_lock": "Aptiktas pasenęs pacman užraktas. Šalinama /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Nepavyko pašalinti pasenusio užrakto. Paleiskite: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Aptikta pertraukta paketų operacija. Bandoma atkurti...",
+  "pkg_guard_audit_fail": "Nepavyko atkurti pertrauktos dpkg operacijos. Reikalingas vartotojo įsikišimas rankiniu būdu.",
+  "pkg_guard_broken": "Aptiktos pažeistos paketų priklausomybės. Bandoma atkurti...",
+  "pkg_guard_broken_fail": "Nepavyko pataisyti pažeistų paketų. Reikalingas vartotojo įsikišimas rankiniu būdu.",
+  "pkg_guard_broken_pending": "Paketų priklausomybės vis dar pažeistos. Reikalingas vartotojo įsikišimas rankiniu būdu."
 }

@@ -752,5 +752,17 @@
   "mcp_agent_server": "MCP Agent Server",
   "mcp_agent_server_tooltip": "Hinahayaan ang mga AI agent na gamitin ang LinuxToys (mag-browse, mag-install, mag-alis, mga setting) sa pamamagitan ng lokal na MCP server. Tumatakbo bilang systemd user service; nananatili sa iyong screen ang mga hiling ng password.",
   "mcp_service_failed_title": "MCP Agent Server",
-  "mcp_skill_installed": "Na-install ang agent skill"
+  "mcp_skill_installed": "Na-install ang agent skill",
+  "uri_single_request_message": "Nagtatanggap lang ang LinuxToys ng isang URI na kahilingan sa isang pagkakataon.",
+  "pkg_guard_wait_named": "May ibang operasyon ng pakete na tumatakbo (${manager}). Naghihintay hanggang matapos ito...",
+  "pkg_guard_wait": "May ibang operasyon ng pakete na tumatakbo. Naghihintay hanggang matapos ito...",
+  "pkg_guard_timeout_named": "May ibang operasyon ng pakete (${manager}) na tumatakbo pa rin at masyado nang matagal ito. Pakihintay hanggang matapos ito, pagkatapos ay subukan muli.",
+  "pkg_guard_timeout": "May ibang operasyon ng pakete na tumatakbo pa rin at masyado nang matagal ito. Pakihintay hanggang matapos ang kasalukuyang operasyon, pagkatapos ay subukan muli.",
+  "pkg_guard_stale_lock": "Nakita ang isang 'stale' pacman lock. Inaalis ang /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Nabigo ang pag-alis ng 'stale' lock. Patakbuhin: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Nakita ang isang naputol na operasyon ng pakete. Sinasubukang maitayos...",
+  "pkg_guard_audit_fail": "Nabigo ang pag-ayos ng naputol na dpkg operasyon. Kailangan ng manual na interbensyon ng gumagamit.",
+  "pkg_guard_broken": "Nakita ang mga sirang dependency ng pakete. Sinasubukang maitayos...",
+  "pkg_guard_broken_fail": "Nabigo ang pag-aayos ng mga sirang pakete. Kailangan ng manual na interbensyon ng gumagamit.",
+  "pkg_guard_broken_pending": "Ang mga dependency ng pakete ay nananatiling sira. Kailangan ng manual na interbensyon ng gumagamit."
 }

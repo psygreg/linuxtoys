@@ -752,5 +752,17 @@
   "mcp_agent_server": "Server de agenți MCP",
   "mcp_agent_server_tooltip": "Permite agenților AI să folosească LinuxToys (răsfoire, instalare, eliminare, setări) printr-un server MCP local. Rulează ca serviciu de utilizator systemd; solicitările de parolă rămân pe ecranul tău.",
   "mcp_service_failed_title": "Server de agenți MCP",
-  "mcp_skill_installed": "Abilitatea agentului instalată"
+  "mcp_skill_installed": "Abilitatea agentului instalată",
+  "uri_single_request_message": "LinuxToys acceptă doar o singură solicitare URI odată.",
+  "pkg_guard_wait_named": "Rulează altă operațiune cu pachete (${manager}). Se așteaptă finalizarea acesteia...",
+  "pkg_guard_wait": "Rulează altă operațiune cu pachete. Se așteaptă finalizarea acesteia...",
+  "pkg_guard_timeout_named": "Altă operațiune cu pachete (${manager}) rulează în continuare și durează prea mult. Vă rugăm să așteptați finalizarea acesteia, apoi încercați din nou.",
+  "pkg_guard_timeout": "Altă operațiune cu pachete rulează în continuare și durează prea mult. Vă rugăm să așteptați finalizarea operațiunii în curs, apoi încercați din nou.",
+  "pkg_guard_stale_lock": "S-a detectat o blocare pacman învechită. Se îndepărtează /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Îndepărtarea blocării învechite a eșuat. Rulați: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "S-a detectat o operațiune cu pachete întreruptă. Se încearcă recuperarea...",
+  "pkg_guard_audit_fail": "Recuperarea operațiunii dpkg întrerupte a eșuat. Este necesară intervenția manuală a utilizatorului.",
+  "pkg_guard_broken": "S-au detectat dependențe de pachete corupte. Se încearcă recuperarea...",
+  "pkg_guard_broken_fail": "Repararea pachetelor corupte a eșuat. Este necesară intervenția manuală a utilizatorului.",
+  "pkg_guard_broken_pending": "Dependențele pachetelor sunt în continuare corupte. Este necesară intervenția manuală a utilizatorului."
 }

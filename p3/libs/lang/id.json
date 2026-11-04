@@ -752,5 +752,17 @@
   "mcp_agent_server": "Server Agen MCP",
   "mcp_agent_server_tooltip": "Memungkinkan agen AI menggunakan LinuxToys (menjelajah, memasang, menghapus, pengaturan) melalui server MCP lokal. Berjalan sebagai layanan pengguna systemd; permintaan kata sandi tetap di layar Anda.",
   "mcp_service_failed_title": "Server Agen MCP",
-  "mcp_skill_installed": "Keterampilan agen terpasang"
+  "mcp_skill_installed": "Keterampilan agen terpasang",
+  "uri_single_request_message": "LinuxToys hanya menerima satu permintaan URI dalam satu waktu.",
+  "pkg_guard_wait_named": "Operasi paket lain (${manager}) sedang berjalan. Menunggu hingga selesai...",
+  "pkg_guard_wait": "Operasi paket lain sedang berjalan. Menunggu hingga selesai...",
+  "pkg_guard_timeout_named": "Operasi paket lain (${manager}) masih berjalan dan memakan waktu terlalu lama. Tunggu hingga selesai, lalu coba lagi.",
+  "pkg_guard_timeout": "Operasi paket lain masih berjalan dan memakan waktu terlalu lama. Tunggu hingga operasi yang sedang berjalan selesai, lalu coba lagi.",
+  "pkg_guard_stale_lock": "Terdeteksi kunci pacman basi. Menghapus /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Gagal menghapus kunci basi. Jalankan: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Terdeteksi operasi paket yang terputus. Mencoba pemulihan...",
+  "pkg_guard_audit_fail": "Gagal memulihkan operasi dpkg yang terputus. Diperlukan intervensi manual dari pengguna.",
+  "pkg_guard_broken": "Terdeteksi dependensi paket yang rusak. Mencoba pemulihan...",
+  "pkg_guard_broken_fail": "Gagal memperbaiki paket yang rusak. Diperlukan intervensi manual dari pengguna.",
+  "pkg_guard_broken_pending": "Dependensi paket masih rusak. Diperlukan intervensi manual dari pengguna."
 }

@@ -752,5 +752,17 @@
   "mcp_agent_server": "MCP-agenttjener",
   "mcp_agent_server_tooltip": "Lar AI-agenter bruke LinuxToys (bla, installere, fjerne, innstillinger) via en lokal MCP-tjener. Kjører som en systemd-brukertjeneste; passordforespørsler blir på skjermen din.",
   "mcp_service_failed_title": "MCP-agenttjener",
-  "mcp_skill_installed": "Agentferdighet installert"
+  "mcp_skill_installed": "Agentferdighet installert",
+  "uri_single_request_message": "LinuxToys godtar kun én URI-forespørsel om gangen.",
+  "pkg_guard_wait_named": "En annen pakkehandling (${manager}) kjører nå. Venter til den er ferdig...",
+  "pkg_guard_wait": "En annen pakkehandling kjører nå. Venter til den er ferdig...",
+  "pkg_guard_timeout_named": "En annen pakkehandling (${manager}) kjører fortsatt og tar for lang tid. Vent til den er ferdig, og prøv igjen.",
+  "pkg_guard_timeout": "En annen pakkehandling kjører fortsatt og tar for lang tid. Vent til den pågående handlingen er ferdig, og prøv igjen.",
+  "pkg_guard_stale_lock": "Registrerte en utdatert pacman-lås. Fjerner /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Kunne ikke fjerne den utdaterte låsen. Kjør: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "En avbrutt pakkehandling ble oppdaget. Forsøker å gjenopprette...",
+  "pkg_guard_audit_fail": "Kunne ikke gjenopprette den avbrutte dpkg-handlingen. Manuell brukerhandling er påkrevd.",
+  "pkg_guard_broken": "Oppdaget ødelagte pakkeavhengigheter. Forsøker å gjenopprette...",
+  "pkg_guard_broken_fail": "Kunne ikke reparere de ødelagte pakkene. Manuell brukerhandling er påkrevd.",
+  "pkg_guard_broken_pending": "Pakkeavhengighetene er fortsatt ødelagte. Manuell brukerhandling er påkrevd."
 }

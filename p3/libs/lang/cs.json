@@ -752,5 +752,17 @@
   "mcp_agent_server": "Server agentů MCP",
   "mcp_agent_server_tooltip": "Umožňuje agentům AI používat LinuxToys (procházení, instalace, odstraňování, nastavení) prostřednictvím místního serveru MCP. Běží jako uživatelská služba systemd; výzvy k heslu zůstávají na vaší obrazovce.",
   "mcp_service_failed_title": "Server agentů MCP",
-  "mcp_skill_installed": "Dovednost agenta nainstalována"
+  "mcp_skill_installed": "Dovednost agenta nainstalována",
+  "uri_single_request_message": "LinuxToys přijímá najednou pouze jeden požadavek URI.",
+  "pkg_guard_wait_named": "Právě probíhá jiná operace s balíčky (${manager}). Čeká se na její dokončení...",
+  "pkg_guard_wait": "Právě probíhá jiná operace s balíčky. Čeká se na její dokončení...",
+  "pkg_guard_timeout_named": "Jiná operace s balíčky (${manager}) stále probíhá a trvá moc dlouho. Počkejte na její dokončení a pak to zkuste znovu.",
+  "pkg_guard_timeout": "Jiná operace s balíčky stále probíhá a trvá moc dlouho. Počkejte na dokončení probíhající operace a pak to zkuste znovu.",
+  "pkg_guard_stale_lock": "Byl detekován zastaralý zámek pacmanu. Odstraňuje se /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Zastaralý zámek se nepodařilo odstranit. Spusťte: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Byla detekována přerušená operace s balíčky. Pokouší se o obnovení...",
+  "pkg_guard_audit_fail": "Obnovení přerušené dpkg operace se nezdařilo. Je nutný ruční zásah uživatele.",
+  "pkg_guard_broken": "Byly detekovány poškozené závislosti balíčků. Pokouší se o obnovení...",
+  "pkg_guard_broken_fail": "Poškozené balíčky se nepodařilo opravit. Je nutný ruční zásah uživatele.",
+  "pkg_guard_broken_pending": "Závislosti balíčků jsou stále poškozené. Je nutný ruční zásah uživatele."
 }

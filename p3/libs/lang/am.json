@@ -752,5 +752,17 @@
   "mcp_agent_server": "የMCP ወኪል አገልጋይ",
   "mcp_agent_server_tooltip": "የAI ወኪሎች LinuxToys (መቃኘት፣ መግጠም፣ ማስወገድ፣ ቅንብሮች) በአካባቢ የMCP አገልጋይ አማካኝነት እንዲጠቀሙ ያደርጋል። እንደ systemd ተጠቃሚ አገልጋይ ይሰራል፤ የይለፍ ቃል ጥያቄዎች በእርስዎ መመልከቻ ላይ ይቀራሉ።",
   "mcp_service_failed_title": "የMCP ወኪል አገልጋይ",
-  "mcp_skill_installed": "የወኪል ክህሎት ተገጥሟል"
+  "mcp_skill_installed": "የወኪል ክህሎት ተገጥሟል",
+  "uri_single_request_message": "LinuxToys በአንድ ጊዜ አንድ ብቻ የURI ጥያቄ ይቀበላል።",
+  "pkg_guard_wait_named": "ሌላ የጥቅል ሥራ (${manager}) እየተከናወነ ነው። እስኪጨርስ በመጠበቅ ላይ ነው...",
+  "pkg_guard_wait": "ሌላ የጥቅል ሥራ እየተከናወነ ነው። እስኪጨርስ በመጠበቅ ላይ ነው...",
+  "pkg_guard_timeout_named": "ሌላ የጥቅል ሥራ (${manager}) አሁንም እየተከናወነ ነው እና በጣም ረጅም ጊዜ ወስዷል። እስኪጨርስ ይጠብቁ፣ ከዚያ እንደገና ይሞክሩ።",
+  "pkg_guard_timeout": "ሌላ የጥቅል ሥራ አሁንም እየተከናወነ ነው እና በጣም ረጅም ጊዜ ወስዷል። በሂደት ላይ ያለው ሥራ እስኪጨርስ ይጠብቁ፣ ከዚያ እንደገና ይሞክሩ።",
+  "pkg_guard_stale_lock": "ጊዜው ያለፈበት የpacman ሎክ ተገኝቷል። /var/lib/pacman/db.lck እየተሰረዘ ነው",
+  "pkg_guard_stale_fail": "ጊዜው ያለፈበት ሎክ ማስወገድ አልተቻለም። ይህን ፈጽሩ: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "ተቋርጦ የነበረ የጥቅል ሥራ ተገኝቷል። ማስተካከል እየተሞከረ ነው...",
+  "pkg_guard_audit_fail": "ተቋርጦ የነበረውን የdpkg ሥራ ማስተካከል አልተቻለም። ተጠቃሚው በእጅ ጣልቃ ገብነት ያስፈልገዋል።",
+  "pkg_guard_broken": "የተበላ የጥቅል ጥገኛነቶች ተገኝተዋል። ማስተካከል እየተሞከረ ነው...",
+  "pkg_guard_broken_fail": "ተበላ የነበሩ ጥቅሎችን ማስተካከል አልተቻለም። ተጠቃሚው በእጅ ጣልቃ ገብነት ያስፈልገዋል።",
+  "pkg_guard_broken_pending": "የጥቅል ጥገኛነቶች አሁንም ተበላ ይገኛሉ። ተጠቃሚው በእጅ ጣልቃ ገብነት ያስፈልገዋል።"
 }

@@ -752,5 +752,17 @@
   "mcp_agent_server": "MCP-Agentenserver",
   "mcp_agent_server_tooltip": "Ermöglicht KI-Agenten die Nutzung von LinuxToys (durchsuchen, installieren, entfernen, Einstellungen) über einen lokalen MCP-Server. Läuft als systemd-Benutzerdienst; Passwortabfragen bleiben auf deinem Bildschirm.",
   "mcp_service_failed_title": "MCP-Agentenserver",
-  "mcp_skill_installed": "Agenten-Skill installiert"
+  "mcp_skill_installed": "Agenten-Skill installiert",
+  "uri_single_request_message": "LinuxToys akzeptiert nur eine URI-Anfrage gleichzeitig.",
+  "pkg_guard_wait_named": "Derzeit läuft eine andere Paketoperation (${manager}). Warte, bis sie abgeschlossen ist...",
+  "pkg_guard_wait": "Derzeit läuft eine andere Paketoperation. Warte, bis sie abgeschlossen ist...",
+  "pkg_guard_timeout_named": "Eine andere Paketoperation (${manager}) läuft noch und braucht zu lange. Bitte warte, bis sie abgeschlossen ist, und versuche es dann erneut.",
+  "pkg_guard_timeout": "Eine andere Paketoperation läuft noch und braucht zu lange. Bitte warte, bis die laufende Operation abgeschlossen ist, und versuche es dann erneut.",
+  "pkg_guard_stale_lock": "Veraltete pacman-Sperre erkannt. /var/lib/pacman/db.lck wird entfernt",
+  "pkg_guard_stale_fail": "Die veraltete Sperre konnte nicht entfernt werden. Ausführen: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Eine unterbrochene Paketoperation wurde erkannt. Wiederherstellung läuft...",
+  "pkg_guard_audit_fail": "Die unterbrochene dpkg-Operation konnte nicht wiederhergestellt werden. Manueller Eingriff des Benutzers erforderlich.",
+  "pkg_guard_broken": "Beschädigte Paketabhängigkeiten wurden erkannt. Wiederherstellung läuft...",
+  "pkg_guard_broken_fail": "Beschädigte Pakete konnten nicht repariert werden. Manueller Eingriff des Benutzers erforderlich.",
+  "pkg_guard_broken_pending": "Die Paketabhängigkeiten sind weiterhin beschädigt. Manueller Eingriff des Benutzers erforderlich."
 }

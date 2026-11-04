@@ -754,5 +754,17 @@
   "mcp_agent_server": "MCP 智能体服务器",
   "mcp_agent_server_tooltip": "让 AI 智能体通过本地 MCP 服务器使用 LinuxToys（浏览、安装、卸载、设置）。以 systemd 用户服务运行；密码提示始终显示在你的屏幕上。",
   "mcp_service_failed_title": "MCP 智能体服务器",
-  "mcp_skill_installed": "智能体技能已安装"
+  "mcp_skill_installed": "智能体技能已安装",
+  "uri_single_request_message": "LinuxToys 每次只接受一个 URI 请求。",
+  "pkg_guard_wait_named": "当前有另一个软件包操作正在运行 (${manager})。正在等待其完成...",
+  "pkg_guard_wait": "当前有另一个软件包操作正在运行。正在等待其完成...",
+  "pkg_guard_timeout_named": "另一个软件包操作 (${manager}) 仍在运行且耗时过长。请等待其完成，然后重试。",
+  "pkg_guard_timeout": "另一个软件包操作仍在运行且耗时过长。请等待正在进行的操作完成，然后重试。",
+  "pkg_guard_stale_lock": "检测到残留的 pacman 锁。正在删除 /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "删除残留锁失败。请执行命令: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "检测到被中断的软件包操作。正在尝试恢复...",
+  "pkg_guard_audit_fail": "无法恢复被中断的 dpkg 操作。需要用户手动干预。",
+  "pkg_guard_broken": "检测到损坏的软件包依赖关系。正在尝试恢复...",
+  "pkg_guard_broken_fail": "无法修复损坏的软件包。需要用户手动干预。",
+  "pkg_guard_broken_pending": "软件包依赖关系仍然损坏。需要用户手动干预。"
 }

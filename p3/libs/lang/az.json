@@ -751,5 +751,17 @@
   "mcp_agent_server": "MCP Agent Serveri",
   "mcp_agent_server_tooltip": "Süni intellekt agentlərinə lokal MCP serveri vasitəsilə LinuxToys-dan (baxmaq, quraşdırmaq, silmək, tənzimləmələr) istifadə etməyə imkan verir. systemd istifadəçi xidməti kimi işləyir; şifrə sorğuları ekranınızda qalır.",
   "mcp_service_failed_title": "MCP Agent Serveri",
-  "mcp_skill_installed": "Agent bacarığı quraşdırıldı"
+  "mcp_skill_installed": "Agent bacarığı quraşdırıldı",
+  "uri_single_request_message": "LinuxToys bir dəfəyə yalnız bir URI sorğusunu qəbul edir.",
+  "pkg_guard_wait_named": "Başqa bir paket əməliyyatı (${manager}) davam edir. Bitməsi gözlənilir...",
+  "pkg_guard_wait": "Başqa bir paket əməliyyatı davam edir. Bitməsi gözlənilir...",
+  "pkg_guard_timeout_named": "Başqa bir paket əməliyyatı (${manager}) hələ də davam edir və çox vaxt aparır. Bitməsini gözləyin, sonra yenidən cəhd edin.",
+  "pkg_guard_timeout": "Başqa bir paket əməliyyatı hələ də davam edir və çox vaxt aparır. Davam edən əməliyyatın bitməsini gözləyin, sonra yenidən cəhd edin.",
+  "pkg_guard_stale_lock": "Köhnəlmiş pacman kilidi aşkarlandı. /var/lib/pacman/db.lck silinir",
+  "pkg_guard_stale_fail": "Köhnəlmiş kilidi silmək alınmadı. Bu əmri icra edin: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Kəsilmiş paket əməliyyatı aşkarlandı. Bərpa cəhd olunur...",
+  "pkg_guard_audit_fail": "Kəsilmiş dpkg əməliyyatını bərpa etmək alınmadı. İstifadəçinin əl ilə müdaxiləsi lazımdır.",
+  "pkg_guard_broken": "Pozulmuş paket asılılıqları aşkarlandı. Bərpa cəhd olunur...",
+  "pkg_guard_broken_fail": "Pozulmuş paketləri düzəltmək alınmadı. İstifadəçinin əl ilə müdaxiləsi lazımdır.",
+  "pkg_guard_broken_pending": "Paket asılılıqları hələ də pozulub. İstifadəçinin əl ilə müdaxiləsi lazımdır."
 }

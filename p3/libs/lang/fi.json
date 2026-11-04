@@ -752,5 +752,17 @@
   "mcp_agent_server": "MCP-agenttipalvelin",
   "mcp_agent_server_tooltip": "Antaa tekoälyagenttien käyttää LinuxToysia (selaa, asenna, poista, asetukset) paikallisen MCP-palvelimen kautta. Toimii systemd-käyttäjäpalveluna; salasanakehotukset pysyvät näytölläsi.",
   "mcp_service_failed_title": "MCP-agenttipalvelin",
-  "mcp_skill_installed": "Agenttitaito asennettu"
+  "mcp_skill_installed": "Agenttitaito asennettu",
+  "uri_single_request_message": "LinuxToys hyväksyy kerrallaan vain yhden URI-pyynnön.",
+  "pkg_guard_wait_named": "Toinen pakettoiminto (${manager}) on käynnissä. Odotetaan sen valmistumista...",
+  "pkg_guard_wait": "Toinen pakettoiminto on käynnissä. Odotetaan sen valmistumista...",
+  "pkg_guard_timeout_named": "Toinen pakettoiminto (${manager}) on yhä käynnissä ja kestää liian kauan. Odota sen valmistumista ja yritä sitten uudelleen.",
+  "pkg_guard_timeout": "Toinen pakettoiminto on yhä käynnissä ja kestää liian kauan. Odota meneillään olevan toiminnon valmistumista ja yritä sitten uudelleen.",
+  "pkg_guard_stale_lock": "Havaittiin vanhentunut pacmanin lukko. Poistetaan /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Vanhentunutta lukkoa ei voitu poistaa. Suorita: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Havaittiin keskeytynyt pakettoiminto. Yritetään palautusta...",
+  "pkg_guard_audit_fail": "Keskeytetyn dpkg-toiminnon palautus epäonnistui. Manuaalinen käyttäjän toimenpide tarvitaan.",
+  "pkg_guard_broken": "Havaittiin rikkoutuneita pakettiriippuvuuksia. Yritetään palautusta...",
+  "pkg_guard_broken_fail": "Rikkoutuneiden pakettien korjaus epäonnistui. Manuaalinen käyttäjän toimenpide tarvitaan.",
+  "pkg_guard_broken_pending": "Pakettiriippuvuudet ovat yhä rikki. Manuaalinen käyttäjän toimenpide tarvitaan."
 }

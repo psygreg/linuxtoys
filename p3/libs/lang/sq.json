@@ -752,5 +752,17 @@
   "mcp_agent_server": "Server agjentësh MCP",
   "mcp_agent_server_tooltip": "U lejon agjentëve të AI të përdorin LinuxToys (shfletim, instalim, heqje, rregullime) nëpërmjet një serveri lokal MCP. Funksionon si shërbim përdoruesi i systemd; kërkesat e fjalëkalimit qëndrojnë në ekranin tuaj.",
   "mcp_service_failed_title": "Server agjentësh MCP",
-  "mcp_skill_installed": "Aftësia e agjentit u instalua"
+  "mcp_skill_installed": "Aftësia e agjentit u instalua",
+  "uri_single_request_message": "LinuxToys pranon vetëm një kërkesë URI në të njëjtën kohë.",
+  "pkg_guard_wait_named": "Po ekzekutohet një veprim tjetër me paketa (${manager}). Po pritet që ai të përfundojë...",
+  "pkg_guard_wait": "Po ekzekutohet një veprim tjetër me paketa. Po pritet që ai të përfundojë...",
+  "pkg_guard_timeout_named": "Një veprim tjetër me paketa (${manager}) është ende duke u ekzekutuar dhe po zgjat shumë. Ju lutemi prisni që ai të përfundojë, pastaj provoni përsëri.",
+  "pkg_guard_timeout": "Një veprim tjetër me paketa është ende duke u ekzekutuar dhe po zgjat shumë. Ju lutemi prisni që veprimi aktual të përfundojë, pastaj provoni përsëri.",
+  "pkg_guard_stale_lock": "U zbulua një kyçje e vjetruar e pacman. Po hiqet /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Heqja e kyçjes së vjetruar dështoi. Ekzekutoni: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "U zbulua një veprim me paketa i ndërprerë. Po provohet rikuperimi...",
+  "pkg_guard_audit_fail": "Rikuperimi i veprimit dpkg të ndërprerë dështoi. Kërkohet ndërhyrja manuale e përdoruesit.",
+  "pkg_guard_broken": "U zbuluan varësi paketash të prishura. Po provohet rikuperimi...",
+  "pkg_guard_broken_fail": "Riparimi i paketave të prishura dështoi. Kërkohet ndërhyrja manuale e përdoruesit.",
+  "pkg_guard_broken_pending": "Varësitë e paketave janë ende të prishura. Kërkohet ndërhyrja manuale e përdoruesit."
 }

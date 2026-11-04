@@ -752,5 +752,17 @@
   "mcp_agent_server": "MCP agentide server",
   "mcp_agent_server_tooltip": "Võimaldab tehisintellekti agentidel kasutada LinuxToys'i (sirvimine, paigaldamine, eemaldamine, sätted) kohaliku MCP serveri kaudu. Töötab systemd kasutajateenusena; paroolipäringud jäävad teie ekraanile.",
   "mcp_service_failed_title": "MCP agentide server",
-  "mcp_skill_installed": "Agendi oskus paigaldatud"
+  "mcp_skill_installed": "Agendi oskus paigaldatud",
+  "uri_single_request_message": "LinuxToys võtab korraga vastu ainult ühe URI-päringu.",
+  "pkg_guard_wait_named": "Töötab teine paketioperatsioon (${manager}). Oodatakse selle lõppemist...",
+  "pkg_guard_wait": "Töötab teine paketioperatsioon. Oodatakse selle lõppemist...",
+  "pkg_guard_timeout_named": "Teine paketioperatsioon (${manager}) töötab veel ja võtab liiga palju aega. Oodake selle lõppemist ja proovige seejärel uuesti.",
+  "pkg_guard_timeout": "Teine paketioperatsioon töötab veel ja võtab liiga palju aega. Oodake käimasoleva operatsiooni lõppemist ja proovige seejärel uuesti.",
+  "pkg_guard_stale_lock": "Tuvastati vananenud pacmani lukk. Eemaldatakse /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Vananenud lukku ei õnnestunud eemaldada. Käivitage: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Tuvastati katkestatud paketioperatsioon. Proovitakse taastada...",
+  "pkg_guard_audit_fail": "Katkestatud dpkg operatsiooni ei õnnestunud taastada. Vajalik on kasutaja käsitsi sekkumine.",
+  "pkg_guard_broken": "Tuvastati vigased paketi sõltuvused. Proovitakse taastada...",
+  "pkg_guard_broken_fail": "Vigased paketid ei õnnestunud parandada. Vajalik on kasutaja käsitsi sekkumine.",
+  "pkg_guard_broken_pending": "Paketi sõltuvused on endiselt vigased. Vajalik on kasutaja käsitsi sekkumine."
 }

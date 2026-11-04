@@ -752,5 +752,17 @@
   "mcp_agent_server": "MCP Ajan Sunucusu",
   "mcp_agent_server_tooltip": "Yapay zeka ajanlarının LinuxToys'u (göz atma, yükleme, kaldırma, ayarlar) yerel bir MCP sunucusu üzerinden kullanmasını sağlar. Bir systemd kullanıcı hizmeti olarak çalışır; parola istemleri ekranınızda kalır.",
   "mcp_service_failed_title": "MCP Ajan Sunucusu",
-  "mcp_skill_installed": "Ajan becerisi yüklendi"
+  "mcp_skill_installed": "Ajan becerisi yüklendi",
+  "uri_single_request_message": "LinuxToys aynı anda yalnızca bir URI isteğini kabul eder.",
+  "pkg_guard_wait_named": "Şu anda başka bir paket işlemi çalışıyor (${manager}). Tamamlanması bekleniyor...",
+  "pkg_guard_wait": "Şu anda başka bir paket işlemi çalışıyor. Tamamlanması bekleniyor...",
+  "pkg_guard_timeout_named": "Başka bir paket işlemi (${manager}) hâlâ çalışıyor ve çok uzun sürüyor. Tamamlanmasını bekleyin, sonra tekrar deneyin.",
+  "pkg_guard_timeout": "Başka bir paket işlemi hâlâ çalışıyor ve çok uzun sürüyor. Devam eden işlemin tamamlanmasını bekleyin, sonra tekrar deneyin.",
+  "pkg_guard_stale_lock": "Geçersiz pacman kilit dosyası algılandı. /var/lib/pacman/db.lck kaldırılıyor",
+  "pkg_guard_stale_fail": "Geçersiz kilit kaldırılamadı. Çalıştırın: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Bir kesintiye uğramış paket işlemi algılandı. Kurtarma deneniyor...",
+  "pkg_guard_audit_fail": "Kesintiye uğramış dpkg işlemini kurtarma başarısız oldu. Kullanıcının elle müdahalesi gerekli.",
+  "pkg_guard_broken": "Bozuk paket bağımlılıkları algılandı. Kurtarma deneniyor...",
+  "pkg_guard_broken_fail": "Bozuk paketler düzeltilemedi. Kullanıcının elle müdahalesi gerekli.",
+  "pkg_guard_broken_pending": "Paket bağımlılıkları hâlâ bozuk durumda. Kullanıcının elle müdahalesi gerekli."
 }

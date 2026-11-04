@@ -751,5 +751,17 @@
   "mcp_agent_server": "MCP server agenata",
   "mcp_agent_server_tooltip": "Omogućava AI agentima da koriste LinuxToys (pregledanje, instalacija, uklanjanje, postavke) preko lokalnog MCP servera. Radi kao systemd korisnička usluga; zahtjevi za lozinku ostaju na vašem ekranu.",
   "mcp_service_failed_title": "MCP server agenata",
-  "mcp_skill_installed": "Vještina agenta instalirana"
+  "mcp_skill_installed": "Vještina agenta instalirana",
+  "uri_single_request_message": "LinuxToys prima samo jedan URI zahtjev istovremeno.",
+  "pkg_guard_wait_named": "Izvodi se druga radnja s paketima (${manager}). Čeka se da se završi...",
+  "pkg_guard_wait": "Izvodi se druga radnja s paketima. Čeka se da se završi...",
+  "pkg_guard_timeout_named": "Druga radnja s paketima (${manager}) još traje i predugo traje. Sačekajte da se završi, pa pokušajte ponovo.",
+  "pkg_guard_timeout": "Druga radnja s paketima još traje i predugo traje. Sačekajte da se trenutna radnja završi, pa pokušajte ponovo.",
+  "pkg_guard_stale_lock": "Otkriven je zaostali pacman zaključaj. Uklanja se /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Uklanjanje zaostalog zaključaja nije uspjelo. Pokrenite: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Otkrivena je prekinuta radnja s paketima. Pokušava se oporavak...",
+  "pkg_guard_audit_fail": "Oporavak prekinute dpkg radnje nije uspio. Potrebna je ručna intervencija korisnika.",
+  "pkg_guard_broken": "Otkrivene su pokvarene zavisnosti paketa. Pokušava se oporavak...",
+  "pkg_guard_broken_fail": "Popravka pokvarenih paketa nije uspjela. Potrebna je ručna intervencija korisnika.",
+  "pkg_guard_broken_pending": "Zavisnosti paketa su i dalje pokvarene. Potrebna je ručna intervencija korisnika."
 }

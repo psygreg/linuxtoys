@@ -752,5 +752,17 @@
   "mcp_agent_server": "Pelayan Ejen MCP",
   "mcp_agent_server_tooltip": "Membolehkan ejen AI menggunakan LinuxToys (layar, pasang, alih keluar, tetapan) melalui pelayan MCP setempat. Berjalan sebagai perkhidmatan pengguna systemd; gesaan kata laluan kekal pada skrin anda.",
   "mcp_service_failed_title": "Pelayan Ejen MCP",
-  "mcp_skill_installed": "Kemahiran ejen dipasang"
+  "mcp_skill_installed": "Kemahiran ejen dipasang",
+  "uri_single_request_message": "LinuxToys hanya menerima satu permintaan URI pada satu masa.",
+  "pkg_guard_wait_named": "Operasi pakej lain (${manager}) sedang dijalankan. Menunggu sehingga selesai...",
+  "pkg_guard_wait": "Operasi pakej lain sedang dijalankan. Menunggu sehingga selesai...",
+  "pkg_guard_timeout_named": "Operasi pakej lain (${manager}) masih berjalan dan mengambil masa terlalu lama. Tunggu sehingga selesai, kemudian cuba lagi.",
+  "pkg_guard_timeout": "Operasi pakej lain masih berjalan dan mengambil masa terlalu lama. Tunggu sehingga operasi semasa selesai, kemudian cuba lagi.",
+  "pkg_guard_stale_lock": "Kunci pacman basi dikesan. Menghapuskan /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Gagal menyingkirkan kunci basi. Jalankan: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Operasi pakej yang terganggu dikesan. Cuba pemulihan...",
+  "pkg_guard_audit_fail": "Gagal memulihkan operasi dpkg yang terganggu. Perlukan campur tangan manual daripada pengguna.",
+  "pkg_guard_broken": "Kebergantungan pakej rosak dikesan. Cuba pemulihan...",
+  "pkg_guard_broken_fail": "Gagal membaiki pakej rosak. Perlukan campur tangan manual daripada pengguna.",
+  "pkg_guard_broken_pending": "Kebergantungan pakej masih rosak. Perlukan campur tangan manual daripada pengguna."
 }

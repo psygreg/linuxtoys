@@ -752,5 +752,17 @@
   "mcp_agent_server": "Freastalaí gníomhairí MCP",
   "mcp_agent_server_tooltip": "Ligeann sé do ghníomhairí AI LinuxToys a úsáid (brabhsáil, suiteáil, bain, socruithe) trí fhreastalaí MCP logánta. Rith mar sheirbhís úsáideora systemd; fanann na foláirimh fhocal faire ar do scáileán.",
   "mcp_service_failed_title": "Freastalaí gníomhairí MCP",
-  "mcp_skill_installed": "Scil gníomhaire suiteáilte"
+  "mcp_skill_installed": "Scil gníomhaire suiteáilte",
+  "uri_single_request_message": "Glacann LinuxToys le hiarratas URI amháin ag an am.",
+  "pkg_guard_wait_named": "Tá oibríocht phacáistí eile (${manager}) ar siúl. Ag fanacht léi a chríochnú...",
+  "pkg_guard_wait": "Tá oibríocht phacáistí eile ar siúl. Ag fanacht léi a chríochnú...",
+  "pkg_guard_timeout_named": "Tá oibríocht phacáistí eile (${manager}) fós ar siúl agus tógann sí an iomarca ama. Fan léi go gcríochnóidh sí agus déan iarracht arís ina dhiaidh sin.",
+  "pkg_guard_timeout": "Tá oibríocht phacáistí eile fós ar siúl agus tógann sí an iomarca ama. Fan leis an oibríocht reatha go gcríochnóidh sí agus déan iarracht arís ina dhiaidh sin.",
+  "pkg_guard_stale_lock": "Braitheadh glas 'stale' pacman. Tá /var/lib/pacman/db.lck á bhaint.",
+  "pkg_guard_stale_fail": "Níorbh fhéidir an glas 'stale' a bhaint. Rith: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Braitheadh oibríocht phacáistí stadaithe go tobann. Ag iarraidh a athchóiriú...",
+  "pkg_guard_audit_fail": "Níorbh fhéidir an oibríocht dpkg stadaithe go tobann a athchóiriú. Teastaíonn idirghabháil láimhe ón úsáideoir.",
+  "pkg_guard_broken": "Braitheadh spleáchais pacáistí briste. Ag iarraidh a athchóiriú...",
+  "pkg_guard_broken_fail": "Níorbh fhéidir na pacáistí briste a dheisiú. Teastaíonn idirghabháil láimhe ón úsáideoir.",
+  "pkg_guard_broken_pending": "Tá spleáchais na bpacáistí fós briste. Teastaíonn idirghabháil láimhe ón úsáideoir."
 }

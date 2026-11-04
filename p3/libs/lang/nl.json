@@ -752,5 +752,17 @@
   "mcp_agent_server": "MCP-agentserver",
   "mcp_agent_server_tooltip": "Laat AI-agents LinuxToys gebruiken (bladeren, installeren, verwijderen, instellingen) via een lokale MCP-server. Draait als systemd-gebruikersdienst; wachtwoordvragen blijven op je scherm.",
   "mcp_service_failed_title": "MCP-agentserver",
-  "mcp_skill_installed": "Agentvaardigheid geïnstalleerd"
+  "mcp_skill_installed": "Agentvaardigheid geïnstalleerd",
+  "uri_single_request_message": "LinuxToys accepteert slechts één URI-verzoek tegelijk.",
+  "pkg_guard_wait_named": "Er wordt momenteel een andere pakketbewerking uitgevoerd (${manager}). Wachten tot deze klaar is...",
+  "pkg_guard_wait": "Er wordt momenteel een andere pakketbewerking uitgevoerd. Wachten tot deze klaar is...",
+  "pkg_guard_timeout_named": "Een andere pakketbewerking (${manager}) loopt nog en duurt te lang. Wacht tot deze klaar is en probeer het opnieuw.",
+  "pkg_guard_timeout": "Een andere pakketbewerking loopt nog en duurt te lang. Wacht tot de lopende bewerking klaar is en probeer het opnieuw.",
+  "pkg_guard_stale_lock": "Verouderde pacman-vergrendeling gedetecteerd. /var/lib/pacman/db.lck wordt verwijderd",
+  "pkg_guard_stale_fail": "Verwijderen van de verouderde vergrendeling is mislukt. Voer uit: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Er is een afgebroken pakketbewerking gedetecteerd. Herstel wordt geprobeerd...",
+  "pkg_guard_audit_fail": "Herstel van de afgebroken dpkg-bewerking is mislukt. Handmatig ingrijpen van de gebruiker is vereist.",
+  "pkg_guard_broken": "Beschadigde pakketafhankelijkheden gedetecteerd. Herstel wordt geprobeerd...",
+  "pkg_guard_broken_fail": "Herstellen van de beschadigde pakketten is mislukt. Handmatig ingrijpen van de gebruiker is vereist.",
+  "pkg_guard_broken_pending": "De pakketafhankelijkheden zijn nog steeds beschadigd. Handmatig ingrijpen van de gebruiker is vereist."
 }

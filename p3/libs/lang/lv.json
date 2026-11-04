@@ -752,5 +752,17 @@
   "mcp_agent_server": "MCP aģentu serveris",
   "mcp_agent_server_tooltip": "Ļauj MI aģentiem izmantot LinuxToys (pārlūkot, instalēt, noņemt, iestatījumus), izmantojot lokālo MCP serveri. Darbojas kā systemd lietotāja pakalpojums; paroļu pieprasījumi paliek jūsu ekrānā.",
   "mcp_service_failed_title": "MCP aģentu serveris",
-  "mcp_skill_installed": "Aģenta prasme instalēta"
+  "mcp_skill_installed": "Aģenta prasme instalēta",
+  "uri_single_request_message": "LinuxToys vienlaikus pieņem tikai vienu URI pieprasījumu.",
+  "pkg_guard_wait_named": "Pašlaik notiek cita paku darbība (${manager}). Gaidāms tās noslēgums...",
+  "pkg_guard_wait": "Pašlaik notiek cita paku darbība. Gaidāms tās noslēgums...",
+  "pkg_guard_timeout_named": "Cita paku darbība (${manager}) vēl notiek un aizņem pārāk daudz laika. Lūdzu, pagaidiet, līdz tā noslēgsies, un pēc tam mēģiniet vēlreiz.",
+  "pkg_guard_timeout": "Cita paku darbība vēl notiek un aizņem pārāk daudz laika. Lūdzu, pagaidiet, līdz pašreizējā darbība noslēgsies, un pēc tam mēģiniet vēlreiz.",
+  "pkg_guard_stale_lock": "Konstatēts novecojis pacman bloķēšanas fails. Tiek dzēsts /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Novecojušo bloķēšanas failu neizdevās dzēst. Palaidiet: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Konstatēta pārtraukta paku darbība. Tiek mēģināts atjaunot...",
+  "pkg_guard_audit_fail": "Pārtrauktas dpkg darbības atjaunošana neizdevās. Nepieciešama lietotāja manuāla iejaukšanās.",
+  "pkg_guard_broken": "Konstatētas sabojātas paku atkarības. Tiek mēģināts atjaunot...",
+  "pkg_guard_broken_fail": "Sabojāto paku labošana neizdevās. Nepieciešama lietotāja manuāla iejaukšanās.",
+  "pkg_guard_broken_pending": "Paku atkarības joprojām ir sabojātas. Nepieciešama lietotāja manuāla iejaukšanās."
 }

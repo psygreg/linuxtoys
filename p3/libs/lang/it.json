@@ -752,5 +752,17 @@
   "mcp_agent_server": "Server di agenti MCP",
   "mcp_agent_server_tooltip": "Consente agli agenti IA di usare LinuxToys (sfogliare, installare, rimuovere, impostazioni) tramite un server MCP locale. Funziona come servizio utente di systemd; le richieste di password restano sul tuo schermo.",
   "mcp_service_failed_title": "Server di agenti MCP",
-  "mcp_skill_installed": "Abilità dell'agente installata"
+  "mcp_skill_installed": "Abilità dell'agente installata",
+  "uri_single_request_message": "LinuxToys accetta solo una richiesta URI alla volta.",
+  "pkg_guard_wait_named": "È in corso un'altra operazione sui pacchetti (${manager}). In attesa che termini...",
+  "pkg_guard_wait": "È in corso un'altra operazione sui pacchetti. In attesa che termini...",
+  "pkg_guard_timeout_named": "Un'altra operazione sui pacchetti (${manager}) è ancora in corso e sta impiegando troppo tempo. Aspetta che termini e poi riprova.",
+  "pkg_guard_timeout": "Un'altra operazione sui pacchetti è ancora in corso e sta impiegando troppo tempo. Aspetta che l'operazione in corso termini e poi riprova.",
+  "pkg_guard_stale_lock": "Rilevato un blocco obsoleto di pacman. Rimozione di /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Impossibile rimuovere il blocco obsoleto. Esegui: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Rilevata un'operazione sui pacchetti interrotta. Tentativo di recupero...",
+  "pkg_guard_audit_fail": "Impossibile recuperare l'operazione dpkg interrotta. È richiesto l'intervento manuale dell'utente.",
+  "pkg_guard_broken": "Rilevate dipendenze di pacchetti rotte. Tentativo di recupero...",
+  "pkg_guard_broken_fail": "Impossibile riparare i pacchetti rotti. È richiesto l'intervento manuale dell'utente.",
+  "pkg_guard_broken_pending": "Le dipendenze dei pacchetti sono ancora rotte. È richiesto l'intervento manuale dell'utente."
 }

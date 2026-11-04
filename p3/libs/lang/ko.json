@@ -752,5 +752,17 @@
   "mcp_agent_server": "MCP 에이전트 서버",
   "mcp_agent_server_tooltip": "AI 에이전트가 로컬 MCP 서버를 통해 LinuxToys(탐색, 설치, 제거, 설정)를 사용할 수 있게 합니다. systemd 사용자 서비스로 실행되며 비밀번호 요청은 항상 내 화면에 표시됩니다.",
   "mcp_service_failed_title": "MCP 에이전트 서버",
-  "mcp_skill_installed": "에이전트 스킬이 설치되었습니다"
+  "mcp_skill_installed": "에이전트 스킬이 설치되었습니다",
+  "uri_single_request_message": "LinuxToys는 한 번에 하나의 URI 요청만 받습니다.",
+  "pkg_guard_wait_named": "다른 패키지 작업(${manager})이 진행 중입니다. 완료를 기다리고 있습니다...",
+  "pkg_guard_wait": "다른 패키지 작업이 진행 중입니다. 완료를 기다리고 있습니다...",
+  "pkg_guard_timeout_named": "다른 패키지 작업(${manager})이 아직 실행 중이며 시간이 너무 오래 걸립니다. 작업이 끝날 때까지 기다린 후 다시 시도해 주세요.",
+  "pkg_guard_timeout": "다른 패키지 작업이 아직 실행 중이며 시간이 너무 오래 걸립니다. 진행 중인 작업이 끝날 때까지 기다린 후 다시 시도해 주세요.",
+  "pkg_guard_stale_lock": "남아 있는 pacman 잠금이 감지되었습니다. /var/lib/pacman/db.lck 제거 중",
+  "pkg_guard_stale_fail": "남아 있는 잠금 제거에 실패했습니다. 실행하세요: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "중단된 패키지 작업이 감지되었습니다. 복구를 시도하고 있습니다...",
+  "pkg_guard_audit_fail": "중단된 dpkg 작업을 복구하지 못했습니다. 사용자의 수동 개입이 필요합니다.",
+  "pkg_guard_broken": "손상된 패키지 의존성이 감지되었습니다. 복구를 시도하고 있습니다...",
+  "pkg_guard_broken_fail": "손상된 패키지를 수정하지 못했습니다. 사용자의 수동 개입이 필요합니다.",
+  "pkg_guard_broken_pending": "패키지 의존성이 여전히 손상되어 있습니다. 사용자의 수동 개입이 필요합니다."
 }

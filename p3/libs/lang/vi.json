@@ -752,5 +752,17 @@
   "mcp_agent_server": "Máy chủ Tác nhân MCP",
   "mcp_agent_server_tooltip": "Cho phép các tác nhân AI sử dụng LinuxToys (duyệt, cài đặt, gỡ cài đặt, cài đặt) qua máy chủ MCP cục bộ. Chạy dưới dạng dịch vụ người dùng systemd; lời nhắc mật khẩu luôn hiển thị trên màn hình của bạn.",
   "mcp_service_failed_title": "Máy chủ Tác nhân MCP",
-  "mcp_skill_installed": "Đã cài đặt kỹ năng tác nhân"
+  "mcp_skill_installed": "Đã cài đặt kỹ năng tác nhân",
+  "uri_single_request_message": "LinuxToys chỉ chấp nhận một yêu cầu URI tại một thời điểm.",
+  "pkg_guard_wait_named": "Một thao tác gói khác đang chạy (${manager}). Đang chờ cho đến khi hoàn tất...",
+  "pkg_guard_wait": "Một thao tác gói khác đang chạy. Đang chờ cho đến khi hoàn tất...",
+  "pkg_guard_timeout_named": "Một thao tác gói khác (${manager}) vẫn đang chạy và mất quá nhiều thời gian. Vui lòng đợi cho đến khi hoàn tất, sau đó thử lại.",
+  "pkg_guard_timeout": "Một thao tác gói khác vẫn đang chạy và mất quá nhiều thời gian. Vui lòng đợi cho đến khi thao tác hiện tại hoàn tất, sau đó thử lại.",
+  "pkg_guard_stale_lock": "Phát hiện khóa pacman cũ không còn hiệu lực. Đang xóa /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Không thể xóa khóa cũ. Chạy: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Phát hiện thao tác gói bị gián đoạn. Đang thử khôi phục...",
+  "pkg_guard_audit_fail": "Không thể khôi phục thao tác dpkg bị gián đoạn. Yêu cầu người dùng can thiệp thủ công.",
+  "pkg_guard_broken": "Phát hiện các phần phụ thuộc gói bị hỏng. Đang thử khôi phục...",
+  "pkg_guard_broken_fail": "Không thể sửa các gói bị hỏng. Yêu cầu người dùng can thiệp thủ công.",
+  "pkg_guard_broken_pending": "Các phần phụ thuộc của gói vẫn bị hỏng. Yêu cầu người dùng can thiệp thủ công."
 }

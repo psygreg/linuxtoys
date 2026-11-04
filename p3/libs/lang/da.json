@@ -752,5 +752,17 @@
   "mcp_agent_server": "MCP-agentserver",
   "mcp_agent_server_tooltip": "Lader AI-agenter bruge LinuxToys (gennemse, installere, fjerne, indstillinger) via en lokal MCP-server. Kører som en systemd-brugertjeneste; adgangskodeforespørgsler forbliver på din skærm.",
   "mcp_service_failed_title": "MCP-agentserver",
-  "mcp_skill_installed": "Agentfærdighed installeret"
+  "mcp_skill_installed": "Agentfærdighed installeret",
+  "uri_single_request_message": "LinuxToys accepterer kun én URI-forespørgsel ad gangen.",
+  "pkg_guard_wait_named": "En anden pakkehandling (${manager}) kører i øjeblikket. Venter på, at den bliver færdig...",
+  "pkg_guard_wait": "En anden pakkehandling kører i øjeblikket. Venter på, at den bliver færdig...",
+  "pkg_guard_timeout_named": "En anden pakkehandling (${manager}) kører stadig og tager for lang tid. Vent på, at den bliver færdig, og prøv igen.",
+  "pkg_guard_timeout": "En anden pakkehandling kører stadig og tager for lang tid. Vent på, at den igangværende handling bliver færdig, og prøv igen.",
+  "pkg_guard_stale_lock": "Registrerede en forældet pacman-lås. Fjerner /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Kunne ikke fjerne den forældede lås. Kør: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "En afbrudt pakkehandling blev fundet. Forsøger at gendanne...",
+  "pkg_guard_audit_fail": "Kunne ikke gendanne den afbrudte dpkg-handling. Manuel brugerhandling er påkrævet.",
+  "pkg_guard_broken": "Brudte pakkeafhængigheder blev fundet. Forsøger at gendanne...",
+  "pkg_guard_broken_fail": "Kunne ikke reparere de brudte pakker. Manuel brugerhandling er påkrævet.",
+  "pkg_guard_broken_pending": "Pakkeafhængighederne er stadig brudte. Manuel brugerhandling er påkrævet."
 }

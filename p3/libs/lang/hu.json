@@ -752,5 +752,17 @@
   "mcp_agent_server": "MCP-ügynökszerver",
   "mcp_agent_server_tooltip": "Lehetővé teszi, hogy az MI-ügynökök a LinuxToys-t (böngészés, telepítés, eltávolítás, beállítások) helyi MCP-szerveren keresztül használják. systemd felhasználói szolgáltatásként fut; a jelszókérések a képernyődön maradnak.",
   "mcp_service_failed_title": "MCP-ügynökszerver",
-  "mcp_skill_installed": "Ügynök-készség telepítve"
+  "mcp_skill_installed": "Ügynök-készség telepítve",
+  "uri_single_request_message": "A LinuxToys egyszerre csak egy URI-kérést fogad el.",
+  "pkg_guard_wait_named": "Jelenleg egy másik csomagművelet (${manager}) fut. Várjuk, hogy befejeződjön...",
+  "pkg_guard_wait": "Jelenleg egy másik csomagművelet fut. Várjuk, hogy befejeződjön...",
+  "pkg_guard_timeout_named": "Egy másik csomagművelet (${manager}) még fut, és túl sokáig tart. Várja meg, amíg befejeződik, majd próbálja újra.",
+  "pkg_guard_timeout": "Egy másik csomagművelet még fut, és túl sokáig tart. Várja meg, amíg a folyamatban lévő művelet befejeződik, majd próbálja újra.",
+  "pkg_guard_stale_lock": "Elavult pacman-zárolás észlelve. /var/lib/pacman/db.lck eltávolítása folyamatban",
+  "pkg_guard_stale_fail": "Az elavult zárolás eltávolítása nem sikerült. Futtassa: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Megszakadt csomagművelet észlelve. Helyreállítási kísérlet folyamatban...",
+  "pkg_guard_audit_fail": "A megszakadt dpkg-művelet helyreállítása nem sikerült. A felhasználó kézi beavatkozása szükséges.",
+  "pkg_guard_broken": "Sérült csomagfüggőségek észlelve. Helyreállítási kísérlet folyamatban...",
+  "pkg_guard_broken_fail": "A sérült csomagok javítása nem sikerült. A felhasználó kézi beavatkozása szükséges.",
+  "pkg_guard_broken_pending": "A csomagfüggőségek továbbra is sérültek. A felhasználó kézi beavatkozása szükséges."
 }

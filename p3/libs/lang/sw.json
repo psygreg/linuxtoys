@@ -750,5 +750,17 @@
   "mcp_agent_server": "Seva ya Wakala wa MCP",
   "mcp_agent_server_tooltip": "Inaruhusu mawakala wa AI kutumia LinuxToys (kuvinjari, kusakinisha, kuondoa, mipangilio) kupitia seva ya MCP ya ndani. Inafanya kazi kama huduma ya mtumiaji wa systemd; maombi ya nenosiri hubaki kwenye skrini yako.",
   "mcp_service_failed_title": "Seva ya Wakala wa MCP",
-  "mcp_skill_installed": "Ujuzi wa wakala umesakinishwa"
+  "mcp_skill_installed": "Ujuzi wa wakala umesakinishwa",
+  "uri_single_request_message": "LinuxToys hakubali zaidi ya ombi moja la URI kwa wakati mmoja.",
+  "pkg_guard_wait_named": "Kuna operesheni nyingine ya vifurushi (${manager}) inaendelea kwa sasa. Inasubiri ikamilike...",
+  "pkg_guard_wait": "Kuna operesheni nyingine ya vifurushi inaendelea kwa sasa. Inasubiri ikamilike...",
+  "pkg_guard_timeout_named": "Kuna operesheni nyingine ya vifurushi (${manager}) bado inaendelea na inachukua muda mrefu mno. Tafadhali subiri ikamilike, kisha jaribu tena.",
+  "pkg_guard_timeout": "Kuna operesheni nyingine ya vifurushi bado inaendelea na inachukua muda mrefu mno. Tafadhali subiri operesheni inayoendelea ikamilike, kisha jaribu tena.",
+  "pkg_guard_stale_lock": "Kugunduliwa kufungwa kwa pacman kilichopitwa na wakati. Inafuta /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Kushindwa kufuta kufungwa kilichopitwa na wakati. Fanya: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Kugunduliwa operesheni ya vifurushi iliyokatizwa. Inajaribu kurejesha...",
+  "pkg_guard_audit_fail": "Kushindwa kurejesha operesheni ya dpkg iliyokatizwa. Inahitajika kuingilia kwa mikono ya mtumiaji.",
+  "pkg_guard_broken": "Kugunduliwa mahitaji-vifurushi yaliyoharibiwa. Inajaribu kurejesha...",
+  "pkg_guard_broken_fail": "Kushindwa kurekebisha vifurushi vilivyoharibiwa. Inahitajika kuingilia kwa mikono ya mtumiaji.",
+  "pkg_guard_broken_pending": "Mahitaji-vifurushi bado yameharibiwa. Inahitajika kuingilia kwa mikono ya mtumiaji."
 }

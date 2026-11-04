@@ -752,5 +752,17 @@
   "mcp_agent_server": "Servidor de Agentes MCP",
   "mcp_agent_server_tooltip": "Permite que agentes de IA usem o LinuxToys (navegar, instalar, remover, configurações) por meio de um servidor MCP local. Funciona como um serviço de usuário do systemd; os pedidos de senha continuam na sua tela.",
   "mcp_service_failed_title": "Servidor de Agentes MCP",
-  "mcp_skill_installed": "Habilidade do agente instalada"
+  "mcp_skill_installed": "Habilidade do agente instalada",
+  "uri_single_request_message": "O LinuxToys aceita apenas uma solicitação URI por vez.",
+  "pkg_guard_wait_named": "Outra operação de pacotes (${manager}) está em execução. Aguardando a conclusão...",
+  "pkg_guard_wait": "Outra operação de pacotes está em execução. Aguardando a conclusão...",
+  "pkg_guard_timeout_named": "Outra operação de pacotes (${manager}) ainda está em execução e está demorando muito. Aguarde a conclusão e tente novamente.",
+  "pkg_guard_timeout": "Outra operação de pacotes ainda está em execução e está demorando muito. Aguarde a conclusão da operação em andamento e tente novamente.",
+  "pkg_guard_stale_lock": "Detectado um bloqueio de pacman obsoleto. Removendo /var/lib/pacman/db.lck",
+  "pkg_guard_stale_fail": "Não foi possível remover o bloqueio obsoleto. Execute: sudo rm /var/lib/pacman/db.lck",
+  "pkg_guard_audit": "Detectada uma operação de pacotes interrompida. Tentando recuperar...",
+  "pkg_guard_audit_fail": "Não foi possível recuperar a operação dpkg interrompida. É necessária a intervenção manual do usuário.",
+  "pkg_guard_broken": "Detectadas dependências de pacotes corrompidas. Tentando recuperar...",
+  "pkg_guard_broken_fail": "Não foi possível corrigir os pacotes corrompidos. É necessária a intervenção manual do usuário.",
+  "pkg_guard_broken_pending": "As dependências dos pacotes continuam corrompidas. É necessária a intervenção manual do usuário."
 }
