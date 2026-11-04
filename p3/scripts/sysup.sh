@@ -172,13 +172,13 @@ elif is_fedora || is_rhel; then
         dnf_transaction sudo_ dnf -y makecache --refresh || die "Failed to remove orphaned packages"
     fi
     if [ "$UPD_SERVICE" = "1" ]; then
-        dnf_transaction dnf --refresh upgrade -y --setopt=throttle=2M || fatal "Failed to upgrade packages"
+        dnf_transaction dnf --refresh upgrade --best --allowerasing -y --setopt=throttle=2M || fatal "Failed to upgrade packages"
     else
-        dnf_transaction sudo_ dnf --refresh upgrade -y || fatal "Failed to upgrade packages"
+        dnf_transaction sudo_ dnf --refresh upgrade --best --allowerasing -y || fatal "Failed to upgrade packages"
     fi
     is_fedora && { release_upgrade &&
             if offer_release_upgrade; then
-                dnf_transaction sudo_ dnf system-upgrade download --releasever=$fedora_version -y || fatal "Failed to download Fedora $fedora_version upgrade"
+                dnf_transaction sudo_ dnf system-upgrade download --releasever=$fedora_version --best --allowerasing -y || fatal "Failed to download Fedora $fedora_version upgrade"
                 dnf_transaction sudo_ dnf system-upgrade reboot || fatal "Failed to reboot for Fedora $fedora_version upgrade"
             fi
     }
