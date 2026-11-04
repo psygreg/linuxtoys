@@ -188,6 +188,8 @@
   "portainer_desc": "Kiolesura cha usimamizi cha msingi wa wavuti kwa Docker, kinachokuruhusu kusimamia vyombo vyako, picha, mitandao na ujazo kwa urahisi.",
   "edu": "Elimu",
   "edu_desc": "Rasilimali za kujifunza na kufundisha kwa umri wote.",
+  "yay_desc": "Msaidizi maarufu wa AUR ulioandikwa kwa Go. Inafanana na paru.",
+  "paru_desc": "Msaidizi maarufu wa AUR ulioandikwa kwa Rust. Inafanana na yay.",
   "cachyconfs_desc": "Mipangilio iliyoboreshwa kwa utendaji bora na majibu, na marekebisho madogo kwa matatizo ya kawaida yanayotumiwa kwa chaguo-msingi kwenye CachyOS, yaliyochujwa kwa uwezo wa kuoana ulimwenguni.",
   "cachyconfs": "Mpangilio wa systemd wa CachyOS",
   "omb_desc": "Mfumo wa kufurahisha unaoendeshwa na jamii kwa kusimamia usanidi wako wa bash.",
