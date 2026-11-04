@@ -451,7 +451,7 @@ jobs:
       # provides xvfb-run, which quick-sharun needs to trace the dlopened
       # libraries of GUI binaries; appstream supplies libappstream.so.5 and
       # its GObject typelib, webp-pixbuf-loader is passed explicitly to
-      # quick-sharun, and zenity/util-linux are bundled into the AppDir.
+      # quick-sharun, and zenity/util-linux/jq are bundled into the AppDir.
       - name: Install build dependencies
         run: |
           pacman -Syu --noconfirm
@@ -459,7 +459,7 @@ jobs:
               git curl wget rust cargo maturin python python-pip \
               pkgconf patchelf gtk3 appstream gobject-introspection \
               zenity util-linux webp-pixbuf-loader xorg-server-xvfb \
-              adwaita-icon-theme
+              adwaita-icon-theme jq
 
       - name: Check out repository
         uses: actions/checkout@v4

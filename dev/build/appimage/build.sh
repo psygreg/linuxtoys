@@ -396,9 +396,11 @@ export ANYLINUX_LIB=1
 unset ADD_HOOKS || true
 unset UPINFO || true
 
-# Deploy the launcher/runtime and the GTK3 zenity helper used by LinuxToys.
-# This follows pkgforge's proven LinuxToys recipe, but against our source-built
-# AppDir rather than the AUR package.
+# Deploy the launcher/runtime, the GTK3 zenity helper used by LinuxToys and
+# jq, required by scripts/sysup.sh (Fedora release upgrades) and the
+# OpenLinkHub peripheral helper for JSON parsing. This follows pkgforge's
+# proven LinuxToys recipe, but against our source-built AppDir rather than
+# the AUR package.
 WEBP_PIXBUF_LOADER="$(
     find /usr/lib/gdk-pixbuf-2.0 -type f \
         -name 'libpixbufloader-webp.so' \
@@ -414,6 +416,7 @@ WEBP_PIXBUF_LOADER="$(
     "$QUICK_SHARUN" \
         "$APP_BIN/linuxtoys" \
         /usr/bin/zenity \
+        /usr/bin/jq \
         /usr/bin/script \
         /usr/lib/libappstream.so.5 \
         "$WEBP_PIXBUF_LOADER"
