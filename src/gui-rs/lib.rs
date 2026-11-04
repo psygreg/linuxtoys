@@ -29,15 +29,32 @@ thread_local! {
 }
 
 fn cstr(ptr: *const c_char) -> String {
-    if ptr.is_null() { return String::new(); }
-    unsafe { CStr::from_ptr(ptr) }.to_string_lossy().into_owned()
+    if ptr.is_null() {
+        return String::new();
+    }
+    unsafe { CStr::from_ptr(ptr) }
+        .to_string_lossy()
+        .into_owned()
 }
 
 fn load_scaled(path: &str, width: i32, height: i32) -> Option<Pixbuf> {
-    if path.is_empty() { return None; }
+    if path.is_empty() {
+        return None;
+    }
     let meta = fs::metadata(path).ok()?;
-    let mtime_ns = meta.modified().ok()?.duration_since(std::time::UNIX_EPOCH).ok()?.as_nanos();
-    let key = PixbufKey { path: path.to_owned(), mtime_ns, len: meta.len(), width, height };
+    let mtime_ns = meta
+        .modified()
+        .ok()?
+        .duration_since(std::time::UNIX_EPOCH)
+        .ok()?
+        .as_nanos();
+    let key = PixbufKey {
+        path: path.to_owned(),
+        mtime_ns,
+        len: meta.len(),
+        width,
+        height,
+    };
 
     if let Some(pixbuf) = PIXBUF_CACHE.with(|cache| cache.borrow().get(&key).cloned()) {
         return Some(pixbuf);
@@ -46,7 +63,9 @@ fn load_scaled(path: &str, width: i32, height: i32) -> Option<Pixbuf> {
     let pixbuf = Pixbuf::from_file_at_scale(path, width, height, true).ok()?;
     PIXBUF_CACHE.with(|cache| {
         let mut cache = cache.borrow_mut();
-        cache.retain(|k, _| !(k.path == path && k.width == width && k.height == height && k != &key));
+        cache.retain(|k, _| {
+            !(k.path == path && k.width == width && k.height == height && k != &key)
+        });
         cache.insert(key, pixbuf.clone());
     });
     Some(pixbuf)
@@ -92,7 +111,9 @@ fn fetch_http_icon(source: &str) -> Result<Vec<u8>, String> {
         .map_err(|error| error.to_string())?;
     let mut reader = response.into_reader().take(REMOTE_ICON_LIMIT + 1);
     let mut data = Vec::new();
-    reader.read_to_end(&mut data).map_err(|error| error.to_string())?;
+    reader
+        .read_to_end(&mut data)
+        .map_err(|error| error.to_string())?;
     if data.is_empty() || data.len() as u64 > REMOTE_ICON_LIMIT {
         return Err("remote icon is empty or exceeds size limit".to_string());
     }
@@ -107,11 +128,16 @@ fn fetch_snapd_icon(source: &str) -> Result<Vec<u8>, String> {
         stream,
         "GET {} HTTP/1.1\r\nHost: localhost\r\nAccept: */*\r\nConnection: close\r\n\r\n",
         source
-    ).map_err(|error| error.to_string())?;
+    )
+    .map_err(|error| error.to_string())?;
 
     let mut response = Vec::new();
-    stream.read_to_end(&mut response).map_err(|error| error.to_string())?;
-    let header_end = response.windows(4).position(|window| window == b"\r\n\r\n")
+    stream
+        .read_to_end(&mut response)
+        .map_err(|error| error.to_string())?;
+    let header_end = response
+        .windows(4)
+        .position(|window| window == b"\r\n\r\n")
         .ok_or_else(|| "invalid snapd icon response".to_string())?;
     let header = std::str::from_utf8(&response[..header_end]).map_err(|error| error.to_string())?;
     let status = header.lines().next().unwrap_or_default();
@@ -153,7 +179,9 @@ fn bind_remote_image(image: &gtk::Image, source: &str, size: i32) {
     }
 
     let should_spawn = {
-        let mut fetches = remote_fetches().lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+        let mut fetches = remote_fetches()
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
         match fetches.get(&source).copied() {
             Some(None) => false,
             _ => {
@@ -176,8 +204,11 @@ fn bind_remote_image(image: &gtk::Image, source: &str, size: i32) {
                 fs::write(&tmp, data).map_err(|error| error.to_string())?;
                 fs::rename(&tmp, &worker_target).map_err(|error| error.to_string())?;
                 Ok(())
-            })().is_ok();
-            let mut fetches = remote_fetches().lock().unwrap_or_else(|poisoned| poisoned.into_inner());
+            })()
+            .is_ok();
+            let mut fetches = remote_fetches()
+                .lock()
+                .unwrap_or_else(|poisoned| poisoned.into_inner());
             fetches.insert(worker_source, Some(success));
         });
     }
@@ -292,14 +323,30 @@ fn widget_key<W: IsA<gtk::Widget>>(widget: &W) -> usize {
 }
 
 fn corner_coverage(x: usize, y: usize, width: usize, height: usize, radius: f64) -> f64 {
-    if radius <= 0.0 { return 1.0; }
+    if radius <= 0.0 {
+        return 1.0;
+    }
     let px = x as f64 + 0.5;
     let py = y as f64 + 0.5;
     let right = width as f64 - px;
     let bottom = height as f64 - py;
-    let dx = if px < radius { radius - px } else if right < radius { radius - right } else { 0.0 };
-    let dy = if py < radius { radius - py } else if bottom < radius { radius - bottom } else { 0.0 };
-    if dx == 0.0 || dy == 0.0 { return 1.0; }
+    let dx = if px < radius {
+        radius - px
+    } else if right < radius {
+        radius - right
+    } else {
+        0.0
+    };
+    let dy = if py < radius {
+        radius - py
+    } else if bottom < radius {
+        radius - bottom
+    } else {
+        0.0
+    };
+    if dx == 0.0 || dy == 0.0 {
+        return 1.0;
+    }
     let distance = (dx * dx + dy * dy).sqrt();
     (radius + 0.5 - distance).clamp(0.0, 1.0)
 }
@@ -316,7 +363,7 @@ fn category_watermark_pixbuf(path: &str, width: i32, height: i32) -> Option<Pixb
     // Vertically center the oversized watermark, then nudge it 12px down:
     // the bleed crop otherwise hides the top edge of icons whose important
     // artwork concentrates there.
-    let icon_y = ((height - icon_size) as f64 / 2.0).round() as isize + 12;
+    let icon_y = ((height - icon_size) as f64 / 2.0).round() as isize + 10;
     let source = Pixbuf::from_file_at_scale(path, icon_size_ss, icon_size_ss, true).ok()?;
 
     let sw = source.width().max(0) as usize;
@@ -324,11 +371,15 @@ fn category_watermark_pixbuf(path: &str, width: i32, height: i32) -> Option<Pixb
     let stride = source.rowstride().max(0) as usize;
     let channels = source.n_channels().max(0) as usize;
     let has_alpha = source.has_alpha();
-    if channels < 3 || stride < sw.saturating_mul(channels) { return None; }
+    if channels < 3 || stride < sw.saturating_mul(channels) {
+        return None;
+    }
 
     let bytes = source.read_pixel_bytes();
     let pixels = bytes.as_ref();
-    if pixels.len() < stride.saturating_mul(sh) { return None; }
+    if pixels.len() < stride.saturating_mul(sh) {
+        return None;
+    }
 
     let tw = width as usize;
     let th = height as usize;
@@ -349,15 +400,22 @@ fn category_watermark_pixbuf(path: &str, width: i32, height: i32) -> Option<Pixb
                 for sx in 0..supersample {
                     let source_x = (x * supersample + sx) as isize - icon_x_ss;
                     let source_y = (y * supersample + sy) as isize - icon_y_ss;
-                    if source_x < 0 || source_y < 0 ||
-                       source_x as usize >= sw || source_y as usize >= sh {
+                    if source_x < 0
+                        || source_y < 0
+                        || source_x as usize >= sw
+                        || source_y as usize >= sh
+                    {
                         continue;
                     }
                     let offset = source_y as usize * stride + source_x as usize * channels;
-                    if offset + 2 >= pixels.len() { continue; }
+                    if offset + 2 >= pixels.len() {
+                        continue;
+                    }
                     let alpha = if has_alpha && channels >= 4 && offset + 3 < pixels.len() {
                         pixels[offset + 3] as f64 / 255.0
-                    } else { 1.0 };
+                    } else {
+                        1.0
+                    };
                     alpha_sum += alpha;
                     red_premul += pixels[offset] as f64 * alpha;
                     green_premul += pixels[offset + 1] as f64 * alpha;
@@ -378,8 +436,13 @@ fn category_watermark_pixbuf(path: &str, width: i32, height: i32) -> Option<Pixb
 
     let bytes = glib::Bytes::from_owned(output);
     Some(Pixbuf::from_bytes(
-        &bytes, gdk_pixbuf::Colorspace::Rgb, true, 8,
-        width, height, width.saturating_mul(4),
+        &bytes,
+        gdk_pixbuf::Colorspace::Rgb,
+        true,
+        8,
+        width,
+        height,
+        width.saturating_mul(4),
     ))
 }
 
@@ -390,22 +453,27 @@ fn register_category_watermark(
 ) {
     let key = widget_key(surface);
     CATEGORY_WATERMARKS.with(|states| {
-        states.borrow_mut().insert(key, CategoryWatermarkState {
-            drawing: drawing.clone(),
-            pixbuf: None,
-            icon_path,
-            pending_width: 0,
-            pending_height: 0,
-            rendered_width: 0,
-            rendered_height: 0,
-            render_scheduled: false,
-        });
+        states.borrow_mut().insert(
+            key,
+            CategoryWatermarkState {
+                drawing: drawing.clone(),
+                pixbuf: None,
+                icon_path,
+                pending_width: 0,
+                pending_height: 0,
+                rendered_width: 0,
+                rendered_height: 0,
+                render_scheduled: false,
+            },
+        );
     });
 
     surface.connect_size_allocate(move |widget, allocation| {
         let should_schedule = CATEGORY_WATERMARKS.with(|states| {
             let mut states = states.borrow_mut();
-            let Some(state) = states.get_mut(&key) else { return false; };
+            let Some(state) = states.get_mut(&key) else {
+                return false;
+            };
             let width = allocation.width();
             let height = allocation.height();
             let changed = state.pending_width != width || state.pending_height != height;
@@ -446,7 +514,10 @@ fn register_category_watermark(
 
     drawing.connect_draw(move |_drawing, cr| {
         let pixbuf = CATEGORY_WATERMARKS.with(|states| {
-            states.borrow().get(&key).and_then(|state| state.pixbuf.clone())
+            states
+                .borrow()
+                .get(&key)
+                .and_then(|state| state.pixbuf.clone())
         });
         if let Some(pixbuf) = pixbuf {
             cr.set_source_pixbuf(&pixbuf, 0.0, 0.0);
@@ -461,17 +532,27 @@ fn flush_category_surface(widget: &gtk::Widget) -> bool {
     let request = CATEGORY_WATERMARKS.with(|states| {
         let states = states.borrow();
         let state = states.get(&key)?;
-        if state.pending_width <= 0 || state.pending_height <= 0 ||
-           (state.pixbuf.is_some() &&
-            state.pending_width == state.rendered_width &&
-            state.pending_height == state.rendered_height) {
+        if state.pending_width <= 0
+            || state.pending_height <= 0
+            || (state.pixbuf.is_some()
+                && state.pending_width == state.rendered_width
+                && state.pending_height == state.rendered_height)
+        {
             return None;
         }
-        Some((state.icon_path.clone(), state.pending_width, state.pending_height))
+        Some((
+            state.icon_path.clone(),
+            state.pending_width,
+            state.pending_height,
+        ))
     });
 
-    let Some((path, width, height)) = request else { return false; };
-    let Some(pixbuf) = category_watermark_pixbuf(&path, width, height) else { return false; };
+    let Some((path, width, height)) = request else {
+        return false;
+    };
+    let Some(pixbuf) = category_watermark_pixbuf(&path, width, height) else {
+        return false;
+    };
 
     CATEGORY_WATERMARKS.with(|states| {
         if let Some(state) = states.borrow_mut().get_mut(&key) {
@@ -488,15 +569,17 @@ fn category_surface_has_pending_render(widget: &gtk::Widget) -> bool {
     let key = widget_key(widget);
     CATEGORY_WATERMARKS.with(|states| {
         let states = states.borrow();
-        let Some(state) = states.get(&key) else { return false; };
+        let Some(state) = states.get(&key) else {
+            return false;
+        };
 
         // A registered category surface is not ready until GTK has allocated it
         // and the allocation-sized watermark for that exact size exists.
-        state.pending_width <= 0 ||
-        state.pending_height <= 0 ||
-        state.pixbuf.is_none() ||
-        state.pending_width != state.rendered_width ||
-        state.pending_height != state.rendered_height
+        state.pending_width <= 0
+            || state.pending_height <= 0
+            || state.pixbuf.is_none()
+            || state.pending_width != state.rendered_width
+            || state.pending_height != state.rendered_height
     })
 }
 
@@ -519,24 +602,30 @@ fn flush_category_tree(widget: &gtk::Widget, remaining: &mut usize, unlimited: b
     let mut rendered = 0usize;
     if (unlimited || *remaining > 0) && flush_category_surface(widget) {
         rendered += 1;
-        if !unlimited { *remaining = remaining.saturating_sub(1); }
+        if !unlimited {
+            *remaining = remaining.saturating_sub(1);
+        }
     }
-    if !unlimited && *remaining == 0 { return rendered; }
+    if !unlimited && *remaining == 0 {
+        return rendered;
+    }
 
     if let Ok(container) = widget.clone().downcast::<gtk::Container>() {
         for child in container.children() {
             rendered += flush_category_tree(&child, remaining, unlimited);
-            if !unlimited && *remaining == 0 { break; }
+            if !unlimited && *remaining == 0 {
+                break;
+            }
         }
     }
     rendered
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn lt_gui_has_pending_render_work(
-    root: *mut gtk::ffi::GtkWidget,
-) -> bool {
-    if root.is_null() { return false; }
+pub unsafe extern "C" fn lt_gui_has_pending_render_work(root: *mut gtk::ffi::GtkWidget) -> bool {
+    if root.is_null() {
+        return false;
+    }
     ensure_gtk_initialized();
     let root: gtk::Widget = from_glib_none(root);
     category_tree_has_pending_render(&root)
@@ -547,7 +636,9 @@ pub unsafe extern "C" fn lt_gui_flush_category_watermarks(
     root: *mut gtk::ffi::GtkWidget,
     max_count: usize,
 ) -> usize {
-    if root.is_null() { return 0; }
+    if root.is_null() {
+        return 0;
+    }
     ensure_gtk_initialized();
     let root: gtk::Widget = from_glib_none(root);
     let unlimited = max_count == 0;
@@ -562,7 +653,6 @@ fn ensure_gtk_initialized() {
         }
     }
 }
-
 
 fn stack_remove_child(stack: &gtk::Stack, child: &gtk::Widget, destroy: bool) -> bool {
     if child.parent().as_ref() != Some(stack.upcast_ref::<gtk::Widget>()) {
@@ -612,8 +702,12 @@ pub unsafe extern "C" fn lt_gui_stack_add_category_browser(
     installed_label: *const c_char,
 ) -> bool {
     ensure_gtk_initialized();
-    if stack.is_null() || available_flowbox.is_null() || installed_flowbox.is_null()
-        || name.is_null() || available_label.is_null() || installed_label.is_null()
+    if stack.is_null()
+        || available_flowbox.is_null()
+        || installed_flowbox.is_null()
+        || name.is_null()
+        || available_label.is_null()
+        || installed_label.is_null()
     {
         return false;
     }
@@ -752,11 +846,15 @@ pub unsafe extern "C" fn lt_gui_stack_remove_child_after_transition(
 }
 
 #[no_mangle]
-pub extern "C" fn lt_gui_abi_version() -> u32 { 20 }
+pub extern "C" fn lt_gui_abi_version() -> u32 {
+    20
+}
 
 fn command_stdout(program: &str, args: &[&str]) -> Option<String> {
     let output = Command::new(program).args(args).output().ok()?;
-    if !output.status.success() { return None; }
+    if !output.status.success() {
+        return None;
+    }
     Some(String::from_utf8_lossy(&output.stdout).trim().to_string())
 }
 
@@ -799,16 +897,22 @@ fn piped_output_bytes(
 }
 
 fn normalize_archive_member(value: &str) -> String {
-    value.trim().trim_start_matches("./").trim_start_matches('/').to_string()
+    value
+        .trim()
+        .trim_start_matches("./")
+        .trim_start_matches('/')
+        .to_string()
 }
 
 fn tar_stream_members(program: &str, args: &[&str]) -> Option<Vec<String>> {
     let bytes = piped_output_bytes(program, args, "tar", &["-tf", "-"])?;
-    Some(String::from_utf8_lossy(&bytes)
-        .lines()
-        .map(normalize_archive_member)
-        .filter(|v| !v.is_empty())
-        .collect())
+    Some(
+        String::from_utf8_lossy(&bytes)
+            .lines()
+            .map(normalize_archive_member)
+            .filter(|v| !v.is_empty())
+            .collect(),
+    )
 }
 
 fn tar_stream_member(program: &str, args: &[&str], member: &str) -> Option<Vec<u8>> {
@@ -824,11 +928,13 @@ fn tar_stream_member(program: &str, args: &[&str], member: &str) -> Option<Vec<u
 
 fn bsdtar_members(path: &str) -> Option<Vec<String>> {
     let bytes = command_output_bytes("bsdtar", &["-tf", path])?;
-    Some(String::from_utf8_lossy(&bytes)
-        .lines()
-        .map(normalize_archive_member)
-        .filter(|v| !v.is_empty())
-        .collect())
+    Some(
+        String::from_utf8_lossy(&bytes)
+            .lines()
+            .map(normalize_archive_member)
+            .filter(|v| !v.is_empty())
+            .collect(),
+    )
 }
 
 fn bsdtar_member(path: &str, member: &str) -> Option<Vec<u8>> {
@@ -842,19 +948,26 @@ fn bsdtar_member(path: &str, member: &str) -> Option<Vec<u8>> {
 
 fn rpm_members(path: &str) -> Option<Vec<String>> {
     let bytes = piped_output_bytes("rpm2cpio", &[path], "cpio", &["-t", "--quiet"])?;
-    Some(String::from_utf8_lossy(&bytes)
-        .lines()
-        .map(normalize_archive_member)
-        .filter(|v| !v.is_empty())
-        .collect())
+    Some(
+        String::from_utf8_lossy(&bytes)
+            .lines()
+            .map(normalize_archive_member)
+            .filter(|v| !v.is_empty())
+            .collect(),
+    )
 }
 
 fn rpm_member(path: &str, member: &str) -> Option<Vec<u8>> {
     for candidate in [format!("./{member}"), member.to_string()] {
         if let Some(bytes) = piped_output_bytes(
-            "rpm2cpio", &[path], "cpio", &["-i", "--quiet", "--to-stdout", &candidate],
+            "rpm2cpio",
+            &[path],
+            "cpio",
+            &["-i", "--quiet", "--to-stdout", &candidate],
         ) {
-            if !bytes.is_empty() { return Some(bytes); }
+            if !bytes.is_empty() {
+                return Some(bytes);
+            }
         }
     }
     None
@@ -869,7 +982,9 @@ fn appimage_squashfs_offset(path: &str) -> Option<u64> {
     let mut overlap = Vec::<u8>::new();
     loop {
         let count = file.read(&mut buffer).ok()?;
-        if count == 0 { break; }
+        if count == 0 {
+            break;
+        }
         let mut data = overlap.clone();
         data.extend_from_slice(&buffer[..count]);
         if let Some(pos) = data.windows(4).position(|w| w == b"hsqs") {
@@ -886,16 +1001,24 @@ fn appimage_squashfs_offset(path: &str) -> Option<u64> {
 fn squashfs_members(path: &str, offset: Option<u64>) -> Option<Vec<String>> {
     let mut command = Command::new("unsquashfs");
     command.arg("-ll");
-    if let Some(offset) = offset { command.arg("-o").arg(offset.to_string()); }
+    if let Some(offset) = offset {
+        command.arg("-o").arg(offset.to_string());
+    }
     command.arg(path);
     let output = command.output().ok()?;
-    if !output.status.success() { return None; }
+    if !output.status.success() {
+        return None;
+    }
     let mut members = Vec::new();
     for line in String::from_utf8_lossy(&output.stdout).lines() {
         // unsquashfs -ll prefixes metadata, then squashfs-root/<member>.
-        let Some(pos) = line.find("squashfs-root/") else { continue; };
+        let Some(pos) = line.find("squashfs-root/") else {
+            continue;
+        };
         let member = normalize_archive_member(&line[pos + "squashfs-root/".len()..]);
-        if !member.is_empty() { members.push(member); }
+        if !member.is_empty() {
+            members.push(member);
+        }
     }
     Some(members)
 }
@@ -903,7 +1026,9 @@ fn squashfs_members(path: &str, offset: Option<u64>) -> Option<Vec<String>> {
 fn squashfs_member(path: &str, offset: Option<u64>, member: &str) -> Option<Vec<u8>> {
     let mut command = Command::new("unsquashfs");
     command.arg("-cat");
-    if let Some(offset) = offset { command.arg("-o").arg(offset.to_string()); }
+    if let Some(offset) = offset {
+        command.arg("-o").arg(offset.to_string());
+    }
     command.arg(path).arg(member);
     let output = command.output().ok()?;
     output.status.success().then_some(output.stdout)
@@ -941,10 +1066,14 @@ fn desktop_icon_value(text: &str) -> Option<String> {
             in_desktop_entry = line == "[Desktop Entry]";
             continue;
         }
-        if !in_desktop_entry || line.starts_with('#') { continue; }
+        if !in_desktop_entry || line.starts_with('#') {
+            continue;
+        }
         if let Some(value) = line.strip_prefix("Icon=") {
             let value = value.trim();
-            if !value.is_empty() { return Some(value.to_string()); }
+            if !value.is_empty() {
+                return Some(value.to_string());
+            }
         }
     }
     None
@@ -953,24 +1082,42 @@ fn desktop_icon_value(text: &str) -> Option<String> {
 fn desktop_member_score(member: &str, package_name: &str, kind: &str) -> i32 {
     let normalized = normalize_archive_member(member);
     let lower = normalized.to_ascii_lowercase();
-    if !lower.ends_with(".desktop") { return -1; }
+    if !lower.ends_with(".desktop") {
+        return -1;
+    }
     let canonical = lower.contains("usr/share/applications/")
         || lower.contains("share/applications/")
         || (kind == "snap" && lower.starts_with("meta/gui/"))
         || (kind == "appimage" && !lower.contains('/'));
-    if !canonical { return -1; }
-    let base = Path::new(&normalized).file_stem().and_then(|v| v.to_str()).unwrap_or_default();
+    if !canonical {
+        return -1;
+    }
+    let base = Path::new(&normalized)
+        .file_stem()
+        .and_then(|v| v.to_str())
+        .unwrap_or_default();
     let mut score = 10;
-    if base.eq_ignore_ascii_case(package_name) { score += 100; }
-    if base.to_ascii_lowercase().contains(&package_name.to_ascii_lowercase()) { score += 25; }
-    if lower.contains("share/applications/") { score += 10; }
+    if base.eq_ignore_ascii_case(package_name) {
+        score += 100;
+    }
+    if base
+        .to_ascii_lowercase()
+        .contains(&package_name.to_ascii_lowercase())
+    {
+        score += 25;
+    }
+    if lower.contains("share/applications/") {
+        score += 10;
+    }
     score
 }
 
 fn icon_member_score(member: &str, icon_value: &str, kind: &str) -> i32 {
     let normalized = normalize_archive_member(member);
     let lower = normalized.to_ascii_lowercase();
-    if lower.contains("/symbolic/") || lower.ends_with("-symbolic.svg") { return -1; }
+    if lower.contains("/symbolic/") || lower.ends_with("-symbolic.svg") {
+        return -1;
+    }
 
     let mut requested = icon_value.trim().trim_start_matches('/').to_string();
     if kind == "snap" || kind == "appimage" {
@@ -982,8 +1129,16 @@ fn icon_member_score(member: &str, icon_value: &str, kind: &str) -> i32 {
     }
     let requested_path = Path::new(&requested);
     if requested.contains('/') {
-        if normalized != requested && !normalized.ends_with(&format!("/{requested}")) { return -1; }
-        return match requested_path.extension().and_then(|v| v.to_str()).unwrap_or("").to_ascii_lowercase().as_str() {
+        if normalized != requested && !normalized.ends_with(&format!("/{requested}")) {
+            return -1;
+        }
+        return match requested_path
+            .extension()
+            .and_then(|v| v.to_str())
+            .unwrap_or("")
+            .to_ascii_lowercase()
+            .as_str()
+        {
             "svg" => 1000,
             "png" => 980,
             "xpm" => 940,
@@ -995,25 +1150,59 @@ fn icon_member_score(member: &str, icon_value: &str, kind: &str) -> i32 {
         || lower.contains("share/pixmaps/")
         || (kind == "snap" && lower.starts_with("meta/gui/"))
         || (kind == "appimage" && !lower.contains('/'));
-    if !canonical { return -1; }
-    let requested_name = requested_path.file_name().and_then(|v| v.to_str()).unwrap_or(&requested);
-    let requested_stem = Path::new(requested_name).file_stem().and_then(|v| v.to_str()).unwrap_or(requested_name);
-    let member_name = Path::new(&normalized).file_name().and_then(|v| v.to_str()).unwrap_or_default();
-    let member_stem = Path::new(member_name).file_stem().and_then(|v| v.to_str()).unwrap_or_default();
+    if !canonical {
+        return -1;
+    }
+    let requested_name = requested_path
+        .file_name()
+        .and_then(|v| v.to_str())
+        .unwrap_or(&requested);
+    let requested_stem = Path::new(requested_name)
+        .file_stem()
+        .and_then(|v| v.to_str())
+        .unwrap_or(requested_name);
+    let member_name = Path::new(&normalized)
+        .file_name()
+        .and_then(|v| v.to_str())
+        .unwrap_or_default();
+    let member_stem = Path::new(member_name)
+        .file_stem()
+        .and_then(|v| v.to_str())
+        .unwrap_or_default();
     if Path::new(requested_name).extension().is_some() {
-        if !member_name.eq_ignore_ascii_case(requested_name) { return -1; }
+        if !member_name.eq_ignore_ascii_case(requested_name) {
+            return -1;
+        }
     } else if !member_stem.eq_ignore_ascii_case(requested_stem) {
         return -1;
     }
 
     let mut score = 100;
-    if member_name.eq_ignore_ascii_case(requested_name) { score += 100; }
-    if lower.ends_with(".svg") { score += 80; }
-    else if lower.ends_with(".png") { score += 60; }
-    else if lower.ends_with(".xpm") { score += 20; }
-    else { return -1; }
-    for (needle, bonus) in [("/512x512/", 55), ("/256x256/", 50), ("/128x128/", 45), ("/96x96/", 40), ("/64x64/", 35), ("/48x48/", 30), ("/scalable/", 70)] {
-        if lower.contains(needle) { score += bonus; break; }
+    if member_name.eq_ignore_ascii_case(requested_name) {
+        score += 100;
+    }
+    if lower.ends_with(".svg") {
+        score += 80;
+    } else if lower.ends_with(".png") {
+        score += 60;
+    } else if lower.ends_with(".xpm") {
+        score += 20;
+    } else {
+        return -1;
+    }
+    for (needle, bonus) in [
+        ("/512x512/", 55),
+        ("/256x256/", 50),
+        ("/128x128/", 45),
+        ("/96x96/", 40),
+        ("/64x64/", 35),
+        ("/48x48/", 30),
+        ("/scalable/", 70),
+    ] {
+        if lower.contains(needle) {
+            score += bonus;
+            break;
+        }
     }
     score
 }
@@ -1022,33 +1211,61 @@ fn packaged_desktop_icon(path: &str, kind: &str, package_name: &str) -> Option<S
     // Strict policy and selective I/O: list members, read only candidate desktop
     // files, then read only the chosen icon. Never unpack the package payload.
     let entries = package_members(path, kind)?;
-    let mut desktops: Vec<(i32, &String)> = entries.iter().filter_map(|member| {
-        let score = desktop_member_score(member, package_name, kind);
-        (score >= 0).then_some((score, member))
-    }).collect();
+    let mut desktops: Vec<(i32, &String)> = entries
+        .iter()
+        .filter_map(|member| {
+            let score = desktop_member_score(member, package_name, kind);
+            (score >= 0).then_some((score, member))
+        })
+        .collect();
     desktops.sort_by(|a, b| b.0.cmp(&a.0).then_with(|| a.1.cmp(b.1)));
 
     for (_, desktop_member) in desktops {
-        let Some(desktop_bytes) = package_member(path, kind, desktop_member) else { continue; };
-        if desktop_bytes.len() as u64 > REMOTE_ICON_LIMIT { continue; }
+        let Some(desktop_bytes) = package_member(path, kind, desktop_member) else {
+            continue;
+        };
+        if desktop_bytes.len() as u64 > REMOTE_ICON_LIMIT {
+            continue;
+        }
         let desktop = String::from_utf8_lossy(&desktop_bytes);
-        let Some(icon_value) = desktop_icon_value(&desktop) else { continue; };
-        let Some((_, icon_member)) = entries.iter().filter_map(|member| {
-            let score = icon_member_score(member, &icon_value, kind);
-            (score >= 0).then_some((score, member))
-        }).max_by(|a, b| a.0.cmp(&b.0).then_with(|| b.1.cmp(a.1))) else { continue; };
+        let Some(icon_value) = desktop_icon_value(&desktop) else {
+            continue;
+        };
+        let Some((_, icon_member)) = entries
+            .iter()
+            .filter_map(|member| {
+                let score = icon_member_score(member, &icon_value, kind);
+                (score >= 0).then_some((score, member))
+            })
+            .max_by(|a, b| a.0.cmp(&b.0).then_with(|| b.1.cmp(a.1)))
+        else {
+            continue;
+        };
 
-        let Some(icon_bytes) = package_member(path, kind, icon_member) else { continue; };
-        if icon_bytes.is_empty() || icon_bytes.len() as u64 > REMOTE_ICON_LIMIT { continue; }
+        let Some(icon_bytes) = package_member(path, kind, icon_member) else {
+            continue;
+        };
+        if icon_bytes.is_empty() || icon_bytes.len() as u64 > REMOTE_ICON_LIMIT {
+            continue;
+        }
 
         let package_meta = fs::metadata(path).ok()?;
         let mut hasher = DefaultHasher::new();
         path.hash(&mut hasher);
         package_meta.len().hash(&mut hasher);
-        package_meta.modified().ok()?.duration_since(std::time::UNIX_EPOCH).ok()?.as_nanos().hash(&mut hasher);
+        package_meta
+            .modified()
+            .ok()?
+            .duration_since(std::time::UNIX_EPOCH)
+            .ok()?
+            .as_nanos()
+            .hash(&mut hasher);
         desktop_member.hash(&mut hasher);
         icon_member.hash(&mut hasher);
-        let extension = Path::new(icon_member).extension().and_then(|v| v.to_str()).unwrap_or("img");
+        let extension = Path::new(icon_member)
+            .extension()
+            .and_then(|v| v.to_str())
+            .unwrap_or("img");
         let target = package_icon_cache_dir().join(format!("{:016x}.{extension}", hasher.finish()));
         if !target.is_file() {
             fs::create_dir_all(target.parent()?).ok()?;
@@ -1070,7 +1287,9 @@ fn deb_control_value(control: &str, field: &str) -> String {
             if line.starts_with(' ') || line.starts_with('\t') {
                 let part = line.trim();
                 if !part.is_empty() && part != "." {
-                    if !value.is_empty() { value.push(' '); }
+                    if !value.is_empty() {
+                        value.push(' ');
+                    }
                     value.push_str(part);
                 }
                 continue;
@@ -1099,7 +1318,11 @@ fn local_package_metadata(path: &str) -> serde_json::Value {
     let lower = basename.to_ascii_lowercase();
     let mut kind = "unknown";
     let mut format_label = "Package".to_string();
-    let mut name = file.file_stem().and_then(|v| v.to_str()).unwrap_or(basename).to_string();
+    let mut name = file
+        .file_stem()
+        .and_then(|v| v.to_str())
+        .unwrap_or(basename)
+        .to_string();
     let mut version = String::new();
     let mut architecture = String::new();
     let mut maintainer = String::new();
@@ -1109,7 +1332,10 @@ fn local_package_metadata(path: &str) -> serde_json::Value {
         kind = "deb";
         format_label = "Debian package".to_string();
         if let Some(control) = command_stdout("dpkg-deb", &["-f", path]) {
-            let value = deb_control_value(&control, "Package"); if !value.is_empty() { name = value; }
+            let value = deb_control_value(&control, "Package");
+            if !value.is_empty() {
+                name = value;
+            }
             version = deb_control_value(&control, "Version");
             architecture = deb_control_value(&control, "Architecture");
             maintainer = deb_control_value(&control, "Maintainer");
@@ -1118,9 +1344,19 @@ fn local_package_metadata(path: &str) -> serde_json::Value {
     } else if lower.ends_with(".rpm") {
         kind = "rpm";
         format_label = "RPM package".to_string();
-        if let Some(output) = command_stdout("rpm", &["-qp", "--qf", "%{NAME}\\x1f%{VERSION}-%{RELEASE}\\x1f%{ARCH}\\x1f%{PACKAGER}\\x1f%{SUMMARY}", path]) {
+        if let Some(output) = command_stdout(
+            "rpm",
+            &[
+                "-qp",
+                "--qf",
+                "%{NAME}\\x1f%{VERSION}-%{RELEASE}\\x1f%{ARCH}\\x1f%{PACKAGER}\\x1f%{SUMMARY}",
+                path,
+            ],
+        ) {
             let fields: Vec<&str> = output.split('\u{1f}').collect();
-            if let Some(value) = fields.get(0).filter(|v| !v.is_empty()) { name = (*value).to_string(); }
+            if let Some(value) = fields.get(0).filter(|v| !v.is_empty()) {
+                name = (*value).to_string();
+            }
             version = fields.get(1).unwrap_or(&"").to_string();
             architecture = fields.get(2).unwrap_or(&"").to_string();
             maintainer = fields.get(3).unwrap_or(&"").to_string();
@@ -1130,7 +1366,10 @@ fn local_package_metadata(path: &str) -> serde_json::Value {
         kind = "arch";
         format_label = "Arch Linux package".to_string();
         if let Some(info) = command_stdout("bsdtar", &["-xOf", path, ".PKGINFO"]) {
-            let value = pkginfo_value(&info, "pkgname"); if !value.is_empty() { name = value; }
+            let value = pkginfo_value(&info, "pkgname");
+            if !value.is_empty() {
+                name = value;
+            }
             version = pkginfo_value(&info, "pkgver");
             architecture = pkginfo_value(&info, "arch");
             maintainer = pkginfo_value(&info, "packager");
@@ -1144,9 +1383,15 @@ fn local_package_metadata(path: &str) -> serde_json::Value {
         format_label = "Flatpak reference".to_string();
         if let Ok(text) = fs::read_to_string(file) {
             for line in text.lines() {
-                if let Some(v) = line.strip_prefix("Name=") { name = v.trim().to_string(); }
-                else if let Some(v) = line.strip_prefix("Title=") { if !v.trim().is_empty() { name = v.trim().to_string(); } }
-                else if let Some(v) = line.strip_prefix("Comment=") { description = v.trim().to_string(); }
+                if let Some(v) = line.strip_prefix("Name=") {
+                    name = v.trim().to_string();
+                } else if let Some(v) = line.strip_prefix("Title=") {
+                    if !v.trim().is_empty() {
+                        name = v.trim().to_string();
+                    }
+                } else if let Some(v) = line.strip_prefix("Comment=") {
+                    description = v.trim().to_string();
+                }
             }
         }
     } else if lower.ends_with(".flatpak") {
@@ -1158,7 +1403,9 @@ fn local_package_metadata(path: &str) -> serde_json::Value {
     } else if lower.ends_with(".appimage") {
         kind = "appimage";
         format_label = "AppImage".to_string();
-        name = basename[..basename.len().saturating_sub(9)].trim_end_matches('.').to_string();
+        name = basename[..basename.len().saturating_sub(9)]
+            .trim_end_matches('.')
+            .to_string();
     }
 
     let size = fs::metadata(file).map(|m| m.len()).unwrap_or(0);
@@ -1188,14 +1435,20 @@ pub unsafe extern "C" fn lt_gui_inspect_local_package(
     output_len: usize,
 ) -> bool {
     ensure_gtk_initialized();
-    if path.is_null() || output.is_null() || output_len < 2 { return false; }
+    if path.is_null() || output.is_null() || output_len < 2 {
+        return false;
+    }
     let path = cstr(path);
-    if path.is_empty() || !Path::new(&path).is_file() { return false; }
+    if path.is_empty() || !Path::new(&path).is_file() {
+        return false;
+    }
     let encoded = match serde_json::to_vec(&local_package_metadata(&path)) {
         Ok(value) => value,
         Err(_) => return false,
     };
-    if encoded.len() + 1 > output_len { return false; }
+    if encoded.len() + 1 > output_len {
+        return false;
+    }
     std::ptr::copy_nonoverlapping(encoded.as_ptr(), output as *mut u8, encoded.len());
     *(output.add(encoded.len())) = 0;
     true
@@ -1214,7 +1467,9 @@ pub unsafe extern "C" fn lt_gui_set_image_source(
     size: i32,
 ) -> bool {
     ensure_gtk_initialized();
-    if image.is_null() { return false; }
+    if image.is_null() {
+        return false;
+    }
     let widget: gtk::Widget = from_glib_none(image);
     let image = match widget.downcast::<gtk::Image>() {
         Ok(image) => image,
@@ -1237,7 +1492,10 @@ pub struct LtGuiItemCardSpec {
     category: u8,
 }
 
-unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec, featured_height: i32) -> Option<gtk::EventBox> {
+unsafe fn create_item_card_from_spec(
+    spec: &LtGuiItemCardSpec,
+    featured_height: i32,
+) -> Option<gtk::EventBox> {
     let name = cstr(spec.name);
     let icon_path = cstr(spec.icon_path);
     let icon_name = cstr(spec.icon_name);
@@ -1261,8 +1519,12 @@ unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec, featured_height: 
             Some(&resolve_symbolic_icon("edit-delete-symbolic")),
             gtk::IconSize::Menu,
         );
-        remove_button.style_context().add_class("installed-card-remove-left");
-        remove_button.style_context().add_class("destructive-action");
+        remove_button
+            .style_context()
+            .add_class("installed-card-remove-left");
+        remove_button
+            .style_context()
+            .add_class("destructive-action");
         remove_button.set_size_request(24, 24);
         remove_button.set_relief(gtk::ReliefStyle::None);
         remove_button.set_can_focus(true);
@@ -1280,7 +1542,9 @@ unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec, featured_height: 
         let check = gtk::CheckButton::new();
         check.set_can_focus(false);
         check.set_widget_name("linuxtoys-native-check");
-        if !removable { check.set_margin_start(22); }
+        if !removable {
+            check.set_margin_start(22);
+        }
         row.pack_start(&check, false, false, 0);
     }
 
@@ -1354,7 +1618,9 @@ unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec, featured_height: 
         let card_surface = gtk::Grid::new();
         card_surface.set_widget_name("linuxtoys-native-surface");
         card_surface.style_context().add_class("script-item");
-        if is_new { card_surface.style_context().add_class("script-item-new"); }
+        if is_new {
+            card_surface.style_context().add_class("script-item-new");
+        }
         card_surface.set_margin_top(4);
         card_surface.set_margin_start(4);
         card_surface.set_margin_end(4);
@@ -1391,7 +1657,11 @@ unsafe fn create_item_card_from_spec(spec: &LtGuiItemCardSpec, featured_height: 
         ordinary_surface.pack_start(&row, true, true, 0);
         ordinary_surface.set_widget_name("linuxtoys-native-surface");
         ordinary_surface.style_context().add_class("script-item");
-        if is_new { ordinary_surface.style_context().add_class("script-item-new"); }
+        if is_new {
+            ordinary_surface
+                .style_context()
+                .add_class("script-item-new");
+        }
         ordinary_surface.set_margin_top(4);
         ordinary_surface.set_margin_start(4);
         ordinary_surface.set_margin_end(4);
@@ -1464,8 +1734,6 @@ pub unsafe extern "C" fn lt_gui_flowbox_add_item_cards(
     count
 }
 
-
-
 #[repr(C)]
 pub struct LtGuiSearchGroupSpec {
     category_name: *const c_char,
@@ -1493,11 +1761,11 @@ pub extern "C" fn lt_gui_search_viewport_capacity(width: i32, height: i32) -> us
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn lt_gui_search_results_begin(
-    root: *mut gtk::ffi::GtkWidget,
-) -> bool {
+pub unsafe extern "C" fn lt_gui_search_results_begin(root: *mut gtk::ffi::GtkWidget) -> bool {
     ensure_gtk_initialized();
-    if root.is_null() { return false; }
+    if root.is_null() {
+        return false;
+    }
 
     let widget: gtk::Widget = from_glib_none(root);
     let container = match widget.downcast::<gtk::Container>() {
@@ -1526,7 +1794,9 @@ pub unsafe extern "C" fn lt_gui_search_ensure_group(
     viewport_width: i32,
 ) -> bool {
     ensure_gtk_initialized();
-    if root.is_null() || spec.is_null() { return false; }
+    if root.is_null() || spec.is_null() {
+        return false;
+    }
 
     let root_widget: gtk::Widget = from_glib_none(root);
     let results = match named_descendant(&root_widget, "linuxtoys-search-results-container")
@@ -1657,7 +1927,9 @@ unsafe fn create_featured_large_card_from_spec(
     let surface = gtk::Box::new(gtk::Orientation::Horizontal, 0);
     surface.set_widget_name("linuxtoys-native-surface");
     surface.style_context().add_class("script-item");
-    if spec.is_new != 0 { surface.style_context().add_class("script-item-new"); }
+    if spec.is_new != 0 {
+        surface.style_context().add_class("script-item-new");
+    }
     surface.set_margin_top(4);
     surface.set_margin_start(4);
     surface.set_margin_end(4);
@@ -1698,7 +1970,9 @@ pub unsafe extern "C" fn lt_gui_grid_attach_featured_large_card(
     row: i32,
 ) -> bool {
     ensure_gtk_initialized();
-    if grid.is_null() || spec.is_null() { return false; }
+    if grid.is_null() || spec.is_null() {
+        return false;
+    }
     let widget: gtk::Widget = from_glib_none(grid);
     let grid = match widget.downcast::<gtk::Grid>() {
         Ok(grid) => grid,
@@ -1732,10 +2006,7 @@ fn named_descendant(root: &gtk::Widget, name: &str) -> Option<gtk::Widget> {
     None
 }
 
-unsafe fn update_item_card_from_spec(
-    event_box: &gtk::EventBox,
-    spec: &LtGuiItemCardSpec,
-) -> bool {
+unsafe fn update_item_card_from_spec(event_box: &gtk::EventBox, spec: &LtGuiItemCardSpec) -> bool {
     // Featured ordinary cards never use checklist/remove controls. Refuse a
     // structural role change rather than trying to mutate the widget hierarchy.
     if spec.removable != 0 || spec.checklist != 0 {
@@ -1859,7 +2130,6 @@ pub unsafe extern "C" fn lt_gui_update_item_card(
     update_item_card_from_spec(&event_box, &*spec)
 }
 
-
 #[repr(C)]
 pub struct LtGuiInfosHeadSpec {
     execute_label: *const c_char,
@@ -1975,7 +2245,6 @@ pub unsafe extern "C" fn lt_gui_populate_infos_head(
     true
 }
 
-
 #[repr(C)]
 pub struct LtGuiAppPageHeaderSpec {
     aggregate_markup: *const c_char,
@@ -2053,7 +2322,7 @@ pub unsafe extern "C" fn lt_gui_populate_app_page_header(
 
         let provider = gtk::CssProvider::new();
         let _ = provider.load_from_data(
-            b"button { min-width: 20px; min-height: 20px; padding: 1px 3px; margin: 0; }"
+            b"button { min-width: 20px; min-height: 20px; padding: 1px 3px; margin: 0; }",
         );
 
         for stars in 1..=5 {
@@ -2062,10 +2331,9 @@ pub unsafe extern "C" fn lt_gui_populate_app_page_header(
             button.set_relief(gtk::ReliefStyle::None);
             button.set_can_focus(false);
             button.set_size_request(24, 24);
-            button.style_context().add_provider(
-                &provider,
-                gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
-            );
+            button
+                .style_context()
+                .add_provider(&provider, gtk::STYLE_PROVIDER_PRIORITY_APPLICATION);
             rating.pack_start(&button, false, false, 0);
         }
 
@@ -2115,7 +2383,6 @@ pub unsafe extern "C" fn lt_gui_populate_app_page_header(
     infos.pack_start(&controls, false, false, 10);
     true
 }
-
 
 #[repr(C)]
 pub struct LtGuiListRowSpec {
@@ -2260,7 +2527,6 @@ unsafe fn create_list_row_from_spec(spec: &LtGuiListRowSpec) -> gtk::Box {
     outer
 }
 
-
 unsafe fn update_list_row_from_spec(row: &gtk::Box, spec: &LtGuiListRowSpec) -> bool {
     let root: gtk::Widget = row.clone().upcast();
     let name = match named_descendant(&root, "linuxtoys-list-row-name")
@@ -2289,7 +2555,11 @@ unsafe fn update_list_row_from_spec(row: &gtk::Box, spec: &LtGuiListRowSpec) -> 
     });
     name.set_single_line_mode(embedded);
     name.set_hexpand(embedded);
-    name.set_halign(if embedded { gtk::Align::Fill } else { gtk::Align::Start });
+    name.set_halign(if embedded {
+        gtk::Align::Fill
+    } else {
+        gtk::Align::Start
+    });
     name.set_xalign(0.0);
     secondary.set_ellipsize(if embedded {
         gtk::pango::EllipsizeMode::End
@@ -2298,7 +2568,11 @@ unsafe fn update_list_row_from_spec(row: &gtk::Box, spec: &LtGuiListRowSpec) -> 
     });
     secondary.set_single_line_mode(embedded);
     secondary.set_hexpand(embedded);
-    secondary.set_halign(if embedded { gtk::Align::Fill } else { gtk::Align::Start });
+    secondary.set_halign(if embedded {
+        gtk::Align::Fill
+    } else {
+        gtk::Align::Start
+    });
     secondary.set_xalign(0.0);
     if let Some(text) = named_descendant(&root, "linuxtoys-list-row-text")
         .and_then(|w| w.downcast::<gtk::Box>().ok())
@@ -2406,8 +2680,6 @@ unsafe fn update_list_row_from_spec(row: &gtk::Box, spec: &LtGuiListRowSpec) -> 
 
     true
 }
-
-
 
 fn clear_list_container(container: &gtk::Box) {
     for child in container.children() {
@@ -2641,11 +2913,7 @@ fn text_tag(
     tag
 }
 
-fn insert_tagged(
-    buffer: &gtk::TextBuffer,
-    text: &str,
-    tags: &[&gtk::TextTag],
-) {
+fn insert_tagged(buffer: &gtk::TextBuffer, text: &str, tags: &[&gtk::TextTag]) {
     if text.is_empty() {
         return;
     }
@@ -2699,18 +2967,49 @@ fn markdown_tags(buffer: &gtk::TextBuffer) -> MdTags {
         bold: text_tag(buffer, "md-bold", &[("weight", &700i32)]),
         italic: text_tag(buffer, "md-italic", &[("style", &Style::Italic)]),
         code: text_tag(buffer, "md-code", &[("family", &"monospace")]),
-        code_block: text_tag(buffer, "md-code-block", &[
-            ("family", &"monospace"), ("left-margin", &14i32), ("right-margin", &14i32),
-            ("pixels-above-lines", &3i32), ("pixels-below-lines", &3i32),
-        ]),
-        table_header: text_tag(buffer, "md-table-header", &[("family", &"monospace"), ("weight", &700i32)]),
+        code_block: text_tag(
+            buffer,
+            "md-code-block",
+            &[
+                ("family", &"monospace"),
+                ("left-margin", &14i32),
+                ("right-margin", &14i32),
+                ("pixels-above-lines", &3i32),
+                ("pixels-below-lines", &3i32),
+            ],
+        ),
+        table_header: text_tag(
+            buffer,
+            "md-table-header",
+            &[("family", &"monospace"), ("weight", &700i32)],
+        ),
         table: text_tag(buffer, "md-table", &[("family", &"monospace")]),
         strike: text_tag(buffer, "md-strike", &[("strikethrough", &true)]),
-        heading: text_tag(buffer, "md-heading", &[("weight", &700i32), ("scale", &1.08f64)]),
+        heading: text_tag(
+            buffer,
+            "md-heading",
+            &[("weight", &700i32), ("scale", &1.08f64)],
+        ),
         base: text_tag(buffer, "md-base", &[("scale", &1.10f64)]),
         lead: text_tag(buffer, "md-lead", &[("scale", &1.20f64)]),
-        quote: text_tag(buffer, "md-quote", &[("style", &Style::Italic), ("left-margin", &18i32), ("right-margin", &8i32)]),
-        list: text_tag(buffer, "md-list", &[("left-margin", &18i32), ("indent", &-12i32), ("scale", &1.10f64)]),
+        quote: text_tag(
+            buffer,
+            "md-quote",
+            &[
+                ("style", &Style::Italic),
+                ("left-margin", &18i32),
+                ("right-margin", &8i32),
+            ],
+        ),
+        list: text_tag(
+            buffer,
+            "md-list",
+            &[
+                ("left-margin", &18i32),
+                ("indent", &-12i32),
+                ("scale", &1.10f64),
+            ],
+        ),
         rule: text_tag(buffer, "md-rule", &[]),
     }
 }
@@ -2718,85 +3017,508 @@ fn markdown_tags(buffer: &gtk::TextBuffer) -> MdTags {
 fn find_inline_token(value: &str) -> Option<(usize, usize, &'static str, String, Option<String>)> {
     // Earliest token wins; equal starts preserve the Python regex's precedence.
     let mut best: Option<(usize, usize, usize, &'static str, String, Option<String>)> = None;
-    let mut consider = |start: usize, end: usize, pri: usize, kind: &'static str, body: String, extra: Option<String>| {
+    let mut consider = |start: usize,
+                        end: usize,
+                        pri: usize,
+                        kind: &'static str,
+                        body: String,
+                        extra: Option<String>| {
         if best.as_ref().map_or(true, |b| (start, pri) < (b.0, b.2)) {
             best = Some((start, end, pri, kind, body, extra));
         }
     };
-    if let Some(s) = value.find('`') { if let Some(e) = value[s+1..].find('`') { consider(s, s+1+e+1, 0, "code", value[s+1..s+1+e].to_string(), None); } }
-    if let Some(s) = value.find('[') { if let Some(mid) = value[s+1..].find("](") { let m=s+1+mid; if let Some(e)=value[m+2..].find(')') { let inside=&value[m+2..m+2+e]; let url=inside.split_whitespace().next().unwrap_or(""); if !url.is_empty() { consider(s,m+2+e+1,1,"link",value[s+1..m].to_string(),Some(url.to_string())); } } } }
-    for (pat, pri, kind) in [("**",2,"bold"),("__",3,"bold"),("~~",4,"strike")] { if let Some(s)=value.find(pat) { if let Some(e)=value[s+2..].find(pat) { consider(s,s+2+e+2,pri,kind,value[s+2..s+2+e].to_string(),None); } } }
-    if let Some(s)=value.find('*') { if let Some(e)=value[s+1..].find('*') { consider(s,s+1+e+1,5,"italic",value[s+1..s+1+e].to_string(),None); } }
+    if let Some(s) = value.find('`') {
+        if let Some(e) = value[s + 1..].find('`') {
+            consider(
+                s,
+                s + 1 + e + 1,
+                0,
+                "code",
+                value[s + 1..s + 1 + e].to_string(),
+                None,
+            );
+        }
+    }
+    if let Some(s) = value.find('[') {
+        if let Some(mid) = value[s + 1..].find("](") {
+            let m = s + 1 + mid;
+            if let Some(e) = value[m + 2..].find(')') {
+                let inside = &value[m + 2..m + 2 + e];
+                let url = inside.split_whitespace().next().unwrap_or("");
+                if !url.is_empty() {
+                    consider(
+                        s,
+                        m + 2 + e + 1,
+                        1,
+                        "link",
+                        value[s + 1..m].to_string(),
+                        Some(url.to_string()),
+                    );
+                }
+            }
+        }
+    }
+    for (pat, pri, kind) in [("**", 2, "bold"), ("__", 3, "bold"), ("~~", 4, "strike")] {
+        if let Some(s) = value.find(pat) {
+            if let Some(e) = value[s + 2..].find(pat) {
+                consider(
+                    s,
+                    s + 2 + e + 2,
+                    pri,
+                    kind,
+                    value[s + 2..s + 2 + e].to_string(),
+                    None,
+                );
+            }
+        }
+    }
+    if let Some(s) = value.find('*') {
+        if let Some(e) = value[s + 1..].find('*') {
+            consider(
+                s,
+                s + 1 + e + 1,
+                5,
+                "italic",
+                value[s + 1..s + 1 + e].to_string(),
+                None,
+            );
+        }
+    }
     // Underscore emphasis is deliberately conservative like Python's (?<!\\w)...(?!\\w).
-    for (s, _) in value.match_indices('_') { if s>0 && value[..s].chars().next_back().map_or(false, |c| c.is_alphanumeric() || c=='_') { continue; } if let Some(rel)=value[s+1..].find('_') { let e=s+1+rel; if value[e+1..].chars().next().map_or(false, |c| c.is_alphanumeric() || c=='_') { continue; } consider(s,e+1,6,"italic",value[s+1..e].to_string(),None); break; } }
-    best.map(|(a,b,_,k,v,e)|(a,b,k,v,e))
+    for (s, _) in value.match_indices('_') {
+        if s > 0
+            && value[..s]
+                .chars()
+                .next_back()
+                .map_or(false, |c| c.is_alphanumeric() || c == '_')
+        {
+            continue;
+        }
+        if let Some(rel) = value[s + 1..].find('_') {
+            let e = s + 1 + rel;
+            if value[e + 1..]
+                .chars()
+                .next()
+                .map_or(false, |c| c.is_alphanumeric() || c == '_')
+            {
+                continue;
+            }
+            consider(s, e + 1, 6, "italic", value[s + 1..e].to_string(), None);
+            break;
+        }
+    }
+    best.map(|(a, b, _, k, v, e)| (a, b, k, v, e))
 }
 
 fn insert_inline(buffer: &gtk::TextBuffer, value: &str, base: &[&gtk::TextTag], tags: &MdTags) {
-    let Some((start,end,kind,body,extra)) = find_inline_token(value) else { insert_tagged(buffer,value,base); return; };
-    insert_tagged(buffer,&value[..start],base);
+    let Some((start, end, kind, body, extra)) = find_inline_token(value) else {
+        insert_tagged(buffer, value, base);
+        return;
+    };
+    insert_tagged(buffer, &value[..start], base);
     let mut nested: Vec<&gtk::TextTag> = base.to_vec();
     match kind {
-        "code" => { nested.push(&tags.code); insert_tagged(buffer,&body,&nested); }
-        "bold" => { nested.push(&tags.bold); insert_inline(buffer,&body,&nested,tags); }
-        "strike" => { nested.push(&tags.strike); insert_inline(buffer,&body,&nested,tags); }
-        "italic" => { nested.push(&tags.italic); insert_inline(buffer,&body,&nested,tags); }
+        "code" => {
+            nested.push(&tags.code);
+            insert_tagged(buffer, &body, &nested);
+        }
+        "bold" => {
+            nested.push(&tags.bold);
+            insert_inline(buffer, &body, &nested, tags);
+        }
+        "strike" => {
+            nested.push(&tags.strike);
+            insert_inline(buffer, &body, &nested, tags);
+        }
+        "italic" => {
+            nested.push(&tags.italic);
+            insert_inline(buffer, &body, &nested, tags);
+        }
         "link" => {
             use gtk::pango::Underline;
-            let url=extra.unwrap_or_default();
-            let link=text_tag(buffer,&format!("md-link-{}",hex_bytes(&url)),&[("underline",&Underline::Single)]);
-            nested.push(&link); insert_inline(buffer,&body,&nested,tags);
+            let url = extra.unwrap_or_default();
+            let link = text_tag(
+                buffer,
+                &format!("md-link-{}", hex_bytes(&url)),
+                &[("underline", &Underline::Single)],
+            );
+            nested.push(&link);
+            insert_inline(buffer, &body, &nested, tags);
         }
-        _ => insert_tagged(buffer,&body,&nested),
+        _ => insert_tagged(buffer, &body, &nested),
     }
-    insert_inline(buffer,&value[end..],base,tags);
+    insert_inline(buffer, &value[end..], base, tags);
 }
 
 fn split_table_row(mut value: &str) -> Vec<String> {
-    value=value.trim();
-    if value.starts_with('|') { value=&value[1..]; }
-    if value.ends_with('|') && !value.ends_with("\\|") { value=&value[..value.len()-1]; }
-    let mut cells=Vec::new(); let mut current=String::new(); let mut escaped=false;
-    for ch in value.chars() { if escaped { current.push(ch); escaped=false; } else if ch=='\\' { escaped=true; current.push(ch); } else if ch=='|' { cells.push(current.trim().to_string()); current.clear(); } else { current.push(ch); } }
-    cells.push(current.trim().to_string()); cells
-}
-
-fn table_separator(value:&str)->Option<Vec<u8>> { let cells=split_table_row(value); if cells.is_empty(){return None;} let mut out=Vec::new(); for cell in cells { let c:String=cell.chars().filter(|x|!x.is_whitespace()).collect(); let core=c.trim_matches(':'); if core.len()<3 || !core.chars().all(|x|x=='-'){return None;} out.push(if c.starts_with(':')&&c.ends_with(':'){1}else if c.ends_with(':'){2}else{0}); } Some(out) }
-fn plain_table_cell(s:&str)->String { s.chars().filter(|c| !matches!(c,'`'|'*'|'_'|'~')).collect() }
-
-#[no_mangle]
-pub unsafe extern "C" fn lt_gui_populate_markdown_buffer(buffer:*mut gtk::ffi::GtkTextBuffer, text:*const c_char)->bool {
-    ensure_gtk_initialized(); if buffer.is_null(){return false;} let buffer:gtk::TextBuffer=from_glib_none(buffer); buffer.set_text(""); let source=cstr(text); let tags=markdown_tags(&buffer); let lines:Vec<&str>=source.lines().collect();
-    let mut i=0usize; let mut in_fence=false; let mut fence_char='`'; let mut fence_len=0usize; let mut code_lines:Vec<String>=Vec::new(); let mut lead_started=false; let mut lead_finished=false;
-    while i<lines.len(){ let raw=lines[i]; let line=raw.trim_end();
-        let trimmed=line.trim_start(); let fence_run=trimmed.chars().take_while(|c|*c=='`'||*c=='~').collect::<String>();
-        if in_fence { let closing=!fence_run.is_empty() && fence_run.chars().all(|c|c==fence_char) && fence_run.len()>=fence_len && trimmed[fence_run.len()..].trim().is_empty(); if closing { insert_tagged(&buffer,&code_lines.join("\n"),&[&tags.code_block]); code_lines.clear(); in_fence=false; if i+1<lines.len(){insert_tagged(&buffer,"\n",&[]);} } else {code_lines.push(raw.to_string());} i+=1; continue; }
-        if fence_run.len()>=3 && fence_run.chars().all(|c|c==fence_run.chars().next().unwrap()) && line.len()-trimmed.len()<=3 { in_fence=true; fence_char=fence_run.chars().next().unwrap(); fence_len=fence_run.len(); i+=1; continue; }
-        if line.contains('|') && i+1<lines.len(){ if let Some(aligns)=table_separator(lines[i+1]) { let mut rows=vec![split_table_row(line)]; i+=2; while i<lines.len() && lines[i].contains('|') && !lines[i].trim().is_empty(){rows.push(split_table_row(lines[i]));i+=1;} let cols=rows.iter().map(|r|r.len()).max().unwrap_or(0); for r in &mut rows {r.resize(cols,String::new());} let widths: Vec<usize> = (0..cols).map(|c|rows.iter().map(|r|plain_table_cell(&r[c]).chars().count()).max().unwrap_or(0).min(40)).collect(); for (ri,row) in rows.iter().enumerate(){ let mut pieces=Vec::new(); for c in 0..cols {let mut p=plain_table_cell(&row[c]); let w=widths[c]; if p.chars().count()>w {p=p.chars().take(w.saturating_sub(1).max(1)).collect::<String>()+"…";} let n=p.chars().count(); let pad=w.saturating_sub(n); p=match aligns.get(c).copied().unwrap_or(0){2=>format!("{}{}"," ".repeat(pad),p),1=>{let l=pad/2;format!("{}{}{}"," ".repeat(l),p," ".repeat(pad-l))},_=>format!("{}{}",p," ".repeat(pad))};pieces.push(p);} insert_tagged(&buffer,&pieces.join(" | "),&[if ri==0{&tags.table_header}else{&tags.table}]); if ri==0 {insert_tagged(&buffer,"\n",&[&tags.table]); let seps:Vec<String>=widths.iter().enumerate().map(|(c,w)|match aligns.get(c).copied().unwrap_or(0){1 if *w>=2=>format!(":{}:","-".repeat(w-2)),2 if *w>=1=>format!("{}:","-".repeat(w-1)),_=>"-".repeat(*w)}).collect();insert_tagged(&buffer,&seps.join("-+-"),&[&tags.table]);} if ri+1<rows.len(){insert_tagged(&buffer,"\n",&[]);} } if i<lines.len(){insert_tagged(&buffer,"\n",&[]);} continue; } }
-        let t=line.trim_start(); let heading_hash=t.chars().take_while(|c|*c=='#').count(); let heading=heading_hash>=1&&heading_hash<=6&&t.chars().nth(heading_hash)==Some(' ');
-        let quote=t.starts_with('>'); let unordered={let x=t.as_bytes();x.len()>2&&(x[0]==b'-'||x[0]==b'+'||x[0]==b'*')&&x[1]==b' '};
-        let ordered_end=t.find(|c:char|c=='.'||c==')').filter(|&p|p>0&&t[..p].chars().all(|c|c.is_ascii_digit())&&t[p+1..].starts_with(' '));
-        let compact:String=t.chars().filter(|c|!c.is_whitespace()).collect(); let rule=compact.len()>=3 && compact.chars().next().map_or(false,|c|matches!(c,'-'|'*'|'_')) && compact.chars().all(|c|c==compact.chars().next().unwrap());
-        let is_block=heading||quote||unordered||ordered_end.is_some()||rule; if lead_started&&!lead_finished&&(t.is_empty()||is_block){lead_finished=true;}
-        if rule {insert_tagged(&buffer,"────────────────────────",&[&tags.rule]);}
-        else if heading {let body=t[heading_hash..].trim().trim_end_matches('#').trim_end();insert_inline(&buffer,body,&[&tags.heading],&tags);}
-        else if unordered {let indent=line.len()-t.len();let depth=(indent/2).min(4);insert_tagged(&buffer,&format!("{}• ","    ".repeat(depth)),&[&tags.list]);insert_inline(&buffer,&t[2..],&[&tags.list],&tags);}
-        else if let Some(p)=ordered_end {let indent=line.len()-t.len();let depth=(indent/2).min(4);insert_tagged(&buffer,&format!("{}{}. ","    ".repeat(depth),&t[..p]),&[&tags.list]);insert_inline(&buffer,t[p+2..].trim_start(),&[&tags.list],&tags);}
-        else if quote {insert_inline(&buffer,t[1..].strip_prefix(' ').unwrap_or(&t[1..]),&[&tags.quote],&tags);}
-        else if !t.is_empty(){if !lead_started{lead_started=true;} insert_inline(&buffer,line,&[if !lead_finished{&tags.lead}else{&tags.base}],&tags);}
-        if i+1<lines.len(){insert_tagged(&buffer,"\n",&[]);} i+=1;
+    value = value.trim();
+    if value.starts_with('|') {
+        value = &value[1..];
     }
-    if in_fence {insert_tagged(&buffer,&code_lines.join("\n"),&[&tags.code_block]);} true
+    if value.ends_with('|') && !value.ends_with("\\|") {
+        value = &value[..value.len() - 1];
+    }
+    let mut cells = Vec::new();
+    let mut current = String::new();
+    let mut escaped = false;
+    for ch in value.chars() {
+        if escaped {
+            current.push(ch);
+            escaped = false;
+        } else if ch == '\\' {
+            escaped = true;
+            current.push(ch);
+        } else if ch == '|' {
+            cells.push(current.trim().to_string());
+            current.clear();
+        } else {
+            current.push(ch);
+        }
+    }
+    cells.push(current.trim().to_string());
+    cells
+}
+
+fn table_separator(value: &str) -> Option<Vec<u8>> {
+    let cells = split_table_row(value);
+    if cells.is_empty() {
+        return None;
+    }
+    let mut out = Vec::new();
+    for cell in cells {
+        let c: String = cell.chars().filter(|x| !x.is_whitespace()).collect();
+        let core = c.trim_matches(':');
+        if core.len() < 3 || !core.chars().all(|x| x == '-') {
+            return None;
+        }
+        out.push(if c.starts_with(':') && c.ends_with(':') {
+            1
+        } else if c.ends_with(':') {
+            2
+        } else {
+            0
+        });
+    }
+    Some(out)
+}
+fn plain_table_cell(s: &str) -> String {
+    s.chars()
+        .filter(|c| !matches!(c, '`' | '*' | '_' | '~'))
+        .collect()
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn lt_gui_populate_appstream_buffer(buffer:*mut gtk::ffi::GtkTextBuffer, json:*const c_char)->bool {
-    ensure_gtk_initialized(); if buffer.is_null(){return false;} let buffer:gtk::TextBuffer=from_glib_none(buffer); buffer.set_text(""); let value:serde_json::Value=match serde_json::from_str(&cstr(json)){Ok(v)=>v,Err(_)=>return false};
+pub unsafe extern "C" fn lt_gui_populate_markdown_buffer(
+    buffer: *mut gtk::ffi::GtkTextBuffer,
+    text: *const c_char,
+) -> bool {
+    ensure_gtk_initialized();
+    if buffer.is_null() {
+        return false;
+    }
+    let buffer: gtk::TextBuffer = from_glib_none(buffer);
+    buffer.set_text("");
+    let source = cstr(text);
+    let tags = markdown_tags(&buffer);
+    let lines: Vec<&str> = source.lines().collect();
+    let mut i = 0usize;
+    let mut in_fence = false;
+    let mut fence_char = '`';
+    let mut fence_len = 0usize;
+    let mut code_lines: Vec<String> = Vec::new();
+    let mut lead_started = false;
+    let mut lead_finished = false;
+    while i < lines.len() {
+        let raw = lines[i];
+        let line = raw.trim_end();
+        let trimmed = line.trim_start();
+        let fence_run = trimmed
+            .chars()
+            .take_while(|c| *c == '`' || *c == '~')
+            .collect::<String>();
+        if in_fence {
+            let closing = !fence_run.is_empty()
+                && fence_run.chars().all(|c| c == fence_char)
+                && fence_run.len() >= fence_len
+                && trimmed[fence_run.len()..].trim().is_empty();
+            if closing {
+                insert_tagged(&buffer, &code_lines.join("\n"), &[&tags.code_block]);
+                code_lines.clear();
+                in_fence = false;
+                if i + 1 < lines.len() {
+                    insert_tagged(&buffer, "\n", &[]);
+                }
+            } else {
+                code_lines.push(raw.to_string());
+            }
+            i += 1;
+            continue;
+        }
+        if fence_run.len() >= 3
+            && fence_run
+                .chars()
+                .all(|c| c == fence_run.chars().next().unwrap())
+            && line.len() - trimmed.len() <= 3
+        {
+            in_fence = true;
+            fence_char = fence_run.chars().next().unwrap();
+            fence_len = fence_run.len();
+            i += 1;
+            continue;
+        }
+        if line.contains('|') && i + 1 < lines.len() {
+            if let Some(aligns) = table_separator(lines[i + 1]) {
+                let mut rows = vec![split_table_row(line)];
+                i += 2;
+                while i < lines.len() && lines[i].contains('|') && !lines[i].trim().is_empty() {
+                    rows.push(split_table_row(lines[i]));
+                    i += 1;
+                }
+                let cols = rows.iter().map(|r| r.len()).max().unwrap_or(0);
+                for r in &mut rows {
+                    r.resize(cols, String::new());
+                }
+                let widths: Vec<usize> = (0..cols)
+                    .map(|c| {
+                        rows.iter()
+                            .map(|r| plain_table_cell(&r[c]).chars().count())
+                            .max()
+                            .unwrap_or(0)
+                            .min(40)
+                    })
+                    .collect();
+                for (ri, row) in rows.iter().enumerate() {
+                    let mut pieces = Vec::new();
+                    for c in 0..cols {
+                        let mut p = plain_table_cell(&row[c]);
+                        let w = widths[c];
+                        if p.chars().count() > w {
+                            p = p
+                                .chars()
+                                .take(w.saturating_sub(1).max(1))
+                                .collect::<String>()
+                                + "…";
+                        }
+                        let n = p.chars().count();
+                        let pad = w.saturating_sub(n);
+                        p = match aligns.get(c).copied().unwrap_or(0) {
+                            2 => format!("{}{}", " ".repeat(pad), p),
+                            1 => {
+                                let l = pad / 2;
+                                format!("{}{}{}", " ".repeat(l), p, " ".repeat(pad - l))
+                            }
+                            _ => format!("{}{}", p, " ".repeat(pad)),
+                        };
+                        pieces.push(p);
+                    }
+                    insert_tagged(
+                        &buffer,
+                        &pieces.join(" | "),
+                        &[if ri == 0 {
+                            &tags.table_header
+                        } else {
+                            &tags.table
+                        }],
+                    );
+                    if ri == 0 {
+                        insert_tagged(&buffer, "\n", &[&tags.table]);
+                        let seps: Vec<String> = widths
+                            .iter()
+                            .enumerate()
+                            .map(|(c, w)| match aligns.get(c).copied().unwrap_or(0) {
+                                1 if *w >= 2 => format!(":{}:", "-".repeat(w - 2)),
+                                2 if *w >= 1 => format!("{}:", "-".repeat(w - 1)),
+                                _ => "-".repeat(*w),
+                            })
+                            .collect();
+                        insert_tagged(&buffer, &seps.join("-+-"), &[&tags.table]);
+                    }
+                    if ri + 1 < rows.len() {
+                        insert_tagged(&buffer, "\n", &[]);
+                    }
+                }
+                if i < lines.len() {
+                    insert_tagged(&buffer, "\n", &[]);
+                }
+                continue;
+            }
+        }
+        let t = line.trim_start();
+        let heading_hash = t.chars().take_while(|c| *c == '#').count();
+        let heading =
+            heading_hash >= 1 && heading_hash <= 6 && t.chars().nth(heading_hash) == Some(' ');
+        let quote = t.starts_with('>');
+        let unordered = {
+            let x = t.as_bytes();
+            x.len() > 2 && (x[0] == b'-' || x[0] == b'+' || x[0] == b'*') && x[1] == b' '
+        };
+        let ordered_end = t.find(|c: char| c == '.' || c == ')').filter(|&p| {
+            p > 0 && t[..p].chars().all(|c| c.is_ascii_digit()) && t[p + 1..].starts_with(' ')
+        });
+        let compact: String = t.chars().filter(|c| !c.is_whitespace()).collect();
+        let rule = compact.len() >= 3
+            && compact
+                .chars()
+                .next()
+                .map_or(false, |c| matches!(c, '-' | '*' | '_'))
+            && compact
+                .chars()
+                .all(|c| c == compact.chars().next().unwrap());
+        let is_block = heading || quote || unordered || ordered_end.is_some() || rule;
+        if lead_started && !lead_finished && (t.is_empty() || is_block) {
+            lead_finished = true;
+        }
+        if rule {
+            insert_tagged(&buffer, "────────────────────────", &[&tags.rule]);
+        } else if heading {
+            let body = t[heading_hash..].trim().trim_end_matches('#').trim_end();
+            insert_inline(&buffer, body, &[&tags.heading], &tags);
+        } else if unordered {
+            let indent = line.len() - t.len();
+            let depth = (indent / 2).min(4);
+            insert_tagged(
+                &buffer,
+                &format!("{}• ", "    ".repeat(depth)),
+                &[&tags.list],
+            );
+            insert_inline(&buffer, &t[2..], &[&tags.list], &tags);
+        } else if let Some(p) = ordered_end {
+            let indent = line.len() - t.len();
+            let depth = (indent / 2).min(4);
+            insert_tagged(
+                &buffer,
+                &format!("{}{}. ", "    ".repeat(depth), &t[..p]),
+                &[&tags.list],
+            );
+            insert_inline(&buffer, t[p + 2..].trim_start(), &[&tags.list], &tags);
+        } else if quote {
+            insert_inline(
+                &buffer,
+                t[1..].strip_prefix(' ').unwrap_or(&t[1..]),
+                &[&tags.quote],
+                &tags,
+            );
+        } else if !t.is_empty() {
+            if !lead_started {
+                lead_started = true;
+            }
+            insert_inline(
+                &buffer,
+                line,
+                &[if !lead_finished {
+                    &tags.lead
+                } else {
+                    &tags.base
+                }],
+                &tags,
+            );
+        }
+        if i + 1 < lines.len() {
+            insert_tagged(&buffer, "\n", &[]);
+        }
+        i += 1;
+    }
+    if in_fence {
+        insert_tagged(&buffer, &code_lines.join("\n"), &[&tags.code_block]);
+    }
+    true
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn lt_gui_populate_appstream_buffer(
+    buffer: *mut gtk::ffi::GtkTextBuffer,
+    json: *const c_char,
+) -> bool {
+    ensure_gtk_initialized();
+    if buffer.is_null() {
+        return false;
+    }
+    let buffer: gtk::TextBuffer = from_glib_none(buffer);
+    buffer.set_text("");
+    let value: serde_json::Value = match serde_json::from_str(&cstr(json)) {
+        Ok(v) => v,
+        Err(_) => return false,
+    };
     use gtk::pango::Style;
-    let base=text_tag(&buffer,"as-base",&[("scale",&1.10f64)]); let lead=text_tag(&buffer,"as-lead",&[("scale",&1.20f64)]); let list=text_tag(&buffer,"as-list",&[("left-margin",&18i32),("indent",&-12i32),("scale",&1.10f64)]); let bold=text_tag(&buffer,"as-bold",&[("weight",&700i32)]); let italic=text_tag(&buffer,"as-italic",&[("style",&Style::Italic)]); let code=text_tag(&buffer,"as-code",&[("family",&"monospace")]);
-    let mut first=true; let mut rendered=0usize;
-    let insert_spans=|buffer:&gtk::TextBuffer, spans:&serde_json::Value, base_tags:Vec<&gtk::TextTag>| { if let Some(items)=spans.as_array(){for span in items {let text=span.get("text").and_then(|v|v.as_str()).unwrap_or("");if text.is_empty(){continue;}let mut ts=base_tags.clone();if let Some(styles)=span.get("styles").and_then(|v|v.as_array()){for st in styles.iter().filter_map(|v|v.as_str()){match st{"bold"=>ts.push(&bold),"italic"=>ts.push(&italic),"code"=>ts.push(&code),_=>{}}}}insert_tagged(buffer,text,&ts);}} };
-    if let Some(blocks)=value.as_array(){for block in blocks {let ty=block.get("type").and_then(|v|v.as_str()).unwrap_or("");match ty {"paragraph"=>{if rendered>0{insert_tagged(&buffer,"\n\n",&[]);}insert_spans(&buffer,block.get("spans").unwrap_or(&serde_json::Value::Null),vec![if first{&lead}else{&base}]);first=false;rendered+=1;},"unordered_list"|"ordered_list"=>{if rendered>0{insert_tagged(&buffer,"\n\n",&[]);}if let Some(items)=block.get("items").and_then(|v|v.as_array()){for (idx,item) in items.iter().enumerate(){if idx>0{insert_tagged(&buffer,"\n",&[]);}let prefix=if ty=="ordered_list"{format!("{}. ",idx+1)}else{"• ".to_string()};insert_tagged(&buffer,&prefix,&[&list]);insert_spans(&buffer,item,vec![&list]);}}rendered+=1;},_=>{}}}}
+    let base = text_tag(&buffer, "as-base", &[("scale", &1.10f64)]);
+    let lead = text_tag(&buffer, "as-lead", &[("scale", &1.20f64)]);
+    let list = text_tag(
+        &buffer,
+        "as-list",
+        &[
+            ("left-margin", &18i32),
+            ("indent", &-12i32),
+            ("scale", &1.10f64),
+        ],
+    );
+    let bold = text_tag(&buffer, "as-bold", &[("weight", &700i32)]);
+    let italic = text_tag(&buffer, "as-italic", &[("style", &Style::Italic)]);
+    let code = text_tag(&buffer, "as-code", &[("family", &"monospace")]);
+    let mut first = true;
+    let mut rendered = 0usize;
+    let insert_spans =
+        |buffer: &gtk::TextBuffer, spans: &serde_json::Value, base_tags: Vec<&gtk::TextTag>| {
+            if let Some(items) = spans.as_array() {
+                for span in items {
+                    let text = span.get("text").and_then(|v| v.as_str()).unwrap_or("");
+                    if text.is_empty() {
+                        continue;
+                    }
+                    let mut ts = base_tags.clone();
+                    if let Some(styles) = span.get("styles").and_then(|v| v.as_array()) {
+                        for st in styles.iter().filter_map(|v| v.as_str()) {
+                            match st {
+                                "bold" => ts.push(&bold),
+                                "italic" => ts.push(&italic),
+                                "code" => ts.push(&code),
+                                _ => {}
+                            }
+                        }
+                    }
+                    insert_tagged(buffer, text, &ts);
+                }
+            }
+        };
+    if let Some(blocks) = value.as_array() {
+        for block in blocks {
+            let ty = block.get("type").and_then(|v| v.as_str()).unwrap_or("");
+            match ty {
+                "paragraph" => {
+                    if rendered > 0 {
+                        insert_tagged(&buffer, "\n\n", &[]);
+                    }
+                    insert_spans(
+                        &buffer,
+                        block.get("spans").unwrap_or(&serde_json::Value::Null),
+                        vec![if first { &lead } else { &base }],
+                    );
+                    first = false;
+                    rendered += 1;
+                }
+                "unordered_list" | "ordered_list" => {
+                    if rendered > 0 {
+                        insert_tagged(&buffer, "\n\n", &[]);
+                    }
+                    if let Some(items) = block.get("items").and_then(|v| v.as_array()) {
+                        for (idx, item) in items.iter().enumerate() {
+                            if idx > 0 {
+                                insert_tagged(&buffer, "\n", &[]);
+                            }
+                            let prefix = if ty == "ordered_list" {
+                                format!("{}. ", idx + 1)
+                            } else {
+                                "• ".to_string()
+                            };
+                            insert_tagged(&buffer, &prefix, &[&list]);
+                            insert_spans(&buffer, item, vec![&list]);
+                        }
+                    }
+                    rendered += 1;
+                }
+                _ => {}
+            }
+        }
+    }
     true
 }
 
@@ -2812,12 +3534,19 @@ pub unsafe extern "C" fn lt_gui_add_app_page_developer_line(
     spec: *const LtGuiDeveloperLineSpec,
 ) -> bool {
     ensure_gtk_initialized();
-    if infos_box.is_null() || spec.is_null() { return false; }
+    if infos_box.is_null() || spec.is_null() {
+        return false;
+    }
     let widget: gtk::Widget = from_glib_none(infos_box);
-    let infos = match widget.downcast::<gtk::Box>() { Ok(v) => v, Err(_) => return false };
+    let infos = match widget.downcast::<gtk::Box>() {
+        Ok(v) => v,
+        Err(_) => return false,
+    };
     let spec = &*spec;
     let developer = cstr(spec.developer);
-    if developer.is_empty() { return true; }
+    if developer.is_empty() {
+        return true;
+    }
 
     let row = gtk::Box::new(gtk::Orientation::Horizontal, 6);
     row.set_widget_name("linuxtoys-app-developer-row");
@@ -2825,7 +3554,10 @@ pub unsafe extern "C" fn lt_gui_add_app_page_developer_line(
     row.set_margin_bottom(5);
     let label = gtk::Label::new(None);
     label.set_widget_name("linuxtoys-app-developer-label");
-    label.set_markup(&format!("<span size=\"small\" weight=\"bold\">{}</span>", glib::markup_escape_text(&developer)));
+    label.set_markup(&format!(
+        "<span size=\"small\" weight=\"bold\">{}</span>",
+        glib::markup_escape_text(&developer)
+    ));
     label.set_halign(gtk::Align::Start);
     label.set_selectable(false);
     label.set_can_focus(false);
@@ -2859,9 +3591,14 @@ pub unsafe extern "C" fn lt_gui_add_app_page_action_button(
     spec: *const LtGuiActionButtonSpec,
 ) -> bool {
     ensure_gtk_initialized();
-    if controls.is_null() || spec.is_null() { return false; }
+    if controls.is_null() || spec.is_null() {
+        return false;
+    }
     let widget: gtk::Widget = from_glib_none(controls);
-    let controls = match widget.downcast::<gtk::Box>() { Ok(v) => v, Err(_) => return false };
+    let controls = match widget.downcast::<gtk::Box>() {
+        Ok(v) => v,
+        Err(_) => return false,
+    };
     let spec = &*spec;
     let button: gtk::Widget = if spec.dropdown != 0 {
         gtk::MenuButton::new().upcast()
@@ -2869,7 +3606,9 @@ pub unsafe extern "C" fn lt_gui_add_app_page_action_button(
         gtk::Button::new().upcast()
     };
     button.set_widget_name("linuxtoys-app-extra-action");
-    if spec.suggested != 0 { button.style_context().add_class("suggested-action"); }
+    if spec.suggested != 0 {
+        button.style_context().add_class("suggested-action");
+    }
     let content = gtk::Box::new(gtk::Orientation::Horizontal, 6);
     content.set_margin_start(8);
     content.set_margin_end(8);
@@ -2884,7 +3623,9 @@ pub unsafe extern "C" fn lt_gui_add_app_page_action_button(
         );
         content.pack_start(&arrow, false, false, 0);
     }
-    if let Ok(container) = button.clone().downcast::<gtk::Container>() { container.add(&content); }
+    if let Ok(container) = button.clone().downcast::<gtk::Container>() {
+        container.add(&content);
+    }
     controls.pack_start(&button, false, false, 0);
     button.show_all();
     true
@@ -2903,9 +3644,14 @@ pub unsafe extern "C" fn lt_gui_populate_screenshot_chrome(
     spec: *const LtGuiScreenshotChromeSpec,
 ) -> bool {
     ensure_gtk_initialized();
-    if outer.is_null() || stack.is_null() || spec.is_null() { return false; }
+    if outer.is_null() || stack.is_null() || spec.is_null() {
+        return false;
+    }
     let outer_w: gtk::Widget = from_glib_none(outer);
-    let outer = match outer_w.downcast::<gtk::Box>() { Ok(v) => v, Err(_) => return false };
+    let outer = match outer_w.downcast::<gtk::Box>() {
+        Ok(v) => v,
+        Err(_) => return false,
+    };
     let stack_w: gtk::Widget = from_glib_none(stack);
     let spec = &*spec;
     let row = gtk::Box::new(gtk::Orientation::Horizontal, 10);
