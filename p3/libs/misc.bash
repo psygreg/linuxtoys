@@ -305,3 +305,140 @@ desktop_shortcut() {
         update-desktop-database "$HOME/.local/share/applications" >/dev/null 2>&1 || true
     fi
 }
+
+# Return 0 when a user .desktop launcher no longer points at an installed app.
+# Conservative: only Flatpak/Snap/TryExec/absolute-Exec orphans are removed;
+# complex wrappers (env/sh -c/wine) are left alone.
+_desktop_launcher_is_orphan() {
+    local desktop_file="$1"
+    local entry_type="" try_exec="" exec_line="" cmd="" app_id="" snap_name=""
+
+    # Flatpak export symlinks that lost their target leave broken menu entries.
+    if [[ -L "$desktop_file" && ! -e "$desktop_file" ]]; then
+        return 0
+    fi
+    [[ -f "$desktop_file" ]] || return 1
+
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        case "$line" in
+            '[Desktop Entry]')
+                entry_type="Application"
+                try_exec=""
+                exec_line=""
+                ;;
+            \[*)
+                break
+                ;;
+            Type=*)
+                entry_type="${line#Type=}"
+                ;;
+            TryExec=*)
+                try_exec="${line#TryExec=}"
+                ;;
+            Exec=*)
+                [[ -n "$exec_line" ]] || exec_line="${line#Exec=}"
+                ;;
+        esac
+    done < "$desktop_file"
+
+    [[ -z "$entry_type" || "$entry_type" == "Application" ]] || return 1
+
+    if [[ -n "$try_exec" ]]; then
+        if [[ "$try_exec" == /* ]]; then
+            [[ -e "$try_exec" ]] || return 0
+        else
+            command -v -- "$try_exec" >/dev/null 2>&1 || return 0
+        fi
+    fi
+
+    [[ -n "$exec_line" ]] || return 1
+    # Desktop Entry field codes are not part of the command.
+    exec_line="${exec_line//%%/ }"
+    exec_line=$(printf '%s' "$exec_line" | sed -E 's/%[fFuUdDnNickvm]//g')
+
+    # Flatpak launchers survive uninstall when copied into ~/.local/share/applications.
+    if [[ "$exec_line" == *flatpak*run* ]]; then
+        app_id=$(printf '%s\n' "$exec_line" | grep -oE '[A-Za-z0-9_]+\.[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)+' | tail -n1)
+        if [[ -n "$app_id" ]]; then
+            if command -v flatpak >/dev/null 2>&1; then
+                flatpak info "$app_id" >/dev/null 2>&1 || return 0
+            else
+                return 0
+            fi
+        fi
+    elif [[ "$exec_line" == */var/lib/flatpak/* || "$exec_line" == */.local/share/flatpak/* ]]; then
+        cmd="${exec_line%%[[:space:]]*}"
+        cmd="${cmd#\"}"
+        cmd="${cmd%\"}"
+        [[ -e "$cmd" ]] || return 0
+    fi
+
+    # Snap launchers left behind after snap remove.
+    if [[ "$exec_line" =~ snap[[:space:]]+run[[:space:]]+([^[:space:]]+) ]]; then
+        snap_name="${BASH_REMATCH[1]}"
+        snap_name="${snap_name%%.*}"
+        if command -v snap >/dev/null 2>&1; then
+            snap list "$snap_name" >/dev/null 2>&1 || return 0
+        else
+            return 0
+        fi
+    elif [[ "$exec_line" =~ /snap/bin/([^[:space:]\"]+) ]]; then
+        snap_name="${BASH_REMATCH[1]}"
+        snap_name="${snap_name%%.*}"
+        if command -v snap >/dev/null 2>&1; then
+            snap list "$snap_name" >/dev/null 2>&1 || return 0
+        else
+            [[ -e "/snap/bin/${BASH_REMATCH[1]}" ]] || return 0
+        fi
+    fi
+
+    # Absolute Exec targets (AUR copies, AppImages, hand-made shortcuts).
+    # Skip wrappers we cannot validate safely.
+    case "$exec_line" in
+        env\ *|sh\ *|bash\ *|\"env\ *|\'env\ *|\"sh\ *|\'sh\ *|\"bash\ *|\'bash\ *)
+            return 1
+            ;;
+    esac
+    if [[ "$exec_line" == \"* ]]; then
+        cmd="${exec_line#\"}"
+        cmd="${cmd%%\"*}"
+    elif [[ "$exec_line" == \'* ]]; then
+        cmd="${exec_line#\'}"
+        cmd="${cmd%%\'*}"
+    else
+        cmd="${exec_line%%[[:space:]]*}"
+    fi
+    if [[ "$cmd" == /* ]]; then
+        [[ -e "$cmd" ]] || return 0
+    fi
+
+    return 1
+}
+
+# Drop leftover user menu shortcuts whose Flatpak/Snap/native targets are gone.
+# Safe for sysup: never fatal, never touches system-wide application dirs, and
+# skips root service runs (those have no user menu worth cleaning).
+cleanup_orphan_desktops() {
+    [ "$(id -u)" -ne 0 ] || return 0
+
+    local applications_dir="${XDG_DATA_HOME:-$HOME/.local/share}/applications"
+    [[ -d "$applications_dir" ]] || return 0
+
+    local desktop_file removed=0
+    shopt -s nullglob
+    for desktop_file in "$applications_dir"/*.desktop; do
+        _desktop_launcher_is_orphan "$desktop_file" || continue
+        rm -f -- "$desktop_file" 2>/dev/null || {
+            warn "Failed to remove orphaned desktop shortcut: $desktop_file"
+            continue
+        }
+        echo "Removed orphaned desktop shortcut: ${desktop_file##*/}"
+        removed=$((removed + 1))
+    done
+    shopt -u nullglob
+
+    if (( removed > 0 )) && command -v update-desktop-database >/dev/null 2>&1; then
+        update-desktop-database "$applications_dir" >/dev/null 2>&1 || true
+    fi
+    return 0
+}

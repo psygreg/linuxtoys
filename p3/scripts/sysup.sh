@@ -128,6 +128,7 @@ if [ "$UPD_SERVICE" = "1" ] && [ "$(id -u)" -ne 0 ]; then
     flatpak_update_installation --user ""
     brew_update
     bun_update
+    cleanup_orphan_desktops
     echo "$sysup_completed"
     exit 0
 fi
@@ -283,6 +284,10 @@ fi
 if command -v snap >/dev/null 2>&1 && command -v snapd >/dev/null 2>&1; then
     { [ "$UPD_SERVICE" = "1" ] && snap refresh; } || sudo_ snap refresh || warn "Failed to upgrade snap packages"
 fi
+
+# Drop leftover user menu launchers whose Flatpak/Snap/native targets were
+# removed earlier in this update (or by previous uninstalls). Best-effort.
+cleanup_orphan_desktops
 
 # Update Homebrew formulae on any system where Homebrew is installed.
 brew_update
