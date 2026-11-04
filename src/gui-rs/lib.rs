@@ -313,7 +313,10 @@ fn category_watermark_pixbuf(path: &str, width: i32, height: i32) -> Option<Pixb
     let icon_size = ((height as f64 * 1.70).round() as i32).max(1);
     let icon_size_ss = icon_size.saturating_mul(supersample as i32);
     let icon_x = (-height as f64 * 0.42).round() as isize;
-    let icon_y = ((height - icon_size) as f64 / 2.0).round() as isize;
+    // Vertically center the oversized watermark, then nudge it 12px down:
+    // the bleed crop otherwise hides the top edge of icons whose important
+    // artwork concentrates there.
+    let icon_y = ((height - icon_size) as f64 / 2.0).round() as isize + 12;
     let source = Pixbuf::from_file_at_scale(path, icon_size_ss, icon_size_ss, true).ok()?;
 
     let sw = source.width().max(0) as usize;
