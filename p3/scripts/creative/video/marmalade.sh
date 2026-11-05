@@ -11,7 +11,7 @@ if is_fedora || is_rhel || is_ostree; then
     call_script codecfix
     pkg_install --ostreecheck libv4l gtk4
 elif is_ubuntu || is_debian; then
-    pkg_install ffmpeg libgtk-4 libv4l-0t64
+    pkg_install ffmpeg libgtk-4-1 libv4l-0t64
 elif is_arch || is_cachy; then
     pkg_install v4l-utils ffmpeg gtk4
 fi
