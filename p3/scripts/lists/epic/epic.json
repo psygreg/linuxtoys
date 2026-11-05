@@ -11,7 +11,7 @@
         "screenshots": "screens/",
         "type": "url",
         "urls": {
-            "deb": "https://launcher-public-service-prod06.ol.epicgames.com/launcher/api/installer/download/EpicGamesLauncher-x86_64.deb?trackingId=05e07fdf6c684eecae0227bc726e066d"
+            "deb": "https://launcher-public-service-prod06.ol.epicgames.com/launcher/api/installer/download/EpicGamesLauncher-x86_64.deb"
         }
     }
 ]
