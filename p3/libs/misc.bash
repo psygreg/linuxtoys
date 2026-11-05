@@ -306,6 +306,48 @@ desktop_shortcut() {
     fi
 }
 
+# Return 0 when a no-longer-recorded absolute path still has a live AppImage
+# sibling in the same directory. AppImage integration flows (Gear Lever, the
+# ArtCraft Launcher, ...) place the AppImage under a version-suffixed filename
+# (photocraft-0.20.1-linux-x86_64.AppImage) and replace it with the next one
+# (photocraft-0.20.2-linux-x86_64.AppImage) on update, sometimes without
+# rewriting the desktop entry's Exec/TryExec in step. The app is then still
+# installed and launchable, just under the new name: treating the stale
+# version-suffixed path as a dead target would erase a working app's menu
+# shortcut. Only treat the target as still installed when another .AppImage
+# file with the same app stem (basename up to the first hyphen,
+# case-insensitively, so artcraft_launcher.appimage matches itself but
+# photograd-1.0.0.AppImage does not shadow photocraft) exists beside it.
+# Every other missing target keeps the plain missing-file verdict.
+_appimage_sibling_present () {
+    local target case_name dir stem candidate found=0
+    target="$1"
+
+    case_name="${target##*/}"
+    [[ "$case_name" =~ \.[Aa]pp[Ii]mage$ ]] || return 1
+
+    dir="${target%/*}"
+    [[ -d "$dir" ]] || return 1
+
+    stem="${case_name%%-*}"
+    [[ -n "$stem" ]] || return 1
+
+    shopt -s nullglob nocaseglob
+    for candidate in "$dir"/*.appimage; do
+        if [[ ${candidate##*/} == "$stem"* ]]; then
+            found=1
+            break
+        fi
+    done
+    shopt -u nullglob nocaseglob
+
+    if [[ "$found" == 1 ]]; then
+        return 0
+    fi
+
+    return 1
+}
+
 # Return 0 when a user .desktop launcher no longer points at an installed app.
 # Conservative: only Flatpak/Snap/TryExec/absolute-Exec orphans are removed;
 # complex wrappers (env/sh -c/wine) are left alone.
@@ -345,7 +387,7 @@ _desktop_launcher_is_orphan() {
 
     if [[ -n "$try_exec" ]]; then
         if [[ "$try_exec" == /* ]]; then
-            [[ -e "$try_exec" ]] || return 0
+            [[ -e "$try_exec" ]] || _appimage_sibling_present "$try_exec" || return 0
         else
             command -v -- "$try_exec" >/dev/null 2>&1 || return 0
         fi
@@ -409,13 +451,15 @@ _desktop_launcher_is_orphan() {
         cmd="${exec_line%%[[:space:]]*}"
     fi
     if [[ "$cmd" == /* ]]; then
-        [[ -e "$cmd" ]] || return 0
+        [[ -e "$cmd" ]] || _appimage_sibling_present "$cmd" || return 0
     fi
 
     return 1
 }
 
 # Drop leftover user menu shortcuts whose Flatpak/Snap/native targets are gone.
+# AppImage targets whose version-suffixed filename was replaced on update are
+# not orphans: a sibling .AppImage with the same app stem keeps the entry.
 # Safe for sysup: never fatal, never touches system-wide application dirs, and
 # skips root service runs (those have no user menu worth cleaning).
 cleanup_orphan_desktops() {
