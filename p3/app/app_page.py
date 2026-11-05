@@ -1,7 +1,5 @@
 import os
 import random
-import shutil
-import re
 import subprocess
 import webbrowser
 import hashlib
@@ -15,6 +13,7 @@ from . import (
     get_icon_path,
     appstream_cache,
     appstream_extensions,
+    flatpak_residue,
     gui_rs,
     gtk_dialogs,
     installed_packages,
@@ -1988,41 +1987,12 @@ class AppPageView(Gtk.Box):
     @staticmethod
     def _flatpak_data_identity(info):
         """Return a safe Flatpak application ID for ~/.var/app/<ID>."""
-        if str(info.get("appstream_source", "") or "").strip() != "flatpak":
-            return ""
-
-        # AppStream IDs for Flatpak applications are normally the Flatpak app ID.
-        # Prefer an explicit package/app ID if the catalog supplies one.
-        candidates = (
-            info.get("flatpak_id"),
-            info.get("package-name"),
-            info.get("appstream_id"),
-            info.get("id"),
-        )
-        pattern = re.compile(r"^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)+$")
-        for value in candidates:
-            value = str(value or "").strip()
-            if value.endswith(".desktop"):
-                value = value[:-8]
-            if pattern.fullmatch(value):
-                return value
-        return ""
+        return flatpak_residue.flatpak_data_identity(info)
 
     @staticmethod
     def _flatpak_data_path(app_id):
         """Build, but never resolve through, the only directory we may remove."""
-        if not app_id:
-            return None
-        base = Path.home() / ".var" / "app"
-        target = base / app_id
-        # app_id validation forbids '/' and traversal. Keep this explicit guard too
-        # so future changes to the ID parser cannot broaden the deletion boundary.
-        try:
-            if target.parent != base or target.name != app_id:
-                return None
-        except (OSError, ValueError):
-            return None
-        return target
+        return flatpak_residue.flatpak_data_path(app_id)
 
     def _refresh_flatpak_data_state(self):
         """Offer cleanup only for an uninstalled Flatpak with residual user data."""
@@ -2045,10 +2015,7 @@ class AppPageView(Gtk.Box):
             return
 
         def worker():
-            try:
-                present = os.path.lexists(target)
-            except OSError:
-                present = False
+            present = flatpak_residue.residual_data_present(target)
             GLib.idle_add(
                 self._finish_flatpak_data_probe,
                 generation,
@@ -2084,7 +2051,7 @@ class AppPageView(Gtk.Box):
         info = self._selected_install_info
         app_id = self._flatpak_data_identity(info)
         target = self._flatpak_data_path(app_id)
-        if target is None or not os.path.lexists(target):
+        if target is None or not flatpak_residue.residual_data_present(target):
             self._refresh_flatpak_data_state()
             return
 
@@ -2126,18 +2093,11 @@ class AppPageView(Gtk.Box):
         generation = self._flatpak_data_probe_generation
 
         def worker():
-            error = None
-            try:
-                # Never follow a symlink at ~/.var/app/<ID>. A symlink is itself
-                # residual data, so unlink it rather than touching its destination.
-                if target.is_symlink():
-                    target.unlink()
-                elif target.is_dir():
-                    shutil.rmtree(target)
-                elif os.path.lexists(target):
-                    target.unlink()
-            except OSError as exc:
-                error = str(exc)
+            # Removal rules live in flatpak_residue, shared with the MCP
+            # server's remove_flatpak_data, so the GUI and agents behave
+            # identically. Never follows a symlink at ~/.var/app/<ID>: the
+            # link itself is residual data and is unlinked instead.
+            error = flatpak_residue.remove_residual_data(target)
             GLib.idle_add(
                 self._finish_flatpak_data_removal,
                 generation,

@@ -1,6 +1,6 @@
 ---
 name: linuxtoys-mcp
-description: Enable and drive the LinuxToys MCP server to manage Linux apps on the user's machine like a user would - search the catalog, read app pages (descriptions, screenshots, donation links), install and remove apps, install local package files (.deb, .rpm, .appimage and more, optionally downloaded from a URL), install and remove Flathub app extensions/addons, change LinuxToys settings, and translate descriptions. Use when the user asks to install or remove software through LinuxToys, asks to install a package file or app extension, change its settings, or when configuring AI agent access to LinuxToys.
+description: Enable and drive the LinuxToys MCP server to manage Linux apps on the user's machine like a user would - search the catalog, read app pages (descriptions, screenshots, donation links), install and remove apps, install local package files (.deb, .rpm, .appimage and more, optionally downloaded from a URL), install and remove Flathub app extensions/addons, clean up the leftover data of uninstalled Flatpak apps, check for and apply LinuxToys app updates, change LinuxToys settings, and translate descriptions. Use when the user asks to install or remove software through LinuxToys, asks to install a package file or app extension, asks to clean up leftovers of an uninstalled Flatpak app, asks to update or check the version of LinuxToys itself, change its settings, or when configuring AI agent access to LinuxToys.
 ---
 
 # LinuxToys MCP
@@ -83,10 +83,12 @@ After connecting, call `server_info` once to confirm the session works.
 
 | Tool | Purpose |
 | --- | --- |
-| `server_info` | Version, endpoint, service state, busy jobs |
+| `server_info` | Version, endpoint, service state, busy jobs, cached script-gate state |
+| `get_update_status` | Fresh networked check of LinuxToys itself: running vs newest published release, releases behind, whether the app can update itself on this host, script-gate state |
+| `update_linuxtoys` | Run the official LinuxToys self-update as a tracked job (ask the user first — it changes the whole app); poll `get_job`, then restart the service |
 | `list_categories` | Catalog categories |
 | `search_apps(query, limit?)` | Search every catalog (scripts, repos, Flathub/Snap, AppImages); returns stable `id`s |
-| `get_app_details(app_id)` | App page: description, screenshots URLs, homepage/donate/purchase links, version, install state |
+| `get_app_details(app_id)` | App page: description, screenshots URLs, homepage/donate/purchase links, version, install state (and leftover `~/.var/app` data state for Flatpak apps) |
 | `get_screenshot(app_id, index?)` | Returns an image so you can see the app's screenshots |
 | `install_app(app_id)` | Queue an install; returns a `job_id` |
 | `fetch_package_url(url)` | Download a package file (.deb/.rpm/.pkg.tar.*/.pacman/.eopkg/.flatpak/.flatpakref/.snap/.appimage) from an http(s) URL into a private staging directory; returns its local path |
@@ -96,6 +98,7 @@ After connecting, call `server_info` once to confirm the session works.
 | `install_app_extension(app_id, extension)` | Install one extension of an app by its component id or full flatpak ref; returns a `job_id` |
 | `remove_app_extension(app_id, extension)` | Remove one installed extension of an app; returns a `job_id` |
 | `remove_app(app_id)` | Queue a removal; returns a `job_id` |
+| `remove_flatpak_data(app_id)` | Remove the leftover user data (`~/.var/app/<AppID>`) of a Flatpak app that is no longer installed — the GUI's "Remove data" button on that app's page; refuses apps still installed; returns a `job_id` |
 | `get_job(job_id, tail_lines?)` | Job state (`queued`/`running`/`success`/`error`), exit code, log tail |
 | `list_jobs()` | Recent jobs |
 | `get_settings()` / `set_settings(...)` | Automatic updates, automatic bug reports, language |
@@ -132,8 +135,33 @@ list) → poll `get_job` → verify with `list_app_extensions`. These are plain
 dialog on the user's screen, and unlike app installs they are not recorded in
 the Action Registry — the installed state comes from `list_app_extensions`.
 
+**Flatpak leftover data (an app you can no longer see installed):** Flatpak
+keeps per-app user data in `~/.var/app/<AppID>`, which outlives the app. When
+`get_app_details` of a Flatpak app reports `flatpak_residual_data` (there is
+also a `flatpak_residual_note` naming the exact directory), tell the user
+what would be deleted and confirm → `remove_flatpak_data(app_id)` → poll
+`get_job` → verify with `get_app_details` (`flatpak_residual_data` turns
+false). No password appears: the data lives in the user's home. The tool
+always refuses apps that are still installed — if the user wants both the
+app and its data gone, run `remove_app` first, and only then the data
+cleanup.
+
 **Remove something:** check `get_registry_entries` / `get_app_details`
 (install state) → confirm with the user → `remove_app` → poll `get_job`.
+
+**Update LinuxToys itself:** `get_update_status` (networked; tells you current
+version vs the newest published release, how many releases behind it sits,
+and whether the app can update itself) → tell the user what changed
+(`release_notes`) and get their OK → `update_linuxtoys` → poll `get_job`
+like any other job → on success, restart the service so the running MCP
+server picks up the new code:
+
+```bash
+systemctl --user restart linuxtoys-mcp.service
+```
+
+The GUI also needs reopening. If `update_linuxtoys` fails with "cancelled",
+the user closed the password dialog — tell them and let them decide.
 
 **Change settings:** `set_settings` with only the fields to change
 (`automatic_updates`, `automatic_bug_reports`, `language`). A running GUI
@@ -155,10 +183,30 @@ for arbitrary strings).
   `remove_app_extension`) work the same way: only touch the extension the
   user asked about, and never install extensions as a side effect of an app
   install.
+- Flatpak leftover data (`remove_flatpak_data`) permanently deletes
+  `~/.var/app/<AppID>`. Only run it when the user asked for exactly that or
+  confirmed it, show them the directory first (`flatpak_residual_path`),
+  and never treat the flag as something to "clean up" proactively for apps
+  they may want to reinstall — deleting the data also deletes its saved
+  settings and profiles. The tool is the judge of eligibility: it refuses
+  apps that are still installed, and a refusal message explains why.
+- Updating LinuxToys itself changes the whole app: call `get_update_status`
+  first, show the user what is new, and only run `update_linuxtoys` after
+  they agree. After a successful update, restart
+  `linuxtoys-mcp.service` and reopen the GUI so everything runs the new
+  version.
+- When `install_app` or `remove_app` is refused because the installed
+  LinuxToys is more than two releases behind the newest one, do not look for
+  workarounds: explain the refusal to the user, offer `update_linuxtoys`,
+  and retry after it succeeds. Package installs (Flathub/Snap apps,
+  AppImages, AUR, Homebrew, local package files) are not affected by this
+  gate.
 - Never ask for or accept the user's password; privilege prompts appear on
   their screen on their own.
 - Installs are serialized: one job runs at a time. Poll `get_job` rather than
-  re-submitting the same app.
+  re-submitting the same app. `update_linuxtoys` runs in the same queue and
+  refuses to start while any other job is active; wait for the queue to
+  finish first.
 - Jobs are in-memory; if the service restarts mid-way, re-check the app's
   state with `get_app_details` before retrying. For package files, re-check
   the file path: the install re-verifies the exact file that was inspected.

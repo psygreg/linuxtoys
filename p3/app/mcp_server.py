@@ -3,9 +3,10 @@
 
 Lets AI agents interact with LinuxToys the way a user would: browse and
 search the catalog, read app pages (descriptions, screenshots, donation and
-purchase links), install and remove apps, change settings (automatic updates,
-automatic bug reports, language), translate descriptions, and read or export
-the Action Registry.
+purchase links), install and remove apps, clean up the leftover user data of
+uninstalled Flatpak apps (the app page's "Remove data" action), change
+settings (automatic updates, automatic bug reports, language), translate
+descriptions, and read or export the Action Registry.
 
 Design:
 
@@ -58,6 +59,7 @@ if __package__:
     from . import appstream_logs
     from . import appimage_catalog
     from . import antenna
+    from . import flatpak_residue
     from . import parser
     from . import registry_utils
     from . import translate_helper
@@ -90,6 +92,7 @@ else:
     from app import appstream_logs
     from app import appimage_catalog
     from app import antenna
+    from app import flatpak_residue
     from app import parser
     from app import registry_utils
     from app import translate_helper
@@ -541,6 +544,25 @@ def _app_details(entry):
             )
         except Exception:
             details["extensions_available"] = False
+
+        # Leftover user data under ~/.var/app/<AppID> outlives its Flatpak
+        # app; the same leftover the app page's "Remove data" button offers
+        # to delete. The presence probe is a cheap lexists; removal goes
+        # through remove_flatpak_data under the same guards as the button.
+        identity = flatpak_residue.flatpak_data_identity(entry)
+        if identity:
+            details["flatpak_app_id"] = identity
+        residual_path = flatpak_residue.flatpak_data_path(identity)
+        details["flatpak_residual_data"] = flatpak_residue.residual_data_present(residual_path)
+        if details["flatpak_residual_data"]:
+            details["flatpak_residual_path"] = str(residual_path)
+            if not _installed_state(entry)["installed"]:
+                details["flatpak_residual_note"] = (
+                    "This Flatpak app is no longer installed but its user "
+                    f"data is still at '{residual_path}'. remove_flatpak_data "
+                    "deletes that directory permanently — get the user's "
+                    "approval first."
+                )
     return details
 
 
@@ -885,6 +907,43 @@ def _extension_parent_hint(app_id):
     return ""
 
 
+def _flatpak_data_blueprint(entry):
+    """Validate one catalog entry as a leftover-data target (app page parity).
+
+    Returns (identity, target Path). Raises ValueError with the same reasons
+    the GUI's app page refuses to offer its "Remove data" action: not a
+    Flatpak component, no safe ~/.var/app/<AppID> mapping, or the app is
+    still installed (its live data is never a leftover that may be removed).
+    Filesystem presence is probed separately by each caller.
+    """
+    name = str(entry.get("name") or "").strip()
+    if str(entry.get("appstream_source") or "").strip() != "flatpak":
+        raise ValueError(
+            f"'{name or 'this app'}' is not a Flatpak app. Leftover ~/.var/app "
+            "user data only exists for Flatpak apps."
+        )
+    identity = flatpak_residue.flatpak_data_identity(entry)
+    target = flatpak_residue.flatpak_data_path(identity)
+    if not identity or target is None:
+        raise ValueError(
+            f"'{name or 'this app'}' has no Flatpak app ID that maps to a safe "
+            "~/.var/app/<AppID> path, so its leftover data cannot be addressed."
+        )
+    installed = _installed_state(entry)
+    if installed["installed"]:
+        seen = (
+            "registry transaction"
+            if installed["in_action_registry"]
+            else "installed Flatpak package"
+        )
+        raise ValueError(
+            f"'{name or identity}' is still installed ({seen}). Removing its "
+            "data would discard a working installation's data; remove the "
+            "app first with remove_app, then retry."
+        )
+    return identity, target
+
+
 # ---------------------------------------------------------------------------
 # Job manager: serialized install/remove runs with GUI askpass
 # ---------------------------------------------------------------------------
@@ -1018,6 +1077,28 @@ class JobManager:
         self._queue.put((job, extension))
         return job
 
+    def submit_flatpak_data(self, entry):
+        """Queue the leftover-data cleanup for one uninstalled Flatpak app.
+
+        Mirrors the GUI app page's "Remove data" action: the entry must be a
+        Flatpak component that is no longer installed and still owns its
+        ~/.var/app/<AppID> directory. The identity/path guards and the probe
+        re-run inside the worker, so state changes while queued re-refuse.
+        Not a script and not a package transaction: no version gate, no
+        transmap, no Action Registry registration.
+        """
+        identity, target = _flatpak_data_blueprint(entry)
+        if not flatpak_residue.residual_data_present(target):
+            raise ValueError(
+                f"No leftover user data found for '{entry.get('name') or identity}' "
+                f"at '{target}' — nothing to remove."
+            )
+        job = Job("flatpak_data_remove", _stable_id(entry))
+        job.name = str(entry.get("name") or identity)
+        self._register(job)
+        self._queue.put((job, entry))
+        return job
+
     def _register(self, job):
         with self._lock:
             self._jobs[job.id] = job
@@ -1074,10 +1155,13 @@ class JobManager:
         job.started = time.time()
         try:
             try:
-                # Extension installs/uninstalls and app updates never enter
-                # the bug-report history in the GUI either: they are flatpak
-                # addon operations and the app's own update, not app scripts.
-                if job.kind not in ("extension_install", "extension_remove", "update"):
+                # Extension installs/uninstalls, app updates and leftover
+                # Flatpak data cleanups never enter the bug-report history
+                # in the GUI either: they are flatpak-side operations and
+                # the app's own update, not app scripts.
+                if job.kind not in (
+                    "extension_install", "extension_remove", "update", "flatpak_data_remove",
+                ):
                     antenna.add_script_to_history(str(job.name))
             except Exception:
                 pass  # Bug-report context is best effort.
@@ -1103,6 +1187,8 @@ class JobManager:
                 )
             elif job.kind == "install":
                 code, reason = self._install(job, entry)
+            elif job.kind == "flatpak_data_remove":
+                code, reason = self._remove_flatpak_data(job, entry)
             else:
                 code, reason = self._remove(job, entry)
             job.exit_code = code
@@ -1377,6 +1463,31 @@ class JobManager:
             f"flatpak {action} exited with status {code}. See the job log for details."
         )
 
+    def _remove_flatpak_data(self, job, entry):
+        """Remove one uninstalled Flatpak app's leftover ~/.var/app/<AppID>.
+
+        Re-runs the full guard set (flatpak source, safe identity, uninstalled
+        state) at execution time: the app may have been installed or removed
+        elsewhere while the job waited in the queue. A leftover that vanished
+        in the meantime is a no-op success, not an error.
+        """
+        try:
+            identity, target = _flatpak_data_blueprint(entry)
+        except ValueError as exc:
+            return 1, str(exc)
+        if not flatpak_residue.residual_data_present(target):
+            self._log(job, "Leftover user data is already gone; nothing to remove.")
+            return 0, ""
+        self._log(job, f"Removing leftover Flatpak user data: {target}")
+        error = flatpak_residue.remove_residual_data(target)
+        if error:
+            return 1, (
+                f"Could not remove leftover user data '{target}': {error}. "
+                "See the job log for details."
+            )
+        self._log(job, f"Removed leftover Flatpak user data: {target}")
+        return 0, ""
+
     def _remove(self, job, entry):
         blockers = installed_packages.dependency_blockers(entry)
         if blockers:
@@ -1598,6 +1709,9 @@ class _LazyJobs:
     def submit_extension(self, entry, extension, remove=False):
         return self._get().submit_extension(entry, extension, remove)
 
+    def submit_flatpak_data(self, entry):
+        return self._get().submit_flatpak_data(entry)
+
     def get(self, job_id):
         return self._get().get(job_id)
 
@@ -1676,7 +1790,9 @@ def tool_schemas():
             "name": "get_app_details",
             "description": (
                 "Full app page for one stable ID: description, screenshots URLs, "
-                "homepage/donation/purchase links, version, install state."
+                "homepage/donation/purchase links, version, install state. For "
+                "Flatpak apps also reports leftover ~/.var/app user data "
+                "(flatpak_residual_data) when the app is no longer installed."
             ),
             "inputSchema": {
                 "type": "object",
@@ -1811,6 +1927,24 @@ def tool_schemas():
             "description": (
                 "Remove an app/feature installed through LinuxToys, by stable ID. "
                 "Returns a job id — poll get_job until success/error."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {"app_id": {"type": "string", "description": "Stable catalog ID"}},
+                "required": ["app_id"],
+            },
+        },
+        {
+            "name": "remove_flatpak_data",
+            "description": (
+                "Remove the leftover user data (~/.var/app/<AppID>) of one "
+                "Flatpak app that is no longer installed — the same guarded "
+                "cleanup the GUI's 'Remove data' button offers on that app's "
+                "page. get_app_details reports flatpak_residual_data when "
+                "eligible; the tool refuses apps that are still installed. "
+                "Confirm with the user first: the deletion is permanent and "
+                "needs no password (the data lives in their home). Returns a "
+                "job id — poll get_job."
             ),
             "inputSchema": {
                 "type": "object",
@@ -2350,6 +2484,39 @@ def _tool_remove(app_id):
     }
 
 
+def _tool_remove_flatpak_data(app_id):
+    """Queue the leftover-data cleanup of one uninstalled Flatpak app."""
+    entry = _resolve_entry(app_id)
+    if entry is None:
+        raise ValueError(f"Unknown app id '{app_id}'. Use search_apps to list valid IDs.")
+    # Validates flatpak source, safe ~/.var/app/<AppID> mapping and the
+    # uninstalled state — the same reasons the app page hides its button.
+    identity, target = _flatpak_data_blueprint(entry)
+    if not flatpak_residue.residual_data_present(target):
+        raise ValueError(
+            f"No leftover user data found for '{entry.get('name') or identity}' "
+            f"at '{target}' — nothing to remove."
+        )
+    try:
+        job = JOBS.submit_flatpak_data(entry)
+    except ValueError:
+        raise
+    except Exception as exc:
+        raise ValueError(f"Could not queue the data removal: {exc}")
+    return {
+        "job_id": job.id,
+        "app": _stable_id(entry),
+        "name": job.name,
+        "path": str(target),
+        "state": job.state,
+        "note": (
+            "The removal is confined to the user's home and needs no password. "
+            "Poll get_job; get_app_details afterwards reports "
+            "flatpak_residual_data false."
+        ),
+    }
+
+
 def _tool_get_job(job_id, tail_lines=40):
     job = JOBS.get(job_id)
     if job is None:
@@ -2564,6 +2731,8 @@ def dispatch_tool(name, arguments):
         return _tool_list_app_extensions(arguments.get("app_id"))
     if name == "remove_app":
         return _tool_remove(arguments.get("app_id"))
+    if name == "remove_flatpak_data":
+        return _tool_remove_flatpak_data(arguments.get("app_id"))
     if name == "get_job":
         return _tool_get_job(arguments.get("job_id"), arguments.get("tail_lines", 40))
     if name == "list_jobs":
@@ -2659,10 +2828,14 @@ def _initialize_result(requested_version):
             "install_package_file, with fetch_package_url for downloads. "
             "Flathub apps may offer extensions/addons: when get_app_details "
             "reports extensions_available, use list_app_extensions / "
-            "install_app_extension / remove_app_extension. Installs that need "
-            "root show the password dialog on the user's screen; never ask "
-            "the user to hand you credentials. Descriptions and screenshots "
-            "can be read and translated with translate_text / "
+            "install_app_extension / remove_app_extension. Uninstalled "
+            "Flatpak apps can leave leftover user data under ~/.var/app: "
+            "get_app_details reports it as flatpak_residual_data, and "
+            "remove_flatpak_data removes it as a tracked job once the user "
+            "confirms — it always refuses apps that are still installed. "
+            "Installs that need root show the password dialog on the user's "
+            "screen; never ask the user to hand you credentials. Descriptions "
+            "and screenshots can be read and translated with translate_text / "
             "translate_app_description. The app updates itself: "
             "get_update_status, then update_linuxtoys with the user's "
             "approval (poll get_job and restart the linuxtoys-mcp service "
