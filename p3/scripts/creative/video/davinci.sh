@@ -93,9 +93,9 @@ check_disk_space () {
 
 	# set required space based on package type
 	if [ "$pkgname" == "davinci-resolve" ]; then
-		required_space_gb=12
+		required_space_gb=15
 	elif [ "$pkgname" == "davinci-resolve-studio" ]; then
-		required_space_gb=25
+		required_space_gb=30
 	fi
 
 	local required_space_kb=$((required_space_gb * 1024 * 1024))
