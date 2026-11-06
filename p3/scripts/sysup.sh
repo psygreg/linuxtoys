@@ -60,7 +60,7 @@ release_upgrade() {
     fi
 }
 offer_release_upgrade() {
-    zenity --question --text="$sysup_available" --title="Release Upgrade" || return 1
+    question "Release Upgrade" "$sysup_available" || return 1
 }
 
 # Update Flatpak packages for one installation ($1: --user or --system, $2: "sudo" to elevate).

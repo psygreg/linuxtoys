@@ -1,6 +1,6 @@
 ---
 name: linuxtoys-mcp
-description: Enable and drive the LinuxToys MCP server to manage Linux apps on the user's machine like a user would - search the catalog, read app pages (descriptions, screenshots, donation links), install and remove apps, install local package files (.deb, .rpm, .appimage and more, optionally downloaded from a URL), install and remove Flathub app extensions/addons, clean up the leftover data of uninstalled Flatpak apps, run the app's full system update, check for and apply LinuxToys app updates, change LinuxToys settings, and translate descriptions. Use when the user asks to install or remove software through LinuxToys, asks to install a package file or app extension, asks to clean up leftovers of an uninstalled Flatpak app, asks to run a full system update, asks to update or check the version of LinuxToys itself, change its settings, or when configuring AI agent access to LinuxToys.
+description: Enable and drive the LinuxToys MCP server to manage Linux apps on the user's machine like a user would - search the catalog, read app pages (descriptions, screenshots, donation links), install and remove apps, install local package files (.deb, .rpm, .appimage and more, optionally downloaded from a URL), install and remove Flathub app extensions/addons, clean up the leftover data of uninstalled Flatpak apps, run the app's full system update, handle questions/warnings raised by scripts (ask the user before the run; relay warnings), check for and apply LinuxToys app updates, change LinuxToys settings, and translate descriptions. Use when the user asks to install or remove software through LinuxToys, asks to install a package file or app extension, asks to clean up leftovers of an uninstalled Flatpak app, asks to run a full system update, asks to update or check the version of LinuxToys itself, change its settings, or when configuring AI agent access to LinuxToys.
 ---
 
 # LinuxToys MCP
@@ -86,12 +86,12 @@ After connecting, call `server_info` once to confirm the session works.
 | `server_info` | Version, endpoint, service state, busy jobs, cached script-gate state |
 | `get_update_status` | Fresh networked check of LinuxToys itself: running vs newest published release, releases behind, whether the app can update itself on this host, script-gate state |
 | `update_linuxtoys` | Run the official LinuxToys self-update as a tracked job (ask the user first — it changes the whole app); poll `get_job`, then restart the service |
-| `update_system` | Run the app's full system update ("Update System" card): distro packages, Flatpaks, Snaps, Homebrew/Bun, orphan and leftover-shortcut cleanup; ask the user first — needs root (password dialog on their screen), long run |
+| `update_system` | Run the app's full system update ("Update System" card): distro packages, Flatpaks, Snaps, Homebrew/Bun, orphan and leftover-shortcut cleanup; ask the user first — needs root (password dialog on their screen), long run; may also answer `requires_answers` (release-upgrade choice) before running |
 | `list_categories` | Catalog categories |
 | `search_apps(query, limit?)` | Search every catalog (scripts, repos, Flathub/Snap, AppImages); returns stable `id`s |
 | `get_app_details(app_id)` | App page: description, screenshots URLs, homepage/donate/purchase links, version, install state (and leftover `~/.var/app` data state for Flatpak apps) |
 | `get_screenshot(app_id, index?)` | Returns an image so you can see the app's screenshots |
-| `install_app(app_id)` | Queue an install; returns a `job_id` |
+| `install_app(app_id)` | Queue an install; returns a `job_id`. Curated scripts may first answer `requires_answers`: ask the user the listed questions, then re-call with `answers` |
 | `fetch_package_url(url)` | Download a package file (.deb/.rpm/.pkg.tar.*/.pacman/.eopkg/.flatpak/.flatpakref/.snap/.appimage) from an http(s) URL into a private staging directory; returns its local path |
 | `get_package_file_details(path)` | Inspect a local package file like the GUI's package view does: name, version, architecture, maintainer, description, size, format, and whether that package type is supported on this system |
 | `install_package_file(path)` | Queue the install of a local package file through the same guarded machinery; returns a `job_id` |
@@ -100,7 +100,7 @@ After connecting, call `server_info` once to confirm the session works.
 | `remove_app_extension(app_id, extension)` | Remove one installed extension of an app; returns a `job_id` |
 | `remove_app(app_id)` | Queue a removal; returns a `job_id` |
 | `remove_flatpak_data(app_id)` | Remove the leftover user data (`~/.var/app/<AppID>`) of a Flatpak app that is no longer installed — the GUI's "Remove data" button on that app's page; refuses apps still installed; returns a `job_id` |
-| `get_job(job_id, tail_lines?)` | Job state (`queued`/`running`/`success`/`error`), exit code, log tail |
+| `get_job(job_id, tail_lines?)` | Job state (`queued`/`running`/`success`/`error`), exit code, log tail; plus the script's dialog events: `warnings` (attention to relay), `live_prompts` (dialogs the user answered live), `error_detail` (fatal message on failure) |
 | `list_jobs()` | Recent jobs |
 | `get_settings()` / `set_settings(...)` | Automatic updates, automatic bug reports, language |
 | `translate_text(text, target_language?)` | Same translation method as the app page; defaults to the user's language |
@@ -125,6 +125,41 @@ is (name, version, format) and stop if it is not supported on this system →
 confirm → `install_package_file(path)` → poll `get_job`. It goes through the
 same guarded machinery as a package-view install, so the usual root password
 dialog appears on the user's screen when needed.
+
+**Scripts that ask questions, warn or fail with dialogs:** script dialogs
+do not pop on your behalf, and the machine tells you about them:
+
+- *Questions* (yes/no prompts, single/multi selections): `install_app` and
+  `update_system` return `requires_answers` with a `questions` list instead
+  of queueing anything. This covers every installation shape: curated
+  scripts, repository-list entries (the composed pipeline and its pre/post
+  hook scripts) and AppStream overlays (hook scripts on top of an
+  AppStream component). Present **each** question to the user through your
+  own question UI (`title`/`message`, the listed options, and the suggested
+  default), then re-call the same tool with
+  `answers={question id: choice}`. Every listed id must be covered; radio
+  choices must match one listed option exactly; multi-select accepts
+  option string(s) comma-separated or an array; yes/no prompts take the
+  literal question id with "yes" or "no". The run then uses those answers
+  instead of dialogs, so the user decides without any popups. The service
+  pre-filters by branch: only questions whose enclosing branch actually
+  matches this host are listed (host-detectable conditions are evaluated
+  for real; conditions written as previous-step results — `call_script`
+  exports included — presume success; `skipped_branches` counts the
+  call sites filtered out, and the note points it out).
+- *Warnings*: `get_job` carries a `warnings` list. These are messages the
+  script raised that need attention — relay them to the user promptly,
+  whether the job still runs or ends successfully. They are **not**
+  failures: a completed run with warnings still worked; do not frame them
+  as "the update failed".
+- *Fatal dialogs / errors*: on a failed run (`state: "error"`) the fatal
+  dialog's message arrives in `error_detail` (the log tail has more):
+  report the failure with that message, not just the exit code.
+- Prompts the service could not preset (variable-based) are shown live to
+  the user and listed in `live_prompts`: let the user know what was asked
+  on screen and what they answered. Informational popups are omitted
+  entirely; their text lives in the log tail. Password dialogs always
+  appear on the user's screen as usual.
 
 **Flathub app extensions (VLC plugins, Steam compatibility tools, ...):**
 when `get_app_details` reports `extensions_available`, run
@@ -188,6 +223,14 @@ for arbitrary strings).
 
 ## 6. Rules
 
+- Script dialogs are yours to handle, not to suppress: when
+  `install_app`/`update_system` answer `requires_answers`, ask every listed
+  question of the user before running (answers must match the offered
+  options; every id must be covered). Once the run is queued, relay
+  `warnings` from `get_job` as attention-required messages without calling
+  the run a failure — only `state: "error"` with `error_detail` is a
+  failure — and mention `live_prompts` (dialogs the user answered on
+  screen). Informational popups are omitted; their text is in the log.
 - Always tell the user what you are about to install or remove, and do it only
   when they asked for it or confirmed.
 - Package files (`get_package_file_details` / `install_package_file` /

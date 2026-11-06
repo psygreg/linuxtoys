@@ -32,6 +32,7 @@ Entry points: ``linuxtoys --mcp`` (also the systemd ExecStart) or
 """
 
 import base64
+import hashlib
 import hmac
 import json
 import os
@@ -272,6 +273,1224 @@ def _system_update_entry():
             "installation."
         )
     return entry
+
+
+# ---------------------------------------------------------------------------
+# Agent script-dialog machinery
+#
+# Scripts raise dialogs through four helper families in libs/linuxtoys.bash:
+# question/zenask, radioselect, listselect and warn/zenwrn/nonfatal/die/fatal.
+# Agent behavior:
+#
+# - Questions: statically extracted from the script text and returned by
+#   install_app/update_system BEFORE any run (requires_answers payload).
+#   The agent asks the user (options + default are provided), then re-calls
+#   the tool with `answers`; the run carries a prepared-answers file that
+#   the helpers consult instead of showing a dialog. Calls the service
+#   cannot pre-ask (variable args, continuations, exotic escapes) are
+#   counted as dynamic prompts: they keep their live dialog behavior and
+#   are logged as events so the agent learns they were shown to the user.
+# - Warnings (warn/zenwrn/nonfatal) and fatal dialogs (die/fatal): the
+#   helpers append structured events to a per-job file that get_job parses
+#   live. No dialog blocks an agent run; informational popups are omitted
+#   and their text lands in the job log.
+#
+# Env contract set by _execute_script (never by the GUI/CLI):
+#   LT_AGENT_MODE=1        agent-managed run
+#   LT_AGENT_EVENTS=...    "kind\ttext" event lines
+#   LT_AGENT_ANSWERS=...   "key\tanswer" line file; key = prompt kind plus
+#                          the prompt fields joined by \x1f after
+#                          \t/\r/\n/\x1f-name normalization — byte parity
+#                          with the bash-side lookup (_lt_agent_lookup).
+# ---------------------------------------------------------------------------
+
+_UNIT_SEP = "\x1f"
+_QUESTION_ID_LEN = 12
+
+_DIALOG_HELPER_RE = re.compile(
+    r"(?:^|[^A-Za-z0-9_-])(zenask|question|radioselect|listselect)(?![A-Za-z0-9_-])"
+)
+_DQ_VAR_RE = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}|\$([A-Za-z_][A-Za-z0-9_]*)")
+_NAV_FORM_RE = re.compile(r"^\$\{([A-Za-z_][A-Za-z0-9_]*)\}$|^\$([A-Za-z_][A-Za-z0-9_]*)$")
+_LANG_ASSIGN_RE = re.compile(r'^\s*([A-Za-z_][A-Za-z0-9_]*)=(.*)$')
+
+
+def _clean_field(value):
+    """One-line, separator-free field value (bash _lt_agent_clean parity)."""
+    return re.sub(r"[\t\r\n\x1f]", " ", str(value))
+
+
+def _agent_key(kind, fields):
+    parts = [_clean_field(kind)]
+    parts.extend(_clean_field(field) for field in fields)
+    return _UNIT_SEP.join(parts)
+
+
+def _agent_question_id(kind, fields):
+    digest = hashlib.sha256(_agent_key(kind, fields).encode("utf-8")).hexdigest()
+    return digest[:_QUESTION_ID_LEN]
+
+
+def _printf_unescape(text):
+    """bash printf %b equivalent; None marks a call the service will not
+    pre-ask (non-representable escapes), so the dialog keeps its live
+    pass-up behavior instead of a wrongly-mapped key."""
+    out = []
+    index = 0
+    length = len(text)
+    while index < length:
+        char = text[index]
+        if char != "\\":
+            out.append(char)
+            index += 1
+            continue
+        if index + 1 >= length:
+            return None  # trailing backslash: unpredictable at runtime
+        escape = text[index + 1]
+        simple = {"a": "\a", "b": "\b", "f": "\f", "n": "\n",
+                  "r": "\r", "t": "\t", "v": "\v", "\\": "\\"}
+        if escape in simple:
+            out.append(simple[escape])
+            index += 2
+            continue
+        if escape == "c":  # %b output terminator: not fixed text
+            return None
+        if escape == "x":
+            digits = ""
+            probe = index + 2
+            while probe < length and len(digits) < 2 and text[probe] in "0123456789abcdefABCDEF":
+                digits += text[probe]
+                probe += 1
+            if not digits:
+                return None
+            out.append(chr(int(digits, 16) & 0xFF))
+            index = probe
+            continue
+        if escape == "0":
+            digits = ""
+            probe = index + 2
+            while probe < length and len(digits) < 3 and text[probe] in "01234567":
+                digits += text[probe]
+                probe += 1
+            if not digits:
+                return None
+            out.append(chr(int(digits, 8) & 0xFF))
+            index = probe
+            continue
+        return None
+    return "".join(out)
+
+
+_BASH_DQ_SPECIAL = {'"': '"', "\\": "\\", "$": "$", "`": "`"}
+
+
+def _decode_double_quoted(raw):
+    """Decode ONE double-quoted literal's content the way bash does.
+
+    Returns (decoded, dynamic): dynamic=True when the literal references a
+    shell variable or command substitution instead of fixed text (the
+    caller may still try whole-content `$var` resolution).
+    """
+    out = []
+    index = 0
+    while index < len(raw):
+        char = raw[index]
+        if char != "\\":
+            if char == "$" or char == "`":
+                return "", True
+            out.append(char)
+            index += 1
+            continue
+        if index + 1 >= len(raw):
+            break  # dangling backslash: runtime sees a bare backslash here
+        nxt = raw[index + 1]
+        if nxt == "\n":
+            index += 2  # quoted continuation: spliced out by bash
+            continue
+        if nxt in _BASH_DQ_SPECIAL:
+            out.append(_BASH_DQ_SPECIAL[nxt])
+            index += 2
+            continue
+        # Escapes that survive into the runtime value untouched (the runtime
+        # expands them through printf %b for the question text only).
+        out.append(char)
+        out.append(nxt)
+        index += 2
+    return "".join(out), False
+
+
+def _lang_assignment_value(raw):
+    """libs/lang/<code>.lib value ("..." or '...') decoded; None if unusable.
+
+    Double-quoted content referencing another var (finishmsg="$msg018") is
+    kept verbatim so _resolve_lang_ref expands it recursively like bash
+    does when the script sources the lib.
+    """
+    raw = raw.strip()
+    if raw.startswith('"') and raw.endswith('"') and len(raw) >= 2:
+        text, dynamic = _decode_double_quoted(raw[1:-1])
+        return raw[1:-1] if dynamic else text
+    return raw
+
+
+_LANG_TABLE_CACHE = {"lang": None, "table": {}}
+
+
+def _lang_table():
+    """Script translation variables ($msg2xx style) for $var resolution."""
+    lang = str(os.environ.get("LANG") or "").strip()[:2].casefold() or "en"
+    if _LANG_TABLE_CACHE["lang"] == lang:
+        return _LANG_TABLE_CACHE["table"]
+    table = {}
+    try:
+        directory = os.path.join(_script_dir(), "libs", "lang")
+        path = os.path.join(directory, f"{lang}.lib")
+        if not os.path.isfile(path):
+            path = os.path.join(directory, "en.lib")
+        with open(path, "r", encoding="utf-8", errors="replace") as handle:
+            for line in handle:
+                match = _LANG_ASSIGN_RE.match(line)
+                if not match:
+                    continue
+                value = _lang_assignment_value(match.group(2))
+                if value is not None:
+                    table[match.group(1)] = value
+    except Exception:
+        table = {}
+    _LANG_TABLE_CACHE["lang"] = lang
+    _LANG_TABLE_CACHE["table"] = table
+    return table
+
+
+def _resolve_lang_ref(var_name, table, depth=4):
+    """Resolved translation var (file entries may reference other entries);
+    None when the name is not a resolvable lib value."""
+    if depth < 0:
+        return None
+    raw = table.get(var_name)
+    if raw is None:
+        return None
+    out = []
+    index = 0
+    while index < len(raw):
+        char = raw[index]
+        if char != "$":
+            out.append(char)
+            index += 1
+            continue
+        match = _DQ_VAR_RE.match(raw[index:])
+        if not match:
+            out.append(char)
+            index += 1
+            continue
+        name = match.group(1) or match.group(2)
+        nested = _resolve_lang_ref(name, table, depth - 1)
+        if nested is None:
+            return None
+        out.append(nested)
+        index += len(match.group(0))
+    return "".join(out)
+
+
+def _agent_prompt_entry(kind, fields, title="", message=""):
+    if kind == "question":
+        options = ["Yes", "No"]
+        default = "Yes"
+    elif kind == "radio":
+        options = fields
+        default = options[0] if options else ""
+    else:
+        options = fields
+        default = ""
+    return {
+        "id": _agent_question_id(kind, fields),
+        "kind": kind,
+        "title": title,
+        "message": message,
+        "options": list(options),
+        "default": default,
+    }
+
+
+def _agent_scan_line(line, resolver):
+    """All statically extractable helper calls on one physical line.
+
+    `resolver(name)` decides variable arguments: the composed script-local
+    + lang table, or None when the value is runtime-only. Anything the
+    resolver cannot pin falls back to the runtime dialog (dynamic).
+    """
+    entries = []
+    dynamic = 0
+    cursor = 0
+    while True:
+        match = _DIALOG_HELPER_RE.search(line, cursor)
+        if match is None:
+            break
+        cursor = match.end()
+        helper = match.group(1)
+        kind = (
+            "question" if helper in ("question", "zenask")
+            else "radio" if helper == "radioselect"
+            else "list"
+        )
+        fields = []
+        dynamic_call = False
+        parse_end = match.end()
+        index = cursor
+        while index < len(line):
+            while index < len(line) and line[index] in " \t":
+                index += 1
+            if index >= len(line):
+                break
+            char = line[index]
+            if char == "\\" and index == len(line) - 1:
+                dynamic_call = True  # continuation: the call has more args
+                break
+            if char == '"':
+                closing = index + 1
+                while closing < len(line):
+                    if line[closing] == "\\":  # keep escapes: decode handles them
+                        closing += 2
+                        continue
+                    if line[closing] == '"':
+                        break
+                    closing += 1
+                if closing >= len(line):
+                    dynamic_call = True  # unterminated literal
+                    break
+                raw_content = line[index + 1:closing]
+                decoded, dynamic_res = _decode_double_quoted(raw_content)
+                if dynamic_res:
+                    # Whole-content `$var` (the dominant translated form,
+                    # `question "T" "$msg2xx"`) still resolves.
+                    var_match = _NAV_FORM_RE.match(raw_content.strip())
+                    resolved = None
+                    if var_match:
+                        name = var_match.group(1) or var_match.group(2)
+                        resolved = resolver(name)
+                    if resolved is None:
+                        dynamic_call = True
+                        break
+                    fields.append(resolved)
+                else:
+                    fields.append(decoded)
+                index = closing + 1
+                parse_end = index
+                continue
+            if char == "'":
+                closing = line.find("'", index + 1)
+                if closing < 0:
+                    dynamic_call = True
+                    break
+                fields.append(line[index + 1:closing])
+                index = closing + 1
+                parse_end = index
+                continue
+            var_match = _NAV_FORM_RE.match(line[index:])
+            if var_match:
+                name = var_match.group(1) or var_match.group(2)
+                resolved = resolver(name)
+                if resolved is None:
+                    dynamic_call = True  # script-local or extended expansion
+                    break
+                fields.append(resolved)
+                index += len(var_match.group(0))
+                parse_end = index
+                continue
+            if char == "#":
+                break  # trailing comment: the call's arguments end here
+            break  # redirect / pipe / other token: arguments complete
+
+        if dynamic_call:
+            dynamic += 1
+        elif fields:
+            if kind == "question":
+                title = fields[0] if fields else ""
+                raw_text = fields[1] if len(fields) > 1 else ""
+                message = _printf_unescape(raw_text)
+                if message is None:
+                    dynamic += 1
+                    continue
+                # The runtime lookup passes the RAW title and the UNescaped
+                # text (question() unescapes $2 before consulting answers).
+                entries.append(_agent_prompt_entry(
+                    "question", [title, message], title=title, message=message,
+                ))
+            else:
+                if len(set(fields)) != len(fields):
+                    dynamic += 1  # duplicated options: ambiguous answer key
+                    continue
+                entries.append(_agent_prompt_entry(kind, fields))
+    return entries, dynamic
+
+
+def _script_agent_questions(path):
+    """Static question extraction for one plain script (agent pre-asking).
+
+    Branch-aware: each helper call site is analyzed with the conditions it
+    is nested inside, and those conditions are evaluated against THIS host
+    before the question is offered:
+
+    - conditions composed purely of read-only host probes (the is_* libs
+      predicates, [ ]/[[ ]]/test facts, command -v / grep / package-query
+      reads) run for real in a sandboxed bash that sources the same libs
+      tree the job will use;
+    - conditions carrying runtime values (variables set by previous steps
+      in the same script, call_script exports) are presumed to have
+      succeeded: they contribute success to the chain, so branches a
+      previous step gates into are pre-asked. Should that step fail at
+      runtime the usual machinery reports the error to the user, and the
+      prepared answer is simply not consulted; on success the run consumes
+      it and proceeds as expected, both covered by the fallback answer
+      file lookup semantics verified by the integration tests.
+    """
+    try:
+        with open(path, "r", encoding="utf-8", errors="replace") as handle:
+            text = handle.read()
+    except OSError:
+        return [], 0, 0
+    return _agent_script_scan(text)
+
+
+def _agent_logical_lines(text):
+    """Join backslash continuations into logical lines.
+
+    Yields ``(first_physical_line, logical_text)``. Heredoc bodies pass
+    through untouched (inert): their content neither opens frames nor
+    carries helper calls.
+    """
+    pending = []
+    heredoc = None
+    start = 0
+    for number, raw in enumerate(text.split("\n"), 1):
+        stripped = raw.strip()
+        if heredoc is not None:
+            if stripped == heredoc:
+                heredoc = None
+            continue
+        marker = re.match(r".*<<-?\s*['\"]?([A-Za-z_][A-Za-z0-9_]*)['\"]?\s*$", raw)
+        if marker:
+            heredoc = marker.group(1)
+            continue
+        if not pending:
+            start = number
+        if raw.endswith("\\"):
+            pending.append(raw[:-1])
+            continue
+        if pending:
+            pending.append(raw)
+            yield (start, " ".join(part.strip() for part in pending))
+            pending = []
+        else:
+            yield (number, raw)
+    if pending:
+        yield (start, " ".join(part.strip() for part in pending))
+
+
+def _agent_strip_comment(line):
+    """Drop an unquoted trailing comment; None marks a comment-only line."""
+    index = 0
+    quote = None
+    while index < len(line):
+        char = line[index]
+        if quote:
+            if char == "\\":
+                index += 2
+                continue
+            if char == quote:
+                quote = None
+        elif char in ('"', "'"):
+            quote = char
+        elif char == "#" and (index == 0 or line[index - 1] in " \t"):
+            return line[:index].rstrip() or None
+        index += 1
+    return line
+
+
+_AGENT_FUNCDEF_RE = re.compile(
+    r"^(?:function\s+)?([A-Za-z_][A-Za-z0-9_-]*)\s*\(\s*\)\s*\{.*$"
+)
+_AGENT_STRUCT_KW = {
+    "if", "then", "elif", "else", "fi", "while", "until", "do", "done",
+    "case", "esac", "in", "for",
+}
+# Frames that a same/matching brace-close `}` pops (func bodies close via
+# their own `}` line too, but the brace-gate groups pop as gates).
+_AGENT_BRACE_POP_KINDS = ("gate", "block", "func", "case")
+
+# Read-only host predicates and commands observed in the corpus, verified
+# against libs/linuxtoys.bash + libs/sysinfo.bash (is_* helpers are pure
+# system detection) and libs/packages.bash (dpkg/rpm/pacman/dnf/flatpak/
+# snap query reads only; nothing here mutates).
+_AGENT_PROBE_FUNCTIONS = frozenset({
+    "is_arch", "is_cachy", "is_manjaro", "is_debian", "is_ubuntu", "is_fedora",
+    "is_rhel", "is_ostree", "is_ublue", "is_gregos", "is_suse", "is_solus",
+    "is_zorin", "is_deepin", "is_steamos", "is_restricted_host", "is_systemd",
+    "is_nvidia", "is_intel", "is_amd", "is_icr_capable", "is_rocm_capable",
+    "is_rusticl_capable", "is_hybridgpu",
+})
+_AGENT_PROBE_QUERY_WORDS = frozenset({
+    "dpkg", "rpm", "pacman", "dnf", "flatpak", "snap",
+})
+_AGENT_PROBE_READONLY_FLAGS = {
+    "dpkg": {"-s", "-l", "-L"},
+    "rpm": {"-q", "-qi", "-qs", "-qa"},
+    "pacman": {"-Q", "-Qs", "-Qi", "-Ql"},
+    "dnf": {"list"},
+    "flatpak": {"list", "info"},
+    "snap": {"list"},
+}
+_AGENT_PRESUME_CALL = "_lt_agent_presume"
+_AGENT_WORD_RE = re.compile(r"\s+")
+_AGENT_CONDITION_CACHE = {}
+_AGENT_PROBE_TTL_SECONDS = 30
+
+
+def _agent_split_top(text):
+    """Top-level alternation units of one condition (bash-ish, forgiving)."""
+    result = []
+    index = 0
+    length = len(text)
+    while index < length:
+        if text.startswith("&&", index):
+            result.append("&&")
+            index += 2
+            continue
+        if text.startswith("||", index):
+            result.append("||")
+            index += 2
+            continue
+        if text[index] == ";":
+            result.append(";")
+            index += 1
+            continue
+        if text[index] in " \t":
+            index += 1
+            continue
+        if text[index] in "(){}":
+            result.append(text[index])
+            index += 1
+            continue
+        start = index
+        quote = None
+        while index < length:
+            char = text[index]
+            if quote:
+                if char == "\\":
+                    index += 2
+                    continue
+                if char == quote:
+                    quote = None
+                index += 1
+                continue
+            if char in ('"', "'"):
+                quote = char
+                index += 1
+                continue
+            if char == ";":
+                break
+            if text.startswith("&&", index) or text.startswith("||", index):
+                break
+            if char in "(){}":
+                break
+            index += 1
+        token = text[start:index].strip()
+        if token:
+            result.append(token)
+    return result
+
+
+def _agent_condition_compile_atom(atom):
+    """One command/test atom: keep safe probes, else presume success."""
+    if atom in ("!", "&&", "||", ";", "{", "}", "(", ")"):
+        return atom
+    body = atom[1:].strip() if atom.startswith("!") else atom
+    if re.search(r"[$`\n]", body):
+        return ("! " + _AGENT_PRESUME_CALL) if atom.startswith("!") else _AGENT_PRESUME_CALL
+    words = _AGENT_WORD_RE.split(body)
+    first = words[0] if words else ""
+    if not first:
+        return _AGENT_PRESUME_CALL
+    if first in _AGENT_PROBE_FUNCTIONS:
+        return atom
+    if first in ("[", "[[", "test"):
+        return atom
+    if first in ("command", "grep", "findmnt", "stat", "pgrep", "true", "false"):
+        return atom
+    # package-manager word probes are host probes only when every flag the
+    # atom carries is a read-only one (`rpm -ivh` would not be).
+    if first in _AGENT_PROBE_QUERY_WORDS:
+        for flag in words[1:]:
+            if flag.startswith("-") and flag not in _AGENT_PROBE_READONLY_FLAGS.get(first, set()):
+                return _AGENT_PRESUME_CALL
+        return atom
+    return _AGENT_PRESUME_CALL
+
+
+def _agent_condition_compile(cond):
+    """Rebuild one branch condition for host evaluation.
+
+    Probe-shaped atoms stay verbatim; anything the service cannot classify
+    (runtime variables, arbitrary commands, mutations) is substituted with
+    a presume-success call, so the branch's host-detectable parts still
+    cut it (a false is_fedora excludes the branch for real), while
+    previous-step-dictated parts follow the presume-success rule.
+    """
+    parts = []
+    for unit in _agent_split_top(cond):
+        if unit in ("&&", "||", "(", ")", "{", "}"):
+            parts.append(unit)
+            continue
+        parts.append(_agent_condition_compile_atom(unit))
+    rebuilt = " ".join(part for part in parts if part)
+    return rebuilt or None
+
+
+def _agent_compile_arms(scope_dir, conditions):
+    """Evaluate the rebuilt chain conditions in one sandboxed bash.
+
+    Returns a "1"-side bitmap in order. Any failure degrades to taken for
+    every condition — never lose a question to an evaluator hiccup.
+    """
+    if not conditions:
+        return []
+    key = (scope_dir, tuple(conditions))
+    now = time.time()
+    cached = _AGENT_CONDITION_CACHE.get(key)
+    # Probes read live host state (command -v, file existence): a change
+    # between two agent calls must not be served from a stale result, so
+    # entries live for a short TTL only.
+    if cached is not None and now - cached[1] < _AGENT_PROBE_TTL_SECONDS:
+        return list(cached[0])
+    script = [
+        f"SCRIPT_DIR={shlex_quote(scope_dir)}",
+        "FS_OPS= PACKAGE_OPS= BOOT_OPS= MISC_OPS= SYSD_OPS= HELPERS_OPS= OPTIMIZER_OPS=",
+        "DISPLAY=; WAYLAND_DISPLAY=",
+        "export DISPLAY= WAYLAND_DISPLAY=",
+        f"source {shlex_quote(os.path.join(scope_dir, 'libs', 'linuxtoys.bash'))}",
+        f"{_AGENT_PRESUME_CALL}() {{ return 0; }}",
+        "__flags__=",
+    ]
+    for condition in conditions:
+        script.append(f"__arm() {{ {condition}; }}")
+        script.append(
+            'if __arm; then __flags__="${__flags__}1"; else __flags__="${__flags__}0"; fi'
+        )
+    script.append('echo "__flags__=${__flags__}"')
+    try:
+        proc = subprocess.run(
+            ["bash", "-c", "\n".join(script)],
+            capture_output=True,
+            text=True,
+            stdin=subprocess.DEVNULL,
+            timeout=15,
+            env={**os.environ, "DISPLAY": "", "WAYLAND_DISPLAY": "", "LANG": "C"},
+            check=False,
+        )
+        matched = re.search(r"__flags__=([01]+)", proc.stdout or "")
+        flags = list(matched.group(1)) if matched else ["1"] * len(conditions)
+    except (OSError, subprocess.SubprocessError):
+        flags = ["1"] * len(conditions)
+    flags = flags[: len(conditions)]
+    flags.extend("1" for _ in range(len(conditions) - len(flags)))
+    _AGENT_CONDITION_CACHE[key] = (flags, time.time())
+    return flags
+
+
+_AGENT_ASSIGN_RE = re.compile(r"^\s*(?:export\s+|local\s+)?([A-Za-z_][A-Za-z0-9_]*)=(\"[^\"]*\"|'[^']*')\s*$")
+
+
+def _agent_script_var_table(text):
+    """Static constant assignments inside one script (name="literal"), with
+    runtime-result assignments deliberately excluded.
+
+    A script-local var may reference a lang var (rmmsg="$msg288"); the
+    resolver then expands it through _resolve_lang_ref composed on the
+    script table, so args like `zenask "OpenCode" "$rmmsg"` — where the
+    script renamed the message — resolve exactly like they do at runtime.
+    """
+    table = {}
+    for line in text.split("\n"):
+        original = _agent_strip_comment(line)
+        if not original:
+            continue
+        match = _AGENT_ASSIGN_RE.match(original)
+        if not match:
+            continue
+        value = _lang_assignment_value(match.group(2))
+        if value is not None:
+            table[match.group(1)] = value
+    return table
+
+
+def _agent_script_scan(text):
+    """Structural scan of one script with per-site branch evaluation.
+
+    Returns ``(questions, dynamic, skipped)``. Function-body sites resolve
+    through their callers one hop (direct or call_script driven conditions
+    are all caller-context frames; presume success applies to step atoms).
+    """
+    lang_table = _lang_table()
+    scope_dir = _script_dir()
+    script_vars = _agent_script_var_table(text)
+    merged_vars = dict(lang_table)
+    merged_vars.update(script_vars)
+
+    def resolver(name):
+        return _resolve_lang_ref(name, merged_vars)
+
+    groups = {}   # gid -> list of arm dicts {"kind", "cond"}
+    stack = []    # active frames: {"kind", "group", "arm", "name"}
+    sites = []    # {"entries", "frames"}
+    callers = []  # {"name", "frames"}
+    defined = set()
+    line_contexts = []  # (stripped_line, pre_snapshot) per logical line
+    dynamic = 0
+
+    def take_snapshot():
+        return [dict(record) for record in stack]
+
+    # ---- pass one: structure walk, site capture, caller records ------------
+    for _line_no, logical in _agent_logical_lines(text):
+        line = _agent_strip_comment(logical)
+        if not line:
+            continue
+        stripped = line.strip()
+        # Mid-line brace gates (`cond && { more...`, sysup's release-upgrade
+        # chain) open one "gate" frame each, and the remainder continues as
+        # the line's own body; a same-line `}` balance pops the gate right
+        # away. Lines that open a branch natively (if/elif/while/until —
+        # their arm compiler already carries the presume-success semantics)
+        # never split this way.
+        first_word_probe = stripped.split(None, 1)[0] if stripped.split() else ""
+        net_braces = 0
+        gate_search = None
+        if first_word_probe not in _AGENT_STRUCT_KW:
+            gate_search = re.search(r"\s*(&&|\|\|)\s*\{\s*", stripped)
+        while gate_search:
+            prefix = stripped[: gate_search.start()].strip()
+            operator = gate_search.group(1)
+            stripped = stripped[gate_search.end():]
+            if net_braces < 0:
+                net_braces = 0
+            net_braces += stripped.count("{") - stripped.count("}")
+            if prefix:
+                compiled_gate = _agent_condition_compile(prefix)
+                if compiled_gate is None:
+                    compiled_gate = prefix
+                if operator == "||":
+                    compiled_gate = f"! ( {compiled_gate} )"
+                gid = f"g{len(groups)}"
+                groups[gid] = [{"kind": "if", "cond": compiled_gate}]
+                stack.append({"kind": "gate", "group": gid, "arm": 0, "name": None})
+            # Same-line brace balance: each extra `}` closing one group pops
+            # the innermost brace-owned frame right away.
+            while net_braces < 0:
+                for index in range(len(stack) - 1, -1, -1):
+                    if stack[index]["kind"] in _AGENT_BRACE_POP_KINDS:
+                        del stack[index:]
+                        net_braces += 1
+                        break
+            gate_search = re.search(r"\s*(&&|\|\|)\s*\{\s*", stripped)
+        while net_braces < 0:
+            for index in range(len(stack) - 1, -1, -1):
+                if stack[index]["kind"] in _AGENT_BRACE_POP_KINDS:
+                    del stack[index:]
+                    net_braces += 1
+                    break
+        pre_snapshot = take_snapshot()
+        line_contexts.append((stripped, pre_snapshot))
+        entries, line_dynamic = _agent_scan_line(line, resolver)
+        if line_dynamic:
+            dynamic += line_dynamic
+        if entries:
+            sites.append({"entries": entries, "frames": take_snapshot()})
+        first_word = stripped.split(None, 1)[0] if stripped.split() else ""
+
+        # openings
+        if first_word in ("if", "while", "until"):
+            body = stripped.split(None, 1)[1] if len(stripped.split(None, 1)) > 1 else ""
+            cond = re.sub(r";\s*(?:then|do)\s*$", "", body).strip()
+            gid = f"g{len(groups)}"
+            groups[gid] = [{"kind": "if", "cond": cond}]
+            stack.append({"kind": "branch", "group": gid, "arm": 0, "name": None})
+            continue
+        if first_word == "for":
+            stack.append({"kind": "for", "group": None, "arm": None, "name": None})
+            continue
+        if first_word == "case":
+            stack.append({"kind": "case", "group": None, "arm": None, "name": None})
+            continue
+        func_match = _AGENT_FUNCDEF_RE.match(stripped)
+        if func_match:
+            defined.add(func_match.group(1))
+            stack.append({
+                "kind": "func",
+                "group": None,
+                "arm": None,
+                "name": func_match.group(1),
+            })
+            continue
+        # arm mutation
+        if first_word == "else":
+            if stack and stack[-1]["kind"] == "branch":
+                gid = stack[-1]["group"]
+                groups[gid].append({"kind": "else", "cond": ""})
+                stack[-1]["arm"] = len(groups[gid]) - 1
+            continue
+        if first_word == "elif":
+            if stack and stack[-1]["kind"] == "branch":
+                gid = stack[-1]["group"]
+                cond = re.sub(r";\s*then\s*$", "", stripped.split(None, 1)[1].strip()).strip()
+                groups[gid].append({"kind": "elif", "cond": cond})
+                stack[-1]["arm"] = len(groups[gid]) - 1
+            continue
+        # closers
+        if first_word == "fi":
+            for index in range(len(stack) - 1, -1, -1):
+                if stack[index]["kind"] in ("branch", "loop"):
+                    del stack[index:]
+                    break
+            continue
+        if first_word == "esac":
+            for index in range(len(stack) - 1, -1, -1):
+                if stack[index]["kind"] == "case":
+                    del stack[index:]
+                    break
+            continue
+        if first_word == "done":
+            for index in range(len(stack) - 1, -1, -1):
+                if stack[index]["kind"] in ("branch", "loop", "case", "for"):
+                    del stack[index:]
+                    break
+            continue
+        if stripped == "}":
+            for index in range(len(stack) - 1, -1, -1):
+                if stack[index]["kind"] in _AGENT_BRACE_POP_KINDS:
+                    del stack[index:]
+                    break
+            continue
+        if first_word in _AGENT_STRUCT_KW:
+            continue
+        # plain command line: keep a caller record for function resolution
+        if re.fullmatch(r"[a-zA-Z_][A-Za-z0-9_-]*", first_word):
+            callers.append({"name": first_word, "frames": take_snapshot()})
+
+    # ---- pass 1b: mid-line function calls (chains like `cond && func`) ----
+    for stripped, pre_snapshot in line_contexts:
+        for name in defined | set(record["name"] for record in callers):
+            if not re.search(r"(?:^|[^A-Za-z0-9_-])" + re.escape(name) + r"(?:[^A-Za-z0-9_-]|$)", stripped):
+                continue
+            if stripped.startswith(name + "()") or stripped.startswith("function " + name):
+                continue  # the definition itself, not a call
+            first_word = stripped.split(None, 1)[0] if stripped.split() else ""
+            caller_cond = None
+            if first_word in ("if", "elif", "while", "until"):
+                body = stripped.split(None, 1)[1] if len(stripped.split(None, 1)) > 1 else ""
+                caller_cond = re.sub(r";\s*(?:then|do)\s*$", "", body).strip()
+            elif re.search(r"&&\s*\{\s*$", stripped) or re.search(r"\|\|\s*\{\s*$", stripped):
+                prefix = re.split(r"&&\s*\{\s*$|\|\|\s*\{\s*$", stripped)[0].strip()
+                negated = bool(re.search(r"\|\|\s*\{\s*$", stripped))
+                compiled = _agent_condition_compile(prefix)
+                if compiled is not None:
+                    caller_cond = f"! ( {compiled} )" if negated else compiled
+            caller_frames = [dict(item) for item in pre_snapshot]
+            if caller_cond and name in caller_cond:
+                # The call lives inside this line's own condition: keep the
+                # other atoms as a gate frame, with the call atom itself
+                # replaced by the presume-success call.
+                pseudo = caller_cond.replace(name, _AGENT_PRESUME_CALL)
+                gid = f"g{len(groups)}"
+                groups[gid] = [{"kind": "if", "cond": pseudo}]
+                caller_frames.append({"kind": "branch", "group": gid, "arm": 0})
+            callers.append({"name": name, "frames": caller_frames})
+
+    # ---- pass two: evaluate every arm ONCE, then apply chain rules ---------
+    compiled_conditions = []
+    position_of = {}  # (gid, arm_idx) -> index in compiled_conditions
+    for gid, arms in groups.items():
+        for arm_idx, arm in enumerate(arms):
+            original = arm.get("cond") or ""
+            compiled = _agent_condition_compile(arm["cond"]) if arm.get("cond") else None
+            arm["compiled"] = compiled
+            # An arm whose condition carries runtime values (previous-step
+            # results, call_script exports) is presumed to succeed: its
+            # truth is soft and must never disqualify sibling arms.
+            arm["presumed"] = bool(re.search(r"[$`@\n]", original)) or (
+                compiled is not None and _AGENT_PRESUME_CALL in compiled
+            )
+            if compiled is not None:
+                position_of[(gid, arm_idx)] = len(compiled_conditions)
+                compiled_conditions.append(compiled)
+    values = _agent_compile_arms(scope_dir, compiled_conditions)
+
+    def arm_ok(gid, arm_idx):
+        key = (gid, arm_idx)
+        if key not in position_of:
+            return True  # absent condition: nothing to falsify
+        return values[position_of[key]] == "1"
+
+    def sibling_probe_true(gid, arm_idx):
+        """An earlier arm whose condition resolved purely from host probes
+        (no presumed atoms) is a hard truth: the run definitely took it.
+        An arm containing presumed (previous-step) atoms is soft — its
+        value might not have happened, so later arms stay reachable."""
+        key = (gid, arm_idx)
+        if key not in position_of:
+            return False
+        arm = (groups.get(gid) or [{}])[arm_idx]
+        compiled = arm.get("compiled")
+        if compiled is None or _AGENT_PRESUME_CALL in compiled:
+            return False
+        return values[position_of[key]] == "1"
+
+    def chain_taken(frames):
+        """One caller chain is taken when nothing enclosing is probe-false.
+        Presumed (previous-step) atoms contribute success inside each arm's
+        evaluated value, so only real probes can falsify; an earlier arm
+        whose evaluated value is 1 wins the group and later arms (failure
+        paths) are unreachable per the presume-success rule."""
+        for record in frames:
+            if record["kind"] in ("branch", "gate"):
+                gid = record["group"]
+                arm_idx = record["arm"] or 0
+                arm = (groups.get(gid) or [{}])[arm_idx]
+                for pos in range(arm_idx):
+                    if sibling_probe_true(gid, pos):
+                        return False
+                if not arm_ok(gid, arm_idx):
+                    return False
+        return True
+
+    questions = []
+    skipped = 0
+    seen_ids = set()
+    for site in sites:
+        taken = True
+        for record in site['frames']:
+            if record["kind"] == "func":
+                name = record["name"]
+                caller_hits = [caller for caller in callers if caller["name"] == name]
+                if not caller_hits:
+                    continue  # the function is never invoked: presume reachable
+                any_caller_ok = any(chain_taken(caller["frames"]) for caller in caller_hits)
+                if not any_caller_ok:
+                    taken = False
+                    break
+                continue
+            if record["kind"] in ("case", "for", "block"):
+                continue
+            if record["kind"] in ("branch", "loop", "gate"):
+                gid = record["group"]
+                arm_idx = record["arm"] or 0
+                arm = (groups.get(gid) or [{}])[arm_idx]
+                for pos in range(arm_idx):
+                    if sibling_probe_true(gid, pos):
+                        taken = False
+                        break
+                if taken and not arm_ok(gid, arm_idx):
+                    taken = False
+                if not taken:
+                    break
+        if not taken:
+            skipped += 1
+            continue
+        for entry in site["entries"]:
+            if entry["id"] in seen_ids:
+                continue
+            seen_ids.add(entry["id"])
+            questions.append(entry)
+    return questions, dynamic, skipped
+
+
+_AGENT_REPO_HOOK_LINE_RE = re.compile(r"^run_list_hook\s+(.+?)\s*$", re.MULTILINE)
+
+
+def _agent_list_hook_path(hook, scope_dir):
+    """Resolve one repository hook path exactly like the runtime helper:
+    `$CACHE_DIR/lists/<hook>` first, then `$SCRIPT_DIR/scripts/lists/<hook>`.
+
+    Returns the concrete script file path when one of those locations holds
+    it, else None — the runtime reports a missing hook, so the scan just
+    skips it instead of inventing a fallback.
+    """
+    token = str(hook or "").strip()
+    if not token:
+        return None
+    if os.path.isabs(token):
+        return token if os.path.isfile(token) else None
+    cache_dir = str(os.environ.get("CACHE_DIR") or "").strip()
+    for prefix in (
+        os.path.join(cache_dir, "lists") if cache_dir else None,
+        os.path.join(scope_dir, "scripts", "lists"),
+    ):
+        if not prefix:
+            continue
+        path = os.path.join(prefix, token)
+        if os.path.isfile(path):
+            return path
+    return None
+
+
+def _agent_hook_candidates(overrides, phase, scope_dir):
+    """Scan candidates for one pre/post hook phase.
+
+    Runtime parity with the looked-up shapes: an inline shell string and a
+    `{"script": <lists-relative path>}` mapping (which the runtime sources
+    via run_list_hook) both reach the scan.
+    """
+    results = []
+    if not isinstance(overrides, dict):
+        return results
+    value = overrides.get(phase)
+    if isinstance(value, str) and value.strip():
+        results.append({"kind": "text", "text": value.strip()})
+    elif isinstance(value, dict):
+        script = str(value.get("script", "") or "").strip()
+        path = _agent_list_hook_path(script, scope_dir)
+        if path:
+            results.append({"kind": "path", "path": path})
+    return results
+
+
+def _agent_read_pipeline(path):
+    try:
+        with open(path, encoding="utf-8", errors="replace") as handle:
+            return handle.read()
+    except OSError:
+        return None
+    finally:
+        try:
+            os.remove(path)
+        except OSError:
+            pass
+
+
+def _agent_repo_pipeline_text(entry):
+    """The composed install script of one repository-list entry (the same
+    text `materialize_repo_script` hands to the job)."""
+    try:
+        from . import repo_parser
+        path = repo_parser.create_install_script(entry)
+    except Exception:
+        return None
+    return _agent_read_pipeline(path)
+
+
+def _agent_appstream_pipeline_text(entry):
+    """The composed install pipeline of one AppStream entry (pre hooks,
+    dependencies, install body, Flatpak overrides, post hooks)."""
+    try:
+        from .tui.appstream_executor import build_install_script
+        path = build_install_script(entry)
+    except Exception:
+        return None
+    return _agent_read_pipeline(path)
+
+
+def _agent_dialog_candidates(entry):
+    """Where helper-family dialogs can live for one catalog entry.
+
+    - Curated physical scripts: the entry's own file (existing behavior).
+    - Repository-list entries (`is_repo_entry`): the materialized install
+      pipeline plus every pre/post hook script it sources.
+    - AppStream entries and overlays: the composed AppStream pipeline plus
+      the overlay's hook scripts (`appstream_overrides`).
+    """
+    results = []
+    if not (entry.get("is_appstream_entry") or entry.get("is_repo_entry")):
+        script_path = str(entry.get("path") or "").strip()
+        if script_path and os.path.isfile(script_path):
+            results.append({"kind": "text", "text": _read_file_text(script_path)})
+        return results
+    scope_dir = _script_dir()
+    if entry.get("is_repo_entry"):
+        pipeline = _agent_repo_pipeline_text(entry)
+        if pipeline:
+            results.append({"kind": "text", "text": pipeline})
+        overrides = entry.get("overrides") or {}
+    else:
+        pipeline = _agent_appstream_pipeline_text(entry)
+        if pipeline:
+            results.append({"kind": "text", "text": pipeline})
+        overrides = entry.get("appstream_overrides") or {}
+    for phase in ("pre", "post"):
+        results.extend(_agent_hook_candidates(overrides, phase, scope_dir))
+    return results
+
+
+def _read_file_text(path):
+    try:
+        with open(path, encoding="utf-8", errors="replace") as handle:
+            return handle.read()
+    except OSError:
+        return ""
+
+
+def _agent_dialog_scan_requests(entry):
+    """The branch-aware dialog scan aggregated over one catalog entry's
+    candidate scripts; returns ``(questions, dynamic, skipped)`` with
+    question ids deduplicated across candidates."""
+    questions = []
+    dynamic = 0
+    skipped = 0
+    seen_ids = set()
+    for candidate in _agent_dialog_candidates(entry):
+        try:
+            if candidate["kind"] == "path":
+                text = _read_file_text(candidate["path"])
+            else:
+                text = candidate.get("text") or ""
+            entries, line_dynamic, line_skipped = _agent_script_scan(text)
+        except Exception:
+            continue
+        dynamic += line_dynamic
+        skipped += line_skipped
+        for question in entries:
+            if question["id"] in seen_ids:
+                continue
+            seen_ids.add(question["id"])
+            questions.append(question)
+    if not questions and not dynamic:
+        return [], 0, 0
+    return questions, dynamic, skipped
+
+
+def _agent_records(questions, answers):
+    """Validate agent `answers` against extracted questions and build the
+    per-job answer file records; ValueError says exactly what is wrong.
+    """
+    by_id = {entry["id"]: entry for entry in questions}
+    answers = dict(answers if isinstance(answers, dict) else {})
+    problems = []
+    missing = [entry["id"] for entry in questions if entry["id"] not in answers]
+    if missing:
+        problems.append(
+            "answers must cover every question id returned earlier; missing: "
+            + ", ".join(missing)
+        )
+    records = []
+    for question_id, value in answers.items():
+        entry = by_id.get(str(question_id))
+        if entry is None:
+            problems.append(f"unknown question id '{question_id}'")
+            continue
+        kind = entry["kind"]
+        if kind == "question":
+            if isinstance(value, list):
+                value = value[0] if value else ""
+            folded = str(value).strip().casefold()
+            if folded in ("yes", "y", "true", "1", "on"):
+                records.append({
+                    "kind": "question",
+                    "fields": [entry["title"], entry["message"]],
+                    "value": "yes",
+                })
+            elif folded in ("no", "n", "false", "0", "off"):
+                records.append({
+                    "kind": "question",
+                    "fields": [entry["title"], entry["message"]],
+                    "value": "no",
+                })
+            else:
+                problems.append(
+                    f"question '{question_id}' expects 'yes' or 'no', got {value!r}"
+                )
+            continue
+        if kind == "radio":
+            if isinstance(value, list):
+                text = str(value[0]) if len(value) == 1 else None
+            else:
+                text = str(value)
+            if text is None or text not in entry["options"]:
+                problems.append(
+                    f"radio question '{question_id}' expects exactly one of "
+                    "the listed options, got "
+                    + ("a list with multiple items" if isinstance(value, list) else repr(value))
+                )
+                continue
+            records.append({
+                "kind": "radio",
+                "fields": entry["options"],
+                "value": _clean_field(text),
+            })
+            continue
+        # list: one string (comma/newline separated) or an array of strings
+        if isinstance(value, list):
+            selections = [str(item) for item in value]
+        else:
+            selections = [part for part in re.split(r"[\n,]", str(value)) if part.strip()]
+        unknown = [item for item in selections if item not in entry["options"]]
+        if unknown:
+            problems.append(
+                f"multi-select question '{question_id}' only accepts the "
+                f"listed options; unknown: {', '.join(unknown)}"
+            )
+            continue
+        records.append({
+            "kind": "list",
+            "fields": entry["options"],
+            "value": _UNIT_SEP.join(_clean_field(sel) for sel in selections),
+        })
+    if problems:
+        raise ValueError("\n".join(problems))
+    return records
+
+
+def _agent_answers_path_write(job, directory):
+    """Write the prepared-answers file for one queued job (or None).
+
+    Record values are already clean and single-line (validated in
+    _agent_records; list selections join on \x1f without any extra cleanup,
+    or the join separator itself would be mangled). An empty record value
+    (an answered "none selected") still gets its line, so the helpers take
+    the answer instead of re-asking through a pass-up dialog.
+    """
+    records = job.agent_answer_records
+    if not records:
+        return None
+    with open(os.path.join(directory, "answers"), "w", encoding="utf-8") as handle:
+        for record in records:
+            key = _agent_key(record["kind"], record["fields"])
+            handle.write(f"{key}\t{record['value']}\n")
+    return os.path.join(directory, "answers")
+
+
+def _agent_dir(job):
+    """Per-job agent dialog directory (events + answers files)."""
+    if job.agent_event_dir:
+        return job.agent_event_dir
+    directory = os.path.join(_tmp_dir(), f"agent-{job.id}")
+    os.makedirs(directory, mode=0o700, exist_ok=True)
+    job.agent_event_dir = directory
+    return directory
+
+
+def _agent_events_path(job):
+    return os.path.join(_agent_dir(job), "events")
+
+
+def _read_agent_events(directory):
+    """Parse one job's event file: (warnings, live_prompts, fatal_errors)."""
+    warnings, prompts, errors = [], [], []
+    if not directory:
+        return warnings, prompts, errors
+    try:
+        with open(os.path.join(directory, "events"), "r", encoding="utf-8", errors="replace") as handle:
+            for line in handle:
+                line = line.rstrip("\n")
+                if not line or "\t" not in line:
+                    continue
+                kind, text = line.split("\t", 1)
+                if kind == "warn" and text not in warnings:
+                    warnings.append(text)
+                elif kind == "prompt" and text not in prompts:
+                    prompts.append(text)
+                elif kind == "error" and text not in errors:
+                    errors.append(text)
+    except OSError:
+        pass
+    return warnings, prompts, errors
 
 
 def _iter_script_entries():
@@ -977,6 +2196,7 @@ class Job:
     __slots__ = (
         "id", "kind", "app_id", "name", "state", "exit_code", "reason",
         "log", "created", "started", "finished",
+        "agent_answer_records", "agent_event_dir",
     )
 
     def __init__(self, kind, app_id):
@@ -991,6 +2211,10 @@ class Job:
         self.created = time.time()
         self.started = 0.0
         self.finished = 0.0
+        # Agent dialog machinery (script jobs only): prepared answers from
+        # a pre-ask flow and the per-job directory with its event file.
+        self.agent_answer_records = None
+        self.agent_event_dir = ""
 
     def log_lines(self, tail=None):
         lines = list(self.log)
@@ -1026,7 +2250,7 @@ class JobManager:
         self._worker = threading.Thread(target=self._work, daemon=True, name="linuxtoys-mcp-jobs")
         self._worker.start()
 
-    def submit(self, kind, app_id):
+    def submit(self, kind, app_id, agent_answer_records=None):
         entry = _resolve_entry(app_id)
         if entry is None:
             raise ValueError(f"No installable entry found for '{app_id}'. Use search_apps to list valid IDs.")
@@ -1040,6 +2264,9 @@ class JobManager:
                 raise ValueError(refusal)
         job = Job(kind, app_id)
         job.name = str(entry.get("name") or app_id)
+        job.agent_answer_records = (
+            [dict(record) for record in (agent_answer_records or [])] or None
+        )
         self._register(job)
         self._queue.put((job, entry))
         return job
@@ -1069,7 +2296,7 @@ class JobManager:
         self._queue.put((job, None))
         return job
 
-    def submit_system_update(self):
+    def submit_system_update(self, agent_answer_records=None):
         """Queue the app's full system update (sysup.sh, "Update System").
 
         Not the app's own self-update (submit_update); this is the same
@@ -1079,7 +2306,9 @@ class JobManager:
         script run, so the outdated-version gate governs it like any other
         script job, and it is serialized against the LinuxToys self-update
         so it never races the app being replaced. Needs root: the password
-        dialog appears on the user's screen.
+        dialog appears on the user's screen. Pre-asked script questions
+        (release-upgrade prompts and other questions in sysup) arrive as
+        prepared answers through agent_answer_records.
         """
         with self._lock:
             self_update_busy = any(
@@ -1099,6 +2328,9 @@ class JobManager:
                 raise ValueError(refusal)
         job = Job("system_update", "sysup")
         job.name = str(entry.get("name") or "System update")
+        job.agent_answer_records = (
+            [dict(record) for record in (agent_answer_records or [])] or None
+        )
         self._register(job)
         self._queue.put((job, entry))
         return job
@@ -1159,10 +2391,16 @@ class JobManager:
         return job
 
     def _register(self, job):
+        evicted = []
         with self._lock:
             self._jobs[job.id] = job
             while len(self._jobs) > 100:
-                self._jobs.popitem(last=False)
+                evicted.append(self._jobs.popitem(last=False)[1])
+        for stale in evicted:
+            # Job payloads live in memory; their dialog directories are root
+            # files on /tmp: best-effort removal keeps them from piling up.
+            if getattr(stale, "agent_event_dir", ""):
+                shutil.rmtree(stale.agent_event_dir, ignore_errors=True)
 
     def get(self, job_id):
         with self._lock:
@@ -1607,6 +2845,20 @@ class JobManager:
             env.pop("LINUXTOYS_RUNNER_STATE", None)
             env.pop("LINUXTOYS_APPSTREAM_PACKAGE", None)
 
+            # Agent dialog machinery: scripts driven through the MCP service
+            # must not block on dialog clicks. The shell helpers consult the
+            # events file (warn/die/failed-question events the tools relay)
+            # and the prepared-answers file written from validated user
+            # choices, and keep password dialogs and any prompt that could
+            # not be pre-asked working on the user's screen.
+            if not job.agent_event_dir:
+                _agent_dir(job)
+            env["LT_AGENT_MODE"] = "1"
+            env["LT_AGENT_EVENTS"] = _agent_events_path(job)
+            answers_path = _agent_answers_path_write(job, job.agent_event_dir)
+            if answers_path:
+                env["LT_AGENT_ANSWERS"] = answers_path
+
             # Semantic resolution for single-package native AppStream entries,
             # mirroring the GUI runner.
             if script_info.get("appstream_source") == "native":
@@ -1764,14 +3016,31 @@ class _LazyJobs:
                 self._manager = JobManager()
             return self._manager
 
-    def submit(self, kind, app_id):
-        return self._get().submit(kind, app_id)
+class _LazyJobs:
+    """Create the job worker only when this process actually serves jobs.
+
+    Merely importing mcp_server (GUI menu, CLI status checks) must not spawn
+    worker threads.
+    """
+
+    def __init__(self):
+        self._manager = None
+        self._lock = threading.Lock()
+
+    def _get(self):
+        with self._lock:
+            if self._manager is None:
+                self._manager = JobManager()
+            return self._manager
+
+    def submit(self, kind, app_id, agent_answer_records=None):
+        return self._get().submit(kind, app_id, agent_answer_records)
 
     def submit_update(self):
         return self._get().submit_update()
 
-    def submit_system_update(self):
-        return self._get().submit_system_update()
+    def submit_system_update(self, agent_answer_records=None):
+        return self._get().submit_system_update(agent_answer_records)
 
     def submit_file(self, spec):
         return self._get().submit_file(spec)
@@ -1850,11 +3119,27 @@ def tool_schemas():
                 "own self-update (update_linuxtoys does that). Always get "
                 "the user's approval first: it changes the whole system, "
                 "needs root (the password dialog appears on the user's "
-                "screen) and may take a long time. Refused while LinuxToys "
+                "screen) and may take a long time. May return "
+                "requires_answers first (release-upgrade choices): ask the "
+                "user, then re-call with answers. Refused while LinuxToys "
                 "itself is more than two releases behind, like any LinuxToys "
                 "script run. Returns a job id — poll get_job."
             ),
-            "inputSchema": {"type": "object", "properties": {}},
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "answers": {
+                        "type": "object",
+                        "description": "User choices from an earlier requires_answers response: {question id: choice}.",
+                        "additionalProperties": {
+                            "anyOf": [
+                                {"type": "string"},
+                                {"type": "array", "items": {"type": "string"}},
+                            ],
+                        },
+                    },
+                },
+            },
         },
         {
             "name": "search_apps",
@@ -1905,11 +3190,32 @@ def tool_schemas():
             "description": (
                 "Install an app or feature by stable ID. Runs exactly like a user "
                 "install: when root is required the password dialog appears on the "
-                "user's screen. Returns a job id — poll get_job until success/error."
+                "user's screen. Curated scripts may ask questions first — when the "
+                "tool answers requires_answers, show each question to the user and "
+                "re-call it with answers={question id: choice}. Returns a job id "
+                "— poll get_job until success/error."
             ),
             "inputSchema": {
                 "type": "object",
-                "properties": {"app_id": {"type": "string", "description": "Stable catalog ID"}},
+                "properties": {
+                    "app_id": {"type": "string", "description": "Stable catalog ID"},
+                    "answers": {
+                        "type": "object",
+                        "description": (
+                            "User choices for the questions returned in an earlier "
+                            "requires_answers response: {question id: choice}. "
+                            "question values are 'yes'/'no'; radio expects one "
+                            "exact option; multi-select expects option string(s) "
+                            "(comma-separated) or an array. All ids must be covered."
+                        ),
+                        "additionalProperties": {
+                            "anyOf": [
+                                {"type": "string"},
+                                {"type": "array", "items": {"type": "string"}},
+                            ],
+                        },
+                    },
+                },
                 "required": ["app_id"],
             },
         },
@@ -2040,7 +3346,14 @@ def tool_schemas():
         },
         {
             "name": "get_job",
-            "description": "Status, exit code and log tail of one install/remove job.",
+            "description": (
+                "Status, exit code and log tail of one install/remove job. "
+                "Also carries the script dialogs that phoned home during the "
+                "run: warnings (attention-required messages to relay — not "
+                "failures), live_prompts (dialogs answered by the user on "
+                "screen) and error_detail (the fatal dialog text when the "
+                "run failed)."
+            ),
             "inputSchema": {
                 "type": "object",
                 "properties": {
@@ -2308,10 +3621,31 @@ def _tool_update_linuxtoys():
     }
 
 
-def _tool_update_system():
+def _tool_update_system(answers=None):
     """Queue a full system update by running the app's own sysup script."""
     try:
-        job = JOBS.submit_system_update()
+        entry = _system_update_entry()
+    except ValueError:
+        raise
+    except Exception as exc:
+        raise ValueError(f"Could not queue the system update: {exc}")
+    try:
+        questions, dynamic_count, branch_skipped = _agent_dialog_scan_requests(entry)
+    except Exception:
+        questions, dynamic_count, branch_skipped = [], 0, 0
+    if questions and answers is None:
+        return _requires_answers_payload(entry, questions, dynamic_count, branch_skipped)
+    if answers is not None and not questions:
+        raise ValueError(
+            "The system update carries no pre-answerable script questions; "
+            "omit answers and queue it directly."
+        )
+    try:
+        records = _agent_records(questions, answers) if answers is not None else None
+    except ValueError:
+        raise
+    try:
+        job = JOBS.submit_system_update(agent_answer_records=records)
     except ValueError:
         raise
     except Exception as exc:
@@ -2325,12 +3659,12 @@ def _tool_update_system():
             "Flatpaks, Snaps, Homebrew/Bun updates, orphan cleanup and "
             "leftover desktop-shortcut removal. It needs root, so the "
             "password dialog appears on the user's screen — wait for them to "
-            "type it, never ask for the password. Ubuntu/Fedora may also ask "
-            "about a release upgrade there; that choice belongs to the user. "
-            "The run can take a long while: poll get_job rather than "
-            "re-submitting, and report the reboot recommendation it prints "
-            "at the end. update_system updates the system; the app itself "
-            "is updated by update_linuxtoys."
+            "type it, never ask for the password. Ubuntu/Fedora release "
+            "upgrade choices come from the answer you validated; warnings "
+            "and prompts raised during the run arrive through get_job. Poll "
+            "get_job rather than re-submitting and report the reboot "
+            "recommendation it prints at the end. update_system updates the "
+            "system; the app itself is updated by update_linuxtoys."
         ),
     }
 
@@ -2381,9 +3715,70 @@ def _tool_get_screenshot(app_id, index=0):
     }
 
 
-def _tool_install(app_id):
+def _requires_answers_payload(entry, questions, dynamic_count, branch_skipped=0):
+    """Response shape when the agent must ask user questions before a run."""
+    payload = {
+        "requires_answers": True,
+        "app": _stable_id(entry),
+        "name": str(entry.get("name") or ""),
+        "questions": questions,
+        "dynamic_prompts": dynamic_count > 0,
+        "dynamic_prompts_note": (
+            "This script also contains variable-based prompts the service "
+            "cannot preset. If their branch runs, each one is shown live to "
+            "the user and logged as a prompt event in get_job."
+        ) if dynamic_count else "",
+        "branch_filter_note": (
+            "Only questions whose branch matches this host are listed "
+            "here; other, host-irrelevant call sites were skipped."
+        ) if branch_skipped else "",
+        "note": (
+            "No job was queued yet. Present each question to the user as a "
+            "standard agent question (options and suggested default are "
+            "listed), then call this tool again with "
+            "answers={question id: choice}; choices must match the offered "
+            "options exactly (question expects 'yes' or 'no', the "
+            "multi-select may also take an array of selections). Every "
+            "question id must be covered. Warnings and fatal dialogs of the "
+            "run arrive through get_job."
+        ),
+    }
+    if branch_skipped:
+        payload["skipped_branches"] = branch_skipped
+    return payload
+
+
+def _tool_install(app_id, answers=None):
+    entry = _resolve_entry(app_id)
+    if entry is None:
+        hint = _extension_parent_hint(app_id)
+        if hint:
+            raise ValueError(
+                f"No installable entry found for '{app_id}'. {hint}"
+            )
+        raise ValueError(f"No installable entry found for '{app_id}'. Use search_apps to list valid IDs.")
+    # Scripts of every installation shape — curated physical scripts,
+    # repository-list entries (pipeline + pre/post hooks) and AppStream
+    # overlays (`appstream_overrides` hooks) — ask questions through the
+    # dialog helpers: surface them first when the agent has not supplied
+    # choices yet.
     try:
-        job = JOBS.submit("install", app_id)
+        questions, dynamic_count, branch_skipped = _agent_dialog_scan_requests(entry)
+    except Exception:
+        questions, dynamic_count, branch_skipped = [], 0, 0
+    if questions and answers is None:
+        return _requires_answers_payload(entry, questions, dynamic_count, branch_skipped)
+    if answers is not None and not questions:
+        raise ValueError(
+            "This app's run carries no pre-answerable script questions; "
+            "omit answers and queue it directly."
+        )
+    try:
+        records = _agent_records(questions, answers) if answers is not None else None
+    except ValueError:
+        raise
+    try:
+        job = JOBS.submit("install", app_id, agent_answer_records=records)
     except ValueError as exc:
         hint = _extension_parent_hint(app_id)
         if hint:
@@ -2396,7 +3791,8 @@ def _tool_install(app_id):
         "note": (
             "The install runs like a normal user install. If it needs root, the "
             "password dialog appears on the user's screen — wait for them to "
-            "type it. Poll get_job for the outcome."
+            "type it. Poll get_job for the outcome; its warnings list relays "
+            "the script dialogs you must tell the user about."
         ),
     }
 
@@ -2635,7 +4031,28 @@ def _tool_get_job(job_id, tail_lines=40):
     job = JOBS.get(job_id)
     if job is None:
         raise ValueError(f"Unknown or expired job id '{job_id}'. Jobs reset when the service restarts.")
-    return job.public(tail=tail_lines)
+    payload = job.public(tail=tail_lines)
+    warnings, prompts, errors = _read_agent_events(job.agent_event_dir)
+    payload["warnings"] = warnings
+    payload["live_prompts"] = prompts
+    if errors:
+        payload["error_detail"] = errors[-1]
+    if warnings:
+        payload["warning_note"] = (
+            "These warnings were raised by the script's dialog layer and do "
+            "not (by themselves) mean the run failed: convey each of them to "
+            "the user as an attention-required message, even while `state` is "
+            "still running or the run later succeeds. A failure looks "
+            "different here: `state` is `error` and the fatal dialog text "
+            "arrives in error_detail."
+        )
+    if prompts:
+        payload["prompt_note"] = (
+            "These script dialogs could not be pre-asked, so they were shown "
+            "to the user live on screen (they may include questions the "
+            "agent cannot preset); relay what was asked and answered."
+        )
+    return payload
 
 
 def _tool_list_jobs(limit=20):
@@ -2820,7 +4237,7 @@ def dispatch_tool(name, arguments):
     if name == "update_linuxtoys":
         return _tool_update_linuxtoys()
     if name == "update_system":
-        return _tool_update_system()
+        return _tool_update_system(arguments.get("answers"))
     if name == "search_apps":
         return {"results": _search_catalog(arguments.get("query"), arguments.get("limit", 20))}
     if name == "get_app_details":
@@ -2828,7 +4245,7 @@ def dispatch_tool(name, arguments):
     if name == "get_screenshot":
         return _tool_get_screenshot(arguments.get("app_id"), arguments.get("index", 0))
     if name == "install_app":
-        return _tool_install(arguments.get("app_id"))
+        return _tool_install(arguments.get("app_id"), arguments.get("answers"))
     if name == "fetch_package_url":
         return _tool_fetch_package_url(arguments.get("url"))
     if name == "get_package_file_details":
@@ -2949,8 +4366,17 @@ def _initialize_result(requested_version):
             "get_app_details reports it as flatpak_residual_data, and "
             "remove_flatpak_data removes it as a tracked job once the user "
             "confirms — it always refuses apps that are still installed. "
-            "Installs that need root show the password dialog on the user's "
-            "screen; never ask the user to hand you credentials. Descriptions "
+            "Scripts can ask questions: install_app/update_system answer "
+            "requires_answers first; show every listed question (options "
+            "and default provided) to the user through your own question "
+            "UI, then re-call the tool with answers={id: choice}. During "
+            "any run get_job relays the script dialogs: warnings are "
+            "attention-required messages to convey promptly (they do not "
+            "mean failure), live_prompts are dialogs the user answered on "
+            "screen, and error_detail carries the fatal message of a "
+            "failed run. Installs that need root show the password dialog "
+            "on the user's screen; never ask the user to hand you "
+            "credentials. Descriptions "
             "and screenshots can be read and translated with translate_text / "
             "translate_app_description. The app updates itself: "
             "get_update_status, then update_linuxtoys with the user's "

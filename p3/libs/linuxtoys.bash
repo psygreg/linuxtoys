@@ -402,6 +402,61 @@ _msg_unescape() {
     printf '%b' "${1-}"
 }
 
+# --- MCP agent dialog passthrough ------------------------------------------
+# The MCP agent server sets these for script runs it drives, so dialogs can
+# never block a run nobody may be clicking and the agent relays warnings:
+#   LT_AGENT_MODE=1        the run is agent-managed (never set by GUI/CLI)
+#   LT_AGENT_EVENTS=path   dialog events append here: "kind\ttext" lines,
+#                          kind = warn | error | prompt; the service parses
+#                          them into get_job payload for the agent
+#   LT_AGENT_ANSWERS=path  optional "key\tanswer" line file prepared by the
+#                          service: one entry per pre-asked question, with
+#                          yes/no ("yes"/"no"), one radio option, or a list
+#                          selection whose lines are joined with \x1f
+# Event capture keys and answer lookup both pass through _lt_agent_clean, so
+# both ends see the same bytes. Outside the agent none of these are set and
+# every dialog behaves exactly as before.
+_lt_agent_active() {
+    [[ -n "$LT_AGENT_MODE" ]]
+}
+
+_lt_agent_clean() {
+    local _s="${1-}"
+    _s="${_s//$'\t'/ }"
+    _s="${_s//$'\r'/ }"
+    _s="${_s//$'\n'/ }"
+    _s="${_s//$'\x1f'/ }"
+    printf '%s' "$_s"
+}
+
+_lt_agent_event() {
+    [ -n "$LT_AGENT_EVENTS" ] || return 0
+    printf '%s\t%s\n' "$1" "$(_lt_agent_clean "$2")" >> "$LT_AGENT_EVENTS" 2>/dev/null || true
+}
+
+# Prepared-answer lookup for one prompt (fields: kind, then every prompt
+# field as the service recorded it). Echoes the answer when found; the
+# newest matching entry wins when a file repeats a key.
+_lt_agent_lookup() {
+    [ -n "$LT_AGENT_ANSWERS" ] && [ -f "$LT_AGENT_ANSWERS" ] || return 1
+    local key line found=0 answer part sep=$'\x1f'
+    key="$(_lt_agent_clean "$1")"
+    shift
+    for part in "$@"; do
+        key="${key}${sep}$(_lt_agent_clean "$part")"
+    done
+    while IFS= read -r line || [ -n "$line" ]; do
+        part="${line#"$key"}"
+        if [[ "$part" != "$line" && "${part:0:1}" == $'\t' ]]; then
+            answer="${part:1}"
+            found=1
+        fi
+    done < "$LT_AGENT_ANSWERS"
+    [ "$found" = 1 ] || return 1
+    printf '%s\n' "$answer"
+    return 0
+}
+
 # Unified message handler
 _msg() {
     local type="$1"
@@ -410,6 +465,14 @@ _msg() {
     local title="${3:-LinuxToys}"
 
     if [[ "$DISABLE_ZENITY" == "1" ]]; then
+        return 0
+    fi
+
+    if _lt_agent_active; then
+        # Informational dialogs are omitted in agent runs: the text stays in
+        # the job log for the agent instead. warn()/error()/die() intercept
+        # _msg in agent mode themselves, so only info reaches here.
+        echo "$text"
         return 0
     fi
 
@@ -440,6 +503,17 @@ question() {
     local width="${3:-360}"
     local height="${4:-300}"
     local _reply
+
+    if _lt_agent_active; then
+        # Preset answers replace the dialog: the service validated the user's
+        # choice ("yes"/"no") when queueing this run. Without one, log a
+        # prompt event and show the dialog live (pass-up for prompts the
+        # agent could not pre-ask); the agent tells the user about it.
+        if _reply=$(_lt_agent_lookup question "$title" "$text"); then
+            { [ "$_reply" = "yes" ] && return 0; } || return 1
+        fi
+        _lt_agent_event prompt "question: $title ($text)"
+    fi
 
     if _zenity_can_run; then
         _zenity_run --question --title "$title" --text "$text" \
@@ -491,6 +565,15 @@ _cli_select() {
 radioselect() {
     (( $# > 0 )) || return 1
 
+    if _lt_agent_active; then
+        local _pref
+        if _pref=$(_lt_agent_lookup radio "$@"); then
+            printf '%s\n' "$_pref"
+            return 0
+        fi
+        _lt_agent_event prompt "radio-select: $*"
+    fi
+
     if _zenity_can_run; then
         local -a rows=()
         local option state="TRUE"
@@ -508,6 +591,17 @@ radioselect() {
 
 listselect() {
     (( $# > 0 )) || return 1
+
+    if _lt_agent_active; then
+        local _pref _sep=$'\x1f' _nl=$'\n'
+        if _pref=$(_lt_agent_lookup list "$@"); then
+            # Selections reach the answers file joined on \x1f (line file
+            # format); re-emit one per line, exactly like zenity's output.
+            printf '%s\n' "${_pref//$_sep/$_nl}"
+            return 0
+        fi
+        _lt_agent_event prompt "multi-select: $*"
+    fi
 
     if _zenity_can_run; then
         _zenity_run --list --multiple --title="LinuxToys" \
@@ -527,6 +621,17 @@ info() {
     fi
 }
 warn() {
+    if _lt_agent_active; then
+        # Structured event first, then the echoed text the job log already
+        # captures. No popup: the agent relays the warning to the user, and
+        # an unattended dialog would block the run forever.
+        _lt_agent_event warn "$1"
+        if [ -n "$CHECKLIST_RUN" ]; then
+            echo -n "WARN: "
+        fi
+        _msg_unescape "$1"; echo
+        return 0
+    fi
     # Mirror info(): _msg prints the text itself before showing the dialog,
     # so echoing here too would duplicate the line (as zeny dialogs showed,
     # the message reached the terminal buffer twice for one call).
@@ -541,11 +646,26 @@ warn() {
     fi
 }
 error() {
+    if _lt_agent_active; then
+        # nonfatal semantics: the run continues, but the service records the
+        # message in the same warning channel as warn()/zenwrn().
+        _lt_agent_event warn "$1"
+        _msg_unescape "$1"; echo
+        return 1
+    fi
     _zenity_can_run || { _msg_unescape "$1"; echo; return 1; }
     _msg error "$1" "Error"
     return 1
 }
 die() {
+    if _lt_agent_active; then
+        # fatal(): the run ends here. The structured event carries the
+        # message the agent must report, and the echoed line lands in the
+        # job log; no popup blocks anything at this point.
+        _lt_agent_event error "$1"
+        _msg_unescape "$1"; echo
+        exit 1
+    fi
     _zenity_can_run || { _msg_unescape "$1"; echo; exit 1; }
     _msg error "$1" "Fatal Error"
     exit 1

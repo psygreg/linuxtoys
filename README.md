@@ -97,7 +97,7 @@ You may use the AppImage available at the latest release to use LinuxToys withou
 
 ## MCP Agent Server
 
-LinuxToys ships with an opt-in **MCP (Model Context Protocol) server** that lets AI agents use the app on your behalf, like a user would: browse and search the catalog, read app pages (descriptions, screenshots, donation and purchase links), install and remove apps, clean up the leftover data of uninstalled Flatpak apps, run the full system update or LinuxToys' own self-update, translate descriptions, and change settings such as automatic updates, automatic bug reports and language.
+LinuxToys ships with an opt-in **MCP (Model Context Protocol) server** that lets AI agents use the app on your behalf, like a user would: browse and search the catalog, read app pages (descriptions, screenshots, donation and purchase links), install and remove apps, clean up the leftover data of uninstalled Flatpak apps, run the full system update or LinuxToys' own self-update, handle script questions and warnings (the agent asks the user before the run and relays prompts, warnings and fatal dialogs), translate descriptions, and change settings such as automatic updates, automatic bug reports and language.
 
 - **Off by default.** Turn it on from the app menu (☰) with the *MCP Agent Server* toggle, or let an agent do it following the bundled `linuxtoys-mcp` agent skill.
 - **Runs as a systemd user service** (`linuxtoys-mcp.service`): installed with the app, enabled only when you toggle it, and started automatically with your session from then on. It never registers the GUI's application identity, so the app keeps launching normally through every other method.
