@@ -4,8 +4,9 @@
 Lets AI agents interact with LinuxToys the way a user would: browse and
 search the catalog, read app pages (descriptions, screenshots, donation and
 purchase links), install and remove apps, clean up the leftover user data of
-uninstalled Flatpak apps (the app page's "Remove data" action), change
-settings (automatic updates, automatic bug reports, language), translate
+uninstalled Flatpak apps (the app page's "Remove data" action), run the
+app's full system update (the menu card's "Update System"), change settings
+(automatic updates, automatic bug reports, language), translate
 descriptions, and read or export the Action Registry.
 
 Design:
@@ -247,6 +248,30 @@ def _version_gate_refusal():
         "installs (Flathub/Snap, AppImages, AUR, Homebrew, local files) are "
         "not affected."
     )
+
+
+def _system_update_entry():
+    """The app's own full-system-update script (sysup.sh), or raise ValueError.
+
+    The system update is deliberately not an app page: it is the same plain
+    script the GUI's "Update System" card and the automatic-update service
+    run, excluded from manifests and registry noise by design (see
+    manifest_helper._SYSTEM_UPDATE_NAMES). Agents reach it through the
+    dedicated update_system tool, which resolves it by its stable filename
+    id instead of through search/login surfaces.
+    """
+    entry = manifest_helper.find_script_by_id("sysup", _translations())
+    if entry is None:
+        raise ValueError(
+            "The system-update script (sysup) is not available in this "
+            "LinuxToys installation's catalog."
+        )
+    if not str(entry.get("path") or "").strip():
+        raise ValueError(
+            "The system-update script (sysup) has no runnable path in this "
+            "installation."
+        )
+    return entry
 
 
 def _iter_script_entries():
@@ -1044,6 +1069,40 @@ class JobManager:
         self._queue.put((job, None))
         return job
 
+    def submit_system_update(self):
+        """Queue the app's full system update (sysup.sh, "Update System").
+
+        Not the app's own self-update (submit_update); this is the same
+        plain script the GUI's main-window card and the automatic-update
+        service run: distro packages, Flatpaks, Snaps, Homebrew/Bun,
+        orphan and leftover-desktop-shortcut cleanup. It is a LinuxToys
+        script run, so the outdated-version gate governs it like any other
+        script job, and it is serialized against the LinuxToys self-update
+        so it never races the app being replaced. Needs root: the password
+        dialog appears on the user's screen.
+        """
+        with self._lock:
+            self_update_busy = any(
+                job.state in ("queued", "running") and job.kind == "update"
+                for job in self._jobs.values()
+            )
+        if self_update_busy:
+            raise ValueError(
+                "The system update cannot start while the LinuxToys "
+                "self-update is active. Poll get_job until it finishes, "
+                "restart the linuxtoys-mcp service, then retry."
+            )
+        entry = _system_update_entry()
+        if self._gate_applies("system_update", entry):
+            refusal = _version_gate_refusal()
+            if refusal:
+                raise ValueError(refusal)
+        job = Job("system_update", "sysup")
+        job.name = str(entry.get("name") or "System update")
+        self._register(job)
+        self._queue.put((job, entry))
+        return job
+
     def submit_file(self, spec):
         """Queue a package-file install (Package View parity).
 
@@ -1118,13 +1177,14 @@ class JobManager:
     def _gate_applies(kind, entry=None):
         """Whether the outdated-version gate governs this job kind.
 
-        Only LinuxToys script logic is gated: plain scripts, repo scripts and
-        registry removals (which run generated uninstall scripts). AppStream,
-        Snap/Flatpak, AppImage, AUR and Homebrew instalments and local package
-        files are package pipelines and stay ungated — the same split every
-        other runner surface uses.
+        Only LinuxToys script logic is gated: plain scripts, repo scripts,
+        registry removals (which run generated uninstall scripts) and the
+        full system update (also a plain script run). AppStream, Snap/Flatpak,
+        AppImage, AUR and Homebrew instalments and local package files are
+        package pipelines and stay ungated — the same split every other
+        runner surface uses.
         """
-        if kind == "remove":
+        if kind in ("remove", "system_update"):
             return True
         if kind != "install":
             return False
@@ -1168,7 +1228,7 @@ class JobManager:
 
             # The gate can tighten while a job waits in the queue: re-check it
             # right before the script starts, mirroring the GUI's run gate.
-            if job.kind in ("install", "remove") and self._gate_applies(job.kind, entry):
+            if job.kind in ("install", "remove", "system_update") and self._gate_applies(job.kind, entry):
                 refusal = _version_gate_refusal()
                 if refusal:
                     self._log(job, refusal)
@@ -1186,6 +1246,13 @@ class JobManager:
                     job, entry, remove=job.kind == "extension_remove"
                 )
             elif job.kind == "install":
+                code, reason = self._install(job, entry)
+            elif job.kind == "system_update":
+                # Same plain-script pipeline as installs (temp-copy filter,
+                # compatibility check, package-manager wait, transmap run).
+                # sysup.sh opts itself out of the registry and the antenna is
+                # recorded above like any GUI script run; the refusals of a
+                # failed run mirror what the GUI terminal shows.
                 code, reason = self._install(job, entry)
             elif job.kind == "flatpak_data_remove":
                 code, reason = self._remove_flatpak_data(job, entry)
@@ -1703,6 +1770,9 @@ class _LazyJobs:
     def submit_update(self):
         return self._get().submit_update()
 
+    def submit_system_update(self):
+        return self._get().submit_system_update()
+
     def submit_file(self, spec):
         return self._get().submit_file(spec)
 
@@ -1767,6 +1837,22 @@ def tool_schemas():
                 "approval first. A password dialog may appear on the user's "
                 "screen. Poll get_job; afterwards restart the linuxtoys-mcp "
                 "service so it runs the new version."
+            ),
+            "inputSchema": {"type": "object", "properties": {}},
+        },
+        {
+            "name": "update_system",
+            "description": (
+                "Run the app's full system update ('Update System') as a "
+                "tracked job: distribution packages, Flatpaks, Snaps, "
+                "Homebrew/Bun, orphan cleanup — the same run the GUI's menu "
+                "card and the automatic-update service use. Not the app's "
+                "own self-update (update_linuxtoys does that). Always get "
+                "the user's approval first: it changes the whole system, "
+                "needs root (the password dialog appears on the user's "
+                "screen) and may take a long time. Refused while LinuxToys "
+                "itself is more than two releases behind, like any LinuxToys "
+                "script run. Returns a job id — poll get_job."
             ),
             "inputSchema": {"type": "object", "properties": {}},
         },
@@ -2166,10 +2252,11 @@ def _tool_get_update_status():
     }
     if gate.get("blocked"):
         result["blocked_note"] = (
-            "install_app/remove_app of LinuxToys scripts are refused until "
-            "LinuxToys is updated; run update_linuxtoys (with the user's "
-            "approval) and retry afterwards. Package installs (Flathub/Snap, "
-            "AppImages, AUR, Homebrew, local files) keep working."
+            "LinuxToys script jobs (install_app, remove_app, update_system) "
+            "are refused until LinuxToys is updated; run update_linuxtoys "
+            "(with the user's approval) and retry afterwards. Package "
+            "installs (Flathub/Snap, AppImages, AUR, Homebrew, local files) "
+            "keep working."
         )
     return result
 
@@ -2217,6 +2304,33 @@ def _tool_update_linuxtoys():
             "grant — wait for them to type it, never ask for the password. "
             "Poll get_job; on success restart the service (systemctl --user "
             "restart linuxtoys-mcp.service) so it runs the new version."
+        ),
+    }
+
+
+def _tool_update_system():
+    """Queue a full system update by running the app's own sysup script."""
+    try:
+        job = JOBS.submit_system_update()
+    except ValueError:
+        raise
+    except Exception as exc:
+        raise ValueError(f"Could not queue the system update: {exc}")
+    return {
+        "job_id": job.id,
+        "name": job.name,
+        "state": job.state,
+        "note": (
+            "This runs the app's full system update: distribution packages, "
+            "Flatpaks, Snaps, Homebrew/Bun updates, orphan cleanup and "
+            "leftover desktop-shortcut removal. It needs root, so the "
+            "password dialog appears on the user's screen — wait for them to "
+            "type it, never ask for the password. Ubuntu/Fedora may also ask "
+            "about a release upgrade there; that choice belongs to the user. "
+            "The run can take a long while: poll get_job rather than "
+            "re-submitting, and report the reboot recommendation it prints "
+            "at the end. update_system updates the system; the app itself "
+            "is updated by update_linuxtoys."
         ),
     }
 
@@ -2705,6 +2819,8 @@ def dispatch_tool(name, arguments):
         return _tool_get_update_status()
     if name == "update_linuxtoys":
         return _tool_update_linuxtoys()
+    if name == "update_system":
+        return _tool_update_system()
     if name == "search_apps":
         return {"results": _search_catalog(arguments.get("query"), arguments.get("limit", 20))}
     if name == "get_app_details":
@@ -2839,9 +2955,13 @@ def _initialize_result(requested_version):
             "translate_app_description. The app updates itself: "
             "get_update_status, then update_linuxtoys with the user's "
             "approval (poll get_job and restart the linuxtoys-mcp service "
-            "afterwards). When install_app or remove_app is refused because "
-            "the installed version is too far behind the newest release, "
-            "update LinuxToys first — package installs keep working."
+            "afterwards). The full system update is separate: "
+            "update_system runs the app's own 'Update System' script "
+            "after user approval — refused while the app version is too "
+            "far behind, like any LinuxToys script run. When install_app "
+            "or remove_app is refused because the installed version is "
+            "too far behind the newest release, update LinuxToys first — "
+            "package installs keep working."
         ),
     }
 

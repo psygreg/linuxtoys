@@ -1,6 +1,6 @@
 ---
 name: linuxtoys-mcp
-description: Enable and drive the LinuxToys MCP server to manage Linux apps on the user's machine like a user would - search the catalog, read app pages (descriptions, screenshots, donation links), install and remove apps, install local package files (.deb, .rpm, .appimage and more, optionally downloaded from a URL), install and remove Flathub app extensions/addons, clean up the leftover data of uninstalled Flatpak apps, check for and apply LinuxToys app updates, change LinuxToys settings, and translate descriptions. Use when the user asks to install or remove software through LinuxToys, asks to install a package file or app extension, asks to clean up leftovers of an uninstalled Flatpak app, asks to update or check the version of LinuxToys itself, change its settings, or when configuring AI agent access to LinuxToys.
+description: Enable and drive the LinuxToys MCP server to manage Linux apps on the user's machine like a user would - search the catalog, read app pages (descriptions, screenshots, donation links), install and remove apps, install local package files (.deb, .rpm, .appimage and more, optionally downloaded from a URL), install and remove Flathub app extensions/addons, clean up the leftover data of uninstalled Flatpak apps, run the app's full system update, check for and apply LinuxToys app updates, change LinuxToys settings, and translate descriptions. Use when the user asks to install or remove software through LinuxToys, asks to install a package file or app extension, asks to clean up leftovers of an uninstalled Flatpak app, asks to run a full system update, asks to update or check the version of LinuxToys itself, change its settings, or when configuring AI agent access to LinuxToys.
 ---
 
 # LinuxToys MCP
@@ -86,6 +86,7 @@ After connecting, call `server_info` once to confirm the session works.
 | `server_info` | Version, endpoint, service state, busy jobs, cached script-gate state |
 | `get_update_status` | Fresh networked check of LinuxToys itself: running vs newest published release, releases behind, whether the app can update itself on this host, script-gate state |
 | `update_linuxtoys` | Run the official LinuxToys self-update as a tracked job (ask the user first — it changes the whole app); poll `get_job`, then restart the service |
+| `update_system` | Run the app's full system update ("Update System" card): distro packages, Flatpaks, Snaps, Homebrew/Bun, orphan and leftover-shortcut cleanup; ask the user first — needs root (password dialog on their screen), long run |
 | `list_categories` | Catalog categories |
 | `search_apps(query, limit?)` | Search every catalog (scripts, repos, Flathub/Snap, AppImages); returns stable `id`s |
 | `get_app_details(app_id)` | App page: description, screenshots URLs, homepage/donate/purchase links, version, install state (and leftover `~/.var/app` data state for Flatpak apps) |
@@ -163,6 +164,21 @@ systemctl --user restart linuxtoys-mcp.service
 The GUI also needs reopening. If `update_linuxtoys` fails with "cancelled",
 the user closed the password dialog — tell them and let them decide.
 
+**Run the full system update:** `update_system` runs the app's own
+"Update System" operation — the same sysup run the GUI's menu card and the
+automatic-update service use. It is separate from `update_linuxtoys`: the
+app keeps updating itself, the system updates within its current release
+(no release upgrade unless the user accepts a prompt). Ask the user first
+(it changes the whole system) → `update_system` → poll `get_job` patiently
+and report milestones from the log tail. The run needs root: the password
+dialog appears on the user's screen — wait for them to type it. Ubuntu and
+Fedora may also pop a release-upgrade question there; that answer belongs
+to the user. Skip when the user's answer is no. When the job finishes,
+report what it printed: orphan cleanup results and whether a reboot is
+recommended. If it ends `error`, read the log tail and report exactly where
+it stopped — a package transaction can need the user's hands — and do not
+blindly re-submit the same run.
+
 **Change settings:** `set_settings` with only the fields to change
 (`automatic_updates`, `automatic_bug_reports`, `language`). A running GUI
 applies a language change on its next launch.
@@ -195,12 +211,18 @@ for arbitrary strings).
   they agree. After a successful update, restart
   `linuxtoys-mcp.service` and reopen the GUI so everything runs the new
   version.
-- When `install_app` or `remove_app` is refused because the installed
-  LinuxToys is more than two releases behind the newest one, do not look for
-  workarounds: explain the refusal to the user, offer `update_linuxtoys`,
-  and retry after it succeeds. Package installs (Flathub/Snap apps,
-  AppImages, AUR, Homebrew, local package files) are not affected by this
-  gate.
+- The full system update (`update_system`) changes the whole system: get the
+  user's explicit OK first, tell them the password prompt (and a possible
+  release-upgrade question on Ubuntu/Fedora) appears on their screen, and
+  never start it while the LinuxToys self-update is active. It is refused,
+  like every LinuxToys script run, when the installed app is more than two
+  releases behind — offer `update_linuxtoys` first in that case.
+- When `install_app`, `remove_app` or `update_system` is refused because the
+  installed LinuxToys is more than two releases behind the newest one, do
+  not look for workarounds: explain the refusal to the user, offer
+  `update_linuxtoys`, and retry after it succeeds. Package installs
+  (Flathub/Snap apps, AppImages, AUR, Homebrew, local package files) are
+  not affected by this gate.
 - Never ask for or accept the user's password; privilege prompts appear on
   their screen on their own.
 - Installs are serialized: one job runs at a time. Poll `get_job` rather than
