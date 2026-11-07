@@ -37,14 +37,15 @@ _LAST_LOAD_CONTEXT = None
 #   "org.example.App": "native",
 #   "Example App": {"fedora": "native", "arch": "native", "all": "flatpak"},
 #
-# Valid source values: "flatpak" and "native".
+# Valid source values: "flatpak", "native" and "appimage".
 APPSTREAM_SOURCE_PREFERENCE = {
     "default": "flatpak",
     "apps": {
         "org.kde.ghostwriter": {"all": "native"},
         "com.helix_editor.Helix": {"all": "native"},
         "org.gimp.GIMP": {"all": "flatpak"},
-        "com.obsproject.Studio": {"all": "flatpak"}
+        "com.obsproject.Studio": {"all": "flatpak"},
+        "org.wireshark.Wireshark": {"all": "appimage"}
     },
 }
 
