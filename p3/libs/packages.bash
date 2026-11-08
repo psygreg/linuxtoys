@@ -942,7 +942,12 @@ pkg_install () {
         fi
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     elif is_suse; then
-        zypper_transaction sudo_ zypper in -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
+        # -y/--no-confirm does not cover the third-party EULA prompt (e.g. the
+        # openSUSE NVIDIA repo), whose default answer is 'no' and aborts the
+        # whole transaction. --auto-agree-with-licenses answers exactly that
+        # prompt and is documented as having no effect when no package asks
+        # for license agreement.
+        zypper_transaction sudo_ zypper in -y --auto-agree-with-licenses "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install"
     elif is_solus; then
         eopkg_transaction sudo_ eopkg it -y "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
@@ -1374,7 +1379,9 @@ pkg_fromfile () {
         dnf_transaction sudo_ dnf install -y "${@}" || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
     elif is_suse; then
-        zypper_transaction sudo_ zypper in -y "${@}" || fatal "Failed to install $*"
+        # Same EULA coverage as the pkg_install suse branch; local RPMs can
+        # carry license agreements of their own.
+        zypper_transaction sudo_ zypper in -y --auto-agree-with-licenses "${@}" || fatal "Failed to install $*"
         _append_transmap "pkg file $*"
     elif is_solus; then
         eopkg_transaction sudo_ eopkg it -y "${@}" || fatal "Failed to install $*"

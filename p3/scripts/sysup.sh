@@ -235,7 +235,7 @@ elif is_suse; then
     if (( ${#orphaned_packages[@]} )); then
         zypper_transaction sudo_ zypper -n rm --clean-deps "${orphaned_packages[@]}" || die "Failed to remove orphaned packages"
     fi
-    zypper_transaction sudo_ zypper dup --no-recommends -y || fatal "Failed to upgrade packages"
+    zypper_transaction sudo_ zypper dup --no-recommends --auto-agree-with-licenses -y || fatal "Failed to upgrade packages"
 elif is_solus; then
     if [ "$UPD_SERVICE" = "1" ]; then
         eopkg_transaction eopkg rmo -y || fatal "Failed to remove orphaned packages"
