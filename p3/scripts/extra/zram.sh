@@ -70,8 +70,10 @@ setup_zswap() {
         grubbyargs_upd "$ZSWAP_PARAMS"
     elif is_ostree; then
         kargs_upd "$ZSWAP_PARAMS"
+    elif kernelstubargs_upd "$ZSWAP_PARAMS"; then
+        : # applied through kernelstub (kernelstub-managed systemd-boot)
     else
-        # systemd-boot
+        # systemd-boot: consumed by kernel-install when regenerating entries
         prep_create /etc/kernel/cmdline.d/10-zswap.conf
         echo "$ZSWAP_PARAMS" | sudo tee /etc/kernel/cmdline.d/10-zswap.conf >/dev/null
         # GRUB

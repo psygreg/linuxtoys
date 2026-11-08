@@ -919,6 +919,20 @@ def _reverse_grubbyargs_update(karg):
     return f"sudo grubby --remove-args=\"{karg}\" --update-kernel ALL || true"
 
 
+def _reverse_kernelstubargs_update(karg):
+    """
+    Reverse a kernelstub kernel argument update by removing it.
+
+    Uses kernelstub --delete-options to remove the previously added argument;
+    the regeneration of the boot entries from its configuration happens in the
+    same run.
+    """
+    if not karg:
+        return None
+
+    return f"sudo kernelstub --delete-options \"{karg}\" || true"
+
+
 def _reverse_swapfile_creation(swapfile_type, swapfile_path):
     """
     Reverse swapfile creation by disabling and removing the swapfile.
@@ -1089,6 +1103,15 @@ def _reverse_operation(op_line, package_manager):
         # Initramfs updates need to be re-run to ensure consistency
         cmd = _reverse_initramfs_update()
         return [cmd] if cmd else []
+
+    elif op_type == "updated" and "kernelstub" in op_line:
+        # kernelstub kargs format: "updated kernelstub kargs kernel-argument"
+        # Check before the generic kargs branch: the line also contains "kargs".
+        parts = op_line.split(None, 3)  # ["updated", "kernelstub", "kargs", "kernel-argument"]
+        if len(parts) >= 4:
+            cmd = _reverse_kernelstubargs_update(parts[3])
+            return [cmd] if cmd else []
+        return []
 
     elif op_type == "updated" and "kargs" in op_line:
         # Check if this is grubby kargs or rpm-ostree kargs

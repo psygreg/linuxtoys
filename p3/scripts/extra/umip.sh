@@ -14,11 +14,13 @@ if is_fedora || is_rhel || is_suse ; then
     grubbyargs_upd "clearcpuid=umip"
 elif is_ostree; then
     kargs_upd "clearcpuid=umip"
+elif kernelstubargs_upd "clearcpuid=umip"; then
+    : # applied through kernelstub (kernelstub-managed systemd-boot)
 else
-    # for systemd-boot
+    # systemd-boot: consumed by kernel-install when regenerating entries
     prep_create /etc/kernel/cmdline.d/10-umip-patch.conf
     echo "clearcpuid=umip" | sudo tee /etc/kernel/cmdline.d/10-umip-patch.conf >/dev/null
-    # for GRUB
+    # GRUB
     prep_create /etc/default/grub.d/10-umip-patch.cfg
     sudo tee /etc/default/grub.d/10-umip-patch.cfg << EOF
 GRUB_CMDLINE_LINUX_DEFAULT="\${GRUB_CMDLINE_LINUX_DEFAULT} clearcpuid=umip"

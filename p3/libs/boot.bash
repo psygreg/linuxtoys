@@ -29,7 +29,18 @@ bootloader_upd() {
             fi
             _append_transmap "updated bootloader"
         elif is_ubuntu; then
-            sudo_ update-grub || fatal "Unable to update bootloader"
+            if command -v update-grub >/dev/null 2>&1; then
+                sudo_ update-grub || fatal "Unable to update bootloader"
+            elif command -v kernelstub >/dev/null 2>&1 && sudo_ bootctl is-installed >/dev/null 2>&1; then
+                # GRUB-less systemd-boot installs like Pop!_OS manage entries
+                # through kernelstub; a plain run regenerates them from its
+                # configuration.
+                sudo_ kernelstub || fatal "Unable to update bootloader"
+            elif command -v bootctl >/dev/null 2>&1 && sudo_ bootctl is-installed >/dev/null 2>&1; then
+                sudo_ bootctl update || fatal "Unable to update bootloader"
+            else
+                fatal "Unable to determine installed bootloader"
+            fi
             _append_transmap "updated bootloader"
         elif is_debian; then
             {
@@ -83,6 +94,19 @@ grubbyargs_upd () {
         sudo_ grubby --args="$arg" --update-kernel ALL || fatal "Failed to update grubby kargs"
         _append_transmap "updated grubby kargs $arg"
     done
+}
+
+# Kernel parameters on kernelstub-managed systemd-boot installs (Pop!_OS):
+# boot entries are generated from kernelstub's own configuration, which never
+# reads /etc/kernel/cmdline.d, so parameters must go through kernelstub itself.
+# Returns 1 on systems kernelstub does not manage (callers fall back to the
+# cmdline.d/GRUB drop-ins). Applied options are idempotent, so a rerun after a
+# partial failure does not duplicate them.
+kernelstubargs_upd() {
+    command -v kernelstub >/dev/null 2>&1 || return 1
+    sudo_ bootctl is-installed >/dev/null 2>&1 || return 1
+    sudo_ kernelstub -a "$*" || fatal "Failed to update kernel args"
+    _append_transmap "updated kernelstub kargs $*"
 }
 
 # Signing is useful when Secure Boot is enforced or the firmware is in
