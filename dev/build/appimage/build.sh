@@ -315,37 +315,26 @@ find "$APP_BIN" -type f -name '*.pyc' -delete 2>/dev/null || true
 [[ -f "$APP_BIN/app/liblinuxtoys_gui.so" ]] || { _msg error "Rust native GTK library missing from AppDir."; exit 1; }
 verify_bundled_python_tui_deps
 
-# LinuxToys launcher for the AppImage runtime. quick-sharun/uruntime provides
-# APPDIR, so no host /usr/share/linuxtoys path is involved.
+# LinuxToys entry point, mirroring the /usr/bin/linuxtoys launcher the distro
+# packages ship: cd into the app tree, pick CLI mode from the arguments and
+# hand over to linuxtoys.py. sharun remains the AppRun (quick-sharun generates
+# AppRun.sh itself), so this script must not carry AppImage runtime bootstrapping:
+# - GI_TYPELIB_PATH and the XDG data dirs of the bundled icons are provided by
+#   sharun at launch ($APPDIR/lib/girepository-* and $APPDIR/share when it
+#   exists),
+# - the static LINUXTOYS_* env vars are applied through $APPDIR/.env instead
+#   (see the block right before --make-appimage).
+# Per the quick-sharun maintainer in
+# https://github.com/psygreg/linuxtoys/issues/1358.
 cat > "$APP_BIN/linuxtoys" <<'LAUNCHER'
 #!/bin/sh
-set -eu
-
 cd "${APPDIR:?}/bin"
-export LINUXTOYS_PROCESS_NAME=linuxtoys
-export LINUXTOYS_APPIMAGE=1
-export LINUXTOYS_APPIMAGE_DIR="$APPDIR"
-export GI_TYPELIB_PATH="$APPDIR/lib/girepository-1.0${GI_TYPELIB_PATH:+:$GI_TYPELIB_PATH}"
 
-# Prefer the symbolic icon themes bundled in the AppDir so status icons resolve
-# even when the host ships neither xapp-symbolic-icons nor adwaita-icon-theme.
-# XDG_DATA_DIRS entries must be the *parent* of the icons/ directory.
-_bundled_icons=""
-for _d in "$APPDIR/share" "$APPDIR"; do
-    [ -d "$_d/icons" ] && _bundled_icons="${_bundled_icons:+$_bundled_icons:}$_d"
-done
-if [ -n "$_bundled_icons" ]; then
-    export XDG_DATA_DIRS="${_bundled_icons}${XDG_DATA_DIRS:+:$XDG_DATA_DIRS}"
-fi
-
+# CLI mode if arguments are provided; a linuxtoys:// URI always opens the GUI.
 if [ "$#" -eq 1 ]; then
     case "$1" in
-        linuxtoys://*)
-            unset EASY_CLI
-            ;;
-        *)
-            export EASY_CLI=1
-            ;;
+        linuxtoys://*) unset EASY_CLI ;;
+        *) export EASY_CLI=1 ;;
     esac
 elif [ "$#" -gt 0 ]; then
     export EASY_CLI=1
@@ -361,28 +350,19 @@ find "$APP_BIN/helpers" -type f -name '*.sh' -exec chmod +x {} \; 2>/dev/null ||
 chmod +x "$APP_BIN/linuxtoys.py"
 
 # Work on a build-local copy: never alter src/toys.linux.LinuxToys.desktop in the tree.
+# No Exec= patching is needed: quick-sharun derives the main binary by taking
+# the basename of the desktop file's Exec= value (stripping the /usr/bin/
+# prefix), and desktop-integration tools rewrite Exec= to point at the
+# integrated AppImage. Same recipe as the pkgforge-dev/LinuxToys-AppImage
+# build (see https://github.com/psygreg/linuxtoys/issues/1358).
 cp "$ROOT_DIR/src/toys.linux.LinuxToys.desktop" "$DESKTOP_FILE"
-
-# AppImage desktop integration launches the Exec target *inside* the AppImage.
-# The packaged desktop file used by DEB/RPM installs intentionally points at
-# /usr/bin/linuxtoys, so patch only this build-local copy. The replacement is
-# idempotent whether the source already says /usr/bin/linuxtoys or linuxtoys.
-if grep -q '^Exec=' "$DESKTOP_FILE"; then
-    sed -i -E 's|^Exec=(/usr/bin/)?linuxtoys([[:space:]].*)?$|Exec=linuxtoys\2|' "$DESKTOP_FILE"
-else
-    printf '\nExec=linuxtoys %%u\n' >> "$DESKTOP_FILE"
-fi
-
-# Fail rather than silently emit an AppImage whose desktop integration would
-# escape to a host-installed LinuxToys binary.
-if ! grep -qE '^Exec=linuxtoys([[:space:]]|$)' "$DESKTOP_FILE"; then
-    _msg error "Could not make the desktop Exec entry AppImage-safe:"
-    grep '^Exec=' "$DESKTOP_FILE" >&2 || true
-    exit 1
-fi
 
 export ARCH="$(uname -m)"
 export VERSION="$LT_VERSION"
+# Pin the artifact filename instead of renaming what quick-sharun produced:
+# appimagetool auto-detects the name from the desktop entry and tags it
+# "anylinux" otherwise. This value is what the release workflow collects.
+export OUTNAME="LinuxToys-$LT_VERSION-$ARCH.AppImage"
 export OUTPATH="$OUTPUT_PATH"
 export DESKTOP="$DESKTOP_FILE"
 export ICON="$ROOT_DIR/src/linuxtoys.svg"
@@ -390,17 +370,27 @@ install -Dm644 "$ROOT_DIR/src/toys.linux.LinuxToys.metainfo.xml" "$APPDIR/share/
 export DEPLOY_PYTHON=1
 export ANYLINUX_LIB=1
 
+# Ship zero GPU drivers: they are loaded from the host at runtime through
+# cross-libc-dlopen instead. LinuxToys is a GTK3 app that does not depend on a
+# recent OpenGL nor has a hard Vulkan dependency, so it meets the criteria
+# documented in quick-sharun for this mode. This keeps mesa's libgallium (and
+# with it the 163 MiB libLLVM.so.22 it drags in) out of the bundle; shipping
+# mesa that links to LLVM is also about to become a hard error in quick-sharun
+# (pkgforge-dev/Anylinux-AppImages#1033). Suggested by the quick-sharun
+# maintainer in https://github.com/psygreg/linuxtoys/issues/1358.
+export USE_HOST_DRIVERS_EXPERIMENTAL=1
+
 # LinuxToys now has its own background updater. Do not add pkgforge's generic
 # self-updater hook to the official build, otherwise users would get two
 # independent update mechanisms.
 unset ADD_HOOKS || true
 unset UPINFO || true
 
-# Deploy the launcher/runtime, the GTK3 zenity helper used by LinuxToys and
+# Deploy the entry point into bin/, the GTK3 zenity helper used by LinuxToys,
 # jq, required by scripts/sysup.sh (Fedora release upgrades) and the
-# OpenLinkHub peripheral helper for JSON parsing. This follows pkgforge's
-# proven LinuxToys recipe, but against our source-built AppDir rather than
-# the AUR package.
+# OpenLinkHub peripheral helper for JSON parsing. Sharun itself becomes the
+# AppRun (added by quick-sharun). This follows pkgforge's proven LinuxToys
+# recipe, but against our source-built AppDir rather than the AUR package.
 WEBP_PIXBUF_LOADER="$(
     find /usr/lib/gdk-pixbuf-2.0 -type f \
         -name 'libpixbufloader-webp.so' \
@@ -422,31 +412,36 @@ WEBP_PIXBUF_LOADER="$(
         "$WEBP_PIXBUF_LOADER"
 )
 
-# AppStream is loaded dynamically through GObject Introspection, so its typelib
-# is not discoverable from the ELF dependency graph followed by quick-sharun.
-# Arch's appstream package supplies both files; bundle the typelib explicitly.
-install -Dm644 \
-    /usr/lib/girepository-1.0/AppStream-1.0.typelib \
-    "$APPDIR/lib/girepository-1.0/AppStream-1.0.typelib"
-
+# The AppStream typelib needs no manual bundling: with DEPLOY_PYTHON and the
+# detected GTK, quick-sharun deploys libgirepository and then copies the whole
+# girepository typelib directory (AppStream included) automatically.
 replace_upstream_glycin
+
+# Runtime env vars for the AppImage, written into the AppDir .env file sharun
+# reads at launch ("env variables can be added to a .env file in the AppDir",
+# per the quick-sharun maintainer in
+# https://github.com/psygreg/linuxtoys/issues/1358). Unquoted values are
+# expanded by sharun, so $APPDIR resolves to the mounted AppDir at runtime.
+# These are AppImage-only context: the distro packages never set them.
+cat >> "$APPDIR/.env" <<'ENV'
+LINUXTOYS_PROCESS_NAME=linuxtoys
+LINUXTOYS_APPIMAGE=1
+LINUXTOYS_APPIMAGE_DIR=$APPDIR
+ENV
 
 (
     cd "$BUILD_DIR"
     "$QUICK_SHARUN" --make-appimage
 )
 
-# quick-sharun names the artifact itself. Normalize it to an official,
-# predictable filename while keeping any generated .zsync alongside it.
-mapfile -t APPIMAGES < <(find "$OUTPUT_PATH" -maxdepth 1 -type f -name '*.AppImage' -print)
-if [[ ${#APPIMAGES[@]} -ne 1 ]]; then
-    _msg error "Expected exactly one AppImage in $OUTPUT_PATH, found ${#APPIMAGES[@]}."
-    exit 1
-fi
-
+# OUTNAME pinned the artifact filename, exactly the path the release workflow
+# collects. Fail loudly against upstream naming changes instead of shipping a
+# misnamed artifact.
 FINAL_APPIMAGE="$OUTPUT_PATH/LinuxToys-$LT_VERSION-$ARCH.AppImage"
-if [[ "${APPIMAGES[0]}" != "$FINAL_APPIMAGE" ]]; then
-    mv -f "${APPIMAGES[0]}" "$FINAL_APPIMAGE"
+if [[ ! -f "$FINAL_APPIMAGE" ]]; then
+    _msg error "Expected AppImage was not produced: $FINAL_APPIMAGE"
+    ls -la "$OUTPUT_PATH" >&2 || true
+    exit 1
 fi
 chmod +x "$FINAL_APPIMAGE"
 
