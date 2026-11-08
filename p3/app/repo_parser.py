@@ -1339,6 +1339,29 @@ def materialize_repo_script(script_info):
     return materialized
 
 
+def materialize_queue_infos(infos):
+    """Prepare repository entries queued for execution.
+
+    Every caller of the terminal runner must hand it file-backed script paths;
+    ``repo://`` virtual paths crash materialization-free runners instead of
+    resolving. Entries with a real path (already materialized upstream, or
+    plain scripts) pass through unchanged. Returns ``(resolved, failed)`` so
+    callers can refuse the whole run when any entry cannot be materialized.
+    """
+    resolved = []
+    failed = []
+    for info in infos:
+        if str(info.get("path", "")).startswith("repo://"):
+            try:
+                resolved.append(materialize_repo_script(info))
+                continue
+            except (ValueError, NotImplementedError, OSError):
+                failed.append(str(info.get("name") or info.get("path") or "?"))
+                continue
+        resolved.append(info)
+    return resolved, failed
+
+
 def _validate_dependencies(entry):
     dependencies = entry.get("dependencies", [])
 

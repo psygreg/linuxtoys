@@ -2425,21 +2425,110 @@ _pkg_appimage_install_gearlever () {
     _pkg_appimage_gearlever_installed
 }
 
+# Gear Lever's CLI confirms each integration by printing the final destination
+# path ("<path> was integrated successfully"). Its integration folder is a user
+# setting ("AppImage location"), so it does not have to be LinuxToys' managed
+# ~/AppImages directory: the printed destinations are the ground truth for
+# what was just installed. Prints one absolute path per line.
+_pkg_appimage_gearlever_success_paths () {
+    awk '
+    / was integrated successfully$/ {
+        sub(/ was integrated successfully$/, "")
+        print
+    }'
+}
+
 _pkg_appimage_gearlever_previous () {
     local app_name="${LINUXTOYS_APP_NAME:-}"
     [[ -n "$app_name" ]] || return 0
 
+    local list_json list_path
+    # Prefer the machine-readable output of newer Gear Lever builds (4.4+).
+    # Desktop names carry a "(version)" or "(hash)" suffix from KEEP-update
+    # naming, so match on the bare app name.
+    list_path=""
+    list_json=$(flatpak run it.mijorus.gearlever --list-installed --json 2>/dev/null)
+    if [[ -n "$list_json" ]]; then
+        list_path=$(printf '%s' "$list_json" | python3 -c '
+import json, sys
+app_name = sys.argv[1]
+try:
+    data = json.load(sys.stdin)
+except ValueError:
+    sys.exit(0)
+for app in data.get("installed", []):
+    name = str(app.get("name") or "").split(" (", 1)[0].strip()
+    path = str(app.get("path") or "")
+    if name == app_name and path:
+        print(path)
+        break
+' "$app_name")
+    fi
+
+    # Fallback: the legacy space-padded table where the absolute AppImage path
+    # ends each record. Applies to builds without --json output.
+    if [[ -z "$list_path" ]]; then
+        flatpak run it.mijorus.gearlever --list-installed 2>/dev/null |
+            awk -v target="$app_name" '
+            {
+                # Gear Lever ends each record with the absolute AppImage path.
+                path = $NF
+
+                # Everything preceding " (" at the beginning is the app name.
+                line = $0
+                sub(/[[:space:]]+\([^)]*\).*/, "", line)
+                # Build-futureproofing: also cut the version/manager columns
+                # when the record carries no "(version)" name suffix.
+                sub(/[[:space:]]+\[.*/, "", line)
+
+                if (line == target) {
+                    print path
+                    exit
+                }
+            }'
+        return
+    fi
+
+    printf '%s\n' "$list_path"
+}
+
+# Resolve a previously integrated AppImage through Gear Lever's own listing.
+# Gear Lever's integration folder is a user setting, so names recorded by
+# LinuxToys may live anywhere inside $HOME and are not findable through
+# ~/AppImages. Prints the absolute path of the listing record whose basename
+# matches the given name, or nothing.
+_pkg_appimage_gearlever_lookup () {
+    local file_name="${1:?}"
+    file_name="${file_name##*/}"
+    [[ -n "$file_name" ]] || return 0
+
+    local list_json
+    list_json=$(flatpak run it.mijorus.gearlever --list-installed --json 2>/dev/null)
+    if [[ -n "$list_json" ]]; then
+        printf '%s' "$list_json" | python3 -c '
+import json, os, sys
+file_name = sys.argv[1].casefold()
+try:
+    data = json.load(sys.stdin)
+except ValueError:
+    sys.exit(0)
+for app in data.get("installed", []):
+    path = str(app.get("path") or "")
+    if os.path.basename(path).casefold() == file_name:
+        print(path)
+        break
+' "$file_name"
+        return
+    fi
+
+    # Legacy fallback: space-padded table with the absolute AppImage path as
+    # the last field (builds without --json output).
     flatpak run it.mijorus.gearlever --list-installed 2>/dev/null |
-        awk -v target="$app_name" '
+        awk -v wanted="$file_name" '
+        BEGIN { IGNORECASE = 1 }
         {
-            # Gear Lever ends each record with the absolute AppImage path.
             path = $NF
-
-            # Everything preceding " (" at the beginning is the app name.
-            line = $0
-            sub(/[[:space:]]+\([^)]*\).*/, "", line)
-
-            if (line == target) {
+            if (path == wanted) {
                 print path
                 exit
             }
@@ -2553,8 +2642,12 @@ pkg_appimage () {
         local gearlever_path
         gearlever_path=$(_pkg_appimage_gearlever_previous) || die "Failed to query Gear Lever AppImages"
         if [[ -n "$gearlever_path" ]]; then
+            # Gear Lever's integration folder is a user setting; any absolute
+            # path it lists is a real previous installation. The file is
+            # tracked by its name: pkg_appimage_rm resolves it through Gear
+            # Lever's listing when it is outside LinuxToys' ~/AppImages.
             case "$gearlever_path" in
-                "$HOME/AppImages/"*) previous_appimage="${gearlever_path##*/}" ;;
+                /*) previous_appimage="${gearlever_path##*/}" ;;
                 *) die "Gear Lever returned an unexpected AppImage path: $gearlever_path" ;;
             esac
         fi
@@ -2627,6 +2720,14 @@ EOF
     }
     prep_dir "$HOME/AppImages"
 
+    # Inputs Gear Lever did NOT carry to completion. Base the list on every
+    # input so non-systemd systems (which never enter the Gear Lever block)
+    # reach the LinuxToys fallback below unchanged; the systemd block resets
+    # and refills it per file.
+    local -a _fallback_files=("$@") _integrated_names=()
+    local appimage_name appimage_file _file_output _gearlever_dest _integrated_from_file _dedup_name
+    local output=""
+
     # Prefer Gear Lever on systemd systems. If it cannot inspect/integrate an
     # otherwise valid AppImage, fall back to LinuxToys' own simple integration.
     if is_systemd; then
@@ -2634,18 +2735,7 @@ EOF
             info "$gearlevermsg"
             _pkg_appimage_install_gearlever
         fi
-        # Snapshot ~/AppImages before integration so the exact new file can be
-        # identified after. Record each file's identity (inode, mtime, size)
-        # alongside its name, not just the name: Gear Lever names integrated
-        # files from the AppImage's internal metadata, so a re-install or a
-        # same-version update OVERWRITES an existing file of the same name
-        # instead of adding a new one. A plain name set-difference cannot see
-        # that overwrite and came up empty ("Could not determine integrated
-        # AppImage filename."), skipping the registry record; comparing
-        # identity too makes a replaced file show up as a change.
-        local _pre_list
-        _pre_list=$(mktemp) || return 1
-        find "$HOME/AppImages" -maxdepth 1 -type f -printf '%f\t%i\t%T@\t%s\n' 2>/dev/null | sort > "$_pre_list"
+        _fallback_files=()
         # Gear Lever's CLI dispatch (Cli.from_options) only recognizes an
         # option passed as the FIRST argument: `--yes --integrate FILE`
         # leaves argv[1]="--yes", matches no CLI option, and launches the GTK
@@ -2658,51 +2748,88 @@ EOF
         # ignored while scanning for the file argument, and a prompt crash
         # turns into a nonzero exit that reaches the fallback below instead
         # of dropping the file.
-        local appimage_name appimage_file _file_output _integrate_status=0
-        local output=""
         for appimage_file in "$@"; do
             _file_output=""
-            _file_output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate --yes "$appimage_file" 2>&1) \
-                || _integrate_status=$?
+            _file_output=$(echo "y" | flatpak run it.mijorus.gearlever --integrate --yes "$appimage_file" 2>&1) || true
             output+="$(printf '%s\n' "$_file_output" | _gearlever_filter_output)"$'\n'
-        done
-        if [[ $_integrate_status -eq 0 ]]; then
-            # Record every file whose identity is new or changed after these
-            # calls (added name, or a same-name overwrite). Observing the actual
-            # result beats guessing the name Gear Lever chose.
-            local -a _integrated_names=()
-            mapfile -t _integrated_names < <(
-                comm -13 "$_pre_list" \
-                    <(find "$HOME/AppImages" -maxdepth 1 -type f -printf '%f\t%i\t%T@\t%s\n' 2>/dev/null | sort) |
-                    cut -f1
-            )
-            rm -f "$_pre_list"
-            if [[ ${#_integrated_names[@]} -gt 0 ]]; then
-                # Surface Gear Lever's own confirmation lines (e.g. "<path>
-                # was integrated successfully") in the terminal viewer.
-                [[ -n "${output//[[:space:]]/}" ]] && echo "$output"
-                for appimage_name in "${_integrated_names[@]}"; do
-                    _append_transmap "appimage $appimage_name"
-                done
-                _pkg_appimage_release_record
-                return 0
-            fi
-            # Exit status alone cannot prove integration: Gear Lever's CLI
-            # fails open (unknown flags, refused input, prompt EOF) and can
-            # exit 0 without having touched ~/AppImages at all. Fall through
-            # to LinuxToys' own integration instead of recording a phantom
-            # install.
-        else
-            rm -f "$_pre_list"
-        fi
 
-        echo "$output"
-        warn "Gear Lever integration failed. Falling back to LinuxToys AppImage integration."
+            # Gear Lever refuses to integrate a byte-identical copy (it prints
+            # "This AppImage is already integrated" and leaves the input file
+            # where it is). The app is installed and menu-integrated already;
+            # record it for the registry instead of re-integrating a duplicate
+            # through the fallback below.
+            if [[ "$_file_output" == *"This AppImage is already integrated"* && -f "$appimage_file" ]]; then
+                _gearlever_dest=$(_pkg_appimage_gearlever_previous) || true
+                if [[ -n "$_gearlever_dest" ]]; then
+                    _append_transmap "appimage ${_gearlever_dest##*/}"
+                fi
+                continue
+            fi
+
+            # Gear Lever's CLI confirms each integration by printing the final
+            # destination path. Its integration folder is a user setting
+            # (gschema default ~/AppImages, but any configured folder — e.g.
+            # ~/Appimages — can receive the file, and the input is deleted
+            # afterwards), so LinuxToys cannot assume a folder: verify the
+            # printed destination exists and record its basename.
+            _integrated_from_file=0
+            while IFS= read -r _gearlever_dest; do
+                if [[ -n "$_gearlever_dest" && -f "$_gearlever_dest" ]]; then
+                    _integrated_names+=("${_gearlever_dest##*/}")
+                    _integrated_from_file=1
+                fi
+            done < <(_pkg_appimage_gearlever_success_paths <<< "$_file_output")
+            [[ $_integrated_from_file -eq 1 ]] && continue
+
+            if [[ ! -f "$appimage_file" ]]; then
+                # The input vanished without a confirmable destination. Gear
+                # Lever deletes originals only after a successful copy, so
+                # the integration most likely succeeded; a fallback is not
+                # possible either way because the source file is gone.
+                warn "Gear Lever integrated '${appimage_file##*/}' into its managed folder, but printed no verifiable destination (check it in that folder)."
+                continue
+            fi
+            # Exit status cannot prove integration: Gear Lever's CLI fails
+            # open (unknown flags, refused input, prompt EOF) and can exit 0
+            # without touching anything, so an input whose run left no
+            # verifiable destination stays queued for the fallback below.
+            _fallback_files+=("$appimage_file")
+        done
+        # Only entries Gear Lever PROVED installed get a registry record;
+        # naming beyond Gear Lever's printed destinations would be guessing.
+        if [[ ${#_integrated_names[@]} -gt 0 ]]; then
+            # Surface Gear Lever's own confirmation lines (e.g. "<path>
+            # was integrated successfully") in the terminal viewer.
+            [[ -n "${output//[[:space:]]/}" ]] && echo "$output"
+            while read -r _dedup_name; do
+                [[ -n "$_dedup_name" ]] && _append_transmap "appimage $_dedup_name"
+            done < <(printf '%s\n' "${_integrated_names[@]}" | sort -u)
+            _pkg_appimage_release_record
+        fi
+        if [[ ${#_fallback_files[@]} -gt 0 ]]; then
+            if [[ ${#_integrated_names[@]} -eq 0 ]]; then
+                # No input verified: recording entries now would leave the
+                # registry pointing at files that were never installed, so
+                # hand the still-present inputs to LinuxToys' own
+                # integration below instead.
+                echo "$output"
+                warn "Gear Lever integration failed. Falling back to LinuxToys AppImage integration."
+            fi
+        elif [[ ${#_integrated_names[@]} -eq 0 ]]; then
+            # Every input was reported as already integrated; its entries
+            # are recorded per file above and nothing can be duplicated.
+            echo "$output"
+            return 0
+        else
+            # Every input verified through Gear Lever: already echoed once.
+            return 0
+        fi
     fi
 
     # Minimal fallback/non-systemd integration. Repository metadata already
     # supplies the application name, description and icon, so desktop_shortcut
     # can create a consistent launcher without extracting AppImage metadata.
+    set -- "${_fallback_files[@]}"
     for appimage_file in "$@"; do
         [[ -f "$appimage_file" ]] || fatal "AppImage file not found: $appimage_file"
 
@@ -2756,8 +2883,12 @@ _pkg_appimage_cleanup_artifacts () {
             [[ -f "$desktop_file" ]] || continue
             exec_line=$(sed -n 's/^Exec=//p' "$desktop_file" | head -n1) || true
             # Substring match covers quoted and unquoted Exec forms alike;
-            # the absolute AppImage path is unique to this one target.
-            [[ "$exec_line" == *"$target_path"* ]] || continue
+            # the absolute AppImage path is unique to this one target. The
+            # exact-name suffix also covers Gear Lever's own integrations:
+            # its AppImage folder is a user setting (e.g. ~/Appimages), so
+            # the canonical ~/AppImages path does not always exist.
+            [[ "$exec_line" == *"$target_path"* ||
+               "$exec_line" == *"/$appimage_file"* ]] || continue
 
             # Fallback integration persists icons in a dedicated per-app
             # directory; dropping the desktop file orphans them.
@@ -2784,9 +2915,10 @@ pkg_appimage_rm () {
     fi
     [[ $# -gt 0 ]] || return 0
 
-    # Normalize each operand to a bare basename that exists in ~/AppImages.
-    # Accept a full path or ./name on input but strip it down; reject only
-    # genuinely unsafe values (option injection / traversal).
+    # Normalize each operand to a bare name and resolve it to the absolute
+    # path of the file that is actually installed. Accept a full path or
+    # ./name on input but strip it down; reject only genuinely unsafe values
+    # (option injection / traversal).
     # A recorded name with no matching file is NOT an error: the removal's
     # desired end state is already reached, so converge as a no-op. Failing
     # here would abort the generating uninstall script (set -eo pipefail)
@@ -2798,39 +2930,50 @@ pkg_appimage_rm () {
         appimage_file="${appimage_file##*/}"
         [[ "$appimage_file" != "." && "$appimage_file" != ".." && -n "$appimage_file" ]] || return 1
 
-        if [[ ! -e "$HOME/AppImages/$appimage_file" ]]; then
-            # Self-heal: the recorded name may be stale (Gear Lever renames by
-            # internal metadata). Match a single AppImage case-insensitively.
-            # `|| true` inside both pipelines: when ~/AppImages does not exist
-            # at all, find's nonzero status must not trip set -eo pipefail and
-            # abort the uninstall script mid-removal.
-            local _resolved
+        if [[ -e "$HOME/AppImages/$appimage_file" || -L "$HOME/AppImages/$appimage_file" ]]; then
+            _targets+=("$HOME/AppImages/$appimage_file")
+            _names+=("$appimage_file")
+            continue
+        fi
+        # Self-heal: the recorded name may be stale (Gear Lever renames by
+        # internal metadata). Match a single AppImage case-insensitively.
+        # `|| true` inside both pipelines: when ~/AppImages does not exist
+        # at all, find's nonzero status must not trip set -eo pipefail and
+        # abort the uninstall script mid-removal.
+        local _resolved
+        _resolved=$(
+            find "$HOME/AppImages" -maxdepth 1 -type f \
+                \( -iname '*.appimage' -o -iname '*.AppImage' \) \
+                -iname "$appimage_file" -printf '%f\n' 2>/dev/null | head -n1
+            true
+        )
+        if [[ -z "$_resolved" ]]; then
             _resolved=$(
                 find "$HOME/AppImages" -maxdepth 1 -type f \
-                    \( -iname '*.appimage' -o -iname '*.AppImage' \) \
-                    -iname "$appimage_file" -printf '%f\n' 2>/dev/null | head -n1
+                    -iname '*.appimage' -printf '%f\n' 2>/dev/null |
+                    awk -v target="${appimage_file%.*}" \
+                        'BEGIN{IGNORECASE=1} { base=$0; sub(/\.[^.]*$/, "", base); if (base == target) { print $0; exit } }' 2>/dev/null
                 true
             )
-            if [[ -z "$_resolved" ]]; then
-                _resolved=$(
-                    find "$HOME/AppImages" -maxdepth 1 -type f \
-                        -iname '*.appimage' -printf '%f\n' 2>/dev/null |
-                        awk -v target="${appimage_file%.*}" \
-                            'BEGIN{IGNORECASE=1} { base=$0; sub(/\.[^.]*$/, "", base); if (base == target) { print $0; exit } }' 2>/dev/null
-                    true
-                )
-            fi
-            if [[ -n "$_resolved" ]]; then
-                appimage_file="$_resolved"
-            else
-                # Gear Lever's CLI can only remove an existing file, so there
-                # is nothing left to uninstall; keep the name recorded below.
-                _absent+=("$appimage_file")
-                _names+=("$appimage_file")
-                continue
-            fi
         fi
-        _targets+=("$appimage_file")
+        if [[ -n "$_resolved" ]]; then
+            _targets+=("$HOME/AppImages/$_resolved")
+            _names+=("$appimage_file")
+            continue
+        fi
+        # Gear Lever's integration folder is a user setting (its default is
+        # ~/AppImages, but any configured folder — e.g. ~/Appimages — can
+        # hold the integrated file), so a record pointing outside LinuxToys'
+        # managed folder must be resolved through Gear Lever's own listing.
+        _resolved=$(_pkg_appimage_gearlever_lookup "$appimage_file")
+        if [[ -n "$_resolved" ]]; then
+            _targets+=("$_resolved")
+            _names+=("$appimage_file")
+            continue
+        fi
+        # Gear Lever's CLI can only remove an existing file, so there
+        # is nothing left to uninstall; keep the name recorded below.
+        _absent+=("$appimage_file")
         _names+=("$appimage_file")
     done
 
@@ -2858,21 +3001,20 @@ pkg_appimage_rm () {
     local _gearlever_status=0 _remove_output
     if is_systemd && [[ ${#_targets[@]} -gt 0 ]]; then
         (
-            cd "$HOME/AppImages" || exit 1
             for appimage_file in "${_targets[@]}"; do
                 # Capture and filter per file: Gear Lever's sandbox prints
                 # benign GLib warnings on every start, and its raw prompt or
                 # confirmation lines would otherwise leak unfiltered into the
                 # terminal viewer.
                 _remove_output=$(echo "y" | flatpak run it.mijorus.gearlever --remove --yes \
-                    "$HOME/AppImages/$appimage_file" 2>&1) || true
+                    "$appimage_file" 2>&1) || true
                 printf '%s\n' "$_remove_output" | _gearlever_filter_output
             done
         ) || _gearlever_status=$?
 
         local _still_present=0
         for appimage_file in "${_targets[@]}"; do
-            if [[ -e "$HOME/AppImages/$appimage_file" || -L "$HOME/AppImages/$appimage_file" ]]; then
+            if [[ -e "$appimage_file" || -L "$appimage_file" ]]; then
                 _still_present=1
             fi
         done
@@ -2880,15 +3022,15 @@ pkg_appimage_rm () {
         if [[ $_still_present -eq 1 ]]; then
             warn "Gear Lever could not remove the AppImage (not integrated or unavailable). Removing it directly."
             for appimage_file in "${_targets[@]}"; do
-                if [[ -e "$HOME/AppImages/$appimage_file" || -L "$HOME/AppImages/$appimage_file" ]]; then
-                    rm -f -- "$HOME/AppImages/$appimage_file" || return $?
+                if [[ -e "$appimage_file" || -L "$appimage_file" ]]; then
+                    rm -f -- "$appimage_file" || return $?
                 fi
             done
         fi
 
         # Nothing may remain: any survivor means the removal failed.
         for appimage_file in "${_targets[@]}"; do
-            if [[ -e "$HOME/AppImages/$appimage_file" || -L "$HOME/AppImages/$appimage_file" ]]; then
+            if [[ -e "$appimage_file" || -L "$appimage_file" ]]; then
                 return 1
             fi
         done
@@ -2896,8 +3038,8 @@ pkg_appimage_rm () {
         # Manual removal for non-systemd systems
         for appimage_file in "${_targets[@]}"; do
             # Remove from AppImages directory
-            if [[ -e "$HOME/AppImages/$appimage_file" || -L "$HOME/AppImages/$appimage_file" ]]; then
-                rm -f -- "$HOME/AppImages/$appimage_file" || return $?
+            if [[ -e "$appimage_file" || -L "$appimage_file" ]]; then
+                rm -f -- "$appimage_file" || return $?
             fi
         done
     fi

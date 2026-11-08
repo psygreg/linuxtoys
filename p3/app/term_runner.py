@@ -1,10 +1,11 @@
 import sys
 import os
+import shlex
 import subprocess
 import threading
 import traceback
 
-from . import dev_mode, package_guard, reboot_helper
+from . import dev_mode, package_guard, reboot_helper, repo_parser
 from .gtk_common import GLib, Gtk, Vte, resolve_symbolic_icon
 from .gtk_dialogs import run_message_dialog
 from .term_registry import ExecutionRegistry
@@ -161,6 +162,25 @@ class TerminalRunner:
         if current_script.get("reboot") == "yes":
             self.parent.reboot_required = True
 
+        # Queues built outside the open_term_view funnel may still carry a
+        # repository entry's repo:// virtual path; script_command() would
+        # resolve it against the process cwd and fail. Materialize here, in
+        # place, so queue and execution-history references stay consistent.
+        if str(script_path).startswith("repo://"):
+            try:
+                current_script.update(
+                    repo_parser.materialize_repo_script(current_script)
+                )
+                script_path = current_script["path"]
+            except (ValueError, NotImplementedError, OSError):
+                # Surface the failure on the terminal instead of crashing the
+                # runner; child-exit accounting treats it as a failed script.
+                self._spawn_error_notice(
+                    "Could not prepare repository entry: "
+                    f"{current_script.get('name') or current_script.get('path')}"
+                )
+                return
+
         self._self_update = current_script.get("self_update", False)
         self._cleanup_script_path = current_script.get("cleanup_path")
         self._current_action_is_removal = bool(self._cleanup_script_path)
@@ -212,6 +232,36 @@ class TerminalRunner:
 
         self.vbox_main.button_run.set_sensitive(False)
         self.vbox_main.button_remove.set_sensitive(False)
+
+    def _spawn_error_notice(self, message):
+        """Fail the current scripted run inside the terminal without a crash.
+
+        A queued entry that cannot execute at all (for example a repository
+        entry whose install script could not be materialized) must still go
+        through the standard child-exit accounting: the Run button, progress
+        bar and completion widgets are reset there. Raising instead would
+        leave the run marked active forever.
+        """
+        try:
+            self.terminal.spawn_async(
+                Vte.PtyFlags.DEFAULT,
+                None,
+                ["/bin/bash", "-c", "echo " + shlex.quote(message) + "; exit 1"],
+                [f"SCRIPT_DIR={os.environ.get('SCRIPT_DIR', '')}"],
+                GLib.SpawnFlags.DEFAULT,
+                None,
+                None,
+                -1,
+                None,
+                None,
+            )
+        except Exception:
+            # Spawn failures are start-up environment problems; keep the same
+            # outcome (a failed run) but surface the reason outside VTE.
+            traceback.print_exc()
+            self.parent._script_running = False
+            self._clear_runner_lock()
+            self.vbox_main.button_run.set_sensitive(True)
 
     def _begin_busy_wait(self, script_info):
         """Wait for a running native package operation before dispatching.

@@ -4,7 +4,7 @@ from .window_search import SearchCtl
 from .featured_scripts import FeaturedCtl
 from .local_scripts import LocalScriptsCtl
 from .updater.update_dialog import scripts_blocked_by_version
-from . import app_page, term_view, skills_view, get_icon_path, header, gui_rs
+from . import app_page, gtk_dialogs, repo_parser, skills_view, get_icon_path, header, gui_rs
 
 class NavCtl:
     def _set_header_actions_sensitive(self, sensitive):
@@ -546,6 +546,29 @@ class NavCtl:
         # Check if any script has auto_run flag set in its info dict
         if not auto_run and infos:
             auto_run = any(script.get("auto_run", False) for script in infos)
+
+        # Repository entries arrive from several activation paths with their
+        # ``repo://`` virtual path; materialize every queued entry so the
+        # terminal runner only ever sees file-backed script paths.
+        resolved_infos, failed_names = repo_parser.materialize_queue_infos(infos)
+        if failed_names:
+            gtk_dialogs.run_message_dialog(
+                self,
+                title=self.translations.get(
+                    "repo_prepare_error_title", "Could Not Prepare Repository Entry"
+                ),
+                secondary_text=self.translations.get(
+                    "repo_prepare_error_message",
+                    "The following repository features could not be prepared "
+                    "for installation:\n\n{names}",
+                ).format(names="\n".join(f"• {name}" for name in failed_names)),
+                message_type=Gtk.MessageType.ERROR,
+                buttons=[("OK", Gtk.ButtonsType.OK)],
+                default_response=Gtk.ResponseType.OK,
+            )
+            return
+
+        infos = resolved_infos
 
         # Refuse to open a run entirely when LinuxToys is too far behind the
         # newest release: script runs (including auto-runs launched from menu
