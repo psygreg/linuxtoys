@@ -196,7 +196,7 @@ dv_rhel () {
 
         # dependencies -- compile python2
         sudo dnf groupinstall -y "Development Tools"
-        pkg_install gcc openssl-devel bzip2-devel libffi-devel wget tar curl
+        pkg_install fuse gcc openssl-devel bzip2-devel libffi-devel wget tar curl
         prep_tmp_noram
         wget "https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz" || fatal "unable to get dependency python2"
         tar xzf Python-2.7.18.tgz && cd Python-2.7.18
