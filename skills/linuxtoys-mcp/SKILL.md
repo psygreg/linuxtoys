@@ -100,7 +100,7 @@ After connecting, call `server_info` once to confirm the session works.
 | `remove_app_extension(app_id, extension)` | Remove one installed extension of an app; returns a `job_id` |
 | `remove_app(app_id)` | Queue a removal; returns a `job_id` |
 | `remove_flatpak_data(app_id)` | Remove the leftover user data (`~/.var/app/<AppID>`) of a Flatpak app that is no longer installed — the GUI's "Remove data" button on that app's page; refuses apps still installed; returns a `job_id` |
-| `get_job(job_id, tail_lines?)` | Job state (`queued`/`running`/`success`/`error`), exit code, log tail; plus the script's dialog events: `warnings` (attention to relay), `live_prompts` (dialogs the user answered live), `error_detail` (fatal message on failure) |
+| `get_job(job_id, tail_lines?, wait_seconds?)` | Job state (`queued`/`running`/`success`/`error`), exit code, log tail (filled in while the script runs); `wait_seconds` (max 20) blocks until the job finishes, so you monitor a run by calling it again while the state is `queued` or `running`; plus the script's dialog events: `warnings` (attention to relay), `live_prompts` (dialogs the user answered live), `error_detail` (fatal message on failure) |
 | `list_jobs()` | Recent jobs |
 | `get_settings()` / `set_settings(...)` | Automatic updates, automatic bug reports, language |
 | `translate_text(text, target_language?)` | Same translation method as the app page; defaults to the user's language |
@@ -113,7 +113,7 @@ After connecting, call `server_info` once to confirm the session works.
 
 **Install something:** `search_apps` → show the best matches to the user →
 `get_app_details` on the chosen one (tell the user what it does) → confirm →
-`install_app` → poll `get_job` every few seconds until `success`/`error` →
+`install_app` → `get_job` with `wait_seconds: 20` until `success`/`error` →
 report the outcome (and the log tail on error). Installs that need root pop
 the password dialog on the user's screen; tell the user to expect it and wait
 for them to finish — do not ask them to paste the password to you.
@@ -204,9 +204,10 @@ the user closed the password dialog — tell them and let them decide.
 automatic-update service use. It is separate from `update_linuxtoys`: the
 app keeps updating itself, the system updates within its current release
 (no release upgrade unless the user accepts a prompt). Ask the user first
-(it changes the whole system) → `update_system` → poll `get_job` patiently
-and report milestones from the log tail. The run needs root: the password
-dialog appears on the user's screen — wait for them to type it. Ubuntu and
+(it changes the whole system) → `update_system` → `get_job` with
+`wait_seconds: 20` until it finishes, reporting milestones from the log
+tail. The run needs root: the password dialog appears on the user's screen
+— wait for them to type it. Ubuntu and
 Fedora may also pop a release-upgrade question there; that answer belongs
 to the user. Skip when the user's answer is no. When the job finishes,
 report what it printed: orphan cleanup results and whether a reboot is

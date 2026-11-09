@@ -127,6 +127,7 @@ MAX_BODY_BYTES = 1024 * 1024
 MAX_SCREENSHOT_BYTES = 8 * 1024 * 1024
 SESSION_IDLE_TTL = 24 * 60 * 60
 JOB_LOG_LINES = 400
+JOB_WAIT_MAX_SECONDS = 20
 
 def shlex_quote(value):
     return shlex.quote(str(value))
@@ -2195,7 +2196,7 @@ def _flatpak_data_blueprint(entry):
 class Job:
     __slots__ = (
         "id", "kind", "app_id", "name", "state", "exit_code", "reason",
-        "log", "created", "started", "finished",
+        "log", "created", "started", "finished", "done",
         "agent_answer_records", "agent_event_dir",
     )
 
@@ -2211,6 +2212,9 @@ class Job:
         self.created = time.time()
         self.started = 0.0
         self.finished = 0.0
+        # Set once the job has finished (success or error), so get_job can
+        # wait for the outcome instead of making the caller poll.
+        self.done = threading.Event()
         # Agent dialog machinery (script jobs only): prepared answers from
         # a pre-ask flow and the per-job directory with its event file.
         self.agent_answer_records = None
@@ -2505,6 +2509,7 @@ class JobManager:
             job.state = "error"
         finally:
             job.finished = time.time()
+            job.done.set()
             if job.log:
                 appstream_logs.append_appstream_log(
                     f"mcp-{job.kind}-{job.name or job.app_id}",
@@ -2928,9 +2933,13 @@ class JobManager:
                 pass
 
     def _run_command(self, job, command, env):
-        """Run one script subprocess, capturing output into the job log."""
+        """Run one script subprocess, streaming its output into the job log.
+
+        Each line lands in the log as the script prints it, so get_job shows
+        the progress of a long run instead of an empty log until it exits.
+        """
         try:
-            result = subprocess.run(
+            process = subprocess.Popen(
                 command,
                 stdin=subprocess.DEVNULL,
                 stdout=subprocess.PIPE,
@@ -2938,15 +2947,17 @@ class JobManager:
                 universal_newlines=True,
                 errors="replace",
                 env=env or None,
-                check=False,
             )
-        except KeyboardInterrupt:
-            return 130, ""
         except Exception as exc:
             self._log(job, f"Failed to launch the script: {exc}")
             return 1, f"Failed to launch the script: {exc}"
-        self._log(job, result.stdout)
-        return result.returncode, result.stdout
+        output = []
+        with process:
+            for line in process.stdout:
+                output.append(line)
+                self._log(job, line)
+            code = process.wait()
+        return code, "".join(output)
 
     @staticmethod
     def _failure_reason(output):
@@ -2998,23 +3009,6 @@ class JobManager:
         except OSError:
             pass
 
-
-class _LazyJobs:
-    """Create the job worker only when this process actually serves jobs.
-
-    Merely importing mcp_server (GUI menu, CLI status checks) must not spawn
-    worker threads.
-    """
-
-    def __init__(self):
-        self._manager = None
-        self._lock = threading.Lock()
-
-    def _get(self):
-        with self._lock:
-            if self._manager is None:
-                self._manager = JobManager()
-            return self._manager
 
 class _LazyJobs:
     """Create the job worker only when this process actually serves jobs.
@@ -3347,18 +3341,30 @@ def tool_schemas():
         {
             "name": "get_job",
             "description": (
-                "Status, exit code and log tail of one install/remove job. "
-                "Also carries the script dialogs that phoned home during the "
-                "run: warnings (attention-required messages to relay — not "
-                "failures), live_prompts (dialogs answered by the user on "
-                "screen) and error_detail (the fatal dialog text when the "
-                "run failed)."
+                "Status, exit code and log tail of one install/remove/system "
+                "update job. The log tail fills in while the script runs. "
+                "wait_seconds blocks until the job finishes (or that many "
+                "seconds pass), so monitoring a run needs no timer: call it "
+                "again while state is queued or running. Also carries the "
+                "script dialogs that phoned home during the run: warnings "
+                "(attention-required messages to relay — not failures), "
+                "live_prompts (dialogs answered by the user on screen) and "
+                "error_detail (the fatal dialog text when the run failed)."
             ),
             "inputSchema": {
                 "type": "object",
                 "properties": {
                     "job_id": {"type": "string"},
                     "tail_lines": {"type": "integer", "description": "Log tail length (default 40)"},
+                    "wait_seconds": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": JOB_WAIT_MAX_SECONDS,
+                        "description": (
+                            "Block up to this many seconds for the job to "
+                            "finish (default 0 answers at once)."
+                        ),
+                    },
                 },
                 "required": ["job_id"],
             },
@@ -4027,10 +4033,21 @@ def _tool_remove_flatpak_data(app_id):
     }
 
 
-def _tool_get_job(job_id, tail_lines=40):
+def _job_wait_seconds(value):
+    try:
+        seconds = float(value or 0)
+    except (TypeError, ValueError):
+        return 0.0
+    return min(max(seconds, 0.0), JOB_WAIT_MAX_SECONDS)
+
+
+def _tool_get_job(job_id, tail_lines=40, wait_seconds=0):
     job = JOBS.get(job_id)
     if job is None:
         raise ValueError(f"Unknown or expired job id '{job_id}'. Jobs reset when the service restarts.")
+    wait = _job_wait_seconds(wait_seconds)
+    if wait:
+        job.done.wait(wait)
     payload = job.public(tail=tail_lines)
     warnings, prompts, errors = _read_agent_events(job.agent_event_dir)
     payload["warnings"] = warnings
@@ -4267,7 +4284,11 @@ def dispatch_tool(name, arguments):
     if name == "remove_flatpak_data":
         return _tool_remove_flatpak_data(arguments.get("app_id"))
     if name == "get_job":
-        return _tool_get_job(arguments.get("job_id"), arguments.get("tail_lines", 40))
+        return _tool_get_job(
+            arguments.get("job_id"),
+            arguments.get("tail_lines", 40),
+            arguments.get("wait_seconds", 0),
+        )
     if name == "list_jobs":
         return _tool_list_jobs(arguments.get("limit", 20))
     if name == "get_settings":
