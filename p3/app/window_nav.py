@@ -4,7 +4,7 @@ from .window_search import SearchCtl
 from .featured_scripts import FeaturedCtl
 from .local_scripts import LocalScriptsCtl
 from .updater.update_dialog import scripts_blocked_by_version
-from . import app_page, gtk_dialogs, repo_parser, skills_view, get_icon_path, header, gui_rs
+from . import app_page, gtk_dialogs, repo_parser, term_view, skills_view, get_icon_path, header, gui_rs
 
 class NavCtl:
     def _set_header_actions_sensitive(self, sensitive):
