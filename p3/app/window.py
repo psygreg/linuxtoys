@@ -31,6 +31,7 @@ from . import (
     needed_helper,
     parser,
     reboot_helper,
+    registry_heal,
     revealer,
     revert_helper,
     search_helper,
@@ -169,6 +170,7 @@ class AppWindow(
         self._update_state = "checking" if self.automatic_updates_enabled else "disabled"
         self._appstream_state = "hidden"
         self._apt_appstream_refresh_enqueued = False
+        self._registry_self_heal_started = False
         # Only the bootstrap case blocks the main menu. Once both artifacts exist,
         # future AppStream refreshes remain fully background operations.
         self._appstream_pickle_missing_at_startup = (
@@ -1007,6 +1009,9 @@ class AppWindow(
                         "the normal parser path will rebuild it."
                     )
 
+            if not result.get("starter"):
+                GLib.idle_add(self._start_registry_self_heal)
+
             if initial_build:
                 GLib.idle_add(
                     self._finish_initial_appstream_build,
@@ -1733,6 +1738,50 @@ class AppWindow(
                 logger.info("Pruned %d expired removal registry entries", removed)
         except Exception as exc:
             logger.warning("Registry prune failed: %s", exc)
+
+    def _start_registry_self_heal(self):
+        """Once per session, look for registry transactions LinuxToys no longer offers.
+
+        Starts only after a complete AppStream catalog is published. The check
+        treats a missing or starter catalog as unknown, never as discontinued.
+        """
+        if self._registry_self_heal_started:
+            return False
+        self._registry_self_heal_started = True
+
+        def worker():
+            try:
+                candidates = registry_heal.find_discontinued_transactions()
+            except Exception as exc:
+                logger.warning("Registry self-heal check failed: %s", exc)
+                candidates = []
+            GLib.idle_add(self._queue_registry_self_heal, candidates)
+
+        threading.Thread(
+            target=worker, daemon=True, name="linuxtoys-registry-heal"
+        ).start()
+        return False
+
+    def _queue_registry_self_heal(self, candidates):
+        """Queue background removal of discontinued transactions (GTK thread)."""
+        if not candidates or version_gate.check().get("blocked"):
+            return False
+        for candidate in candidates:
+            name = candidate["name"]
+            if installed_packages.removal_blocked({"name": name, "registry_name": name}):
+                logger.info("Keeping %s: installed features still depend on it", name)
+                continue
+            remove_entry = revert_helper.build_uninstall_script_entry(
+                {"name": name, "registry_name": name}, self.translations
+            )
+            if remove_entry is None:
+                logger.info("Keeping %s: no reversible operations are recorded", name)
+                continue
+            logger.info("Removing %s: repository app %s is no longer offered", name, candidate["app_id"])
+            self._appstream_runner.enqueue_registry_removal(
+                {"name": name, "registry_name": name}, remove_entry
+            )
+        return False
 
     def _refresh_installed_features_view(self):
         # Hidden Installed Features views can be expensive to rebuild and GTK will

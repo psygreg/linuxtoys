@@ -240,26 +240,59 @@ def search_registry_entries(registry_data, query):
 
     return results
 
+
+_GIT_RELEASE_APP_ID_RE = re.compile(r"^[A-Z_][A-Z0-9_]*$")
+_GIT_RELEASE_REPO_RE = re.compile(r"^https://(?:github\.com|codeberg\.org)/[^/]+/[^/]+/?$")
+
+
+def _parse_git_release_operation(operation):
+    """Return (app_id, version, repo) for a well-formed git-release operation, else None."""
+    if not operation.startswith("git-release "):
+        return None
+    parts = operation.split(None, 3)
+    if len(parts) != 4:
+        return None
+    _kind, app_id, version, repo = parts
+    if not _GIT_RELEASE_APP_ID_RE.fullmatch(app_id) or not version or not _GIT_RELEASE_REPO_RE.fullmatch(repo):
+        return None
+    return app_id, version, repo
+
+
+def get_repo_release_transactions(registry_data=None):
+    """Return {script_name: repo_app_id} for transactions that installed a repository release.
+
+    A name recording more than one repository app is ambiguous and is left out.
+    """
+    if registry_data is None:
+        registry_data = parse_registry_file()
+
+    transactions = {}
+    for script_name, executions in registry_data.items():
+        app_ids = set()
+        for _timestamp, operations in executions:
+            for operation in operations:
+                parsed = _parse_git_release_operation(operation)
+                if parsed is not None:
+                    app_ids.add(parsed[0])
+        if len(app_ids) == 1:
+            transactions[script_name] = app_ids.pop()
+    return transactions
+
+
 def get_git_release_apps(registry_data=None):
     """Return latest registered pkg_fromrelease metadata keyed by repo_app_id."""
     if registry_data is None:
         registry_data = parse_registry_file()
 
     apps = {}
-    app_id_re = re.compile(r"^[A-Z_][A-Z0-9_]*$")
-    repo_re = re.compile(r"^https://(?:github\.com|codeberg\.org)/[^/]+/[^/]+/?$")
 
     for _script_name, executions in registry_data.items():
         for timestamp, operations in executions:
             for operation in operations:
-                if not operation.startswith("git-release "):
+                parsed = _parse_git_release_operation(operation)
+                if parsed is None:
                     continue
-                parts = operation.split(None, 3)
-                if len(parts) != 4:
-                    continue
-                _kind, app_id, version, repo = parts
-                if not app_id_re.fullmatch(app_id) or not version or not repo_re.fullmatch(repo):
-                    continue
+                app_id, version, repo = parsed
                 previous = apps.get(app_id)
                 if previous is None or str(timestamp or "") >= previous["timestamp"]:
                     apps[app_id] = {

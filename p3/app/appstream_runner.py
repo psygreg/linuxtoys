@@ -407,6 +407,42 @@ class AppStreamRunner:
         self._notify_changed()
         return record["id"]
 
+    def enqueue_registry_removal(self, info, remove_info):
+        """Queue an unattended removal of a feature LinuxToys no longer offers.
+
+        Unlike enqueue_removal(), the record is always new: session history is
+        never reused, and a removal already queued or running for the same
+        registry name is not duplicated.
+        """
+        self._ensure_started()
+        name = str(info.get("registry_name") or info.get("name") or "").strip()
+        with self._condition:
+            if any(
+                item.get("action") == "remove"
+                and item["status"] in ("queued", "running")
+                and str(item["info"].get("registry_name") or "").strip() == name
+                for item in self._records
+            ):
+                return None
+            record = {
+                "id": uuid.uuid4().hex,
+                "info": dict(info),
+                "name": info.get("name", name),
+                "icon": info.get("icon", "application-x-executable"),
+                "status": "queued",
+                "exit_code": None,
+                "failure_reason": "",
+                "action": "remove",
+                "remove_info": dict(remove_info),
+                "automatic": True,
+            }
+            self._records.append(record)
+            self._jobs.append(record)
+            self._condition.notify()
+
+        self._notify_changed()
+        return record["id"]
+
     def enqueue_snap_revert(self, app_info):
         """Queue a Snap revision revert through the persistent PTY."""
         snap_name = str(
@@ -760,10 +796,13 @@ class AppStreamRunner:
                     callback = getattr(self.parent, "_show_aur_operation_failure", None)
                     if callback is not None:
                         GLib.idle_add(callback, record.get("name", "AUR package"), failure_output)
-                elif exit_code not in (0, 100, self._NATIVE_TRANSACTION_BUSY_EXIT) and not aur_job:
+                elif (exit_code not in (0, 100, self._NATIVE_TRANSACTION_BUSY_EXIT)
+                        and not aur_job and not record.get("automatic")):
                     # Background jobs have no terminal to read after the fact,
                     # so surface the recorded reason (and its transcript)
                     # instead of leaving the user with "Installation failed".
+                    # Unattended cleanups stay silent: their queue row and
+                    # transcript report the failure.
                     callback = getattr(self.parent, "_show_installation_failure", None)
                     if callback is not None:
                         GLib.idle_add(
@@ -1752,7 +1791,9 @@ class AppStreamRunner:
         try:
             self._process.stdin.write(dispatch.encode("utf-8"))
             self._process.stdin.flush()
-            exit_code = self._read_until_marker(marker)
+            exit_code, output = self._read_until_marker(marker, capture_output=True)
+            if output:
+                self._append_transcript(script_info.get("name") or "Removal", output + "\n")
 
             # The generated uninstall script owns the registry mutation. Its
             # transmap is only execution scratch and must never become a new

@@ -312,7 +312,9 @@ if [[ "$UPD_SERVICE" != "1" ]] && git_app_versions; then
 
         if [[ "$latest_version" != "$installed_version" ]]; then
             echo "Updating $app: $installed_version -> $latest_version"
-            call_script "$app" || warn "Failed to update $app"
+            # call_script dies (exiting the whole run) when nothing offers the app
+            # any more. The subshell confines that to this app's warning.
+            ( call_script "$app" ) || warn "Failed to update $app"
         fi
     done
 fi
