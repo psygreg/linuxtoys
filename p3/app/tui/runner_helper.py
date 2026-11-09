@@ -1492,7 +1492,7 @@ class AppstreamRunnerMixin:
             prefix="snap-revert-", suffix=".sh", dir=directory, text=True
         )
         with os.fdopen(fd, "w", encoding="utf-8") as handle:
-            handle.write("#!/usr/bin/env bash\n")
+            handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
             handle.write(" ".join(shlex.quote(part) for part in argv))
             handle.write("\n")
         os.chmod(raw_path, 0o700)
@@ -1786,7 +1786,7 @@ class AppstreamRunnerMixin:
         )
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                handle.write("#!/usr/bin/env bash\n")
+                handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
                 handle.write(f"pkg_appimage {shlex.quote(path)}\n")
             os.chmod(script_path, 0o700)
             command = script_command(script_path, resolve_script_dir())
@@ -2258,7 +2258,7 @@ class ManifestRunnerMixin:
         ``create_temp_file`` prepends the preamble that sets SCRIPT_DIR and
         loads the core library, so nothing is sourced here.
         """
-        content = "\n".join(["#!/bin/bash", "set -eo pipefail", *lines, ""])
+        content = "\n".join(["#!/bin/bash", "# architectures: x86_64, aarch64", "set -eo pipefail", *lines, ""])
         fd, path = tempfile.mkstemp(prefix="linuxtoys-manifest-", suffix=".sh")
         with os.fdopen(fd, "w", encoding="utf-8") as handle:
             handle.write(content)

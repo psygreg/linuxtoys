@@ -16,10 +16,66 @@ info() { printf "\e[0;32m[INFO]\e[m %s\n" "${1}"; exit 0; }
 
 error() { printf "\e[0;31m[ERROR]\e[m %s\n" "${1}"; exit 1; }
 
+# Delegate ISA policy to the application; never maintain installer alias tables.
+architecture_prepare() {
+    command -v python3 >/dev/null 2>&1 || error "Python 3 is required for safe architecture validation."
+    _architecture_work=$(mktemp -d "${TMPDIR:-/tmp}/linuxtoys-preflight.XXXXXX") || error "Cannot stage preflight."
+    trap 'rm -rf -- "${_architecture_work}"' EXIT
+    local source_dir revision file
+    source_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)
+    # Only a user-owned checkout may supply local executable validation code.
+    # A downloaded installer in /tmp must not import an attacker's sibling p3/.
+    if [ -e "$source_dir/.git" ] && [ -f "$source_dir/p3/app/architecture_cli.py" ] &&
+       python3 - "$source_dir" <<'PYLOCAL'
+import os, pathlib, stat, sys
+root = pathlib.Path(sys.argv[1]).resolve()
+paths = [root, root / 'p3', root / 'p3/app', root / 'p3/app/__init__.py']
+paths += [root / 'p3/app' / name for name in (
+    'architecture.py', 'architecture_cli.py', 'architecture_files.py', 'architecture_flatpak.py')]
+for path in paths:
+    metadata = path.lstat()
+    if metadata.st_uid != os.getuid() or metadata.st_mode & 0o022 or stat.S_ISLNK(metadata.st_mode):
+        raise SystemExit(1)
+PYLOCAL
+    then
+        _architecture_cli="$source_dir/p3/app/architecture_cli.py"
+    else
+        revision=$(python3 -c 'import json,sys; from urllib.parse import quote; print(quote(json.load(sys.stdin)["tag_name"], safe=""))' <<< "$_api") || error "Release has no source tag."
+        revision=$(curl -fsSL "https://api.github.com/repos/psygreg/linuxtoys/commits/$revision" | python3 -c 'import json,re,sys; s=json.load(sys.stdin)["sha"]; assert re.fullmatch("[0-9a-f]{40}",s); print(s)') || error "Cannot resolve immutable release source."
+        mkdir -p "$_architecture_work/app" || error "Cannot stage architecture helper."
+        : > "$_architecture_work/app/__init__.py"
+        for file in architecture.py architecture_files.py architecture_flatpak.py architecture_cli.py; do
+            curl -fsSL "https://raw.githubusercontent.com/psygreg/linuxtoys/$revision/p3/app/$file" -o "$_architecture_work/app/$file" || error "Release lacks architecture validation; use a qualified release."
+        done
+        _architecture_cli="$_architecture_work/app/architecture_cli.py"
+    fi
+    python3 "$_architecture_cli" label host >/dev/null || error "Unsupported host architecture."
+    printf '%s' "$_api" > "$_architecture_work/release.json"
+}
+
+architecture_verify() {
+    python3 - "$_architecture_work/sha256sums.txt" "$1" <<'PYHASH' || error "Release checksum validation failed."
+import hashlib, pathlib, sys
+path = pathlib.Path(sys.argv[2])
+records = [line.split() for line in pathlib.Path(sys.argv[1]).read_text().splitlines()]
+expected = [row[0] for row in records if len(row) == 2 and row[1].lstrip("*") == path.name]
+if len(expected) != 1:
+    raise SystemExit("Missing or ambiguous release checksum")
+digest = hashlib.sha256()
+with path.open("rb") as source:
+    for chunk in iter(lambda: source.read(1024 * 1024), b""):
+        digest.update(chunk)
+if digest.hexdigest() != expected[0]:
+    raise SystemExit("Release checksum mismatch")
+PYHASH
+    python3 "$_architecture_cli" files "$1" || error "Incompatible or unverified release payload."
+}
+
 osdeb() {
-	if curl -fsSL "${_deb}" -o "/tmp/${_deb_name}"; then
+	if curl -fsSL "${_deb}" -o "${_architecture_work}/${_deb_name}"; then
+        architecture_verify "${_architecture_work}/${_deb_name}"
 		sudo apt update || true
-		if sudo apt install -y "/tmp/${_deb_name}"; then
+		if sudo apt install -y "${_architecture_work}/${_deb_name}"; then
 			info "LinuxToys installed or updated!"
 		else
 			error "Installation failed (apt)."
@@ -30,17 +86,18 @@ osdeb() {
 }
 
 osrpm() {
-	if curl -fsSL "${_rpm}" -o "/tmp/${_rpm_name}"; then
+	if curl -fsSL "${_rpm}" -o "${_architecture_work}/${_rpm_name}"; then
+        architecture_verify "${_architecture_work}/${_rpm_name}"
 		if command -v dnf >/dev/null 2>&1; then
 			{ [ "$ID" = "rhel" ]; } && sudo subscription-manager repos --enable codeready-builder-for-rhel-$(rpm -E %rhel)-$(arch)-rpms && sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm
 			{ [[ "$ID_LIKE" = *rhel* ]] && [ "$ID" != "rhel" ]; } && sudo dnf config-manager --set-enabled crb && sudo dnf install epel-release
-			if sudo dnf install -y "/tmp/${_rpm_name}"; then
+			if sudo dnf install -y "${_architecture_work}/${_rpm_name}"; then
 				info "LinuxToys installed or updated!"
 			else
 				error "Installation failed (dnf)."
 			fi
 		else
-			if sudo yum install -y "/tmp/${_rpm_name}"; then
+			if sudo yum install -y "${_architecture_work}/${_rpm_name}"; then
 				info "LinuxToys installed or updated!"
 			else
 				error "Installation failed (yum)."
@@ -52,8 +109,9 @@ osrpm() {
 }
 
 ossuse() {
-    if curl -fsSL "${_rpm}" -o "/tmp/${_rpm_name}"; then
-        if sudo rpm -U --nodeps --replacefiles --replacepkgs "/tmp/${_rpm_name}"; then
+    if curl -fsSL "${_rpm}" -o "${_architecture_work}/${_rpm_name}"; then
+        architecture_verify "${_architecture_work}/${_rpm_name}"
+        if sudo zypper --non-interactive install "${_architecture_work}/${_rpm_name}"; then
             dependencies=(
                 bash git curl wget zenity python3 python3-gobject gtk3
                 python3-requests python3-urllib3 python3-certifi util-linux
@@ -76,12 +134,14 @@ osarch() {
     [ -n "${_pkg:-}" ] || error "No Arch Linux package was found in the latest LinuxToys release."
     [ -n "${_pkg_name:-}" ] || error "Could not determine the LinuxToys Arch package filename."
 
+    curl -fL --retry 3 "${_pkg}" -o "$_architecture_work/${_pkg_name}" || error "Package download failed."
+    architecture_verify "$_architecture_work/${_pkg_name}"
     if pacman -Qi linuxtoys-bin &>/dev/null; then
         sudo pacman -R --noconfirm linuxtoys-bin ||
             error "Failed to remove existing linuxtoys-bin package."
     fi
 
-    if curl -fL --retry 3 "${_pkg}" -o "/tmp/${_pkg_name}"; then
+    if [ -f "$_architecture_work/${_pkg_name}" ]; then
         if [ "$ID" = "cachyos" ]; then
             dependencies=(
                 bash git curl wget zenity appstream archlinux-appstream-data
@@ -92,7 +152,7 @@ osarch() {
                 sudo pacman -S --noconfirm --needed "${pkg}"
             done
         fi
-        if sudo pacman -U --noconfirm "/tmp/${_pkg_name}"; then
+        if sudo pacman -U --noconfirm "${_architecture_work}/${_pkg_name}"; then
             info "LinuxToys installed or updated!"
         else
             error "Installation failed (pacman)."
@@ -107,6 +167,12 @@ osappimage() {
 
 	[ -n "${_appimage:-}" ] || error "No AppImage was found in the latest LinuxToys release."
 	[ -n "${_appimage_name:-}" ] || error "Could not determine the LinuxToys AppImage filename."
+
+    _appimage_dir="$_architecture_work/appimage"
+    mkdir -p "$_appimage_dir" || error "Cannot stage AppImage."
+    _appimage_file="${_appimage_dir}/${_appimage_name}"
+    curl -fL --retry 3 "${_appimage}" -o "${_appimage_file}" || error "AppImage download failed."
+    architecture_verify "${_appimage_file}"
 
 	if ! command -v flatpak >/dev/null 2>&1; then
 		error "Flatpak is required to install the LinuxToys AppImage on this system."
@@ -153,14 +219,6 @@ osappimage() {
 		fi
 	fi
 
-	_appimage_dir=$(mktemp -d "${TMPDIR:-/tmp}/linuxtoys-appimage.XXXXXX") ||
-		error "Failed to create temporary AppImage directory."
-	trap 'rm -rf -- "${_appimage_dir}"' EXIT
-	_appimage_file="${_appimage_dir}/${_appimage_name}"
-
-	printf "\e[0;36m[INFO]\e[m Downloading LinuxToys AppImage...\n"
-	curl -fL --retry 3 "${_appimage}" -o "${_appimage_file}" ||
-		error "Failed to download: ${_appimage_name}"
 	chmod +x "${_appimage_file}" || error "Failed to make the AppImage executable."
 	mkdir -p "${HOME}/AppImages" || error "Failed to create ${HOME}/AppImages."
 
@@ -221,7 +279,7 @@ ossolus() {
 }
 
 manjaro() {
-    { sudo pamac build linuxtoys-bin && info "LinuxToys installed or updated!"; } || error "Failed to download: ${_pkg_name}"
+    osarch
 }
 
 requires_appimage() {
@@ -258,30 +316,33 @@ installer() {
 		error "Failed to fetch release information from GitHub and git.linux.toys"
 	fi
 
-	_tag_name=$(echo "${_api}" | grep -Pio '"tag_name":\s*"\K[^"]+')
-
-	_appimage=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.AppImage' | head -n1)
-	_appimage_name=$(basename "${_appimage}")
-
-	# The release also ships a .src.rpm, which is only meant for COPR builds
-	# and cannot be installed as a standard package; keep the binary one.
-	_rpm=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.rpm' | grep -v '\.src\.rpm' | head -n1)
-	_rpm_name=$(basename "${_rpm}")
-
-	_deb=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.deb')
-	_deb_name=$(basename "${_deb}")
-
-	_pkg=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?/linuxtoys-[^"/]+-[0-9]+-x86_64\.pkg\.tar\.zst' | head -n1)
-	_pkg_name=$(basename "${_pkg}")
-
-	_eopkg=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.eopkg')
-	_eopkg_name=$(basename "${_eopkg}")
+    architecture_prepare
+    _checksum_url=$(python3 -c 'import json,sys; a=[x["browser_download_url"] for x in json.load(sys.stdin).get("assets",[]) if x.get("name")=="sha256sums.txt"]; assert len(a)==1 and a[0].startswith("https://"); print(a[0])' <<< "$_api") || error "Release has no unique checksum manifest."
+    curl -fsSL "$_checksum_url" -o "$_architecture_work/sha256sums.txt" || error "Cannot download release checksums."
 
 	if [ -r /etc/os-release ]; then
 		. /etc/os-release
 	else
 		error "Unsupported operating system (no /etc/os-release)."
 	fi
+
+    local kind selected
+    if requires_appimage || [ "${ID:-}" = solus ]; then kind=appimage
+    else
+        case "${ID:-} ${ID_LIKE:-}" in
+            *debian*|*ubuntu*|*deepin*) kind=deb ;;
+            *suse*|*fedora*|*rhel*|*centos*|*rocky*|*almalinux*) kind=rpm ;;
+            *arch*|*manjaro*|*biglinux*|*bigcommunity*|*cachyos*|*artix*) kind=arch ;;
+            *) error "Unsupported operating system." ;;
+        esac
+    fi
+    selected=$(python3 "$_architecture_cli" release --kind "$kind" "$_architecture_work/release.json") || error "No unique verified native LinuxToys release asset."
+    case "$kind" in
+        deb) _deb="$selected"; _deb_name=$(basename "$_deb") ;;
+        rpm) _rpm="$selected"; _rpm_name=$(basename "$_rpm") ;;
+        arch) _pkg="$selected"; _pkg_name=$(basename "$_pkg") ;;
+        appimage) _appimage="$selected"; _appimage_name=$(basename "$_appimage") ;;
+    esac
 
     # Select the AppImage before either the ostree check or ID_LIKE can route
     # an immutable host to a native package installation.

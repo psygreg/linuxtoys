@@ -162,7 +162,8 @@ def _asset_kind(name):
 
 
 def _asset_architectures(name):
-    return list(_rs.git_asset_architectures(name))
+    from app.architecture import asset_architectures
+    return asset_architectures(name)
 
 
 def _build_record(repository, names):

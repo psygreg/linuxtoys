@@ -94,7 +94,7 @@
     {
         "appstream-name": "com.dec05eba.gpu_screen_recorder",
         "overrides": {
-            "post": "{ is_intel && pkg_flat --skip-user org.freedesktop.Platform.VAAPI.Intel/x86_64/24.08; } || true"
+            "post": "{ is_intel && pkg_flat_extension com.dec05eba.gpu_screen_recorder org.freedesktop.Platform.VAAPI.Intel; } || true"
         }
     },
     {
@@ -131,10 +131,8 @@
             },
             {
                 "type": "flathub",
-                "package-name": [
-                    "org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/24.08",
-                    "org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/25.08"
-                ]
+                "package-name": "org.freedesktop.Platform.VulkanLayer.MangoHud",
+                "extension-of": "com.valvesoftware.Steam"
             }
         ],
         "os": [ "fedora", "ostree", "arch", "cachy", "ubuntu", "debian", "suse", "solus" ]
@@ -180,10 +178,8 @@
             },
             {
                 "type": "flathub",
-                "package-name": [
-                    "org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/24.08",
-                    "org.freedesktop.Platform.VulkanLayer.MangoHud/x86_64/25.08"
-                ]
+                "package-name": "org.freedesktop.Platform.VulkanLayer.MangoHud",
+                "extension-of": "com.valvesoftware.Steam"
             }
         ],
         "os": [ "fedora", "ostree", "arch", "cachy", "ubuntu", "debian", "suse", "solus" ]

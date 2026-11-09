@@ -165,6 +165,8 @@ def create_temp_file(script_path):
     with open(script_path, "r", encoding="utf-8") as f:
         lines = f.readlines()
 
+    from .architecture import require_script
+    require_script("".join(lines))
     filtered_lines = []
     for line in lines:
         # Ignore lines containing "xdg-open"
@@ -179,7 +181,7 @@ def create_temp_file(script_path):
         filtered_lines.append(line)
 
     tmp_file = tempfile.NamedTemporaryFile(delete=False, mode="w", encoding="utf-8")
-    tmp_file.write(script_preamble("".join(filtered_lines), script_dir))
+    tmp_file.write(script_preamble("".join(filtered_lines), script_dir, internal=True))
     tmp_file.writelines(filtered_lines)
     tmp_file.close()
     temp_file_path = tmp_file.name
@@ -643,7 +645,7 @@ def scripts_uninstall(args: list, skip_confirmation, translations):
 def _remove_package(package):
     script_dir = resolve_script_dir()
     shell = (
-        script_preamble('pkg_remove "$2"\n', script_dir)
+        script_preamble('pkg_remove "$2"\n', script_dir, internal=True)
         + 'pkg_remove "$2"\n'
     )
 

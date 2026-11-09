@@ -3953,6 +3953,7 @@ class AppWindow(
         safe_source = source.replace("/", "_")
         tmp_script = os.path.join(tmp_dir, f"skill_install_{safe_source}_{slug}.sh")
         script_content = f"""#!/bin/bash
+# architectures: x86_64
 # name: Install Skill {slug}
 # description: Install skill {source} for agent {agent}
 source "$SCRIPT_DIR/libs/linuxtoys.bash"

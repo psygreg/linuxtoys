@@ -844,6 +844,13 @@ pkg_install () {
     [[ ${#pkg_found[@]} -gt 0 ]] && echo "Packages ${pkg_found[*]} already installed, skipping."
     [[ ${#pkg_notfound[@]} -eq 0 ]] && return 0
     local to_install="${pkg_notfound[*]}"
+    local architecture_manager
+    if is_debian || is_ubuntu; then architecture_manager=apt
+    elif is_arch || is_cachy || is_manjaro; then architecture_manager=pacman
+    elif is_suse; then architecture_manager=zypper
+    elif is_solus; then architecture_manager=eopkg
+    else architecture_manager=dnf; fi
+    _architecture_check packages "$architecture_manager" "${pkg_notfound[@]}"
     askpass
     (( _bypass )) || runner_lock "package-transaction"
     if is_debian || is_ubuntu; then
@@ -978,10 +985,20 @@ pkg_flat() {
     # remote's bootstrap script configures it (plus whatever runtimes it needs)
     # and owns its own session idempotency.
     local _skip_user=0
-    local _next_remote=0
+    local _next_remote=0 _next_scope=0 _explicit_scope=""
     local _remote="flathub"
     local -a _flatpak_args=()
     for arg in "$@"; do
+        if [[ $_next_scope -eq 1 ]]; then
+            [[ "$arg" == user || "$arg" == system ]] || die "Invalid Flatpak scope"
+            _explicit_scope="--$arg"
+            _next_scope=0
+            continue
+        fi
+        if [[ "$arg" == "--scope" ]]; then
+            _next_scope=1
+            continue
+        fi
         if [[ $_next_remote -eq 1 ]]; then
             _remote="$arg"
             _next_remote=0
@@ -995,29 +1012,13 @@ pkg_flat() {
             _flatpak_args+=("$arg")
         fi
     done
-    [[ $_next_remote -eq 0 ]] || die "pkg_flat --remote requires a remote name"
+    [[ $_next_remote -eq 0 && $_next_scope -eq 0 ]] || die "pkg_flat --remote/--scope requires a value"
     if [[ "$_remote" != "flathub" ]]; then
         [[ "$_remote" =~ ^[a-z0-9][a-z0-9._-]*$ ]] \
             || die "pkg_flat: unsupported Flatpak remote: $_remote"
     fi
 
-    if [[ "$_remote" == "flathub" ]]; then
-        if ! command -v flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
-            call_script flathub
-            # Installing Flatpak or adding Flathub changes the AppStream source universe.
-            # Keep the last completed catalog usable, but force the next AppStream check
-            # to rebuild it against the newly available source.
-            rm -f "$HOME/.cache/linuxtoys/appstream/state.json"
-        fi
-    else
-        if ! command -v flatpak &>/dev/null || ! flatpak remote-list | grep -Fxq "$_remote"; then
-            call_script "$_remote"
-            # A newly configured remote can add an AppStream source (and the
-            # whole Flatpak stack on first use), so the next catalog check
-            # must rebuild against the newly available universe.
-            rm -f "$HOME/.cache/linuxtoys/appstream/state.json"
-        fi
-    fi
+    command -v flatpak >/dev/null 2>&1 || die "Configure Flatpak and its native remote before installing applications"
     local flatpak_scope="--user"
     if [[ $_skip_user -eq 1 ]]; then
         flatpak_scope="--system"
@@ -1030,6 +1031,12 @@ pkg_flat() {
          ! flatpak remote-list --user 2>/dev/null | grep -Fxq "$_remote"; then
         flatpak_scope="--system"
     fi
+
+    [[ -z "$_explicit_scope" ]] || flatpak_scope="$_explicit_scope"
+    local resolved_refs
+    resolved_refs=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" flatpak "$_remote" "${flatpak_scope#--}" "${_flatpak_args[@]}") || die "Flatpak architecture/availability preflight failed"
+    [[ -n "$resolved_refs" ]] || die "No native Flatpak refs resolved"
+    mapfile -t _flatpak_args <<< "$resolved_refs"
 
     local -a _flatpak_normal=()
     local -a _flatpak_new=()
@@ -1062,7 +1069,7 @@ pkg_flat() {
             mapfile -t _runtime_new < <(_flatpak_runtime_extension_delta "$_runtime_before" "$flatpak_scope")
             rm -f "$_runtime_before"
             if [[ ${#_runtime_new[@]} -gt 0 ]]; then
-                _append_transmap "flatpak ${_runtime_new[*]}"
+                _append_transmap "flatpak $flatpak_scope ${_runtime_new[*]}"
             fi
         else
             _flatpak_normal+=("$arg")
@@ -1089,9 +1096,20 @@ pkg_flat() {
                 fatal "Failed to install flatpak package $basename"
         done
         if [[ ${#_flatpak_new[@]} -gt 0 ]]; then
-            _append_transmap "flatpak ${_flatpak_new[*]}"
+            _append_transmap "flatpak $flatpak_scope ${_flatpak_new[*]}"
         fi
     fi
+}
+
+pkg_flat_extension() {
+    [[ $# -eq 2 ]] || die "Usage: pkg_flat_extension APP_ID EXTENSION_ID"
+    local refs
+    refs=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" extension "$1" "$2") || die "Native extension unavailable for the installed application runtime"
+    [[ -n "$refs" ]] || die "No native extension refs resolved"
+    local -a plan=()
+    mapfile -t plan <<< "$refs"
+    [[ ${#plan[@]} -ge 3 ]] || die "Invalid native extension plan"
+    pkg_flat --scope "${plan[0]}" --remote "${plan[1]}" "${plan[@]:2}"
 }
 
 # Snap requires a real host system. Keep this check centralized so Store,
@@ -1111,10 +1129,8 @@ _snap_supported_host () {
 pkg_snap () {
     _snap_supported_host || die "Snap packages are unsupported on this system"
     (( $# > 0 )) || return 0
-    if ! command -v snap >/dev/null 2>&1; then
-        call_script snap || die "Failed to install Snap support"
-        command -v snap >/dev/null 2>&1 || die "Snap is unavailable after installing Snap support"
-    fi
+    _architecture_check snap "$@"
+    command -v snap >/dev/null 2>&1 || die "Configure native snapd before installing Store packages"
 
     local -a _snap_new=()
     local pak
@@ -1192,6 +1208,7 @@ _snap_installed_names () {
 
 pkg_snap_file () {
     (( $# > 0 )) || die "No Snap package files provided"
+    _architecture_check files "$@"
     _snap_supported_host || die "Snap packages are unsupported on this system"
 
     if ! command -v snap >/dev/null 2>&1; then
@@ -1214,10 +1231,8 @@ pkg_snap_file () {
             die "Snap package file not found: $snap_file"
         }
 
-        # Local snaps obtained outside the Store do not carry a Store assertion,
-        # so snapd requires --dangerous. --classic is harmless for strict snaps
-        # and is required when the package itself declares classic confinement.
-        sudo_ snap install --dangerous --classic "$snap_file" || {
+        # Never bypass snapd assertion or confinement verification.
+        sudo_ snap install "$snap_file" || {
             rm -f "$before_file"
             runner_unlock
             die "Failed to install Snap package from file: $snap_file"
@@ -1251,6 +1266,9 @@ pkg_fromfile () {
 
     # Use filtered args for the rest of the function
     set -- "${_filtered_args[@]}"
+
+    # Validate every input before authenticating or installing any item in a batch.
+    _architecture_check files "$@"
 
     # Snap files are handled by snapd rather than the host package manager.
     # Keep this outside the generic lock because installing Snap support may
@@ -1330,7 +1348,7 @@ pkg_fromfile () {
             rm -f "$_runtime_before"
             [[ -n "$_runtime_before_system" ]] && rm -f "$_runtime_before_system"
             if [[ ${#_runtime_new[@]} -gt 0 ]]; then
-                _append_transmap "flatpak ${_runtime_new[*]}"
+                _append_transmap "flatpak $flatpak_scope ${_runtime_new[*]}"
             fi
         else
             _append_transmap "pkg file $flatpak_file"
@@ -1340,10 +1358,8 @@ pkg_fromfile () {
     fi
 
     if is_debian || is_ubuntu; then
-        # Wrapper only stands by (and retries) on lock collisions; a plain
-        # failure falls through to the dpkg fallback, as before.
-        if ! { apt_transaction sudo_ apt-get -o APT::Sandbox::User=root install -y "${@}" || \
-                apt_transaction sudo_ dpkg -i "${@}"; }; then
+        # Retry lock collisions without bypassing APT dependency verification.
+        if ! apt_transaction sudo_ apt-get install -y "${@}"; then
             fatal "Failed to install $*"
         fi
         _append_transmap "pkg file $*"
@@ -1401,6 +1417,7 @@ pkg_tarball () {
     local member normalized first_component common_root has_nested
     local -a members=()
 
+    _architecture_check files "$@"
     apps_dir="$HOME/.local/linuxtoys/apps"
     mkdir -p -- "$apps_dir" || die "Failed to create application directory: $apps_dir"
 
@@ -1540,6 +1557,7 @@ pkg_binary () {
     local apps_dir="$HOME/.local/linuxtoys/apps"
     local target_dir target_file
 
+    _architecture_check files "$binary"
     [ -f "$binary" ] || die "Binary file not found: $binary"
     [ -n "$app_name" ] || die "LinuxToys app name is unavailable"
 
@@ -1697,6 +1715,9 @@ pkg_fromurl () {
         package_files+=("$package_file")
     done
 
+    # The whole download batch must be safe before its first install starts.
+    _architecture_check files "${package_files[@]}"
+
     for package_file in "${package_files[@]}"; do
         if [[ $_binary -eq 1 ]]; then
             if [[ $_no_shortcut -eq 1 ]]; then
@@ -1815,49 +1836,6 @@ pkg_make () {
 
     [[ "$source" == https://* ]] || die "pkg_make only accepts HTTPS sources"
 
-    local user_level_make=0 steamos_readonly_toggled=0
-    if [[ ! "$install_command" =~ (^|[[:space:];|&()])sudo([[:space:]]|$) ]]; then
-        user_level_make=1
-    fi
-
-    if is_steamos && (( user_level_make )); then
-        # User-level Make applications are SteamOS-compatible. Their declared
-        # native dependencies are treated as build-only Arch packages. Temporarily
-        # unlock the system image only while installing the build toolchain.
-        local -a steamos_build_packages=(base-devel)
-        if (( ! uninstall )); then
-            steamos_build_packages+=("${build_dependencies[@]}")
-        fi
-
-                command -v steamos-readonly >/dev/null 2>&1 || \
-            die "steamos-readonly is required for pkg_make on SteamOS"
-
-        if steamos-readonly status 2>/dev/null | grep -qi 'enabled'; then
-            sudo_ steamos-readonly disable || die "Failed to disable SteamOS read-only mode"
-            steamos_readonly_toggled=1
-        fi
-
-        pacman_lock_guard
-        if ! sudo_ pacman -S --needed --noconfirm "${steamos_build_packages[@]}"; then
-            if (( steamos_readonly_toggled )); then
-                sudo_ steamos-readonly enable || warn "Failed to restore SteamOS read-only mode after package installation failure"
-            fi
-            die "Failed to install SteamOS make build dependencies"
-        fi
-
-        if (( steamos_readonly_toggled )); then
-            sudo_ steamos-readonly enable || die "Failed to restore SteamOS read-only mode"
-            steamos_readonly_toggled=0
-        fi
-    else
-        if ! command -v make >/dev/null 2>&1; then
-                        pkg_install --ostreecheck make
-        fi
-        if (( ! uninstall && ${#build_dependencies[@]} > 0 )); then
-                        pkg_install --ostreecheck --ignore-appends "${build_dependencies[@]}"
-        fi
-    fi
-
     local workdir source_dir archive make_dir run_command="$install_command"
     local -a makefiles=()
     prep_tmp_noram
@@ -1881,6 +1859,7 @@ pkg_make () {
             die "Failed to download make source: $source"
         }
 
+        _architecture_check files --content-kind source "$archive"
         # Reject archive path traversal before extraction.
         local member normalized
         while IFS= read -r member; do
@@ -1903,6 +1882,54 @@ pkg_make () {
             rm -rf -- "$workdir"
             die "Failed to extract make tarball: $source"
         }
+    fi
+
+    _architecture_check tree --content-kind source "$source_dir"
+
+    local user_level_make=0 steamos_readonly_toggled=0
+    if [[ ! "$install_command" =~ (^|[[:space:];|&()])sudo([[:space:]]|$) ]]; then
+        user_level_make=1
+    fi
+
+    if is_steamos && (( user_level_make )); then
+        # User-level Make applications are SteamOS-compatible. Their declared
+        # native dependencies are treated as build-only Arch packages. Temporarily
+        # unlock the system image only while installing the build toolchain.
+        local -a steamos_build_packages=(base-devel)
+        if (( ! uninstall )); then
+            steamos_build_packages+=("${build_dependencies[@]}")
+        fi
+
+                command -v steamos-readonly >/dev/null 2>&1 || \
+            die "steamos-readonly is required for pkg_make on SteamOS"
+
+        _architecture_check packages pacman "${steamos_build_packages[@]}"
+        if steamos-readonly status 2>/dev/null | grep -qi 'enabled'; then
+            sudo_ steamos-readonly disable || die "Failed to disable SteamOS read-only mode"
+            steamos_readonly_toggled=1
+        fi
+
+        pacman_lock_guard
+        if ! sudo_ pacman -S --needed --noconfirm "${steamos_build_packages[@]}"; then
+            if (( steamos_readonly_toggled )); then
+                sudo_ steamos-readonly enable || warn "Failed to restore SteamOS read-only mode after package installation failure"
+            fi
+            die "Failed to install SteamOS make build dependencies"
+        fi
+
+        if (( steamos_readonly_toggled )); then
+            sudo_ steamos-readonly enable || die "Failed to restore SteamOS read-only mode"
+            steamos_readonly_toggled=0
+        fi
+    else
+        local -a required_build_packages=()
+        command -v make >/dev/null 2>&1 || required_build_packages+=(make)
+        if (( ! uninstall )); then
+            required_build_packages+=("${build_dependencies[@]}")
+        fi
+        if (( ${#required_build_packages[@]} > 0 )); then
+            pkg_install --ostreecheck --ignore-appends "${required_build_packages[@]}"
+        fi
     fi
 
     # Prefer a top-level makefile. If there is none, accept exactly one makefile
@@ -2043,7 +2070,7 @@ pkg_fromrelease () {
         native_type=eopkg
     fi
 
-    package_url=$(python3 - "$1" "${2:-*}" "$native_type" "$(uname -m)" "$_tarball" "$_binary" "$_snap" "$snap_release_allowed" <<'PY'
+    package_url=$(python3 - "$1" "${2:-*}" "$native_type" "$(python3 "$SCRIPT_DIR/app/architecture_cli.py" label host)" "$_tarball" "$_binary" "$_snap" "$snap_release_allowed" "$_make" <<'PY'
 import fnmatch
 import json
 import re
@@ -2121,7 +2148,7 @@ def normalize_release(host, release):
     return normalized
 
 
-repository, pattern, native, machine, tarball_mode, binary_mode, snap_mode, snap_allowed = sys.argv[1:]
+repository, pattern, native, machine, tarball_mode, binary_mode, snap_mode, snap_allowed, source_mode = sys.argv[1:]
 tarball_mode = tarball_mode == "1"
 binary_mode = binary_mode == "1"
 snap_mode = snap_mode == "1"
@@ -2141,24 +2168,11 @@ if not isinstance(version, str) or not version:
     fail("Latest release has no tag name")
 pattern = pattern.replace("$APP_GIT_VERSION", version)
 
-aliases = {
-    "x86_64": ("x86_64", "amd64", "x64"),
-    "aarch64": ("aarch64", "arm64"),
-    "i686": ("i386", "i486", "i586", "i686", "ia32", "x86"),
-    "armv7l": ("armv7l", "armv7", "armhf"),
-    "armv6l": ("armv6l", "armv6", "armel"),
-    "riscv64": ("riscv64",),
-    "ppc64le": ("ppc64le", "ppc64el"),
-    "ppc64": ("ppc64",),
-    "s390x": ("s390x",),
-    "loongarch64": ("loongarch64",),
-}
-architecture = next((key for key, values in aliases.items() if machine in values), None)
-if architecture is None:
-    fail(f"Unsupported architecture: {machine}")
-# Match longer aliases first so x86_64 is not mistaken for x86.
-labels = sorted((label for values in aliases.values() for label in values), key=len, reverse=True)
-arch_re = re.compile(r"(?<![a-z0-9])(" + "|".join(map(re.escape, labels)) + r")(?![a-z0-9])")
+# The same policy serves Python catalogs, Rust indexing and this shell path.
+import os
+sys.path.insert(0, os.environ["SCRIPT_DIR"])
+from app.architecture import select_asset, ArchitectureError
+
 native_extensions = {"arch": (".pacman", ".pkg.tar.zst"), "rpm": (".rpm",),
                      "deb": (".deb",), "eopkg": (".eopkg",)}
 if binary_mode:
@@ -2177,48 +2191,18 @@ else:
     ]
     if snap_allowed:
         formats.append((".snap",))
-candidates = []
-for asset in release["assets"]:
-    name, url = asset.get("name", ""), asset.get("browser_download_url", "")
-    if not isinstance(name, str) or not isinstance(url, str):
-        continue
-    lower = name.lower()
-    if urlsplit(url).scheme != "https":
-        continue
-    if binary_mode:
-        if name != pattern:
-            continue
-    elif not fnmatch.fnmatchcase(lower, pattern.lower()):
-        continue
-    if re.search(r"(?:^|[._-])(?:debug|debuginfo|debugsource|devel|source|src)(?:[._-]|$)", lower):
-        continue
-    if binary_mode:
-        kind = 0
-    else:
-        kind = next((i for i, extensions in enumerate(formats) if lower.endswith(extensions)), None)
-        if kind is None:
-            continue
-    detected = set(arch_re.findall(lower))
-    x86_fallback = False
-    if detected and not detected.intersection(aliases[architecture]):
-        if architecture == "x86_64" and detected.intersection(aliases["i686"]):
-            x86_fallback = True
-        else:
-            continue
-    # Use 32-bit x86 only when no native or architecture-unlabelled asset matches.
-    # Within each tier, retain AppImage > Flatpak > native package > Snap preference.
-    # Explicit architecture matches outrank assets whose names omit architecture.
-    candidates.append(((x86_fallback, kind, 0 if detected else 1), name, url))
-if not candidates:
-    fail(f"No compatible release package for {machine} ({native or 'portable only'})")
-best_rank = min(item[0] for item in candidates)
-best = [item for item in candidates if item[0] == best_rank]
-if len(best) != 1:
-    fail("Multiple matching packages; pass an ASSET_GLOB to choose one:\n" +
-         "\n".join(item[1] for item in best))
-print(f"Selected {best[0][1]} from {version}", file=sys.stderr)
+try:
+    selected = select_asset(release["assets"], machine=machine, pattern=pattern,
+                            formats=None if binary_mode else tuple(formats),
+                            exact=binary_mode, source=source_mode == "1")
+except ArchitectureError as error:
+    fail(str(error))
+selected_url = selected["browser_download_url"]
+if urlsplit(selected_url).scheme != "https":
+    fail("Selected release asset must use HTTPS")
+print(f"Selected {selected['name']} from {version}", file=sys.stderr)
 print(version)
-print(best[0][2])
+print(selected_url)
 PY
     ) || die "Failed to select a release package"
 
@@ -2625,6 +2609,7 @@ pkg_appimage_update () {
 
 pkg_appimage () {
     [[ $# -gt 0 ]] || die "No AppImage files provided"
+    _architecture_check files "$@"
     # update handling
     local appimage_input previous_appimage
     local -a appimage_inputs=()
@@ -2652,11 +2637,6 @@ pkg_appimage () {
             esac
         fi
     fi
-    if [[ -n "$previous_appimage" ]]; then
-        [[ $# -eq 1 ]] || die "Cannot map multiple new AppImages to one installed AppImage"
-        [[ "$1" != "$(realpath -- "$HOME/AppImages/$previous_appimage")" ]] || die "Update input is the installed AppImage itself"
-        pkg_appimage_rm --skip-appends "$previous_appimage" || die "Failed to remove previous AppImage: $previous_appimage"
-    fi
 
     { is_ubuntu || is_debian; } && {
         # FUSE 2 changed package names across Debian/Ubuntu releases. Prefer the
@@ -2667,43 +2647,8 @@ pkg_appimage () {
             pkg_install libfuse2t64
         elif LC_ALL=C apt-cache policy libfuse2 | grep -Eq '^[[:space:]]*Candidate: [^ (]'; then
             pkg_install libfuse2
-        elif is_ubuntu; then
-            # Ubuntu publishes libfuse2t64 in universe. If APT cannot see either
-            # compatibility package, enable universe and refresh metadata once.
-            # add-apt-repository is idempotent and supports deb822 Ubuntu sources.
-            command -v add-apt-repository >/dev/null 2>&1 || \
-                die "Cannot enable Ubuntu universe: add-apt-repository is unavailable"
-            sudo_ add-apt-repository -y universe || \
-                die "Failed to enable Ubuntu universe repository"
-            apt_transaction sudo_ apt-get update || die "Failed to refresh APT repositories after enabling universe"
-            if LC_ALL=C apt-cache policy libfuse2t64 | grep -Eq '^[[:space:]]*Candidate: [^ (]'; then
-                pkg_install libfuse2t64
-            elif LC_ALL=C apt-cache policy libfuse2 | grep -Eq '^[[:space:]]*Candidate: [^ (]'; then
-                pkg_install libfuse2
-            else
-                die "No FUSE 2 compatibility package is available after enabling Ubuntu universe"
-            fi
-        elif is_debian; then
-            # Debian testing may temporarily lack a FUSE 2 compatibility package.
-            # Expose only Trixie's libfuse2t64 through a narrowly pinned source.
-            sudo_ mkdir -p /etc/apt/preferences.d /etc/apt/sources.list.d
-            prep_create "/etc/apt/sources.list.d/linuxtoys-trixie-fuse.list" \
-                        "/etc/apt/preferences.d/linuxtoys-trixie-fuse"
-            echo 'deb https://deb.debian.org/debian trixie main' | \
-                sudo_ tee /etc/apt/sources.list.d/linuxtoys-trixie-fuse.list >/dev/null
-            sudo_ tee /etc/apt/preferences.d/linuxtoys-trixie-fuse >/dev/null <<'EOF'
-Package: *
-Pin: release n=trixie
-Pin-Priority: -1
-
-Package: libfuse2t64
-Pin: release n=trixie
-Pin-Priority: 990
-EOF
-            apt_transaction sudo_ apt-get update || die "Failed to refresh APT repositories for FUSE 2 compatibility"
-            pkg_install libfuse2t64
         else
-            die "No FUSE 2 compatibility package is available from this system's APT repositories"
+            die "No native FUSE 2 candidate is available; configure a supported repository before installing this AppImage"
         fi
     }
     { is_fedora || is_ostree || is_rhel; } && {
@@ -2718,6 +2663,22 @@ EOF
             pkg_install fuse2;
         }
     }
+    # Resolve optional integration availability before removing a prior copy.
+    local _native_gearlever=0
+    if is_systemd; then
+        if _pkg_appimage_gearlever_installed; then
+            _native_gearlever=1
+        elif command -v flatpak >/dev/null 2>&1 &&
+             python3 "$SCRIPT_DIR/app/architecture_cli.py" flatpak flathub user it.mijorus.gearlever >/dev/null 2>&1; then
+            _native_gearlever=1
+        fi
+    fi
+    if [[ -n "$previous_appimage" ]]; then
+        [[ $# -eq 1 ]] || die "Cannot map multiple new AppImages to one installed AppImage"
+        [[ "$1" != "$(realpath -- "$HOME/AppImages/$previous_appimage")" ]] || die "Update input is the installed AppImage itself"
+        pkg_appimage_rm --skip-appends "$previous_appimage" || die "Failed to remove previous AppImage: $previous_appimage"
+    fi
+
     prep_dir "$HOME/AppImages"
 
     # Inputs Gear Lever did NOT carry to completion. Base the list on every
@@ -2730,7 +2691,7 @@ EOF
 
     # Prefer Gear Lever on systemd systems. If it cannot inspect/integrate an
     # otherwise valid AppImage, fall back to LinuxToys' own simple integration.
-    if is_systemd; then
+    if is_systemd && [[ $_native_gearlever -eq 1 ]]; then
         if ! _pkg_appimage_gearlever_installed; then
             info "$gearlevermsg"
             _pkg_appimage_install_gearlever

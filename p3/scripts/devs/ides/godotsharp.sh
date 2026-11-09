@@ -21,6 +21,7 @@ GODOT_MONO_ZIP="Godot_latest_mono_linux.x86_64.zip"
 # first install
 if [ ! -d "$HOME/.local/godot" ]; then
     wget "$GODOT_MONO_URL" -O "$GODOT_MONO_ZIP"
+    _architecture_check files "$GODOT_MONO_ZIP"
     prep_dir "$HOME/.local/godot"
     extract_dir="$(mktemp -d)"
     unzip -q "$GODOT_MONO_ZIP" -d "$extract_dir"
@@ -42,6 +43,7 @@ if [ ! -d "$HOME/.local/godot" ]; then
     call_script dotnet
 else # update
     wget "$GODOT_MONO_URL" -O "$GODOT_MONO_ZIP"
+    _architecture_check files "$GODOT_MONO_ZIP"
     prep_dir_edit "$HOME/.local/godot"
     unzip -d "$HOME/.local/godot" "$GODOT_MONO_ZIP"
 fi

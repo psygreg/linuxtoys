@@ -17,8 +17,9 @@ GODOT_URL=$(get_latest_godot_url)
 GODOT_ZIP="Godot_latest_linux.x86_64.zip"
 # first install
 if [ ! -d "$HOME/.local/godot" ]; then
-    prep_dir "$HOME/.local/godot"
     wget "$GODOT_URL" -O "$GODOT_ZIP"
+    _architecture_check files "$GODOT_ZIP"
+    prep_dir "$HOME/.local/godot"
     unzip "$GODOT_ZIP"
     GODOT_BIN=$(ls Godot*_linux.x86_64)
     move_ "$GODOT_BIN" Godot
@@ -31,6 +32,7 @@ if [ ! -d "$HOME/.local/godot" ]; then
     sed -i "s|\$HOME|$HOME|g" "$HOME/.local/share/applications/godot.desktop"
 else # update
     wget "$GODOT_URL" -O "$GODOT_ZIP"
+    _architecture_check files "$GODOT_ZIP"
     unzip "$GODOT_ZIP"
     GODOT_BIN=$(ls Godot*_linux.x86_64)
     prep_edit "$HOME/.local/godot/Godot"

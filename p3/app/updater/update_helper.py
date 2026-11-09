@@ -227,10 +227,8 @@ def is_current_version(version: str | None = None) -> tuple[bool, str | None]:
 def run_background_update():
     """Install the latest LinuxToys release without opening the VTE viewer.
 
-    Keep LinuxToys' normal askpass pre-authentication on systems that may need
-    native package operations, but bypass it on SteamOS where install.sh uses
-    the user-level AppImage/Gear Lever update path. Returns
-    (success, error_message).
+    The installer validates architecture and availability before requesting
+    privileges. Returns (success, error_message).
     """
     env = os.environ.copy()
     script_dir = os.environ.get("SCRIPT_DIR")
@@ -249,7 +247,7 @@ def run_background_update():
 
     if is_steamos:
         script = (
-            "#!/usr/bin/env bash\n"
+            "#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n"
             "curl -fsSL https://linux.toys/install.sh | bash\n"
         )
     else:
@@ -261,14 +259,10 @@ def run_background_update():
             return False, f"LinuxToys shell library was not found: {library_path}"
 
         script = (
-            "#!/usr/bin/env bash\n"
+            "#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n"
             f"source {shlex.quote(library_path)}\n"
-            "askpass\n"
             "\n"
-            # Keep install.sh in the same shell that ran askpass. In the\n"
-            # background updater there is no controlling TTY, so spawning a\n"
-            # separate `bash` via a pipe can make sudo's cached authorization\n"
-            # unavailable to the installer.\n"
+            # Source the installer to retain the shell helper context.
             "_lt_installer=$(mktemp \"${TMPDIR:-/tmp}/linuxtoys-installer.XXXXXX\") || exit 1\n"
             "trap 'rm -f -- \"$_lt_installer\"' EXIT\n"
             "curl -fsSL https://linux.toys/install.sh -o \"$_lt_installer\" || exit 1\n"

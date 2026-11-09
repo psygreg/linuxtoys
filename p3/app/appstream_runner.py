@@ -846,7 +846,7 @@ class AppStreamRunner:
         self._mark_no_manifest_export(transmap_path)
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                handle.write("#!/usr/bin/env bash\n")
+                handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
                 handle.write(f"pkg_install {shlex.quote(package)}\n")
             os.chmod(path, 0o700)
             env = script_environment(script_info, os.environ.copy())
@@ -1198,7 +1198,7 @@ class AppStreamRunner:
         )
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                handle.write("#!/usr/bin/env bash\n")
+                handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
                 handle.write(f"pkg_snap_revert {shlex.quote(snap_name)}\n")
             os.chmod(path, 0o700)
 
@@ -1252,7 +1252,7 @@ class AppStreamRunner:
         )
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                handle.write("#!/usr/bin/env bash\n")
+                handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
                 handle.write("sudo_ apt-get update\n")
             os.chmod(path, 0o700)
             env = script_environment({"name": "Refresh package metadata"}, os.environ.copy())
@@ -1349,7 +1349,7 @@ class AppStreamRunner:
         fd, script_path = tempfile.mkstemp(prefix="local-package-", suffix=".sh", dir=directory, text=True)
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                handle.write("#!/usr/bin/env bash\n")
+                handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
                 handle.write(f"{function} {shlex.quote(package_path)}\n")
             os.chmod(script_path, 0o700)
             payload = dict(script_info)
@@ -1656,7 +1656,7 @@ class AppStreamRunner:
         )
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                handle.write("#!/usr/bin/env bash\n")
+                handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
                 handle.write("\n".join(lines))
                 handle.write("\n")
             os.chmod(path, 0o700)
@@ -1707,7 +1707,7 @@ class AppStreamRunner:
         )
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                handle.write("#!/usr/bin/env bash\n")
+                handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
                 handle.write("\n".join(lines))
                 handle.write("\n")
             os.chmod(path, 0o700)

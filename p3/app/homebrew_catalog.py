@@ -4,7 +4,6 @@ from __future__ import annotations
 import json
 import logging
 import os
-import platform
 import re
 import shutil
 import subprocess
@@ -51,8 +50,8 @@ def enabled():
 
 
 def linux_arch():
-    machine = platform.machine().lower()
-    return {"amd64": "x86_64", "aarch64": "arm64"}.get(machine, machine)
+    from .architecture import label
+    return label("homebrew")
 
 
 def availability_fingerprint():
@@ -266,7 +265,7 @@ def materialize_install(info):
     fd, path = tempfile.mkstemp(prefix="linuxtoys-homebrew-", suffix=".sh")
     import shlex
     with os.fdopen(fd, "w", encoding="utf-8") as handle:
-        handle.write('#!/bin/bash\nset -eo pipefail\nsource "$SCRIPT_DIR/libs/linuxtoys.bash"\n'
+        handle.write('#!/bin/bash\n# architectures: x86_64\nset -eo pipefail\nsource "$SCRIPT_DIR/libs/linuxtoys.bash"\n'
                      'source "$SCRIPT_DIR/libs/packages.bash"\n'
                      f'pkg_brew {shlex.quote(name)}\n')
     os.chmod(path, 0o700)

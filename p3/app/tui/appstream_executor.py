@@ -95,7 +95,7 @@ def _write_temp_script(lines: list[str], prefix: str) -> str:
         prefix=prefix, suffix=".sh", dir=_OVERRIDES_DIR, text=True
     )
     with os.fdopen(fd, "w", encoding="utf-8") as handle:
-        handle.write("#!/usr/bin/env bash\n")
+        handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
         handle.write("\n".join(lines))
         handle.write("\n")
     os.chmod(path, 0o700)
@@ -281,7 +281,7 @@ def build_install_script(entry: dict) -> str:
         text=True,
     )
     with os.fdopen(fd, "w", encoding="utf-8") as handle:
-        handle.write("#!/usr/bin/env bash\n\n")
+        handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n\n")
         handle.write(script_body)
         handle.write("\n")
     os.chmod(path, 0o700)
@@ -537,7 +537,7 @@ def build_aur_install_script(package: str) -> str:
         prefix="aur-install-", suffix=".sh", dir=_OVERRIDES_DIR, text=True
     )
     with os.fdopen(fd, "w", encoding="utf-8") as handle:
-        handle.write("#!/usr/bin/env bash\n")
+        handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
         handle.write(f"pkg_install {shlex.quote(package)}\n")
     os.chmod(path, 0o700)
     return path

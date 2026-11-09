@@ -16,7 +16,6 @@ DESKTOP_FILE="${HOME}/.local/share/applications/${PKG_NAM}.desktop"
 if [ -d "${PKG_DIR}" ]; then
 	info "$notdomsg" && exit 100
 fi
-prep_dir "${PKG_DIR}"
 
 PKG_URL="$(
 	curl -fsSL \
@@ -24,8 +23,12 @@ PKG_URL="$(
 		grep -Pio '"linux":\{"link":"\K[^"]+'
 )" || exit 1
 [ -n "$PKG_URL" ] || exit 1
-curl -fsSL "${PKG_URL}" |
-	tar -xzf - -C "${PKG_DIR}" || exit 1
+toolbox_archive=$(mktemp --suffix=.tar.gz) || exit 1
+trap 'rm -f "$toolbox_archive"' EXIT
+curl -fsSL "${PKG_URL}" -o "$toolbox_archive" || exit 1
+_architecture_check files "$toolbox_archive"
+prep_dir "${PKG_DIR}"
+tar -xzf "$toolbox_archive" -C "${PKG_DIR}" || exit 1
 
 TOOLBOX_BIN="$(
 	find "${PKG_DIR}" \

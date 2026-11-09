@@ -2661,7 +2661,7 @@ class JobManager:
                 os.close(fd)
                 try:
                     with open(script_path, "w", encoding="utf-8") as handle:
-                        handle.write("#!/usr/bin/env bash\n")
+                        handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
                         handle.write(f"pkg_appimage {shlex_quote(path)}\n")
                     os.chmod(script_path, 0o700)
                     payload = dict(entry)
@@ -2713,7 +2713,7 @@ class JobManager:
         fd, script_path = tempfile.mkstemp(prefix="mcp-package-", suffix=".sh", dir=directory, text=True)
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                handle.write("#!/usr/bin/env bash\n")
+                handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
                 handle.write(f"{function} {shlex_quote(path)}\n")
             os.chmod(script_path, 0o700)
             payload = {

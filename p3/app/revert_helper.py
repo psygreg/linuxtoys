@@ -573,10 +573,23 @@ def _reverse_flatpak_removal(app_ids):
     if not app_ids:
         return []
 
+    scope = None
+    if app_ids[0] in ("--user", "--system"):
+        scope, app_ids = app_ids[0], app_ids[1:]
+    if any(app_id.startswith("-") for app_id in app_ids):
+        return ["false # Invalid Flatpak rollback operand"]
+
     commands = []
 
     for app_id in app_ids:
         app_id = shlex.quote(app_id)
+        if scope is not None:
+            prefix = "sudo_rq && sudo_ " if scope == "--system" else ""
+            commands.append(
+                f"if flatpak info {scope} {app_id} >/dev/null 2>&1; then "
+                f"{prefix}flatpak uninstall {scope} --noninteractive {app_id}; fi"
+            )
+            continue
 
         cmd = (
             f"if flatpak info --user {app_id} >/dev/null 2>&1; then "
@@ -1202,6 +1215,7 @@ def build_uninstall_script_entry(script_info, translations=None):
 
     lines = [
         "#!/bin/bash",
+        "# architectures: x86_64, aarch64",
         "set -eo pipefail",
         f'SCRIPT_DIR="{script_dir}"',
         'source "$SCRIPT_DIR/libs/linuxtoys.bash"',
@@ -1357,6 +1371,7 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
 
     lines = [
         "#!/bin/bash",
+        "# architectures: x86_64, aarch64",
         "set -eo pipefail",
         f'SCRIPT_DIR="{script_dir}"',
         'source "$SCRIPT_DIR/libs/linuxtoys.bash"',

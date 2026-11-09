@@ -4,6 +4,7 @@ import subprocess
 
 from .gtk_common import Gdk, Gtk, GLib
 from . import parser
+from .architecture import host
 
 class LocalScriptsCtl:
     def _setup_drag_and_drop(self):
@@ -117,6 +118,7 @@ class LocalScriptsCtl:
         )
 
         _template_local_script = f"""#!/bin/bash
+# architectures: {host().value}
 # name: {name}
 # version: 1.0
 # description: Local Script

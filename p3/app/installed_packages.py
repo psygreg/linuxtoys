@@ -516,7 +516,7 @@ def build_external_removal(info, installed_match, translations=None):
     """Build a temporary standard package-removal script for an observed install."""
     if not installed_match:
         return None
-    lines = ["#!/bin/bash", "set -eo pipefail", 'source "$SCRIPT_DIR/libs/linuxtoys.bash"', 'source "$SCRIPT_DIR/libs/helpers.bash"']
+    lines = ["#!/bin/bash", "# architectures: x86_64, aarch64", "set -eo pipefail", 'source "$SCRIPT_DIR/libs/linuxtoys.bash"', 'source "$SCRIPT_DIR/libs/helpers.bash"']
     if installed_match["source"] == "flatpak":
         app_id = shlex.quote(installed_match["package"])
         scope = installed_match.get("scope")

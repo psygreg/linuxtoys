@@ -16,28 +16,10 @@ desktop_file="$desktop_dir/hiddify.desktop"
 tmp_dir="$(mktemp -d)"
 archive_file="$tmp_dir/hiddify.tar.gz"
 
-prep_create "$app_file"
-rm -f "$app_file"
-prep_create "$desktop_file"
-rm -f "$desktop_file"
-
 trap 'rm -rf "$tmp_dir"' EXIT
 
-arch="$(uname -m)"
-case "$arch" in
-    x86_64) hiddify_arch="x64" ;;
-    aarch64|arm64) hiddify_arch="arm64" ;;
-    *) hiddify_arch="" ;;
-esac
-
-if [ -n "$hiddify_arch" ]; then
-    latest_url=$(curl -fsSL "https://api.github.com/repos/hiddify/hiddify-app/releases/latest" \
-        | grep -Eo 'https://[^"]+Hiddify-Linux-'"$hiddify_arch"'-AppImage\.tar\.gz')
-else
-    latest_url=$(curl -fsSL "https://api.github.com/repos/hiddify/hiddify-app/releases/latest" \
-        | grep -Eo 'https://[^"]+Hiddify-Linux-[^"]+-AppImage\.tar\.gz' \
-        | head -n 1)
-fi
+curl -fsSL "https://api.github.com/repos/hiddify/hiddify-app/releases/latest" -o "$tmp_dir/release.json" || fatal "Cannot query Hiddify releases"
+latest_url=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" release --kind tar --pattern 'Hiddify-Linux-*-AppImage.tar.gz' "$tmp_dir/release.json") || fatal "No unique native Hiddify asset"
 
 if [ -z "$latest_url" ]; then
     fatal "Could not detect the latest Hiddify AppImage archive URL. Please try again later."
@@ -47,14 +29,22 @@ if ! curl -fL "$latest_url" -o "$archive_file"; then
     fatal "Failed to download Hiddify AppImage archive."
 fi
 
+_architecture_check files "$archive_file"
+
 if ! tar -xzf "$archive_file" -C "$tmp_dir"; then
     fatal "Failed to extract Hiddify AppImage archive."
 fi
 
-extracted_appimage="$(find "$tmp_dir" -maxdepth 2 -type f -name '*.AppImage' | head -n 1)"
+mapfile -t extracted_appimages < <(find "$tmp_dir" -maxdepth 2 -type f -name '*.AppImage')
+[[ ${#extracted_appimages[@]} -eq 1 ]] || fatal "Expected exactly one native AppImage in the archive"
+extracted_appimage="${extracted_appimages[0]}"
 if [ -z "$extracted_appimage" ]; then
     fatal "AppImage not found inside downloaded archive."
 fi
+
+_architecture_check files "$extracted_appimage"
+prep_create "$app_file"
+prep_create "$desktop_file"
 
 install -Dm755 "$extracted_appimage" "$app_file"
 

@@ -147,15 +147,7 @@ class UpdateDialog(Gtk.Dialog):
 
             with open("/tmp/.self_update_lt", "w") as f:
                 script_content = f"""#!/bin/bash
-if [ -r /etc/os-release ]; then
-    . /etc/os-release
-fi
-
-if [ "${{ID:-}}" != "steamos" ]; then
-    source "$SCRIPT_DIR/libs/linuxtoys.bash"
-    sudo_rq
-fi
-
+# architectures: x86_64, aarch64
 curl -fsSL https://linux.toys/install.sh | bash && touch {marker!r}
 """
                 f.write(script_content)

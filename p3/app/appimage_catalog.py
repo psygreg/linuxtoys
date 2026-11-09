@@ -10,7 +10,6 @@ from __future__ import annotations
 import json
 import contextlib
 import html
-import platform
 import re
 import tempfile
 import shutil
@@ -898,40 +897,18 @@ def repository_gone(info):
     return checked
 
 def _arch_match(filename):
-    name = filename.lower()
-    arch = platform.machine().lower()
-    if arch in ("x86_64", "amd64"):
-        wanted, rejected = ("x86_64", "amd64", "x64"), ("aarch64", "arm64", "armhf", "i386", "i686")
-    elif arch in ("aarch64", "arm64"):
-        wanted, rejected = ("aarch64", "arm64"), ("x86_64", "amd64", "i386", "i686")
-    else:
-        return False
-    return not any(x in name for x in rejected) and (
-        any(x in name for x in wanted) or not any(x in name for x in ("arm", "x86", "amd", "i386", "i686"))
-    )
+    from .architecture import asset_eligible
+    return asset_eligible({"name": filename})
+
 
 def _release_asset(assets):
-    candidates = []
-    for asset in assets:
-        name = str(asset.get("name") or "")
-        url = str(asset.get("browser_download_url") or asset.get("download_url") or "")
-        if not re.search(r"(?i)\.appimage$", name) or not url.startswith("https://"):
-            continue
-        if _arch_match(name):
-            candidates.append((name, url))
-    if len(candidates) == 1:
-        return candidates[0][1]
-    host_arch = platform.machine().lower()
-    if not candidates:
-        raise ValueError(
-            f"Expected one compatible AppImage release asset; found 0 "
-            f"(host architecture: {host_arch})"
-        )
-    raise ValueError(
-        "Expected one compatible AppImage release asset; found "
-        f"{len(candidates)} ({', '.join(name for name, _ in candidates)}); "
-        "the upstream release does not identify a single installable AppImage"
-    )
+    from .architecture import select_asset
+    candidate = select_asset(assets, formats=((".appimage",),))
+    url = str(candidate.get("browser_download_url") or candidate.get("download_url") or "")
+    if not url.startswith("https://"):
+        raise ValueError("AppImage release asset has no HTTPS URL")
+    return url
+
 
 def tracked_app_id(info):
     """Stable registry identity for one AppImage app.
@@ -967,6 +944,8 @@ def resolve_download(info):
         if parsed.scheme != "https":
             continue
         if re.search(r"(?i)\.appimage$", parsed.path):
+            if not _arch_match(parsed.path.rsplit("/", 1)[-1]):
+                raise ValueError("Direct AppImage URL does not identify a verified native architecture")
             return url, "", ""
         parts = [p for p in parsed.path.split("/") if p]
         try:
@@ -1029,6 +1008,8 @@ def _download_appimage(url, dest_path, progress=None):
         header = handle.read(4)
     if header != b"\x7fELF":
         raise ValueError("Downloaded asset is not an ELF AppImage")
+    from .architecture_files import validate_file
+    validate_file(dest_path)
 
 @contextlib.contextmanager
 def download_for_install(info, progress=None):

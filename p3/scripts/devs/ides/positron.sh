@@ -15,7 +15,8 @@ if is_debian || is_ubuntu; then
 	_link="https://cdn.posit.co/positron/releases/deb/x86_64/Positron-${_tag}-x64.deb"
     _pkg_name=$(basename ${_link})
     if curl -fsSL "${_link}" -o "/tmp/${_pkg_name}"; then
-        sudo_rq; pkg_install r-base r-base-dev
+        _architecture_check files "/tmp/${_pkg_name}"
+        pkg_install r-base r-base-dev
         if pkg_fromfile "/tmp/${_pkg_name}"; then
             zeninf "Positron successfully installed!"
         else
@@ -28,7 +29,8 @@ elif is_fedora || is_rhel; then
 	_link="https://cdn.posit.co/positron/releases/rpm/x86_64/Positron-${_tag}-x64.rpm"
     _pkg_name=$(basename ${_link})
     if curl -fsSL "${_link}" -o "/tmp/${_pkg_name}"; then
-        sudo_rq; pkg_install R-core R-core-devel
+        _architecture_check files "/tmp/${_pkg_name}"
+        pkg_install R-core R-core-devel
         if pkg_fromfile "/tmp/${_pkg_name}"; then
             zeninf "Positron successfully installed!"
         else

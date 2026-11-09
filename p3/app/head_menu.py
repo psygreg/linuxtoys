@@ -19,6 +19,7 @@ from .gtk_dialogs import WaitDialog
 import threading
 import asyncio
 import os
+import shlex
 
 
 class InputDialog(Gtk.MessageDialog):
@@ -471,13 +472,14 @@ class MenuButton(Gtk.MenuButton):
 		lib_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'libs', 'linuxtoys.bash')
 
 		script_content = '''#!/bin/bash
+# architectures: x86_64, aarch64
 source "''' + lib_path + '''"
 
-_packages=("''' + ' '.join(packages) + '''")
-[ "${#_packages[@]}" -eq 0 ] || { sudo_rq; _install_; }
+_packages=(''' + ' '.join(shlex.quote(package) for package in packages) + ''')
+[ "${#_packages[@]}" -eq 0 ] || pkg_install "${_packages[@]}"
 
-_flatpaks=("''' + ' '.join(flatpaks) + '''")
-_flatpak_
+_flatpaks=(''' + ' '.join(shlex.quote(package) for package in flatpaks) + ''')
+[ "${#_flatpaks[@]}" -eq 0 ] || pkg_flat "${_flatpaks[@]}"
 '''
 		with open(self._temp_sh, 'w+') as f:
 			f.write(script_content)
