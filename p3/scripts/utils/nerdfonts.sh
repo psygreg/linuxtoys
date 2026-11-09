@@ -23,33 +23,13 @@ declare -A _font_urls=(
 	["AdwaitaMono"]="${_release_base_url}/AdwaitaMono.tar.xz"
 )
 
-_font_options=()
-for _font in JetBrainsMono FiraCode Hack Meslo AdwaitaMono; do
-	_font_options+=(TRUE "${_font}" "${_font_urls[${_font}]}")
-done
-
-_selection_file="$(mktemp /tmp/linuxtoys-nerdfonts-selection.XXXXXX)" || fatal "Failed to create temporary selection file"
-
-if _zenity_can_run; then
-	if zenity --list \
-		--title="Choose Nerd Fonts" \
-		--width=420 --height=320 \
-		--column="Selected" --column="Fonts" --column="Link" \
-		--hide-column=3 \
-		--print-column=2 \
-		--separator=$'\n' \
-		--checklist --multiple \
-		"${_font_options[@]}" > "${_selection_file}"; then
-		mapfile -t _selected_fonts < "${_selection_file}"
-	else
-		rm -f "${_selection_file}"
-		zenwrn "No font selected"
-		exit 0
-	fi
+_font_names=(JetBrainsMono FiraCode Hack Meslo AdwaitaMono)
+if _selected_fonts_text=$(listselect --title "Choose Nerd Fonts" --all "${_font_names[@]}"); then
+	mapfile -t _selected_fonts <<< "${_selected_fonts_text}"
 else
-	_selected_fonts=(JetBrainsMono FiraCode Hack Meslo AdwaitaMono)
+	zenwrn "No font selected"
+	exit 0
 fi
-rm -f "${_selection_file}"
 
 [ ${#_selected_fonts[@]} -gt 0 ] || { zenwrn "No font selected"; exit 0; }
 

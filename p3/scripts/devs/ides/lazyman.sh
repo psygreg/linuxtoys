@@ -17,26 +17,13 @@ pkg_install neovim
 prep_dir "$HOME/.config/nvim-Lazyman"
 git clone --depth=1 https://github.com/doctorfree/nvim-lazyman $HOME/.config/nvim-Lazyman
 $HOME/.config/nvim-Lazyman/lazyman.sh -z && {
-	_nvims=(
-		"FALSE" "g" "Abstract"
-		"FALSE" "a" "AstroNvimPlus"
-		"FALSE" "j" "Basic IDE"
-		"FALSE" "e" "Ecovim"
-		"FALSE" "l" "LazyVim"
-		"FALSE" "v" "LunarVim"
-		"FALSE" "m" "MagicVim"
-		"FALSE" "c" "NvChad"
-		"FALSE" "s" "SpaceVim"
-	)
-
-	_selected_nvim=$(zenity --list \
-	--title="$msg006" \
-	--width=420 --height=500 \
-	--column="Selected" --column="Options" --column="NVIMS" \
-	--hide-column=2 \
-	--separator=" " \
-	--radiolist \
-	"${_nvims[@]}")
+	_nvim_labels=("Abstract" "AstroNvimPlus" "Basic IDE" "Ecovim" "LazyVim" "LunarVim" "MagicVim" "NvChad" "SpaceVim")
+	_nvim_ids=(g a j e l v m c s)
+	_selected_nvim_label=$(radioselect --no-default --title "$msg006" "${_nvim_labels[@]}") || _selected_nvim_label=""
+	_selected_nvim=""
+	for _i in "${!_nvim_labels[@]}"; do
+		[[ "${_nvim_labels[_i]}" == "$_selected_nvim_label" ]] && _selected_nvim="${_nvim_ids[_i]}"
+	done
 
 	[ -n "$_selected_nvim" ] && {
 		$HOME/.config/nvim-Lazyman/lazyman.sh -${_selected_nvim} -z && {

@@ -137,7 +137,7 @@ if is_debian || is_ubuntu; then
 elif is_arch || is_cachy; then
     pacman -Si -- "$package" >/dev/null 2>&1 || { command -v paru >/dev/null && paru -Si -- "$package" >/dev/null 2>&1; }
 elif is_ostree || is_fedora || is_rhel; then
-    dnf -q repoquery --available -- "$package" >/dev/null 2>&1 || dnf -q list --available "$package" >/dev/null 2>&1
+    dnf -q repoquery --available --qf '%{name}\n' -- "$package" 2>/dev/null | grep -Fxq -- "$package" || dnf -q list --available "$package" >/dev/null 2>&1
 elif is_suse; then
     zypper --non-interactive search --match-exact --type package -- "$package" 2>/dev/null | grep -Eq "^i? \\|[[:space:]]*$package[[:space:]]*\\|"
 elif is_solus; then
@@ -883,6 +883,11 @@ def _prepare_homebrew_manifest_entries(formulae, translations=None):
     } for formula in formulae]
 
 
+def _shell_exit_status(returncode):
+    """Return the script's own exit code; a child killed by signal N becomes 128+N."""
+    return returncode if returncode >= 0 else 128 - returncode
+
+
 def run_script(script_info):
     if script_info.get("appstream_source") == "homebrew":
         from . import homebrew_catalog
@@ -938,7 +943,6 @@ def _run_script_impl(script_info):
                                     stdin=sys.stdin,
                                     stdout=sys.stdout,
                                     stderr=sys.stderr,
-                                    check=True,
                                     env=child_env)
 
         else:
@@ -953,8 +957,9 @@ def _run_script_impl(script_info):
         if result.stdout:
             print(result.stdout)
         
-        print(f"\n--- Script finished with exit code: {result.returncode} ---")
-        return result.returncode
+        exit_status = _shell_exit_status(result.returncode)
+        print(f"\n--- Script finished with exit code: {exit_status} ---")
+        return exit_status
         
     except Exception as e:
         print(f"Error executing script '{script_info['name']}': {e}")

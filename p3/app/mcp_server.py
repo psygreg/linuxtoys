@@ -314,6 +314,7 @@ _DIALOG_HELPER_RE = re.compile(
 _DQ_VAR_RE = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}|\$([A-Za-z_][A-Za-z0-9_]*)")
 _NAV_FORM_RE = re.compile(r"^\$\{([A-Za-z_][A-Za-z0-9_]*)\}$|^\$([A-Za-z_][A-Za-z0-9_]*)$")
 _LANG_ASSIGN_RE = re.compile(r'^\s*([A-Za-z_][A-Za-z0-9_]*)=(.*)$')
+_BARE_FLAG_RE = re.compile(r"--[A-Za-z0-9-]*")
 
 
 def _clean_field(value):
@@ -513,6 +514,43 @@ def _agent_prompt_entry(kind, fields, title="", message=""):
     }
 
 
+def _selector_fields(kind, fields):
+    """Split a radioselect/listselect call into (title, message, options).
+
+    Mirrors the helpers' leading flags: `--title VALUE`, `--text VALUE`,
+    `--all` (list only), `--no-default` (radio only) and an optional `--`
+    terminator. Options comes back
+    as None when a flag has no value or its text escape cannot be represented,
+    so the call stays a dynamic prompt.
+    """
+    title = ""
+    message = ""
+    index = 0
+    while index < len(fields):
+        field = fields[index]
+        if field in ("--title", "--text"):
+            if index + 1 >= len(fields):
+                return title, message, None
+            if field == "--title":
+                title = fields[index + 1]
+            else:
+                message = _printf_unescape(fields[index + 1])
+                if message is None:
+                    return title, message, None
+            index += 2
+            continue
+        if field == "--all" and kind == "list":
+            index += 1
+            continue
+        if field == "--no-default" and kind == "radio":
+            index += 1
+            continue
+        if field == "--":
+            index += 1
+        break
+    return title, message, fields[index:]
+
+
 def _agent_scan_line(line, resolver):
     """All statically extractable helper calls on one physical line.
 
@@ -598,6 +636,14 @@ def _agent_scan_line(line, resolver):
                 index += len(var_match.group(0))
                 parse_end = index
                 continue
+            flag_match = _BARE_FLAG_RE.match(line, index)
+            if flag_match and (
+                flag_match.end() == len(line) or line[flag_match.end()] in " \t)"
+            ):
+                fields.append(flag_match.group(0))  # selector flags: --title, --all, --
+                index = flag_match.end()
+                parse_end = index
+                continue
             if char == "#":
                 break  # trailing comment: the call's arguments end here
             break  # redirect / pipe / other token: arguments complete
@@ -618,10 +664,16 @@ def _agent_scan_line(line, resolver):
                     "question", [title, message], title=title, message=message,
                 ))
             else:
-                if len(set(fields)) != len(fields):
+                title, message, options = _selector_fields(kind, fields)
+                if options is None:
+                    dynamic += 1
+                    continue
+                if len(set(options)) != len(options):
                     dynamic += 1  # duplicated options: ambiguous answer key
                     continue
-                entries.append(_agent_prompt_entry(kind, fields))
+                entries.append(_agent_prompt_entry(
+                    kind, options, title=title, message=message,
+                ))
     return entries, dynamic
 
 

@@ -58,44 +58,30 @@ optimizer () {
 }
 # menu
 while true; do
-    OPTIONS=(
-        TRUE  "standard"    "$defaultpwr"
-    )
+    IDS=(standard)
+    LABELS=("$defaultpwr")
     if ! is_zorin && ! is_cachy && ! is_suse; then
-        OPTIONS+=(
-            FALSE "laptop" "Laptop"
-        )
+        IDS+=(laptop)
+        LABELS+=("Laptop")
     fi
     CPU_VENDOR=$(awk -F ': *' '/^vendor_id/ { print $2; exit }' /proc/cpuinfo)
     if [[ "$CPU_VENDOR" == "AuthenticAMD" ]]; then
-        OPTIONS+=(
-            FALSE "performance" "$highperfpwr"
-        )
+        IDS+=(performance)
+        LABELS+=("$highperfpwr")
     fi
-    OPTIONS+=(
-        FALSE "cancel" "$msg070"
-    )
+    IDS+=(cancel)
+    LABELS+=("$msg070")
 
-    CHOICE=$(
-        zenity --list \
-            --radiolist \
-            --title="Power Optimizer" \
-            --text="$msg229" \
-            --column="Select" \
-            --column="ID" \
-            --column="Options" \
-            --hide-column=2 \
-            --print-column=2 \
-            "${OPTIONS[@]}" \
-            --width=360 \
-            --height=360
-    )
-    status=$?
+    CHOICE=$(radioselect --title "Power Optimizer" --text "$msg229" "${LABELS[@]}") || exit 100
+    CHOICE_ID=""
+    for i in "${!LABELS[@]}"; do
+        if [[ "${LABELS[i]}" == "$CHOICE" ]]; then
+            CHOICE_ID="${IDS[i]}"
+            break
+        fi
+    done
 
-    if (( status != 0 )) || [[ -z "$CHOICE" ]]; then
-        exit 100
-    fi
-    case "$CHOICE" in
+    case "$CHOICE_ID" in
         standard)
             askpass && optimizer
             exit $?
@@ -113,7 +99,7 @@ while true; do
             exit 100
             ;;
         *)
-            printf 'Unexpected option returned by Zenity: %q\n' "$CHOICE" >&2
+            printf 'Unexpected option returned by the menu: %q\n' "$CHOICE" >&2
             exit 1
             ;;
     esac

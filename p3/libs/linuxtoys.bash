@@ -525,44 +525,121 @@ question() {
     [[ "$_reply" =~ ^[Yy]$ ]]
 }
 
+# Prints terminal prompts for the selectors: on the terminal stdin is attached
+# to when there is one (so callers that silence stderr still show the menu),
+# otherwise on stderr. Arguments are printf arguments.
+_cli_out() {
+    if [[ -t 0 ]] && { : >/dev/fd/0; } 2>/dev/null; then
+        printf "$@" >/dev/fd/0
+    else
+        printf "$@" >&2
+    fi
+}
+
+# Terminal selection behind radioselect/listselect when no dialog can be shown
+# (CLI, TUI). Shows the title, the question and the numbered options, then
+# reads the choice from stdin. Radio prints the chosen label; list prints one
+# label per line. Returns 1 when nothing is chosen, which is the cancel status
+# of the dialogs. Agent runs never prompt: their answers come from the
+# prepared-answers file.
 _cli_select() {
-    local mode="$1"
-    shift
-    local -a options=("$@")
-    local reply token index
-    local -a selected=()
+    local mode="$1" title="$2" text="$3" preselect="$4"
+    shift 4
+    local -a options=("$@") defaults=() toks=() picks=()
+    local -A seen=()
+    local reply tok index
 
     (( ${#options[@]} > 0 )) || return 1
+    if _lt_agent_active; then
+        return 1
+    fi
 
-    printf '%s\n' "Select an option:" >&2
+    if [[ -n "$title" ]]; then
+        _cli_out '\n%s\n' "$title"
+    fi
+    if [[ -n "$text" ]]; then
+        _cli_out '%s\n' "$text"
+    fi
     for index in "${!options[@]}"; do
-        printf '  %d) %s\n' "$((index + 1))" "${options[index]}" >&2
+        _cli_out '  %d) %s\n' "$((index + 1))" "${options[index]}"
     done
 
-    if [[ "$mode" == "radio" ]]; then
-        read -r -p "Selection [1]: " reply || return 1
-        reply="${reply:-1}"
+    if [[ "$mode" == radio ]]; then
+        if [[ "$preselect" == none ]]; then
+            _cli_out 'Selection: '
+        else
+            _cli_out 'Selection [1]: '
+        fi
+        read -r reply || return 1
+        reply="${reply//[[:space:]]/}"
+        if [[ "$preselect" != none ]]; then
+            reply="${reply:-1}"
+        fi
         [[ "$reply" =~ ^[0-9]+$ ]] || return 1
+        reply=$(( 10#$reply ))
         (( reply >= 1 && reply <= ${#options[@]} )) || return 1
         printf '%s\n' "${options[reply - 1]}"
         return 0
     fi
 
-    read -r -p "Selections (space/comma separated): " reply || return 1
-    [[ -n "$reply" ]] || return 1
+    if [[ "$preselect" == all ]]; then
+        for (( index = 1; index <= ${#options[@]}; index++ )); do
+            defaults+=("$index")
+        done
+        _cli_out 'Selections (space or comma separated; Enter keeps all): '
+    else
+        _cli_out 'Selections (space or comma separated): '
+    fi
+    read -r reply || return 1
+    if [[ -z "${reply//[[:space:]]/}" ]]; then
+        reply="${defaults[*]-}"
+    fi
     reply="${reply//,/ }"
-
-    for token in $reply; do
-        [[ "$token" =~ ^[0-9]+$ ]] || return 1
-        (( token >= 1 && token <= ${#options[@]} )) || return 1
-        selected+=("${options[token - 1]}")
+    read -r -a toks <<< "$reply"
+    (( ${#toks[@]} > 0 )) || return 1
+    for tok in "${toks[@]}"; do
+        [[ "$tok" =~ ^[0-9]+$ ]] || return 1
+        tok=$(( 10#$tok ))
+        (( tok >= 1 && tok <= ${#options[@]} )) || return 1
+        if [[ -z "${seen[$tok]-}" ]]; then
+            seen[$tok]=1
+            picks+=("${options[tok - 1]}")
+        fi
     done
-
-    (( ${#selected[@]} > 0 )) || return 1
-    printf '%s\n' "${selected[@]}"
+    printf '%s\n' "${picks[@]}"
+    return 0
 }
 
+# radioselect [--title TITLE] [--text TEXT] [--no-default] [--] OPTION...
+# The first option starts selected unless --no-default is given: then nothing
+# is selected and Enter cancels.
 radioselect() {
+    local title="LinuxToys" text="" nodefault=""
+    while (( $# > 0 )); do
+        case "$1" in
+            --title)
+                (( $# >= 2 )) || return 1
+                title="$2"
+                shift 2
+                ;;
+            --text)
+                (( $# >= 2 )) || return 1
+                text="$(_msg_unescape "$2")"
+                shift 2
+                ;;
+            --no-default)
+                nodefault=1
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                break
+                ;;
+        esac
+    done
     (( $# > 0 )) || return 1
 
     if _lt_agent_active; then
@@ -575,21 +652,55 @@ radioselect() {
     fi
 
     if _zenity_can_run; then
-        local -a rows=()
+        local -a rows=() text_args=()
         local option state="TRUE"
+        if [[ -n "$nodefault" ]]; then
+            state="FALSE"
+        fi
         for option in "$@"; do
             rows+=("$state" "$option")
             state="FALSE"
         done
-        _zenity_run --list --radiolist --title="LinuxToys" \
+        if [[ -n "$text" ]]; then
+            text_args=(--text="$text")
+        fi
+        _zenity_run --list --radiolist --title="$title" "${text_args[@]}" \
             --column="" --column="Option" "${rows[@]}"
         return $?
     fi
 
-    _cli_select radio "$@"
+    _cli_select radio "$title" "$text" "${nodefault:+none}" "$@"
 }
 
+# listselect [--title TITLE] [--text TEXT] [--all] [--] OPTION...
+# --all starts with every option checked; Enter keeps those on the terminal.
 listselect() {
+    local title="LinuxToys" text="" preselect=""
+    while (( $# > 0 )); do
+        case "$1" in
+            --title)
+                (( $# >= 2 )) || return 1
+                title="$2"
+                shift 2
+                ;;
+            --text)
+                (( $# >= 2 )) || return 1
+                text="$(_msg_unescape "$2")"
+                shift 2
+                ;;
+            --all)
+                preselect=all
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                break
+                ;;
+        esac
+    done
     (( $# > 0 )) || return 1
 
     if _lt_agent_active; then
@@ -604,12 +715,23 @@ listselect() {
     fi
 
     if _zenity_can_run; then
-        _zenity_run --list --multiple --title="LinuxToys" \
-            --column="Option" --separator=$'\n' "$@"
+        local -a rows=() text_args=()
+        local option state="FALSE"
+        if [[ "$preselect" == all ]]; then
+            state="TRUE"
+        fi
+        for option in "$@"; do
+            rows+=("$state" "$option")
+        done
+        if [[ -n "$text" ]]; then
+            text_args=(--text="$text")
+        fi
+        _zenity_run --list --checklist --title="$title" "${text_args[@]}" \
+            --column="" --column="Option" --separator=$'\n' "${rows[@]}"
         return $?
     fi
 
-    _cli_select list "$@"
+    _cli_select list "$title" "$text" "$preselect" "$@"
 }
 
 info() {

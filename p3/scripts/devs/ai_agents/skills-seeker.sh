@@ -9,6 +9,18 @@
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
+: "${_skills_search_label:=Search}"
+: "${_skills_trending_label:=Trending}"
+: "${_skills_hot_label:=Hot}"
+: "${_skills_official_label:=Official}"
+: "${_skills_installed_label:=Installed}"
+: "${_skills_clear_cache_label:=Clear cache}"
+: "${_skills_results_title:=Search results}"
+: "${_skills_action_title:=Action}"
+: "${_skills_install_label:=Install}"
+: "${_skills_detail_label:=Details}"
+: "${_skills_back_label:=Back}"
+: "${_skills_choose_agent_title:=Choose agent}"
 
 FETCHER="$SCRIPT_DIR/../../app/skills_fetcher.py"
 PYTHON=$(command -v python3)
@@ -19,16 +31,17 @@ _zen_fallback() {
 }
 
 show_main_menu() {
-    choice=$(zenity --list --title="Skills Seeker" \
-        --column="Option" --column="Description" \
-        "search" "$_skills_search_label" \
-        "trending" "$_skills_trending_label" \
-        "hot" "$_skills_hot_label" \
-        "official" "$_skills_official_label" \
-        "installed" "$_skills_installed_label" \
-        "clear_cache" "$_skills_clear_cache_label" \
-        --height=320 --width=450 2>/dev/null) || return 1
-    echo "$choice"
+    local -a ids=(search trending hot official installed clear_cache)
+    local -a labels=("$_skills_search_label" "$_skills_trending_label" "$_skills_hot_label" "$_skills_official_label" "$_skills_installed_label" "$_skills_clear_cache_label")
+    local picked i
+    picked=$(radioselect --no-default --title "Skills Seeker" "${labels[@]}") || return 1
+    for i in "${!labels[@]}"; do
+        if [[ "${labels[i]}" == "$picked" ]]; then
+            echo "${ids[i]}"
+            return 0
+        fi
+    done
+    return 1
 }
 
 run_search() {
@@ -51,8 +64,9 @@ _do_search() {
 _show_results() {
     local json="$1"
     local query="$2"
-    local list_items
-    list_items=$(echo "$json" | "$PYTHON" -c "
+    local parsed picked selected="" i name installs source_name
+    local -a names=() labels=()
+    parsed=$(echo "$json" | "$PYTHON" -c "
 import json,sys
 data=json.load(sys.stdin)
 for s in data.get('skills',[]):
@@ -67,14 +81,22 @@ for s in data.get('skills',[]):
         zeninf "$_skills_error_parse" 2>/dev/null || echo "$_skills_error_parse"
         return 1
     }
-    [ -z "$list_items" ] && {
+    while IFS=$'\t' read -r name installs source_name; do
+        [[ -n "$name" ]] || continue
+        names+=("$name")
+        labels+=("$name - $installs - $source_name")
+    done <<< "$parsed"
+    [[ ${#names[@]} -gt 0 ]] || {
         zeninf "$_skills_no_results" 2>/dev/null || echo "$_skills_no_results"
         return 0
     }
-    local selected
-    selected=$(zenity --list --title="$_skills_results_title" \
-        --column="$_skills_col_name" --column="$_skills_col_installs" --column="$_skills_col_source" \
-        --width=600 --height=400 $list_items 2>/dev/null) || return 1
+    picked=$(radioselect --no-default --title "$_skills_results_title" "${labels[@]}") || return 1
+    for i in "${!labels[@]}"; do
+        if [[ "${labels[i]}" == "$picked" ]]; then
+            selected="${names[i]}"
+            break
+        fi
+    done
     [ -z "$selected" ] && return 0
     _handle_skill_selection "$selected"
 }
@@ -108,13 +130,12 @@ for s in data.get('skills',[]):
         source="${matched_id%/*}"
         slug="${matched_id##*/}"
     fi
-    local action
-    action=$(zenity --list --title="$_skills_action_title" \
-        --column="Action" --column="Description" \
-        "install" "$_skills_install_label" \
-        "detail" "$_skills_detail_label" \
-        "back" "$_skills_back_label" \
-        --width=400 --height=250 2>/dev/null) || return 0
+    local action_label action=""
+    action_label=$(radioselect --no-default --title "$_skills_action_title" "$_skills_install_label" "$_skills_detail_label" "$_skills_back_label") || return 0
+    case "$action_label" in
+        "$_skills_install_label") action=install ;;
+        "$_skills_detail_label") action=detail ;;
+    esac
     case "$action" in
         install) _install_skill "$source" "$slug" ;;
         detail)  _show_detail "$source" "$slug" ;;
@@ -178,14 +199,8 @@ _install_skill() {
         zeninf "$_skills_no_agents" 2>/dev/null || echo "$_skills_no_agents"
         return 1
     fi
-    local agent_list=""
-    for a in "${agents[@]}"; do
-        agent_list+="$a\n"
-    done
     local chosen_agent
-    chosen_agent=$(echo -e "$agent_list" | \
-        zenity --list --title="$_skills_choose_agent_title" \
-        --column="Agent" --height=300 --width=300 2>/dev/null) || return 1
+    chosen_agent=$(radioselect --no-default --title "$_skills_choose_agent_title" "${agents[@]}") || return 1
     [ -z "$chosen_agent" ] && return 0
     local skill_ref="${source}/${slug}"
     if ! zenask "$_skills_confirm_title" \

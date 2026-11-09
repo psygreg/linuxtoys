@@ -60,17 +60,11 @@ elif is_gregos; then
 else
     # menu
     while true; do
-        CHOICE=$(zenity --list --title "Swapfile Creator" --text "Create swapfile on:" \
-            --column "Options" \
+        CHOICE=$(radioselect --no-default --title "Swapfile Creator" --text "Create swapfile on:" \
             "/ (root)" \
             "/home (home)" \
             "Custom path..." \
-            "Cancel" \
-            --height 330 --width 300)
-
-        if [ $? -ne 0 ]; then
-            exit 100
-        fi
+            "Cancel") || exit 100
 
         case $CHOICE in
         "/ (root)") create_swap "/" && break;;

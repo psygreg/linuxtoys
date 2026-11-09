@@ -240,16 +240,7 @@ dv_rhel () {
     }
 
     while true; do
-		CHOICE=$(zenity --list --title="DaVinci Resolve installer for RHEL" \
-        	--column="Which version do you want to install?" \
-			"Free" \
-			"Studio" \
-			"$msg070" \
-			--height=300 --width=300)
-
-		if [ $? -ne 0 ]; then
-        	break
-   		fi
+		CHOICE=$(radioselect --no-default --title "DaVinci Resolve installer for RHEL" --text "Which version do you want to install?" "Free" "Studio" "$msg070") || break
 
 		case $CHOICE in
 			"Free") _upkgname='davinci-resolve'
@@ -313,16 +304,7 @@ davinciboxatom () {
     }
 
 	while true; do
-		CHOICE=$(zenity --list --title="AutoDaVinciBox" \
-        	--column="Which version do you want to install?" \
-			"Free" \
-			"Studio" \
-			"$msg070" \
-			--height=300 --width=300)
-
-		if [ $? -ne 0 ]; then
-        	break
-   		fi
+		CHOICE=$(radioselect --no-default --title "AutoDaVinciBox" --text "Which version do you want to install?" "Free" "Studio" "$msg070") || break
 
 		case $CHOICE in
 			"Free") _upkgname='davinci-resolve'
@@ -353,16 +335,7 @@ else
     # menu
     while true; do
 
-        CHOICE=$(zenity --list --title "DaVinci Resolve" \
-            --column="" \
-            "$msg231" \
-            "$msg232" \
-            "$msg070" \
-            --height=330 --width=300)
-
-        if [ $? -ne 0 ]; then
-            break
-        fi
+        CHOICE=$(radioselect --no-default --title "DaVinci Resolve" "$msg231" "$msg232" "$msg070") || break
 
         case $CHOICE in
         "$msg231") davinciboxd && break ;;

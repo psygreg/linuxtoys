@@ -424,6 +424,9 @@ def confirm_action(prompt_message):
     except KeyboardInterrupt:
         print("\n⚠️  Operation cancelled by user.")
         return False
+    except EOFError:
+        print("\n❌ Operation cancelled: no input available.")
+        return False
     return True
 
 
@@ -447,12 +450,15 @@ def execute_scripts_with_feedback(scripts_found):
         elif exit_code == 130:
             print("\n⚠️  Execution interrupted by the user.")
             break
+
+        elif exit_code == 100:
+            print(f"⚠️  {name} was cancelled.")
+            # Only ask when more scripts remain: a cancel on the last one ends the run.
+            if index < total and not confirm_action("Do you want to continue with the remaining scripts?"):
+                break
+
         else:
             print(f"✗ {name} Failed with exit code: {exit_code}.")
-            # Ask the user if they want to continue with the remaining scripts
-            if not confirm_action("Do you want to continue with the remaining scripts?"):
-                print("❌ Operation cancelled.")
-                break
 
 
 def _refuse_outdated_scripts() -> bool:
@@ -592,9 +598,12 @@ def execute_uninstalls_with_feedback(scripts_found, translations):
             print("\n⚠️  Removal interrupted by the user.")
             break
         else:
-            print(f"✗ {name} removal failed with exit code: {exit_code}.")
-            if not confirm_action("Do you want to continue with the remaining removals?"):
-                print("❌ Operation cancelled.")
+            if exit_code == 100:
+                print(f"⚠️  {name} removal was cancelled.")
+            else:
+                print(f"✗ {name} removal failed with exit code: {exit_code}.")
+            # Only ask when more removals remain; the last one ends the run either way.
+            if index < total and not confirm_action("Do you want to continue with the remaining removals?"):
                 break
 
 
@@ -678,8 +687,7 @@ def remove_packages_with_feedback(packages):
             print(f"✓ Package '{package}' removed successfully.")
         else:
             print(f"✗ Package '{package}' removal failed with exit code: {exit_code}.")
-            if not confirm_action("Do you want to continue with the remaining removals?"):
-                print("❌ Operation cancelled.")
+            if index < total and not confirm_action("Do you want to continue with the remaining removals?"):
                 break
 
 
@@ -771,9 +779,8 @@ def install_packages_with_feedback(packages_found):
             failed_items.append(('PACKAGE', package, 1))
             print(f"Package '{package}' installation failed")
             
-            # Ask if user wants to continue on failure
-            if not confirm_action("Do you want to continue with the remaining installations?"):
-                print("❌ Operation cancelled.")
+            # Ask only when more packages remain; the last one ends the run either way.
+            if current_item < total_items and not confirm_action("Do you want to continue with the remaining installations?"):
                 break
 
 def packages_install(args: list, skip_confirmation, translations):
