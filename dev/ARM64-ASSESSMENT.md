@@ -349,6 +349,8 @@ catalog/font search, incompatible-tag refusal, offline source selection and GUI
 search/shutdown on Wayland and Xwayland. Test and environment details are in
 [script-rollout-evidence.json](script-rollout-evidence.json).
 The local compatibility defect is resolved; **live upstream rollout remains
-pending**, including coordination of the unchanged automatic sync workflow.
+pending**. The [preparation follow-up](SCRIPT-PREPARATION.md) now replaces the
+unsafe automatic sync locally with a manual artifact-only workflow; no workflow
+was executed and upstream adoption still needs separate coordination.
 Native amd64 regression is still unavailable. B07–B10 packaging and the other
 M2 limitations remain open; packaging qualification has not begun.

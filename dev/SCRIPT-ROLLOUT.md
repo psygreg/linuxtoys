@@ -102,11 +102,11 @@ the exported bytes in a clean client environment. Do not export build artifacts.
 
 1. Arrange native amd64 regression evidence separately. Assign the actual client
    release version and retain the existing release-age policy.
-2. Coordinate/hold the existing automatic scripts sync *before merging source*.
-   `.github/workflows/sync-scripts.yml` currently deletes the remote tree then
-   copies `p3/scripts/*`: it omits the hidden manifest, targets mutable default
-   history, suppresses copy errors and pushes automatically. It cannot publish
-   this contract safely as written. This milestone does not change/run it.
+2. At M3A, `.github/workflows/sync-scripts.yml` deleted the remote tree then copied
+   `p3/scripts/*`, omitting the manifest and pushing automatically. The subsequent
+   [artifact-only preparation follow-up](SCRIPT-PREPARATION.md) replaces that
+   design locally with a manual review-artifact job. Nothing was run or published;
+   maintainers must still coordinate adoption before a separately authorized rollout.
 3. Distribute the reviewed client with API, policy, lock and matching bundled
    manifest first. Its approved bundled fonts work while the tag is unavailable.
    Legacy caches do not gain permission. No need to expose new scripts to old
@@ -115,7 +115,8 @@ the exported bytes in a clean client environment. Do not export build artifacts.
    under the content-addressed tag printed by `--check`. Preserve the legacy
    default branch for older clients; include dotfiles; do not mutate an existing
    tag. Both mirrors must serve identical approved content. Verify through the
-   new client before re-enabling any adapted synchronization workflow.
+   new client before calling the rollout complete. The replacement preparation
+   workflow has no repository/tag publisher to enable.
 5. Rollback: restore the prior complete **client/policy/bundle pair**, subject to
    its existing minimum-client gate, or explicitly review a same-policy/API
    revision into a new client allowlist. Never retag unknown bytes or relax

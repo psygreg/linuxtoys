@@ -175,6 +175,7 @@ successfully. Evidence, commands, profiles and limitations are recorded in
 [script-rollout-evidence.json](script-rollout-evidence.json).
 
 Still required: native amd64 regression and separately authorized, coordinated
-upstream rollout. The existing automatic sync omits the hidden manifest and must
-be addressed before merge/publication. No workflow was changed/run, no upstream
-write occurred, and Ubuntu ARM64 packaging qualification has not begun.
+upstream rollout. At M3A, the automatic sync omitted the hidden manifest. The
+subsequent [preparation follow-up](SCRIPT-PREPARATION.md) replaces that design
+locally; it adds no native application evidence or publisher. No workflow was
+run, no upstream write occurred, and packaging qualification has not begun.

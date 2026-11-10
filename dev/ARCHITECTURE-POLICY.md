@@ -190,7 +190,9 @@ does not bypass this contract; existing release-age gate behavior is unchanged.
 
 [SCRIPT-ROLLOUT.md](SCRIPT-ROLLOUT.md) defines supported revision relationships,
 preparation, rollback and the required publication order. Its workflow warning is
-material: the unchanged default-branch sync omits the hidden manifest and must be
-coordinated separately before merging/publishing these artifacts.
+material: the original default-branch sync omitted the hidden manifest.
+[SCRIPT-PREPARATION.md](SCRIPT-PREPARATION.md) records its subsequent local
+replacement: manual preparation and review-artifact storage, with no repository,
+tag or release publication path. Adoption/publication remain separately authorized.
 See [verification evidence](script-rollout-evidence.json). Native amd64 and live
 upstream publication remain separate gates; packaging qualification has not begun.

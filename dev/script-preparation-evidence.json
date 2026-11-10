@@ -1,0 +1,127 @@
+{
+  "schema": 1,
+  "date": "2026-11-10",
+  "baseline": "e4f44a1f19a8870a8a760e6531fdc42a5f8ac728",
+  "scope": "Local artifact-only workflow replacement; no workflow execution or publication",
+  "environment": {
+    "system": "Darwin",
+    "architecture": "arm64",
+    "python": "3.13.7",
+    "ruff": "0.12.3",
+    "ruby_psych": "4.0.9; YAML.safe_load"
+  },
+  "approved_revision_unchanged": "083138ce4b55ccf533a215c995bf27db25eae80d60b487150ae710f14d245e5f",
+  "protected_files_byte_identical_to_baseline": [
+    "p3/app/script-revisions.json",
+    "p3/app/architecture-routes.json",
+    "p3/scripts/.linuxtoys-scripts.json"
+  ],
+  "payload_and_application_dependencies_unchanged": true,
+  "artifact_validation": {
+    "schema": 1,
+    "status": "validated",
+    "publication": false,
+    "revision": "083138ce4b55ccf533a215c995bf27db25eae80d60b487150ae710f14d245e5f",
+    "script_api": 1,
+    "architecture_policy_sha256": "c09ae4f4a43d2504162bba397272e04308d752643962bd87f8d7a1278c2a8653",
+    "manifest_files": 337,
+    "archive_files": 338,
+    "payload_bytes": 3742564,
+    "archive": "scripts.tar",
+    "archive_sha256": "ee16612ea2530214eb8fcbab5d493838f4639cd759c2dd8a991c71861fefea37",
+    "archive_format": "POSIX pax; sorted regular files; uid/gid/mtime=0; .sh=0755, other=0644",
+    "checks": [
+      "client-approved revision",
+      "script API",
+      "architecture policy",
+      "exact inventory including hidden files",
+      "regular files only",
+      "fresh raw-byte digests",
+      "bounded payload"
+    ]
+  },
+  "artifact_file_sha256": {
+    "SHA256SUMS": "dac9127c08fafc1fcb7a05e09d8635bd43ea9ee6f971c5bcf446348d9c1a7079",
+    "scripts.tar": "ee16612ea2530214eb8fcbab5d493838f4639cd759c2dd8a991c71861fefea37",
+    "validation.json": "27c3bbc97bf62fe2d359df112caf6c7b473eec06bbc6ae0d7df606632640370b"
+  },
+  "reproducibility": {
+    "real_source_exports_compared": 2,
+    "all_three_files_byte_identical": true,
+    "fixtures": "Input location, mtime, permission bits and insertion order varied; bytes remained identical",
+    "temporary_review_root": "/tmp/linuxtoys-preparation-review-h3rzxyug"
+  },
+  "tests": {
+    "command": "python3 -m unittest discover -s dev/tests -v",
+    "total": 93,
+    "passed": 90,
+    "skipped": 3,
+    "skips": [
+      "Linux DEB metadata tool",
+      "native Linux Rust/ctypes layouts",
+      "Linux updater fixture"
+    ],
+    "focused_preparation_tests": 25,
+    "result": "OK",
+    "log": "/tmp/linuxtoys-preparation-tests.log"
+  },
+  "checks": {
+    "ruff_lint": "passed for changed preparation module and new tests",
+    "ruff_format": "passed for changed preparation module and new tests",
+    "python_ast": "passed",
+    "workflow_yaml": "Ruby/Psych safe parser and structural capability allowlist passed",
+    "workflow_shell": "bash -n on parsed run block passed",
+    "manifest": "--check passed; exact production files unchanged",
+    "artifact": "--verify-artifact and independent byte reconstruction passed",
+    "diff": "git diff --check passed"
+  },
+  "workflow_capabilities": {
+    "triggers": [
+      "workflow_dispatch (no inputs)"
+    ],
+    "runner": "ubuntu-24.04",
+    "repository_permissions": {
+      "contents": "read"
+    },
+    "checkout_ref": "github.sha",
+    "checkout_persist_credentials": false,
+    "checkout_action": "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+    "review_storage_action": "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02",
+    "artifact_overwrite": false,
+    "explicit_future_remote_output": "GitHub Actions review artifact storage only; not exercised",
+    "repository_publisher": false,
+    "tag_or_release_publisher": false,
+    "mirror_checkout_or_writer": false,
+    "deployment": false,
+    "custom_token_secret": false,
+    "approval_writer_in_workflow": false
+  },
+  "local_preparation": {
+    "credentials_required": false,
+    "git_required": false,
+    "network_operations": false,
+    "third_party_python_dependencies": false,
+    "installer_bodies_executed": false,
+    "existing_revision_overwrite": false
+  },
+  "operations_not_performed": [
+    "workflow trigger/execution",
+    "artifact upload/download",
+    "GitHub or mirror writes",
+    "remote tag creation",
+    "publication or deployment",
+    "package/dependency installation",
+    "native amd64 or emulation qualification",
+    "Ubuntu ARM64 packaging qualification"
+  ],
+  "limitations": [
+    "Actionlint and ShellCheck unavailable; no result claimed",
+    "Workflow/hosted runner/action execution and artifact storage not tested",
+    "Native amd64 application qualification remains separate",
+    "No new Linux ARM64 application runtime/build test; prior M2/M3A evidence retained",
+    "Socket binding denied in local sandbox: socket/device mode rejection tested with metadata fixtures; FIFO rejection tested with a real FIFO",
+    "Checksums show correspondence to trusted client bytes, not new signing provenance",
+    "Handled write failure cleans only its new output; crash/cleanup failure may leave an incomplete directory which verification and retry refuse"
+  ],
+  "documentation": "SCRIPT-PREPARATION.md"
+}
