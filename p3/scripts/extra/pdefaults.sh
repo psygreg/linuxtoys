@@ -65,7 +65,7 @@ while true; do
         LABELS+=("Laptop")
     fi
     CPU_VENDOR=$(awk -F ': *' '/^vendor_id/ { print $2; exit }' /proc/cpuinfo)
-    if [[ "$CPU_VENDOR" == "AuthenticAMD" ]]; then
+    if [[ "$CPU_VENDOR" == "AuthenticAMD" ]] && ! is_cachy; then
         IDS+=(performance)
         LABELS+=("$highperfpwr")
     fi
