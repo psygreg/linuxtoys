@@ -767,8 +767,9 @@ _cli_input() {
 # Asks for one line of text and prints it. Returns 0 with the entry, which is
 # empty when nothing was typed and there is no default; returns 1 when the user
 # cancels or no input can be read. Each option takes `--opt VALUE` or
-# `--opt=VALUE`. Agent runs cannot pre-answer free text: the prompt is logged
-# and shown live, the way question() handles prompts it could not pre-ask.
+# `--opt=VALUE`. In agent runs a prompt the service pre-asked is answered from
+# the prepared answers; any other prompt is logged and shown live, the way
+# question() handles prompts it could not pre-ask.
 userinput() {
     local title="LinuxToys" text="" default="" _opt _val
 
@@ -797,6 +798,11 @@ userinput() {
     done
 
     if _lt_agent_active; then
+        local _pref
+        if _pref=$(_lt_agent_lookup input "$title" "$text" "$default"); then
+            printf '%s\n' "$_pref"
+            return 0
+        fi
         _lt_agent_event prompt "input: $title ($text)"
     fi
 

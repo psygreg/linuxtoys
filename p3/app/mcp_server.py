@@ -279,14 +279,16 @@ def _system_update_entry():
 # ---------------------------------------------------------------------------
 # Agent script-dialog machinery
 #
-# Scripts raise dialogs through four helper families in libs/linuxtoys.bash:
-# question/zenask, radioselect, listselect and warn/zenwrn/nonfatal/die/fatal.
+# Scripts raise dialogs through five helper families in libs/linuxtoys.bash:
+# question/zenask, radioselect, listselect, userinput and
+# warn/zenwrn/nonfatal/die/fatal.
 # Agent behavior:
 #
 # - Questions: statically extracted from the script text and returned by
 #   install_app/update_system BEFORE any run (requires_answers payload).
-#   The agent asks the user (options + default are provided), then re-calls
-#   the tool with `answers`; the run carries a prepared-answers file that
+#   The agent asks the user (options + default are provided; a userinput
+#   prompt is a text question answered with the text the user typed), then
+#   re-calls the tool with `answers`; the run carries a prepared-answers file that
 #   the helpers consult instead of showing a dialog. Calls the service
 #   cannot pre-ask (variable args, continuations, exotic escapes) are
 #   counted as dynamic prompts: they keep their live dialog behavior and
@@ -309,8 +311,13 @@ _UNIT_SEP = "\x1f"
 _QUESTION_ID_LEN = 12
 
 _DIALOG_HELPER_RE = re.compile(
-    r"(?:^|[^A-Za-z0-9_-])(zenask|question|radioselect|listselect)(?![A-Za-z0-9_-])"
+    r"(?:^|[^A-Za-z0-9_-])(zenask|question|radioselect|listselect|userinput)(?![A-Za-z0-9_-])"
 )
+_INPUT_COMMAND_POSITION_RE = re.compile(
+    r"(?:^|[;&|({`!]|\$\(|\b(?:then|do|else|if|elif|while|until))\s*$"
+)
+_INPUT_ANSWER_MAX = 1024
+_INPUT_CONTROL_RE = re.compile(r"[\x00-\x1f\x7f]")
 _DQ_VAR_RE = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}|\$([A-Za-z_][A-Za-z0-9_]*)")
 _NAV_FORM_RE = re.compile(r"^\$\{([A-Za-z_][A-Za-z0-9_]*)\}$|^\$([A-Za-z_][A-Za-z0-9_]*)$")
 _LANG_ASSIGN_RE = re.compile(r'^\s*([A-Za-z_][A-Za-z0-9_]*)=(.*)$')
@@ -501,6 +508,9 @@ def _agent_prompt_entry(kind, fields, title="", message=""):
     elif kind == "radio":
         options = fields
         default = options[0] if options else ""
+    elif kind == "input":
+        options = []
+        default = fields[2] if len(fields) > 2 else ""
     else:
         options = fields
         default = ""
@@ -551,6 +561,50 @@ def _selector_fields(kind, fields):
     return title, message, fields[index:]
 
 
+def _input_command_position(prefix):
+    """True when a userinput name starts a command, not an argument or text."""
+    return _INPUT_COMMAND_POSITION_RE.search(prefix.rstrip()) is not None
+
+
+def _input_fields(fields):
+    """Split one userinput call into (title, message, default); None when the
+    call cannot be pinned statically.
+
+    Mirrors userinput's options: `--title`, `--text` and `--default`, each
+    with one value (the `--opt=VALUE` form arrives here as two fields). The
+    text is unescaped and loses trailing newlines the way $(...) does on the
+    bash side, so the answer key matches at runtime.
+    """
+    title = "LinuxToys"
+    message = ""
+    default = ""
+    index = 0
+    while index < len(fields):
+        option = fields[index]
+        if option not in ("--title", "--text", "--default") or index + 1 >= len(fields):
+            return None
+        value = fields[index + 1]
+        if option == "--title":
+            title = value
+        elif option == "--text":
+            message = _printf_unescape(value)
+            if message is None or "\x00" in message:
+                return None
+            message = message.rstrip("\n")
+        else:
+            default = value
+        index += 2
+    return title, message, default
+
+
+def _input_answer_problem(text):
+    if len(text) > _INPUT_ANSWER_MAX:
+        return f"is longer than {_INPUT_ANSWER_MAX} characters"
+    if _INPUT_CONTROL_RE.search(text):
+        return "must be one line without control characters"
+    return None
+
+
 def _agent_scan_line(line, resolver):
     """All statically extractable helper calls on one physical line.
 
@@ -570,8 +624,11 @@ def _agent_scan_line(line, resolver):
         kind = (
             "question" if helper in ("question", "zenask")
             else "radio" if helper == "radioselect"
+            else "input" if helper == "userinput"
             else "list"
         )
+        if kind == "input" and not _input_command_position(line[:match.start(1)]):
+            continue  # the word sits in an argument or text, not a call
         fields = []
         dynamic_call = False
         parse_end = match.end()
@@ -644,12 +701,31 @@ def _agent_scan_line(line, resolver):
                 index = flag_match.end()
                 parse_end = index
                 continue
+            if (
+                kind == "input" and flag_match
+                and flag_match.end() < len(line) and line[flag_match.end()] == "="
+            ):
+                fields.append(flag_match.group(0))  # userinput --opt=VALUE
+                index = flag_match.end() + 1
+                parse_end = index
+                if index >= len(line) or line[index] in " \t)":
+                    fields.append("")  # empty `--opt=` value
+                continue
             if char == "#":
                 break  # trailing comment: the call's arguments end here
             break  # redirect / pipe / other token: arguments complete
 
         if dynamic_call:
             dynamic += 1
+        elif kind == "input":
+            parsed = _input_fields(fields)
+            if parsed is None:
+                dynamic += 1  # unknown or unpaired option: runtime prompt only
+                continue
+            title, message, default = parsed
+            entries.append(_agent_prompt_entry(
+                "input", [title, message, default], title=title, message=message,
+            ))
         elif fields:
             if kind == "question":
                 title = fields[0] if fields else ""
@@ -953,6 +1029,23 @@ def _agent_compile_arms(scope_dir, conditions):
 _AGENT_ASSIGN_RE = re.compile(r"^\s*(?:export\s+|local\s+)?([A-Za-z_][A-Za-z0-9_]*)=(\"[^\"]*\"|'[^']*')\s*$")
 
 
+_AGENT_DEFAULT_RE = re.compile(r'^\s*:\s+"\$\{([A-Za-z_][A-Za-z0-9_]*):=([^}"]*)\}"\s*$')
+
+
+def _agent_script_default_table(text):
+    """`: "${name:=value}"` fallbacks: the value applies only where the lang
+    table does not define the name, as the shell does at runtime."""
+    table = {}
+    for line in text.split("\n"):
+        match = _AGENT_DEFAULT_RE.match(line)
+        if not match:
+            continue
+        value = _lang_assignment_value(f'"{match.group(2)}"')
+        if value is not None:
+            table[match.group(1)] = value
+    return table
+
+
 def _agent_script_var_table(text):
     """Static constant assignments inside one script (name="literal"), with
     runtime-result assignments deliberately excluded.
@@ -986,7 +1079,8 @@ def _agent_script_scan(text):
     lang_table = _lang_table()
     scope_dir = _script_dir()
     script_vars = _agent_script_var_table(text)
-    merged_vars = dict(lang_table)
+    merged_vars = _agent_script_default_table(text)
+    merged_vars.update(lang_table)
     merged_vars.update(script_vars)
 
     def resolver(name):
@@ -1449,6 +1543,22 @@ def _agent_records(questions, answers):
                 problems.append(
                     f"question '{question_id}' expects 'yes' or 'no', got {value!r}"
                 )
+            continue
+        if kind == "input":
+            if not isinstance(value, str):
+                problems.append(
+                    f"text question '{question_id}' expects one text answer, got {value!r}"
+                )
+                continue
+            problem = _input_answer_problem(value)
+            if problem:
+                problems.append(f"text question '{question_id}' {problem}")
+                continue
+            records.append({
+                "kind": "input",
+                "fields": [entry["title"], entry["message"], entry["default"]],
+                "value": value,
+            })
             continue
         if kind == "radio":
             if isinstance(value, list):
@@ -3176,7 +3286,7 @@ def tool_schemas():
                 "properties": {
                     "answers": {
                         "type": "object",
-                        "description": "User choices from an earlier requires_answers response: {question id: choice}.",
+                        "description": "User choices from an earlier requires_answers response: {question id: choice}; a text question takes the exact text the user typed.",
                         "additionalProperties": {
                             "anyOf": [
                                 {"type": "string"},
@@ -3252,7 +3362,9 @@ def tool_schemas():
                             "requires_answers response: {question id: choice}. "
                             "question values are 'yes'/'no'; radio expects one "
                             "exact option; multi-select expects option string(s) "
-                            "(comma-separated) or an array. All ids must be covered."
+                            "(comma-separated) or an array; a text question takes the "
+                            "exact text the user typed, on one line (at most 1024 "
+                            "characters). All ids must be covered."
                         ),
                         "additionalProperties": {
                             "anyOf": [
@@ -3796,9 +3908,11 @@ def _requires_answers_payload(entry, questions, dynamic_count, branch_skipped=0)
             "listed), then call this tool again with "
             "answers={question id: choice}; choices must match the offered "
             "options exactly (question expects 'yes' or 'no', the "
-            "multi-select may also take an array of selections). Every "
-            "question id must be covered. Warnings and fatal dialogs of the "
-            "run arrive through get_job."
+            "multi-select may also take an array of selections; a text "
+            "question (kind 'input') takes the exact text the user typed, "
+            "on one line, and its default is only the suggestion to offer). "
+            "Every question id must be covered. Warnings and fatal dialogs "
+            "of the run arrive through get_job."
         ),
     }
     if branch_skipped:
@@ -4442,7 +4556,8 @@ def _initialize_result(requested_version):
             "Scripts can ask questions: install_app/update_system answer "
             "requires_answers first; show every listed question (options "
             "and default provided) to the user through your own question "
-            "UI, then re-call the tool with answers={id: choice}. During "
+            "UI, then re-call the tool with answers={id: choice} (a text "
+            "question takes the text the user typed). During "
             "any run get_job relays the script dialogs: warnings are "
             "attention-required messages to convey promptly (they do not "
             "mean failure), live_prompts are dialogs the user answered on "
