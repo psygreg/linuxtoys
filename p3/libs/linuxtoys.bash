@@ -734,6 +734,87 @@ listselect() {
     _cli_select list "$title" "$text" "$preselect" "$@"
 }
 
+# Terminal entry behind userinput when no dialog can be shown (CLI, TUI).
+# Enter keeps the default. Agent runs never prompt (see userinput).
+_cli_input() {
+    local title="$1" text="$2" default="$3" reply
+
+    if _lt_agent_active; then
+        return 1
+    fi
+
+    if [[ -n "$title" ]]; then
+        _cli_out '\n%s\n' "$title"
+    fi
+    if [[ -n "$text" ]]; then
+        _cli_out '%s\n' "$text"
+    fi
+    if [[ -n "$default" ]]; then
+        _cli_out 'Entry [%s]: ' "$default"
+    else
+        _cli_out 'Entry: '
+    fi
+
+    IFS= read -r reply || return 1
+    if [[ -z "$reply" ]]; then
+        reply="$default"
+    fi
+    printf '%s\n' "$reply"
+    return 0
+}
+
+# userinput [--title TITLE] [--text TEXT] [--default VALUE]
+# Asks for one line of text and prints it. Returns 0 with the entry, which is
+# empty when nothing was typed and there is no default; returns 1 when the user
+# cancels or no input can be read. Each option takes `--opt VALUE` or
+# `--opt=VALUE`. Agent runs cannot pre-answer free text: the prompt is logged
+# and shown live, the way question() handles prompts it could not pre-ask.
+userinput() {
+    local title="LinuxToys" text="" default="" _opt _val
+
+    while (( $# > 0 )); do
+        case "$1" in
+            --title=*|--text=*|--default=*)
+                _opt="${1%%=*}"
+                _val="${1#*=}"
+                shift
+                ;;
+            --title|--text|--default)
+                (( $# >= 2 )) || return 1
+                _opt="$1"
+                _val="$2"
+                shift 2
+                ;;
+            *)
+                return 1
+                ;;
+        esac
+        case "$_opt" in
+            --title) title="$_val" ;;
+            --text) text="$(_msg_unescape "$_val")" ;;
+            --default) default="$_val" ;;
+        esac
+    done
+
+    if _lt_agent_active; then
+        _lt_agent_event prompt "input: $title ($text)"
+    fi
+
+    if _zenity_can_run; then
+        local -a entry_args=()
+        if [[ -n "$text" ]]; then
+            entry_args+=(--text="$text")
+        fi
+        if [[ -n "$default" ]]; then
+            entry_args+=(--entry-text="$default")
+        fi
+        _zenity_run --entry --title="$title" "${entry_args[@]}"
+        return $?
+    fi
+
+    _cli_input "$title" "$text" "$default"
+}
+
 info() {
     { { [ -n "$CALLED_SCRIPT" ] && { [ "$1" = "$finishmsg" ] || [ "$1" = "$rebootmsg" ]; }; } && return 0; } || true
     if [ -n "$CHECKLIST_RUN" ]; then
