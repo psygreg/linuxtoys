@@ -108,6 +108,32 @@ def run_version_gate_dialog(
     ) == Gtk.ResponseType.OK
 
 
+def run_privilege_required_dialog(
+    parent: Optional[Gtk.Widget],
+    *,
+    translations: Optional[dict] = None,
+) -> None:
+    """Explain that this user cannot use sudo, which LinuxToys needs to install software.
+
+    The caller closes the application afterwards; this dialog only explains why.
+    """
+    t = translations or {}
+    run_message_dialog(
+        parent,
+        title=t.get("privilege_required_title", "Administrator Access Required"),
+        secondary_text=t.get(
+            "privilege_required_message",
+            "This user cannot use sudo, so LinuxToys cannot install, update or remove software. "
+            "Make sure sudo is installed, add the user to the sudo group (Debian, Ubuntu) or the wheel group "
+            "(Fedora, Arch, openSUSE), "
+            "then open LinuxToys again.",
+        ),
+        message_type=Gtk.MessageType.ERROR,
+        buttons=[(t.get("script_runner_close", "Close"), Gtk.ResponseType.CLOSE)],
+        default_response=Gtk.ResponseType.CLOSE,
+    )
+
+
 class WaitDialog(Gtk.Dialog):
 	def __init__(self, parent, message="Waiting..."):
 		_ = create_translator()

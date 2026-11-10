@@ -23,6 +23,7 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
         self.auto_run = auto_run
         self.executed_scripts = []  # Track scripts that actually ran for cache updates
         self._destroyed = False
+        self._last_exit_code = None
 
         # Track revert capability of the removable script (if available)
         self.removable_script_revert_capability = None

@@ -147,6 +147,39 @@ class BugReporting:
             default_response=Gtk.ResponseType.OK,
         )
 
+    def _last_terminal_line(self) -> str:
+        """The last non-blank line of the terminal output, which says why a run ended."""
+        lines = [line.strip() for line in self._get_vte_buffer_text().split("\n")]
+        return next((line for line in reversed(lines) if line), "")
+
+    def _show_bug_report_cancelled_dialog(self):
+        """Explain a cancelled or skipped run instead of filing a report for it."""
+        return run_message_dialog(
+            self,
+            title=self.translations.get("bug_report_cancelled_title", "Nothing to Report"),
+            secondary_text=self.translations.get(
+                "bug_report_cancelled_message",
+                "The last run was cancelled or skipped, so there is nothing to report.\n\nLast message: {reason}",
+            ).format(reason=self._last_terminal_line() or "-"),
+            message_type=Gtk.MessageType.INFO,
+            buttons=[("OK", Gtk.ResponseType.OK)],
+            default_response=Gtk.ResponseType.OK,
+        )
+
+    def _show_bug_report_rejected_dialog(self):
+        """The server found no text it could file from the terminal output."""
+        return run_message_dialog(
+            self,
+            title=self.translations.get("bug_report_rejected_title", "Nothing to Report"),
+            secondary_text=self.translations.get(
+                "bug_report_rejected_message",
+                "The terminal output had no text that could be sent, so the report was not submitted.",
+            ),
+            message_type=Gtk.MessageType.WARNING,
+            buttons=[("OK", Gtk.ResponseType.OK)],
+            default_response=Gtk.ResponseType.OK,
+        )
+
     def _show_bug_report_network_error_dialog(self, title: str, message: str):
         response = run_message_dialog(
             self,
@@ -174,6 +207,11 @@ class BugReporting:
  
     def on_copy_clicked(self, button):
         """Handle bug report button click."""
+        # Exit 100 is LinuxToys' cancellation status (authentication refused, a
+        # skipped script): nothing to report, so explain that instead.
+        if getattr(self, "_last_exit_code", None) == 100:
+            self._show_bug_report_cancelled_dialog()
+            return
         if not self._show_bug_report_confirmation_dialog():
             return
         
@@ -237,6 +275,8 @@ class BugReporting:
 
             # Show result dialog
             self._show_bug_report_result_dialog(True, result)
+        except antenna.EmptyReportError:
+            self._show_bug_report_rejected_dialog()
         except ConnectionError:
             self._show_bug_report_network_error_dialog(
                 self.translations.get(

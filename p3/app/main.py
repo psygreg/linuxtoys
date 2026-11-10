@@ -11,7 +11,7 @@ from .lang_utils import load_translations, create_translator
 from .manifest_helper import find_script_by_name
 from . import uri_parser
 from .easy_cli import easy_cli_handler, easy_cli_run_script
-from .compat import is_supported_system
+from .compat import can_escalate_privileges, is_supported_system
 from . import get_app_resource_path, get_icon_path
 
 # Only define GUI classes if not in CLI mode
@@ -160,6 +160,13 @@ def run():
         )
         dialog.run()
         dialog.destroy()
+        sys.exit(1)
+
+    # LinuxToys installs and updates software through sudo. A user who cannot
+    # use it would fail every run partway through, so say so now and stop.
+    if not can_escalate_privileges():
+        from .gtk_dialogs import run_privilege_required_dialog
+        run_privilege_required_dialog(None, translations=translations)
         sys.exit(1)
 
     # Run kernel update check for psycachy kernels (debian/ubuntu only)

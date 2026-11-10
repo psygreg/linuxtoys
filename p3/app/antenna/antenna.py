@@ -15,7 +15,12 @@ from ..lang_utils import _
 from urllib.parse import urlparse
  
 _REPORT_URL = "https://bug.linux.toys"
- 
+
+
+class EmptyReportError(Exception):
+    """The server found no log text it could file, so nothing was submitted."""
+
+
 # Cache directory for storing the generated secret (in user's config dir)
 _CACHE_DIR = Path.home() / ".cache" / "linuxtoys" / "antenna"
 _SECRET_CACHE = _CACHE_DIR / "bootstrap.json"
@@ -816,6 +821,8 @@ def submit_issue(
     infer_related_app: bool = True,
 ) -> dict | None:
     """Submit a GitHub issue. Logs default to current captured output (last 20 lines).
+
+    Raises EmptyReportError when the server has no log text left to file.
     
     Args:
         title: Issue title
@@ -968,6 +975,9 @@ def submit_issue(
         print("[IssueReporter] Could not file issue: Connection timeout", file=sys.stderr)
         raise
     except requests.exceptions.HTTPError as e:
+        if e.response is not None and e.response.status_code == 422:
+            print("[IssueReporter] Report rejected: no readable log lines", file=sys.stderr)
+            raise EmptyReportError() from e
         print(f"[IssueReporter] Could not file issue: Server error ({e.response.status_code})", file=sys.stderr)
         raise
     except Exception as e:

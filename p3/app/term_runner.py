@@ -381,6 +381,7 @@ class TerminalRunner:
                 pass
 
     def on_child_exit(self, term, status):
+        self._last_exit_code = os.WEXITSTATUS(status) if os.WIFEXITED(status) else None
         # A dying child must never leave navigation locked, including fatal/exit 100 paths.
         self._clear_runner_lock()
 

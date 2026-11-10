@@ -4,9 +4,9 @@ This document outlines the mandatory rules and workflow for all AI agents workin
 
 ## 📜 Code Development Standards
 Agents must adhere to standard best practices for the languages used:
-- **Python:** Follow PEP 8. Use type hinting extensively. Ensure functional correctness and readability and no missing imports. `textual` and `pyte` are vendored in, so any features for the TUI should be compatible with the version shipped with the app.
-- **Rust:** Follow Rust best practices (e.g., idiomatic usage, error handling via `Result`). Ensure memory safety and performance, and that any new dependency introduced is versioned in accordance to Rust 1.75, which is the oldest version we support.
-- **Bash:** Scripts must be idempotent where possible. Always include shebang (`#!/usr/bin/env bash`). Use robust input validation and handle exit codes correctly. Always use standard LinuxToys Core Libraries functions - the `.bash` files under [p3/libs](p3/libs) - when possible or make new ones if a helper should be made reusable.
+- **Python:** Follow PEP 8. Use type hinting extensively. Ensure functional correctness and readability and no missing imports. `textual` and `pyte` are vendored in, so any features for the TUI should be compatible with the version shipped with the app. All python code must be compatible with Python 3.12, which is the oldest version we support.
+- **Rust:** Follow Rust best practices (e.g., idiomatic usage, error handling via `Result`). Ensure memory safety and performance, and that any new code added or dependency introduced is done so in accordance to Rust 1.75, which is the oldest version we support.
+- **Bash:** Scripts must be idempotent where possible, made for Bash 5.2, which is the oldest version we support. Always include shebang (`#!/usr/bin/env bash`). Use robust input validation and handle exit codes correctly. Always use standard LinuxToys Core Libraries functions - the `.bash` files under [p3/libs](p3/libs) - when possible and make new ones if a helper should be made reusable.
 
 ## 🧪 Testing Requirement
 **All changes must be accompanied by temporary test harnesses.**
@@ -21,4 +21,4 @@ Agents must adhere to standard best practices for the languages used:
 - The agent's role is to prepare the changes; human review is required for committing and pushing.
 
 ## 🗺️ Documentation
-For a detailed map of modules, functions, and application structure, please refer to the upcoming [MEMORY.md](MEMORY.md). This file will serve as a repository knowledge base.
+For a detailed map of modules, functions, and application structure, please refer to [ARCHITECTURE.md](ARCHITECTURE.md).

@@ -1,4 +1,7 @@
+import grp
 import os
+import pwd
+import shutil
 import threading
 
 
@@ -443,6 +446,44 @@ def is_supported_system():
 
     # Check if any OS compatibility key matches
     return bool(compat_keys & supported_os_keys)
+
+
+_ESCALATION_GROUPS = ("sudo", "wheel", "admin")
+_ESCALATION_COMMANDS = ("sudo", "sudo-rs", "run0-sudo")
+
+
+def _account_group_ids(username: str, primary_gid: int) -> set[int]:
+    """Group IDs from the account database, which is what sudo matches against."""
+    try:
+        return set(os.getgrouplist(username, primary_gid))
+    except OSError:
+        return set(os.getgroups()) | {primary_gid}
+
+
+def can_escalate_privileges() -> bool:
+    """Return True when the current user can use sudo, or is root.
+
+    sudo asks for a password before it decides whether a user has any rights,
+    so `sudo -n` cannot tell an unauthorized user from one who needs a password.
+    The check therefore looks at membership in the groups that the default
+    sudoers policies grant (sudo, wheel, admin), without prompting for anything.
+    """
+    if os.geteuid() == 0:
+        return True
+    if not any(shutil.which(command) for command in _ESCALATION_COMMANDS):
+        return False
+    try:
+        account = pwd.getpwuid(os.getuid())
+    except KeyError:
+        return False
+    group_ids = _account_group_ids(account.pw_name, account.pw_gid)
+    for group_name in _ESCALATION_GROUPS:
+        try:
+            if grp.getgrnam(group_name).gr_gid in group_ids:
+                return True
+        except KeyError:
+            continue
+    return False
 
 
 def get_system_compat_keys():
