@@ -493,14 +493,14 @@
         "x86_64"
       ]
     },
-    "1ba44470f759b1ada886f25bf5bcc649dc704ec2ab06827ddd68c14eda118caa": {
+    "46ed8dd9d204872f5f273dc6545fed33ef5e29802b328a545dcc42d0c7c3f7ec": {
       "path": "health/accessibility/atkinson.sh",
       "architectures": [
         "x86_64",
         "aarch64"
       ]
     },
-    "60b91d3b966be7ed19917b160a9220437b2fd6d943d2d23ac163b946f629da43": {
+    "f69a6b990bd00057ca77c1a779e4599967d717cfd67b74afde7fb443ba4b4156": {
       "path": "health/accessibility/opendyslexic.sh",
       "architectures": [
         "x86_64",
@@ -963,7 +963,7 @@
         "x86_64"
       ]
     },
-    "ddf3c7697269a06a0efbee3a6eb8e88fc683213218bb8fe8fd4ec645425f7de7": {
+    "d9d30e8bb83979de406011d32c65ac62e4a959ea23e48ade4b0e9791005a058d": {
       "path": "utils/nerdfonts.sh",
       "architectures": [
         "x86_64",

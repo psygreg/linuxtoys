@@ -8,6 +8,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 import io
+import gzip
+import lzma
 import os
 import selectors
 import time
@@ -142,7 +144,33 @@ def _member(
         data = header + handle.read(MAX_NESTED_BYTES + 1)
         if len(data) > MAX_NESTED_BYTES:
             raise ArchitectureError("Nested archive inspection limit exceeded")
-        _archive(io.BytesIO(data), payload, depth + 1)
+        if header.startswith((b"\x1f\x8b", b"\xfd7zXZ\x00")):
+            # Debian packages routinely contain individually compressed manpages,
+            # not tarballs. Inspect their bounded decompressed contents too.
+            try:
+                if header.startswith(b"\x1f\x8b"):
+                    with gzip.open(io.BytesIO(data), "rb") as compressed:
+                        decoded = compressed.read(MAX_NESTED_BYTES + 1)
+                else:
+                    decoder = lzma.LZMADecompressor(memlimit=MAX_NESTED_BYTES)
+                    decoded = decoder.decompress(data, max_length=MAX_NESTED_BYTES + 1)
+                    if not decoder.eof or decoder.unused_data:
+                        raise ArchitectureError(
+                            "Truncated or multiple nested xz streams"
+                        )
+            except (OSError, EOFError, lzma.LZMAError) as error:
+                raise ArchitectureError(f"Invalid compressed member: {name}") from error
+            if len(decoded) > MAX_NESTED_BYTES:
+                raise ArchitectureError("Decompressed member inspection limit exceeded")
+            if tarfile.is_tarfile(io.BytesIO(decoded)):
+                _archive(io.BytesIO(decoded), payload, depth + 1)
+            else:
+                inner_name = str(PurePosixPath(name).with_suffix(""))
+                _member(
+                    inner_name, len(decoded), io.BytesIO(decoded), payload, depth + 1
+                )
+        else:
+            _archive(io.BytesIO(data), payload, depth + 1)
 
 
 def re_shared_object(name: str) -> bool:

@@ -239,3 +239,45 @@ distrobox_move_() {
             || fatal "Failed to move $src to $dest in Distrobox $container"
     done
 }
+
+# Font routes are explicit architecture-independent data, pinned by reviewed
+# SHA-256. Never use a stale download or touch installed fonts after a refusal.
+font_download() {
+    [[ $# -eq 3 && "$1" == https://* && "$3" =~ ^[0-9a-f]{64}$ ]] || fatal "Invalid verified font download"
+    curl -fgL --proto '=https' --proto-redir '=https' --connect-timeout 15 --max-time 120 \
+        --output "$2" -- "$1" || fatal "Font download unavailable: $1"
+    printf '%s  %s\n' "$3" "$2" | sha256sum --check --status || fatal "Font download checksum mismatch: $2"
+    _architecture_check files --content-kind data "$2"
+}
+
+font_install() {
+    [[ $# -ge 2 && "$1" =~ ^[A-Za-z0-9_-]+$ ]] || fatal "Expected a font directory name and files"
+    local target="$HOME/.local/share/fonts/$1" file family
+    shift
+    command -v fc-scan >/dev/null 2>&1 || fatal "Install native fontconfig before installing fonts"
+    [[ ! -L "$target" && ! -e "$target.bak" && ! -L "$target.bak" ]] || fatal "Resolve the existing font backup/symlink before continuing: $target"
+    _architecture_check files --content-kind data "$@"
+    python3 - "$HOME" "$target" <<'PYFONT' || fatal "Font destination escapes the user profile"
+from pathlib import Path
+import sys
+home, target = (Path(value).resolve() for value in sys.argv[1:])
+if not target.is_relative_to(home) or target == home:
+    raise SystemExit(1)
+PYFONT
+    for file in "$@"; do
+        case "$file" in *.ttf|*.otf) ;; *) fatal "Not a supported font file: $file" ;; esac
+        [[ ! -L "$target/$(basename -- "$file")" ]] || fatal "Refusing an existing font symlink"
+        family=$(fc-scan --format '%{family}' "$file") || fatal "Invalid font: $file"
+        [[ -n "$family" ]] || fatal "Empty or invalid font: $file"
+    done
+    # Existing user contents survive rollback; never overwrite an older backup.
+    if [[ -d "$target" ]]; then
+        cp -a -- "$target" "$target.bak" || fatal "Cannot back up user fonts"
+        _append_transmap "edited $target"
+    else
+        mkdir -p -- "$target" || fatal "Cannot create user font directory"
+        _append_transmap "created $target"
+    fi
+    # User fonts never justify privilege escalation, even on a permission error.
+    cp -f -- "$@" "$target/" || fatal "Cannot copy user fonts"
+}

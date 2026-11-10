@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 import shlex
 import shutil
@@ -87,6 +88,9 @@ from .my_widgets import (
 from .tui_app_page import AppPageWidget, hide_app_page, show_app_page
 
 TRANSMAP_PATH = "/tmp/linuxtoys/transmap"
+
+
+logger = logging.getLogger(__name__)
 
 
 class ScriptRunnerMixin:

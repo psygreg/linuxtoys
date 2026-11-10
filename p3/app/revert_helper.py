@@ -358,6 +358,9 @@ def _parse_operation(op_line):
         elif op_type == "warn":
             # Warning: "WARN: message text" -> keep all parts as operands
             return op_type, parts[1:]
+        elif op_type in {"created", "edited", "removed", "tmpdir_noram"}:
+            # Filesystem records contain one complete path, including spaces.
+            return op_type, [op_line.split(None, 1)[1]]
         elif op_type == "called":
             # Script display names may contain spaces.
             return op_type, [" ".join(parts[1:])]
@@ -539,30 +542,22 @@ def _reverse_file_deletion(file_path):
     Attempts removal without sudo first. If permission is denied,
     calls sudo_rq and retries with root access.
     """
-    # Try without sudo first; if permission denied, request sudo and retry
+    target = shlex.quote(file_path)
     return (
-        f"rm -rf {file_path} 2>/dev/null || "
-        f"{{ sudo_rq && sudo rm -rf {file_path} 2>/dev/null; }} || true"
+        f"rm -rf -- {target} 2>/dev/null || "
+        f"{{ sudo_rq && sudo_ rm -rf -- {target} 2>/dev/null; }} || true"
     )
 
 
 def _reverse_file_restoration(file_path):
-    """Reverse a file or directory change by restoring from .bak file/directory.
-
-    Attempts restoration without sudo first. If permission is denied,
-    calls sudo_rq and retries with root access.
-    """
+    """Restore the complete recorded path without shell interpretation."""
     backup_path = f"{file_path}.bak"
-
-    # Check if backup exists
     if not os.path.exists(backup_path):
         return None
-
-    # Try without sudo first; if permission denied, request sudo and retry
-    # Use proper quoting to handle paths with spaces and special characters
+    target, backup = shlex.quote(file_path), shlex.quote(backup_path)
     return (
-        f"{{ rm -rf {file_path} && mv {backup_path} {file_path}; }} 2>/dev/null || "
-        f"{{ sudo_rq && sudo bash -c 'rm -rf \"{file_path}\" && mv \"{backup_path}\" \"{file_path}\"'; }} || true"
+        f"{{ rm -rf -- {target} && mv -- {backup} {target}; }} 2>/dev/null || "
+        f"{{ sudo_rq && sudo_ rm -rf -- {target} && sudo_ mv -- {backup} {target}; }} || true"
     )
 
 def _reverse_flatpak_removal(app_ids):

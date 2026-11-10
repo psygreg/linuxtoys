@@ -309,3 +309,21 @@ integrity/privilege work, and B18 infrastructure/documentation drift. B17's
 mixed-architecture Flatpak cache filtering is implemented; stale/provenance
 metadata still requires upstream validation. M1 is an eligibility foundation,
 not a general ARM64 software-support announcement.
+
+## M2 native qualification update
+
+The [M2 qualification report](ARM64-QUALIFICATION.md) records native Ubuntu ARM64
+build, ELF, Python 3.14, ctypes/GTK/GI, GUI, CLI, TUI, MCP and font evidence. B06's
+native application build/import and bounded GUI verification are now demonstrated
+for the recorded environment; this does not qualify every distribution or feature.
+B15's initial font-data routes now use reviewed pins and SHA-256 checks. B16's
+filesystem rollback quoting and broad window-close temporary deletion were
+corrected. B14 inspection now handles bounded compressed documentation while
+continuing to reject compressed foreign binaries.
+
+The three existing ARM font routes passed lifecycle and failure scenarios. IBus
+Typing Booster, HTTPie and Nala are payload-verified independent Ubuntu candidates,
+without runtime installation or promotion. B07–B10 packaging, B13 hardware,
+broader B14–B18 work, matching remote script rollout and native amd64 runtime
+regression remain open. The original M0 matrix stays a historical inventory;
+current qualification levels and limitations are explicitly separated in M2.

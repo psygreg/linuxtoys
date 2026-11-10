@@ -1,0 +1,929 @@
+{
+  "schema": 1,
+  "date": "2026-11-09",
+  "baseline": "97bde46b60542aaca3b60a4ba57e8210119d6f12",
+  "environment": {
+    "os": "Ubuntu 26.04.1 LTS",
+    "machine": "aarch64",
+    "python": "3.14.4",
+    "rustc": "rustc 1.93.1 (01f6ddf75 2026-02-11) (built from a source tarball)",
+    "cargo": "cargo 1.93.1 (083ac5135 2025-12-15) (built from a source tarball)",
+    "gtk": "3.24.52",
+    "pygobject": "3.56.2",
+    "glib": "2.88.0",
+    "cairo": "1.18.4",
+    "vte": "0.84.0",
+    "appstream": "1.1.2",
+    "maturin": "1.9.4"
+  },
+  "cargo_lock_sha256": "f022d2414f28867dc5861d538bb3779336b7a15489ec0e1aff4dae5f4415b158",
+  "isolation": {
+    "system_packages_installed": false,
+    "system_packages_upgraded": false,
+    "desktop_checkout_changed": false,
+    "temporary_native_packages": [
+      [
+        "gir1.2-appstream-1.0",
+        "1.1.2-1"
+      ],
+      [
+        "gir1.2-glib-2.0-dev",
+        "2.88.0-1ubuntu0.1"
+      ],
+      [
+        "gir1.2-freedesktop-dev",
+        "1.86.0-6build1"
+      ],
+      [
+        "gir1.2-gly-2",
+        "2.1.5+ds-0ubuntu0.2"
+      ],
+      [
+        "native-architecture",
+        "0.2.6build1"
+      ],
+      [
+        "girepository-tools",
+        "2.88.0-1ubuntu0.1"
+      ],
+      [
+        "icu-devtools",
+        "78.2-2ubuntu1"
+      ],
+      [
+        "libpkgconf7",
+        "2.5.1-4"
+      ],
+      [
+        "pkgconf-bin",
+        "2.5.1-4"
+      ],
+      [
+        "pkgconf",
+        "2.5.1-4"
+      ],
+      [
+        "libffi-dev",
+        "3.5.2-4"
+      ],
+      [
+        "uuid-dev",
+        "2.41.3-3ubuntu2.2"
+      ],
+      [
+        "libblkid-dev",
+        "2.41.3-3ubuntu2.2"
+      ],
+      [
+        "libsepol-dev",
+        "3.9-2"
+      ],
+      [
+        "libpcre2-16-0",
+        "10.46-1ubuntu0.1"
+      ],
+      [
+        "libpcre2-posix3",
+        "10.46-1ubuntu0.1"
+      ],
+      [
+        "libpcre2-dev",
+        "10.46-1ubuntu0.1"
+      ],
+      [
+        "libselinux-dev",
+        "3.9-4build1"
+      ],
+      [
+        "libmount-dev",
+        "2.41.3-3ubuntu2.2"
+      ],
+      [
+        "libsysprof-capture-4-dev",
+        "50.0-1"
+      ],
+      [
+        "zlib1g-dev",
+        "1:1.3.dfsg+really1.3.1-1ubuntu3.2"
+      ],
+      [
+        "libgio-2.0-dev",
+        "2.88.0-1ubuntu0.1"
+      ],
+      [
+        "python3-packaging",
+        "26.0-1"
+      ],
+      [
+        "libgio-2.0-dev-bin",
+        "2.88.0-1ubuntu0.1"
+      ],
+      [
+        "libglib2.0-dev-bin",
+        "2.88.0-1ubuntu0.1"
+      ],
+      [
+        "libglib2.0-dev",
+        "2.88.0-1ubuntu0.1"
+      ],
+      [
+        "libatk1.0-dev",
+        "2.60.4-0ubuntu0.1"
+      ],
+      [
+        "libsystemd-dev",
+        "259.9-0ubuntu0.1"
+      ],
+      [
+        "libdbus-1-dev",
+        "1.16.2-2ubuntu4"
+      ],
+      [
+        "xorg-sgml-doctools",
+        "1:1.11-1.1build1"
+      ],
+      [
+        "x11proto-dev",
+        "2025.1-1"
+      ],
+      [
+        "libxau-dev",
+        "1:1.0.11-1build2"
+      ],
+      [
+        "libxdmcp-dev",
+        "1:1.1.5-2"
+      ],
+      [
+        "xtrans-dev",
+        "1.6.0-1build1"
+      ],
+      [
+        "libxcb1-dev",
+        "1.17.0-2ubuntu1"
+      ],
+      [
+        "libx11-dev",
+        "2:1.8.13-1ubuntu0.1"
+      ],
+      [
+        "libxext-dev",
+        "2:1.3.4-1build3"
+      ],
+      [
+        "libxfixes-dev",
+        "1:6.0.0-2build2"
+      ],
+      [
+        "libxi-dev",
+        "2:1.8.2-2"
+      ],
+      [
+        "libxtst-dev",
+        "2:1.2.5-1ubuntu0.1"
+      ],
+      [
+        "libxres-dev",
+        "2:1.2.1-1build2"
+      ],
+      [
+        "libatspi2.0-dev",
+        "2.60.4-0ubuntu0.1"
+      ],
+      [
+        "libatk-bridge2.0-dev",
+        "2.60.4-0ubuntu0.1"
+      ],
+      [
+        "libbrotli-dev",
+        "1.2.0-3ubuntu0.1"
+      ],
+      [
+        "libbz2-dev",
+        "1.0.8-6ubuntu0.1"
+      ],
+      [
+        "libexpat1-dev",
+        "2.7.4-1ubuntu0.2"
+      ],
+      [
+        "libpng-dev",
+        "1.6.57-1ubuntu0.1"
+      ],
+      [
+        "libfreetype-dev",
+        "2.14.2+dfsg-1ubuntu0.2"
+      ],
+      [
+        "libfontconfig-dev",
+        "2.17.1-3ubuntu1"
+      ],
+      [
+        "libpixman-1-dev",
+        "0.46.4-1"
+      ],
+      [
+        "libice-dev",
+        "2:1.1.1-1build1"
+      ],
+      [
+        "libsm-dev",
+        "2:1.2.6-1build1"
+      ],
+      [
+        "libxcb-render0-dev",
+        "1.17.0-2ubuntu1"
+      ],
+      [
+        "libxcb-shm0-dev",
+        "1.17.0-2ubuntu1"
+      ],
+      [
+        "libxrender-dev",
+        "1:0.9.12-1build1"
+      ],
+      [
+        "libcairo2-dev",
+        "1.18.4-3"
+      ],
+      [
+        "libdatrie-dev",
+        "0.2.14-1"
+      ],
+      [
+        "libglx-dev",
+        "1.7.0-3"
+      ],
+      [
+        "libgl-dev",
+        "1.7.0-3"
+      ],
+      [
+        "libegl-dev",
+        "1.7.0-3"
+      ],
+      [
+        "libglvnd-core-dev",
+        "1.7.0-3"
+      ],
+      [
+        "libgles1",
+        "1.7.0-3"
+      ],
+      [
+        "libgles-dev",
+        "1.7.0-3"
+      ],
+      [
+        "libopengl0",
+        "1.7.0-3"
+      ],
+      [
+        "libopengl-dev",
+        "1.7.0-3"
+      ],
+      [
+        "libglvnd-dev",
+        "1.7.0-3"
+      ],
+      [
+        "libegl1-mesa-dev",
+        "26.0.8-1ubuntu0.3"
+      ],
+      [
+        "libepoxy-dev",
+        "1.5.10-2build1"
+      ],
+      [
+        "libfribidi-dev",
+        "1.0.16-5"
+      ],
+      [
+        "liblcms2-dev",
+        "2.17-1ubuntu0.2"
+      ],
+      [
+        "libseccomp-dev",
+        "2.6.0-2ubuntu5"
+      ],
+      [
+        "libglycin-2-dev",
+        "2.1.5+ds-0ubuntu0.2"
+      ],
+      [
+        "libgdk-pixbuf-2.0-dev",
+        "2.44.5+dfsg-4ubuntu1"
+      ],
+      [
+        "libgraphite2-dev",
+        "1.3.14-11ubuntu1.1"
+      ],
+      [
+        "libharfbuzz-cairo0",
+        "12.3.2-2"
+      ],
+      [
+        "libicu-dev",
+        "78.2-2ubuntu1"
+      ],
+      [
+        "libharfbuzz-dev",
+        "12.3.2-2"
+      ],
+      [
+        "libthai-dev",
+        "0.1.30-1"
+      ],
+      [
+        "libxft-dev",
+        "2.3.6-1build2"
+      ],
+      [
+        "pango1.0-tools",
+        "1.57.0-1"
+      ],
+      [
+        "libpango1.0-dev",
+        "1.57.0-1"
+      ],
+      [
+        "libwayland-bin",
+        "1.24.0-2"
+      ],
+      [
+        "libwayland-dev",
+        "1.24.0-2"
+      ],
+      [
+        "libxcomposite-dev",
+        "1:0.4.6-1build1"
+      ],
+      [
+        "libxcursor-dev",
+        "1:1.2.3-1build1"
+      ],
+      [
+        "libxdamage-dev",
+        "1:1.1.7-1"
+      ],
+      [
+        "libxinerama-dev",
+        "2:1.1.4-3build2"
+      ],
+      [
+        "libxkbcommon-dev",
+        "1.13.1-1"
+      ],
+      [
+        "libxrandr-dev",
+        "2:1.5.4-1build1"
+      ],
+      [
+        "wayland-protocols",
+        "1.47-1"
+      ],
+      [
+        "libgtk-3-dev",
+        "3.24.52-0ubuntu1"
+      ],
+      [
+        "pkg-config",
+        "2.5.1-4"
+      ],
+      [
+        "python3-gi-cairo",
+        "3.56.2-1"
+      ],
+      [
+        "python3-wheel",
+        "0.46.3-2"
+      ],
+      [
+        "python3-pip",
+        "25.1.1+dfsg-1ubuntu2"
+      ]
+    ],
+    "staged_linker_links_relocated_to_installed_runtime": 87
+  },
+  "native_artifacts": [
+    {
+      "profile": "debug",
+      "file": "_catalog_rs.abi3.so",
+      "elf_class": "ELF64",
+      "elf_machine": 183,
+      "sha256": "de182cdaff99220a40540e0dca9c0a50337dbeca7b8fdfd7531f3db7d011ae47"
+    },
+    {
+      "profile": "debug",
+      "file": "liblinuxtoys_gui.so",
+      "elf_class": "ELF64",
+      "elf_machine": 183,
+      "sha256": "65a8c15b908ae2b921d5fa529a88b977f5b36b989473b779f6f7447b55db0e97"
+    },
+    {
+      "profile": "release",
+      "file": "_catalog_rs.abi3.so",
+      "elf_class": "ELF64",
+      "elf_machine": 183,
+      "sha256": "2a1e187a7a828a894750f366f5f93f2cbf549c358e29469ffeb274fdc0a0b054"
+    },
+    {
+      "profile": "release",
+      "file": "liblinuxtoys_gui.so",
+      "elf_class": "ELF64",
+      "elf_machine": 183,
+      "sha256": "db290ee90cef3943b7f848af28472a67cace6cfa268c333cde4845b3ee4648c1"
+    }
+  ],
+  "abi": {
+    "version": 20,
+    "pointer_bytes": 8,
+    "rust_ctypes_structures_compared": 11
+  },
+  "unit_tests": {
+    "ubuntu_arm64": {
+      "run": 46,
+      "passed": 46,
+      "skipped": 0
+    },
+    "macos_arm64": {
+      "run": 46,
+      "passed": 43,
+      "skipped": 3
+    },
+    "rust_workspace": {
+      "catalog_passed": 39,
+      "gui_unit_tests": 0
+    }
+  },
+  "application_probes": [
+    {
+      "scenario": "final-none-imports-online",
+      "exit": 0,
+      "observations": [
+        {
+          "probe": "imports",
+          "host": "aarch64",
+          "python": "3.14.4",
+          "catalog": "p3/app/_catalog_rs.abi3.so",
+          "gui": "p3/app/liblinuxtoys_gui.so",
+          "pointer_bytes": 8,
+          "cairo": "1.18.4",
+          "abi": 20
+        }
+      ]
+    },
+    {
+      "scenario": "final-wayland-widgets-online",
+      "exit": 0,
+      "observations": [
+        {
+          "probe": "widgets",
+          "display": "GdkWaylandDisplay",
+          "cycles": 100,
+          "resident_bytes_after_10_and_100": [
+            77406208,
+            77406208
+          ],
+          "rss_max_kib": 107808
+        }
+      ]
+    },
+    {
+      "scenario": "final-x11-widgets-online",
+      "exit": 0,
+      "observations": [
+        {
+          "probe": "widgets",
+          "display": "X11Display",
+          "cycles": 100,
+          "resident_bytes_after_10_and_100": [
+            74330112,
+            74330112
+          ],
+          "rss_max_kib": 92652
+        }
+      ]
+    },
+    {
+      "scenario": "final-wayland-gui-online",
+      "exit": 0,
+      "observations": [
+        {
+          "probe": "gui",
+          "display": "GdkWaylandDisplay",
+          "window": "AppWindow",
+          "search_groups": 0,
+          "elapsed_seconds": 12.03
+        }
+      ]
+    },
+    {
+      "scenario": "final-x11-gui-online",
+      "exit": 0,
+      "observations": [
+        {
+          "probe": "gui",
+          "display": "X11Display",
+          "window": "AppWindow",
+          "search_groups": 0,
+          "elapsed_seconds": 11.88
+        }
+      ]
+    },
+    {
+      "scenario": "final-wayland-gui-offline",
+      "exit": 0,
+      "observations": [
+        {
+          "probe": "gui",
+          "display": "GdkWaylandDisplay",
+          "window": "AppWindow",
+          "search_groups": 1,
+          "elapsed_seconds": 12.24
+        }
+      ]
+    },
+    {
+      "scenario": "final-x11-gui-offline",
+      "exit": 0,
+      "observations": [
+        {
+          "probe": "gui",
+          "display": "X11Display",
+          "window": "AppWindow",
+          "search_groups": 1,
+          "elapsed_seconds": 12.27
+        }
+      ]
+    },
+    {
+      "scenario": "final-none-tui-offline",
+      "exit": 0,
+      "observations": [
+        {
+          "probe": "tui",
+          "screen": "HomeScreen",
+          "search": "Atkinson"
+        }
+      ]
+    },
+    {
+      "scenario": "final-none-mcp-offline",
+      "exit": 0,
+      "observations": [
+        {
+          "probe": "mcp",
+          "authenticated": true,
+          "unauthenticated_refused": true,
+          "tool_count": 26,
+          "search": "Atkinson"
+        }
+      ]
+    }
+  ],
+  "normal_window_close_debug": [
+    {
+      "backend": "wayland",
+      "exit": 0,
+      "observations": [
+        {
+          "probe": "launcher",
+          "display": "GdkWaylandDisplay",
+          "window": "AppWindow",
+          "exit": 0
+        }
+      ]
+    },
+    {
+      "backend": "x11",
+      "exit": 0,
+      "observations": [
+        {
+          "probe": "launcher",
+          "display": "X11Display",
+          "window": "AppWindow",
+          "exit": 0
+        }
+      ]
+    }
+  ],
+  "normal_window_close_release": [
+    {
+      "backend": "wayland",
+      "exit": 0,
+      "observations": [
+        {
+          "probe": "launcher",
+          "display": "GdkWaylandDisplay",
+          "window": "AppWindow",
+          "exit": 0
+        }
+      ]
+    },
+    {
+      "backend": "x11",
+      "exit": 0,
+      "observations": [
+        {
+          "probe": "launcher",
+          "display": "X11Display",
+          "window": "AppWindow",
+          "exit": 0
+        }
+      ]
+    }
+  ],
+  "cli_terminal_probes": [
+    {
+      "mode": "cli",
+      "option": "--help",
+      "exit": 0
+    },
+    {
+      "mode": "cli",
+      "option": "--version",
+      "exit": 0
+    },
+    {
+      "mode": "cli",
+      "option": "--list",
+      "exit": 0
+    },
+    {
+      "mode": "tui-pty",
+      "exit": 0,
+      "output_bytes": 96495
+    }
+  ],
+  "font_scenarios_final_code": [
+    {
+      "route": "atkinson",
+      "scenario": "fresh",
+      "font_files": 6,
+      "fontconfig_visible": true,
+      "registry_detection": true,
+      "removal_or_restoration": true,
+      "transport": "verified artifact replay"
+    },
+    {
+      "route": "atkinson",
+      "scenario": "existing",
+      "font_files": 6,
+      "fontconfig_visible": true,
+      "registry_detection": true,
+      "removal_or_restoration": true,
+      "transport": "verified artifact replay"
+    },
+    {
+      "route": "atkinson",
+      "scenario": "offline",
+      "refused_before_install": true
+    },
+    {
+      "route": "atkinson",
+      "scenario": "unavailable",
+      "refused_before_install": true
+    },
+    {
+      "route": "atkinson",
+      "scenario": "tampered",
+      "refused_before_install": true
+    },
+    {
+      "route": "opendyslexic",
+      "scenario": "fresh",
+      "font_files": 4,
+      "fontconfig_visible": true,
+      "registry_detection": true,
+      "removal_or_restoration": true,
+      "transport": "verified artifact replay"
+    },
+    {
+      "route": "opendyslexic",
+      "scenario": "existing",
+      "font_files": 4,
+      "fontconfig_visible": true,
+      "registry_detection": true,
+      "removal_or_restoration": true,
+      "transport": "verified artifact replay"
+    },
+    {
+      "route": "opendyslexic",
+      "scenario": "offline",
+      "refused_before_install": true
+    },
+    {
+      "route": "opendyslexic",
+      "scenario": "unavailable",
+      "refused_before_install": true
+    },
+    {
+      "route": "opendyslexic",
+      "scenario": "tampered",
+      "refused_before_install": true
+    },
+    {
+      "route": "nerdfonts",
+      "scenario": "fresh",
+      "font_files": 210,
+      "fontconfig_visible": true,
+      "registry_detection": true,
+      "removal_or_restoration": true,
+      "transport": "verified artifact replay"
+    },
+    {
+      "route": "nerdfonts",
+      "scenario": "existing",
+      "font_files": 210,
+      "fontconfig_visible": true,
+      "registry_detection": true,
+      "removal_or_restoration": true,
+      "transport": "verified artifact replay"
+    },
+    {
+      "route": "nerdfonts",
+      "scenario": "offline",
+      "refused_before_install": true
+    },
+    {
+      "route": "nerdfonts",
+      "scenario": "unavailable",
+      "refused_before_install": true
+    },
+    {
+      "route": "nerdfonts",
+      "scenario": "tampered",
+      "refused_before_install": true
+    }
+  ],
+  "font_download_artifacts": [
+    {
+      "file": "AtkinsonHyperlegible-BoldItalic.ttf",
+      "sha256": "7a46f1b0ef2f64b61065c1a6b5a11fcb9b019b44062d88ba121a083cc39e86bf"
+    },
+    {
+      "file": "AtkinsonHyperlegible-Regular.ttf",
+      "sha256": "7fb917c89019896d0b52ee84b7cbb3304c18cb90b19a62f5e32712bd23e97669"
+    },
+    {
+      "file": "AtkinsonHyperlegibleMono[wght].ttf",
+      "sha256": "5ce8b1698d1ded7dff2178c1a3ad159470085a58ea239e8b2cb88f4fb4a6f646"
+    },
+    {
+      "file": "AtkinsonHyperlegible-Bold.ttf",
+      "sha256": "5a3b0c8cc8ca545155150b4512a1fa248298df121c50d6557e651e61fbdab92f"
+    },
+    {
+      "file": "AtkinsonHyperlegible-Italic.ttf",
+      "sha256": "021beda4d3c6edfc78872e436d74009f9a1bcb294331908fe5747c61d3dcc514"
+    },
+    {
+      "file": "AtkinsonHyperlegibleMono-Italic[wght].ttf",
+      "sha256": "e18f523877530e4abe229df6a36d394326254da488a7f5abb9b7b5ea8f780cd4"
+    },
+    {
+      "file": "od.zip",
+      "sha256": "927a65cefdb18c932769b2fbdd46f4967c9585991f3b1c69380000ede0fcb180"
+    },
+    {
+      "file": "Hack.tar.xz",
+      "sha256": "cdd389472e10e2261520140ff1b382b4f8a226af5fd0b2735b975d31151d9c3c"
+    },
+    {
+      "file": "FiraCode.tar.xz",
+      "sha256": "68e3bd6164864b8b514605bc34e3a87ac401c8c48682fcce6478c70263340207"
+    },
+    {
+      "file": "Meslo.tar.xz",
+      "sha256": "6b6624632dc6873dfb7681c3f818e7c01ab601ab707690b6440933bbe57e2b11"
+    },
+    {
+      "file": "AdwaitaMono.tar.xz",
+      "sha256": "409118887ec166a2342c184ade6734faf5d236a097742cb7085ff42826a1dd94"
+    },
+    {
+      "file": "JetBrainsMono.tar.xz",
+      "sha256": "04d5e8f903693f9dd13e16f867e994834e681eb3c72c0d337a770dcda09010cf"
+    }
+  ],
+  "font_transport_note": "Live pinned downloads/lifecycle passed during qualification. A later live repeat refused after a 120-second upstream timeout. Final-code lifecycle is explicit replay of those 12 original artifacts with production checks retained; there is no production cache fallback.",
+  "neutral_ubuntu_candidates_not_promoted": [
+    {
+      "package": "ibus-typing-booster",
+      "version": "2.30.4-1",
+      "architecture": "all",
+      "independent_payload_verified": true,
+      "runtime_install_tested": false
+    },
+    {
+      "package": "httpie",
+      "version": "3.2.4-4",
+      "architecture": "all",
+      "independent_payload_verified": true,
+      "runtime_install_tested": false
+    },
+    {
+      "package": "nala",
+      "version": "0.16.0",
+      "architecture": "all",
+      "independent_payload_verified": true,
+      "runtime_install_tested": false
+    }
+  ],
+  "vendored_tui_versions": [
+    {
+      "name": "linkify-it-py",
+      "version": "2.2.0"
+    },
+    {
+      "name": "markdown-it-py",
+      "version": "4.2.0"
+    },
+    {
+      "name": "mdit-py-plugins",
+      "version": "0.6.1"
+    },
+    {
+      "name": "mdurl",
+      "version": "0.1.2"
+    },
+    {
+      "name": "platformdirs",
+      "version": "4.14.5"
+    },
+    {
+      "name": "Pygments",
+      "version": "2.21.0"
+    },
+    {
+      "name": "pyte",
+      "version": "0.8.2"
+    },
+    {
+      "name": "rich",
+      "version": "15.0.0"
+    },
+    {
+      "name": "textual",
+      "version": "8.2.8"
+    },
+    {
+      "name": "typing_extensions",
+      "version": "4.16.0"
+    },
+    {
+      "name": "wcwidth",
+      "version": "0.8.5"
+    }
+  ],
+  "limitations": {
+    "native_amd64_available": false,
+    "standalone_xorg_tested": false,
+    "x11_transport": "Xwayland in the Wayland session",
+    "production_package_install_or_upgrade_tested": false,
+    "long_duration_leak_tested": false,
+    "arm64_appimage_claim": false,
+    "remote_script_digest_mismatch": "1ba44470f759b1ada886f25bf5bcc649dc704ec2ab06827ddd68c14eda118caa",
+    "online_qualified_font_search_groups": 0,
+    "bundled_connection_failure_font_search_groups": 1
+  },
+  "vte_terminal_probes": [
+    {
+      "backend": "wayland",
+      "exit": 0,
+      "observations": [
+        {
+          "probe": "widgets",
+          "display": "GdkWaylandDisplay",
+          "cycles": 100,
+          "vte_shell_exit": 0,
+          "vte_output_verified": true,
+          "resident_bytes_after_10_and_100": [
+            78000128,
+            78000128
+          ],
+          "rss_max_kib": 116960
+        }
+      ]
+    },
+    {
+      "backend": "x11",
+      "exit": 0,
+      "observations": [
+        {
+          "probe": "widgets",
+          "display": "X11Display",
+          "cycles": 100,
+          "vte_shell_exit": 0,
+          "vte_output_verified": true,
+          "resident_bytes_after_10_and_100": [
+            74723328,
+            74723328
+          ],
+          "rss_max_kib": 101804
+        }
+      ]
+    }
+  ]
+}

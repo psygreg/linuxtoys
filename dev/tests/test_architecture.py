@@ -7,6 +7,8 @@ No installer, privilege escalation, network request or system change is needed.
 from __future__ import annotations
 
 import hashlib
+import gzip
+import lzma
 import contextlib
 import shutil
 import io
@@ -347,6 +349,42 @@ class PayloadTests(unittest.TestCase):
                     machine="arm64",
                     content_kind="source",
                 )
+
+    def test_compressed_documentation_and_foreign_binaries(self):
+        for suffix, compress in [(".gz", gzip.compress), (".xz", lzma.compress)]:
+            data = self.write(
+                "documentation.tar",
+                tar_bytes(
+                    {
+                        "guide.txt" + suffix: compress(
+                            b"architecture-neutral documentation"
+                        )
+                    }
+                ),
+            )
+            files.validate_file(data, machine="arm64", content_kind="data")
+            for name in ("tool" + suffix, "vendor.data"):
+                mixed = self.write(
+                    "mixed.tar",
+                    tar_bytes({"native": elf(183), name: compress(elf(62))}),
+                )
+                with self.assertRaises(policy.ArchitectureError):
+                    files.validate_file(mixed, machine="arm64")
+            hidden = self.write(
+                "hidden.tar",
+                tar_bytes({"code.so" + suffix: compress(b"unknown native format")}),
+            )
+            with self.assertRaises(policy.ArchitectureError):
+                files.validate_file(hidden, machine="arm64", content_kind="data")
+
+        multiple = self.write(
+            "multiple.tar",
+            tar_bytes(
+                {"guide.xz": lzma.compress(b"documentation") + lzma.compress(elf(62))}
+            ),
+        )
+        with self.assertRaises(policy.ArchitectureError):
+            files.validate_file(multiple, machine="arm64", content_kind="data")
 
     def test_package_metadata_conflict(self):
         path = self.write("tool-arm64.deb", b"deb placeholder")

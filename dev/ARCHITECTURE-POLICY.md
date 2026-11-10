@@ -145,3 +145,28 @@ inspection path is qualified. Packages containing non-Linux or unrecognized
 native formats may now be refused even on x86; resolve those with explicit
 payload evidence, not a permissive fallback. No DEB/RPM release pipeline,
 GitHub publishing or ARM64 AppImage support claim is introduced.
+
+## M2 qualification boundary
+
+[ARM64-QUALIFICATION.md](ARM64-QUALIFICATION.md) supersedes the historical M1
+"unqualified GUI" status for the exact native environment and probes recorded
+there. It distinguishes builds, imports, UI exercise, feature lifecycle tests
+and unverified runtime/distribution work. Native amd64 remains unavailable;
+fixture-based x86 regression is not described as native qualification.
+
+Compressed gzip/xz members are bounded and inspected after decompression, whether
+they contain tar archives, documentation or native binaries. Explicit independent
+metadata still cannot conceal foreign code. No unknown native payload becomes
+compatible through this correction.
+
+The initial font routes pin exact source/release assets and SHA-256 values, use
+private staging, validate font data before installation and perform user-only
+writes without elevation. Existing contents are snapshotted and paths remain
+within the user profile. A prior backup or a symlink conflict requires resolution
+before mutation. Updates to pins require review; automatic tracking of upstream
+`latest` and arbitrary version migration are outside the demonstrated scope.
+
+Remote scripts with different bodies remain refused. The qualified bundled
+snapshot and its client must be rolled out together upstream; M2 does not promote
+older or newer remote bodies merely to keep a menu entry visible. Window closure
+also preserves shared runner/rollback state instead of deleting `/tmp/linuxtoys`.

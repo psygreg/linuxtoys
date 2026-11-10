@@ -16,15 +16,7 @@
 
 set -euo pipefail
 
-ROOT_DIR="$PWD"
-while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do
-    ROOT_DIR="${ROOT_DIR%/*}"
-done
-
-if [[ "$ROOT_DIR" == "/" ]]; then
-    echo "Error: run this script from inside the LinuxToys source tree." >&2
-    exit 1
-fi
+ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 if [[ -f "$ROOT_DIR/dev/libs/utils.lib" ]]; then
     # shellcheck source=/dev/null

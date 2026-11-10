@@ -4406,14 +4406,10 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         if getattr(self, "_appstream_runner", None) is not None:
             self._appstream_runner.shutdown()
 
-        # Clean up temporary directory
-        tmp_linuxtoys_path = "/tmp/linuxtoys"
-        try:
-            if os.path.exists(tmp_linuxtoys_path):
-                shutil.rmtree(tmp_linuxtoys_path)
-                print(f"Cleaned up temporary directory: {tmp_linuxtoys_path}")
-        except Exception as e:
-            print(f"Warning: Could not clean up temporary directory {tmp_linuxtoys_path}: {e}")
+        # /tmp/linuxtoys is shared by independent runners and application
+        # instances. Their transactions own those artifacts (including rollback
+        # data); closing this window must not remove another invocation's state.
+        # library_loader registers cleanup for its own execution-session directory.
 
         self.get_application().quit()
 
