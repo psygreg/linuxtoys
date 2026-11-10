@@ -5,9 +5,6 @@ solbuild
 _catalog_rs.abi3.so
 liblinuxtoys_gui.so
 
-# AGENTS.md (OpenCode-specific)
-AGENTS.md
-
 # Python bytecode/cache
 __pycache__/
 *.py[cod]
