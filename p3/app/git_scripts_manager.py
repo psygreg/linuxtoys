@@ -1,17 +1,8 @@
 #!/usr/bin/env python3
-"""
-Git Scripts Manager Module
+"""Synchronize only client-approved, immutable script revisions.
 
-This module handles live updating of scripts via git.
-It clones or pulls the scripts repository from GitHub/Git.Linux.Toys
-with automatic fallback to bundled scripts on failure.
-
-Features:
-- Clone scripts repository on first run
-- Pull updates on subsequent runs
-- Automatic fallback to bundled scripts if git operations fail
-- Network error handling and timeouts
-- Logging for debugging
+Network failures retain a qualified cache or the verified bundled snapshot.
+Unversioned remote HEAD is never an execution authority.
 """
 
 import os
@@ -20,9 +11,12 @@ import shutil
 import logging
 import time
 import threading
+import tempfile
+import fcntl
 from pathlib import Path
 
 from .dev_mode import is_dev_mode_enabled
+from .script_compat import require_bundle, preferred_tag
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -113,7 +107,7 @@ def _run_git_command(args, cwd=None, timeout=GIT_TIMEOUT):
     try:
         result = subprocess.run(
             [
-                "git",
+                "git", "-c", "core.hooksPath=/dev/null",
                 *args
             ],
             cwd=cwd,
@@ -181,7 +175,7 @@ def _cleanup_retired_cache(path):
         logger.warning(f"Could not remove retired scripts cache {path}: {e}")
 
 
-def _promote_staged_scripts_cache():
+def _promote_staged_scripts_cache(staging_dir=None):
     """Atomically-ish swap a validated staging clone into the active cache path.
 
     Never recursively delete the active cache before promotion. Rename the old tree
@@ -189,9 +183,11 @@ def _promote_staged_scripts_cache():
     staging tree at the canonical path, then clean up the retired tree afterwards.
     If promotion fails, restore the previous tree whenever possible.
     """
-    if not os.path.isdir(GIT_SCRIPTS_STAGING_DIR):
+    staging_dir = staging_dir or GIT_SCRIPTS_STAGING_DIR
+    require_bundle(staging_dir)
+    if not os.path.isdir(staging_dir):
         raise FileNotFoundError(
-            f"Scripts staging directory does not exist: {GIT_SCRIPTS_STAGING_DIR}"
+            f"Scripts staging directory does not exist: {staging_dir}"
         )
 
     retired_path = None
@@ -203,7 +199,7 @@ def _promote_staged_scripts_cache():
         os.replace(GIT_SCRIPTS_CACHE_DIR, retired_path)
 
     try:
-        os.replace(GIT_SCRIPTS_STAGING_DIR, GIT_SCRIPTS_CACHE_DIR)
+        os.replace(staging_dir, GIT_SCRIPTS_CACHE_DIR)
     except Exception:
         # Roll back only when the canonical destination is still free. If another
         # process already installed a usable cache, do not overwrite it.
@@ -221,131 +217,54 @@ def _promote_staged_scripts_cache():
                     f"{restore_error}"
                 )
         raise
-    finally:
+    else:
         if retired_path:
             _cleanup_retired_cache(retired_path)
 
 
 def _clone_scripts_repo(progress_callback=None):
-    """Clone into a staging directory and promote only after a successful clone."""
+    """Fetch the pinned tag into private staging; validate before promotion."""
     if not _ensure_cache_dir():
-        logger.error("Cannot create cache directory")
         return False
-
-    if os.path.exists(GIT_SCRIPTS_STAGING_DIR):
-        try:
-            shutil.rmtree(GIT_SCRIPTS_STAGING_DIR)
-        except Exception as e:
-            logger.error(f"Failed to clear scripts staging directory: {e}")
-            return False
-
+    tag = preferred_tag()
     urls = (
-        (GITHUB_REPO_URL, "scripts_init_cloning_github", "GitHub"),
-        (GITLINUXTOYS_REPO_URL, "scripts_init_cloning_linux_toys", "git.linux.toys"),
+        (GITHUB_REPO_URL, "scripts_init_cloning_github"),
+        (GITLINUXTOYS_REPO_URL, "scripts_init_cloning_linux_toys"),
     )
-
-    for repo_url, progress_key, label in urls:
+    for repo_url, progress_key in urls:
         if progress_callback:
             progress_callback(progress_key)
-        logger.info(f"Attempting to clone scripts from {repo_url} (timeout: {GIT_TIMEOUT}s)")
-        success, _, error = _run_git_command(
-            ["clone", "--depth=1", repo_url, GIT_SCRIPTS_STAGING_DIR]
-        )
-
-        if success:
-            try:
-                # The normal clone path is used only when no valid cached repository
-                # exists. Move any broken/incomplete cache aside first, promote the
-                # validated staging tree, then clean up the retired tree best-effort.
-                _promote_staged_scripts_cache()
-            except Exception as e:
-                logger.error(f"Failed to promote synchronized scripts cache: {e}")
-                return False
-
-            logger.info(f"Successfully cloned scripts from {label}")
+        staging = tempfile.mkdtemp(prefix="scripts.updating.", dir=CACHE_DIR)
+        try:
+            success, _, error = _run_git_command(
+                ["clone", "--depth=1", "--single-branch", "--branch", tag,
+                 "--", repo_url, staging]
+            )
+            if not success:
+                logger.warning("Approved scripts fetch failed: %s", error)
+                continue
+            require_bundle(staging)
+            _promote_staged_scripts_cache(staging)
             _write_update_timestamp()
             if progress_callback:
                 progress_callback("scripts_init_success")
             return True
-
-        logger.warning(f"{label} clone failed: {error}")
-        try:
-            if os.path.exists(GIT_SCRIPTS_STAGING_DIR):
-                shutil.rmtree(GIT_SCRIPTS_STAGING_DIR)
-        except OSError:
-            pass
-
-    logger.info("Will keep the currently available scripts source")
+        except (OSError, ValueError) as exc:
+            logger.warning("Rejected synchronized scripts: %s", exc)
+        finally:
+            if os.path.exists(staging):
+                shutil.rmtree(staging)
     if progress_callback:
         progress_callback("scripts_init_failed")
     return False
 
+
 def _pull_scripts_repo(progress_callback=None, force=False):
-    """
-    Pull updates from the scripts repository.
-
-    Times out after 10 seconds to prevent hanging on network issues.
-    Respects the update interval to avoid rate limiting unless force is True.
-
-    If pull fails (including timeout), will use the cached repository.
-
-    Args:
-        progress_callback: Optional function to call with progress messages
-        force: Whether to bypass the update interval
-
-    Returns:
-        bool: True if pull was successful or skipped due to rate limiting
-    """
-    if not _git_repo_exists():
-        logger.warning("Scripts repository not found in cache, cloning instead")
-        if progress_callback:
-            progress_callback("scripts_init_not_found")
-        return _clone_scripts_repo(progress_callback)
-
-    # Check if we should update based on time interval unless explicitly forced.
-    if not force and not _should_update_scripts():
-        logger.info("Skipping repository update due to rate limiting (updated < 6 hours ago)")
-        return True  # Return True since we have valid cached scripts
-
-    if progress_callback:
-        progress_callback("scripts_init_updating")
-    logger.info(f"Pulling updates for scripts repository (timeout: {GIT_TIMEOUT}s)")
-    success, output, error = _run_git_command(
-        ["pull", "--ff-only"],
-        cwd=GIT_SCRIPTS_CACHE_DIR
-    )
-
-    if success:
-        # Restore the managed cache to exactly the checked-out revision.
-        reset_success, _, reset_error = _run_git_command(
-            ["reset", "--hard", "HEAD"],
-            cwd=GIT_SCRIPTS_CACHE_DIR
-        )
-
-        if not reset_success:
-            logger.warning(
-                f"Failed to restore scripts working tree: {reset_error}"
-            )
-            return False
-
-        logger.info(
-            "Successfully pulled scripts updates and restored working tree"
-        )
-        _write_update_timestamp()
-        if progress_callback:
-            progress_callback("scripts_init_update_success")
+    """Update through staging, never pull/reset the active execution tree."""
+    if not force and _cached_scripts_are_readily_available() and not _should_update_scripts():
         return True
+    return _clone_scripts_repo(progress_callback)
 
-    logger.warning(f"Failed to pull updates: {error}")
-
-    if force:
-        logger.info(
-            "Forced scripts update failed to pull; attempting a clean clone"
-        )
-        return _clone_scripts_repo(progress_callback)
-
-    logger.info("Keeping the cached scripts repository unchanged")
-    return False
 
 def force_update_scripts(progress_callback=None):
     """Update the script cache immediately, bypassing the update interval."""
@@ -362,25 +281,24 @@ def get_bundled_scripts_dir():
 
 
 def _cached_scripts_are_readily_available():
-    """Cheap startup check for a previously successful cache; never invokes git."""
-    return (
-        os.path.isdir(GIT_SCRIPTS_CACHE_DIR)
-        and os.path.isdir(os.path.join(GIT_SCRIPTS_CACHE_DIR, ".git"))
-        and os.path.isfile(LAST_UPDATE_TIMESTAMP_FILE)
-    )
+    """Check exact approved content without invoking git or the network."""
+    if not _git_repo_exists():
+        return False
+    try:
+        require_bundle(GIT_SCRIPTS_CACHE_DIR)
+        return True
+    except (OSError, ValueError) as exc:
+        logger.debug("Cached scripts are not qualified: %s", exc)
+        return False
 
 
 def get_available_scripts_dir():
-    """Return an immediately usable scripts tree without network/subprocess work."""
-    bundled_scripts_dir = get_bundled_scripts_dir()
-
-    if is_dev_mode_enabled():
-        return bundled_scripts_dir
-
-    if _cached_scripts_are_readily_available():
+    """Select a verified source; missing metadata never grants permission."""
+    if not is_dev_mode_enabled() and _cached_scripts_are_readily_available():
         return GIT_SCRIPTS_CACHE_DIR
-
-    return bundled_scripts_dir
+    bundled = get_bundled_scripts_dir()
+    require_bundle(bundled)
+    return bundled
 
 
 def _synchronize_scripts_unlocked(progress_callback=None, force=False):
@@ -393,13 +311,13 @@ def _synchronize_scripts_unlocked(progress_callback=None, force=False):
             "success": False,
             "changed": False,
             "performed": False,
-            "path": get_bundled_scripts_dir(),
+            "path": get_available_scripts_dir(),
         }
 
     # One HEAD lookup both validates the cached repository and captures the
     # revision used for change detection. Avoid separate rev-parse probes.
-    old_commit = _get_head_commit()
-    had_repo = old_commit is not None
+    had_repo = _cached_scripts_are_readily_available()
+    old_commit = _get_head_commit() if had_repo else None
 
     performed = force or not had_repo or _should_update_scripts()
     if not performed:
@@ -443,12 +361,21 @@ def _synchronize_scripts_unlocked(progress_callback=None, force=False):
 
 
 def synchronize_scripts(progress_callback=None, force=False):
-    """Synchronize scripts while preventing overlapping in-process promotions."""
+    """Serialize promotion across threads/processes; readers only see approved trees."""
     with _SYNC_LOCK:
-        return _synchronize_scripts_unlocked(
-            progress_callback=progress_callback,
-            force=force,
-        )
+        if not _ensure_cache_dir():
+            return {"success": False, "changed": False, "performed": False,
+                    "path": get_available_scripts_dir()}
+        with open(os.path.join(CACHE_DIR, "scripts.sync.lock"), "a") as lock:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                return {"success": False, "changed": False, "performed": False,
+                        "path": get_available_scripts_dir()}
+            try:
+                return _synchronize_scripts_unlocked(progress_callback, force)
+            finally:
+                fcntl.flock(lock, fcntl.LOCK_UN)
 
 
 def will_perform_git_operation():
@@ -463,7 +390,7 @@ def will_perform_git_operation():
 def get_scripts_dir(progress_callback=None):
     """Synchronize synchronously, retained for CLI/backwards compatibility."""
     if is_dev_mode_enabled():
-        return get_bundled_scripts_dir()
+        return get_available_scripts_dir()
 
     result = synchronize_scripts(progress_callback=progress_callback)
     if result["success"] and os.path.isdir(result["path"]):

@@ -50,8 +50,9 @@ historical x86 route baseline. They are not new third-party runtime guarantees.
 Only the three data-only font routes currently receive ARM64 curated eligibility.
 Other ARM64 feature promotions require individual qualification.
 
-Changed/new curated scripts need a reviewed `# architectures: x86_64, aarch64`
-header or an updated reviewed digest. Missing declarations fail, including in
+Changed/new curated scripts need a reviewed header or an updated reviewed digest,
+**and managed trees need client-approved bundle revisions** (see below).
+Headers never authorize an unapproved synchronized tree. Missing declarations fail, including in
 developer mode. Generated package/removal scripts explicitly declare their host
 scope and still call payload/package guards. Architecture metadata is a contract
 for trusted installer code, not a sandbox for arbitrary shell or downloaded
@@ -170,3 +171,26 @@ Remote scripts with different bodies remain refused. The qualified bundled
 snapshot and its client must be rolled out together upstream; M2 does not promote
 older or newer remote bodies merely to keep a menu entry visible. Window closure
 also preserves shared runner/rollback state instead of deleting `/tmp/linuxtoys`.
+
+## Remote-script compatibility follow-up
+
+The client now requires an approved exact-byte bundle **before** selecting a
+scripts source. `app/script_compat.py` checks the client-owned revision allowlist,
+script API 1, architecture-policy fingerprint and complete file inventory.
+`architecture.require_script_path()` applies that check before the existing ISA
+policy for execution and list hooks. Remote headers never grant revision approval.
+The three existing ARM64 font scripts also refuse clients lacking their API
+validator before loading installation code. No further ARM64 route is promoted.
+
+Synchronization fetches the pinned content-addressed tag in private staging;
+validation precedes cache promotion. Failure retains an approved cache or verified
+bundle, including offline. It never executes unknown content to restore search.
+Promotion rollback retains a recovery tree if restoration fails. Developer mode
+does not bypass this contract; existing release-age gate behavior is unchanged.
+
+[SCRIPT-ROLLOUT.md](SCRIPT-ROLLOUT.md) defines supported revision relationships,
+preparation, rollback and the required publication order. Its workflow warning is
+material: the unchanged default-branch sync omits the hidden manifest and must be
+coordinated separately before merging/publishing these artifacts.
+See [verification evidence](script-rollout-evidence.json). Native amd64 and live
+upstream publication remain separate gates; packaging qualification has not begun.

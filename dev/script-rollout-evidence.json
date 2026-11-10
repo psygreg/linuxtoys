@@ -1,0 +1,169 @@
+{
+  "schema": 1,
+  "date": "2026-11-10",
+  "baseline": "fe169397270cbebb83b16bcae0941300e5fb7888",
+  "scope": "Local-only client/script compatibility; no packaging qualification or publication",
+  "environment": {
+    "os": "Ubuntu 26.04.1 LTS",
+    "machine": "aarch64",
+    "python": "3.14.4",
+    "rust_cargo": "1.93.1 (retained M2 toolchain)",
+    "host": "Apple M3 Pro / VMware",
+    "native_library_source": "Retained native M2 release libraries copied into a separate source tree; Rust unchanged, not rebuilt",
+    "catalog": "_catalog_rs.abi3.so (ELF AArch64 validated)",
+    "gui": "liblinuxtoys_gui.so (ELF AArch64 validated, ABI 20)",
+    "pointer_bytes": 8,
+    "dependencies": "Exact retained M2 GI/sysroot and p3/vendor; no dependency or package installation"
+  },
+  "workspace": "/home/ta/linuxtoys-rollout-qualification",
+  "contract": {
+    "script_api": 1,
+    "manifest_sha256": "083138ce4b55ccf533a215c995bf27db25eae80d60b487150ae710f14d245e5f",
+    "inventory_files": 337,
+    "accepted_production_revisions": [
+      "083138ce4b55ccf533a215c995bf27db25eae80d60b487150ae710f14d245e5f"
+    ],
+    "tag": "linuxtoys-script-api-1-083138ce4b55ccf533a215c995bf27db25eae80d60b487150ae710f14d245e5f",
+    "architecture_promotions": []
+  },
+  "root_cause": {
+    "retained_remote_commit": "6b0de756183eb439bc7435c41a23367f37547fc4",
+    "remote_bodies": "All three ARM64 fonts exactly match M1 rather than M2; no CRLF discrepancy",
+    "atkinson_remote_sha256": "1ba44470f759b1ada886f25bf5bcc649dc704ec2ab06827ddd68c14eda118caa",
+    "details": "SCRIPT-ROLLOUT.md"
+  },
+  "tests": {
+    "python_arm64": {
+      "total": 68,
+      "passed": 68,
+      "skipped": 0,
+      "log": "unit-tests-final.log"
+    },
+    "python_macos": {
+      "total": 68,
+      "passed": 65,
+      "skipped": 3,
+      "skips": "Linux DEB metadata, native Rust/ctypes layout, Linux updater fixture"
+    },
+    "rollout_tests_added": 22,
+    "cases": [
+      "matching exact-byte revision",
+      "older/newer/unknown revision refusal",
+      "stale client API",
+      "API/policy mismatch",
+      "manifest/body tampering and CRLF changes",
+      "conflicting explicit API requirements",
+      "missing/extra/symlink files",
+      "missing managed manifest",
+      "ignored documentation cannot execute",
+      "offline approved cache and bundle",
+      "missing remote tag",
+      "tampered same-name tag",
+      "partial synchronization",
+      "explicit-only rollback approval and revocation",
+      "promotion/restore failures",
+      "invalid stage before cache rename",
+      "process lock exclusion",
+      "rejection before preamble/session creation",
+      "missing helper before font installation body",
+      "reviewed x86 route preservation"
+    ],
+    "native_rollout": {
+      "command": "python3 dev/tests/native_script_rollout_smoke.py --profile NEW_DIR [--gui]",
+      "transport": "git daemon, loopback TCP only",
+      "approved_fonts": [
+        "Atkinson Hyperlegible",
+        "OpenDyslexic",
+        "Nerd Fonts"
+      ],
+      "tampered_tag_refused": true,
+      "offline_cache_search": true,
+      "offline_bundle_search": true,
+      "original_API_guard_paths_and_CLI_preparation": true,
+      "log": "native-final.log"
+    },
+    "gui": [
+      {
+        "backend": "Wayland",
+        "actual": "GdkWaylandDisplay",
+        "atkinson_search_groups": 1,
+        "normal_shutdown": true,
+        "seconds": 12.13,
+        "log": "native-wayland-final.log"
+      },
+      {
+        "backend": "X11 via Xwayland",
+        "actual": "X11Display",
+        "atkinson_search_groups": 1,
+        "normal_shutdown": true,
+        "seconds": 12.45,
+        "log": "native-x11-final.log"
+      }
+    ],
+    "imports": {
+      "result": "passed",
+      "log": "imports.log"
+    },
+    "tui": {
+      "result": "HomeScreen, Atkinson search and shutdown passed",
+      "log": "tui-final.log"
+    },
+    "mcp": {
+      "result": "authenticated Atkinson search, unauthenticated refusal and shutdown passed",
+      "tools": 26,
+      "log": "mcp-final.log"
+    },
+    "cli": {
+      "result": "EASY_CLI=1 --help, --version, --list passed; all three fonts listed; updater prompt declined via EOF",
+      "logs": [
+        "cli-help-final.log",
+        "cli-version-final.log",
+        "cli-list-final.log"
+      ]
+    },
+    "quality": {
+      "ruff": "0.12.3 full lint/format for four new Python files; fatal lint for changed existing modules passed",
+      "syntax": "AST parsing of changed Python and bash -n of changed scripts passed",
+      "shellcheck": "0.11.0 --severity=error, all three changed scripts passed",
+      "manifest": "--check and fresh --export passed",
+      "policy": "All route paths/architecture lists and non-script declarations match M2; only three existing font digests refreshed",
+      "diff": "git diff --check passed"
+    },
+    "initial_probe_corrections": [
+      "TUI first lacked retained p3/vendor; reused exact M2 Textual/vendor path and reran successfully",
+      "CLI --list requires EASY_CLI=1 without a display; final run sets it and closes stdin to decline the existing updater prompt"
+    ]
+  },
+  "isolation": {
+    "system_package_installs": false,
+    "system_upgrades": false,
+    "font_installs": false,
+    "desktop_checkout_changed": false,
+    "live_upstream_writes": false,
+    "workflow_execution": false,
+    "native_amd64_or_emulation": false,
+    "temporary_ssh_key_removed": true
+  },
+  "limitations": [
+    "No native amd64 runtime/build qualification",
+    "No live upstream tag rollout; retained M2 cache is historical evidence",
+    "Existing automatic sync omits dotfile manifest and needs separate coordination before merge/publication",
+    "No standalone Xorg test",
+    "No font lifecycle rerun/third-party promotion; M2 lifecycle evidence remains historical",
+    "Offline probes stop the isolated Git endpoint, not all host networking",
+    "No new Rust build; unchanged retained M2 native libraries imported and inspected",
+    "No packaging qualification begun"
+  ],
+  "reproduce": [
+    "source /tmp/linuxtoys-m2/environment.bash",
+    "cd /home/ta/linuxtoys-rollout-qualification/source",
+    "export PYTHONPATH=\"$PWD/p3:/tmp/linuxtoys-m2/release-run/p3/vendor:$PYTHONPATH\"",
+    "python3 dev/prepare_script_rollout.py --check",
+    "python3 -m unittest discover -s dev/tests -v",
+    "python3 dev/tests/native_script_rollout_smoke.py --profile NEW_DIR",
+    "GDK_BACKEND=wayland dbus-run-session -- python3 dev/tests/native_script_rollout_smoke.py --profile NEW_DIR --gui",
+    "GDK_BACKEND=x11 dbus-run-session -- python3 dev/tests/native_script_rollout_smoke.py --profile NEW_DIR --gui",
+    "python3 dev/tests/native_application_smoke.py imports|tui|mcp --profile NEW_DIR"
+  ],
+  "display_environment": "DISPLAY=:0, WAYLAND_DISPLAY=wayland-0, XAUTHORITY from systemctl --user show-environment, XDG_RUNTIME_DIR=/run/user/1000, GIO_USE_VFS=local; new profiles, automatic updates disabled and setup declined"
+}

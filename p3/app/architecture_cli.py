@@ -20,7 +20,7 @@ from app.architecture import (
     host,
     label,
     require_native,
-    require_script,
+    require_script_path,
     resolve_hook_path,
     select_asset,
 )
@@ -217,12 +217,12 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "label":
             print(label(args.system))
         elif args.command == "script":
-            require_script(Path(args.path).read_text())
+            require_script_path(args.path)
         elif args.command == "hook":
             path = resolve_hook_path(
                 args.script_dir, args.relative_path, args.cache_dir
             )
-            require_script(path.read_text())
+            require_script_path(path)
             print(path)
         elif args.command == "files":
             validate_files(args.paths, content_kind=args.content_kind)

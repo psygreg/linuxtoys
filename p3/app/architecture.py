@@ -240,9 +240,13 @@ def _declaration_allowed(values: Any, arch: Architecture) -> bool:
 def require_script(text: str, machine: str | None = None) -> None:
     """Check a reviewed script or explicit header, before its preamble can mutate.
 
-    Legacy curated scripts are pinned by source digest. New/changed scripts,
-    including generated helper dispatches, need an explicit architectures header.
+    Legacy curated scripts are pinned by source digest. Call require_script_path
+    for files: a managed bundle must also pass client-owned revision approval.
+    Explicit headers are for trusted local/generated code, not remote approval.
     """
+    from .script_compat import require_api
+
+    require_api(text)
     arch = host() if machine is None else normalize(machine)
     headers = re.findall(r"(?mi)^# architectures:\s*(.+)$", text)
     if headers:
@@ -341,6 +345,15 @@ def asset_eligible_json(raw: str, machine: str) -> bool:
         return False
 
 
+def require_script_path(path: str | Path, machine: str | None = None) -> None:
+    """Check managed revision integrity before applying the shared ISA policy."""
+    from .script_compat import require_managed_script
+
+    require_managed_script(path)
+    text = Path(path).read_bytes().decode("utf-8")
+    require_script(text, machine)
+
+
 def resolve_hook_path(script_dir: str, hook: str, cache_dir: str = "") -> Path:
     """Resolve the same relative hook in preflight and execution; reject escapes."""
     relative = Path(hook)
@@ -367,9 +380,7 @@ def require_overrides(
         if value is None:
             continue
         if isinstance(value, dict) and isinstance(value.get("script"), str):
-            require_script(
-                resolve_hook_path(script_dir, value["script"], cache_dir).read_text()
-            )
+            require_script_path(resolve_hook_path(script_dir, value["script"], cache_dir))
         elif isinstance(value, str):
             digest = hashlib.sha256(value.strip().encode()).hexdigest()
             declaration = route_policy().get("inline_hooks", {}).get(digest, {})

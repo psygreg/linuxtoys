@@ -327,3 +327,28 @@ without runtime installation or promotion. B07–B10 packaging, B13 hardware,
 broader B14–B18 work, matching remote script rollout and native amd64 runtime
 regression remain open. The original M0 matrix stays a historical inventory;
 current qualification levels and limitations are explicitly separated in M2.
+
+## Remote-script compatibility follow-up (2026-11-10)
+
+The M2 mismatch affected **all three** curated ARM64 font routes: the retained
+remote cache contains exact M1 bodies while M2's client pins their hardened
+revisions. The old cache-selection/in-place-pull model did not coordinate client
+policy and remote publication. [SCRIPT-ROLLOUT.md](SCRIPT-ROLLOUT.md) records the
+exact hashes, cause, version relationships and safe rollout order.
+
+A client-owned manifest allowlist, explicit script API contract, complete-tree
+verification and staged synchronization now prevent unknown/stale bodies from
+displacing a qualified source. Execution/list-hook checks precede preamble
+mutations. Unavailable tags retain approved cache/bundled bytes; rollback never
+relaxes the architecture or integrity rules. The font bodies refuse missing
+client helpers before installation code. ISA eligibility and the M0 CSV are
+unchanged; no additional applications are qualified.
+
+Native Ubuntu ARM64 evidence covers matching TCP Git synchronization, actual
+catalog/font search, incompatible-tag refusal, offline source selection and GUI
+search/shutdown on Wayland and Xwayland. Test and environment details are in
+[script-rollout-evidence.json](script-rollout-evidence.json).
+The local compatibility defect is resolved; **live upstream rollout remains
+pending**, including coordination of the unchanged automatic sync workflow.
+Native amd64 regression is still unavailable. B07–B10 packaging and the other
+M2 limitations remain open; packaging qualification has not begun.

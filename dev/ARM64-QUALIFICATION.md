@@ -99,6 +99,10 @@ native runtime dependencies and full feature routes still need qualification.
 
 ## Remaining blockers and boundaries
 
+Historical M2 status below is retained as evidence. The local-only compatibility
+follow-up is documented at the end of this report and in
+[SCRIPT-ROLLOUT.md](SCRIPT-ROLLOUT.md); live rollout is still pending.
+
 1. **Remote script rollout:** a live synced Atkinson script had digest
    `1ba44470f759b1ada886f25bf5bcc649dc704ec2ab06827ddd68c14eda118caa`, which
    the M2 policy correctly refused. Online GUI font search returned zero groups
@@ -138,3 +142,39 @@ results require the explicit fixture/environment used in the evidence. Fault
 injection retains local GUI/MCP IPC and does not change host networking. Successful
 GUI search in the qualified bundled snapshot does not qualify unmatched remote
 script revisions. Re-run on a native amd64 host before asserting x86 runtime parity.
+
+## Local script compatibility follow-up (2026-11-10)
+
+The [rollout report](SCRIPT-ROLLOUT.md) resolves the local cache/client mismatch
+without accepting unqualified remote revisions. The production lock approves a
+single API-1 manifest; all three existing ARM64 font routes retain their ISA scope
+and add an early client-helper guard. Publication has not occurred.
+
+The final suite passes **68/68 on Ubuntu ARM64**; macOS passes 65 with the same
+three Linux-only skips. Twenty-two new tests cover approval, API/policy conflicts,
+stale/unknown/tampered content, offline sources, partial synchronization, process
+exclusion and rollback failures. Existing x86 eligibility/selector tests remain
+fixtures, not native amd64 evidence. Ruff lint/format, fatal lint for existing
+changed modules, Python AST, Bash syntax, ShellCheck error checks, manifest
+check/export and diff whitespace checks pass.
+
+An isolated loopback TCP Git service supplies the intended approved revision to
+the actual native catalog. Search finds Atkinson, OpenDyslexic and Nerd Fonts;
+the early validators and CLI preparation accept their original approved files.
+Tampering under the same tag is refused before promotion; search still works
+with the approved cache and, after its removal, the bundled snapshot offline.
+Actual GUI font search returns one Atkinson group and closes normally on both
+Wayland and X11 via Xwayland (12.13/12.45-second bounded probes). Native imports,
+TUI search/shutdown, CLI help/version/list and authenticated MCP search/shutdown
+also pass. CLI uses `EASY_CLI=1` and declines the existing updater prompt via EOF.
+
+Tests reused unchanged M2 native release libraries and staged exact dependencies;
+no Rust rebuild, package/font installation or system upgrade was performed.
+An initial TUI probe lacked the retained vendor path; a corrected run reused it
+successfully. Evidence, commands, profiles and limitations are recorded in
+[script-rollout-evidence.json](script-rollout-evidence.json).
+
+Still required: native amd64 regression and separately authorized, coordinated
+upstream rollout. The existing automatic sync omits the hidden manifest and must
+be addressed before merge/publication. No workflow was changed/run, no upstream
+write occurred, and Ubuntu ARM64 packaging qualification has not begun.

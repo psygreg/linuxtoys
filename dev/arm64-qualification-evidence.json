@@ -925,5 +925,12 @@
         }
       ]
     }
-  ]
+  ],
+  "remote_script_followup": {
+    "date": "2026-11-10",
+    "evidence": "script-rollout-evidence.json",
+    "rollout": "SCRIPT-ROLLOUT.md",
+    "live_publication": false,
+    "native_amd64_qualified": false
+  }
 }

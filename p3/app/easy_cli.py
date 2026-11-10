@@ -7,6 +7,7 @@ import asyncio
 import subprocess
 import re
 import shutil
+from pathlib import Path
 from .parser import get_categories, get_all_scripts_recursive, get_appstream_entries
 from .updater import __version__, version_gate
 from .manifest_helper import (
@@ -155,18 +156,21 @@ def _save_script_to_registry(script_name, transmap_path):
 
 def create_temp_file(script_path):
     """
-    Create a temporary script file by filtering out xdg-open calls.
+    Validate a CLI route; preserve API-guarded originals, filter legacy copies.
     """
 
     # Resolve SCRIPT_DIR
     script_dir = resolve_script_dir()
 
-    # Open the original script and set to a list
-    with open(script_path, "r", encoding="utf-8") as f:
-        lines = f.readlines()
-
-    from .architecture import require_script
-    require_script("".join(lines))
+    from .architecture import require_script_path
+    require_script_path(script_path)
+    lines = Path(script_path).read_bytes().decode("utf-8").splitlines(keepends=True)
+    if "# requires-script-api:" in "".join(lines):
+        # API guards validate BASH_SOURCE against the original approved bytes.
+        # The currently qualified font routes contain no xdg-open calls.
+        if any("xdg-open" in line for line in lines):
+            raise ValueError("API-guarded scripts with xdg-open need a reviewed CLI route")
+        return script_path
     filtered_lines = []
     for line in lines:
         # Ignore lines containing "xdg-open"
@@ -410,8 +414,9 @@ def easy_cli_run_script(script_info):
         print(f"✗ Error while executing the script: {e}")
         return 1
     finally:
-        # Remove the temporary script file
-        os.remove(temp_file_path)
+        # API-guarded routes retain their original approved source file.
+        if os.path.abspath(temp_file_path) != os.path.abspath(script_path):
+            os.remove(temp_file_path)
 
     return code
 

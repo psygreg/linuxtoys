@@ -142,16 +142,16 @@ def library_flags(script_text, script_dir):
 def script_preamble(script_text, script_dir, *, internal=False):
     """Set invocation-local flags and always load the core before script code."""
     if __package__:
-        from .architecture import host, require_script
+        from .architecture import host, require_script, require_script_path
     else:
         import sys
         sys.path.insert(0, os.path.abspath(script_dir))
-        from app.architecture import host, require_script
+        from app.architecture import host, require_script, require_script_path
     host()
     if not internal:
         require_script(script_text)
     for hook_path in _list_hook_paths(script_text, script_dir):
-        require_script(hook_path.read_text())
+        require_script_path(hook_path)
     script_dir = os.path.abspath(script_dir)
     flags, referenced = library_flags(script_text, script_dir)
     lines = ["export SCRIPT_DIR=" + shlex.quote(script_dir),
@@ -287,7 +287,9 @@ def script_command(script_path, script_dir):
     source command propagates its return/exit status.
     """
     script_path = os.path.abspath(script_path)
-    text = Path(script_path).read_text(encoding="utf-8")
+    from app.architecture import require_script_path
+    require_script_path(script_path)
+    text = Path(script_path).read_bytes().decode("utf-8")
     return ["/bin/bash", "-c", script_preamble(text, script_dir)
             + 'source "$0" "$@"\n', script_path]
 

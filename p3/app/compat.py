@@ -1141,11 +1141,10 @@ def script_is_compatible(script_path, compat_keys):
     # ISA safety is independent of display/developer-mode compatibility overrides.
     try:
         if __package__:
-            from .architecture import script_eligible
+            from .architecture import require_script_path
         else:
-            from architecture import script_eligible
-        if not script_eligible(get_script_file_data(script_path)["content"]):
-            return False
+            from app.architecture import require_script_path
+        require_script_path(script_path)
     except (OSError, ValueError):
         return False
 
