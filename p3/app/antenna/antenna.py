@@ -812,6 +812,15 @@ def _initialize_antenna() -> None:
     _antenna_initialized = True
  
 # --- Issue submission ---
+def _rejected_for_logs(response) -> bool:
+    """True when the server's 422 names the logs field, the only way it refuses an empty report."""
+    try:
+        detail = response.json().get("detail", [])
+    except (ValueError, AttributeError):
+        return False
+    return any(isinstance(item, dict) and "logs" in item.get("loc", []) for item in detail)
+
+
 def submit_issue(
     title: str,
     logs: str = "",
@@ -903,15 +912,17 @@ def submit_issue(
             logs = logs + "\n" + registry_content
 
     # Background AppStream installs run without any terminal; their per-job
-    # transcripts are the only output a report can carry for them.
+    # transcripts are the only output a report can carry for them. They go
+    # before the terminal output: when the server trims a long report it keeps
+    # the end, which is where the terminal shows the failure.
     try:
-        from .appstream_logs import appstream_log_context
+        from ..appstream_logs import appstream_log_context
 
         appstream_logs = appstream_log_context()
     except Exception:
         appstream_logs = ""
     if appstream_logs:
-        logs = logs + "\n\n" + appstream_logs
+        logs = appstream_logs + "\n\n" + logs
 
     # Handle upstream developer tagging
     validated_app = None
@@ -975,7 +986,7 @@ def submit_issue(
         print("[IssueReporter] Could not file issue: Connection timeout", file=sys.stderr)
         raise
     except requests.exceptions.HTTPError as e:
-        if e.response is not None and e.response.status_code == 422:
+        if e.response is not None and e.response.status_code == 422 and _rejected_for_logs(e.response):
             print("[IssueReporter] Report rejected: no readable log lines", file=sys.stderr)
             raise EmptyReportError() from e
         print(f"[IssueReporter] Could not file issue: Server error ({e.response.status_code})", file=sys.stderr)
