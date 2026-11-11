@@ -318,11 +318,6 @@ _FAMILY_LOCK_FILES = {
 }
 
 
-def native_manager_process_names():
-    """Process names of the distribution's native package-manager path."""
-    return _FAMILY_MANAGER_PROCESSES.get(_native_manager_family(), ())
-
-
 def _running_comm_names():
     """Set of comm names currently present in /proc (15-char, casefolded)."""
     found = set()

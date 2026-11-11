@@ -183,12 +183,3 @@ class LanguageSelector:
                 self.on_language_changed(selected_language)
         
         return selected_language
-
-
-def create_language_menu_item(translations):
-    """
-    Create a menu item for language selection
-    Returns a Gtk.MenuItem
-    """
-    menu_item = Gtk.MenuItem(label=translations.get('select_language', 'Select Language'))
-    return menu_item

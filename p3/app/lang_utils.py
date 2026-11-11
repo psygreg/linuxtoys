@@ -540,19 +540,5 @@ def escape_for_markup(text):
     return text.replace('&', '&amp;')
 
 
-def create_markup_translator(lang_code=None):
-    """
-    Create a translator function that escapes text for markup contexts.
-    Usage: _ = create_markup_translator(); markup_safe = _('key')
-    """
-    translations = load_translations(lang_code)
-    
-    def translate(key):
-        text = translations.get(key, key)
-        return escape_for_markup(text)
-    
-    return translate
-
-
 # Default translator instance for convenience
 _ = create_translator()

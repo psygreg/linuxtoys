@@ -28,7 +28,6 @@ from app import appstream_cache
 __all__ = ["AppPageWidget", "FeaturedCard", "show_app_page", "hide_app_page"]
 
 MENU_PANEL = "#menu-panel"
-BODY = "#body-home"
 LIST_VIEW = "#home-menu"
 LOGO = "#logo_lt"
 TERMINAL = "#terminal-conteiner"
@@ -239,19 +238,6 @@ class AppPageWidget(Vertical):
 
         def __init__(self, script_info: Mapping[str, Any]) -> None:
             super().__init__()
-            self.script_info = script_info
-
-    class RateRequested(Message):
-        """Reserved for GUI parity. Ratings are sent by the widget.
-
-        Attributes:
-            stars: Star count (1 to 5).
-            script_info: Script info of the rated app.
-        """
-
-        def __init__(self, stars: int, script_info: Mapping[str, Any]) -> None:
-            super().__init__()
-            self.stars = stars
             self.script_info = script_info
 
     class UrlRequested(Message):

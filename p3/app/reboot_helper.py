@@ -571,37 +571,6 @@ def handle_ostree_deployment_requirement(
     return True
 
 
-def show_flatpak_installed_info_if_needed(parent_window, translations, transmap_path=None):
-    """
-    Checks if flatpak was installed during script execution and shows info dialog if needed.
-    
-    Args:
-        parent_window: The parent GTK window for the dialog
-        translations: Dictionary containing translation keys
-        transmap_path: Optional path to the transmap file (for testing). If None, uses default.
-    
-    Returns:
-        bool: True if flatpak was detected and info shown, False otherwise
-    """
-    if transmap_path is None:
-        transmap_path = os.path.expanduser("~/.cache/linuxtoys/transmap")
-    
-    if not os.path.exists(transmap_path):
-        return False
-    
-    try:
-        with open(transmap_path, "r") as f:
-            content = f.read()
-            # Check if flatpak was installed (look for "pkg flatpak" or "pkg file flatpak")
-            if "pkg flatpak" in content or "pkg file flatpak" in content:
-                show_flatpak_installed_info_dialog(parent_window, translations)
-                return True
-    except Exception:
-        pass
-    
-    return False
-
-
 def check_reboot_requirement_after_checklist(
     parent_window, translations, close_app_callback
 ):

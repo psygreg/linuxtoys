@@ -865,16 +865,8 @@ class AppPageView(Gtk.Box):
         button.add(label)
         label.show()
 
-    @staticmethod
-    def _google_translate_text(text, target_language):
-        """Best-effort translation through Google's public web endpoint."""
-        return translate_helper.translate_text(text, target_language)
-
     def _translate_description_blocks(self, blocks, target_language):
         return translate_helper.translate_blocks(blocks, target_language)
-
-    def _translate_description_spans(self, spans, target_language):
-        return translate_helper.translate_spans(spans, target_language)
 
     def _on_translate_description_clicked(self, _button):
         if self._description_showing_translation:
@@ -1956,13 +1948,6 @@ class AppPageView(Gtk.Box):
 
         button.show_all()
         self._refresh_rating_state()
-
-    def _on_page_mapped(self, *_args):
-        """Re-derive install state after the page was hidden behind a terminal."""
-        if self._destroyed:
-            return False
-        self.refresh_install_state()
-        return False
 
     def refresh_install_state(self):
         """Refresh Available/Queued/Installed from the window's session/registry state."""

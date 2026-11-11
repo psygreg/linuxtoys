@@ -475,61 +475,6 @@ class NavCtl:
         self.header_bar.props.title = f"LinuxToys: {info.get('name', 'App')}"
         self.main_stack.set_visible_child_name("app_page")
 
-    def refresh_app_page_with_fade(self, info):
-        """Replace the visible app page with a translated copy using a cross-fade."""
-        old_page = self.main_stack.get_child_by_name("app_page")
-        if old_page is None:
-            self.open_app_page(info, preserve_previous=True)
-            return
-
-        page = app_page.AppPageView(
-            info,
-            self,
-            self.translations,
-            on_install_callback=self._install_from_app_page,
-        )
-
-        # Keep both pages alive for the transition. Removing the old page first
-        # makes Gtk.Stack animate from the underlying category instead.
-        refresh_name = f"app_page_refresh_{self.view_counter}"
-        self.view_counter += 1
-        gui_rs.stack_attach_child(
-            self.main_stack, page, refresh_name, make_visible=False
-        )
-
-        old_transition = self.main_stack.get_transition_type()
-        old_duration = self.main_stack.get_transition_duration()
-        fade_duration = 180
-        self.main_stack.set_transition_type(Gtk.StackTransitionType.CROSSFADE)
-        self.main_stack.set_transition_duration(fade_duration)
-        self.main_stack.set_visible_child(page)
-
-        self.header_widget.hide()
-        self.reveal.set_reveal_child(False)
-        self.back_button.show()
-        self.header_bar.props.title = f"LinuxToys: {info.get('name', 'App')}"
-
-        def finish_refresh():
-            try:
-                if old_page.get_parent() is self.main_stack:
-                    self.main_stack.remove(old_page)
-                old_page.destroy()
-            except (AttributeError, TypeError):
-                pass
-
-            # Restore the canonical child name so normal app-page Back/install
-            # handling continues to find the page exactly as before.
-            try:
-                self.main_stack.child_set_property(page, "name", "app_page")
-            except (AttributeError, TypeError):
-                pass
-
-            self.main_stack.set_transition_type(old_transition)
-            self.main_stack.set_transition_duration(old_duration)
-            return False
-
-        GLib.timeout_add(fade_duration + 20, finish_refresh)
-
     def close_app_page_for_install(self):
         """Remove the app page immediately before entering the terminal flow."""
         # The app page already remembers the exact GTK child it was opened from.

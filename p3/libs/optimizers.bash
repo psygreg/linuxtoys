@@ -1,28 +1,4 @@
 
-nvidia_ctkpatch () {
-    if ! nvidia-smi >/dev/null 2>&1; then
-        die "NVIDIA GPU is unavailable to the NVIDIA driver."
-    fi
-    local VAR_OUTPUT="/var/run/cdi/nvidia.yaml"
-    local ETC_OUTPUT="/etc/cdi/nvidia.yaml"
-    prep_create "$VAR_OUTPUT"
-    prep_create "$ETC_OUTPUT"
-    # ensure files can be created cleanly after adding to transmap
-    sudo_ rm "$VAR_OUTPUT"
-    sudo_ rm "$ETC_OUTPUT"
-    sudo_ nvidia-ctk cdi generate --output="$VAR_OUTPUT" || die "failed to generate CDI spec on /var"
-    sudo_ nvidia-ctk cdi generate --output="$ETC_OUTPUT" || die "failed to generate CDI spec on /etc"
-    if systemctl list-unit-files | grep -q nvidia-cdi; then
-        sysd_enable nvidia-cdi-refresh.path nvidia-cdi-refresh.service
-        sysd_start nvidia-cdi-refresh.path nvidia-cdi-refresh.service
-    fi
-    sudo_ chmod a+r "$VAR_OUTPUT"
-    sudo_ chmod a+r "$ETC_OUTPUT"
-    if ! nvidia-ctk cdi list 2>/dev/null | grep -q '^nvidia.com/gpu=all$'; then
-        die "NVIDIA CDI device nvidia.com/gpu=all is unavailable."
-    fi
-}
-
 # legacy function call support - kept here so older code and local user scripts won't break
 
 cachyos_sysd_lib () {

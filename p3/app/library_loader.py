@@ -38,7 +38,6 @@ LIBRARY_FLAGS = {
 
 LEGACY_SUMMONS = {
     "summon_helpers": "helpers.bash",
-    "summon_optimizers": "optimizers.bash",
 }
 
 # Raw native package-manager commands in plain script bodies. These bypass the

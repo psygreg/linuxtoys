@@ -100,16 +100,6 @@ def get_simulated_compat_keys():
     return compat_map.get(key, {key})
 
 
-def should_override_compatibility():
-    """
-    Check if compatibility checks should be overridden.
-    
-    Returns:
-        bool: True if DEV_MODE is enabled (with or without COMPAT override)
-    """
-    return is_dev_mode_enabled()
-
-
 def should_override_container_checks():
     """
     Check if container checks should be overridden.

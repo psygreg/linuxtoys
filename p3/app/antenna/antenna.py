@@ -559,10 +559,7 @@ class LogCapture:
  
     def get_logs(self) -> str:
         return self._buffer.getvalue()
- 
-    def clear(self):
-        self._buffer = StringIO()
- 
+
 log_capture = LogCapture()
 _antenna_initialized = False
  

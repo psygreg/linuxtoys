@@ -64,18 +64,6 @@ OS_KEYS = {
 
 VALID_TYPES = {"git", "tar", "bin", "make", "flathub", "snap", "native", "repository", "url", "external"}
 
-URL_PACKAGE_KEYS = {
-    "deb",
-    "rpm",
-    "pacman",
-    "pkg.tar.zst",
-    "flatpak",
-    "snap",
-    "appimage",
-    "tar",
-    "bin",
-}
-
 NATIVE_PACKAGE_KEY_PRIORITY = (
     "ublue",
     "dakota",
@@ -272,24 +260,6 @@ def _get_repo_list_paths(scripts_dir):
     """Return all repository-list JSON files in deterministic order."""
     json_paths, _, _ = _scan_repo_tree(scripts_dir)
     return list(json_paths)
-
-
-DESCRIPTION_FILE_KEYS = ("descriptions", "description-file")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-SCREENSHOT_EXTENSIONS = (".png", ".jpg", ".jpeg", ".webp", ".svg")
 
 
 def _safe_list_relative_path(entry, scripts_dir, value):
@@ -660,22 +630,6 @@ def load_appstream_overlays(scripts_dir, list_paths=None):
             overlays.setdefault(appstream_id, overlay)
 
     return overlays
-
-
-def load_appstream_commerce_overlays(scripts_dir, list_paths=None):
-    """Backward-compatible commerce-only view of AppStream overlays."""
-    commerce_keys = {
-        "purchase_url", "purchase_price", "purchase_currency_symbol",
-        "purchase_options", "subscription_price",
-        "subscription_currency_symbol", "subscription_options",
-    }
-    return {
-        key: {name: value for name, value in overlay.items() if name in commerce_keys}
-        for key, overlay in load_appstream_overlays(scripts_dir, list_paths).items()
-        if any(name in commerce_keys for name in overlay)
-    }
-
-
 
 
 def _resolve_hook_paths(entry, scripts_dir):

@@ -52,21 +52,6 @@ def run_message_dialog(
     finally:
         dialog.destroy()
 
-def show_information(
-    parent: Optional[Gtk.Widget],
-    *,
-    title: str,
-    message: str,
-) -> None:
-    run_message_dialog(
-        parent,
-        title=title,
-        secondary_text=message,
-        message_type=Gtk.MessageType.INFO,
-        buttons=[("OK", Gtk.ResponseType.OK)],
-        default_response=Gtk.ResponseType.OK,
-    )
-
 def run_version_gate_dialog(
     parent: Optional[Gtk.Widget],
     *,

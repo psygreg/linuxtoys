@@ -291,7 +291,3 @@ class RegistryScreen(Screen):
             severity="error",
         )
 
-
-class RegistryOpenerMixin:
-    def action_open_history(self) -> None:
-        self.app.push_screen(RegistryScreen())

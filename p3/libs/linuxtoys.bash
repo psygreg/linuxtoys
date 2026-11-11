@@ -25,10 +25,6 @@ summon_helpers() {
     [ -n "$HELPERS_OPS" ] && return 0
     source "$SCRIPT_DIR/libs/helpers.lib" || fatal "Helpers library not found"
 }
-summon_optimizers() {
-    [ -n "$OPTIMIZER_OPS" ] && return 0
-    source "$SCRIPT_DIR/libs/optimizers.lib" || fatal "Optimizers library not found"
-}
 
 # --- Zenity compatibility layer ---
 _zenity_can_run() {
@@ -881,7 +877,6 @@ die() {
 }
 
 # legacy function calls
-zenpass() { askpass password "$@"; }
 sudo_rq() { askpass sudo "$@"; }
 zenask() { question "$@"; }
 zenwrn() { warn "$@"; }

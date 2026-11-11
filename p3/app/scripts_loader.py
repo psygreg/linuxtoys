@@ -45,8 +45,3 @@ def initialize_scripts():
     except Exception as e:
         logger.error(f"Error initializing scripts: {e}")
         return prepare_scripts()
-
-
-def get_active_scripts_dir():
-    """Return the currently selected source without network/subprocess work."""
-    return get_available_scripts_dir()

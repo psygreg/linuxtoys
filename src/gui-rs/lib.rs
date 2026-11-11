@@ -1455,11 +1455,6 @@ pub unsafe extern "C" fn lt_gui_inspect_local_package(
 }
 
 #[no_mangle]
-pub extern "C" fn lt_gui_clear_pixbuf_cache() {
-    PIXBUF_CACHE.with(|cache| cache.borrow_mut().clear());
-}
-
-#[no_mangle]
 pub unsafe extern "C" fn lt_gui_set_image_source(
     image: *mut gtk::ffi::GtkWidget,
     icon_path: *const c_char,

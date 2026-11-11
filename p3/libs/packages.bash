@@ -1162,28 +1162,6 @@ pkg_snap_revert () {
     runner_unlock
 }
 
-pkg_snap_remove () {
-    (( $# > 0 )) || return 0
-    command -v snap >/dev/null 2>&1 || return 0
-
-    local -a _snap_found=()
-    local pak
-    for pak in "$@"; do
-        if snap list "$pak" >/dev/null 2>&1; then
-            _snap_found+=("$pak")
-        fi
-    done
-    (( ${#_snap_found[@]} > 0 )) || return 0
-
-    askpass
-    runner_lock "package-removal"
-    sudo_ snap remove "${_snap_found[@]}" || {
-        runner_unlock
-        fatal "Failed to remove snap packages ${_snap_found[*]}"
-    }
-    runner_unlock
-}
-
 _snap_installed_names () {
     command -v snap >/dev/null 2>&1 || return 0
     snap list 2>/dev/null | awk 'NR > 1 { print $1 }' | sort -u

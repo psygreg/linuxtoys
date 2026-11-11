@@ -305,31 +305,3 @@ def show_run_confirmation_dialog(parent_window, translations, scripts_to_run, ex
     dialog.destroy()
 
     return response == Gtk.ResponseType.OK
-
-
-def handle_needed_requirements(
-    parent_window, translations, script_name, required_scripts, proceed_callback
-):
-    """
-    Handles the complete needed requirements flow.
-    Shows dialog, handles user choice, and executes appropriate action.
-
-    Args:
-        parent_window: The parent GTK window for dialogs
-        translations: Dictionary containing translation keys
-        script_name: Name of the script with requirements
-        required_scripts: List of required script info dicts
-        proceed_callback: Function to call if the user confirmed to proceed
-
-    Returns:
-        bool: True if user confirmed to proceed, False otherwise
-    """
-    response = show_needed_requirements_dialog(
-        parent_window, translations, script_name, required_scripts
-    )
-
-    if response:
-        proceed_callback()
-        return True
-
-    return False

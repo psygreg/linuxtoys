@@ -183,28 +183,6 @@ pub(crate) fn load_json_entries(py: Python<'_>, path: &str) -> PyResult<Vec<Py<P
     Ok(out)
 }
 
-#[pyfunction]
-pub(crate) fn load_markdown_text(path: &str) -> String {
-    fs::read_to_string(path)
-        .map(|s| s.trim().to_owned())
-        .unwrap_or_default()
-}
-
-#[pyfunction]
-pub(crate) fn safe_join_below(base: &str, source_dir: &str, value: &str) -> Option<String> {
-    let rel = Path::new(value);
-    if rel.is_absolute() || rel.components().any(|c| matches!(c, Component::ParentDir)) {
-        return None;
-    }
-    let base = fs::canonicalize(base).ok()?;
-    let candidate = fs::canonicalize(Path::new(source_dir).join(rel)).ok()?;
-    if candidate.starts_with(&base) {
-        Some(candidate.to_string_lossy().into_owned())
-    } else {
-        None
-    }
-}
-
 fn as_nonempty_string(v: Option<&Value>) -> Option<&str> {
     v?.as_str().map(str::trim).filter(|s| !s.is_empty())
 }

@@ -969,70 +969,6 @@ class SearchEngine:
 
         return grouped_list
 
-    def _extract_category_name(self, script_path):
-        """
-        Extract a human-readable category name from the script path.
-        Handles nested categories properly.
-
-        Examples:
-        - '/scripts/utils/some_script.sh' -> 'Utils' (or translated)
-        - '/scripts/drivers/nvidia/nvidia_installer.sh' -> 'Nvidia' (or 'Drivers - Nvidia' if no leaf translation)
-        - '/scripts/pdefaults.sh' -> 'Other' (root-level, no category)
-
-        Uses translations when available (using folder names as keys).
-        Falls back to title-cased path components with hierarchy separators.
-
-        Args:
-            script_path: Full path to the script
-
-        Returns:
-            Category name or 'Other' if not determinable or root-level script
-        """
-        if not script_path:
-            return 'Other'
-
-        # Split the path and find the category parts
-        parts = script_path.split('/')
-
-        # Look for script directory indicators
-        if 'scripts' in parts:
-            idx = parts.index('scripts')
-
-            # Extract all directory parts after 'scripts' (excluding the .sh file)
-            category_parts = []
-            for i in range(idx + 1, len(parts)):
-                part = parts[i]
-                if part.endswith('.sh'):
-                    # Found the script file, stop collecting category parts
-                    break
-                category_parts.append(part)
-
-            if not category_parts:
-                # Root-level script with no category directory
-                return 'Other'
-
-            # Construct full nested category path for grouping key
-            full_category_path = '/'.join(category_parts)
-
-            # Try to get translated name for the full nested path first
-            translated_name = self.translations.get(full_category_path)
-            if translated_name:
-                return translated_name
-
-            # Try to get translated name for the leaf (last) category
-            leaf_category = category_parts[-1]
-            translated_name = self.translations.get(leaf_category)
-            if translated_name:
-                return translated_name
-
-            # Fallback: build display name with hierarchy separators
-            # For nested categories, show as "Parent - Leaf" or "Parent > Leaf"
-            display_parts = [p.replace('_', ' ').title() for p in category_parts]
-            display_name = ' - '.join(display_parts)
-            return display_name
-
-        return 'Other'
-
     def _search_linuxtoys_entries(self, results):
         """Return LinuxToys-curated entries and developer-selected popular apps."""
         if not self.script_cache.is_populated:
@@ -1107,22 +1043,6 @@ class SearchEngine:
         for script_info, base_score in parser.search_aur_entries(query):
             results.append(SearchResult(script_info, "script", int(base_score)))
 
-    def _search_categories(self, query, results):
-        """Search through categories."""
-        categories = parser.get_categories(self.translations)
-
-        for category in categories:
-            # Skip script categories (we'll handle them in cached scripts)
-            if category.get('is_script', False):
-                continue
-
-            score = self._calculate_match_score(query, category, 'category')
-            if score > 0:
-                # Add category type marker for UI handling
-                category_copy = category.copy()
-                category_copy['type'] = 'category'
-                results.append(SearchResult(category_copy, 'category', score))
-
     @staticmethod
     def _searchable_package_names(item_info):
         """Return package/application IDs that should participate in search."""
@@ -1153,95 +1073,6 @@ class SearchEngine:
                 add(option.get("package-name"))
 
         return names
-
-    def _calculate_match_score(self, query, item_info, item_type):
-        """
-        Calculate relevance score for a search match.
-        Higher score = more relevant.
-        """
-        name = str(item_info.get('name', '') or '').casefold()
-        description = str(item_info.get('description', '') or '').casefold()
-        developer = str(item_info.get('developer', '') or '').casefold()
-        score = 0
-
-        # Check for 'new' keyword match (English or translated)
-        translated_new = self.translations.get('new_spec_key', 'new').lower()
-        if (query == 'new' or query == translated_new) and item_info.get('is_new', False):
-            score += 90  # High score for exact 'new' keyword match
-
-        # Check for 'official' keyword match (English or translated)
-        translated_official = self.translations.get(
-            'official_spec_key',
-            'official'
-        ).lower()
-
-        if query == 'official' or query == translated_official:
-            if item_info.get('is_repo_entry'):
-                is_official = is_verified_name(item_info.get('name', ''))
-            else:
-                is_official = is_verified_script(item_info.get('path', ''))
-
-            if is_official:
-                score += 90
-
-        # Exact name match gets highest score
-        if query == name:
-            score += 100
-        # Name starts with query
-        elif name.startswith(query):
-            score += 80
-        # Query appears in name
-        elif query in name:
-            score += 60
-
-        # Internal search aliases
-        aliases = self.SEARCH_ALIASES.get(name, ())
-        if any(query in alias for alias in aliases):
-            score += 60
-
-        # AppStream/native package names are useful aliases too. Keep them below
-        # display-name matches, but above descriptions. Source alternatives are
-        # included so both the native package and Flathub application ID remain
-        # searchable after duplicate-source collapsing.
-        package_names = self._searchable_package_names(item_info)
-        if query in package_names:
-            score += 90
-        elif any(package.startswith(query) for package in package_names):
-            score += 70
-        elif any(query in package for package in package_names):
-            score += 50
-
-        # Developer matches. Keep these below application/package identity matches,
-        # but above free-form description matches.
-        if query == developer:
-            score += 55
-        elif developer.startswith(query):
-            score += 45
-        elif query in developer:
-            score += 40
-
-        # Description matches (lower priority than name/developer)
-        if query in description:
-            score += 30
-
-        if item_type == 'category':
-            score += 10  # Categories slightly boosted for navigation
-
-        if score > 0 and len(name) < 20:
-            score += 5
-
-        # Additional scoring for word boundary matches
-        if score > 0:
-            # Check if query matches word boundaries (more relevant)
-            word_pattern = r'\b' + re.escape(query) + r'\b'
-            if re.search(word_pattern, name):
-                score += 20
-            elif re.search(word_pattern, developer):
-                score += 15
-            elif re.search(word_pattern, description):
-                score += 10
-
-        return score
 
 
 def create_search_engine(translations=None, script_cache=None):

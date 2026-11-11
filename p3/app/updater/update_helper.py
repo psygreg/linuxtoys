@@ -140,9 +140,6 @@ class UpdateHelper:
             print(f"Error fetching from {source_name}: {e}")
             return None
 
-    def _is_from_repository(self):
-        return is_from_repository()
-
 
 def _is_from_ppa() -> bool:
     try:

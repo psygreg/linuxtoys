@@ -1360,46 +1360,6 @@ class AppWindow(
         threading.Thread(target=populate_in_background, daemon=True).start()
         return False
 
-    def _populate_search_cache(self):
-        """Populate the search cache in a background thread to avoid blocking the UI."""
-
-        def populate_in_background():
-            try:
-                self.script_cache.populate(self.translations)
-            except Exception as e:
-                print(f"Error populating search cache: {e}")
-
-        threading.Thread(target=populate_in_background, daemon=True).start()
-        return False  # Remove from idle callbacks
-
-    def _populate_category_cache(self):
-        """Populate the category cache in a background thread to avoid blocking the UI."""
-
-        def populate_in_background():
-            try:
-                self.category_cache.populate(self.translations)
-            except Exception as e:
-                print(f"Error populating category cache: {e}")
-
-        threading.Thread(target=populate_in_background, daemon=True).start()
-        return False  # Remove from idle callbacks
-
-    def _populate_all_scripts(self):
-        """Populate the all_scripts cache in a background thread for random scripts display."""
-
-        def populate_in_background():
-            try:
-                self.all_scripts = self._collect_all_scripts()
-                self._invalidate_featured_eligibility_cache()
-                # Start the timer if we're on the main menu and scripts were collected
-                if self.should_start_random_timer and self.all_scripts:
-                    GLib.idle_add(self._deferred_start_random_scripts_refresh_timer)
-            except Exception as e:
-                print(f"Error populating all scripts cache: {e}")
-
-        threading.Thread(target=populate_in_background, daemon=True).start()
-        return False  # Remove from idle callbacks
-
     def _start_scripts_synchronization(self):
         """Synchronize remote scripts after the GTK window has started."""
         if self._scripts_sync_started or dev_mode.is_dev_mode_enabled():

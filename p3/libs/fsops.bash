@@ -100,56 +100,6 @@ _distrobox_fs_record() {
     _append_transmap "distrobox-fs $action $container64 $path64"
 }
 
-distrobox_prep_create() {
-    local container="$1"
-    shift
-
-    for target in "$@"; do
-        if distrobox enter "$container" -- test -f "$target"; then
-            _append_transmap "WARN: unexpected $target already exists in Distrobox $container"
-            distrobox_prep_edit "$container" "$target"
-            continue
-        fi
-
-        distrobox enter "$container" -- sh -c 'mkdir -p "$(dirname "$1")" && touch "$1"' sh "$target" 2>/dev/null \
-            || distrobox enter "$container" -- sudo sh -c 'mkdir -p "$(dirname "$1")" && touch "$1"' sh "$target" \
-            || fatal "Failed to create $target in Distrobox $container"
-        _distrobox_fs_record created "$container" "$target"
-    done
-}
-
-distrobox_prep_edit() {
-    local container="$1"
-    shift
-
-    for target in "$@"; do
-        if ! distrobox enter "$container" -- test -f "$target"; then
-            _append_transmap "WARN: expected $target not found in Distrobox $container"
-            distrobox_prep_create "$container" "$target"
-            continue
-        fi
-
-        distrobox_copy_ "$container" -a "$target" "$target.bak"
-        _distrobox_fs_record edited "$container" "$target"
-    done
-}
-
-distrobox_prep_rm() {
-    local container="$1"
-    shift
-
-    for target in "$@"; do
-        if ! distrobox enter "$container" -- test -e "$target" && \
-           ! distrobox enter "$container" -- test -d "$target"; then
-            _append_transmap "WARN: expected $target not found in Distrobox $container"
-            continue
-        fi
-
-        distrobox_move_ "$container" "$target" "$target.bak"
-        _distrobox_fs_record removed "$container" "$target"
-    done
-}
-
 distrobox_prep_dir() {
     local container="$1"
     shift

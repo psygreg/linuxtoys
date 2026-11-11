@@ -559,15 +559,6 @@ def get_appstream_entries(translations=None):
         category_paths=_indexed_category_paths(),
     )
 
-def get_appstream_entries_for_category(category_path, translations=None):
-    """Materialize only one category from the Rust-owned AppStream catalog."""
-    return appstream_parser.get_entries_for_category(
-        SCRIPTS_DIR,
-        category_path,
-        curated_entries=_get_appstream_curated_entries(translations),
-        category_paths=_indexed_category_paths(),
-    )
-
 
 _installed_appstream_entries_cache = None
 
@@ -623,16 +614,6 @@ def get_appstream_featured_descriptors(translations=None):
     )
 
 
-def materialize_appstream_featured_entries(indices, translations=None):
-    """Materialize only AppStream Featured candidates selected by Python."""
-    return appstream_parser.materialize_featured_entries(
-        SCRIPTS_DIR,
-        indices,
-        curated_entries=_get_appstream_curated_entries(translations),
-        category_paths=_indexed_category_paths(),
-    )
-
-
 def materialize_appstream_featured_entries_by_ids(appstream_ids, translations=None):
     """Materialize selected Featured candidates by stable AppStream component ID."""
     return appstream_parser.materialize_featured_entries_by_ids(
@@ -671,15 +652,6 @@ def get_repository_map():
             repositories[normalized_id] = repo.strip()
 
     return repositories
-
-def get_repository(name):
-    """Return the upstream repository for a script/repository-list entry."""
-    if not name:
-        return None
-
-    return get_repository_map().get(
-        str(name).strip().casefold()
-    )
 
 _DISPLAY_NAME_CACHE = {"translations": None, "resolved": {}}
 
@@ -991,19 +963,6 @@ def get_breadcrumb_path(current_path, translations=None):
     
     return breadcrumbs
 
-
-def is_nested_category(category_path):
-    """
-    Check if a given path represents a nested category (not a top-level category).
-    """
-    scripts_path = os.path.abspath(SCRIPTS_DIR)
-    category_abs_path = os.path.abspath(category_path)
-    
-    if not category_abs_path.startswith(scripts_path):
-        return False
-    
-    rel_path = os.path.relpath(category_abs_path, scripts_path)
-    return os.sep in rel_path
 
 def _should_skip_directory(name):
     return name.startswith(".") or name in RESERVED_DIRECTORIES

@@ -25,7 +25,7 @@ linuxtoys/
 ├── p3/
 │   ├── linuxtoys.py        # #!/usr/bin/env python3 entry: sys.path setup + package main
 │   ├── requirements.txt    # Pins textual/pyte (single source of truth for vendoring)
-│   ├── update_version.py   # (see §9 findings) version-bump helper
+│   ├── update_version.py   # manual version-bump helper (run by hand at release time)
 │   ├── app/                # The Python application (see §4)
 │   ├── libs/*.bash         # Bash helper libraries sourced by catalog scripts (see §6)
 │   ├── scripts/            # THE CATALOG (see §5)
@@ -101,7 +101,6 @@ The remaining `p3/app` layers follow: GUI (§4.2), core runtime (§4.3), TUI/upd
 | `term_registry.py` | `ExecutionRegistry`: persistent per-script transaction registry (save/prune/auto-revert) + `python3 term_registry.py save …` CLI used by `p3/libs/linuxtoys.bash:1162`. |
 | `term_reporting.py` | `BugReporting` mixin: manual + auto bug reports from terminal output via antenna; clipboard copy. |
 | `revealer.py` | Checklist footer (`RevealerFooter` + `SupportFooter` links) + `BugReportDialog` form. |
-| `loading_dialog.py` | ⚠ Entire module unreferenced (§9). |
 
 #### Shared GTK infrastructure
 | File | Role |
@@ -210,7 +209,7 @@ Sourced by catalog scripts (via `linuxtoys.lib`/`library_loader.py` static analy
 | `sysd.bash` | Thin systemd enable/start/stop/disable (system + user scope, once-per-run daemon-reload latch). |
 | `timefix.bash` | Once-per-boot silent clock-skew guard (HTTP-Date reference clock, NTP correction ladder, askpass after-auth hook) — fixes apt/sqv "Not live until" failures. |
 | `helpers.bash` | Downloaders (`fetch_from_mirror`), DaVinci Resolve fetch (`getresolve`), `clinfo_chk`, Debian non-free/backports enablers + legacy shims to catalog scripts. |
-| `optimizers.bash` | NVIDIA CDI spec generation (`nvidia_ctkpatch`) + block of legacy shims to optimizer catalog scripts (intentional compat surface for old local scripts). |
+| `optimizers.bash` | Block of legacy shims to optimizer catalog scripts (intentional compat surface for old local scripts). |
 | `gregos.bash` | Not a library: self-contained GregOS post-install script run headlessly once per `# gregos-version` (theming, bun/opencode, sloth-bash, swapfile). |
 | `translator.lib` / `packages.json` | Package-name translation key→distro dictionary used by `pkg_install`-related name mapping. |
 
@@ -238,8 +237,6 @@ Deps: pyo3 0.24 (abi3-py310), serde/rmp-serde, quick-xml/flate2, prost/tonic/tok
 
 `lib.rs` is the single compiled file. All exports are `#[no_mangle] extern "C" lt_gui_*` functions driven by packed spec structs (`LtGuiItemCardSpec`, `LtGuiAppPageHeaderSpec`, …): batch widget construction (cards/search groups/sidebars/list rows/app-page chrome), featured large cards, category watermark rendering, remote/snapd icon fetch+caching, local package inspection (.deb/.rpm/.pkg.tar/.eopkg/.flatpak/.snap/.appimage), and Markdown/AppStream TextBuffer rendering.
 
-⚠ `src/gui-rs/item.rs` is **never compiled** — `lib.rs` declares no `mod item;` (see §9).
-
 ### `src/translate_*.py` — one-shot translation helpers (repo root)
 
 | File | Purpose |
@@ -254,8 +251,6 @@ Deps: pyo3 0.24 (abi3-py310), serde/rmp-serde, quick-xml/flate2, prost/tonic/tok
 
 - `build-rust.sh` (root) — `build|develop|release|vendor`. `release` vendors deps, builds+deploys both Rust artifacts, then drives distrobox packagers: fedora→`dev/build/copr/build.sh`, arch→`dev/build/pkg/build.sh` + `dev/build/appimage/build.sh`, ubuntu→`dev/build/deb/build.sh`.
 - `dev/build/vendor_deps.sh` — pins textual/pyte from `p3/requirements.txt` into `p3/vendor` (gitignored); refuses to vendor `.so` binaries; `p3/linuxtoys.py` prepends it to `sys.path`.
-- `dev/build/build_all.sh` — legacy linear driver (references two **non-existent** scripts, §9).
-
 ### Packaging targets (`dev/build/<target>/build.sh`, all take `<version> <output_path>`)
 
 | Target | Output | Notes |

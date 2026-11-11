@@ -75,12 +75,6 @@ def clear_host_compat_cache():
         _HOST_COMPAT_CACHE.clear()
 
 
-def clear_runtime_caches():
-    """Discard all compatibility-layer runtime caches."""
-    clear_script_file_cache()
-    clear_host_compat_cache()
-
-
 def _cached_host_value(key, builder):
     """Compute a host property once per process and reuse it safely."""
     with _HOST_COMPAT_CACHE_LOCK:

@@ -23,12 +23,7 @@ bash build.sh (version) (path)
 - **copr/**: Build RPM packages for Fedora/COPR (requires Fedora distrobox container)
 - **deb/**: Build DEB packages for Debian/Ubuntu (requires Debian distrobox container)
 - **pkg/**: Build AUR packages for Arch Linux (requires Arch distrobox container)
-- **solus/**: Build .eopkg packages for Solus OS (uses solbuild)
-- **nuitka/**: Build standalone executable using Nuitka
-
-## Solus Package Building
-
-For Solus OS, use the dedicated `solus/` directory. See [solus/README.md](solus/README.md) for detailed instructions on building .eopkg packages locally or via CI.
+- **appimage/**: Build the universal AppImage via pkgforge quick-sharun
 
 > [!WARNING]
-> For the `build_all.sh` script to work correctly, you must have at least 3 **Distrobox** containers created: **Arch Linux**, **Debian**, and **Fedora**. All 3 containers must be correctly configured with all dependencies installed for the build to succeed. Solus builds can be performed separately using the CI pipeline or locally using solbuild.
+> The distrobox-backed targets (`copr/`, `deb/`, `pkg/`) require their matching container to be correctly configured with all dependencies installed for the build to succeed.

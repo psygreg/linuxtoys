@@ -204,22 +204,6 @@ osappimage() {
 	info "LinuxToys installed or updated!"
 }
 
-ossolus() {
-	if curl -fsSL "${_eopkg}" -o "/tmp/${_eopkg_name}"; then
-		if command -v eopkg >/dev/null 2>&1; then
-			if sudo eopkg install -y "/tmp/${_eopkg_name}"; then
-				info "LinuxToys installed or updated!"
-			else
-				error "Installation failed (eopkg)."
-			fi
-		else
-			error "eopkg command not found on Solus system."
-		fi
-	else
-		error "Failed to download: ${_eopkg_name}"
-	fi
-}
-
 manjaro() {
     { sudo pamac build linuxtoys-bin && info "LinuxToys installed or updated!"; } || error "Failed to download: ${_pkg_name}"
 }
@@ -271,9 +255,6 @@ installer() {
 
 	_pkg=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?/linuxtoys-[^"/]+-[0-9]+-x86_64\.pkg\.tar\.zst' | head -n1)
 	_pkg_name=$(basename "${_pkg}")
-
-	_eopkg=$(echo "${_api}" | grep -Pio '"browser_download_url":\s*"\K[^"]+?\.eopkg')
-	_eopkg_name=$(basename "${_eopkg}")
 
 	if [ -r /etc/os-release ]; then
 		. /etc/os-release

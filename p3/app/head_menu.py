@@ -334,18 +334,6 @@ class MenuButton(Gtk.MenuButton):
 		if self.parent_window:
 			self.parent_window.set_automatic_updates_enabled(is_enabled)
 
-	def __on_language_select(self, widget):
-		"""Handle language selection menu item click"""
-		if self.parent_window:
-			from . import lang_utils
-			current_translations = lang_utils.load_translations()
-			selector = language_selector.LanguageSelector(
-				self.parent_window, 
-				current_translations, 
-				self.on_language_changed
-			)
-			selector.show_language_selector()
-
 	def __on_about(self, widget):
 		"""Handle about menu item click"""
 		if self.parent_window and hasattr(self.parent_window, 'translations'):

@@ -76,7 +76,6 @@ from .my_widgets import (
     InfoButton,
     Terminal,
 )
-from .registry_screen import RegistryOpenerMixin
 from .runner_helper import (
     AppstreamRunnerMixin,
     ManifestRunnerMixin,
@@ -100,7 +99,6 @@ class HomeScreen(
     AppstreamRunnerMixin,
     UpdateRunnerMixin,
     ManifestRunnerMixin,
-    RegistryOpenerMixin,
     StartupRecommendationsMixin,
     Screen,
 ):

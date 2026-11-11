@@ -10,10 +10,6 @@ from . import _catalog_rs
 
 SCORE_MIN = 0
 SCORE_MAX = 999
-TOP_SECTION_MIN = 900
-SECTION_SIZE = 100
-NATIVE_SECTION_COUNT = 10
-REVIEW_CONFIDENCE_COUNT = 10
 
 # Developer-maintained identities that should always live in the top section.
 # Matching is case-insensitive against IDs, package names and canonical/display names.
@@ -166,11 +162,6 @@ def _is_rated_appstream(item):
     )
 
 
-def _session_random_score(key, low, high):
-    """Return the catalog-rs session-stable score for this identity."""
-    return int(_catalog_rs.session_random_score(str(key), int(low), int(high)))
-
-
 def review_subscore(item):
     """Return the cached Bayesian review score (0..999), or None when unavailable."""
     value = item.get("review_subscore")
@@ -204,16 +195,6 @@ def apply_review_scores(items):
         else:
             item["review_subscore"] = int(score)
     return items
-
-
-def score_for_item(item):
-    """Return the direct Bayesian review score for rated AppStream entries."""
-    if _is_rated_appstream(item):
-        score = review_subscore(item)
-        return SCORE_MIN if score is None else max(SCORE_MIN, min(SCORE_MAX, int(score)))
-    if is_known_popular(item) or _is_curated_or_linuxtoys_script(item):
-        return SCORE_MAX
-    return SCORE_MIN
 
 
 def _session_order(item):
@@ -298,11 +279,6 @@ def sort_for_browse(items):
     ranked.sort(key=_direct_sort_key)
     items[:] = structural + _spread_promoted(ranked, promoted)
     return items
-
-
-def browse_sort_key(item):
-    """Compatibility key for callers sorting individual entries."""
-    return _direct_sort_key(item)
 
 
 def flathub_search_tiebreak(item):

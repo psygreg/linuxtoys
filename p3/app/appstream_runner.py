@@ -343,20 +343,6 @@ class AppStreamRunner:
         self._notify_changed()
         return record["id"]
 
-    def status_for_extension_ref(self, flatpak_ref):
-        target = str(flatpak_ref or "").strip()
-        if not target:
-            return None
-        with self._condition:
-            matches = [r for r in self._records if str(r["info"].get("flatpak_ref") or "").strip() == target]
-            if any(r.get("action") == "extension_remove" and r["status"] in ("queued", "running") for r in matches):
-                return "removing"
-            if any(r["status"] in ("queued", "running") for r in matches):
-                return "queued"
-            if any(r["status"] == "success" and r.get("action") != "extension_remove" for r in matches):
-                return "installed"
-        return None
-
     def enqueue_removal(self, app_info, remove_info, record_id=None):
         """Queue an AppStream uninstall through the persistent PTY."""
         self._ensure_started()
@@ -508,9 +494,6 @@ class AppStreamRunner:
         if changed:
             self._notify_changed()
         return changed
-
-    def has_started(self):
-        return self._thread is not None
 
     def has_pending_operations(self):
         """Return True while an AppStream operation is queued or running."""
@@ -1922,10 +1905,6 @@ class AppStreamRunner:
     # runner drives a hidden PTY), so every job keeps its own transcript on
     # disk, the way the terminal viewer keeps a scrollback buffer. The log is
     # what bug reports and the failure dialog read (see appstream_logs).
-
-    @staticmethod
-    def _transcript_path(name):
-        return appstream_log_path(name)
 
     def _append_transcript(self, name, text):
         """Append one job transcript and prune old ones. Never raises."""
