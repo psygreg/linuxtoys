@@ -138,7 +138,7 @@ The remaining `p3/app` layers follow: GUI (§4.2), core runtime (§4.3), TUI/upd
 #### Dialogs, features & misc
 | File | Role |
 |---|---|
-| `mcp_server.py` | Stdlib MCP server (Streamable HTTP, localhost:7420, bearer token): 23 tools over catalog/install/removal/package-files/extensions/residue/settings/translate/registry; serialized `JobManager`; systemd user-unit management; agent-question pre-answering machinery. |
+| `mcp_server.py` | Stdlib MCP server (Streamable HTTP, localhost:7420, bearer token): 23 tools over catalog/install/removal/package-files/extensions/residue/settings/translate/registry; serialized `JobManager` with merged job tracking (every job submission blocks until the run finishes and returns its final record by default; `wait=false`/`wait_seconds` to queue-and-return, re-attachable via `get_job`); systemd user-unit management; agent-question pre-answering machinery. |
 | `uri_parser.py` | GUI-agnostic `linuxtoys://` validation + stable-target resolution. |
 | `translate_helper.py` | GTK-free description translation (Google endpoint) + shared cache — the single pipeline for GUI, TUI and MCP. |
 | `needed_helper.py` | Prerequisite-list and run-confirmation dialogs (shared `_script_row`/`_script_list_scroller` list rendering). |
