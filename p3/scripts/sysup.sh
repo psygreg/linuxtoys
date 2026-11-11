@@ -221,7 +221,7 @@ elif { is_arch || is_cachy; } && ! is_manjaro; then
     if [ "$ID" = "omarchy" ]; then
         omarchy-update -y
     else
-        pacman_transaction sudo_ pacman -Syu --noconfirm || fatal "Failed to upgrade packages"
+        pacman_transaction sudo_ pacman -Syu --noconfirm --overwrite '*' || fatal "Failed to upgrade packages"
     fi
 elif is_manjaro; then
     pacman_lock_guard
