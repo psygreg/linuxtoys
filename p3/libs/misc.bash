@@ -58,6 +58,57 @@ list_storage_drives() {
     done < <(findmnt -rn --raw -o TARGET,SOURCE,FSTYPE)
 }
 
+# check if sufficient disk space is available for a DaVinci Resolve install
+check_disk_space () {
+    local pkgname="$1"
+    local required_space_gb=0
+
+    # set required space based on package type
+    if [ "$pkgname" == "davinci-resolve" ]; then
+        required_space_gb=15
+    elif [ "$pkgname" == "davinci-resolve-studio" ]; then
+        required_space_gb=30
+    fi
+
+    local required_space_kb=$((required_space_gb * 1024 * 1024))
+
+    # On immutable OSes using composeFS (and similar), / is a tiny read-only
+    # mount with no usable space; the writable root lives at /var. Detect this
+    # and check /var instead of / as the 'root' partition.
+    local root_path="/"
+    if [ -d /var ] && { [ -f /run/ostree-booted ] || findmnt -n -o FSTYPE --target / 2>/dev/null | grep -qiE 'composefs|erofs|overlay'; }; then
+        root_path="/var"
+    fi
+
+    # --output=avail keeps the unit and the column layout stable regardless
+    # of DF_BLOCK_SIZE or POSIXLY_CORRECT, unlike parsing plain df.
+    local home_available_kb root_available_kb
+    home_available_kb=$(df --output=avail -k "$HOME" 2>/dev/null | tail -n 1 | tr -d ' ')
+    root_available_kb=$(df --output=avail -k "$root_path" 2>/dev/null | tail -n 1 | tr -d ' ')
+
+    # An unmeasurable filesystem must not pass the check silently: the tests
+    # below error out on an empty value and are then treated as false. Warn
+    # and skip only that path; later writes still fail loudly on their own.
+    if ! [[ "$home_available_kb" =~ ^[0-9]+$ ]]; then
+        warn "Could not determine available storage space on $HOME; skipping that check."
+        home_available_kb=""
+    fi
+    if ! [[ "$root_available_kb" =~ ^[0-9]+$ ]]; then
+        warn "Could not determine available storage space on $root_path; skipping that check."
+        root_available_kb=""
+    fi
+
+    # check home directory
+    if [ -n "$home_available_kb" ] && [ "$home_available_kb" -lt "$required_space_kb" ]; then
+        fatal "$outofspace\n$HOME -- $required_space_gb GB (found $home_available_kb KB free)"
+    fi
+
+    # check root filesystem
+    if [ -n "$root_available_kb" ] && [ "$root_available_kb" -lt "$required_space_kb" ]; then
+        fatal "$outofspace\n$root_path 'root' -- $required_space_gb GB (found $root_available_kb KB free)"
+    fi
+}
+
 # flatpak overrides
 flatpak_override () {
     local scope pretype type setting target
