@@ -121,6 +121,78 @@ def check_ostree_pending_deployments():
         return False
 
 
+def _message_dialog(
+    parent_window,
+    translations,
+    *,
+    title_key,
+    title_default,
+    message_key,
+    message_default,
+    icon_name,
+    size,
+    max_width_chars,
+):
+    """Shared chrome for the reboot-helper dialogs.
+
+    Returns ``(dialog, Gtk)``: a transient, non-resizable dialog with the
+    standard margins and an icon + wrapped-message row. Buttons and any
+    extra content are the caller's concern.
+    """
+    # Import GTK only when needed for GUI functionality
+    import gi
+
+    gi.require_version("Gtk", "3.0")
+    from gi.repository import Gtk
+
+    dialog = Gtk.Dialog(
+        title=translations.get(title_key, title_default),
+        transient_for=parent_window,
+        flags=0,
+    )
+    dialog.set_default_size(*size)
+    dialog.set_resizable(False)
+
+    content_area = dialog.get_content_area()
+    content_area.set_spacing(10)
+    content_area.set_margin_start(20)
+    content_area.set_margin_end(20)
+    content_area.set_margin_top(20)
+    content_area.set_margin_bottom(10)
+
+    # Icon and message row
+    hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=15)
+    icon = Gtk.Image.new_from_icon_name(icon_name, Gtk.IconSize.DIALOG)
+    icon.set_valign(Gtk.Align.START)
+    hbox.pack_start(icon, False, False, 0)
+
+    message_label = Gtk.Label()
+    message_label.set_text(translations.get(message_key, message_default))
+    message_label.set_line_wrap(True)
+    message_label.set_max_width_chars(max_width_chars)
+    message_label.set_justify(Gtk.Justification.LEFT)
+    message_label.set_valign(Gtk.Align.START)
+    hbox.pack_start(message_label, True, True, 0)
+    content_area.pack_start(hbox, True, True, 0)
+
+    return dialog, Gtk
+
+
+def _run_reboot_choice(dialog, Gtk):
+    """Show ``dialog``, map its YES/NO buttons to the reboot-choice strings."""
+    dialog.show_all()
+
+    response = dialog.run()
+    dialog.destroy()
+
+    if response == Gtk.ResponseType.YES:
+        return "reboot_now"
+    elif response == Gtk.ResponseType.NO:
+        return "reboot_later"
+    else:
+        return "cancelled"
+
+
 def show_reboot_warning_dialog(
     parent_window, translations, message_key=None, message_default=None
 ):
@@ -136,75 +208,30 @@ def show_reboot_warning_dialog(
     Returns:
         str: 'reboot_now', 'reboot_later', or 'cancelled'
     """
-    # Import GTK only when needed for GUI functionality
-    import gi
-
-    gi.require_version("Gtk", "3.0")
-    from gi.repository import Gtk
-
-    dialog = Gtk.Dialog(
-        title=translations.get("reboot_required_title", "Reboot Required"),
-        transient_for=parent_window,
-        flags=0,
+    if not message_key:
+        message_key = "reboot_required_message"
+        message_default = (
+            "A script requiring a system reboot has been executed. You must "
+            "reboot your computer before installing other features."
+        )
+    dialog, Gtk = _message_dialog(
+        parent_window,
+        translations,
+        title_key="reboot_required_title",
+        title_default="Reboot Required",
+        message_key=message_key,
+        message_default=message_default or "",
+        icon_name="dialog-warning",
+        size=(400, 150),
+        max_width_chars=50,
     )
-    dialog.set_default_size(400, 150)
-    dialog.set_resizable(False)
-
-    # Add custom buttons
-    reboot_now_btn = dialog.add_button(
+    dialog.add_button(
         translations.get("reboot_now_btn", "Reboot Now"), Gtk.ResponseType.YES
     )
-    reboot_later_btn = dialog.add_button(
+    dialog.add_button(
         translations.get("reboot_later_btn", "Reboot Later"), Gtk.ResponseType.NO
     )
-
-    # Create message content
-    content_area = dialog.get_content_area()
-    content_area.set_spacing(10)
-    content_area.set_margin_start(20)
-    content_area.set_margin_end(20)
-    content_area.set_margin_top(20)
-    content_area.set_margin_bottom(10)
-
-    # Add warning icon and message
-    hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=15)
-
-    # Warning icon
-    icon = Gtk.Image.new_from_icon_name("dialog-warning", Gtk.IconSize.DIALOG)
-    icon.set_valign(Gtk.Align.START)
-    hbox.pack_start(icon, False, False, 0)
-
-    # Message text
-    message_label = Gtk.Label()
-    if message_key:
-        message_label.set_text(
-            translations.get(message_key, message_default or "")
-        )
-    else:
-        message_label.set_text(
-            translations.get(
-                "reboot_required_message",
-                "A script requiring a system reboot has been executed. You must reboot your computer before installing other features.",
-            )
-        )
-    message_label.set_line_wrap(True)
-    message_label.set_max_width_chars(50)
-    message_label.set_justify(Gtk.Justification.LEFT)
-    message_label.set_valign(Gtk.Align.START)
-    hbox.pack_start(message_label, True, True, 0)
-
-    content_area.pack_start(hbox, True, True, 0)
-    dialog.show_all()
-
-    response = dialog.run()
-    dialog.destroy()
-
-    if response == Gtk.ResponseType.YES:
-        return "reboot_now"
-    elif response == Gtk.ResponseType.NO:
-        return "reboot_later"
-    else:
-        return "cancelled"
+    return _run_reboot_choice(dialog, Gtk)
 
 
 def show_ostree_deployment_warning_dialog(parent_window, translations):
@@ -218,70 +245,28 @@ def show_ostree_deployment_warning_dialog(parent_window, translations):
     Returns:
         str: 'reboot_now', 'reboot_later', or 'cancelled'
     """
-    # Import GTK only when needed for GUI functionality
-    import gi
-
-    gi.require_version("Gtk", "3.0")
-    from gi.repository import Gtk
-
-    dialog = Gtk.Dialog(
-        title=translations.get("ostree_deployment_title", "Pending System Updates"),
-        transient_for=parent_window,
-        flags=0,
+    dialog, Gtk = _message_dialog(
+        parent_window,
+        translations,
+        title_key="ostree_deployment_title",
+        title_default="Pending System Updates",
+        message_key="ostree_deployment_message",
+        message_default=(
+            "Your system has pending updates that require a reboot to "
+            "complete. You must reboot your computer to apply these changes "
+            "before installing additional features."
+        ),
+        icon_name="dialog-warning",
+        size=(400, 150),
+        max_width_chars=50,
     )
-    dialog.set_default_size(400, 150)
-    dialog.set_resizable(False)
-
-    # Add custom buttons
-    reboot_now_btn = dialog.add_button(
+    dialog.add_button(
         translations.get("reboot_now_btn", "Reboot Now"), Gtk.ResponseType.YES
     )
-    reboot_later_btn = dialog.add_button(
+    dialog.add_button(
         translations.get("reboot_later_btn", "Reboot Later"), Gtk.ResponseType.NO
     )
-
-    # Create message content
-    content_area = dialog.get_content_area()
-    content_area.set_spacing(10)
-    content_area.set_margin_start(20)
-    content_area.set_margin_end(20)
-    content_area.set_margin_top(20)
-    content_area.set_margin_bottom(10)
-
-    # Add warning icon and message
-    hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=15)
-
-    # Warning icon
-    icon = Gtk.Image.new_from_icon_name("dialog-warning", Gtk.IconSize.DIALOG)
-    icon.set_valign(Gtk.Align.START)
-    hbox.pack_start(icon, False, False, 0)
-
-    # Message text
-    message_label = Gtk.Label()
-    message_label.set_text(
-        translations.get(
-            "ostree_deployment_message",
-            "Your system has pending updates that require a reboot to complete. You must reboot your computer to apply these changes before installing additional features.",
-        )
-    )
-    message_label.set_line_wrap(True)
-    message_label.set_max_width_chars(50)
-    message_label.set_justify(Gtk.Justification.LEFT)
-    message_label.set_valign(Gtk.Align.START)
-    hbox.pack_start(message_label, True, True, 0)
-
-    content_area.pack_start(hbox, True, True, 0)
-    dialog.show_all()
-
-    response = dialog.run()
-    dialog.destroy()
-
-    if response == Gtk.ResponseType.YES:
-        return "reboot_now"
-    elif response == Gtk.ResponseType.NO:
-        return "reboot_later"
-    else:
-        return "cancelled"
+    return _run_reboot_choice(dialog, Gtk)
 
 
 def show_ostree_package_deployment_info_dialog(parent_window, translations):
@@ -297,19 +282,21 @@ def show_ostree_package_deployment_info_dialog(parent_window, translations):
     Returns:
         bool: True if the user ticked "Don't remind me again", False otherwise
     """
-    # Import GTK only when needed for GUI functionality
-    import gi
-
-    gi.require_version("Gtk", "3.0")
-    from gi.repository import Gtk
-
-    dialog = Gtk.Dialog(
-        title=translations.get("ostree_info_title", "Package Deployment Information"),
-        transient_for=parent_window,
-        flags=0,
+    dialog, Gtk = _message_dialog(
+        parent_window,
+        translations,
+        title_key="ostree_info_title",
+        title_default="Package Deployment Information",
+        message_key="ostree_info_message",
+        message_default=(
+            "This system uses ostree for atomic updates. Any newly installed "
+            "packages will be deployed and available after your next system "
+            "reboot."
+        ),
+        icon_name="dialog-information",
+        size=(420, 170),
+        max_width_chars=55,
     )
-    dialog.set_default_size(420, 170)
-    dialog.set_resizable(False)
 
     # Add OK button to dismiss
     ok_button = dialog.add_button(
@@ -317,42 +304,10 @@ def show_ostree_package_deployment_info_dialog(parent_window, translations):
     )
     dialog.set_default_response(Gtk.ResponseType.OK)
 
-    # Create message content
-    content_area = dialog.get_content_area()
-    content_area.set_spacing(10)
-    content_area.set_margin_start(20)
-    content_area.set_margin_end(20)
-    content_area.set_margin_top(20)
-    content_area.set_margin_bottom(10)
-
-    # Add info icon and message
-    hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=15)
-
-    # Info icon
-    icon = Gtk.Image.new_from_icon_name("dialog-information", Gtk.IconSize.DIALOG)
-    icon.set_valign(Gtk.Align.START)
-    hbox.pack_start(icon, False, False, 0)
-
-    # Message text
-    message_label = Gtk.Label()
-    message_label.set_text(
-        translations.get(
-            "ostree_info_message",
-            "This system uses ostree for atomic updates. Any newly installed packages will be deployed and available after your next system reboot.",
-        )
-    )
-    message_label.set_line_wrap(True)
-    message_label.set_max_width_chars(55)
-    message_label.set_justify(Gtk.Justification.LEFT)
-    message_label.set_valign(Gtk.Align.START)
-    hbox.pack_start(message_label, True, True, 0)
-
-    content_area.pack_start(hbox, True, True, 0)
-
     dont_remind = Gtk.CheckButton.new_with_label(
         translations.get("ostree_info_dont_remind", "Don't remind me again")
     )
-    content_area.pack_start(dont_remind, False, False, 0)
+    dialog.get_content_area().pack_start(dont_remind, False, False, 0)
 
     dialog.set_focus(ok_button)
     dialog.show_all()
@@ -373,59 +328,28 @@ def show_flatpak_installed_info_dialog(parent_window, translations):
         parent_window: The parent GTK window for the dialog
         translations: Dictionary containing translation keys
     """
-    # Import GTK only when needed for GUI functionality
-    import gi
-
-    gi.require_version("Gtk", "3.0")
-    from gi.repository import Gtk
-
-    dialog = Gtk.Dialog(
-        title=translations.get("flatpak_installed_title", "Flatpak Installed"),
-        transient_for=parent_window,
-        flags=0,
+    dialog, Gtk = _message_dialog(
+        parent_window,
+        translations,
+        title_key="flatpak_installed_title",
+        title_default="Flatpak Installed",
+        message_key="flatpak_installed_message",
+        message_default=(
+            "Flatpak has been successfully installed on your system. "
+            "Flatpak applications will appear in your app menu after your "
+            "next system reboot."
+        ),
+        icon_name="dialog-information",
+        size=(420, 170),
+        max_width_chars=55,
     )
-    dialog.set_default_size(420, 170)
-    dialog.set_resizable(False)
 
     # Add OK button to dismiss
-    dialog.add_button(
-        translations.get("ok_btn", "OK"), Gtk.ResponseType.OK
-    )
+    dialog.add_button(translations.get("ok_btn", "OK"), Gtk.ResponseType.OK)
 
-    # Create message content
-    content_area = dialog.get_content_area()
-    content_area.set_spacing(10)
-    content_area.set_margin_start(20)
-    content_area.set_margin_end(20)
-    content_area.set_margin_top(20)
-    content_area.set_margin_bottom(10)
-
-    # Add info icon and message
-    hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=15)
-
-    # Info icon
-    icon = Gtk.Image.new_from_icon_name("dialog-information", Gtk.IconSize.DIALOG)
-    icon.set_valign(Gtk.Align.START)
-    hbox.pack_start(icon, False, False, 0)
-
-    # Message text
-    message_label = Gtk.Label()
-    message_label.set_text(
-        translations.get(
-            "flatpak_installed_message",
-            "Flatpak has been successfully installed on your system. Flatpak applications will appear in your app menu after your next system reboot.",
-        )
-    )
-    message_label.set_line_wrap(True)
-    message_label.set_max_width_chars(55)
-    message_label.set_justify(Gtk.Justification.LEFT)
-    message_label.set_valign(Gtk.Align.START)
-    hbox.pack_start(message_label, True, True, 0)
-
-    content_area.pack_start(hbox, True, True, 0)
     dialog.show_all()
 
-    response = dialog.run()
+    dialog.run()
     dialog.destroy()
 
 

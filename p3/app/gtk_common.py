@@ -75,6 +75,19 @@ def get_toplevel_window(widget: Gtk.Widget) -> Optional[Gtk.Window]:
 
     return None
 
+
+def widget_within(widget: Gtk.Widget, root: Gtk.Widget) -> bool:
+    """Whether ``widget`` is ``root`` or sits inside its subtree."""
+    node = widget
+    while node is not None:
+        if node is root:
+            return True
+        try:
+            node = node.get_parent()
+        except (AttributeError, RuntimeError):
+            node = None
+    return False
+
 def _pixbuf_file_signature(path: str):
     try:
         stat = os.stat(path)
@@ -142,4 +155,5 @@ __all__ = [
     "get_toplevel_window",
     "load_scaled_pixbuf",
     "resolve_symbolic_icon",
+    "widget_within",
 ]

@@ -93,6 +93,60 @@ RENDER_CHUNK_SIZE = 100
 SCROLL_LOAD_MARGIN = 5
 
 
+def _menu_items(translations) -> list:
+    """The home menu entries — single source for compose() and language refreshes."""
+    return [
+        ListItem(
+            Label(f"{translations.get('load_manifest', 'Load manifest')}"),
+            id="manifest",
+        ),
+        ListItem(
+            Label(
+                f"{translations.get('select_language', 'Select language')}"
+            ),
+            id="language",
+        ),
+        ListItem(
+            Label(f"{translations.get('about', 'About')}"),
+            id="about",
+        ),
+        ListItem(
+            Label(f"{translations.get('action_registry')}"),
+            id="registry",
+        ),
+        ListItem(Label("Update LinuxToys"), id="update"),
+        ListItem(
+            Label(
+                f"{translations.get('scripts_resync', 'Scripts resync')}"
+            ),
+            id="scripts_resync",
+        ),
+    ]
+
+
+def _link_bar_items(translations) -> list:
+    """The home link bar — single source for compose() and language refreshes."""
+    return [
+        Link("Wiki", url="https://linux.toys/documentation.html"),
+        Static("│", classes="link-sep"),
+        FocusableLabel(
+            f"[u]{translations.get('report_label', 'Report Bug')}[/u]",
+            id="report-bug",
+            classes="report-bug",
+        ),
+        Static("│", classes="link-sep"),
+        Link(
+            f"{translations.get('devportal_label', 'Credits')}",
+            url="https://dev.linux.toys",
+        ),
+        Static("│", classes="link-sep"),
+        Link(
+            f"{translations.get('support_footer', 'Support this project')}",
+            url="https://ko-fi.com/psygreg",
+        ),
+    ]
+
+
 class HomeScreen(
     MenuSelectionMixin,
     ScriptRunnerMixin,
@@ -156,61 +210,12 @@ class HomeScreen(
                         yield self._make_info_button(item, registry_data)
             with VerticalScroll(id="menu-panel"):
                 yield Static(linuxtoys_art, id="logo_lt")
-                yield ListView(
-                    ListItem(
-                        Label(
-                            translations.get("load_manifest", "Load manifest")
-                        ),
-                        id="manifest",
-                    ),
-                    ListItem(
-                        Label(
-                            translations.get(
-                                "select_language", "Select language"
-                            )
-                        ),
-                        id="language",
-                    ),
-                    ListItem(
-                        Label(f"{translations.get('about', 'About')}"),
-                        id="about",
-                    ),
-                    ListItem(
-                        Label(f"{translations.get('action_registry')}"),
-                        id="registry",
-                    ),
-                    ListItem(Label("Update LinuxToys"), id="update"),
-                    ListItem(
-                        Label(
-                            translations.get(
-                                "scripts_resync", "Scripts resync"
-                            )
-                        ),
-                        id="scripts_resync",
-                    ),
-                    id="home-menu",
-                )
+                yield ListView(*_menu_items(translations), id="home-menu")
                 with Vertical(id="terminal-conteiner"):
                     yield Terminal(id="terminal")
 
         with Horizontal(classes="home-links"):
-            yield Link("Wiki", url="https://linux.toys/documentation.html")
-            yield Static("│", classes="link-sep")
-            yield FocusableLabel(
-                f"[u]{translations.get('report_label', 'Report Bug')}[/u]",
-                id="report-bug",
-                classes="report-bug",
-            )
-            yield Static("│", classes="link-sep")
-            yield Link(
-                f"{translations.get('devportal_label', 'Credits')}",
-                url="https://dev.linux.toys",
-            )
-            yield Static("│", classes="link-sep")
-            yield Link(
-                f"{translations.get('support_footer', 'Support this project')}",
-                url="https://ko-fi.com/psygreg",
-            )
+            yield from _link_bar_items(translations)
 
         yield Footer()
 
@@ -693,69 +698,11 @@ class HomeScreen(
         )
         menu = self.query_one("#home-menu", ListView)
         await menu.remove_children()
-        await menu.mount(
-            ListItem(
-                Label(f"{translations.get('load_manifest', 'Load manifest')}"),
-                id="manifest",
-            )
-        )
-        await menu.mount(
-            ListItem(
-                Label(
-                    f"{translations.get('select_language', 'Select language')}"
-                ),
-                id="language",
-            )
-        )
-        await menu.mount(
-            ListItem(
-                Label(f"{translations.get('about', 'About')}"),
-                id="about",
-            )
-        )
-        await menu.mount(
-            ListItem(
-                Label(f"{translations.get('action_registry')}"),
-                id="registry",
-            )
-        )
-        await menu.mount(ListItem(Label("Update LinuxToys"), id="update"))
-        await menu.mount(
-            ListItem(
-                Label(
-                    f"{translations.get('scripts_resync', 'Scripts resync')}"
-                ),
-                id="scripts_resync",
-            )
-        )
+        await menu.mount(*_menu_items(translations))
 
         links_container = self.query_one(".home-links", Horizontal)
         await links_container.remove_children()
-        await links_container.mount(
-            Link("Wiki", url="https://linux.toys/documentation.html")
-        )
-        await links_container.mount(Static("│", classes="link-sep"))
-        await links_container.mount(
-            FocusableLabel(
-                f"[u]{translations.get('report_label', 'Report Bug')}[/u]",
-                id="report-bug",
-                classes="report-bug",
-            )
-        )
-        await links_container.mount(Static("│", classes="link-sep"))
-        await links_container.mount(
-            Link(
-                f"{translations.get('devportal_label', 'Credits')}",
-                url="https://dev.linux.toys",
-            )
-        )
-        await links_container.mount(Static("│", classes="link-sep"))
-        await links_container.mount(
-            Link(
-                f"{translations.get('support_footer', 'Support this project')}",
-                url="https://ko-fi.com/psygreg",
-            )
-        )
+        await links_container.mount(*_link_bar_items(translations))
 
 
 class SplashScreen(Screen):

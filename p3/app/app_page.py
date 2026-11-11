@@ -7,7 +7,7 @@ import threading
 from pathlib import Path
 from urllib.request import Request, urlopen
 
-from .gtk_common import Gdk, Gtk, GdkPixbuf, Pango, GLib, resolve_symbolic_icon
+from .gtk_common import Gdk, Gtk, GdkPixbuf, Pango, GLib, resolve_symbolic_icon, widget_within
 from .atomic_io import atomic_write_bytes
 from .term_header import InfosHead
 from . import (
@@ -1372,18 +1372,16 @@ class AppPageView(Gtk.Box):
                 return
             vote_up = int(stars) == 5
             vote_label = "👍 Recommend" if vote_up else "👎 Do not recommend"
-            dialog = Gtk.MessageDialog(
-                transient_for=self.parent,
-                modal=True,
+            response = run_message_dialog(
+                self.parent,
+                title=self.translations.get("app_page_rate_confirm_title", "Submit Rating?"),
+                secondary_text=vote_label,
                 message_type=Gtk.MessageType.OTHER,
-                buttons=Gtk.ButtonsType.NONE,
-                text=self.translations.get("app_page_rate_confirm_title", "Submit Rating?"),
+                buttons=[
+                    (self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL),
+                    (self.translations.get("app_page_rate_submit", "Submit"), Gtk.ResponseType.OK),
+                ],
             )
-            dialog.format_secondary_text(vote_label)
-            dialog.add_button(self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL)
-            dialog.add_button(self.translations.get("app_page_rate_submit", "Submit"), Gtk.ResponseType.OK)
-            response = dialog.run()
-            dialog.destroy()
             if response != Gtk.ResponseType.OK:
                 return
             self._rating_submitting = True
@@ -1468,13 +1466,13 @@ class AppPageView(Gtk.Box):
             if error:
                 message = f"{message}\n\n{error}"
             message_type = Gtk.MessageType.ERROR
-        dialog = Gtk.MessageDialog(
-            transient_for=self.parent, modal=True, message_type=message_type,
-            buttons=Gtk.ButtonsType.OK, text=title,
+        run_message_dialog(
+            self.parent,
+            title=title,
+            secondary_text=message,
+            message_type=message_type,
+            buttons_type=Gtk.ButtonsType.OK,
         )
-        dialog.format_secondary_text(message)
-        dialog.run()
-        dialog.destroy()
         return False
 
 
@@ -2042,35 +2040,26 @@ class AppPageView(Gtk.Box):
             return
 
         app_name = str(info.get("name") or app_id)
-        dialog = Gtk.MessageDialog(
-            transient_for=self.parent,
-            modal=True,
-            message_type=Gtk.MessageType.WARNING,
-            buttons=Gtk.ButtonsType.NONE,
-            text=self.translations.get(
+        response = run_message_dialog(
+            self.parent,
+            title=self.translations.get(
                 "app_page_remove_data_confirm_title",
                 "Remove app data?",
             ),
-        )
-        dialog.format_secondary_text(
-            self.translations.get(
+            secondary_text=self.translations.get(
                 "app_page_remove_data_confirm_message",
                 "This will permanently remove the remaining user data for "
                 "'{app_name}'. This action cannot be undone.",
-            ).format(app_name=app_name)
+            ).format(app_name=app_name),
+            message_type=Gtk.MessageType.WARNING,
+            buttons=[
+                (self.translations.get("cancel_btn_label", "Cancel"),
+                 Gtk.ResponseType.CANCEL),
+                (self.translations.get("app_page_remove_data", "Remove data"),
+                 Gtk.ResponseType.YES, "destructive-action"),
+            ],
+            default_response=Gtk.ResponseType.CANCEL,
         )
-        dialog.add_button(
-            self.translations.get("cancel_btn_label", "Cancel"),
-            Gtk.ResponseType.CANCEL,
-        )
-        remove_button = dialog.add_button(
-            self.translations.get("app_page_remove_data", "Remove data"),
-            Gtk.ResponseType.YES,
-        )
-        remove_button.get_style_context().add_class("destructive-action")
-        dialog.set_default_response(Gtk.ResponseType.CANCEL)
-        response = dialog.run()
-        dialog.destroy()
         if response != Gtk.ResponseType.YES:
             return
 
@@ -2105,19 +2094,16 @@ class AppPageView(Gtk.Box):
 
         if error:
             self._flatpak_data_button.set_sensitive(True)
-            dialog = Gtk.MessageDialog(
-                transient_for=self.parent,
-                modal=True,
-                message_type=Gtk.MessageType.ERROR,
-                buttons=Gtk.ButtonsType.CLOSE,
-                text=self.translations.get(
+            run_message_dialog(
+                self.parent,
+                title=self.translations.get(
                     "app_page_remove_data_failed_title",
                     "Could not remove app data",
                 ),
+                secondary_text=error,
+                message_type=Gtk.MessageType.ERROR,
+                buttons_type=Gtk.ButtonsType.CLOSE,
             )
-            dialog.format_secondary_text(error)
-            dialog.run()
-            dialog.destroy()
             return False
 
         self._flatpak_data_button.hide()
@@ -2200,29 +2186,21 @@ class AppPageView(Gtk.Box):
         if not snap_name:
             return
 
-        dialog = Gtk.MessageDialog(
-            transient_for=self.parent,
-            modal=True,
-            message_type=Gtk.MessageType.WARNING,
-            buttons=Gtk.ButtonsType.NONE,
-            text=self.translations.get("app_page_snap_revert_confirm_title", "Revert Snap?"),
-        )
-        dialog.format_secondary_text(
-            self.translations.get(
+        response = run_message_dialog(
+            self.parent,
+            title=self.translations.get("app_page_snap_revert_confirm_title", "Revert Snap?"),
+            secondary_text=self.translations.get(
                 "app_page_snap_revert_confirm_message",
                 "LinuxToys will revert '{app_name}' to its previously installed Snap revision. "
                 "Do you want to continue?",
-            ).format(app_name=str(info.get("name") or snap_name))
+            ).format(app_name=str(info.get("name") or snap_name)),
+            message_type=Gtk.MessageType.WARNING,
+            buttons=[
+                (self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL),
+                (self.translations.get("yes", "Yes"), Gtk.ResponseType.YES),
+            ],
+            default_response=Gtk.ResponseType.CANCEL,
         )
-        dialog.add_button(
-            self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL
-        )
-        dialog.add_button(
-            self.translations.get("yes", "Yes"), Gtk.ResponseType.YES
-        )
-        dialog.set_default_response(Gtk.ResponseType.CANCEL)
-        response = dialog.run()
-        dialog.destroy()
         if response != Gtk.ResponseType.YES:
             return
 
@@ -2703,15 +2681,7 @@ class AppPageView(Gtk.Box):
 
     @staticmethod
     def _widget_in_subtree(widget, root):
-        node = widget
-        while node is not None:
-            if node is root:
-                return True
-            try:
-                node = node.get_parent()
-            except (AttributeError, RuntimeError):
-                node = None
-        return False
+        return widget_within(widget, root)
 
     def _on_screenshot_canvas_focus(self, click_box, _event, has_focus):
         """Mark the focused carousel canvas so keyboard ownership is visible."""

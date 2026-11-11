@@ -2807,19 +2807,7 @@ class AppWindow(
     @staticmethod
     def _find_named_descendant(root, widget_name):
         """Find a named GTK descendant without rebuilding or rebinding its card."""
-        if root is None:
-            return None
-        try:
-            if root.get_name() == widget_name:
-                return root
-        except (AttributeError, TypeError):
-            pass
-        if isinstance(root, Gtk.Container):
-            for child in root.get_children():
-                found = AppWindow._find_named_descendant(child, widget_name)
-                if found is not None:
-                    return found
-        return None
+        return gui_rs.card_child(root, widget_name)
 
     def _refresh_root_category_translations_in_place(self):
         """Refresh root-menu language strings without invalidating its card widgets.
@@ -3815,18 +3803,15 @@ class AppWindow(
 
     def show_external_install_error(self, message):
         """Show a safe user-facing error for an external URI request."""
-        dialog = Gtk.MessageDialog(
-            transient_for=self,
-            flags=0,
-            message_type=Gtk.MessageType.ERROR,
-            buttons=Gtk.ButtonsType.OK,
-            text=self.translations.get(
+        gtk_dialogs.run_message_dialog(
+            self,
+            title=self.translations.get(
                 "uri_install_error_title", "Unable to open LinuxToys link"
             ),
+            secondary_text=message,
+            message_type=Gtk.MessageType.ERROR,
+            buttons_type=Gtk.ButtonsType.OK,
         )
-        dialog.format_secondary_text(message)
-        dialog.run()
-        dialog.destroy()
 
     def handle_external_install_request(self, target_id):
         """Resolve a browser-requested installation by stable ID.
@@ -4004,39 +3989,23 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         Returns:
             bool: True if user confirmed to cancel, False if user chose to continue
         """
-        dialog = Gtk.MessageDialog(
-            transient_for=self,
-            flags=0,
-            message_type=Gtk.MessageType.WARNING,
-            buttons=Gtk.ButtonsType.NONE,
-            text=self.translations.get("cancel_script_title", "Cancel Running Script?"),
-        )
-
-        dialog.format_secondary_text(
-            self.translations.get(
+        # Return True if user clicked "Cancel Script" (YES), False otherwise
+        return gtk_dialogs.run_message_dialog(
+            self,
+            title=self.translations.get("cancel_script_title", "Cancel Running Script?"),
+            secondary_text=self.translations.get(
                 "cancel_script_message",
                 "A script is currently running. If you go back now, the running task will be cancelled. Are you sure you want to cancel?",
-            )
-        )
-
-        # Add buttons
-        dialog.add_button(
-            self.translations.get("cancel_script_continue_btn", "Continue Running"),
-            Gtk.ResponseType.NO,
-        )
-        dialog.add_button(
-            self.translations.get("cancel_script_cancel_btn", "Cancel Script"),
-            Gtk.ResponseType.YES,
-        )
-
-        # Set focus to the "Continue Running" button (safer default)
-        dialog.set_default_response(Gtk.ResponseType.NO)
-
-        response = dialog.run()
-        dialog.destroy()
-
-        # Return True if user clicked "Cancel Script" (YES), False otherwise
-        return response == Gtk.ResponseType.YES
+            ),
+            message_type=Gtk.MessageType.WARNING,
+            buttons=[
+                (self.translations.get("cancel_script_continue_btn", "Continue Running"),
+                 Gtk.ResponseType.NO),
+                (self.translations.get("cancel_script_cancel_btn", "Cancel Script"),
+                 Gtk.ResponseType.YES),
+            ],
+            default_response=Gtk.ResponseType.NO,
+        ) == Gtk.ResponseType.YES
 
     def _on_close_requested(self, _widget, _event):
         """Guard application shutdown while AppStream work is still active."""
@@ -4050,46 +4019,32 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
 
     def _show_queue_close_warning_dialog(self):
         """Warn before closing while queued or running operations remain."""
-        dialog = Gtk.MessageDialog(
-            transient_for=self,
-            flags=0,
-            message_type=Gtk.MessageType.WARNING,
-            buttons=Gtk.ButtonsType.NONE,
-            text=self.translations.get(
+        # Return True if user clicked "Close Anyway" (YES), False otherwise
+        return gtk_dialogs.run_message_dialog(
+            self,
+            title=self.translations.get(
                 "queue_close_title",
                 "Operations Are Still Running",
             ),
-        )
-
-        dialog.format_secondary_text(
-            self.translations.get(
+            secondary_text=self.translations.get(
                 "queue_close_message",
                 "Closing LinuxToys will stop all queued and running operations. "
                 "Interrupting an operation while it is in progress may cause "
                 "problems with your system. Are you sure you want to close?",
-            )
-        )
-
-        dialog.add_button(
-            self.translations.get(
-                "queue_close_continue_btn",
-                "Keep LinuxToys Open",
             ),
-            Gtk.ResponseType.NO,
-        )
-        close_button = dialog.add_button(
-            self.translations.get(
-                "queue_close_close_btn",
-                "Close Anyway",
-            ),
-            Gtk.ResponseType.YES,
-        )
-        close_button.get_style_context().add_class("destructive-action")
-        dialog.set_default_response(Gtk.ResponseType.NO)
-
-        response = dialog.run()
-        dialog.destroy()
-        return response == Gtk.ResponseType.YES
+            message_type=Gtk.MessageType.WARNING,
+            buttons=[
+                (self.translations.get(
+                    "queue_close_continue_btn",
+                    "Keep LinuxToys Open",
+                ), Gtk.ResponseType.NO),
+                (self.translations.get(
+                    "queue_close_close_btn",
+                    "Close Anyway",
+                ), Gtk.ResponseType.YES, "destructive-action"),
+            ],
+            default_response=Gtk.ResponseType.NO,
+        ) == Gtk.ResponseType.YES
 
 
     def _window_state_path(self):

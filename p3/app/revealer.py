@@ -239,21 +239,16 @@ class SupportFooter(Gtk.Box):
                 )
             else:
                 # Show error if no comment provided
-                error_dialog = Gtk.MessageDialog(
-                    parent=parent,
-                    flags=0,
-                    message_type=Gtk.MessageType.ERROR,
-                    buttons=Gtk.ButtonsType.OK,
-                    text=self.translations.get("error_label", "Error"),
-                )
-                error_dialog.format_secondary_text(
-                    self.translations.get(
+                run_message_dialog(
+                    parent,
+                    title=self.translations.get("error_label", "Error"),
+                    secondary_text=self.translations.get(
                         "bug_report_empty",
                         "Please provide a description of the issue."
-                    )
+                    ),
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons_type=Gtk.ButtonsType.OK,
                 )
-                error_dialog.run()
-                error_dialog.destroy()
         else:
             dialog.destroy()
     
@@ -288,39 +283,29 @@ class SupportFooter(Gtk.Box):
     
     def _show_success(self, parent_window):
         """Show success dialog."""
-        dialog = Gtk.MessageDialog(
-            parent=parent_window,
-            flags=0,
-            message_type=Gtk.MessageType.INFO,
-            buttons=Gtk.ButtonsType.OK,
-            text=self.translations.get("success_label", "Success"),
-        )
-        dialog.format_secondary_text(
-            self.translations.get(
+        run_message_dialog(
+            parent_window,
+            title=self.translations.get("success_label", "Success"),
+            secondary_text=self.translations.get(
                 "bug_report_submitted",
                 "Thank you! Your bug report has been submitted."
-            )
+            ),
+            message_type=Gtk.MessageType.INFO,
+            buttons_type=Gtk.ButtonsType.OK,
         )
-        dialog.run()
-        dialog.destroy()
     
     def _show_error(self, parent_window, error_msg: str):
         """Show error dialog."""
-        dialog = Gtk.MessageDialog(
-            parent=parent_window,
-            flags=0,
-            message_type=Gtk.MessageType.ERROR,
-            buttons=Gtk.ButtonsType.OK,
-            text=self.translations.get("error_label", "Error"),
-        )
-        dialog.format_secondary_text(
-            self.translations.get(
+        run_message_dialog(
+            parent_window,
+            title=self.translations.get("error_label", "Error"),
+            secondary_text=self.translations.get(
                 "bug_report_failed",
                 "Failed to submit bug report: "
-            ) + error_msg
+            ) + error_msg,
+            message_type=Gtk.MessageType.ERROR,
+            buttons_type=Gtk.ButtonsType.OK,
         )
-        dialog.run()
-        dialog.destroy()
 
 class RevealerFooter(Gtk.Revealer):
     def __init__(self, parent):

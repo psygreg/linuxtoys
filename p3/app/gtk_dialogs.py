@@ -1,9 +1,11 @@
 from __future__ import annotations
-from typing import Iterable, Optional, Tuple
+from typing import Iterable, Optional, Tuple, Union
 from .gtk_common import Gtk, GLib, get_toplevel_window
 from .lang_utils import create_translator
 
+# (label, response) or (label, response, css_class) button rows.
 DialogButton = Tuple[str, Gtk.ResponseType]
+DialogButtonSpec = Union[DialogButton, Tuple[str, Gtk.ResponseType, str]]
 
 def run_message_dialog(
     parent: Optional[Gtk.Widget],
@@ -11,10 +13,16 @@ def run_message_dialog(
     title: str,
     secondary_text: str = "",
     message_type: Gtk.MessageType = Gtk.MessageType.INFO,
-    buttons: Optional[Iterable[DialogButton]] = None,
+    buttons: Optional[Iterable[DialogButtonSpec]] = None,
+    buttons_type: Gtk.ButtonsType = Gtk.ButtonsType.NONE,
     default_response: Optional[Gtk.ResponseType] = None,
 ) -> Gtk.ResponseType:
-    """Create, run, and destroy a standard application message dialog."""
+    """Create, run, and destroy a standard application message dialog.
+
+    ``buttons`` adds custom button rows (optionally with a style class such
+    as ``destructive-action``); ``buttons_type`` selects one of GTK's
+    built-in localized button sets instead. They are mutually exclusive.
+    """
     parent_window = get_toplevel_window(parent) if parent else None
 
     # Dialogs triggered from non-widget helpers (such as Antenna) may not
@@ -28,7 +36,7 @@ def run_message_dialog(
     kwargs = {
         "flags": 0,
         "message_type": message_type,
-        "buttons": Gtk.ButtonsType.NONE,
+        "buttons": buttons_type,
         "text": title,
         "modal": True,
     }
@@ -41,8 +49,11 @@ def run_message_dialog(
     if secondary_text:
         dialog.format_secondary_text(secondary_text)
 
-    for label, response in buttons or []:
-        dialog.add_button(label, response)
+    for button in buttons or []:
+        label, response = button[0], button[1]
+        added = dialog.add_button(label, response)
+        if len(button) > 2 and button[2]:
+            added.get_style_context().add_class(button[2])
 
     if default_response is not None:
         dialog.set_default_response(default_response)
