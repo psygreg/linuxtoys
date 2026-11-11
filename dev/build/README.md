@@ -21,7 +21,9 @@ bash build.sh (version) (path)
 ## Build Targets
 
 - **copr/**: Build RPM packages for Fedora/COPR (requires Fedora distrobox container)
-- **deb/**: Build DEB packages for Debian/Ubuntu (requires Debian distrobox container)
+- **deb/**: Construct a local native DEB in an isolated Linux build environment;
+  see [ARM64 DEB qualification](../ARM64-DEB-QUALIFICATION.md) for prerequisites,
+  provenance and lifecycle evidence. No Launchpad signing/upload is performed.
 - **pkg/**: Build AUR packages for Arch Linux (requires Arch distrobox container)
 - **solus/**: Build .eopkg packages for Solus OS (uses solbuild)
 - **nuitka/**: Build standalone executable using Nuitka

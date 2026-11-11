@@ -362,3 +362,22 @@ artifact preparation on Ubuntu ARM64, including independent/reproducible exports
 failure refusal and protected-source integrity. It changes no application code,
 script, ISA approval or release workflow. Hosted workflow execution, upstream
 adoption, native amd64 application regression and packaging remain separate gates.
+
+## M4A local Ubuntu ARM64 DEB qualification
+
+The [DEB report](ARM64-DEB-QUALIFICATION.md) and
+[evidence](arm64-deb-qualification-evidence.json) qualify a local native Ubuntu
+26.04.1 arm64 application package in disposable Docker root filesystems.
+B07's local ARM64 construction/runtime/lifecycle portion is resolved: shared M1
+architecture labels replace hardcoded amd64, both libraries are source-built,
+native shlibs/runtime dependencies are declared, and actual install, upgrade,
+rollback, removal, reinstall and failure recovery pass as documented. Packaging
+uses conventional paths, no maintainer scripts and preserves user data. No
+third-party route or architecture eligibility is promoted.
+
+B07's native amd64 evidence, older Ubuntu qualification and PPA/release integration
+remain open. B08 release infrastructure, B09 other distribution formats and B10
+AppImage remain outside this milestone. The existing release workflow is
+unchanged and must not be assumed compatible with the new local-only constructor.
+M1/M2/M3A/M3B/M3C policy, approved scripts, revision locks, manifests and workflows
+are unchanged. No host package install, publication or remote write occurred.

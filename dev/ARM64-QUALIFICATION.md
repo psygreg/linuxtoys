@@ -188,3 +188,19 @@ artifacts match the Mac byte-for-byte, and independent tar/integrity checks pass
 This adds preparation/test evidence only. No application rebuild, GUI session,
 third-party route, native amd64 or packaging qualification is added. Actions and
 publication were not executed.
+
+## M4A application DEB qualification
+
+The [native DEB report](ARM64-DEB-QUALIFICATION.md) adds Ubuntu 26.04.1 ARM64
+Docker build and actual dpkg lifecycle evidence. Both locked native libraries,
+installed Python/GI/GTK ABI imports, normal-user CLI/TUI/MCP, Xvfb X11 GUI and
+font catalog searches pass. Independent package reconstruction is byte-identical;
+102 Python and 39 Rust tests pass. Real missing-dependency and interrupted-unpack
+recovery pass; 64 user files and system configuration/package guards survive
+upgrade, rollback, removal, reinstall and purge.
+
+This supersedes earlier statements that packaging has not begun, solely for the
+local Ubuntu ARM64 DEB scope. No host/desktop installation, packaged Wayland,
+historical release migration, native amd64 regression, live updater/publication,
+other format/distribution or additional feature eligibility is qualified. Full
+limitations and exact environment/commands are recorded in the linked report.

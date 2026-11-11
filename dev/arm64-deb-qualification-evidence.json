@@ -1,0 +1,241 @@
+{
+  "baseline": "50f65ad9864b14d779e181c6f86bab9c41d7601b",
+  "date": "2026-11-11",
+  "environment": {
+    "build_user": "uid=0(root) gid=0(root) groups=0(root)",
+    "docker_server": "29.8.0",
+    "dpkg_architecture": "arm64",
+    "kernel": "7.0.0-43-generic",
+    "os_release": "PRETTY_NAME=\"Ubuntu 26.04.1 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"26.04\"\nVERSION=\"26.04.1 LTS (Resolute Raccoon)\"\nVERSION_CODENAME=resolute\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=resolute\nLOGO=ubuntu-logo",
+    "packages": [
+      "cargo 1.93.1ubuntu1 arm64",
+      "dpkg 1.23.7ubuntu1 arm64",
+      "gir1.2-appstream-1.0:arm64 1.1.2-1 arm64",
+      "gir1.2-vte-2.91:arm64 0.84.0-2 arm64",
+      "libglib2.0-0t64:arm64 2.88.0-1ubuntu0.1 arm64",
+      "libgtk-3-0t64:arm64 3.24.52-0ubuntu1 arm64",
+      "libgtk-3-dev:arm64 3.24.52-0ubuntu1 arm64",
+      "python3 3.14.3-0ubuntu2 arm64",
+      "python3-cairo 1.27.0-2build2 arm64",
+      "python3-gi 3.56.2-1 arm64",
+      "python3-gi-cairo 3.56.2-1 arm64",
+      "python3-maturin 1.9.4-5build1 arm64",
+      "rustc 1.93.1ubuntu1 arm64",
+      "shellcheck 0.11.0-2 arm64"
+    ],
+    "test_user": "uid=1001(testuser) gid=1001(testuser) groups=1001(testuser)",
+    "tools": {
+      "cargo": "cargo 1.93.1 (083ac5135 2025-12-15) (built from a source tarball)",
+      "maturin": "maturin 1.9.4",
+      "python3": "Python 3.14.4",
+      "ruff": "ruff 0.15.7",
+      "rustc": "rustc 1.93.1 (01f6ddf75 2026-02-11) (built from a source tarball)"
+    },
+    "uname_machine": "aarch64"
+  },
+  "limitations": [
+    "Native amd64 qualification unavailable; only x86 policy/build-driver fixtures exercised.",
+    "Packaged GUI tested with Xvfb X11 and private D-Bus; no container Wayland/real desktop integration session.",
+    "First-run metadata password and authentication-error dialogs cancelled by SIGTERM; no credentials supplied or metadata refresh authorized.",
+    "Upgrade/rollback compare two package revisions of the same 7.9.8 runtime; no historical release migration or live updater download.",
+    "No actual host power-loss/storage-failure qualification; real dpkg SIGSTOP/SIGKILL recovery only.",
+    "Python transitive vendor inputs recorded, not newly locked; no dependency changes.",
+    "Rustfmt unavailable; no Rust source modified.",
+    "No publication, release automation, other distribution/package format, or third-party application eligibility qualification."
+  ],
+  "milestone": "M4A",
+  "native_elf_rebuild_sha256": {
+    "_catalog_rs.abi3.so": "acffca8807cbda8810340bc404496194b63eb12583550161f489def94da86944",
+    "liblinuxtoys_gui.so": "086bb4a9751ff6e02128dae8626076a34a5e19fc8b8f7970b89cd31563544c33"
+  },
+  "operations": {
+    "interrupt": {
+      "audit_after_kill": "The following packages are in a mess due to serious problems during\ninstallation.  They must be reinstalled for them (and any packages\nthat depend on them) to function properly:\n linuxtoys            (no description available)\n\nThe following packages are missing the list control file in the\ndatabase, they need to be reinstalled:\n linuxtoys            (no description available)\n\nThe following packages are missing the md5sums control file in the\ndatabase, they need to be reinstalled:\n linuxtoys            (no description available)\n\n",
+      "canaries_preserved": true,
+      "interrupted_exit": -9,
+      "mode": "interrupt",
+      "package": {
+        "architecture": "arm64",
+        "depends": "libc6 (>= 2.39), libcairo-gobject2 (>= 1.10.0), libcairo2 (>= 1.2.4), libgcc-s1 (>= 4.2), libgdk-pixbuf-2.0-0 (>= 2.31.1), libglib2.0-0t64 (>= 2.32.0), libgtk-3-0t64 (>= 3.16.2), libpango-1.0-0 (>= 1.14.0), python3 (>= 3.10), python3-gi, python3-gi-cairo, python3-cairo, python3-requests, python3-urllib3, python3-certifi, gir1.2-gtk-3.0, gir1.2-vte-2.91, gir1.2-appstream-1.0, appstream, bash, git, curl, wget, zenity, jq, util-linux, fontconfig, apt, adwaita-icon-theme, hicolor-icon-theme, librsvg2-common, webp-pixbuf-loader, desktop-file-utils, shared-mime-info, sudo | sudo-rs",
+        "elf_files": [
+          "usr/lib/linuxtoys/app/_catalog_rs.abi3.so",
+          "usr/lib/linuxtoys/app/liblinuxtoys_gui.so"
+        ],
+        "file": "linuxtoys_7.9.8-1~m4a1_arm64.deb",
+        "maintainer_scripts": [],
+        "ownership_permissions_and_no_host_paths": true,
+        "payload_files": 1830,
+        "sha256": "83173db3b42d8ef966b6bde02f064beb42ee71b4593bfd727a3fefefdb862f04",
+        "version": "7.9.8-1~m4a1"
+      },
+      "partial_payload_files_before_kill": 1,
+      "status_messages": [
+        "Selecting previously unselected package linuxtoys.",
+        "(Reading database ... 27336 files and directories currently installed.)",
+        "Preparing to unpack .../linuxtoys_7.9.8-1~m4a1_arm64.deb ...",
+        "processing: install: linuxtoys",
+        "status: linuxtoys: half-installed"
+      ],
+      "steps": [
+        "actual dpkg half-installed state",
+        "SIGSTOP and SIGKILL",
+        "real dpkg reinstall/configure recovery"
+      ],
+      "system_configuration_and_other_packages_preserved": true
+    },
+    "lifecycle": {
+      "application": {
+        "cancelled_credential_dialogs": [
+          "password",
+          "authentication-error",
+          "password",
+          "authentication-error"
+        ],
+        "gui": [
+          {
+            "display": "X11Display",
+            "elapsed_seconds": 12.63,
+            "probe": "gui",
+            "search_groups": 1,
+            "window": "AppWindow"
+          }
+        ],
+        "imports": [
+          {
+            "abi": 20,
+            "cairo": "1.18.4",
+            "catalog": "/usr/lib/linuxtoys/app/_catalog_rs.abi3.so",
+            "gui": "/usr/lib/linuxtoys/app/liblinuxtoys_gui.so",
+            "host": "aarch64",
+            "pointer_bytes": 8,
+            "probe": "imports",
+            "python": "3.14.4"
+          }
+        ],
+        "launcher": [
+          {
+            "display": "X11Display",
+            "exit": 0,
+            "probe": "launcher",
+            "window": "AppWindow"
+          }
+        ],
+        "mcp": [
+          {
+            "authenticated": true,
+            "probe": "mcp",
+            "search": "Atkinson",
+            "tool_count": 26,
+            "unauthenticated_refused": true
+          }
+        ],
+        "tui": [
+          {
+            "probe": "tui",
+            "screen": "HomeScreen",
+            "search": "Atkinson"
+          }
+        ],
+        "widgets": [
+          {
+            "cycles": 100,
+            "display": "X11Display",
+            "probe": "widgets",
+            "resident_bytes_after_10_and_100": [
+              121761792,
+              121761792
+            ],
+            "rss_max_kib": 144448,
+            "vte_output_verified": true,
+            "vte_shell_exit": 0
+          }
+        ]
+      },
+      "canaries_preserved": true,
+      "mode": "lifecycle",
+      "package": {
+        "architecture": "arm64",
+        "depends": "libc6 (>= 2.39), libcairo-gobject2 (>= 1.10.0), libcairo2 (>= 1.2.4), libgcc-s1 (>= 4.2), libgdk-pixbuf-2.0-0 (>= 2.31.1), libglib2.0-0t64 (>= 2.32.0), libgtk-3-0t64 (>= 3.16.2), libpango-1.0-0 (>= 1.14.0), python3 (>= 3.10), python3-gi, python3-gi-cairo, python3-cairo, python3-requests, python3-urllib3, python3-certifi, gir1.2-gtk-3.0, gir1.2-vte-2.91, gir1.2-appstream-1.0, appstream, bash, git, curl, wget, zenity, jq, util-linux, fontconfig, apt, adwaita-icon-theme, hicolor-icon-theme, librsvg2-common, webp-pixbuf-loader, desktop-file-utils, shared-mime-info, sudo | sudo-rs",
+        "elf_files": [
+          "usr/lib/linuxtoys/app/_catalog_rs.abi3.so",
+          "usr/lib/linuxtoys/app/liblinuxtoys_gui.so"
+        ],
+        "file": "linuxtoys_7.9.8-1~m4a1_arm64.deb",
+        "maintainer_scripts": [],
+        "ownership_permissions_and_no_host_paths": true,
+        "payload_files": 1830,
+        "sha256": "83173db3b42d8ef966b6bde02f064beb42ee71b4593bfd727a3fefefdb862f04",
+        "version": "7.9.8-1~m4a1"
+      },
+      "steps": [
+        "upgrade",
+        "rollback",
+        "remove",
+        "reinstall",
+        "purge"
+      ],
+      "system_configuration_and_other_packages_preserved": true,
+      "user_files_preserved": 64
+    },
+    "missing": {
+      "canaries_preserved": true,
+      "dependency_failure": "dpkg: dependency problems prevent configuration of linuxtoys:\n linuxtoys depends on python3-gi-cairo; however:\n  Package python3-gi-cairo is not installed.\n\ndpkg: error processing package linuxtoys (--install):\n dependency problems - leaving unconfigured\nErrors were encountered while processing:\n linuxtoys\n",
+      "mode": "missing",
+      "package": {
+        "architecture": "arm64",
+        "depends": "libc6 (>= 2.39), libcairo-gobject2 (>= 1.10.0), libcairo2 (>= 1.2.4), libgcc-s1 (>= 4.2), libgdk-pixbuf-2.0-0 (>= 2.31.1), libglib2.0-0t64 (>= 2.32.0), libgtk-3-0t64 (>= 3.16.2), libpango-1.0-0 (>= 1.14.0), python3 (>= 3.10), python3-gi, python3-gi-cairo, python3-cairo, python3-requests, python3-urllib3, python3-certifi, gir1.2-gtk-3.0, gir1.2-vte-2.91, gir1.2-appstream-1.0, appstream, bash, git, curl, wget, zenity, jq, util-linux, fontconfig, apt, adwaita-icon-theme, hicolor-icon-theme, librsvg2-common, webp-pixbuf-loader, desktop-file-utils, shared-mime-info, sudo | sudo-rs",
+        "elf_files": [
+          "usr/lib/linuxtoys/app/_catalog_rs.abi3.so",
+          "usr/lib/linuxtoys/app/liblinuxtoys_gui.so"
+        ],
+        "file": "linuxtoys_7.9.8-1~m4a1_arm64.deb",
+        "maintainer_scripts": [],
+        "ownership_permissions_and_no_host_paths": true,
+        "payload_files": 1830,
+        "sha256": "83173db3b42d8ef966b6bde02f064beb42ee71b4593bfd727a3fefefdb862f04",
+        "version": "7.9.8-1~m4a1"
+      },
+      "steps": [
+        "real dependency removal",
+        "configure refused",
+        "offline dependency reinstall",
+        "configure recovered"
+      ],
+      "system_configuration_and_other_packages_preserved": true
+    }
+  },
+  "preservation": {
+    "host_dpkg_and_apt_package_databases": "unchanged SHA256",
+    "host_running_services": "unchanged set",
+    "original_container_config_image_mounts_filesystem_diff": "unchanged (filesystem diff compared without ordering)",
+    "original_container_status": "running",
+    "test_container_mounts": [],
+    "test_container_network": "none",
+    "test_container_privileged": false
+  },
+  "regressions": {
+    "approved_manifest_check": "pass",
+    "appstream_validate_no_net": "pass (existing summary-dot info only)",
+    "bash_syntax": "pass",
+    "desktop_file_validate": "pass",
+    "python_passed": 102,
+    "python_source_syntax_files": 102,
+    "ruff_check_and_format": "pass",
+    "rust_catalog_passed": 39,
+    "rust_gui_unit_tests": 0,
+    "shellcheck_0_11_0_builder_and_installed_launcher": "pass"
+  },
+  "reproducibility": {
+    "independent_native_build_and_restage_sha256": "83173db3b42d8ef966b6bde02f064beb42ee71b4593bfd727a3fefefdb862f04",
+    "independent_restage_sha256": "83173db3b42d8ef966b6bde02f064beb42ee71b4593bfd727a3fefefdb862f04",
+    "native_compilation": "Two fresh locked source builds produced identical stripped ELF bytes; no x86 artifacts reused. Final staging/archiving rerun after packaging-only corrections.",
+    "source_date_epoch": 1794389593
+  },
+  "schema": 1,
+  "upgrade_artifact": {
+    "architecture": "arm64",
+    "scope": "same application runtime, different package revision",
+    "sha256": "fd80e8c4bddee635df028d5869b4d898b58e51b2f68daa55b41cd7d528e860ae",
+    "version": "7.9.8-1~m4a2"
+  }
+}

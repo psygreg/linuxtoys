@@ -27,9 +27,11 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path[:0] = [str(ROOT / "p3"), str(ROOT / "p3/vendor")]
-os.environ.setdefault("SCRIPT_DIR", str(ROOT / "p3"))
-os.environ.setdefault("CACHE_DIR", str(ROOT / "p3/scripts"))
+# Test-only override for inspecting the installed package rather than source.
+APP_DIR = Path(os.environ.get("LINUXTOYS_TEST_APP_DIR", str(ROOT / "p3"))).resolve()
+sys.path[:0] = [str(APP_DIR), str(APP_DIR / "vendor")]
+os.environ.setdefault("SCRIPT_DIR", str(APP_DIR))
+os.environ.setdefault("CACHE_DIR", str(APP_DIR / "scripts"))
 
 
 def imports() -> None:
@@ -249,7 +251,7 @@ def launcher() -> None:
 
     GLib.timeout_add(500, decline_setup)
     GLib.timeout_add_seconds(12, finish)
-    sys.argv = [str(ROOT / "p3/linuxtoys.py"), "--gui"]
+    sys.argv = [str(APP_DIR / "linuxtoys.py"), "--gui"]
     try:
         runpy.run_path(sys.argv[0], run_name="__main__")
     except SystemExit as result:
@@ -300,7 +302,7 @@ def mcp() -> None:
         port = probe.getsockname()[1]
     env = dict(os.environ, LINUXTOYS_MCP_PORT=str(port), PYTHONUNBUFFERED="1")
     server = subprocess.Popen(
-        [sys.executable, str(ROOT / "p3/linuxtoys.py"), "--mcp"],
+        [sys.executable, str(APP_DIR / "linuxtoys.py"), "--mcp"],
         env=env,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
