@@ -1,4 +1,5 @@
 from . import get_icon_path
+from .gtk_dialogs import run_message_dialog
 from .gtk_common import Gtk, GLib
 import threading
 from .antenna import antenna
