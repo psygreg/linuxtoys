@@ -4,12 +4,9 @@
 
 ## 1. What LinuxToys is
 
-A cross-distro Linux app installer/manager. A curated catalog of **Bash install scripts** (one script per app, ~500+ files under `p3/scripts/`) is presented through a **PyGObject/GTK3 GUI** (default) or a **Textual TUI** (CLI mode). Execution is mediated by a privilege bridge (`helper`/`bashhelper`/sudoers generation), a **Flatpak/remote-source broker** ("antenna" + `broker`), a **git-based script sync** ("gitutil" + `gitlab_content.py`), and an in-app **self-updater** (`updater/`).
+A cross-distro Linux app installer/manager. A curated catalog of **Bash install scripts** (one script per app, ~500+ files under `p3/scripts/`) is presented through a **PyGObject/GTK3 GUI** (default) or a **Textual TUI** (CLI mode). Execution is mediated by a busy package-manager preflight (`package_guard`), `askpass`/`sudo_` privilege escalation in the bash core, AUR source-security verification (`aur_security`), a transaction lifecycle (transmap + `term_registry.ExecutionRegistry`), a **git-based script sync** (`git_scripts_manager` + `scripts_loader`), and an in-app **self-updater** (`updater/`).
 
-Two native Rust components are compiled via PyO3/maturin:
-
-- **`src/catalog-rs`** → `_catalog_rs` — catalog JSON parsing/repo-name normalization, git-release asset classification (shared with Python through `_catalog_rs` module; see `dev/git_db.py`).
-- **`src/gui-rs`** → `liblinuxtoys_gui.so` — C-side GTK helpers imported by the Python GUI (libadwaita theming etc.).
+Two native Rust components: **`src/catalog-rs`** → `_catalog_rs` is compiled via PyO3/maturin (catalog JSON parsing/repo-name normalization, git-release asset classification; shared with Python through the `_catalog_rs` module; see `dev/git_db.py`), and **`src/gui-rs`** → `liblinuxtoys_gui.so` is a plain cargo cdylib exposing a C ABI consumed by the Python GUI through ctypes (GTK theming helpers).
 
 ## 2. Repository tree (annotated)
 
@@ -46,7 +43,7 @@ linuxtoys/
 /usr/bin/linuxtoys (launcher, written by each packager)
   └─> p3/linuxtoys.py            # prepends p3/vendor to sys.path, then runs app package
         └─> p3/app/main.py       # arg/env parsing: EASY_CLI, linuxtoys:// URL, hybrid-GPU...
-              ├─> GUI path: repo_parser + gui.py (PyGObject + liblinuxtoys_gui.so)
+              ├─> GUI path: main.run() → Gtk.Application + window.AppWindow (PyGObject + liblinuxtoys_gui.so)
               ├─> TUI path: tui/ (Textual app, EASY_CLI=1)
               └─> linuxtoys:// URL / single-script run paths
 ```
@@ -57,14 +54,15 @@ linuxtoys/
 
 | File | Role |
 |---|---|
-| `repo_parser.py` | Repo-list layer over `catalog-rs`: entry validation/resolution (Rust), list-JSON walking, install-script materialization (`create_install_script`), git-db consumption, commerce/description overlays. |
-| `parser.py` | Catalog core: Rust-assisted scripts-tree index, `.sh` header parsing, compat/visibility policy, category/repo/AppStream entry materialization, display-name resolution. (§4.3) |
+| `repo_parser.py` | Repo-list layer over `catalog-rs`: entry validation/resolution (Rust), list-JSON walking, install-script materialization (`compose_install_script` builds the text; `create_install_script` writes the transient `.sh` and keeps the runner's appimage "true" convention), git-db consumption, commerce/description overlays. |
+| `parser.py` | Catalog core: Rust-assisted scripts-tree index, `.sh` header parsing, compat/visibility policy, `appstream_context` (shared resolution context for URI/MCP), category/repo/AppStream entry materialization, display-name resolution. (§4.3) |
 | `search_helper.py` | `SearchEngine` over scripts + AppStream (+local scripts): Rust index overlay, weighted scorer, grouped-by-category results. |
 | `appstream_cache.py` | Builds/publishes the persistent AppStream catalog (`~/.cache/linuxtoys/appstream/catalog.json` + `extensions.json`, schema 26): native/Flatpak/Snap/Homebrew/AppImage sources, source fingerprints, ODRS ratings + Snap votes APIs. |
 | `appstream_parser.py` | Adapts the cached catalog into LinuxToys entries: source/omit/category policy, Rust runtime catalog (search/browse/installed/featured slices) with stale-while-revalidate. |
-| `appstream_runner.py` | Persistent hidden-PTY runner + session queue for AppStream transactions (install/remove/extension/snap-revert/apt-refresh/skill/local-package/AppImage/homebrew/AUR) with completion markers, stall watchdog, transcripts, registry finishing, conflict gating, AUR source-security verification. |
+| `appstream_runner.py` | Persistent hidden-PTY runner + session queue for AppStream transactions (install/remove/extension/snap-revert/apt-refresh/skill/local-package/AppImage/homebrew/AUR) with completion markers, stall watchdog, transcripts, registry finishing, conflict gating; AUR source-security verification delegates to `aur_security` (provenance cross-check on). |
 | `appstream_queue.py` / `appstream_extensions.py` | GTK views: session AppStream queue; embedded Flatpak-extensions view for the app page. |
-| `aur_cache.py` | Opt-in AUR metadata cache (`catalog.bin` via catalog-rs): enable/refresh lifecycle, lazy browse/search views. |
+| `aur_security.py` | Shared AUR source-security scanner (GUI runner + TUI executor + MCP): shallow-clone inspection of PKGBUILD + `*.install` against the obfuscation rules; the GitHub provenance cross-check is the opt-in `check_provenance=True` superset used by the GUI. |
+| `aur_cache.py` | Opt-in AUR metadata cache (`catalog.bin` via catalog-rs): enable/refresh lifecycle (`refresh_catalog` is the shared refresh sequence), lazy browse/search views. |
 | `homebrew_catalog.py` | Homebrew snapshot cache (formula.json + analytics popularity, 14-day TTL) feeding the AppStream-style catalog; `materialize_install` for queued formulae. |
 | `snap_catalog.py` | Snap Store metadata over snapd's Unix socket → AppStream-style entries (14-day cache). |
 | `appimage_catalog.py` | AppImage community feed cache + intent-based category inference; release resolution/download for installs and updates (ELF validation, 4 GiB cap). |
@@ -98,17 +96,17 @@ The remaining `p3/app` layers follow: GUI (§4.2), core runtime (§4.3), TUI/upd
 | `header.py` / `head_menu.py` | Invisible page header builder; hamburger popover (manifest import, language, about, registry, resync, auto-updates/auto-report/MCP toggles) + `InputDialog`. |
 | `term_header.py` / `term_view.py` | `InfosHead` (native header block shared by terminal view and app page); `TermRunScripts` (VTE terminal + controls, removal/revert confirmations, Escape handling). |
 | `term_runner.py` | `TerminalRunner` mixin: VTE execution engine — spawn with library env, serialization vs AppStream runner, package-manager busy-wait, transmap/registry lifecycle, auto-revert queueing, runner-lock channel (`/tmp/linuxtoys/runner-state-*`). |
-| `term_registry.py` | `ExecutionRegistry`: persistent per-script transaction registry (save/prune/auto-revert) + `python3 term_registry.py save …` CLI used by `p3/libs/linuxtoys.bash:1162`. |
+| `term_registry.py` | `ExecutionRegistry`: persistent per-script transaction registry (save with no-op skip + same-script prune, tmpdir_noram cleanup, auto-revert, expiry pruning) + `python3 term_registry.py save …` CLI used by `p3/libs/linuxtoys.bash`. The canonical save/cleanup that `easy_cli` delegates to. |
 | `term_reporting.py` | `BugReporting` mixin: manual + auto bug reports from terminal output via antenna; clipboard copy. |
-| `revealer.py` | Checklist footer (`RevealerFooter` + `SupportFooter` links) + `BugReportDialog` form. |
+| `revealer.py` | Checklist footer (`RevealerFooter` + `SupportFooter` links over the shared `_support_links` table) + `BugReportDialog` form. |
 
 #### Shared GTK infrastructure
 | File | Role |
 |---|---|
-| `gtk_common.py` | GTK3/Gdk/Pango/Vte imports + helpers (symbolic-icon resolution with XSI preference, memoized scaled pixbufs, markup escaping, toplevel lookup). |
-| `gtk_dialogs.py` | Standard dialog helpers: `run_message_dialog`, version-gate + privilege dialogs, `WaitDialog`, startup-recommendations prompt. |
-| `gui_rs.py` | ctypes bridge to `liblinuxtoys_gui.so` (ABI 20): spec marshalling, native widget recovery, batch cards/grids/sidebar/search groups/markdown+appstream buffers/local-package inspection. |
-| `easy_cli.py` | Headless CLI mode: arg parsing/dispatch, script/package/flatpak/snap install+uninstall flows, smart mode, auto-revert, registry writes, version gate, TUI launcher. |
+| `gtk_common.py` | GTK3/Gdk/Pango/Vte imports + helpers (symbolic-icon resolution with XSI preference, memoized scaled pixbufs, markup escaping, toplevel lookup, `widget_within` subtree test). |
+| `gtk_dialogs.py` | Standard dialog helpers: `run_message_dialog` (custom buttons with optional style classes, or built-in localized button sets via `buttons_type`), version-gate + privilege dialogs, `WaitDialog`, startup-recommendations prompt. |
+| `gui_rs.py` | ctypes bridge to `liblinuxtoys_gui.so` (ABI 20): spec marshalling, native widget recovery, batch cards/grids/sidebar/search groups/markdown+appstream buffers/local-package inspection; `card_child` is the single named-descendant lookup. |
+| `easy_cli.py` | Headless CLI mode: arg parsing/dispatch, script/package/flatpak/snap install+uninstall flows, smart mode, auto-revert, registry saves/cleanup (delegates to `term_registry.ExecutionRegistry` — same no-op-skip/prune path as the GUI), version gate, TUI launcher. |
 
 ### 4.3 Core runtime (p3/app top-level)
 
@@ -128,11 +126,11 @@ The remaining `p3/app` layers follow: GUI (§4.2), core runtime (§4.3), TUI/upd
 | File | Role |
 |---|---|
 | `manifest_helper.py` | Manifest engine: load/validate/replay manifests, registry→manifest export, shared package/flatpak/snap installers, CLI manifest mode driver, sysup resolution. |
-| `revert_helper.py` | Registry/transmap-driven reversal: ~20 op families → uninstall/auto-revert script builders. |
-| `registry_utils.py` | Registry file parsing/search, git-release/AppImage-release transaction readers, shlex Bash exports (CLI used by linuxtoys.bash). |
+| `revert_helper.py` | Registry/transmap-driven reversal: ~20 op families → uninstall/auto-revert script builders over shared plumbing (`_revert_script_preamble`, `_registry_cleanup_heredoc`, `_write_revert_script`, `_revert_entry`, `_flatpak_remove_command`). Entry loading delegates to `registry_utils.load_registry_transactions`. |
+| `registry_utils.py` | The single registry module: `parse_registry_file` (grouped dict view, mtime-memoized), `load_registry_transactions` (ordered list view for index arithmetic), `normalize_registry_content` (canonical/idempotent rebuild), `remove_script_entries` (exact-name removal → `(removed, ok)`), `search_registry_entries`, git-release/AppImage-release transaction readers + shlex Bash exports (CLI used by linuxtoys.bash). |
 | `registry_heal.py` | Finds registry transactions for repo apps no longer offered (auto-revert support). |
-| `action_registry.py` | GTK Action Registry viewer with export + cleanup. |
-| `reboot_helper.py` | Reboot/ostree-deployment/flatpak-path requirement dialogs + per-boot acknowledgement + `systemctl reboot`. |
+| `action_registry.py` | GTK Action Registry viewer with export + cleanup (cleanup delegates to `registry_utils.remove_script_entries`). |
+| `reboot_helper.py` | Reboot/ostree-deployment/flatpak-path requirement dialogs (over the shared `_message_dialog` chrome + `_run_reboot_choice`) + per-boot acknowledgement + `systemctl reboot`. |
 | `flatpak_residue.py` | Single source of truth for `~/.var/app/<ID>` residue removal (shared GUI+MCP). |
 | `gregos_helper.py` | One-shot GregOS post-install script run per `# gregos-version` marker. |
 | `kernel_update_helper.py` | psycachy kernel update checker for Ubuntu-family hosts (GTK prompt + installer). |
@@ -142,9 +140,10 @@ The remaining `p3/app` layers follow: GUI (§4.2), core runtime (§4.3), TUI/upd
 |---|---|
 | `mcp_server.py` | Stdlib MCP server (Streamable HTTP, localhost:7420, bearer token): 23 tools over catalog/install/removal/package-files/extensions/residue/settings/translate/registry; serialized `JobManager`; systemd user-unit management; agent-question pre-answering machinery. |
 | `uri_parser.py` | GUI-agnostic `linuxtoys://` validation + stable-target resolution. |
-| `translate_helper.py` | GTK-free description translation (Google endpoint) + shared cache (GUI+MCP). |
-| `needed_helper.py` | Prerequisite-list and run-confirmation dialogs. |
-| `local_scripts.py` | `LocalScriptsCtl` mixin: drag-and-drop, create/edit/delete/export of `~/.local/linuxtoys/scripts`. |
+| `translate_helper.py` | GTK-free description translation (Google endpoint) + shared cache — the single pipeline for GUI, TUI and MCP. |
+| `needed_helper.py` | Prerequisite-list and run-confirmation dialogs (shared `_script_row`/`_script_list_scroller` list rendering). |
+| `local_scripts.py` | `LocalScriptsCtl` mixin: drag-and-drop, create/edit/delete/export of `~/.local/linuxtoys/scripts` (shared confirm/chooser/cleanup helpers for the singular and plural flows). |
+| `atomic_io.py` | Atomic file writes shared by every cache/persistence site: `atomic_write_bytes/text/json` (mkstemp staging + `os.replace`, optional fsync/mode, tmp cleanup on failure). |
 | `language_selector.py` / `about_helper.py` / `deepin_immutable_helper.py` | Language picker; About dialog (GitHub contributors); Deepin immutable-mode one-shot flow. |
 | `skills_fetcher.py` / `skills_view.py` | skills.sh CLI fetcher (TTL cache) + GTK Skills Seeker view. |
 | `file_watcher.py` | DEV_MODE-only 2s poll triggering UI reload on script/lib changes. |
@@ -156,17 +155,17 @@ The remaining `p3/app` layers follow: GUI (§4.2), core runtime (§4.3), TUI/upd
 
 | File | Role |
 |---|---|
-| `main.py` | Entry: `SplashScreen` → `HomeScreen` (search input + item panel + logo/menu/terminal panel). `LinuxToys(App)` boots index in threads, persists theme. HomeScreen mixes in 5 runner/helper mixins. |
+| `main.py` | Entry: `SplashScreen` → `HomeScreen` (search input + item panel + logo/menu/terminal panel). `LinuxToys(App)` boots index in threads, persists theme. HomeScreen mixes in six runner/helper mixins; `_menu_items`/`_link_bar_items` are the single source for the home menu and link bar (compose + language refresh share them). |
 | `menu_helper.py` | `MenuSelectionMixin` — menu dispatch (registry/language/manifest/update/about/resync). |
-| `runner_helper.py` | The execution core: `ScriptRunnerMixin` (script install/remove, category nav incl. Specials/Homebrew/AppImage/AUR, run engine over embedded terminal, registry saves, reboot/auto-revert), `AppstreamRunnerMixin` (AppStream transactions via executor-built scripts), `ManifestRunnerMixin` (manifest classify → bootstrap → confirm → queue), `UpdateRunnerMixin` (check + in-terminal installer). |
-| `helper.py` | Shared data layer: widget-id slugs, warmed search/category caches, virtual categories (Specials/Homebrew/AppImage), `ScriptResult` exit-code classification. |
+| `runner_helper.py` | The execution core: `ScriptRunnerMixin` (script install/remove, category nav incl. Specials/Homebrew/AppImage/AUR, run engine over embedded terminal, registry saves via `easy_cli` → `term_registry`, reboot/auto-revert, parameterized Specials loaders `_catalog_load_async`/`_catalog_search_async` shared by Homebrew/AppImage/AUR), `AppstreamRunnerMixin` (AppStream transactions via executor-built scripts), `ManifestRunnerMixin` (manifest classify → bootstrap → confirm → queue), `UpdateRunnerMixin` (check + in-terminal installer via `update_helper.build_update_script`). |
+| `helper.py` | Shared data layer: widget-id slugs, warmed search/category caches, virtual categories (Specials/Homebrew/AppImage), `ScriptResult` exit-code classification, `flathub_ready` (shared Flathub remote check for startup recommendations and the manifest resolver). |
 | `my_widgets.py` | Custom widgets: `FocusableLabel`, `InfoButton`, list items, and `Terminal` — pyte-backed embedded terminal over a real PTY with password-prompt detection and exit-marker tracking. |
 | `dialog_screen.py` | All `ModalScreen` dialogs (confirm/error/success/reboot/sudo password/language/update/version-gate/AUR consent+security/report-bug). |
-| `appstream_executor.py` | Builds shell scripts/argv for AppStream installs (temp `.sh` with RC gates); `check_aur_package_security` AUR obfuscation scan. |
+| `appstream_executor.py` | Builds shell scripts/argv for AppStream installs (temp `.sh` with RC gates over `repo_parser.compose_install_script`); thin re-export shim for the AUR security scanner (`app/aur_security.py`). |
 | `manifest_dialog.py` / `manifest_resolver.py` | Manifest `.txt` picker UI + blocking resolver (entries → scripts/packages/snaps/flatpaks, bootstrap detection). Mirrors CLI pipeline. |
 | `tui_app_page.py` | Detail page widget for one app (sources, commerce links, rating, translation, extensions, featured grid); `show_app_page`/`hide_app_page`. |
-| `app_page_translate.py` | TUI description translation (⚠ duplicates `translate_helper.py`, §9). |
-| `registry_screen.py` | Action-registry browser (list/details/search/cleanup/export) + `RegistryOpenerMixin`. |
+| `app_page_translate.py` | Thin adapter over `translate_helper` — the TUI shares the GUI/MCP endpoint, traversal and disk cache; only the entry-info cache-key mapping and plain-text shortcut live here. |
+| `registry_screen.py` | Action-registry browser (list/details/search/cleanup/export); cleanup delegates to `registry_utils.remove_script_entries`. |
 | `skills_core.py` / `skills_view_tui.py` | Skills Seeker: npx `skills` domain ops (install/list/remove, agent detection) + Discover/Installed UI. |
 | `startup_recommendation.py` | One-shot startup setup offer (flathub/rpmfusion/multilib/brew) → dependency-aware queue via ManifestRunner. |
 | `about_helper.py` / `theme_store.py` | About panel (ANSI logo, tabs, contributors) + theme persistence (cache-dir JSON). |
@@ -176,9 +175,9 @@ The remaining `p3/app` layers follow: GUI (§4.2), core runtime (§4.3), TUI/upd
 | File | Role |
 |---|---|
 | `__init__.py` | `__version__` constant. |
-| `update_helper.py` | Release lookup (GitHub → Gitea fallback), install-source detection (PPA/Copr/git disables self-update), `run_background_update` via generated bash script. |
-| `version_gate.py` | Non-blocking cache-backed gate refusing script runs when more than `GATE_GRACE_RELEASES` releases behind; `update-state.json` cache, daemon-thread refresh, fails open. |
-| `update_dialog.py` | GTK dialogs: changelog `UpdateDialog` (own dependency-free Markdown renderer; writes `/tmp/.self_update_lt` installer script), error dialogs, `scripts_blocked_by_version` gate flow for the GUI. |
+| `update_helper.py` | Release lookup (GitHub → Gitea fallback), install-source detection (PPA/Copr/git disables self-update), `build_update_script(mode)` — the single installer-text builder for the VTE dialog (`terminal`: library + sudo_rq, bare pipe on SteamOS, optional completion marker), the headless updater (`background`: askpass + download-then-source in the same shell) and the TUI (`tui`: minimal pipe); `is_steamos()`; `run_background_update` via generated bash script; `compare_versions` delegates here from `version_gate` (also used by `kernel_update_helper`). |
+| `version_gate.py` | Non-blocking cache-backed gate refusing script runs when more than `GATE_GRACE_RELEASES` releases behind; `update-state.json` cache (atomic write via `app.atomic_io`), daemon-thread refresh, fails open; `compare_versions` is the shared tri-state comparator (right-padded tuples). |
+| `update_dialog.py` | GTK dialogs: changelog `UpdateDialog` (own dependency-free Markdown renderer; writes the `build_update_script("terminal", …)` installer to `/tmp/.self_update_lt`), error dialogs, `scripts_blocked_by_version` gate flow for the GUI. |
 
 #### `p3/app/antenna/`
 
@@ -196,19 +195,19 @@ The catalog is **data, not code**: one `.sh` per app plus JSON/metadata. Headers
 
 ## 6. Bash core libraries (`p3/libs/*.bash`)
 
-Sourced by catalog scripts (via `linuxtoys.lib`/`library_loader.py` static analysis). `.lib` files are byte-identical copies of their `.bash` twins (§9).
+Sourced by catalog scripts (via `linuxtoys.lib`/`library_loader.py` static analysis). `linuxtoys.lib`, `helpers.lib` and `optimizers.lib` are **symlinks** to their `.bash` twins, so the two names always stay in sync.
 
 | File | Role |
 |---|---|
-| `linuxtoys.bash` | Core loader (conditionally sources the rest), zenity compat layer, privilege escalation (`askpass`/`sudo_`), message + question/selector dialogs (`_msg`, `question`, `radioselect`, `listselect`, `userinput`) with MCP-agent answer passthrough, `_lang_` i18n, runner locks, transmap (transaction map), `call_script` (script→script calling incl. AppStream resolution), CachyOS mirror preflight. |
+| `linuxtoys.bash` | Core loader (conditionally sources the rest), zenity compat layer, privilege escalation (`askpass`/`sudo_`), message + question/selector dialogs (`_msg`, `question`, `radioselect`, `listselect`, `userinput` — the radio/list selectors share `_select_parse_options`) with MCP-agent answer passthrough, `_lang_` i18n, runner locks, transmap (transaction map), `call_script` (script→script calling incl. AppStream resolution), CachyOS mirror preflight. |
 | `packages.bash` | The package-management core (~3.2k lines): per-manager lock-guard + busy-wait + transaction-retry trios (pacman/apt/dnf/zypper/eopkg/rpm-ostree); `pkg_install`, `pkg_flat`, `pkg_snap(_revert/_file)`, `pkg_fromfile`, `pkg_tarball`, `pkg_binary`, `pkg_fromurl`, `pkg_make`, `pkg_fromrelease`, `pkg_appimage(_update/_rm)` with Gear Lever integration, `pkg_npm`, `pkg_bun`, `pkg_brew(_remove)`, `pkg_remove`. |
 | `sysinfo.bash` | `/etc/os-release` detection (`sysdetect`, `is_*` family incl. ostree/ublue/gregos/restricted hosts) + GPU/compute capability probes (NVIDIA/Intel/AMD, ROCm/Rusticl PCI-ID lists, ReBAR, hybrid GPU). |
-| `fsops.bash` | Reversible filesystem "prep" ops (backup-before-edit/create/remove → transmap) + Distrobox container variants. |
-| `misc.bash` | App-level integrations: `shell_change`, swapfile/rclone/distrobox transmap records, `check_disk_space` (DaVinci-space check), `flatpak_override`, `path_link`, `desktop_shortcut`, orphaned-launcher cleanup. |
+| `fsops.bash` | Reversible filesystem "prep" ops (backup-before-edit/create/remove → transmap) + Distrobox container variants (`distrobox_prep_dir(_edit)`, `distrobox_copy_`, `distrobox_move_` over the shared `_transfer`/`_distrobox_transfer` flag-splitting + fallback plumbing). |
+| `misc.bash` | App-level integrations: `shell_change`, swapfile/distrobox transmap records, `check_disk_space` (DaVinci-space check), `flatpak_override`, `path_link`, `desktop_shortcut`, orphaned-launcher cleanup. |
 | `boot.bash` | Bootloader/initramfs/kernel-args/Secure-Boot (MOK) handling per distro family. |
 | `sysd.bash` | Thin systemd enable/start/stop/disable (system + user scope, once-per-run daemon-reload latch). |
 | `timefix.bash` | Once-per-boot silent clock-skew guard (HTTP-Date reference clock, NTP correction ladder, askpass after-auth hook) — fixes apt/sqv "Not live until" failures. |
-| `helpers.bash` | Downloaders (`fetch_from_mirror`), DaVinci Resolve fetch (`getresolve`), `clinfo_chk`, Debian non-free/backports enablers + legacy shims to catalog scripts. |
+| `helpers.bash` | Downloaders (`fetch_from_mirror`), DaVinci Resolve fetch (`getresolve` with the shared `_davinci_parse_release` feed parser), `clinfo_chk`, Debian non-free/backports enablers + legacy shims to catalog scripts. |
 | `optimizers.bash` | Block of legacy shims to optimizer catalog scripts (intentional compat surface for old local scripts). |
 | `gregos.bash` | Not a library: self-contained GregOS post-install script run headlessly once per `# gregos-version` (theming, bun/opencode, sloth-bash, swapfile). |
 | `translator.lib` / `packages.json` | Package-name translation key→distro dictionary used by `pkg_install`-related name mapping. |
@@ -221,11 +220,12 @@ Two cdylib crates, built by `build-rust.sh` (maturin for catalog-rs, plain cargo
 
 | File | Role |
 |---|---|
-| `lib.rs` | Module entrypoint; registers 30 pyfunctions + 3 pyclasses. No logic. |
-| `repo.rs` | Repo-list (repos.json / lists/*.json) static+runtime validation, git-URL canonicalization, arch alias mapping, full repo-catalog assembly (icons/screenshots/translations, dedupe). ~30 private validators/helpers. Tests: `runtime_compat_tests`. |
-| `appstream.rs` | AppStream ingestion (gz+XML mini-DOM) for Flatpak/native/Homebrew/Snap/AppImage; source-group collapse/preference policy; AppStream→catalog-entry adaptation; `AppStreamGeneration` (incremental builder → published catalog) and `AppStreamCatalog` (runtime index over MessagePack warm cache). Tests: category_resolution/appimage_source/omission_key/homebrew_binary. |
-| `popularity.rs` | Session-stable popularity scoring; Bayesian review subscores; weighted sampling for featured grids. |
-| `featured.rs` | Featured-grid layout planning (large-card placement via deterministic RNG) + app-page Featured ranking with Myket category affinity. |
+| `lib.rs` | Module entrypoint; registers 28 pyfunctions + 3 pyclasses. No logic. |
+| `shared.rs` | Cross-module helpers: `json_to_py` (JSON→Python boundary), `normalize_appstream_id` (canonical AppStream ID normalization), `weighted_pick` (single weighted-draw core for the featured samplers). |
+| `repo.rs` | Repo-list (repos.json / lists/*.json) static+runtime validation, git-URL canonicalization, arch alias mapping, full repo-catalog assembly (icons/screenshots/translations, dedupe). ~30 private validators/helpers; JSON/ID helpers delegate to `shared.rs`. Tests: `runtime_compat_tests`. |
+| `appstream.rs` | AppStream ingestion (gz+XML mini-DOM) for Flatpak/native/Homebrew/Snap/AppImage; source-group collapse/preference policy; AppStream→catalog-entry adaptation; `AppStreamGeneration` (incremental builder → published catalog) and `AppStreamCatalog` (runtime index over MessagePack warm cache); `category_index_maps` shared by the category resolvers. Tests: category_resolution/appimage_source/omission_key/homebrew_binary. |
+| `popularity.rs` | Session-stable popularity scoring; Bayesian review subscores; weighted sampling for featured grids (draw loop over `shared::weighted_pick`). |
+| `featured.rs` | Featured-grid layout planning (large-card placement via deterministic RNG) + app-page Featured ranking with Myket category affinity (sampling over `shared::weighted_pick`). |
 | `search.rs` | Minimal weighted substring scorer over Python-built rows (`SearchIndex`). |
 | `scripts.rs` | Recursive scripts-tree index: dirs, `.sh` files, shebang-comment headers (`build_script_tree_index`). |
 | `snap_ratings.rs` | gRPC client for Canonical's snap ratings service (hand-rolled prost messages + tonic, per-call tokio runtime). |
@@ -242,8 +242,8 @@ Deps: pyo3 0.24 (abi3-py310), serde/rmp-serde, quick-xml/flate2, prost/tonic/tok
 | File | Purpose |
 |---|---|
 | `translate_descriptions.py` | Merge a hand-filled short-description table into a list's `descriptions.json` (validates full 57-language coverage). |
-| `translate_json.py` | Legacy inline merge into `p3/libs/lang/<lang>.json` (runs at import top level, CWD-relative). |
-| `translate_lib.py` | Append `noresolve` message lines across `p3/libs/lang/*.lib`. |
+| `translate_json.py` | Legacy inline merge into `p3/libs/lang/<lang>.json` (runs at import top level; `__file__`-anchored paths). |
+| `translate_lib.py` | Append `noresolve` message lines across `p3/libs/lang/*.lib` (`__file__`-anchored `LANG_DIR`). |
 
 ## 8. Packaging, dev tooling & CI
 

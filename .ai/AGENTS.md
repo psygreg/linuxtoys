@@ -20,5 +20,9 @@ Agents must adhere to standard best practices for the languages used:
 - Agents should stage changes (e.g., `git add .`) but *not* commit them.
 - The agent's role is to prepare the changes; human review is required for committing and pushing.
 
+## 🚫 Repository Information Upkeep
+**The [ARCHITECTURE.md](.ai/ARCHITECTURE.md) file must always be kept up-to-date.**
+- Any sufficiently relevant changes must be reflected in the file.
+
 ## 🗺️ Documentation
 For a detailed map of modules, functions, and application structure, please refer to [ARCHITECTURE.md](.ai/ARCHITECTURE.md).
