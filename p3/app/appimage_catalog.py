@@ -22,6 +22,8 @@ import time
 from pathlib import Path
 from urllib.request import Request, urlopen
 
+from .atomic_io import atomic_write_bytes
+
 FEED_URL = "https://appimage.github.io/feed.json"
 # The hub serves per-app artwork under /database/<app>/...; the feed lists
 # those paths relative to this base.
