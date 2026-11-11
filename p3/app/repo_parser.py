@@ -1008,19 +1008,15 @@ def _metadata_line(value):
     return str(value).replace("\r", " ").replace("\n", " ").strip()
 
 
-def create_install_script(entry):
+def compose_install_script(entry) -> str:
     """
-    Create the transient .sh consumed by the normal LinuxToys execution flow.
+    Build the install script text for a repository/AppStream entry.
 
-    Returns its filesystem path.
+    Raises ValueError for AppImage entries: they have no terminal script —
+    the AppStream runner dispatches them itself (see create_install_script
+    for the runner's "nothing to dispatch" convention).
     """
     install_type = entry.get("type", "git")
-    if install_type == "appimage":
-        # AppImage catalog entries are resolved, downloaded and installed by
-        # the AppStream runner (appimage_catalog.resolve_download + pkg_appimage)
-        # when their queued job starts. No terminal script exists for them; the
-        # runner's own convention for "nothing to dispatch" is the "true" path.
-        return "true"
     name = _metadata_line(entry["name"])
     description = _metadata_line(entry["description"])
     repo = entry["repo"]
@@ -1257,6 +1253,26 @@ python3 "$SCRIPT_DIR/app/library_loader.py" "$_external_script" || exit $?
 {finish_command}
 """
 
+    return contents
+
+
+def create_install_script(entry):
+    """
+    Create the transient .sh consumed by the normal LinuxToys execution flow.
+
+    Returns its filesystem path.
+    """
+    install_type = entry.get("type", "git")
+    if install_type == "appimage":
+        # AppImage catalog entries are resolved, downloaded and installed by
+        # the AppStream runner (appimage_catalog.resolve_download + pkg_appimage)
+        # when their queued job starts. No terminal script exists for them; the
+        # runner's own convention for "nothing to dispatch" is the "true" path.
+        return "true"
+
+    contents = compose_install_script(entry)
+
+    name = _metadata_line(entry["name"])
     tmp_dir = "/tmp/linuxtoys/repo-scripts"
     os.makedirs(tmp_dir, mode=0o700, exist_ok=True)
 

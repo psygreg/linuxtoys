@@ -3,6 +3,7 @@ import shutil
 import subprocess
 
 from .gtk_common import Gdk, Gtk, GLib
+from .gtk_dialogs import run_message_dialog
 from . import parser
 
 class LocalScriptsCtl:
@@ -185,144 +186,142 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
 
         return script_path.startswith(self.local_sh_dir)
 
-    def _delete_local_script(self, script_info):
-        """Delete a local script after confirmation."""
-        script_name = script_info.get("name", "Unknown Script")
-        script_path = script_info.get("path", "")
+    def _confirm_local_scripts_delete(self, script_infos):
+        """Shared delete-confirmation dialog for one or many local scripts.
 
-        if not script_path or not os.path.exists(script_path):
-            return
+        Preserves the icon-suppressed confirm styling; returns True when the
+        user confirmed.
+        """
+        if len(script_infos) == 1:
+            text = self.translations.get(
+                "delete_script_message",
+                "Are you sure you want to delete '{script_name}'?",
+            ).format(script_name=script_infos[0].get("name", "Unknown Script"))
+            secondary = self.translations.get(
+                "delete_script_warning", "<b>This action cannot be undone.</b>"
+            )
+        else:
+            script_names = [info.get("name", "Unknown Script") for info in script_infos]
+            names_text = ", ".join(script_names[:3])  # Show first 3 names
+            if len(script_names) > 3:
+                names_text += f" ... (+{len(script_names) - 3} more)"
+            text = self.translations.get(
+                "delete_scripts_message",
+                "Are you sure you want to delete {count} scripts?",
+            ).format(count=len(script_infos))
+            secondary = self.translations.get(
+                "delete_script_warning",
+                "<b>This action cannot be undone.</b>\n\nScripts: {names}",
+            ).format(names=names_text)
 
-        # Show confirmation dialog without any icon or title
         dialog = Gtk.MessageDialog(
             transient_for=self,
             flags=0,
             message_type=Gtk.MessageType.OTHER,  # Use OTHER to avoid default icons
             buttons=Gtk.ButtonsType.NONE,  # Use NONE to add custom buttons
-            text=self.translations.get(
-                "delete_script_message",
-                "Are you sure you want to delete '{script_name}'?",
-            ).format(script_name=script_name),
+            text=text,
         )
-
-        # Add custom buttons with translations
         dialog.add_button(self.translations.get("no", "No"), Gtk.ResponseType.NO)
         dialog.add_button(self.translations.get("yes", "Yes"), Gtk.ResponseType.YES)
-
-        empty_image = Gtk.Image()
-        dialog.set_image(empty_image)
-
-        message_area = dialog.get_message_area()
-        message_area.set_margin_top(20)
-
-        # Set secondary text with bold "This action cannot be undone"
-        dialog.format_secondary_text(
-            self.translations.get(
-                "delete_script_warning", "<b>This action cannot be undone.</b>"
-            )
-        )
-
-        # Enable markup for the secondary text to display bold formatting
-        secondary_label = dialog.get_message_area().get_children()[
-            1
-        ]  # Second label is secondary text
+        dialog.set_image(Gtk.Image())
+        dialog.get_message_area().set_margin_top(20)
+        dialog.format_secondary_text(secondary)
+        # Second label in the message area is the secondary text; markup
+        # renders the bold "cannot be undone" warning.
+        secondary_label = dialog.get_message_area().get_children()[1]
         secondary_label.set_use_markup(True)
-
         response = dialog.run()
         dialog.destroy()
+        return response == Gtk.ResponseType.YES
 
-        if response == Gtk.ResponseType.YES:
-            try:
-                os.remove(script_path)
-                self.script_cache.scripts[:] = filter(
-                    lambda s: s.get("path") != script_path, self.script_cache.scripts
-                )
-                self.script_cache._removable_cache.pop(script_path, None)
-                # Refresh the current view to remove the deleted script
-                self._refresh_current_local_scripts_view()
-            except Exception as e:
-                # Show error dialog
-                error_dialog = Gtk.MessageDialog(
-                    transient_for=self,
-                    flags=0,
-                    message_type=Gtk.MessageType.ERROR,
-                    buttons=Gtk.ButtonsType.OK,
-                    text=self.translations.get("delete_error_title", "Delete Error"),
-                )
-                error_dialog.format_secondary_text(
-                    self.translations.get(
-                        "delete_error_message", "Failed to delete script: {error}"
-                    ).format(error=str(e))
-                )
-                error_dialog.run()
-                error_dialog.destroy()
+    def _forget_local_script_from_cache(self, script_path) -> bool:
+        """Delete one local script file and drop it from the caches.
+
+        Returns False when the path is missing; propagates removal errors.
+        """
+        if not script_path or not os.path.exists(script_path):
+            return False
+        os.remove(script_path)
+        self.script_cache.scripts[:] = filter(
+            lambda s: s.get("path") != script_path, self.script_cache.scripts
+        )
+        self.script_cache._removable_cache.pop(script_path, None)
+        return True
+
+    def _show_local_scripts_error(self, title_key, title_default,
+                                  msg_key, msg_default, error):
+        """Standard error dialog for local-script operations."""
+        run_message_dialog(
+            self,
+            title=self.translations.get(title_key, title_default),
+            secondary_text=self.translations.get(msg_key, msg_default).format(
+                error=str(error)
+            ),
+            message_type=Gtk.MessageType.ERROR,
+            buttons_type=Gtk.ButtonsType.OK,
+        )
+
+    def _choose_export_directory(self):
+        """File chooser for the export destination; None when cancelled."""
+        dialog = Gtk.FileChooserDialog(
+            title=self.translations.get(
+                "select_export_directory", "Select Export Directory"
+            ),
+            parent=self,
+            action=Gtk.FileChooserAction.SELECT_FOLDER,
+        )
+        dialog.add_button(
+            self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL
+        )
+        dialog.add_button(
+            self.translations.get("export", "Export"), Gtk.ResponseType.OK
+        )
+        dialog.set_current_folder(os.path.expanduser("~"))
+        response = dialog.run()
+        export_dir = dialog.get_filename() if response == Gtk.ResponseType.OK else None
+        dialog.destroy()
+        return export_dir
+
+    def _delete_local_script(self, script_info):
+        """Delete a local script after confirmation."""
+        script_path = script_info.get("path", "")
+
+        if not script_path or not os.path.exists(script_path):
+            return
+
+        if not self._confirm_local_scripts_delete([script_info]):
+            return
+
+        try:
+            self._forget_local_script_from_cache(script_path)
+            # Refresh the current view to remove the deleted script
+            self._refresh_current_local_scripts_view()
+        except Exception as e:
+            self._show_local_scripts_error(
+                "delete_error_title", "Delete Error",
+                "delete_error_message", "Failed to delete script: {error}", e,
+            )
 
     def _delete_local_scripts(self, script_infos):
         """Delete multiple local scripts after confirmation."""
         if not script_infos:
             return
 
-        script_names = [info.get("name", "Unknown Script") for info in script_infos]
-        names_text = ", ".join(script_names[:3])  # Show first 3 names
-        if len(script_names) > 3:
-            names_text += f" ... (+{len(script_names) - 3} more)"
+        if not self._confirm_local_scripts_delete(script_infos):
+            return
 
-        dialog = Gtk.MessageDialog(
-            transient_for=self,
-            flags=0,
-            message_type=Gtk.MessageType.OTHER,
-            buttons=Gtk.ButtonsType.NONE,
-            text=self.translations.get(
-                "delete_scripts_message",
-                "Are you sure you want to delete {count} scripts?",
-            ).format(count=len(script_infos)),
-        )
+        deleted_count = 0
+        for script_info in script_infos:
+            script_path = script_info.get("path", "")
+            try:
+                if self._forget_local_script_from_cache(script_path):
+                    deleted_count += 1
+            except Exception as e:
+                print(f"Failed to delete {script_path}: {e}")
 
-        # Add custom buttons
-        dialog.add_button(self.translations.get("no", "No"), Gtk.ResponseType.NO)
-        dialog.add_button(self.translations.get("yes", "Yes"), Gtk.ResponseType.YES)
-
-        empty_image = Gtk.Image()
-        dialog.set_image(empty_image)
-
-        # Add padding
-        message_area = dialog.get_message_area()
-        message_area.set_margin_top(20)
-
-        # Set secondary text
-        dialog.format_secondary_text(
-            self.translations.get(
-                "delete_script_warning",
-                "<b>This action cannot be undone.</b>\n\nScripts: {names}",
-            ).format(names=names_text)
-        )
-
-        # Enable markup
-        secondary_label = dialog.get_message_area().get_children()[1]
-        secondary_label.set_use_markup(True)
-
-        response = dialog.run()
-        dialog.destroy()
-
-        if response == Gtk.ResponseType.YES:
-            deleted_count = 0
-            for script_info in script_infos:
-                script_path = script_info.get("path", "")
-                if script_path and os.path.exists(script_path):
-                    try:
-                        os.remove(script_path)
-                        self.script_cache.scripts[:] = filter(
-                            lambda s: s.get("path") != script_path,
-                            self.script_cache.scripts,
-                        )
-                        self.script_cache._removable_cache.pop(script_path, None)
-                        deleted_count += 1
-                    except Exception as e:
-                        print(f"Failed to delete {script_path}: {e}")
-
-            # Refresh the view
-            if deleted_count > 0:
-                self._refresh_current_local_scripts_view()
+        # Refresh the view
+        if deleted_count > 0:
+            self._refresh_current_local_scripts_view()
 
     def _edit_local_script(self, script_info):
         """Open a local script in the user's default text editor."""
@@ -367,132 +366,68 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
 
     def _export_local_script(self, script_info):
         """Export a local script to a user-chosen directory."""
-        script_name = script_info.get("name", "Unknown Script")
         script_path = script_info.get("path", "")
 
         if not script_path or not os.path.exists(script_path):
             return
 
-        # Create file chooser dialog
-        dialog = Gtk.FileChooserDialog(
-            title=self.translations.get(
-                "select_export_directory", "Select Export Directory"
-            ),
-            parent=self,
-            action=Gtk.FileChooserAction.SELECT_FOLDER,
-        )
+        export_dir = self._choose_export_directory()
+        if export_dir is None:
+            return
 
-        # Add buttons
-        dialog.add_button(
-            self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL
-        )
-        dialog.add_button(
-            self.translations.get("export", "Export"), Gtk.ResponseType.OK
-        )
+        # Copy the script to the selected directory
+        filename = os.path.basename(script_path)
+        dest_path = os.path.join(export_dir, filename)
 
-        # Set default directory to user's home
-        dialog.set_current_folder(os.path.expanduser("~"))
-
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK:
-            export_dir = dialog.get_filename()
-            dialog.destroy()
-
-            # Copy the script to the selected directory
-            filename = os.path.basename(script_path)
-            dest_path = os.path.join(export_dir, filename)
-
-            try:
-                import shutil
-
-                shutil.copy2(script_path, dest_path)
-
-            except Exception as e:
-                # Show error dialog
-                error_dialog = Gtk.MessageDialog(
-                    transient_for=self,
-                    flags=0,
-                    message_type=Gtk.MessageType.ERROR,
-                    buttons=Gtk.ButtonsType.OK,
-                    text=self.translations.get("export_error_title", "Export Error"),
-                )
-                error_dialog.format_secondary_text(
-                    self.translations.get(
-                        "export_error_message", "Failed to export script: {error}"
-                    ).format(error=str(e))
-                )
-                error_dialog.run()
-                error_dialog.destroy()
-        else:
-            dialog.destroy()
+        try:
+            shutil.copy2(script_path, dest_path)
+        except Exception as e:
+            self._show_local_scripts_error(
+                "export_error_title", "Export Error",
+                "export_error_message", "Failed to export script: {error}", e,
+            )
 
     def _export_local_scripts(self, script_infos):
         """Export multiple local scripts to a user-chosen directory."""
         if not script_infos:
             return
 
-        # Create file chooser dialog
-        dialog = Gtk.FileChooserDialog(
-            title=self.translations.get(
-                "select_export_directory", "Select Export Directory"
-            ),
-            parent=self,
-            action=Gtk.FileChooserAction.SELECT_FOLDER,
-        )
+        export_dir = self._choose_export_directory()
+        if export_dir is None:
+            return
 
-        # Add buttons
-        dialog.add_button(
-            self.translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL
-        )
-        dialog.add_button(
-            self.translations.get("export", "Export"), Gtk.ResponseType.OK
-        )
+        # Copy all scripts to the selected directory
+        success_count = 0
+        for script_info in script_infos:
+            script_path = script_info.get("path", "")
+            if script_path and os.path.exists(script_path):
+                filename = os.path.basename(script_path)
+                dest_path = os.path.join(export_dir, filename)
+                try:
+                    shutil.copy2(script_path, dest_path)
+                    success_count += 1
+                except Exception as e:
+                    print(f"Failed to export {filename}: {e}")
 
-        # Set default directory to user's home
-        dialog.set_current_folder(os.path.expanduser("~"))
-
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK:
-            export_dir = dialog.get_filename()
-            dialog.destroy()
-
-            # Copy all scripts to the selected directory
-            success_count = 0
-            for script_info in script_infos:
-                script_path = script_info.get("path", "")
-                if script_path and os.path.exists(script_path):
-                    filename = os.path.basename(script_path)
-                    dest_path = os.path.join(export_dir, filename)
-                    try:
-                        shutil.copy2(script_path, dest_path)
-                        success_count += 1
-                    except Exception as e:
-                        print(f"Failed to export {filename}: {e}")
-
-            # Show success message
-            if success_count > 0:
-                success_dialog = Gtk.MessageDialog(
-                    transient_for=self,
-                    flags=0,
-                    message_type=Gtk.MessageType.INFO,
-                    buttons=Gtk.ButtonsType.OK,
-                    text=self.translations.get("export_success", "Export Successful"),
-                )
-                empty_image = Gtk.Image()
-                success_dialog.set_image(empty_image)
-                success_dialog.format_secondary_text(
-                    self.translations.get(
-                        "export_success_message",
-                        "{count} scripts exported successfully.",
-                    ).format(count=success_count)
-                )
-                message_area = success_dialog.get_message_area()
-                message_area.set_margin_top(20)
-                success_dialog.run()
-                success_dialog.destroy()
-
-        else:
-            dialog.destroy()
+        # Show success message
+        if success_count > 0:
+            success_dialog = Gtk.MessageDialog(
+                transient_for=self,
+                flags=0,
+                message_type=Gtk.MessageType.INFO,
+                buttons=Gtk.ButtonsType.OK,
+                text=self.translations.get("export_success", "Export Successful"),
+            )
+            success_dialog.set_image(Gtk.Image())
+            success_dialog.format_secondary_text(
+                self.translations.get(
+                    "export_success_message",
+                    "{count} scripts exported successfully.",
+                ).format(count=success_count)
+            )
+            success_dialog.get_message_area().set_margin_top(20)
+            success_dialog.run()
+            success_dialog.destroy()
 
     def _configure_local_scripts_interaction(self, flowbox, category_info):
         is_local = self._is_local_scripts_category(category_info)

@@ -8,16 +8,12 @@ import select
 import shlex
 import subprocess
 import tempfile
-import json
 import time
-from datetime import datetime, timezone
-import urllib.error
-import urllib.parse
-import urllib.request
 import threading
 import uuid
 
 from . import homebrew_catalog, appimage_catalog, package_guard
+from . import aur_security
 from .antenna import antenna
 from .gtk_common import GLib, resolve_symbolic_icon
 from .library_loader import script_command, script_environment
@@ -56,9 +52,8 @@ class AppStreamRunner:
     )
 
     # Internal result used when the AUR pre-install inspection blocks a package.
-    _AUR_SECURITY_BLOCKED = 126
-    _AUR_SECURITY_UNAVAILABLE = 125
-    _AUR_SCAN_MAX_FILE = 1024 * 1024
+    _AUR_SECURITY_BLOCKED = aur_security.AUR_SECURITY_BLOCKED
+    _AUR_SECURITY_UNAVAILABLE = aur_security.AUR_SECURITY_UNAVAILABLE
 
     # Exit code for a job whose PTY transcript stopped making progress (e.g. a
     # hidden `sudo` password prompt the marker can never follow, or a completion
@@ -78,48 +73,6 @@ class AppStreamRunner:
     # by _STALL_IDLE_TIMEOUT, so this is only a backstop against a pathological
     # hold; it is generous enough never to fire during normal operation.
     _EXCLUSIVE_WAIT_TIMEOUT = 900.0
-
-    # High-confidence obfuscation indicators only. This is intentionally not a
-    # general "suspicious shell" scanner: ordinary PKGBUILDs legitimately use
-    # curl, sed, awk, eval-like configure machinery, etc.
-    _AUR_OBFUSCATION_RULES = (
-        (
-            "encoded data is decoded and executed by a shell",
-            re.compile(
-                r"""(?ix)
-                (?:base64\s+(?:-[A-Za-z]*d|--decode)|openssl\s+(?:enc\s+)?-[A-Za-z0-9_-]*d|
-                   xxd\s+-r|(?:gzip|bzip2|xz)\s+-d[c]?|python[23]?\s+-c\s+[^;\n]*(?:b64decode|fromhex))
-                [^;\n|]{0,240}\|\s*(?:ba|z|k|da)?sh\b
-                """
-            ),
-        ),
-        (
-            "decoded or generated content is passed to eval",
-            re.compile(
-                r"""(?ix)
-                \beval\b[^\n]{0,300}
-                (?:base64|b64decode|fromhex|xxd\s+-r|openssl\s+(?:enc\s+)?-|
-                   printf\s+['"][^'"]*\\x[0-9a-f]{2})
-                """
-            ),
-        ),
-        (
-            "eval executes command substitution",
-            re.compile(r"""(?ix)\beval\s+["']?\s*\$\(\s*[^)\n]{4,}\)"""),
-        ),
-        (
-            "a large encoded payload is embedded in the build script",
-            re.compile(r"""(?<![A-Za-z0-9+/])[A-Za-z0-9+/]{600,}={0,2}(?![A-Za-z0-9+/])"""),
-        ),
-        (
-            "a large hexadecimal payload is embedded in the build script",
-            re.compile(r"""(?i)(?<![0-9a-f])(?:[0-9a-f]{2}){300,}(?![0-9a-f])"""),
-        ),
-        (
-            "long hexadecimal escape sequence suggests hidden executable text",
-            re.compile(r"""(?i)(?:\\x[0-9a-f]{2}){40,}"""),
-        ),
-    )
 
     def __init__(self, parent):
         self.parent = parent
@@ -884,306 +837,17 @@ class AppStreamRunner:
                 pass
 
     @classmethod
-    def _scan_aur_text_for_obfuscation(cls, filename, text):
-        findings = []
-        for description, pattern in cls._AUR_OBFUSCATION_RULES:
-            match = pattern.search(text)
-            if match is None:
-                continue
-            line = text.count("\n", 0, match.start()) + 1
-            findings.append(f"{filename}:{line}: {description}")
-        return findings
-
-    @staticmethod
-    def _github_repo_from_url(value):
-        """Return (owner, repo) for a public github.com repository URL."""
-        text = str(value or "").strip()
-        text = re.sub(r"^(?:git\\+)+", "", text, flags=re.IGNORECASE)
-        match = re.match(
-            r"^(?:https?://|git://|ssh://git@|git@)?github\\.com(?::|/)"
-            r"([^/\\s]+)/([^/#?\\s]+)",
-            text,
-            flags=re.IGNORECASE,
-        )
-        if match is None:
-            return None
-        owner = match.group(1).strip()
-        repo = re.sub(r"\\.git$", "", match.group(2).strip(), flags=re.IGNORECASE)
-        if not owner or not repo:
-            return None
-        return owner.casefold(), repo.casefold()
-
-    @classmethod
-    def _github_repositories_from_pkgbuild(cls, text):
-        """Extract GitHub repository identities without evaluating the PKGBUILD."""
-        repos = set()
-        pattern = re.compile(
-            r"(?ix)(?:(?:git\\+)?https?://github\\.com/|"
-            r"(?:git\\+)?git://github\\.com/|"
-            r"(?:git\\+)?ssh://git@github\\.com/|git@github\\.com:)"
-            r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+"
-        )
-        for match in pattern.finditer(text):
-            repo = cls._github_repo_from_url(match.group(0))
-            if repo is not None:
-                repos.add(repo)
-        return repos
-
-    @staticmethod
-    def _github_api_repository(owner, repo):
-        """Fetch public GitHub repository metadata without credentials."""
-        owner = urllib.parse.quote(owner, safe="")
-        repo = urllib.parse.quote(repo, safe="")
-        request = urllib.request.Request(
-            f"https://api.github.com/repos/{owner}/{repo}",
-            headers={
-                "Accept": "application/vnd.github+json",
-                "X-GitHub-Api-Version": "2022-11-28",
-                "User-Agent": "LinuxToys-AUR-security-check",
-            },
-        )
-        try:
-            with urllib.request.urlopen(request, timeout=10) as response:
-                payload = json.load(response)
-        except (urllib.error.HTTPError, urllib.error.URLError,
-                TimeoutError, OSError, ValueError):
-            # Repository reputation is supplemental. Failure to obtain GitHub
-            # metadata must not override the local AUR source inspection.
-            return None
-        return payload if isinstance(payload, dict) else None
-
-    @classmethod
-    def _check_github_source_provenance(cls, pkgbuild_text):
-        """Return high-confidence GitHub source/upstream inconsistencies.
-
-        Fork status alone is harmless. A fork is blocked only when its own
-        parent/source repository is also named by the PKGBUILD, showing that
-        the package declares one upstream while fetching executable source
-        from another repository in that same GitHub fork network.
-        """
-        repositories = cls._github_repositories_from_pkgbuild(pkgbuild_text)
-        if not repositories:
-            return []
-
-        findings = []
-        metadata = {}
-        for identity in sorted(repositories):
-            data = cls._github_api_repository(*identity)
-            if data is None:
-                continue
-            metadata[identity] = data
-            if bool(data.get("disabled")):
-                findings.append(
-                    f"GitHub repository {identity[0]}/{identity[1]} is disabled"
-                )
-
-            # Popularity/activity metadata is deliberately weak evidence. Never
-            # block on one or two of these characteristics: small, new and niche
-            # upstreams are perfectly legitimate. Require at least three distinct
-            # signals before treating the repository as suspicious.
-            weak_signals = []
-
-            created_at = str(data.get("created_at") or "").strip()
-            if created_at:
-                try:
-                    created = datetime.fromisoformat(created_at.replace("Z", "+00:00"))
-                    age_days = max(
-                        0,
-                        (datetime.now(timezone.utc) - created.astimezone(timezone.utc)).days,
-                    )
-                    if age_days < 30:
-                        weak_signals.append(f"repository is only {age_days} days old")
-                except (TypeError, ValueError):
-                    pass
-
-            try:
-                if int(data.get("stargazers_count") or 0) == 0:
-                    weak_signals.append("repository has no stars")
-            except (TypeError, ValueError):
-                pass
-
-            try:
-                if int(data.get("forks_count") or 0) == 0:
-                    weak_signals.append("repository has no forks")
-            except (TypeError, ValueError):
-                pass
-
-            # subscribers_count is GitHub's watcher count. watchers_count mirrors
-            # stargazers_count and must not be counted as a separate signal.
-            try:
-                if int(data.get("subscribers_count") or 0) == 0:
-                    weak_signals.append("repository has no watchers")
-            except (TypeError, ValueError):
-                pass
-
-            try:
-                # GitHub reports repository size in KiB. A tiny repository is only
-                # corroborating evidence and is never sufficient by itself.
-                if int(data.get("size") or 0) < 64:
-                    weak_signals.append("repository is unusually small")
-            except (TypeError, ValueError):
-                pass
-
-            if len(weak_signals) >= 3:
-                findings.append(
-                    f"GitHub repository {identity[0]}/{identity[1]} has multiple "
-                    f"low-reputation signals: " + "; ".join(weak_signals)
-                )
-
-        for (owner, repo), data in metadata.items():
-            if not bool(data.get("fork")):
-                continue
-            ancestors = set()
-            for key in ("parent", "source"):
-                ancestor = data.get(key)
-                if not isinstance(ancestor, dict):
-                    continue
-                full_name = str(ancestor.get("full_name") or "").strip()
-                if "/" not in full_name:
-                    continue
-                ancestor_owner, ancestor_repo = full_name.split("/", 1)
-                ancestors.add((ancestor_owner.casefold(), ancestor_repo.casefold()))
-
-            matched = ancestors & repositories
-            if matched:
-                upstream = ", ".join(
-                    f"{a}/{r}" for a, r in sorted(matched)
-                )
-                findings.append(
-                    f"GitHub source {owner}/{repo} is a fork while the PKGBUILD "
-                    f"also identifies its upstream repository as {upstream}"
-                )
-        return findings
-
-    @classmethod
     def _verify_aur_package_sources(cls, package):
         """Fetch and statically inspect AUR-controlled install sources.
 
         Nothing from the repository is sourced or executed. We inspect PKGBUILD
         plus every regular *.install file shipped in the AUR Git repository.
+        Delegates to the shared scanner; the GUI adds the GitHub provenance
+        cross-check on top of the local inspection.
         """
-        git = shutil.which("git")
-        if not git:
-            return (
-                cls._AUR_SECURITY_UNAVAILABLE,
-                "Git is required to verify the AUR package sources.",
-            )
-
-        safe_package = str(package or "").strip()
-        if not safe_package or not re.fullmatch(r"[A-Za-z0-9@._+:-]+", safe_package):
-            return (
-                cls._AUR_SECURITY_UNAVAILABLE,
-                "The AUR package name could not be safely verified.",
-            )
-
-        temp_root = tempfile.mkdtemp(prefix="linuxtoys-aur-verify-")
-        repo_dir = os.path.join(temp_root, "repo")
-        try:
-            repository = f"https://aur.archlinux.org/{safe_package}.git"
-            try:
-                result = subprocess.run(
-                    [
-                        git,
-                        "-c", "protocol.file.allow=never",
-                        "clone",
-                        "--quiet",
-                        "--depth", "1",
-                        "--no-tags",
-                        "--config", "core.hooksPath=/dev/null",
-                        repository,
-                        repo_dir,
-                    ],
-                    stdin=subprocess.DEVNULL,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                    timeout=45,
-                    check=False,
-                    env={
-                        **os.environ,
-                        "GIT_TERMINAL_PROMPT": "0",
-                        "GIT_CONFIG_NOSYSTEM": "1",
-                    },
-                )
-            except (OSError, subprocess.TimeoutExpired) as exc:
-                return (
-                    cls._AUR_SECURITY_UNAVAILABLE,
-                    f"Could not fetch the AUR repository for verification: {exc}",
-                )
-
-            if result.returncode != 0:
-                detail = (result.stderr or result.stdout or "").strip()
-                if len(detail) > 1000:
-                    detail = detail[-1000:]
-                return (
-                    cls._AUR_SECURITY_UNAVAILABLE,
-                    "Could not fetch the AUR repository for verification."
-                    + (f"\n\n{detail}" if detail else ""),
-                )
-
-            candidates = []
-            pkgbuild = os.path.join(repo_dir, "PKGBUILD")
-            if os.path.isfile(pkgbuild) and not os.path.islink(pkgbuild):
-                candidates.append(pkgbuild)
-
-            # .install files are package-manager hooks executed around package
-            # installation/removal. Scan all regular ones tracked in the AUR repo,
-            # which also covers PKGBUILDs that choose the hook indirectly.
-            for root, dirs, files in os.walk(repo_dir, followlinks=False):
-                dirs[:] = [d for d in dirs if d != ".git"]
-                for filename in files:
-                    if not filename.endswith(".install"):
-                        continue
-                    path = os.path.join(root, filename)
-                    if os.path.isfile(path) and not os.path.islink(path):
-                        candidates.append(path)
-
-            if not candidates or pkgbuild not in candidates:
-                return (
-                    cls._AUR_SECURITY_UNAVAILABLE,
-                    "The AUR repository did not contain a readable PKGBUILD.",
-                )
-
-            findings = []
-            pkgbuild_source = None
-            for path in candidates:
-                try:
-                    size = os.path.getsize(path)
-                    if size > cls._AUR_SCAN_MAX_FILE:
-                        relative = os.path.relpath(path, repo_dir)
-                        findings.append(
-                            f"{relative}: file is too large to safely inspect "
-                            f"({size} bytes)"
-                        )
-                        continue
-                    with open(path, "r", encoding="utf-8", errors="replace") as handle:
-                        source = handle.read(cls._AUR_SCAN_MAX_FILE + 1)
-                except OSError as exc:
-                    return (
-                        cls._AUR_SECURITY_UNAVAILABLE,
-                        f"Could not read an AUR source file for verification: {exc}",
-                    )
-
-                relative = os.path.relpath(path, repo_dir)
-                if path == pkgbuild:
-                    pkgbuild_source = source
-                findings.extend(
-                    cls._scan_aur_text_for_obfuscation(relative, source)
-                )
-
-
-            if pkgbuild_source is not None:
-                findings.extend(
-                    cls._check_github_source_provenance(pkgbuild_source)
-                )
-            if findings:
-                return (
-                    cls._AUR_SECURITY_BLOCKED,
-                    "\n".join(findings[:20]),
-                )
-            return 0, ""
-        finally:
-            shutil.rmtree(temp_root, ignore_errors=True)
+        return aur_security.check_aur_package_security(
+            package, check_provenance=True
+        )
 
     def _run_aur_removal_job(self, script_info):
         """Run an AUR registry revert and retain terminal output when it fails."""

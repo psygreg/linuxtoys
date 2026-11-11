@@ -12,10 +12,9 @@ import subprocess
 import shlex
 
 from .compat import get_linuxtoys_cache_dir
-from .registry_utils import normalize_registry_content
+from .registry_utils import normalize_registry_content, load_registry_transactions
 
 
-_LOAD_ENTRIES_CACHE = {"key": None, "entries": []}
 _EXECUTED_NAMES_CACHE = {"key": None, "executed": frozenset()}
 
 
@@ -115,60 +114,11 @@ def _load_last_execution(script_name):
 
 
 def _load_registry_entries():
-    """Load registry transactions in chronological order (mtime-memoized)."""
-    global _LOAD_ENTRIES_CACHE
-    registry_file = os.path.join(get_linuxtoys_cache_dir(), "registry")
+    """Load registry transactions in chronological order (mtime-memoized).
 
-    if not os.path.exists(registry_file):
-        _LOAD_ENTRIES_CACHE = {"key": None, "entries": []}
-        return []
-
-    try:
-        stat = os.stat(registry_file)
-        cache_key = (stat.st_mtime_ns, stat.st_size)
-    except OSError:
-        return []
-
-    if _LOAD_ENTRIES_CACHE["key"] == cache_key:
-        return _LOAD_ENTRIES_CACHE["entries"]
-
-    try:
-        with open(registry_file, "r") as f:
-            content = f.read()
-    except Exception:
-        return []
-
-    entries = []
-
-    for raw_entry in normalize_registry_content(content).split("---\n"):
-        raw_entry = raw_entry.strip()
-        if not raw_entry:
-            continue
-
-        lines = raw_entry.splitlines()
-        if not lines or "Script: " not in lines[0]:
-            continue
-
-        script_name = lines[0].split("Script: ", 1)[1].strip()
-        operations = []
-
-        for line in lines[1:]:
-            line = line.strip()
-            if line.startswith("- "):
-                op_line = line[2:].strip()
-                if op_line and op_line not in (
-                    "Changes:",
-                    "Changes: (none)",
-                ):
-                    operations.append(op_line)
-
-        entries.append({
-            "name": script_name,
-            "operations": operations,
-        })
-
-    _LOAD_ENTRIES_CACHE = {"key": cache_key, "entries": entries}
-    return entries
+    Delegates to the canonical ordered view in ``registry_utils``.
+    """
+    return load_registry_transactions()
 
 
 def _find_registry_execution(entries, script_name, before_index=None):

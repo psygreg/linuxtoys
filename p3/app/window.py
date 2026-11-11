@@ -3561,10 +3561,9 @@ class AppWindow(
             try:
                 # The refresh publishes catalog.bin atomically. Do not materialize
                 # the AUR here: category browsing is paged directly from Rust.
-                aur_cache.refresh_if_stale()
                 # Prewarm the lazy catalog off GTK too: loading/filtering the
                 # binary and querying pacman's repositories can be expensive.
-                aur_cache.browse_entries()
+                aur_cache.refresh_catalog()
             except Exception as error:
                 logger.warning("AUR catalog refresh failed: %s", error)
                 GLib.idle_add(finish_loading, str(error))

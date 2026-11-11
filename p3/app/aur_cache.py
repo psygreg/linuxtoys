@@ -116,6 +116,16 @@ def refresh_if_stale():
     return False
 
 
+def refresh_catalog():
+    """Refresh the AUR metadata if stale and return the browse entries.
+
+    The single refresh sequence shared by the GUI and TUI category flows.
+    BLOCKING: network, pacman and the catalog load — run it in a worker.
+    """
+    refresh_if_stale()
+    return browse_entries()
+
+
 def _catalog():
     global _CATALOG, _CATALOG_MTIME
     if not enabled() or not CATALOG_PATH.is_file():

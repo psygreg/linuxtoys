@@ -6,12 +6,20 @@ import datetime
 
 if __package__:
     from .revert_helper import build_auto_revert_script_entry
-    from .registry_utils import normalize_registry_content, parse_registry_file
+    from .registry_utils import (
+        normalize_registry_content,
+        parse_registry_file,
+        remove_script_entries,
+    )
     from .compat import get_linuxtoys_cache_dir
 else:
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-    from registry_utils import normalize_registry_content, parse_registry_file
+    from registry_utils import (
+        normalize_registry_content,
+        parse_registry_file,
+        remove_script_entries,
+    )
     from compat import get_linuxtoys_cache_dir
     build_auto_revert_script_entry = None
 
@@ -47,57 +55,12 @@ class ExecutionRegistry:
         """
         Remove all existing entries for a script from the registry file.
         This ensures each script only has the most recent run in the registry.
-        
-        Returns True if entries were removed or file doesn't exist, False on error.
+
+        Delegates to the canonical remover in ``registry_utils``: True
+        unless a read/write error occurred.
         """
-        
-        registry_file = os.path.join(get_linuxtoys_cache_dir(), "registry")
-        
-        if not os.path.exists(registry_file):
-            return True
-        
-        try:
-            with open(registry_file, "r") as f:
-                content = f.read()
-        except Exception:
-            return False
-        
-        # Use regex to find all entries and filter by script name
-        entry_pattern = r'\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[^\]]*\] Script: ([^\n]+)'
-        matches = list(re.finditer(entry_pattern, content))
-        
-        if not matches:
-            return True  # No entries found, nothing to filter
-        
-        # Build list of ranges to keep (entries NOT matching this script)
-        ranges_to_keep = []
-        for i, match in enumerate(matches):
-            script_name_in_entry = match.group(1).strip()
-            if script_name_in_entry == script_name:
-                # Skip this entry
-                continue
-            
-            entry_start = match.start()
-            entry_end = matches[i + 1].start() if i + 1 < len(matches) else len(content)
-            ranges_to_keep.append((entry_start, entry_end))
-        
-        # Reconstruct file from kept ranges
-        try:
-            if not ranges_to_keep:
-                # All entries were for this script, clear the file
-                new_content = ""
-            else:
-                # Normalizing here also heals legacy glued (missing-newline)
-                # entries on the next registry write.
-                new_content = normalize_registry_content(
-                    "".join(content[start:end] for start, end in ranges_to_keep)
-                )
-            
-            with open(registry_file, "w") as f:
-                f.write(new_content)
-            return True
-        except Exception:
-            return False
+        _, ok = remove_script_entries(script_name)
+        return ok
  
     @staticmethod
     def _save_to_registry(script_name, transmap_path):

@@ -206,6 +206,86 @@ def is_current_version(version: str | None = None) -> tuple[bool, str | None]:
     return helper._compare_versions(current, latest) != 1, latest
 
 
+INSTALLER_URL = "https://linux.toys/install.sh"
+
+
+def is_steamos() -> bool:
+    """Whether this host is SteamOS (its installer takes the AppImage path)."""
+    try:
+        with open("/etc/os-release", "r", encoding="utf-8") as os_release:
+            for line in os_release:
+                if line.startswith("ID="):
+                    return line.split("=", 1)[1].strip().strip('"\'') == "steamos"
+    except OSError:
+        pass
+    return False
+
+
+def build_update_script(mode, library_path=None, marker=None):
+    """Build the shell text that installs the latest LinuxToys release.
+
+    Single source shared by the GUI update dialog, the background updater
+    and the TUI. ``mode`` selects the run context:
+
+    - ``"terminal"``: interactive VTE run — on non-SteamOS hosts the core
+      library is sourced and privileges are pre-authenticated with
+      ``sudo_rq`` before the installer runs; SteamOS skips both because
+      install.sh uses the user-level AppImage/Gear Lever path there.
+      ``marker`` optionally appends a completion-marker touch.
+    - ``"background"``: headless run — the same library pre-auth via
+      ``askpass``, but the installer is downloaded and sourced in the same
+      shell so sudo's cached authorization stays available without a
+      controlling TTY (a piped ``bash`` would lose it). Requires
+      ``library_path``.
+    - ``"tui"``: minimal pipe; the TUI terminal owns user interaction.
+    """
+    curl_pipe = f"curl -fsSL {INSTALLER_URL} | bash"
+
+    if mode == "tui":
+        return f"#!/usr/bin/env bash\n{curl_pipe}\n"
+
+    if is_steamos():
+        # install.sh takes the user-level AppImage/Gear Lever update path on
+        # SteamOS: no library pre-auth, no native package operations.
+        script = f"#!/bin/bash\n{curl_pipe}"
+        if mode == "terminal" and marker:
+            script += f" && touch {marker!r}"
+        return script + "\n"
+
+    if mode == "terminal":
+        script = (
+            "#!/bin/bash\n"
+            'source "$SCRIPT_DIR/libs/linuxtoys.bash"\n'
+            "sudo_rq\n"
+            "\n"
+            f"{curl_pipe}"
+        )
+        if marker:
+            script += f" && touch {marker!r}"
+        return script + "\n"
+
+    if mode == "background":
+        if not library_path:
+            raise ValueError("background update requires library_path")
+        library_path = shlex.quote(library_path)
+        return (
+            "#!/usr/bin/env bash\n"
+            f"source {library_path}\n"
+            "askpass\n"
+            "\n"
+            # Keep install.sh in the same shell that ran askpass. In the
+            # background updater there is no controlling TTY, so spawning a
+            # separate `bash` via a pipe can make sudo's cached authorization
+            # unavailable to the installer.
+            "_lt_installer=$(mktemp \"${TMPDIR:-/tmp}/linuxtoys-installer.XXXXXX\") || exit 1\n"
+            "trap 'rm -f -- \"$_lt_installer\"' EXIT\n"
+            f"curl -fsSL {INSTALLER_URL} -o \"$_lt_installer\" || exit 1\n"
+            "source \"$_lt_installer\"\n"
+        )
+
+    raise ValueError(f"unknown update script mode: {mode!r}")
+
+
 def run_background_update():
     """Install the latest LinuxToys release without opening the VTE viewer.
 
@@ -215,26 +295,11 @@ def run_background_update():
     (success, error_message).
     """
     env = os.environ.copy()
-    script_dir = os.environ.get("SCRIPT_DIR")
     env["LINUXTOYS_NONINTERACTIVE"] = "1"
 
-    is_steamos = False
-    try:
-        with open("/etc/os-release", "r", encoding="utf-8") as os_release:
-            for line in os_release:
-                if line.startswith("ID="):
-                    os_id = line.split("=", 1)[1].strip().strip('\"\'')
-                    is_steamos = os_id == "steamos"
-                    break
-    except OSError:
-        pass
-
-    if is_steamos:
-        script = (
-            "#!/usr/bin/env bash\n"
-            "curl -fsSL https://linux.toys/install.sh | bash\n"
-        )
-    else:
+    library_path = None
+    if not is_steamos():
+        script_dir = os.environ.get("SCRIPT_DIR")
         if not script_dir:
             return False, "SCRIPT_DIR environment variable is not set."
 
@@ -242,20 +307,7 @@ def run_background_update():
         if not os.path.isfile(library_path):
             return False, f"LinuxToys shell library was not found: {library_path}"
 
-        script = (
-            "#!/usr/bin/env bash\n"
-            f"source {shlex.quote(library_path)}\n"
-            "askpass\n"
-            "\n"
-            # Keep install.sh in the same shell that ran askpass. In the\n"
-            # background updater there is no controlling TTY, so spawning a\n"
-            # separate `bash` via a pipe can make sudo's cached authorization\n"
-            # unavailable to the installer.\n"
-            "_lt_installer=$(mktemp \"${TMPDIR:-/tmp}/linuxtoys-installer.XXXXXX\") || exit 1\n"
-            "trap 'rm -f -- \"$_lt_installer\"' EXIT\n"
-            "curl -fsSL https://linux.toys/install.sh -o \"$_lt_installer\" || exit 1\n"
-            "source \"$_lt_installer\"\n"
-        )
+    script = build_update_script("background", library_path=library_path)
 
     script_path = None
     try:

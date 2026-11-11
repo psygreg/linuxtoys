@@ -6,6 +6,7 @@ import webbrowser
 from ..gtk_common import Gdk, GLib, Gtk, Pango
 
 from . import __version__
+from .update_helper import build_update_script
 from ..lang_utils import _
 
 
@@ -146,19 +147,11 @@ class UpdateDialog(Gtk.Dialog):
                 pass
 
             with open("/tmp/.self_update_lt", "w") as f:
-                script_content = f"""#!/bin/bash
-if [ -r /etc/os-release ]; then
-    . /etc/os-release
-fi
-
-if [ "${{ID:-}}" != "steamos" ]; then
-    source "$SCRIPT_DIR/libs/linuxtoys.bash"
-    sudo_rq
-fi
-
-curl -fsSL https://linux.toys/install.sh | bash && touch {marker!r}
-"""
-                f.write(script_content)
+                f.write(
+                    build_update_script(
+                        "terminal", marker="/tmp/.self_update_lt_complete"
+                    )
+                )
 
             os.chmod("/tmp/.self_update_lt", 0o700)
             GLib.timeout_add(500, self._restart_after_update)

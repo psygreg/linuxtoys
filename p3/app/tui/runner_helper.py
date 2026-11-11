@@ -30,7 +30,7 @@ from app.registry_utils import parse_registry_file
 from app.repo_parser import materialize_repo_script
 from app.revert_helper import build_uninstall_script_entry
 from app.updater import version_gate
-from app.updater.update_helper import UpdateHelper
+from app.updater.update_helper import UpdateHelper, build_update_script
 
 from .appstream_executor import (
     AUR_SECURITY_BLOCKED,
@@ -326,27 +326,90 @@ class ScriptRunnerMixin:
             group="homebrew-items",
         )
 
-    async def _load_homebrew_items_async(self) -> None:
-        unavailable = translations.get(
-            "homebrew_catalog_unavailable",
-            "Homebrew metadata is unavailable. Try again later.",
-        )
+    async def _catalog_load_async(
+        self,
+        *,
+        view_active,
+        fetch,
+        unavailable_text,
+        empty_text,
+        nav_path=None,
+        include_error_detail=False,
+    ) -> None:
+        """Shared loader for the Specials catalogs (Homebrew/AppImage/AUR).
+
+        Fetches in a thread, revalidates the view, then renders the items or
+        shows the fallback message. ``nav_path`` additionally rejects a late
+        result when the user navigated to another path during the load;
+        ``include_error_detail`` appends the exception text (AUR surfaces
+        catalog errors verbatim).
+        """
         try:
-            items = await asyncio.to_thread(get_homebrew_items)
-        except Exception:  # noqa: BLE001
-            if self._homebrew_view_active():
-                await self._show_items_message(unavailable)
-            return
-        if not self._homebrew_view_active():
-            return
-        if not items:
-            await self._show_items_message(
-                translations.get(
-                    "homebrew_no_items", "No Homebrew packages found."
+            items = await asyncio.to_thread(fetch)
+        except Exception as exc:  # noqa: BLE001
+            if view_active():
+                message = (
+                    f"{unavailable_text}\n\n{exc}"
+                    if include_error_detail
+                    else unavailable_text
                 )
-            )
+                await self._show_items_message(message)
+            return
+        if not view_active():
+            return
+        if nav_path is not None and (
+            not self._nav_stack or self._nav_stack[-1][0] != nav_path
+        ):
+            return  # navegou durante a carga
+        if not items:
+            await self._show_items_message(empty_text)
             return
         await self._render_items(items, lazy=True)
+
+    async def _catalog_search_async(
+        self,
+        *,
+        query: str,
+        view_active,
+        search,
+        load,
+        unavailable_text,
+        empty_text,
+    ) -> None:
+        """Shared search for the Specials catalogs (Homebrew/AppImage).
+
+        An empty query falls back to the full loader; a late result is
+        dropped when the view or the query changed while the thread ran.
+        """
+        if not query:
+            await load()
+            return
+        try:
+            results = await asyncio.to_thread(search, query)
+        except Exception:  # noqa: BLE001
+            if view_active():
+                await self._show_items_message(unavailable_text)
+            return
+        current = self.query_one("#search-input", Input).value.strip()
+        if not view_active() or current != query:
+            return
+        if not results:
+            await self._show_items_message(empty_text)
+            return
+        await self._render_items(results, lazy=True)
+
+    async def _load_homebrew_items_async(self) -> None:
+        await self._catalog_load_async(
+            view_active=self._homebrew_view_active,
+            fetch=get_homebrew_items,
+            unavailable_text=translations.get(
+                "homebrew_catalog_unavailable",
+                "Homebrew metadata is unavailable. Try again later.",
+            ),
+            empty_text=translations.get(
+                "homebrew_no_items", "No Homebrew packages found."
+            ),
+        )
 
     def _request_homebrew_refresh(self) -> None:
         if self._homebrew_refresh_running or not homebrew_catalog.enabled():
@@ -1176,34 +1239,19 @@ class ScriptRunnerMixin:
         )
 
     async def _homebrew_search_async(self, query: str) -> None:
-        if not query:
-            await self._load_homebrew_items_async()
-            return
-
-        try:
-            results = await asyncio.to_thread(search_homebrew_items, query)
-        except Exception:  # noqa: BLE001
-            if self._homebrew_view_active():
-                await self._show_items_message(
-                    translations.get(
-                        "homebrew_catalog_unavailable",
-                        "Homebrew metadata is unavailable. Try again later.",
-                    )
-                )
-            return
-
-        current = self.query_one("#search-input", Input).value.strip()
-        if not self._homebrew_view_active() or current != query:
-            return
-
-        if not results:
-            await self._show_items_message(
-                translations.get(
-                    "homebrew_no_results", "No Homebrew packages found."
-                )
-            )
-            return
-        await self._render_items(results, lazy=True)
+        await self._catalog_search_async(
+            query=query,
+            view_active=self._homebrew_view_active,
+            search=search_homebrew_items,
+            load=self._load_homebrew_items_async,
+            unavailable_text=translations.get(
+                "homebrew_catalog_unavailable",
+                "Homebrew metadata is unavailable. Try again later.",
+            ),
+            empty_text=translations.get(
+                "homebrew_no_results", "No Homebrew packages found."
+            ),
+        )
 
     def _appimage_view_active(self) -> bool:
         return bool(self._nav_stack) and is_appimage_path(
@@ -1229,25 +1277,16 @@ class ScriptRunnerMixin:
         if not self._appimage_view_active():
             return
         path = self._nav_stack[-1][0]
-        try:
-            items = await asyncio.to_thread(get_appimage_items, path)
-        except Exception:  # noqa: BLE001
-            if self._appimage_view_active():
-                await self._show_items_message(
-                    translations.get(
-                        "appimage_unavailable",
-                        "AppImage catalog is unavailable.",
-                    )
-                )
-            return
-        if not self._appimage_view_active() or self._nav_stack[-1][0] != path:
-            return  # navegou durante a carga
-        if not items:
-            await self._show_items_message(
-                translations.get("appimage_no_items", "No AppImages found.")
-            )
-            return
-        await self._render_items(items, lazy=True)
+        await self._catalog_load_async(
+            view_active=self._appimage_view_active,
+            fetch=partial(get_appimage_items, path),
+            unavailable_text=translations.get(
+                "appimage_unavailable",
+                "AppImage catalog is unavailable.",
+            ),
+            empty_text=translations.get("appimage_no_items", "No AppImages found."),
+            nav_path=path,
+        )
 
     def _schedule_appimage_search(self, query: str) -> None:
         if self._appimage_search_timer:
@@ -1266,23 +1305,19 @@ class ScriptRunnerMixin:
         )
 
     async def _appimage_search_async(self, query: str) -> None:
-        if not query:
-            await self._load_appimage_items_async()
-            return
-        try:
-            results = await asyncio.to_thread(search_appimage_items, query)
-        except Exception:  # noqa: BLE001
-            logger.exception("AppImage search failed")
-            return
-        current = self.query_one("#search-input", Input).value.strip()
-        if not self._appimage_view_active() or current != query:
-            return
-        if not results:
-            await self._show_items_message(
-                translations.get("appimage_no_results", "No AppImages found.")
-            )
-            return
-        await self._render_items(results, lazy=True)
+        await self._catalog_search_async(
+            query=query,
+            view_active=self._appimage_view_active,
+            search=search_appimage_items,
+            load=self._load_appimage_items_async,
+            unavailable_text=translations.get(
+                "appimage_unavailable",
+                "AppImage catalog is unavailable.",
+            ),
+            empty_text=translations.get(
+                "appimage_no_results", "No AppImages found."
+            ),
+        )
 
     async def _activate_aur_category(self, button: InfoButton) -> None:
         """Pede consentimento (uma vez) e abre o AUR como uma categoria."""
@@ -1324,39 +1359,32 @@ class ScriptRunnerMixin:
 
     @staticmethod
     def _fetch_aur_items():
-        """Refresh the AUR metadata if stale and return the entries.
+        """Return the entries to browse via the shared AUR refresh sequence.
 
         BLOCKING: network, pacman and the catalog, so run it in a
         thread.
-
-        Returns:
-            The entries to browse.
         """
-        aur_cache.refresh_if_stale()
-        return aur_cache.browse_entries()
+        return aur_cache.refresh_catalog()
 
     async def _load_aur_items(self) -> None:
         """Load the AUR entries and render them.
 
-        Reads in a thread. An error shows its detail as a message, and an
-        empty result shows the "unavailable" message. A late result is
-        ignored if the user already left the category, as in the GUI.
+        Reads in a thread via the shared catalog loader. An error shows its
+        detail as a message, and an empty result shows the "unavailable"
+        message. A late result is ignored if the user already left the
+        category, as in the GUI.
         """
-        unavailable = translations.get(
-            "aur_refresh_failed_title", "AUR metadata unavailable"
+        await self._catalog_load_async(
+            view_active=self._aur_view_active,
+            fetch=self._fetch_aur_items,
+            unavailable_text=translations.get(
+                "aur_refresh_failed_title", "AUR metadata unavailable"
+            ),
+            empty_text=translations.get(
+                "aur_refresh_failed_title", "AUR metadata unavailable"
+            ),
+            include_error_detail=True,
         )
-        try:
-            items = await asyncio.to_thread(self._fetch_aur_items)
-        except Exception as exc:  # noqa: BLE001 - erros do catálogo em Rust
-            if self._aur_view_active():
-                await self._show_items_message(f"{unavailable}\n\n{exc}")
-            return
-        if not self._aur_view_active():
-            return
-        if not items:
-            await self._show_items_message(unavailable)
-            return
-        await self._render_items(items, lazy=True)
 
 
 class AppstreamRunnerMixin:
@@ -2554,9 +2582,7 @@ class UpdateRunnerMixin:
         self._running_is_update = True
         self._show_terminal()
         terminal = self.query_one("#terminal", Terminal)
-        terminal.run_script(
-            ["bash", "-c", "curl -fsSL https://linux.toys/install.sh | bash"]
-        )
+        terminal.run_script(["bash", "-c", build_update_script("tui")])
 
     def _finish_update_run(self, exit_code: int | None) -> None:
         """Handle the end of the update script."""

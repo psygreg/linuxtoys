@@ -17,10 +17,11 @@ from .manifest_helper import (
 )
 from .library_loader import script_command, script_preamble
 from .dev_mode import is_dev_mode_enabled
-from .compat import get_system_compat_keys, get_linuxtoys_cache_dir, TRANSMAP_PATH
+from .compat import get_system_compat_keys, TRANSMAP_PATH
 from . import installed_packages
 from . import package_guard
 from .revert_helper import build_auto_revert_script_entry, build_uninstall_script_entry
+from .term_registry import ExecutionRegistry
 from .repo_parser import materialize_repo_script
 
 CLI_OPTIONS = frozenset({
@@ -77,79 +78,21 @@ def resolve_script_dir():
     sys.exit(1)
 
 def _cleanup_tmp_noram_dirs(transmap_path):
+    """Clean up tmpdir_noram directories recorded in the transmap.
+
+    Shared implementation lives in ``term_registry.ExecutionRegistry``.
     """
-    Clean up temporary directories created by prep_tmp_noram.
-    Reads transmap file for tmpdir_noram entries and removes those directories.
-    """
-    if not os.path.exists(transmap_path):
-        return
-    
-    try:
-        with open(transmap_path, 'r') as f:
-            content = f.read()
-        
-        # Find all tmpdir_noram entries
-        pattern = r'tmpdir_noram\s+(\S+)'
-        matches = re.findall(pattern, content)
-        
-        for tmpdir_path in matches:
-            if os.path.exists(tmpdir_path):
-                try:
-                    shutil.rmtree(tmpdir_path)
-                except Exception:
-                    pass  # Silently ignore cleanup errors
-    except Exception:
-        pass  # Silently ignore transmap read errors
+    ExecutionRegistry._cleanup_tmp_noram_dirs(transmap_path)
+
 
 def _save_script_to_registry(script_name, transmap_path):
-    """Save script execution record to registry."""
-    try:
-        import datetime
-        registry_dir = get_linuxtoys_cache_dir()
-        registry_file = os.path.join(registry_dir, "registry")
-        
-        # Create directory if it doesn't exist
-        os.makedirs(registry_dir, exist_ok=True)
-        
-        # Read transmap contents
-        transmap_contents = ""
-        if os.path.exists(transmap_path):
-            try:
-                with open(transmap_path, "r") as f:
-                    transmap_contents = f.read().strip()
-            except (IOError, OSError):
-                pass
-        
-        # Format entry with timestamp
-        timestamp = datetime.datetime.now().isoformat()
-        entry = f"[{timestamp}] Script: {script_name}\n"
-        if transmap_contents:
-            entry += f"Changes:\n"
-            for line in transmap_contents.split("\n"):
-                if line.strip():
-                    entry += f"  - {line}\n"
-        else:
-            entry += "Changes: (none)\n"
-        entry += "---\n\n"
-        
-        # A legacy writer could leave the file without a trailing newline;
-        # appending after that would glue this entry's header onto the
-        # previous entry's last line and hide it from line-based parsing.
-        try:
-            if os.path.exists(registry_file) and os.path.getsize(registry_file) > 0:
-                with open(registry_file, "rb") as handle:
-                    handle.seek(-1, os.SEEK_END)
-                    if handle.read(1) != b"\n":
-                        with open(registry_file, "a") as fixup:
-                            fixup.write("\n")
-        except OSError:
-            pass
+    """Save a script execution record via the shared ExecutionRegistry.
 
-        # Append to registry file
-        with open(registry_file, "a") as f:
-            f.write(entry)
-    except Exception:
-        pass  # Silently ignore registry errors
+    Follows the GUI path: runs that made no changes (empty transmap) are
+    skipped so the latest useful run is preserved, and older entries for
+    the same script are pruned.
+    """
+    ExecutionRegistry._save_to_registry(script_name, transmap_path)
 
 def create_temp_file(script_path):
     """
