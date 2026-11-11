@@ -74,16 +74,10 @@ is_valid_cluster_name() {
 
 prompt_cluster_name() {
     local input=""
-    if [[ "$DISABLE_ZENITY" == "1" ]]; then
-        read -r -p "Cluster name [$DEFAULT_CLUSTER_NAME]: " input
-    else
-        input="$(zenity --entry \
-            --title="Kind (Kubernetes)" \
-            --text="Enter the cluster name (lowercase letters, numbers, and '-')." \
-            --entry-text="$DEFAULT_CLUSTER_NAME" \
-            --width=460 --height=260)"
-        [ $? -ne 0 ] && return 1
-    fi
+    input="$(userinput \
+        --title="Kind (Kubernetes)" \
+        --text="Enter the cluster name (lowercase letters, numbers, and '-')." \
+        --default="$DEFAULT_CLUSTER_NAME")" || return 1
 
     input="${input:-$DEFAULT_CLUSTER_NAME}"
     if ! is_valid_cluster_name "$input"; then

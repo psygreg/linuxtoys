@@ -21,6 +21,8 @@ _lang_
 : "${_skills_detail_label:=Details}"
 : "${_skills_back_label:=Back}"
 : "${_skills_choose_agent_title:=Choose agent}"
+: "${_skills_search_title:=Skills Seeker}"
+: "${_skills_search_text:=Search for skills:}"
 
 FETCHER="$SCRIPT_DIR/../../app/skills_fetcher.py"
 PYTHON=$(command -v python3)
@@ -45,8 +47,7 @@ show_main_menu() {
 }
 
 run_search() {
-    query=$(zenity --entry --title="$_skills_search_title" \
-        --text="$_skills_search_text" --width=400 2>/dev/null) || return 1
+    query=$(userinput --title "$_skills_search_title" --text "$_skills_search_text") || return 1
     [ -z "$query" ] && return 0
     _do_search "$query"
 }

@@ -70,7 +70,7 @@ else
         "/ (root)") create_swap "/" && break;;
         "/home (home)") create_swap "/home" && break;;
         "Custom path...")
-            CUSTOM_PATH=$(zenity --entry --title "Swapfile Creator" --text "Enter the mount point path for swapfile:\n(e.g., /var, /opt, or any other mount point)")
+            CUSTOM_PATH=$(userinput --title "Swapfile Creator" --text "Enter the mount point path for swapfile:\n(e.g., /var, /opt, or any other mount point)")
             if [ $? -eq 0 ] && [ -n "$CUSTOM_PATH" ]; then
                 if [ "$CUSTOM_PATH" = "/tmp" ] || [[ "$CUSTOM_PATH" == /tmp/* ]]; then
                     zenwrn "/tmp is not suitable for swapfile storage.\nPlease choose a different location."
