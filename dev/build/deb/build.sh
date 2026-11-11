@@ -40,7 +40,6 @@ mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/metainfo"
 mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/mime/packages"
 mkdir -p "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/icons/hicolor/scalable/apps"
 
-# Copy the Python app from p3 directory to proper location
 cp -rf "$ROOT_DIR/p3"/* "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/"
 # Include Rust/PyO3 sources so Debian builds the extension in its own build environment.
 cp -a "$ROOT_DIR/p3" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/"
@@ -98,16 +97,13 @@ for entry in sorted(os.listdir(vendor)):
             json.dump(data, fh, separators=(",", ":"), sort_keys=True)
 print("Vendored Cargo.toml.orig backups pruned from", vendor)
 PYVEND
-# Clean up Python cache files from the entire staged source tree
 find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig" -type d -name "__pycache__" -prune -exec rm -rf {} +
 find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig" -type f \( -name "*.pyc" -o -name "*.pyo" \) -delete
-# Copy desktop file and icon
 cp "$ROOT_DIR/src/toys.linux.LinuxToys.desktop" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/applications/"
 cp "$ROOT_DIR/src/linuxtoys-mimetypes.xml" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/mime/packages/"
 cp "$ROOT_DIR/src/toys.linux.LinuxToys.metainfo.xml" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/metainfo/"
 cp "$ROOT_DIR/src/linuxtoys.svg" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/icons/hicolor/scalable/apps/"
 
-# Create the main executable script
 cat >"$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys" <<'EOF'
 #!/bin/bash
 # Set process name for better desktop integration
@@ -128,14 +124,11 @@ chmod +x "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/bin/linuxtoys"
 find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys" -type d -exec chmod 755 {} +
 find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys" -type f -exec chmod a+r {} +
 
-# Make sure all shell scripts are executable
 find "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/scripts/" -name "*.sh" -exec chmod +x {} \;
 chmod +x "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/usr/share/linuxtoys/linuxtoys.py"
 
-# Create orig tarball
 tar -C "$OUTPUT_PATH" -cJf "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig.tar.xz" "linuxtoys_$LT_VERSION.orig/"
 
-# Create debian package structure
 mkdir -p "$OUTPUT_PATH/linuxtoys-$LT_VERSION"
 
 # Copy the complete orig structure into the debian build directory, including dotfiles such as .cargo
@@ -144,7 +137,6 @@ cp -a "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/." "$OUTPUT_PATH/linuxtoys-$LT_VE
 # Copy debian packaging files from existing structure (assuming they exist)
 mkdir -p "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/source"
 
-# Create debian/control
 cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/control" <<'EOF'
 Source: linuxtoys
 Section: utils
@@ -189,7 +181,6 @@ Depends: ${shlibs:Depends},
 Description: For everything Linux - tools, tweaks and software manager - ready for the age of AI.
 EOF
 
-# Create debian/rules
 cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/rules" <<'EOF'
 #!/usr/bin/make -f
 
@@ -260,7 +251,6 @@ License: CC0-1.0
  found in "/usr/share/common-licenses/CC0-1.0".
 EOF
 
-# Create debian/source/format
 cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/source/format" <<'EOF'
 3.0 (quilt)
 EOF
@@ -273,7 +263,6 @@ cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/source/lintian-overrides" <<'EOF
 linuxtoys source: unpack-message-for-orig *vendor/winapi-*-pc-windows-gnu/lib/*.a*
 EOF
 
-# Create initial debian/changelog
 cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/changelog" <<'EOF'
 linuxtoys (5.0-1) noble; urgency=medium
 
@@ -283,7 +272,6 @@ linuxtoys (5.0-1) noble; urgency=medium
  -- Victor Gregory <psygreg@icloud.com>  Mon, 19 Aug 2025 03:00:47 -0300
 EOF
 
-# set changelog file
 day=$(date +%d)
 day_abbr=$(LC_TIME=C date +%a) # This will always be in English
 month=$(LC_TIME=C date +%b)
@@ -293,7 +281,6 @@ changelog_line2=" -- Victor Gregory <psygreg@icloud.com>  ${day_abbr}, ${day} ${
 sed -i "1c\\$changelog_line" "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/changelog"
 sed -i "6c\\$changelog_line2" "$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/changelog"
 
-# Update debian/install file for new structure
 cat >"$OUTPUT_PATH/linuxtoys-$LT_VERSION/debian/install" <<'EOF'
 usr/bin/linuxtoys /usr/bin/
 usr/share/linuxtoys /usr/share/
@@ -390,7 +377,6 @@ fi
         dput ppa:psygreg/linuxtoys "../linuxtoys_$LT_VERSION-1_source.changes"
         sleep 1
     fi
-    # build package
     debuild -us -uc # this builder script requires devscripts!!
 )
 

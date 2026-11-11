@@ -1,4 +1,3 @@
-# --- SystemD Operations ---
 
 sysd_enable() {
     if [ ! -n "$daemon_reloaded" ]; then

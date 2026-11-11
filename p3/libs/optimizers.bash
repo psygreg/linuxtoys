@@ -1,4 +1,3 @@
-## LinuxToys optimizers library
 
 nvidia_ctkpatch () {
     if ! nvidia-smi >/dev/null 2>&1; then

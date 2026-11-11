@@ -23,7 +23,6 @@ class LanguageSelector:
             modal=True
         )
         
-        # Set a larger minimum size for the dialog
         dialog.set_default_size(500, 450)
         dialog.set_resizable(True)
         
@@ -39,12 +38,10 @@ class LanguageSelector:
         content_area.set_margin_top(20)
         content_area.set_margin_bottom(20)
         
-        # Add label
         label = Gtk.Label(label=self.current_translations.get('select_language_message', 'Please select your preferred language:'))
         label.set_halign(Gtk.Align.START)
         content_area.pack_start(label, False, False, 0)
         
-        # Add search entry
         search_entry = Gtk.SearchEntry()
         search_entry.set_placeholder_text(self.current_translations.get('search_languages_placeholder', 'Search languages'))
         search_entry.set_hexpand(True)
@@ -116,7 +113,6 @@ class LanguageSelector:
         
         search_entry.connect('key-press-event', on_search_key_press)
         
-        # Populate list box with languages
         for lang_code in available_languages:
             display_name = localized_names.get(lang_code, lang_code)
             
@@ -158,7 +154,6 @@ class LanguageSelector:
         if selected_row:
             listbox.select_row(selected_row)
         
-        # Enable double-click to select
         def on_row_activated(listbox, row):
             dialog.response(Gtk.ResponseType.OK)
         
@@ -169,7 +164,6 @@ class LanguageSelector:
         # Show all widgets
         dialog.show_all()
         
-        # Run dialog and get response
         response = dialog.run()
         selected_language = None
         
@@ -180,7 +174,6 @@ class LanguageSelector:
         
         dialog.destroy()
         
-        # If a new language was selected and it's different from current
         if selected_language and selected_language != current_language:
             # Save the language preference
             lang_utils.save_language(selected_language)

@@ -1531,7 +1531,6 @@ def _validate_overrides(entry):
     if not isinstance(overrides, dict):
         return False
 
-    # Only supported override types.
     if set(overrides) - {"flatpak", "pre", "post", "skip-user"}:
         return False
 
@@ -1539,14 +1538,12 @@ def _validate_overrides(entry):
     if skip_user is not None and not isinstance(skip_user, bool):
         return False
 
-    # Validate pre/post hooks.
     for key in ("pre", "post"):
         value = overrides.get(key)
 
         if value is not None and not _validate_hook(value):
             return False
 
-    # Validate Flatpak overrides.
     flatpak = overrides.get("flatpak")
 
     if flatpak is None:
@@ -1624,11 +1621,9 @@ def _create_hook_command(entry, key):
     if value is None:
         return ""
 
-    # Inline shell.
     if isinstance(value, str):
         return value.strip()
 
-    # Script shipped under scripts/lists.
     if isinstance(value, dict):
         script = value.get("script", "").strip()
 
@@ -1685,7 +1680,6 @@ def _normalize_services(entry):
         }
 
     elif isinstance(services, dict):
-        # Only supported scopes.
         if set(services) - {"system", "user"}:
             return None
 

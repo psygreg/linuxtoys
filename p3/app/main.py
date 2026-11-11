@@ -102,7 +102,6 @@ if os.environ.get('EASY_CLI') != '1':
             except Exception as e:
                 print(f"Error loading CSS: {e}")
 
-# Use lang_utils for all translation functionality
 translations = load_translations()  # Auto-detect language from lang_utils
 _ = create_translator()  # Create translator function from lang_utils
 
@@ -122,7 +121,6 @@ def run():
         except Exception as e:
             print(f"Registry prune failed: {e}")
 
-    # Check for UPD_SERVICE mode - runs sysup.sh in CLI mode with UPD_SERVICE passed to the script
     if os.environ.get('UPD_SERVICE') == '1':
         # Set EASY_CLI mode for the script execution
         os.environ['EASY_CLI'] = '1'
@@ -140,9 +138,7 @@ def run():
             print(f"Error running sysup.sh in UPD_SERVICE mode: {e}")
             sys.exit(1)
 
-    # Check for CLI mode
     if os.environ.get('EASY_CLI') == '1':
-        # Run in EASY_CLI
         sys.exit(easy_cli_handler(translations))
 
     # Check if the system is supported before starting GUI
@@ -186,8 +182,6 @@ def run():
     except Exception as e:
         print(f"Kernel update check thread failed: {e}")
 
-    # FIX: Set the application icon before running
-    # Use the icon path resolver
     try:
         icon_path = get_icon_path("linuxtoys.svg")
         if icon_path:
@@ -197,6 +191,5 @@ def run():
     except Exception as e:
         print(f"Warning: Could not set app icon: {e}")
 
-    # Use the already loaded translations from lang_utils
     app = Application(translations)
     app.run(sys.argv)

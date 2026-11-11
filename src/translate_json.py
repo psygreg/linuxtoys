@@ -1,10 +1,8 @@
 import json
 import os
 
-# Directory containing the language files
 lang_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "p3/libs/lang/")
 
-# Translations dictionary: key -> {lang_code: translation}
 translations = {
 "dependency_block_title": {
     "am": "ማስወገድ ታግዷል",

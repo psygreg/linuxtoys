@@ -116,15 +116,12 @@ def warm_search_and_category_index(trans=None) -> SearchEngine:
         if _search_engine is not None:
             return _search_engine
 
-        # 1. Parse categories concurrently (ThreadPoolExecutor)
         cat_cache = CategoryCache()
         cat_cache.populate(active_translations, max_workers=4)
 
-        # 2. Build script cache directly from category data without re-reading the filesystem
         scr_cache = ScriptCache()
         scr_cache.populate_from_category_cache(cat_cache)
 
-        # 3. Create SearchEngine and warm the Rust index
         engine = create_search_engine(active_translations, scr_cache)
         engine._ensure_rust_search_index()
 
@@ -152,7 +149,6 @@ def search_scripts_fast(query: str) -> list[dict]:
         return []
 
     groups = _search_engine.search(query.strip())
-    # Flatten items or return grouped
     return [
         result.item_info for group in groups for result in group["scripts"]
     ]

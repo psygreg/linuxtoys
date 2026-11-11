@@ -1,6 +1,5 @@
 # --- Package Management ---
 
-# Guards against pacman and apt database locks
 
 # Localized strings for the guards, read from the same translation store the
 # GUI uses (libs/lang/<code>.json) so dialogs emitted while a package script
@@ -3069,7 +3068,6 @@ pkg_npm () {
         { ( is_rhel ) && rpmfusion_chk && pkg_install nodejs-npm; }
         { ( is_arch || is_cachy ) && pkg_install npm; }
     fi
-    # PATH config
     for rc in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
         if [ -f "$rc" ]; then
             # Check if PATH modification for .npm-global/bin already exists in the file
@@ -3080,7 +3078,6 @@ pkg_npm () {
             fi
         fi
     done
-    # for fish shells
     fish_config="$HOME/.config/fish/config.fish"
     if [ -f "$fish_config" ]; then
         if ! grep -E "set.*PATH.*/home/$USER/.npm-global/bin|/home/$USER/\.npm-global/bin" "$fish_config" > /dev/null 2>&1; then
@@ -3092,7 +3089,6 @@ pkg_npm () {
 
     local -a flags=()
     local -a packages=()
-    # Separate flags from package names, filtering out -g flag
     for arg in "$@"; do
         if [[ "$arg" == -* ]]; then
             if [[ "$arg" != "-g" && "$arg" != "--global" ]]; then
@@ -3126,7 +3122,6 @@ pkg_bun () {
             fi
         fi
     done
-    # for fish shells
     fish_config="$HOME/.config/fish/config.fish"
     if [ -f "$fish_config" ]; then
         if ! grep -E "set.*PATH.*/home/$USER/.bun/bin|/home/$USER/.bun/bin" "$fish_config" > /dev/null 2>&1; then

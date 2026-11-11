@@ -94,7 +94,6 @@ getresolve () {
     curl -L -o "${_archive_name}.zip" "$_srcurl" || die "Failed to download DaVinci Resolve"
 }
 
-# --- CLInfo Test ---
 clinfo_chk () {
     if ! command -v clinfo &>/dev/null; then
         _msg info "clinfo not found, installing..."
@@ -113,7 +112,6 @@ clinfo_chk () {
     fi
 }
 
-# enable non-free and contrib repos on debian
 enable_debian_nonfree () {
     if is_debian; then
         local updated=0
@@ -147,7 +145,6 @@ enable_debian_nonfree () {
     fi
 }
 
-# enable backports repos on debian
 enable_debian_backports() {
     is_debian || return 1
 

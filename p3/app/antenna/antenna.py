@@ -21,7 +21,6 @@ class EmptyReportError(Exception):
     """The server found no log text it could file, so nothing was submitted."""
 
 
-# Cache directory for storing the generated secret (in user's config dir)
 _CACHE_DIR = Path.home() / ".cache" / "linuxtoys" / "antenna"
 _SECRET_CACHE = _CACHE_DIR / "bootstrap.json"
 _HISTORY_FILE = _CACHE_DIR / "history.json"
@@ -462,12 +461,10 @@ def add_script_to_history(script_name: str) -> None:
     """Add a script execution to history (keep last 10)."""
     try:
         history = _load_history()
-        # Add new entry with timestamp
         history.append({
             "name": script_name,
             "timestamp": time.time()
         })
-        # Keep only last 10
         history = history[-10:]
         _save_history(history)
     except Exception:
@@ -865,7 +862,6 @@ def submit_issue(
         )
         return None
 
-    # Initialize antenna on first bug report submission
     _initialize_antenna()
     
     # Track if logs were explicitly provided (vs captured from stdout)
@@ -924,7 +920,6 @@ def submit_issue(
     if appstream_logs:
         logs = appstream_logs + "\n\n" + logs
 
-    # Handle upstream developer tagging
     validated_app = None
     if related_app:
         try:

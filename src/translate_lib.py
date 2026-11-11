@@ -5,10 +5,8 @@ Script to add translations to all language .lib files
 
 import os
 
-# The base directory containing language files
 LANG_DIR = "../p3/libs/lang"
 
-# Translations for all messages across all supported languages
 TRANSLATIONS = {
     'am.lib': {
         'noresolve': 'noresolve="DaVinci Resolve በዚህ ኮምፒውተር ላይ አልተጫነም። ይጫኑትና እንደገና ይሞክሩ።"'

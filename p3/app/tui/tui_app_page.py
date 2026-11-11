@@ -226,7 +226,7 @@ class AppPageWidget(Vertical):
     AppPageWidget .ext-info { width: 1fr; height: auto; }
     """
 
-    # ---- mensagens para o host ------------------------------------------- #
+    # app page messages for the host screen
     class BackRequested(Message):
         """Posted when the user asks to leave the page."""
 

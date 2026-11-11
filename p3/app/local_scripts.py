@@ -209,11 +209,9 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         dialog.add_button(self.translations.get("no", "No"), Gtk.ResponseType.NO)
         dialog.add_button(self.translations.get("yes", "Yes"), Gtk.ResponseType.YES)
 
-        # Create an empty image to hide the icon area
         empty_image = Gtk.Image()
         dialog.set_image(empty_image)
 
-        # Add 20px padding to the top of the dialog
         message_area = dialog.get_message_area()
         message_area.set_margin_top(20)
 
@@ -269,7 +267,6 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         if len(script_names) > 3:
             names_text += f" ... (+{len(script_names) - 3} more)"
 
-        # Show confirmation dialog
         dialog = Gtk.MessageDialog(
             transient_for=self,
             flags=0,
@@ -285,7 +282,6 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
         dialog.add_button(self.translations.get("no", "No"), Gtk.ResponseType.NO)
         dialog.add_button(self.translations.get("yes", "Yes"), Gtk.ResponseType.YES)
 
-        # Create an empty image to hide the icon area
         empty_image = Gtk.Image()
         dialog.set_image(empty_image)
 
@@ -351,7 +347,6 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
             return
 
         try:
-            # Use xdg-open to open the script in the default text editor
             subprocess.run(["xdg-open", os.path.abspath(script_path)], check=False)
         except Exception as e:
             # Show error dialog if opening fails
@@ -483,7 +478,6 @@ source "$SCRIPT_DIR/libs/lang/${{langfile}}.lib"
                     buttons=Gtk.ButtonsType.OK,
                     text=self.translations.get("export_success", "Export Successful"),
                 )
-                # Create an empty image to hide the icon area
                 empty_image = Gtk.Image()
                 success_dialog.set_image(empty_image)
                 success_dialog.format_secondary_text(

@@ -23,7 +23,6 @@ _msg info "Output path: $OUTPUT_PATH"
 
 rm -rf "$OUTPUT_PATH"
 
-# Create directory structure for the Python app
 mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/bin"
 mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys"
 mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/applications"
@@ -31,7 +30,6 @@ mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/metainfo"
 mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/mime/packages"
 mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/icons/hicolor/scalable/apps"
 
-# Copy the Python app from p3 directory
 cp -rf "$ROOT_DIR/p3"/* "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys/"
 # Keep the build sources in the release tarball; makepkg compiles the PyO3 catalog extension and native GTK library.
 cp -a "$ROOT_DIR/p3" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/"
@@ -45,13 +43,11 @@ mkdir -p "$OUTPUT_PATH/linuxtoys-${LT_VERSION}"/.cargo
     cd "$OUTPUT_PATH/linuxtoys-${LT_VERSION}"
     cargo vendor --locked --manifest-path "$ROOT_DIR/Cargo.toml" vendor > .cargo/config.toml
 )
-# Copy desktop file and icon
 cp "$ROOT_DIR/src/toys.linux.LinuxToys.desktop" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/applications/"
 cp "$ROOT_DIR/src/linuxtoys-mimetypes.xml" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/mime/packages/"
 cp "$ROOT_DIR/src/toys.linux.LinuxToys.metainfo.xml" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/metainfo/"
 cp "$ROOT_DIR/src/linuxtoys.svg" "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/icons/hicolor/scalable/apps/"
 
-# Create the main executable script
 cat >"$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/bin/linuxtoys" <<'EOF'
 #!/bin/bash
 # Set process name for better desktop integration
@@ -72,17 +68,14 @@ chmod +x "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/bin/linuxtoys"
 find "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys" -type d -exec chmod 755 {} +
 find "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys" -type f -exec chmod a+r {} +
 
-# Make sure all shell scripts are executable
 find "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys/scripts/" -name "*.sh" -exec chmod +x {} \;
 chmod +x "$OUTPUT_PATH/linuxtoys-${LT_VERSION}/usr/share/linuxtoys/linuxtoys.py"
 
 # Create tarball (this will be kept for Arch packaging)
 tar -cJf "$OUTPUT_PATH/linuxtoys-${LT_VERSION}.tar.xz" -C "$OUTPUT_PATH" "linuxtoys-${LT_VERSION}/"
 
-# Copy PKGBUILD to output directory
 cp "$ROOT_DIR/dev/build/pkg/PKGBUILD" "$OUTPUT_PATH/PKGBUILD"
 
-# update version and hash on PKGBUILD file
 hash=$(sha256sum "$OUTPUT_PATH/linuxtoys-${LT_VERSION}.tar.xz" | cut -d' ' -f1)
 sed -i "s/pkgver='[^']*'/pkgver='$LT_VERSION'/" "$OUTPUT_PATH/PKGBUILD"
 sed -i "s/sha256sums=('[^']*')/sha256sums=('$hash')/" "$OUTPUT_PATH/PKGBUILD"

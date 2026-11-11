@@ -145,7 +145,6 @@ class HomeScreen(
         yield Header(id="lt-header")
 
         with Horizontal(id="body-home"):
-            # left panel widgets
             with Vertical(id="left-column-home"):
                 yield Input(
                     placeholder=translations.get(
@@ -157,7 +156,6 @@ class HomeScreen(
                     registry_data = parse_registry_file()
                     for item in self._home_items():
                         yield self._make_info_button(item, registry_data)
-            # right panel widgets
             with VerticalScroll(id="menu-panel"):
                 yield Static(linuxtoys_art, id="logo_lt")
                 yield ListView(
@@ -617,7 +615,6 @@ class HomeScreen(
             warm_search_and_category_index(translations)
 
         items = search_scripts_fast(query)
-        # Safely post back to main UI thread
         self.app.call_from_thread(self._render_search_results, items, query)
 
     async def _render_search_results(

@@ -244,11 +244,9 @@ requires_appimage() {
 }
 
 installer() {
-	# Try GitHub first as primary source
 	printf "\e[0;36m[INFO]\e[m Fetching latest release from GitHub...\n"
 	_api=$(curl -fsSL "https://api.github.com/repos/psygreg/linuxtoys/releases/latest" 2>/dev/null)
 
-	# If GitHub fails, fallback to Gitea server
 	if [ -z "${_api}" ]; then
 		printf "\e[0;33m[WARN]\e[m GitHub unavailable, trying Gitea server at git.linux.toys...\n"
 		_api=$(curl -fsSL "https://git.linux.toys/api/v1/repos/psygreg/linuxtoys/releases/latest" 2>/dev/null)

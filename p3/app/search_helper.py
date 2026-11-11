@@ -74,7 +74,6 @@ class ScriptCache:
         self._removable_cache = {}
         scripts_dir = parser.SCRIPTS_DIR
 
-        # Get all scripts from main directory recursively
         self._collect_scripts_from_directory(scripts_dir, translations)
 
         for repo_item in parser.get_repo_entries(translations):
@@ -83,12 +82,10 @@ class ScriptCache:
         for appstream_item in parser.get_appstream_entries(translations):
             self.scripts.append(appstream_item)
 
-        # Also get local scripts directory
         local_scripts_dir = f'{os.environ.get("HOME", "")}/.local/linuxtoys/scripts'
         if os.path.isdir(local_scripts_dir):
             self._collect_scripts_from_directory(local_scripts_dir, translations)
 
-        # Pre-compute removable state for all cached scripts in one pass
         self._populate_removable_cache()
 
         self.is_populated = True
@@ -138,7 +135,6 @@ class ScriptCache:
         negated_scripts = parser._get_negated_scripts(directory_path, self.system_compat_keys)
 
         for item_name in os.listdir(directory_path):
-            # Skip hidden directories and files (e.g., .git, .gitignore)
             # Important for git-synced scripts which include .git directory
             if item_name.startswith('.'):
                 continue
@@ -151,15 +147,12 @@ class ScriptCache:
                 if script_name_without_ext in negated_scripts:
                     continue
 
-                # Filter by compatibility and locale
                 if not script_is_compatible(item_path, self.system_compat_keys):
                     continue
                 if not script_is_localized(item_path, self.current_locale):
                     continue
-                # Filter by container compatibility
                 if self.is_containerized and not script_is_container_compatible(item_path):
                     continue
-                # Parse script metadata
                 defaults = {
                     'name': 'No Name',
                     'version': 'N/A',
@@ -170,7 +163,6 @@ class ScriptCache:
                 }
                 script_info = parser._parse_metadata_file(item_path, defaults, translations)
 
-                # Store the full path for later category extraction
                 script_info['path'] = item_path
 
                 # For local scripts, use filename if no name was found
@@ -183,7 +175,6 @@ class ScriptCache:
                 self.scripts.append(script_info)
 
             elif os.path.isdir(item_path):
-                # Recursively collect from subdirectories
                 self._collect_scripts_from_directory(item_path, translations)
 
     def get_all_scripts(self):
@@ -828,7 +819,6 @@ class SearchEngine:
             # Search through cached scripts (much faster than directory traversal)
             self._search_cached_scripts(query, results)
 
-        # Group results by category
         grouped = self._group_results_by_category(results, max_results)
 
         return grouped
@@ -879,7 +869,6 @@ class SearchEngine:
         Returns:
             List of category group dicts sorted by best match score
         """
-        # Group results by category
         category_groups = {}
 
         for result in results:
@@ -966,12 +955,10 @@ class SearchEngine:
 
             category_groups[group_key]["scripts"].append(result)
 
-        # Sort scripts within each category by relevance
         for group in category_groups.values():
             group['scripts'].sort()
             group['scripts'] = group['scripts'][:max_results_per_category]
 
-        # Convert to list and sort by best match score (descending)
         grouped_list = list(category_groups.values())
         grouped_list.sort(
             key=lambda g: (
@@ -1237,11 +1224,9 @@ class SearchEngine:
         if query in description:
             score += 30
 
-        # Boost scores for certain item types
         if item_type == 'category':
             score += 10  # Categories slightly boosted for navigation
 
-        # Boost for shorter names (more specific matches)
         if score > 0 and len(name) < 20:
             score += 5
 

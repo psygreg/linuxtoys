@@ -276,7 +276,6 @@ def run_psycachy_installer(kernel_type):
         )
         script_path = os.path.join(script_dir, "psycachy.sh")
 
-        # Set SCRIPT_DIR environment variable for the script
         env = os.environ.copy()
         env["SCRIPT_DIR"] = os.path.dirname(os.path.dirname(__file__))
 

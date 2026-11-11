@@ -29,7 +29,6 @@ def show_needed_requirements_dialog(
     dialog.set_default_size(500, 300)
     dialog.set_resizable(True)
 
-    # Add buttons
     dialog.add_button(
         translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL
     )
@@ -38,7 +37,6 @@ def show_needed_requirements_dialog(
     # Set focus to the "Proceed" button (safer default for continuing)
     dialog.set_default_response(Gtk.ResponseType.OK)
 
-    # Create message content
     content_area = dialog.get_content_area()
     content_area.set_spacing(15)
     content_area.set_margin_start(20)
@@ -69,7 +67,6 @@ def show_needed_requirements_dialog(
 
     content_area.pack_start(header_box, False, False, 0)
 
-    # Create scrolled window for required scripts list
     scrolled_window = Gtk.ScrolledWindow()
     scrolled_window.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
     scrolled_window.set_min_content_height(150)
@@ -191,7 +188,6 @@ def show_run_confirmation_dialog(parent_window, translations, scripts_to_run, ex
     dialog.set_default_size(450, 300)
     dialog.set_resizable(True)
 
-    # Add buttons
     dialog.add_button(
         translations.get("cancel_btn_label", "Cancel"), Gtk.ResponseType.CANCEL
     )
@@ -205,7 +201,6 @@ def show_run_confirmation_dialog(parent_window, translations, scripts_to_run, ex
     # Set focus to the "Execute" button
     dialog.set_default_response(Gtk.ResponseType.OK)
 
-    # Create message content
     content_area = dialog.get_content_area()
     content_area.set_spacing(15)
     content_area.set_margin_start(20)
@@ -237,7 +232,6 @@ def show_run_confirmation_dialog(parent_window, translations, scripts_to_run, ex
     scripts_box.set_margin_start(10)
     scripts_box.set_margin_end(10)
 
-    # Add each script to the list
     for script_info in scripts_to_run:
         # Create horizontal box for icon and info
         script_item_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)

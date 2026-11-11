@@ -8,7 +8,6 @@
 # revert: no
 # registry: no
 
-# remove bazzite leftovers
 flatpak remove -y io.github.flattool.Warehouse org.kde.okular org.kde.gwenview org.kde.kcalc org.kde.haruna
 
 # fix flatpak display on niri
@@ -23,11 +22,9 @@ call_script flattheme
 # fix GTK4 app rendering for Intel Arc and Nvidia
 call_script gtk-bmg-fix
 
-# opencode setup
 pkg_brew bun
 bun install -g --trust @opencode/cli
 
-# sloth setup
 call_script nerdfonts
 
 if [ -f "$HOME/.sloth-bash" ]; then
@@ -61,8 +58,6 @@ else
     fi
 fi
 
-# swap setup
 call_script swapfile
 
-# additional flatpaks
 pkg_flat net.nokyan.Resources

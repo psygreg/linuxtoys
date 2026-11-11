@@ -1,4 +1,3 @@
-# --- Filesystem Operations ---
 
 prep_edit() {
     for target in "$@"; do
@@ -89,7 +88,6 @@ move_() {
     done
 }
 
-# --- Distrobox Filesystem Operations ---
 
 _distrobox_fs_record() {
     local action="$1"

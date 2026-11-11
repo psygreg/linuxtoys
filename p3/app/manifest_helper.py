@@ -937,7 +937,6 @@ def _run_script_impl(script_info):
                 _print_busy_package_manager(timeout=True)
                 return 1
 
-        # Check if EASY_CLI mode is enabled
         if os.environ.get("EASY_CLI") == "1":
             result = subprocess.run(command,
                                     stdin=sys.stdin,

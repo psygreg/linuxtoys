@@ -72,7 +72,6 @@ class AboutDialog:
 
     def show_about_dialog(self):
         """Creates and shows the About dialog"""
-        # Create the dialog
         dialog = Gtk.Dialog(
             title=self.translations.get('about_title', 'About LinuxToys'),
             parent=self.parent_window,
@@ -81,14 +80,12 @@ class AboutDialog:
         dialog.set_default_size(512, 310)
         dialog.set_resizable(False)
 
-        # Creates a top bar for tabs
         notebook = Gtk.Notebook()
         notebook.set_size_request(-1, 310)
         content_area = dialog.get_content_area()
         content_area.add(notebook)
 
         # ---------------------------
-        # TAB: ABOUT
         # ---------------------------
         aba_sobre = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         aba_sobre.set_border_width(16)
@@ -117,7 +114,6 @@ class AboutDialog:
 
 
         # ---------------------------
-        # TAB: LICENSE
         # ---------------------------
         aba_licenca = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         aba_licenca.set_border_width(10)
@@ -147,7 +143,6 @@ class AboutDialog:
         notebook.append_page(aba_licenca, Gtk.Label(label=self.translations.get('license_tab', 'License')))
         
         # ---------------------------
-        # Show all widgets
         dialog.show_all()
         
         # Load contributors in background

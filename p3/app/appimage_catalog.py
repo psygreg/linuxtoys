@@ -115,7 +115,7 @@ def _website_and_install_links(pairs):
 def _split_description(text):
     """First sentence becomes the summary; the whole text stays the long one."""
     text = re.sub(r"(?i)<br\s*/?>", "\n", text or "")
-    text = re.sub(r"(?i)</p\s*>", "\n\n", text)  # feed descriptions may carry HTML
+    text = re.sub(r"(?i)</p\s*>", "\n\n", text)
     text = re.sub(r"<[^>]+>", " ", text)
     text = html.unescape(text)
     paragraphs = []

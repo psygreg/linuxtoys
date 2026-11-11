@@ -796,7 +796,6 @@ class ScriptRunnerMixin:
         script_name = script_info.get("name", "Script")
         registry_name = script_info.get("registry_name", script_name)
 
-        # verify if is reboot
         script_path = script_info.get("path", "")
         system_compat_keys = get_system_compat_keys()
         reboot = not is_extension and script_requires_reboot(

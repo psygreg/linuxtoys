@@ -21,10 +21,8 @@ def update_version_file(new_version, version_file_path="../src/ver"):
     Update the version in the src/ver file.
     """
     try:
-        # Create directory if it doesn't exist
         os.makedirs(os.path.dirname(version_file_path), exist_ok=True)
         
-        # Write the new version
         with open(version_file_path, 'w', encoding='utf-8') as f:
             f.write(new_version + '\n')
         
@@ -44,11 +42,9 @@ def update_updater_version(new_version, file_path="app/updater/__init__.py"):
         return False
     
     try:
-        # Read the file
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
         
-        # Update the __version__ variable
         pattern = r'__version__\s*=\s*"[^"]*"'
         replacement = f'__version__ = "{new_version}"'
         
@@ -58,7 +54,6 @@ def update_updater_version(new_version, file_path="app/updater/__init__.py"):
             print("Warning: __version__ string not found or not changed in updater!")
             return False
         
-        # Write the updated content back
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(new_content)
         
@@ -78,7 +73,6 @@ def update_fallback_version_in_code(new_version, file_path="app/update_helper.py
         return False
     
     try:
-        # Read the file
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
         
@@ -86,10 +80,8 @@ def update_fallback_version_in_code(new_version, file_path="app/update_helper.py
         pattern = r'return\s+"[^"]*"\s*#\s*Fallback'
         replacement = f'return "{new_version}"  # Fallback'
         
-        # Try the more specific pattern first
         new_content = re.sub(pattern, replacement, content)
         
-        # If that didn't work, try the general fallback pattern
         if new_content == content:
             pattern = r'#\s*Fallback to hardcoded version\s*\n\s*return\s+"[^"]*"'
             replacement = f'# Fallback to hardcoded version\n    return "{new_version}"'
@@ -99,7 +91,6 @@ def update_fallback_version_in_code(new_version, file_path="app/update_helper.py
             print("Warning: Fallback version string not found or not changed in code!")
             return False
         
-        # Write the updated content back
         with open(file_path, 'w', encoding='utf-8') as f:
             f.write(new_content)
         
@@ -118,22 +109,18 @@ if __name__ == "__main__":
     
     new_version = sys.argv[1]
     
-    # Basic version validation
     if not re.match(r'^\d+\.\d+(\.\d+)?$', new_version):
         print("Error: Version should be in format X.Y or X.Y.Z (e.g., 4.4 or 4.4.1)")
         sys.exit(1)
     
     success = True
     
-    # Update version file (primary)
     if not update_version_file(new_version):
         success = False
     
-    # Update updater's __version__ (secondary)
     if not update_updater_version(new_version):
         print("Warning: Could not update updater version (this is okay if version file exists)")
     
-    # Update fallback version in code (tertiary)
     if not update_fallback_version_in_code(new_version):
         print("Warning: Could not update fallback version in code (this is okay if version file exists)")
     
