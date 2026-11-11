@@ -354,3 +354,11 @@ unsafe automatic sync locally with a manual artifact-only workflow; no workflow
 was executed and upstream adoption still needs separate coordination.
 Native amd64 regression is still unavailable. B07–B10 packaging and the other
 M2 limitations remain open; packaging qualification has not begun.
+
+## M3C preparation verification
+
+[Native preparation evidence](SCRIPT-PREPARATION-ARM64.md) qualifies M3B's local
+artifact preparation on Ubuntu ARM64, including independent/reproducible exports,
+failure refusal and protected-source integrity. It changes no application code,
+script, ISA approval or release workflow. Hosted workflow execution, upstream
+adoption, native amd64 application regression and packaging remain separate gates.

@@ -163,3 +163,13 @@ report, `dev/script-preparation-evidence.json`, `dev/SCRIPT-ROLLOUT.md`,
 `dev/ARCHITECTURE-POLICY.md`, `dev/ARM64-ASSESSMENT.md` and
 `dev/ARM64-QUALIFICATION.md`. No application, script payload, production manifest,
 approval lock, dependency or other workflow file changed.
+
+## M3C native verification follow-up
+
+[SCRIPT-PREPARATION-ARM64.md](SCRIPT-PREPARATION-ARM64.md) records subsequent
+native Ubuntu ARM64/Python 3.14.4 verification: focused/full tests, real Unix
+socket/device checks, independent tar verification and byte parity with these
+M3B artifacts. The workflow audit now reuses installed PyYAML when Ruby is absent.
+Preparation code, workflow definitions and production approvals remain unchanged;
+no workflow was run or artifact uploaded. Historical M3B limitations above remain
+the record of that Mac-only milestone, rather than new native evidence.

@@ -1,0 +1,265 @@
+{
+  "schema": 1,
+  "milestone": "M3C",
+  "baseline": "1bf0f8f40b321ca06f5b974de901a0488d723deb",
+  "scope": "Native Ubuntu ARM64 preparation qualification; no Actions execution or publication",
+  "environment": {
+    "os": "Ubuntu 26.04.1 LTS",
+    "kernel_platform": "Linux-7.0.0-43-generic-aarch64-with-glibc2.43",
+    "architecture": "aarch64",
+    "python": "3.14.4",
+    "rustc_cargo": "1.93.1 (existing toolchain)",
+    "pyyaml": "6.0.3 (already installed)",
+    "shellcheck": "0.11.0 (retained native binary)",
+    "actionlint": "unavailable; not installed",
+    "ruby": "unavailable",
+    "host_lint": "Ruff 0.12.3 on macOS/Python 3.13.7"
+  },
+  "native": {
+    "schema": 1,
+    "os": "Linux-7.0.0-43-generic-aarch64-with-glibc2.43",
+    "architecture": "aarch64",
+    "python": "3.14.4",
+    "revision": "083138ce4b55ccf533a215c995bf27db25eae80d60b487150ae710f14d245e5f",
+    "source_root": "/home/ta/linuxtoys-m3c-qualification/source",
+    "workspace": "/home/ta/linuxtoys-m3c-qualification/run-03",
+    "independent_tar_verification": true,
+    "hidden_manifest_in_tar": true,
+    "artifact_sha256": {
+      "scripts.tar": "ee16612ea2530214eb8fcbab5d493838f4639cd759c2dd8a991c71861fefea37",
+      "validation.json": "27c3bbc97bf62fe2d359df112caf6c7b473eec06bbc6ae0d7df606632640370b",
+      "SHA256SUMS": "dac9127c08fafc1fcb7a05e09d8635bd43ea9ee6f971c5bcf446348d9c1a7079"
+    },
+    "two_native_exports_identical": true,
+    "matches_m3b_macos_python313": true,
+    "cli_operations": [
+      {
+        "options": [
+          "--check"
+        ],
+        "exit": 0,
+        "production_unchanged": true
+      },
+      {
+        "options": [
+          "--check",
+          "--artifact-dir",
+          "/home/ta/linuxtoys-m3c-qualification/run-03/first"
+        ],
+        "exit": 0,
+        "production_unchanged": true
+      },
+      {
+        "options": [
+          "--check",
+          "--verify-artifact",
+          "/home/ta/linuxtoys-m3c-qualification/run-03/first/083138ce4b55ccf533a215c995bf27db25eae80d60b487150ae710f14d245e5f"
+        ],
+        "exit": 0,
+        "production_unchanged": true
+      },
+      {
+        "options": [
+          "--check",
+          "--artifact-dir",
+          "/home/ta/linuxtoys-m3c-qualification/run-03/second"
+        ],
+        "exit": 0,
+        "production_unchanged": true
+      },
+      {
+        "options": [
+          "--check",
+          "--verify-artifact",
+          "/home/ta/linuxtoys-m3c-qualification/run-03/second/083138ce4b55ccf533a215c995bf27db25eae80d60b487150ae710f14d245e5f"
+        ],
+        "exit": 0,
+        "production_unchanged": true
+      },
+      {
+        "options": [
+          "--check",
+          "--artifact-dir",
+          "/home/ta/linuxtoys-m3c-qualification/run-03/first"
+        ],
+        "exit": 1,
+        "production_unchanged": true
+      },
+      {
+        "options": [
+          "--check",
+          "--verify-artifact",
+          "/home/ta/linuxtoys-m3c-qualification/run-03/first/083138ce4b55ccf533a215c995bf27db25eae80d60b487150ae710f14d245e5f"
+        ],
+        "exit": 1,
+        "production_unchanged": true
+      },
+      {
+        "options": [
+          "--check",
+          "--verify-artifact",
+          "/home/ta/linuxtoys-m3c-qualification/run-03/first/083138ce4b55ccf533a215c995bf27db25eae80d60b487150ae710f14d245e5f"
+        ],
+        "exit": 1,
+        "production_unchanged": true
+      },
+      {
+        "options": [
+          "--check",
+          "--verify-artifact",
+          "/home/ta/linuxtoys-m3c-qualification/run-03/first/083138ce4b55ccf533a215c995bf27db25eae80d60b487150ae710f14d245e5f"
+        ],
+        "exit": 1,
+        "production_unchanged": true
+      },
+      {
+        "options": [
+          "--check",
+          "--verify-artifact",
+          "/home/ta/linuxtoys-m3c-qualification/run-03/first/083138ce4b55ccf533a215c995bf27db25eae80d60b487150ae710f14d245e5f"
+        ],
+        "exit": 1,
+        "production_unchanged": true
+      }
+    ],
+    "focused": {
+      "total": 27,
+      "skipped": 0,
+      "passed": 27,
+      "production_integrity_checks": 27
+    },
+    "full": {
+      "total": 95,
+      "skipped": 0,
+      "passed": 95,
+      "production_integrity_checks": 95
+    },
+    "production_content_modes_owners_mtimes_unchanged": true,
+    "protected_paths": 443,
+    "workflow_executed": false,
+    "artifacts_uploaded": false,
+    "package_installation": false
+  },
+  "baseline_integrity": {
+    "unchanged_paths": [
+      "p3",
+      "dev/prepare_script_rollout.py",
+      ".github/workflows",
+      "Cargo.lock",
+      "Cargo.toml",
+      "pyproject.toml"
+    ],
+    "vm_p3_file_hashes_checked": 839,
+    "vm_p3_files_byte_identical_to_baseline": true,
+    "guarded_paths": 443,
+    "guarded_test_runs": 122,
+    "guarded_cli_operations": 10,
+    "checked_properties": [
+      "content",
+      "mode",
+      "uid",
+      "gid",
+      "mtime_ns"
+    ],
+    "desktop_checkout_touched": false,
+    "installed_application_touched": false
+  },
+  "checks": {
+    "native_python_ast": "passed for preparer, tests and native probe",
+    "native_yaml": "PyYAML safe_load plus unchanged workflow capability allowlist passed",
+    "native_bash_syntax": "bash -n, extracted workflow run block; no execution",
+    "native_shellcheck": "all severities; no findings for extracted run block",
+    "actionlint": "unavailable; no result claimed",
+    "host_ruff": "lint and format passed for both verification files",
+    "host_tests": {
+      "total": 95,
+      "passed": 91,
+      "skipped": 4,
+      "skips": "Three existing Linux-only checks plus the Linux socket/device test"
+    },
+    "diff": "git diff --check passed"
+  },
+  "exercised_cases": [
+    "manifest and required hidden-data inclusion",
+    "missing hidden files",
+    "symlinks including source/manifest/destination",
+    "real FIFOs",
+    "real Linux Unix socket",
+    "existing /dev/null rejected before open",
+    "block/device/socket metadata fixtures; no mknod",
+    "malformed and duplicate-key JSON",
+    "API/policy and unknown revision refusal",
+    "inventory/path/case collisions",
+    "source tampering",
+    "existing revision, empty path and symlink refusal",
+    "write/readback/cleanup failure",
+    "incomplete outputs",
+    "archive/report/checksum tampering",
+    "reproducibility across paths, modes, times and order",
+    "independent tar inventory/metadata/raw-digest verification",
+    "cross-platform Python 3.13/3.14 byte parity"
+  ],
+  "workflow_audit": {
+    "definition_unchanged": true,
+    "trigger": "manual workflow_dispatch only; no inputs",
+    "repository_permissions": {
+      "contents": "read"
+    },
+    "checkout_ref": "github.sha",
+    "pinned_actions": [
+      "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+      "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02"
+    ],
+    "persist_credentials": false,
+    "custom_secrets": false,
+    "approval_writer": false,
+    "repository_tag_release_package_deployment_publisher": false,
+    "explicit_future_write_capability": "Actions review artifact storage only; overwrite false, missing files error, retention 7 days",
+    "cross_workflow_publisher_found": false,
+    "external_actions_fetched_or_executed": false
+  },
+  "verification_changes": {
+    "product_implementation_defect_found": false,
+    "test_harness_gap": "Ruby-only YAML audit skipped on guest despite installed PyYAML; existing parser reuse added",
+    "new_native_case": "Real Unix socket and read-only rejection of existing /dev/null character device",
+    "probe": "dev/tests/native_script_preparation_smoke.py",
+    "optimization_guard": "Explicit fail-closed -O guard; regression test proves refusal before output creation"
+  },
+  "operations_not_performed": [
+    "dependency/package/tool installation",
+    "application source or script changes",
+    "approval/policy/manifest changes",
+    "application/library rebuild or GUI qualification",
+    "native amd64 or emulation qualification",
+    "application packaging qualification",
+    "workflow execution",
+    "Actions artifact upload/download",
+    "project or remote tags",
+    "remote repository writes, publication or deployment"
+  ],
+  "logs": [
+    "/home/ta/linuxtoys-m3c-qualification/native-tests-final.log",
+    "/home/ta/linuxtoys-m3c-qualification/native-evidence-final.log",
+    "/home/ta/linuxtoys-m3c-qualification/workflow-parsed.json",
+    "/tmp/linuxtoys-m3c-macos-tests.log"
+  ],
+  "reproduce": [
+    "PYTHONDONTWRITEBYTECODE=1 python3 dev/tests/native_script_preparation_smoke.py --workspace NEW_DIRECTORY",
+    "python3 -m unittest discover -s dev/tests -p test_script_preparation.py -v",
+    "python3 -m unittest discover -s dev/tests -v",
+    "bash -n workflow-run.bash",
+    "/tmp/linuxtoys-m1-tools/root/usr/bin/shellcheck --shell=bash workflow-run.bash"
+  ],
+  "limitations": [
+    "Actionlint unavailable",
+    "Hosted runner/action/server validation and Actions storage not exercised",
+    "External pinned action code not fetched/audited during M3C",
+    "No native amd64 application qualification",
+    "No application or packaging qualification added",
+    "No block device node creation; existing-device and metadata checks only",
+    "Trusted client and same-user filesystem-owner assumptions unchanged",
+    "No new signing provenance"
+  ],
+  "documentation": "SCRIPT-PREPARATION-ARM64.md",
+  "temporary_ssh_credentials_removed": true
+}

@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import ast
+import importlib.util
 import json
 import os
 from pathlib import Path
 import shutil
+import socket
 import stat
 import subprocess
 import sys
@@ -250,6 +252,17 @@ class PreparationTests(unittest.TestCase):
                     self.prepare()
                 self.assertFalse((self.root / "artifacts").exists())
 
+    @unittest.skipUnless(sys.platform == "linux", "Native Linux socket-file probe")
+    def test_native_socket_and_character_device_are_refused_without_reading(self):
+        file = self.tree / "font.sh"
+        file.unlink()
+        with socket.socket(socket.AF_UNIX) as special:
+            special.bind(str(file))
+            self.assert_refused()
+        # Inspect an existing device; no mknod, privilege or system mutation.
+        with self.assertRaisesRegex(ValueError, "bounded regular file"):
+            prep._regular_bytes(Path("/dev/null"), 1024)
+
     def test_bounded_payload_and_script_api_enforced(self):
         with patch.object(prep, "MAX_PAYLOAD", 1):
             self.assert_refused()
@@ -375,6 +388,25 @@ class PreparationTests(unittest.TestCase):
 
 
 class ProductionPreparationTests(unittest.TestCase):
+    def test_native_probe_refuses_optimized_python_before_creating_output(self):
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "must-not-exist"
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-O",
+                    str(ROOT / "dev/tests/native_script_preparation_smoke.py"),
+                    "--workspace",
+                    str(output),
+                ],
+                capture_output=True,
+                text=True,
+                env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"),
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("Run without -O", result.stderr)
+            self.assertFalse(output.exists())
+
     def test_real_approved_revision_roundtrip_and_no_credentials_required(self):
         protected = [
             compat.LOCK_PATH,
@@ -458,10 +490,20 @@ class ProductionPreparationTests(unittest.TestCase):
                 )
 
     @unittest.skipUnless(
-        shutil.which("ruby"), "Ruby/Psych needed for optional workflow YAML audit"
+        shutil.which("ruby") or importlib.util.find_spec("yaml"),
+        "Existing Ruby/Psych or PyYAML needed for workflow YAML audit",
     )
     def test_workflow_is_manual_read_only_and_artifact_only(self):
         path = ROOT / ".github/workflows/sync-scripts.yml"
+        if not shutil.which("ruby"):
+            import yaml
+
+            workflow = yaml.safe_load(path.read_text())
+        else:
+            workflow = self._ruby_workflow(path)
+        self._check_workflow(workflow)
+
+    def _ruby_workflow(self, path):
         result = subprocess.run(
             [
                 "ruby",
@@ -475,7 +517,9 @@ class ProductionPreparationTests(unittest.TestCase):
             text=True,
             check=True,
         )
-        workflow = json.loads(result.stdout)
+        return json.loads(result.stdout)
+
+    def _check_workflow(self, workflow):
         self.assertEqual(set(workflow), {"name", "on", "permissions", "jobs"})
         self.assertEqual(workflow["on"], {"workflow_dispatch": None})
         self.assertEqual(workflow["permissions"], {"contents": "read"})

@@ -179,3 +179,12 @@ upstream rollout. At M3A, the automatic sync omitted the hidden manifest. The
 subsequent [preparation follow-up](SCRIPT-PREPARATION.md) replaces that design
 locally; it adds no native application evidence or publisher. No workflow was
 run, no upstream write occurred, and packaging qualification has not begun.
+
+## M3C preparation qualification
+
+The [native preparation report](SCRIPT-PREPARATION-ARM64.md) adds Ubuntu ARM64
+verification of the unchanged M3B preparer: 27 focused and 95 full tests pass,
+artifacts match the Mac byte-for-byte, and independent tar/integrity checks pass.
+This adds preparation/test evidence only. No application rebuild, GUI session,
+third-party route, native amd64 or packaging qualification is added. Actions and
+publication were not executed.
