@@ -5,7 +5,10 @@ Script to add translations to all language .lib files
 
 import os
 
-LANG_DIR = "../p3/libs/lang"
+LANG_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "p3/libs/lang",
+)
 
 TRANSLATIONS = {
     'am.lib': {

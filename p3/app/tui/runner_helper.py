@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import os
 import shlex
 import shutil
@@ -85,6 +86,8 @@ from .my_widgets import (
     Terminal,
 )
 from .tui_app_page import AppPageWidget, hide_app_page, show_app_page
+
+logger = logging.getLogger(__name__)
 
 TRANSMAP_PATH = "/tmp/linuxtoys/transmap"
 

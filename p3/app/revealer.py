@@ -138,6 +138,36 @@ class BugReportDialog(Gtk.Dialog):
     def get_selected_app(self):
         return self.selected_app
 
+def _support_links(
+    translations: dict[str, str] | None,
+) -> list[tuple[str, str, str, bool]]:
+    """Canonical SupportFooter link table (url, label, icon, is_link).
+
+    Single source shared by construction and language updates so URLs,
+    icons and translation keys cannot drift apart."""
+    translations = translations or {}
+    return [
+        ("https://linux.toys/documentation.html", "Wiki", "wiki.svg", True),
+        (
+            "",
+            translations.get("report_label", "Report Bug"),
+            "report.svg",
+            True,
+        ),
+        (
+            "https://dev.linux.toys",
+            translations.get("devportal_label", "Credits"),
+            "credits.svg",
+            True,
+        ),
+        (
+            "https://ko-fi.com/psygreg",
+            translations.get("support_footer", "Support this project"),
+            "sponsor.svg",
+            True,
+        ),
+    ]
+
 class SupportFooter(Gtk.Box):
     def __init__(self, translations, parent_window=None):
         super().__init__(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
@@ -147,27 +177,7 @@ class SupportFooter(Gtk.Box):
         self.set_margin_bottom(10)
         self.set_halign(Gtk.Align.CENTER)
 
-        self.urls_labels = [
-            ("https://linux.toys/documentation.html", "Wiki", "wiki.svg", True),
-            (
-                "",
-                self.translations.get("report_label", "Report Bug"),
-                "report.svg",
-                True,
-            ),
-            (
-                "https://dev.linux.toys",
-                self.translations.get("devportal_label", "Credits"),
-                "credits.svg",
-                True,
-            ),
-            (
-                "https://ko-fi.com/psygreg",
-                self.translations.get("support_footer", "Support this project"),
-                "sponsor.svg",
-                True,
-            ),
-        ]
+        self.urls_labels = _support_links(self.translations)
         
         # Store button references for later updates
         self.buttons = []
@@ -195,29 +205,9 @@ class SupportFooter(Gtk.Box):
     def update_translations(self, new_translations):
         """Update footer with new translations when language changes"""
         self.translations = new_translations or {}
-        
-        # Update the urls_labels with new translations
-        self.urls_labels = [
-            ("https://linux.toys/knowledgebase.html", "Wiki", "wiki.svg", True),
-            (
-                "",
-                self.translations.get("report_label", "Report Bug"),
-                "report.svg",
-                True,
-            ),
-            (
-                "https://linux.toys/credits.html",
-                self.translations.get("credits_label", "Credits"),
-                "credits.svg",
-                True,
-            ),
-            (
-                "https://ko-fi.com/psygreg",
-                self.translations.get("support_footer", "Support this project"),
-                "sponsor.svg",
-                True,
-            ),
-        ]
+
+        # URLs and icons are constant; only labels follow the translations.
+        self.urls_labels = _support_links(self.translations)
         
         # Update button labels
         for button, index in self.buttons:
