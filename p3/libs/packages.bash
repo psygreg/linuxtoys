@@ -3039,6 +3039,31 @@ pkg_appimage_rm () {
     return 0
 }
 
+# Best-effort upgrade of npm through itself ("pkg_npm npm", used by the
+# Skills Seeker flows to get a modern npx). npm special-cases installing its
+# own package: when the running Node.js does not satisfy the candidate
+# version's "engines" requirement, npm refuses the self-install with a hard
+# EBADENGINE error — for every other package that same mismatch is only a
+# warning. Distro-provided npm (Debian/Ubuntu/Fedora) often pairs an older
+# Node with a perfectly usable npx, so an engine refusal must not abort the
+# caller: this helper treats it as a skip and leaves the installed npm
+# untouched (returns 1 so no transaction gets recorded). Genuine failures
+# (network, permissions) keep the original sudo escalation and fatal path.
+# Returns 0 when npm was actually upgraded, 1 when the upgrade was skipped.
+_pkg_npm_self_upgrade () {
+    local -a _self_flags=("$@")
+    local _self_log
+    if _self_log=$(npm install -g "${_self_flags[@]}" npm 2>&1); then
+        return 0
+    fi
+    if grep -qiE 'EBADENGINE|Unsupported engine|Not compatible with your version of node/npm' <<<"$_self_log"; then
+        warn "The latest npm requires a newer Node.js than the one installed; keeping the current npm."
+        return 1
+    fi
+    # Not an engine refusal: escalate as any other failing npm install would.
+    sudo_ npm install -g "${_self_flags[@]}" npm || fatal "Failed to install npm package npm"
+}
+
 pkg_npm () {
     if ! command -v npm &>/dev/null; then
         { ( is_ubuntu || is_debian || is_suse ) && pkg_install npm; }
@@ -3078,8 +3103,18 @@ pkg_npm () {
     done
     for pkg in "${packages[@]}"; do
         if ! npm list -g "$pkg" &>/dev/null; then
-            { npm install -g "${flags[@]}" "$pkg" 2>/dev/null || sudo_ npm install -g "${flags[@]}" "$pkg"; } || fatal "Failed to install npm package $pkg"
-            _append_transmap "npm $pkg"
+            if [[ "$pkg" == "npm" ]]; then
+                # Installing npm through npm is a self-upgrade, not a regular
+                # package: an engine-incompatible Node makes npm refuse it
+                # outright. Skipped upgrades leave the existing npm in place,
+                # so only real upgrades are recorded for reversal.
+                if _pkg_npm_self_upgrade "${flags[@]}"; then
+                    _append_transmap "npm $pkg"
+                fi
+            else
+                { npm install -g "${flags[@]}" "$pkg" 2>/dev/null || sudo_ npm install -g "${flags[@]}" "$pkg"; } || fatal "Failed to install npm package $pkg"
+                _append_transmap "npm $pkg"
+            fi
         fi
     done
 }
