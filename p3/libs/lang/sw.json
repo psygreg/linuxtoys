@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Kushindwa kurejesha operesheni ya dpkg iliyokatizwa. Inahitajika kuingilia kwa mikono ya mtumiaji.",
   "pkg_guard_broken": "Kugunduliwa mahitaji-vifurushi yaliyoharibiwa. Inajaribu kurejesha...",
   "pkg_guard_broken_fail": "Kushindwa kurekebisha vifurushi vilivyoharibiwa. Inahitajika kuingilia kwa mikono ya mtumiaji.",
-  "pkg_guard_broken_pending": "Mahitaji-vifurushi bado yameharibiwa. Inahitajika kuingilia kwa mikono ya mtumiaji."
+  "pkg_guard_broken_pending": "Mahitaji-vifurushi bado yameharibiwa. Inahitajika kuingilia kwa mikono ya mtumiaji.",
+  "privilege_required_title": "Ufikiaji wa Msimamizi Unahitajika",
+  "privilege_required_message": "Mtumiaji huyu hawezi kutumia sudo, hivyo LinuxToys haiwezi kufunga, kusasisha au kuondoa programu. Hakikisha sudo imewekwa, ongeza mtumiaji kwenye kikundi cha sudo (Debian, Ubuntu) au kikundi cha wheel (Fedora, Arch, openSUSE), kisha fungua LinuxToys tena.",
+  "bug_report_cancelled_title": "Hakuna Kitu cha Kuripoti",
+  "bug_report_cancelled_message": "Uendeshaji wa mwisho ulifutwa au ulirukwa, hivyo hakuna kitu cha kuripoti.\n\nUjumbe wa mwisho: {reason}",
+  "bug_report_rejected_title": "Hakuna Kitu cha Kuripoti",
+  "bug_report_rejected_message": "Pato la terminali halikuwa na maandishi yanayoweza kutumwa, hivyo ripoti haikutumwa."
 }

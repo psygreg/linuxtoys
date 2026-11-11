@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Kesintiye uğramış dpkg işlemini kurtarma başarısız oldu. Kullanıcının elle müdahalesi gerekli.",
   "pkg_guard_broken": "Bozuk paket bağımlılıkları algılandı. Kurtarma deneniyor...",
   "pkg_guard_broken_fail": "Bozuk paketler düzeltilemedi. Kullanıcının elle müdahalesi gerekli.",
-  "pkg_guard_broken_pending": "Paket bağımlılıkları hâlâ bozuk durumda. Kullanıcının elle müdahalesi gerekli."
+  "pkg_guard_broken_pending": "Paket bağımlılıkları hâlâ bozuk durumda. Kullanıcının elle müdahalesi gerekli.",
+  "privilege_required_title": "Yönetici Erişimi Gerekli",
+  "privilege_required_message": "Bu kullanıcı sudo kullanamıyor, bu nedenle LinuxToys yazılım kuramaz, güncelleyemez veya kaldıramaz. sudo'nun kurulu olduğundan emin olun, kullanıcıyı sudo grubuna (Debian, Ubuntu) veya wheel grubuna (Fedora, Arch, openSUSE) ekleyin ve ardından LinuxToys'u yeniden açın.",
+  "bug_report_cancelled_title": "Bildirilecek Bir Şey Yok",
+  "bug_report_cancelled_message": "Son çalıştırma iptal edildi veya atlandı, bu nedenle bildirilecek bir şey yok.\n\nSon mesaj: {reason}",
+  "bug_report_rejected_title": "Bildirilecek Bir Şey Yok",
+  "bug_report_rejected_message": "Terminal çıktısında gönderilebilecek metin yoktu, bu nedenle rapor gönderilmedi."
 }

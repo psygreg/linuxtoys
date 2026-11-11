@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Notaðist ekki að endurheimta truflaða dpkg-aðgerð. Notandi þarf að grípa handvirkt inn.",
   "pkg_guard_broken": "Fannst biluð háð pakka. Reynt er að endurheimta...",
   "pkg_guard_broken_fail": "Notaðist ekki að laga biluð pakka. Notandi þarf að grípa handvirkt inn.",
-  "pkg_guard_broken_pending": "Háð pakka eru enn biluð. Notandi þarf að grípa handvirkt inn."
+  "pkg_guard_broken_pending": "Háð pakka eru enn biluð. Notandi þarf að grípa handvirkt inn.",
+  "privilege_required_title": "Krafist er kerfisstjóraaðgangs",
+  "privilege_required_message": "Þessi notandi getur ekki notað sudo, svo LinuxToys getur ekki sett upp, uppfært eða fjarlægt hugbúnað. Gakktu úr skugga um að sudo sé uppsett, bættu notandanum í sudo-hópinn (Debian, Ubuntu) eða wheel-hópinn (Fedora, Arch, openSUSE) og opnaðu síðan LinuxToys aftur.",
+  "bug_report_cancelled_title": "Ekkert til að tilkynna",
+  "bug_report_cancelled_message": "Síðasta keyrsla var aflýst eða sleppt, svo ekkert er til að tilkynna.\n\nSíðustu skilaboð: {reason}",
+  "bug_report_rejected_title": "Ekkert til að tilkynna",
+  "bug_report_rejected_message": "Úttak skipanagluggans innihélt engan texta sem hægt var að senda, svo skýrslan var ekki send inn."
 }

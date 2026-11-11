@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Pārtrauktas dpkg darbības atjaunošana neizdevās. Nepieciešama lietotāja manuāla iejaukšanās.",
   "pkg_guard_broken": "Konstatētas sabojātas paku atkarības. Tiek mēģināts atjaunot...",
   "pkg_guard_broken_fail": "Sabojāto paku labošana neizdevās. Nepieciešama lietotāja manuāla iejaukšanās.",
-  "pkg_guard_broken_pending": "Paku atkarības joprojām ir sabojātas. Nepieciešama lietotāja manuāla iejaukšanās."
+  "pkg_guard_broken_pending": "Paku atkarības joprojām ir sabojātas. Nepieciešama lietotāja manuāla iejaukšanās.",
+  "privilege_required_title": "Nepieciešama administratora pieeja",
+  "privilege_required_message": "Šis lietotājs nevar izmantot sudo, tāpēc LinuxToys nevar instalēt, atjaunināt vai noņemt programmatūru. Pārliecinieties, ka sudo ir instalēts, pievienojiet lietotāju sudo grupai (Debian, Ubuntu) vai wheel grupai (Fedora, Arch, openSUSE), un pēc tam atveriet LinuxToys vēlreiz.",
+  "bug_report_cancelled_title": "Nav ko ziņot",
+  "bug_report_cancelled_message": "Pēdējā palaišana tika atcelta vai izlaista, tāpēc nav ko ziņot.\n\nPēdējais ziņojums: {reason}",
+  "bug_report_rejected_title": "Nav ko ziņot",
+  "bug_report_rejected_message": "Termināla izvadē nebija teksta, ko varētu nosūtīt, tāpēc ziņojums netika iesniegts."
 }

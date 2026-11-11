@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Herstel van de afgebroken dpkg-bewerking is mislukt. Handmatig ingrijpen van de gebruiker is vereist.",
   "pkg_guard_broken": "Beschadigde pakketafhankelijkheden gedetecteerd. Herstel wordt geprobeerd...",
   "pkg_guard_broken_fail": "Herstellen van de beschadigde pakketten is mislukt. Handmatig ingrijpen van de gebruiker is vereist.",
-  "pkg_guard_broken_pending": "De pakketafhankelijkheden zijn nog steeds beschadigd. Handmatig ingrijpen van de gebruiker is vereist."
+  "pkg_guard_broken_pending": "De pakketafhankelijkheden zijn nog steeds beschadigd. Handmatig ingrijpen van de gebruiker is vereist.",
+  "privilege_required_title": "Administrator-toegang vereist",
+  "privilege_required_message": "Deze gebruiker kan sudo niet gebruiken, dus LinuxToys kan geen software installeren, bijwerken of verwijderen. Zorg ervoor dat sudo is geïnstalleerd, voeg de gebruiker toe aan de sudo-groep (Debian, Ubuntu) of de wheel-groep (Fedora, Arch, openSUSE) en open daarna LinuxToys opnieuw.",
+  "bug_report_cancelled_title": "Niets te melden",
+  "bug_report_cancelled_message": "De laatste run is geannuleerd of overgeslagen, dus er is niets te melden.\n\nLaatste bericht: {reason}",
+  "bug_report_rejected_title": "Niets te melden",
+  "bug_report_rejected_message": "De terminaluitvoer bevatte geen tekst die kon worden verzonden, dus het rapport is niet ingediend."
 }

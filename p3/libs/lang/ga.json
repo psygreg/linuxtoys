@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Níorbh fhéidir an oibríocht dpkg stadaithe go tobann a athchóiriú. Teastaíonn idirghabháil láimhe ón úsáideoir.",
   "pkg_guard_broken": "Braitheadh spleáchais pacáistí briste. Ag iarraidh a athchóiriú...",
   "pkg_guard_broken_fail": "Níorbh fhéidir na pacáistí briste a dheisiú. Teastaíonn idirghabháil láimhe ón úsáideoir.",
-  "pkg_guard_broken_pending": "Tá spleáchais na bpacáistí fós briste. Teastaíonn idirghabháil láimhe ón úsáideoir."
+  "pkg_guard_broken_pending": "Tá spleáchais na bpacáistí fós briste. Teastaíonn idirghabháil láimhe ón úsáideoir.",
+  "privilege_required_title": "Rochtain Riarthóra de Dhíth",
+  "privilege_required_message": "Ní féidir leis an úsáideoir seo sudo a úsáid, mar sin ní féidir le LinuxToys bogearraí a shuiteáil, a nuashonrú ná a bhaint. Déan cinnte go bhfuil sudo suiteáilte, cuir an t-úsáideoir leis an ngrúpa sudo (Debian, Ubuntu) nó leis an ngrúpa wheel (Fedora, Arch, openSUSE), agus ansin oscail LinuxToys arís.",
+  "bug_report_cancelled_title": "Níl aon rud le tuairisciú",
+  "bug_report_cancelled_message": "Cuireadh an rith deiridh ar ceal nó fágadh ar lár é, mar sin níl aon rud le tuairisciú.\n\nAn teachtaireacht dheireanach: {reason}",
+  "bug_report_rejected_title": "Níl aon rud le tuairisciú",
+  "bug_report_rejected_message": "Ní raibh aon téacs in aschur na teirminéile ar féidir é a sheoladh, mar sin níor seoladh an tuarascáil."
 }

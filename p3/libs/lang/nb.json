@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Kunne ikke gjenopprette den avbrutte dpkg-handlingen. Manuell brukerhandling er påkrevd.",
   "pkg_guard_broken": "Oppdaget ødelagte pakkeavhengigheter. Forsøker å gjenopprette...",
   "pkg_guard_broken_fail": "Kunne ikke reparere de ødelagte pakkene. Manuell brukerhandling er påkrevd.",
-  "pkg_guard_broken_pending": "Pakkeavhengighetene er fortsatt ødelagte. Manuell brukerhandling er påkrevd."
+  "pkg_guard_broken_pending": "Pakkeavhengighetene er fortsatt ødelagte. Manuell brukerhandling er påkrevd.",
+  "privilege_required_title": "Administratoradgang kreves",
+  "privilege_required_message": "Denne brukeren kan ikke bruke sudo, så LinuxToys kan ikke installere, oppdatere eller fjerne programvare. Sørg for at sudo er installert, legg til brukeren i sudo-gruppen (Debian, Ubuntu) eller wheel-gruppen (Fedora, Arch, openSUSE), og åpne deretter LinuxToys igjen.",
+  "bug_report_cancelled_title": "Ingenting å rapportere",
+  "bug_report_cancelled_message": "Den siste kjøringen ble avbrutt eller hoppet over, så det er ingenting å rapportere.\n\nSiste melding: {reason}",
+  "bug_report_rejected_title": "Ingenting å rapportere",
+  "bug_report_rejected_message": "Terminalutgangen inneholdt ingen tekst som kunne sendes, så rapporten ble ikke sendt inn."
 }

@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "ተቋርጦ የነበረውን የdpkg ሥራ ማስተካከል አልተቻለም። ተጠቃሚው በእጅ ጣልቃ ገብነት ያስፈልገዋል።",
   "pkg_guard_broken": "የተበላ የጥቅል ጥገኛነቶች ተገኝተዋል። ማስተካከል እየተሞከረ ነው...",
   "pkg_guard_broken_fail": "ተበላ የነበሩ ጥቅሎችን ማስተካከል አልተቻለም። ተጠቃሚው በእጅ ጣልቃ ገብነት ያስፈልገዋል።",
-  "pkg_guard_broken_pending": "የጥቅል ጥገኛነቶች አሁንም ተበላ ይገኛሉ። ተጠቃሚው በእጅ ጣልቃ ገብነት ያስፈልገዋል።"
+  "pkg_guard_broken_pending": "የጥቅል ጥገኛነቶች አሁንም ተበላ ይገኛሉ። ተጠቃሚው በእጅ ጣልቃ ገብነት ያስፈልገዋል።",
+  "privilege_required_title": "የአስተዳዳሪ መዳረሻ ያስፈልጋል",
+  "privilege_required_message": "ይህ ተጠቃሚ sudo መጠቀም አይችልም፣ ስለዚህ LinuxToys ሶፍትዌር መጫን፣ ማዘመን ወይም ማስወገድ አይችልም። sudo የተጫነ መሆኑን ያረጋግጡ፣ ተጠቃሚውን ወደ sudo ቡድን (Debian፣ Ubuntu) ወይም ወደ wheel ቡድን (Fedora፣ Arch፣ openSUSE) ያክሉ፣ ከዚያ LinuxToys እንደገና ይክፈቱ።",
+  "bug_report_cancelled_title": "ምንም የሚሰበክ ነገር የለም",
+  "bug_report_cancelled_message": "የመጨረሻው ሥራ ተሰርዟል ወይም ተለፍቷል፣ ስለዚህ ምንም የሚሰበክ ነገር የለም።\n\nየመጨረሻ መልእክት: {reason}",
+  "bug_report_rejected_title": "ምንም የሚሰበክ ነገር የለም",
+  "bug_report_rejected_message": "የተርሚናሉ ውጤት ለመላክ የሚችል ጽሑፍ የለም፣ ስለዚህ ሪፖርቱ አልተላከም።"
 }

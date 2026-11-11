@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Kunne ikke gendanne den afbrudte dpkg-handling. Manuel brugerhandling er påkrævet.",
   "pkg_guard_broken": "Brudte pakkeafhængigheder blev fundet. Forsøger at gendanne...",
   "pkg_guard_broken_fail": "Kunne ikke reparere de brudte pakker. Manuel brugerhandling er påkrævet.",
-  "pkg_guard_broken_pending": "Pakkeafhængighederne er stadig brudte. Manuel brugerhandling er påkrævet."
+  "pkg_guard_broken_pending": "Pakkeafhængighederne er stadig brudte. Manuel brugerhandling er påkrævet.",
+  "privilege_required_title": "Administratoradgang påkrævet",
+  "privilege_required_message": "Denne bruger kan ikke bruge sudo, så LinuxToys kan ikke installere, opdatere eller fjerne software. Sørg for, at sudo er installeret, tilføj brugeren til sudo-gruppen (Debian, Ubuntu) eller wheel-gruppen (Fedora, Arch, openSUSE), og åbn derefter LinuxToys igen.",
+  "bug_report_cancelled_title": "Intet at rapportere",
+  "bug_report_cancelled_message": "Den sidste kørsel blev annulleret eller sprunget over, så der er intet at rapportere.\n\nSidste besked: {reason}",
+  "bug_report_rejected_title": "Intet at rapportere",
+  "bug_report_rejected_message": "Terminaloutputtet indeholdt ingen tekst, der kunne sendes, så rapporten blev ikke indsendt."
 }

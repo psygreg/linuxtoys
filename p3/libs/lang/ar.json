@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "فشل استرداد عملية dpkg المقطوعة. يلزم تدخل يدوي من المستخدم.",
   "pkg_guard_broken": "تم اكتشاف تبعيات حزم تالفة. جارٍ محاولة الاسترداد...",
   "pkg_guard_broken_fail": "فشل إصلاح الحزم التالفة. يلزم تدخل يدوي من المستخدم.",
-  "pkg_guard_broken_pending": "تبعيات الحزم لا تزال تالفة. يلزم تدخل يدوي من المستخدم."
+  "pkg_guard_broken_pending": "تبعيات الحزم لا تزال تالفة. يلزم تدخل يدوي من المستخدم.",
+  "privilege_required_title": "مطلوب صلاحية المسؤول",
+  "privilege_required_message": "لا يمكن لهذا المستخدم استخدام sudo، لذلك لا يستطيع LinuxToys تثبيت البرامج أو تحديثها أو إزالتها. تأكد من تثبيت sudo، وأضف المستخدم إلى مجموعة sudo (Debian وUbuntu) أو مجموعة wheel (Fedora وArch وopenSUSE)، ثم افتح LinuxToys مرة أخرى.",
+  "bug_report_cancelled_title": "لا يوجد شيء للإبلاغ عنه",
+  "bug_report_cancelled_message": "تم إلغاء التشغيل الأخير أو تخطيه، لذا لا يوجد شيء للإبلاغ عنه.\n\nآخر رسالة: {reason}",
+  "bug_report_rejected_title": "لا يوجد شيء للإبلاغ عنه",
+  "bug_report_rejected_message": "لم يحتوي خرج الطرفية على أي نص يمكن إرساله، لذا لم يتم إرسال التقرير."
 }

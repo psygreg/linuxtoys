@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Obnovenie prerušenej dpkg operácie sa nepodarilo. Je potrebný ručný zásah používateľa.",
   "pkg_guard_broken": "Zistené poškodené závislosti balíkov. Pokúša sa o obnovenie...",
   "pkg_guard_broken_fail": "Poškodené balíky sa nepodarilo opraviť. Je potrebný ručný zásah používateľa.",
-  "pkg_guard_broken_pending": "Závislosti balíkov sú stále poškodené. Je potrebný ručný zásah používateľa."
+  "pkg_guard_broken_pending": "Závislosti balíkov sú stále poškodené. Je potrebný ručný zásah používateľa.",
+  "privilege_required_title": "Vyžaduje sa prístup správcu",
+  "privilege_required_message": "Tento používateľ nemôže používať sudo, takže LinuxToys nemôže inštalovať, aktualizovať ani odstraňovať softvér. Uistite sa, že sudo je nainštalované, pridajte používateľa do skupiny sudo (Debian, Ubuntu) alebo skupiny wheel (Fedora, Arch, openSUSE) a potom znova otvorte LinuxToys.",
+  "bug_report_cancelled_title": "Nie je čo nahlásiť",
+  "bug_report_cancelled_message": "Posledné spustenie bolo zrušené alebo preskočené, takže nie je čo nahlásiť.\n\nPosledná správa: {reason}",
+  "bug_report_rejected_title": "Nie je čo nahlásiť",
+  "bug_report_rejected_message": "Výstup terminálu neobsahoval žiadny text, ktorý by bolo možné odoslať, takže hlásenie nebolo odoslané."
 }

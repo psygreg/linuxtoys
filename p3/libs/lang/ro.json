@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Recuperarea operațiunii dpkg întrerupte a eșuat. Este necesară intervenția manuală a utilizatorului.",
   "pkg_guard_broken": "S-au detectat dependențe de pachete corupte. Se încearcă recuperarea...",
   "pkg_guard_broken_fail": "Repararea pachetelor corupte a eșuat. Este necesară intervenția manuală a utilizatorului.",
-  "pkg_guard_broken_pending": "Dependențele pachetelor sunt în continuare corupte. Este necesară intervenția manuală a utilizatorului."
+  "pkg_guard_broken_pending": "Dependențele pachetelor sunt în continuare corupte. Este necesară intervenția manuală a utilizatorului.",
+  "privilege_required_title": "Este necesar accesul de administrator",
+  "privilege_required_message": "Acest utilizator nu poate folosi sudo, deci LinuxToys nu poate instala, actualiza sau elimina software. Asigurați-vă că sudo este instalat, adăugați utilizatorul în grupul sudo (Debian, Ubuntu) sau în grupul wheel (Fedora, Arch, openSUSE), apoi deschideți din nou LinuxToys.",
+  "bug_report_cancelled_title": "Nu există nimic de raportat",
+  "bug_report_cancelled_message": "Ultima rulare a fost anulată sau omisă, deci nu există nimic de raportat.\n\nUltimul mesaj: {reason}",
+  "bug_report_rejected_title": "Nu există nimic de raportat",
+  "bug_report_rejected_message": "Rezultatul terminalului nu conținea text care să poată fi trimis, deci raportul nu a fost trimis."
 }

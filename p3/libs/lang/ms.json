@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Gagal memulihkan operasi dpkg yang terganggu. Perlukan campur tangan manual daripada pengguna.",
   "pkg_guard_broken": "Kebergantungan pakej rosak dikesan. Cuba pemulihan...",
   "pkg_guard_broken_fail": "Gagal membaiki pakej rosak. Perlukan campur tangan manual daripada pengguna.",
-  "pkg_guard_broken_pending": "Kebergantungan pakej masih rosak. Perlukan campur tangan manual daripada pengguna."
+  "pkg_guard_broken_pending": "Kebergantungan pakej masih rosak. Perlukan campur tangan manual daripada pengguna.",
+  "privilege_required_title": "Akses Pentadbir Diperlukan",
+  "privilege_required_message": "Pengguna ini tidak boleh menggunakan sudo, jadi LinuxToys tidak dapat memasang, mengemas kini atau membuang perisian. Pastikan sudo dipasang, tambahkan pengguna ke kumpulan sudo (Debian, Ubuntu) atau kumpulan wheel (Fedora, Arch, openSUSE), kemudian buka LinuxToys sekali lagi.",
+  "bug_report_cancelled_title": "Tiada Apa yang Perlu Dilaporkan",
+  "bug_report_cancelled_message": "Pelaksanaan terakhir telah dibatalkan atau dilangkau, jadi tiada apa yang perlu dilaporkan.\n\nMesej terakhir: {reason}",
+  "bug_report_rejected_title": "Tiada Apa yang Perlu Dilaporkan",
+  "bug_report_rejected_message": "Output terminal tiada teks yang boleh dihantar, jadi laporan tidak dihantar."
 }
