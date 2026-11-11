@@ -58,103 +58,67 @@ def save_language(lang_code):
 
 
 
-def get_automatic_updates():
-    """Return whether background self-updates are enabled (default: True)."""
+def _settings_read_bool(section, option, default):
+    """Read a boolean preference from settings.conf (missing file → default)."""
     config_file = os.path.join(get_config_dir(), "settings.conf")
     if not os.path.exists(config_file):
-        return True
+        return default
 
     try:
         config = configparser.ConfigParser()
         config.read(config_file)
-        return config.getboolean("updates", "automatic", fallback=True)
+        return config.getboolean(section, option, fallback=default)
     except Exception:
+        return default
+
+
+def _settings_write(section, option, value):
+    """Persist a stringified preference to settings.conf."""
+    config_file = os.path.join(get_config_dir(), "settings.conf")
+    config = configparser.ConfigParser()
+
+    try:
+        if os.path.exists(config_file):
+            config.read(config_file)
+        if not config.has_section(section):
+            config.add_section(section)
+        config.set(section, option, value)
+        with open(config_file, "w") as f:
+            config.write(f)
         return True
+    except Exception as e:
+        print(f"Error saving {section}/{option} preference: {e}")
+        return False
+
+
+def get_automatic_updates():
+    """Return whether background self-updates are enabled (default: True)."""
+    return _settings_read_bool("updates", "automatic", True)
 
 
 def save_automatic_updates(enabled):
     """Persist the automatic background update preference."""
-    config_file = os.path.join(get_config_dir(), "settings.conf")
-    config = configparser.ConfigParser()
-
-    try:
-        if os.path.exists(config_file):
-            config.read(config_file)
-        if not config.has_section("updates"):
-            config.add_section("updates")
-        config.set("updates", "automatic", "true" if enabled else "false")
-        with open(config_file, "w") as f:
-            config.write(f)
-        return True
-    except Exception as e:
-        print(f"Error saving automatic update preference: {e}")
-        return False
+    return _settings_write("updates", "automatic", "true" if enabled else "false")
 
 
 def get_automatic_error_reports():
     """Return whether failed scripts submit bug reports automatically (default: False)."""
-    config_file = os.path.join(get_config_dir(), "settings.conf")
-    if not os.path.exists(config_file):
-        return False
-
-    try:
-        config = configparser.ConfigParser()
-        config.read(config_file)
-        return config.getboolean("reports", "automatic", fallback=False)
-    except Exception:
-        return False
+    return _settings_read_bool("reports", "automatic", False)
 
 
 def save_automatic_error_reports(enabled):
     """Persist the automatic bug report preference."""
-    config_file = os.path.join(get_config_dir(), "settings.conf")
-    config = configparser.ConfigParser()
-
-    try:
-        if os.path.exists(config_file):
-            config.read(config_file)
-        if not config.has_section("reports"):
-            config.add_section("reports")
-        config.set("reports", "automatic", "true" if enabled else "false")
-        with open(config_file, "w") as f:
-            config.write(f)
-        return True
-    except Exception as e:
-        print(f"Error saving automatic bug report preference: {e}")
-        return False
+    return _settings_write("reports", "automatic", "true" if enabled else "false")
 
 
 def get_mcp_server_enabled():
     """Return whether the MCP agent server service is enabled (default: False)."""
-    config_file = os.path.join(get_config_dir(), "settings.conf")
-    if not os.path.exists(config_file):
-        return False
-
-    try:
-        config = configparser.ConfigParser()
-        config.read(config_file)
-        return config.getboolean("mcp", "enabled", fallback=False)
-    except Exception:
-        return False
+    return _settings_read_bool("mcp", "enabled", False)
 
 
 def save_mcp_server_enabled(enabled):
     """Persist the MCP agent server preference."""
-    config_file = os.path.join(get_config_dir(), "settings.conf")
-    config = configparser.ConfigParser()
-
-    try:
-        if os.path.exists(config_file):
-            config.read(config_file)
-        if not config.has_section("mcp"):
-            config.add_section("mcp")
-        config.set("mcp", "enabled", "true" if enabled else "false")
-        with open(config_file, "w") as f:
-            config.write(f)
-        return True
-    except Exception as e:
-        print(f"Error saving MCP server preference: {e}")
-        return False
+    return _settings_write("mcp", "enabled", "true" if enabled else "false")
 
 
 def get_mcp_server_port():
@@ -183,35 +147,12 @@ def get_mcp_server_port():
 
 def get_ostree_deployment_info_hidden():
     """Return whether the ostree package deployment info dialog is hidden (default: False)."""
-    config_file = os.path.join(get_config_dir(), "settings.conf")
-    if not os.path.exists(config_file):
-        return False
-
-    try:
-        config = configparser.ConfigParser()
-        config.read(config_file)
-        return config.getboolean("ostree", "deployment_info_hidden", fallback=False)
-    except Exception:
-        return False
+    return _settings_read_bool("ostree", "deployment_info_hidden", False)
 
 
 def save_ostree_deployment_info_hidden(hidden):
     """Persist whether the ostree package deployment info dialog stays hidden."""
-    config_file = os.path.join(get_config_dir(), "settings.conf")
-    config = configparser.ConfigParser()
-
-    try:
-        if os.path.exists(config_file):
-            config.read(config_file)
-        if not config.has_section("ostree"):
-            config.add_section("ostree")
-        config.set("ostree", "deployment_info_hidden", "true" if hidden else "false")
-        with open(config_file, "w") as f:
-            config.write(f)
-        return True
-    except Exception as e:
-        print(f"Error saving ostree deployment info preference: {e}")
-        return False
+    return _settings_write("ostree", "deployment_info_hidden", "true" if hidden else "false")
 
 @lru_cache(maxsize=1)
 def detect_system_language():

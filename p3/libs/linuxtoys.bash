@@ -475,13 +475,9 @@ _msg() {
     case "$type" in
         # Echo before the dialog so the terminal buffer always holds the
         # message for bug reporting; the dialog is purely the visible surface.
-        info)
+        info|warning)
             echo "$text"
-            _zenity_run --info --text "$text" --width 360 --height 300 || true
-            ;;
-        warning)
-            echo "$text"
-            _zenity_run --warning --text "$text" --width 360 --height 300 || true
+            _zenity_run --"$type" --text "$text" --width 360 --height 300 || true
             ;;
         error)
             echo "$text"
@@ -607,24 +603,32 @@ _cli_select() {
 }
 
 # radioselect [--title TITLE] [--text TEXT] [--no-default] [--] OPTION...
-# The first option starts selected unless --no-default is given: then nothing
-# is selected and Enter cancels.
-radioselect() {
-    local title="LinuxToys" text="" nodefault=""
+# Shared option parsing for radioselect/listselect: fills SELECT_TITLE,
+# SELECT_TEXT and SELECT_FLAG ("1" when $2 — the selector-specific boolean
+# option, possibly empty — was given), and appends the remaining choices to
+# the array named by $1. Returns 1 on malformed options or no choices.
+_select_parse_options() {
+    local -n _choices_ref="$1"
+    local _bool_flag="$2"
+    shift 2
+    SELECT_TITLE="LinuxToys"
+    SELECT_TEXT=""
+    SELECT_FLAG=""
+    _choices_ref=()
     while (( $# > 0 )); do
         case "$1" in
             --title)
                 (( $# >= 2 )) || return 1
-                title="$2"
+                SELECT_TITLE="$2"
                 shift 2
                 ;;
             --text)
                 (( $# >= 2 )) || return 1
-                text="$(_msg_unescape "$2")"
+                SELECT_TEXT="$(_msg_unescape "$2")"
                 shift 2
                 ;;
-            --no-default)
-                nodefault=1
+            "$_bool_flag")
+                SELECT_FLAG="1"
                 shift
                 ;;
             --)
@@ -636,7 +640,18 @@ radioselect() {
                 ;;
         esac
     done
-    (( $# > 0 )) || return 1
+    _choices_ref=("$@")
+    (( ${#_choices_ref[@]} > 0 )) || return 1
+}
+
+# radioselect [--title TITLE] [--text TEXT] [--no-default] [--] OPTION...
+# The first option starts selected unless --no-default is given: then nothing
+# is selected and Enter cancels.
+radioselect() {
+    local -a _options=()
+    _select_parse_options _options --no-default "$@" || return 1
+    local title="$SELECT_TITLE" text="$SELECT_TEXT" nodefault="$SELECT_FLAG"
+    set -- "${_options[@]}"
 
     if _lt_agent_active; then
         local _pref
@@ -671,33 +686,11 @@ radioselect() {
 # listselect [--title TITLE] [--text TEXT] [--all] [--] OPTION...
 # --all starts with every option checked; Enter keeps those on the terminal.
 listselect() {
-    local title="LinuxToys" text="" preselect=""
-    while (( $# > 0 )); do
-        case "$1" in
-            --title)
-                (( $# >= 2 )) || return 1
-                title="$2"
-                shift 2
-                ;;
-            --text)
-                (( $# >= 2 )) || return 1
-                text="$(_msg_unescape "$2")"
-                shift 2
-                ;;
-            --all)
-                preselect=all
-                shift
-                ;;
-            --)
-                shift
-                break
-                ;;
-            *)
-                break
-                ;;
-        esac
-    done
-    (( $# > 0 )) || return 1
+    local -a _options=()
+    _select_parse_options _options --all "$@" || return 1
+    local title="$SELECT_TITLE" text="$SELECT_TEXT" preselect=""
+    [[ -n "$SELECT_FLAG" ]] && preselect=all
+    set -- "${_options[@]}"
 
     if _lt_agent_active; then
         local _pref _sep=$'\x1f' _nl=$'\n'

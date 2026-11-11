@@ -792,13 +792,7 @@ def load_or_refresh(path, *, force=False):
         entries = normalize(feed)
         if not entries:
             raise ValueError("AppImage feed has no usable entries")
-        path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = path.with_name(path.name + ".tmp")
-        try:
-            tmp.write_bytes(payload)
-            os.replace(tmp, path)
-        finally:
-            tmp.unlink(missing_ok=True)
+        atomic_write_bytes(path, payload)
         return entries
     except Exception as exc:
         logging.warning("AppImage community feed unavailable: %s", exc)

@@ -8,6 +8,7 @@ import threading
 from urllib.parse import urlparse
 
 from .compat import get_system_compat_keys, is_containerized, is_wsl
+from .atomic_io import atomic_write_text
 from .dev_mode import get_effective_compat_keys, get_dev_compat_override, is_dev_mode_enabled
 from . import official_index, new_index
 from .lang_utils import detect_system_language
@@ -1264,20 +1265,8 @@ python3 "$SCRIPT_DIR/app/library_loader.py" "$_external_script" || exit $?
         f"{entry.get('name', '')}\0{entry.get('repo', '')}".encode("utf-8")
     ).hexdigest()[:12]
     path = os.path.join(tmp_dir, f"{safe_name}-{identity}.sh")
-    tmp_path = f"{path}.tmp"
 
-    try:
-        with open(tmp_path, "w", encoding="utf-8") as file:
-            file.write(contents)
-
-        os.chmod(tmp_path, 0o700)
-        os.replace(tmp_path, path)
-    except Exception:
-        try:
-            os.unlink(tmp_path)
-        except OSError:
-            pass
-        raise
+    atomic_write_text(path, contents, mode=0o700)
 
     return path
 

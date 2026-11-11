@@ -2,6 +2,7 @@ use pyo3::prelude::*;
 
 mod repo;
 mod appstream;
+mod shared;
 mod popularity;
 mod featured;
 mod search;

@@ -16,7 +16,8 @@ from textual.widgets import Button, Checkbox, Label
 
 from app import compat
 
-from .helper import translations
+from .helper import flathub_ready, translations
+from ..atomic_io import atomic_write_text
 
 logger = logging.getLogger(__name__)
 
@@ -38,9 +39,7 @@ def is_suppressed() -> bool:
 def suppress() -> None:
     marker = _marker_path()
     try:
-        os.makedirs(os.path.dirname(marker), exist_ok=True)
-        with open(marker, "w", encoding="utf-8") as handle:
-            handle.write("1\n")
+        atomic_write_text(marker, "1\n")
     except OSError as exc:
         logger.warning(
             "Could not save startup recommendation preference: %s", exc
@@ -75,33 +74,6 @@ def command_succeeds(command: list[str]) -> bool:
         return False
 
 
-def _flathub_ready(flatpak: str) -> bool:
-    """Return True if a ``flathub`` remote exists in either scope.
-
-    BLOCKING: runs ``flatpak remotes`` for ``--user`` and ``--system``
-    (8 s timeout each). A scope that fails is skipped.
-
-    Args:
-        flatpak: Path of the ``flatpak`` executable.
-    """
-    for scope in ("--user", "--system"):
-        try:
-            result = subprocess.run(
-                [flatpak, scope, "remotes", "--columns=name"],
-                capture_output=True,
-                text=True,
-                timeout=8,
-                check=False,
-            )
-        except (OSError, subprocess.SubprocessError):
-            continue
-        if result.returncode == 0 and "flathub" in {
-            line.strip() for line in result.stdout.splitlines()
-        }:
-            return True
-    return False
-
-
 def detect() -> list[str]:
     """Return the optional setup scripts that are useful on this host."""
     keys = compat.get_system_compat_keys()
@@ -114,7 +86,7 @@ def detect() -> list[str]:
         and "systemd" in keys
     ):
         flatpak = shutil.which("flatpak")
-        if not flatpak or not _flathub_ready(flatpak):
+        if not flatpak or not flathub_ready(flatpak):
             recommendations.append("flathub")
 
     if "fedora" in keys:

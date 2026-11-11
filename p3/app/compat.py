@@ -11,6 +11,40 @@ _SCRIPT_FILE_PATH_LOCKS = {}
 _HOST_COMPAT_CACHE_LOCK = threading.RLock()
 _HOST_COMPAT_CACHE = {}
 
+# Transaction map written by the bash core libraries during script runs
+# (same literal in p3/libs/linuxtoys.bash). Consumed by registry saving,
+# auto-revert and bug reports.
+TRANSMAP_PATH = "/tmp/linuxtoys/transmap"
+
+
+def native_package_family() -> str:
+    """Return this host's native package-manager family ("" = unknown).
+
+    One compat-key mapping shared by the installed-state tracker
+    (``installed_packages``) and the AUR gate (``aur_cache``). The busy-manager
+    preflight (``package_guard``) deliberately mirrors the os-release
+    predicates of ``libs/sysinfo.bash`` instead, because it must inspect
+    exactly the managers the distribution execution path drives.
+
+    Families: "ostree" (rpm-ostree/ublue immutable), "arch" (pacman, incl.
+    CachyOS/Manjaro), "debian" (apt: Debian/Ubuntu/Deepin/Zorin/Pika),
+    "fedora" (dnf), "suse" (zypper).
+    """
+    keys = set(get_system_compat_keys())
+    if keys.intersection({"steamos", "dakota", "gnomeos", "kde-linux"}):
+        return ""
+    if "ostree" in keys or "ublue" in keys:
+        return "ostree"
+    if "cachy" in keys or "arch" in keys or "manjaro" in keys:
+        return "arch"
+    if keys.intersection({"ubuntu", "debian", "pika", "deepin", "zorin"}):
+        return "debian"
+    if "fedora" in keys or "rhel" in keys:
+        return "fedora"
+    if "suse" in keys:
+        return "suse"
+    return ""
+
 
 def _script_file_signature(path):
     """Return a cheap signature suitable for invalidating cached script data."""

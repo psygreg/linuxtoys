@@ -4,6 +4,7 @@ import threading
 
 from .gtk_common import GdkPixbuf, GLib, Gdk, Gtk, Pango
 from . import get_icon_path
+from .dev_mode import is_dev_mode_enabled
 
 
 def _run_fetcher(command, *args):
@@ -735,7 +736,7 @@ class SkillsSeekerView(Gtk.Box):
         if self._loading_installed:
             return
         self._loading_installed = True
-        if os.environ.get("DEV_MODE") == "1":
+        if is_dev_mode_enabled():
             self._show_loading()
             for child in self.installed_flowbox.get_children():
                 child.destroy()
@@ -804,7 +805,7 @@ class SkillsSeekerView(Gtk.Box):
 
     def _handle_remove(self, skill):
         """Confirma e executa remoção de uma skill."""
-        if os.environ.get("DEV_MODE") == "1":
+        if is_dev_mode_enabled():
             self._show_error("Mock mode: removal is disabled.")
             return
         skill_name = skill.get("name", "")

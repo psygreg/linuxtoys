@@ -14,7 +14,8 @@ from pathlib import Path
 
 from . import homebrew_catalog
 from . import registry_utils
-from .compat import get_system_compat_keys, is_containerized
+from .compat import native_package_family, is_containerized, native_package_family
+from .atomic_io import atomic_write_text
 
 CACHE_ROOT = Path(os.path.expanduser("~/.cache/linuxtoys"))
 _LOCK = threading.RLock()
@@ -22,18 +23,16 @@ _STATE = {"manager": None, "native": set(), "flatpak": {}, "snap": set(), "homeb
 
 
 def _manager():
-    keys = get_system_compat_keys()
-    if "steamos" in keys:
-        return None
-    if "ostree" in keys or "ublue" in keys:
+    family = native_package_family()
+    if family == "ostree":
         return "rpm-ostree"
-    if "cachy" in keys or "arch" in keys or "manjaro" in keys:
+    if family == "arch":
         return "pacman"
-    if "ubuntu" in keys or "debian" in keys or "pika" in keys or "deepin" in keys or "zorin" in keys:
+    if family == "debian":
         return "apt"
-    if "fedora" in keys or "rhel" in keys:
+    if family == "fedora":
         return "dnf"
-    if "suse" in keys:
+    if family == "suse":
         return "zypper"
     return None
 
@@ -50,11 +49,10 @@ def _read_lines(name):
 
 
 def _atomic_lines(name, values):
-    CACHE_ROOT.mkdir(parents=True, exist_ok=True)
-    target = _path(name)
-    tmp = target.with_name(target.name + ".tmp")
-    tmp.write_text("".join(f"{value}\n" for value in sorted(set(values))), encoding="utf-8")
-    os.replace(tmp, target)
+    atomic_write_text(
+        _path(name),
+        "".join(f"{value}\n" for value in sorted(set(values))),
+    )
 
 
 def load_previous():

@@ -14,7 +14,7 @@ from textual.css.query import NoMatches
 from textual.widgets import Input
 
 from app import aur_cache, homebrew_catalog, installed_packages
-from app.compat import get_revert_capability, get_system_compat_keys
+from app.compat import get_revert_capability, get_system_compat_keys, TRANSMAP_PATH
 from app.easy_cli import (
     _cleanup_tmp_noram_dirs,
     _save_script_to_registry,
@@ -89,7 +89,7 @@ from .tui_app_page import AppPageWidget, hide_app_page, show_app_page
 
 logger = logging.getLogger(__name__)
 
-TRANSMAP_PATH = "/tmp/linuxtoys/transmap"
+# TRANSMAP_PATH comes from app.compat (see imports above).
 
 
 class ScriptRunnerMixin:

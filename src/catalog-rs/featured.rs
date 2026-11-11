@@ -46,22 +46,7 @@ fn weighted_sample(indices: &[usize], weights: &[f64], count: usize, rng: &mut S
 
     let mut selected = Vec::with_capacity(count.min(pool.len()));
     for _ in 0..count.min(pool.len()) {
-        let total: f64 = pool.iter().map(|(_, weight)| *weight).sum();
-        if total <= 0.0 || !total.is_finite() {
-            break;
-        }
-        let target = rng.unit() * total;
-        let mut cumulative = 0.0;
-        let mut chosen = None;
-        for (position, (_, weight)) in pool.iter().enumerate() {
-            cumulative += *weight;
-            if *weight > 0.0 && target < cumulative {
-                chosen = Some(position);
-                break;
-            }
-        }
-        let position = chosen.or_else(|| pool.iter().rposition(|(_, weight)| *weight > 0.0));
-        let Some(position) = position else { break; };
+        let Some(position) = crate::shared::weighted_pick(&pool, rng.unit()) else { break; };
         selected.push(pool.remove(position).0);
     }
     selected

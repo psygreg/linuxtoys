@@ -1,9 +1,14 @@
 
+# Reload the systemd manager once per script run (shared latch preamble of
+# sysd_enable/sysd_start and their --user variants).
+_sysd_reload_once() {
+    [ -n "${daemon_reloaded:-}" ] && return 0
+    sudo_ systemctl daemon-reload || fatal "Failed to reload systemd daemon"
+    daemon_reloaded="1"
+}
+
 sysd_enable() {
-    if [ ! -n "$daemon_reloaded" ]; then
-        sudo_ systemctl daemon-reload || fatal "Failed to reload systemd daemon"
-        daemon_reloaded="1"
-    fi
+    _sysd_reload_once
     for svc in "$@"; do
         sudo_ systemctl enable "$svc" || fatal "Failed to enable service $svc"
         _append_transmap "sysd enabled $svc"
@@ -16,10 +21,7 @@ sysd_disable() {
     done
 }
 sysd_start() {
-    if [ ! -n "$daemon_reloaded" ]; then
-        sudo_ systemctl daemon-reload || fatal "Failed to reload systemd daemon"
-        daemon_reloaded="1"
-    fi
+    _sysd_reload_once
     for svc in "$@"; do
         sudo_ systemctl start "$svc" || fatal "Failed to start service $svc"
         _append_transmap "sysd started $svc"
@@ -33,10 +35,7 @@ sysd_stop() {
 }
 
 sysd_enable_usr() {
-    if [ ! -n "$daemon_reloaded" ]; then
-        sudo_ systemctl daemon-reload || fatal "Failed to reload systemd daemon"
-        daemon_reloaded="1"
-    fi
+    _sysd_reload_once
     for svc in "$@"; do
         systemctl --user enable "$svc" || fatal "Failed to enable service $svc"
         _append_transmap "sysd usermode enabled $svc"
@@ -49,10 +48,7 @@ sysd_disable_usr() {
     done
 }
 sysd_start_usr() {
-    if [ ! -n "$daemon_reloaded" ]; then
-        sudo_ systemctl daemon-reload || fatal "Failed to reload systemd daemon"
-        daemon_reloaded="1"
-    fi
+    _sysd_reload_once
     for svc in "$@"; do
         systemctl --user start "$svc" || fatal "Failed to start service $svc"
         _append_transmap "sysd usermode started $svc"

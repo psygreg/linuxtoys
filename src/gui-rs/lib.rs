@@ -200,9 +200,7 @@ fn bind_remote_image(image: &gtk::Image, source: &str, size: i32) {
                 if let Some(parent) = worker_target.parent() {
                     fs::create_dir_all(parent).map_err(|error| error.to_string())?;
                 }
-                let tmp = worker_target.with_extension("tmp");
-                fs::write(&tmp, data).map_err(|error| error.to_string())?;
-                fs::rename(&tmp, &worker_target).map_err(|error| error.to_string())?;
+                atomic_write_file(&worker_target, &data, "tmp")?;
                 Ok(())
             })()
             .is_ok();
@@ -1269,9 +1267,7 @@ fn packaged_desktop_icon(path: &str, kind: &str, package_name: &str) -> Option<S
         let target = package_icon_cache_dir().join(format!("{:016x}.{extension}", hasher.finish()));
         if !target.is_file() {
             fs::create_dir_all(target.parent()?).ok()?;
-            let tmp = target.with_extension(format!("{extension}.tmp"));
-            fs::write(&tmp, &icon_bytes).ok()?;
-            fs::rename(&tmp, &target).ok()?;
+            atomic_write_file(&target, &icon_bytes, &format!("{extension}.tmp")).ok()?;
         }
         return Some(target.to_string_lossy().into_owned());
     }
@@ -1452,6 +1448,14 @@ pub unsafe extern "C" fn lt_gui_inspect_local_package(
     std::ptr::copy_nonoverlapping(encoded.as_ptr(), output as *mut u8, encoded.len());
     *(output.add(encoded.len())) = 0;
     true
+}
+
+/// Stage *data* in a sibling ``*.tmp`` file and rename it over *target*, so
+/// readers never observe a partial icon cache entry.
+fn atomic_write_file(target: &std::path::Path, data: &[u8], tmp_extension: &str) -> Result<(), String> {
+    let tmp = target.with_extension(tmp_extension);
+    fs::write(&tmp, data).map_err(|error| error.to_string())?;
+    fs::rename(&tmp, target).map_err(|error| error.to_string())
 }
 
 #[no_mangle]

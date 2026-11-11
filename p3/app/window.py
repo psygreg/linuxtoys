@@ -44,6 +44,7 @@ from . import (
     package_guard,
     package_view
 )
+from .atomic_io import atomic_write_json
 from .gtk_common import Gdk, GLib, Gtk, GdkPixbuf, resolve_symbolic_icon
 from gi.repository import Gio
 from .window_items import ItemWidgetFactory
@@ -4389,11 +4390,7 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
 
         state_path = self._window_state_path()
         try:
-            os.makedirs(os.path.dirname(state_path), exist_ok=True)
-            temporary_path = f"{state_path}.tmp"
-            with open(temporary_path, "w", encoding="utf-8") as state_file:
-                json.dump(state, state_file)
-            os.replace(temporary_path, state_path)
+            atomic_write_json(state_path, state)
         except OSError as exc:
             logger.warning("Could not save window state: %s", exc)
 

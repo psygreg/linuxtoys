@@ -61,17 +61,10 @@ def _appstream_entry_id(entry):
 def _appstream_entries_context(translations=None):
     """Return arguments needed to resolve the same AppStream universe as the UI.
 
-    The tuple is ``(scripts_dir, curated_entries, category_paths)``. The
-    category paths are required: without them the Rust category mapping drops
-    every non-Homebrew component, so a URI resolution would miss entries the
-    UI offers — and a background derived-cache rebuild triggered here would
-    publish that incomplete generation for every other reader.
+    Delegates to ``parser.appstream_context`` with the repository-entry set
+    (``curated=False``), preserving the historical resolution scope.
     """
-    return (
-        parser.SCRIPTS_DIR,
-        parser.get_repo_entries(translations),
-        parser._indexed_category_paths(),
-    )
+    return parser.appstream_context(translations, curated=False)
 
 
 def find_appstream_entry_by_id(appstream_id, translations=None):

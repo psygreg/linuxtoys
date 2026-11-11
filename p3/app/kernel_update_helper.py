@@ -8,6 +8,7 @@ import urllib.error
 import urllib.request
 
 from .gtk_common import GLib, Gtk
+from .updater import version_gate
 
 def get_current_kernel():
     """
@@ -59,31 +60,14 @@ def get_latest_psycachy_releases():
 def compare_versions(current, latest):
     """
     Compare two version strings.
+
+    Delegates to the shared implementation in ``updater.version_gate``.
     Returns:
     - 1 if latest > current (update available)
     - 0 if latest == current (up to date)
     - -1 if latest < current (current is newer)
     """
-
-    def version_tuple(v):
-        # Convert version string to tuple of integers for comparison
-        # e.g., "6.6.63" -> (6, 6, 63)
-        parts = v.split(".")
-        return tuple(int(part) for part in parts)
-
-    try:
-        current_tuple = version_tuple(current)
-        latest_tuple = version_tuple(latest)
-
-        if latest_tuple > current_tuple:
-            return 1
-        elif latest_tuple == current_tuple:
-            return 0
-        else:
-            return -1
-    except (ValueError, TypeError):
-        # If version parsing fails, assume no update needed
-        return 0
+    return version_gate.compare_versions(current, latest)
 
 
 def check_for_kernel_updates(verbose=False):

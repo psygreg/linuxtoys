@@ -50,42 +50,43 @@ prep_dir_edit() {
     done
 }
 
-copy_() {
-    local -a flags=()
-    local -a args=()
+# Shared plumbing for the reversible copy_/move_ transfers (native hosts and
+# Distrobox containers): splits leading option flags from positional args, then
+# runs the per-source fallback chain. Only the tool (cp/mv), the execution
+# scope and the failure labels differ per public wrapper.
+_transfer_split_args() {
+    _TRANSFER_FLAGS=()
+    _TRANSFER_ARGS=()
+    local arg
     for arg in "$@"; do
         if [[ "$arg" == -* ]]; then
-            flags+=("$arg")
+            _TRANSFER_FLAGS+=("$arg")
         else
-            args+=("$arg")
+            _TRANSFER_ARGS+=("$arg")
         fi
-    done
-    
-    local dest="${args[-1]}"
-    local -a sources=("${args[@]:0:${#args[@]}-1}")
-    for src in "${sources[@]}"; do
-        [ -e "$src" ] || fatal "Source $src not found"
-        { cp "${flags[@]}" "$src" "$dest" 2>/dev/null || sudo_ cp "${flags[@]}" "$src" "$dest"; } || fatal "Failed to copy $src to $dest"
     done
 }
 
-move_() {
-    local -a flags=()
-    local -a args=()
-    for arg in "$@"; do
-        if [[ "$arg" == -* ]]; then
-            flags+=("$arg")
-        else
-            args+=("$arg")
-        fi
-    done
-    
-    local dest="${args[-1]}"
-    local -a sources=("${args[@]:0:${#args[@]}-1}")
+_transfer() {
+    local tool="$1" label="$2"
+    shift 2
+    _transfer_split_args "$@"
+
+    local dest="${_TRANSFER_ARGS[-1]}"
+    local -a sources=("${_TRANSFER_ARGS[@]:0:${#_TRANSFER_ARGS[@]}-1}")
+    local src
     for src in "${sources[@]}"; do
         [ -e "$src" ] || fatal "Source $src not found"
-        { mv "${flags[@]}" "$src" "$dest" 2>/dev/null || sudo_ mv "${flags[@]}" "$src" "$dest"; } || fatal "Failed to move $src to $dest"
+        { "$tool" "${_TRANSFER_FLAGS[@]}" "$src" "$dest" 2>/dev/null || sudo_ "$tool" "${_TRANSFER_FLAGS[@]}" "$src" "$dest"; } || fatal "Failed to $label $src to $dest"
     done
+}
+
+copy_() {
+    _transfer cp copy "$@"
+}
+
+move_() {
+    _transfer mv move "$@"
 }
 
 
@@ -130,60 +131,32 @@ distrobox_prep_dir_edit() {
     done
 }
 
-distrobox_copy_() {
-    local container="$1"
-    shift
-    local -a flags=()
-    local -a args=()
-    local arg
+_distrobox_transfer() {
+    local tool="$1" label="$2" container="$3"
+    shift 3
+    _transfer_split_args "$@"
 
-    for arg in "$@"; do
-        if [[ "$arg" == -* ]]; then
-            flags+=("$arg")
-        else
-            args+=("$arg")
-        fi
-    done
-
-    (( ${#args[@]} >= 2 )) || fatal "distrobox_copy_: source and destination required"
-    local dest="${args[-1]}"
-    local -a sources=("${args[@]:0:${#args[@]}-1}")
+    (( ${#_TRANSFER_ARGS[@]} >= 2 )) || fatal "$label: source and destination required"
+    local dest="${_TRANSFER_ARGS[-1]}"
+    local -a sources=("${_TRANSFER_ARGS[@]:0:${#_TRANSFER_ARGS[@]}-1}")
     local src
-
     for src in "${sources[@]}"; do
         distrobox enter "$container" -- test -e "$src" \
             || fatal "Source $src not found in Distrobox $container"
-        distrobox enter "$container" -- cp "${flags[@]}" "$src" "$dest" 2>/dev/null \
-            || distrobox enter "$container" -- sudo cp "${flags[@]}" "$src" "$dest" \
-            || fatal "Failed to copy $src to $dest in Distrobox $container"
+        distrobox enter "$container" -- "$tool" "${_TRANSFER_FLAGS[@]}" "$src" "$dest" 2>/dev/null \
+            || distrobox enter "$container" -- sudo "$tool" "${_TRANSFER_FLAGS[@]}" "$src" "$dest" \
+            || fatal "Failed to $label $src to $dest in Distrobox $container"
     done
+}
+
+distrobox_copy_() {
+    local container="$1"
+    shift
+    _distrobox_transfer cp "distrobox_copy_" "$container" "$@"
 }
 
 distrobox_move_() {
     local container="$1"
     shift
-    local -a flags=()
-    local -a args=()
-    local arg
-
-    for arg in "$@"; do
-        if [[ "$arg" == -* ]]; then
-            flags+=("$arg")
-        else
-            args+=("$arg")
-        fi
-    done
-
-    (( ${#args[@]} >= 2 )) || fatal "distrobox_move_: source and destination required"
-    local dest="${args[-1]}"
-    local -a sources=("${args[@]:0:${#args[@]}-1}")
-    local src
-
-    for src in "${sources[@]}"; do
-        distrobox enter "$container" -- test -e "$src" \
-            || fatal "Source $src not found in Distrobox $container"
-        distrobox enter "$container" -- mv "${flags[@]}" "$src" "$dest" 2>/dev/null \
-            || distrobox enter "$container" -- sudo mv "${flags[@]}" "$src" "$dest" \
-            || fatal "Failed to move $src to $dest in Distrobox $container"
-    done
+    _distrobox_transfer mv "distrobox_move_" "$container" "$@"
 }

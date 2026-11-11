@@ -1,5 +1,6 @@
 import os
 import re
+import subprocess
 import threading
 from collections.abc import Mapping
 from enum import Enum, auto
@@ -15,6 +16,33 @@ from app.search_helper import (
 )
 
 translations = load_translations()
+
+
+def flathub_ready(flatpak: str) -> bool:
+    """Return True if a ``flathub`` remote exists in either scope.
+
+    BLOCKING: runs ``flatpak remotes`` for ``--user`` and ``--system``
+    (8 s timeout each). A scope that fails is skipped.
+
+    Args:
+        flatpak: Path of the ``flatpak`` executable.
+    """
+    for scope in ("--user", "--system"):
+        try:
+            result = subprocess.run(
+                [flatpak, scope, "remotes", "--columns=name"],
+                capture_output=True,
+                text=True,
+                timeout=8,
+                check=False,
+            )
+        except (OSError, subprocess.SubprocessError):
+            continue
+        if result.returncode == 0 and "flathub" in {
+            line.strip() for line in result.stdout.splitlines()
+        }:
+            return True
+    return False
 
 _category_cache: CategoryCache | None = None
 _script_cache: ScriptCache | None = None

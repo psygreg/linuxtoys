@@ -8,6 +8,7 @@ from pathlib import Path
 from urllib.request import Request, urlopen
 
 from .gtk_common import Gdk, Gtk, GdkPixbuf, Pango, GLib, resolve_symbolic_icon
+from .atomic_io import atomic_write_bytes
 from .term_header import InfosHead
 from . import (
     get_icon_path,
@@ -2504,9 +2505,7 @@ class AppPageView(Gtk.Box):
                         data = response.read(12 * 1024 * 1024 + 1)
                     if len(data) > 12 * 1024 * 1024:
                         raise ValueError("screenshot exceeds size limit")
-                    tmp = target.with_suffix(".tmp")
-                    tmp.write_bytes(data)
-                    os.replace(tmp, target)
+                    atomic_write_bytes(target, data)
                 if not self._destroyed:
                     GLib.idle_add(
                         self._finish_remote_screenshot, frame, spinner, str(target),
@@ -2808,9 +2807,7 @@ class AppPageView(Gtk.Box):
                         data = response.read(12 * 1024 * 1024 + 1)
                     if len(data) > 12 * 1024 * 1024:
                         raise ValueError("screenshot exceeds size limit")
-                    tmp = target.with_suffix(".tmp")
-                    tmp.write_bytes(data)
-                    os.replace(tmp, target)
+                    atomic_write_bytes(target, data)
                 if not self._destroyed:
                     GLib.idle_add(self._finish_lightbox_load, target, request_id)
             except Exception:

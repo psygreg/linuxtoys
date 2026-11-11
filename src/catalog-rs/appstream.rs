@@ -8,30 +8,11 @@ use std::hash::{BuildHasher, Hash, Hasher};
 use std::sync::OnceLock;
 
 fn json_to_py(py: Python<'_>, value: &Value) -> PyResult<Py<PyAny>> {
-    Ok(match value {
-        Value::Null => py.None(),
-        Value::Bool(v) => v.into_pyobject(py)?.to_owned().unbind().into_any(),
-        Value::Number(v) => {
-            if let Some(i) = v.as_i64() { i.into_pyobject(py)?.to_owned().unbind().into_any() }
-            else if let Some(u) = v.as_u64() { u.into_pyobject(py)?.to_owned().unbind().into_any() }
-            else { v.as_f64().unwrap_or(0.0).into_pyobject(py)?.to_owned().unbind().into_any() }
-        },
-        Value::String(v) => v.into_pyobject(py)?.to_owned().unbind().into_any(),
-        Value::Array(values) => {
-            let list = PyList::empty(py);
-            for v in values { list.append(json_to_py(py, v)?)?; }
-            list.unbind().into_any()
-        },
-        Value::Object(values) => {
-            let dict = PyDict::new(py);
-            for (k,v) in values { dict.set_item(k, json_to_py(py,v)?)?; }
-            dict.unbind().into_any()
-        }
-    })
+    crate::shared::json_to_py(py, value)
 }
 
 fn normalize_id(value: &str) -> String {
-    value.trim().strip_suffix(".desktop").or_else(|| value.trim().strip_suffix(".Desktop")).unwrap_or(value.trim()).to_lowercase()
+    crate::shared::normalize_appstream_id(value)
 }
 
 
@@ -176,10 +157,26 @@ fn first_category(cands:&Value, exact:&std::collections::HashSet<String>, by:&st
 fn category_path_is_within_rs(path:&str, parent:&str)->bool{
     path==parent||path.strip_prefix(parent).is_some_and(|suffix|suffix.starts_with('/'))
 }
+/// Exact-path set + suffix index for the category resolvers, built once from
+/// the indexed category paths.
+fn category_index_maps(paths: &[String]) -> (std::collections::HashSet<String>, std::collections::HashMap<String, Vec<String>>) {
+    let mut exact = std::collections::HashSet::new();
+    let mut by: std::collections::HashMap<String, Vec<String>> = std::collections::HashMap::new();
+    for path in paths {
+        let path = path.replace('\\', "/").trim_matches('/').to_string();
+        if path.is_empty() || path == "lists" { continue; }
+        exact.insert(path.clone());
+        by.entry(path.rsplit('/').next().unwrap_or(&path).into()).or_default().push(path);
+    }
+    for values in by.values_mut() {
+        values.sort_by_key(|p| (p.matches('/').count(), p.clone()));
+    }
+    (exact, by)
+}
+
 fn resolve_category_rs(cats:&Value, paths:&[String], cfg:&Value)->Option<String>{
-    let set:std::collections::HashSet<&str>=cats.as_array()?.iter().filter_map(Value::as_str).collect(); let mut exact=std::collections::HashSet::new(); let mut by:std::collections::HashMap<String,Vec<String>>=std::collections::HashMap::new();
-    for p in paths{let p=p.replace('\\',"/").trim_matches('/').to_string();if p.is_empty()||p=="lists"{continue} exact.insert(p.clone());by.entry(p.rsplit('/').next().unwrap_or(&p).into()).or_default().push(p)}
-    for v in by.values_mut(){v.sort_by_key(|p|(p.matches('/').count(),p.clone()))}
+    let set:std::collections::HashSet<&str>=cats.as_array()?.iter().filter_map(Value::as_str).collect();
+    let (exact, by)=category_index_maps(paths);
     let o=cfg.as_object()?;
     let main_map=o.get("main").and_then(Value::as_object);
     let preferred_main=o.get("main_priority").and_then(Value::as_array).into_iter().flatten().filter_map(Value::as_str).find_map(|key|{
@@ -257,23 +254,8 @@ fn resolve_component_category_rs(component:&serde_json::Map<String,Value>, paths
                 .map(str::trim)
                 .filter(|value|!value.is_empty())
             {
-                if let Some(category)=first_category(&serde_json::json!([destination]),&{
-                    let mut exact=std::collections::HashSet::new();
-                    for path in paths {
-                        let path=path.replace('\\',"/").trim_matches('/').to_string();
-                        if !path.is_empty()&&path!="lists"{exact.insert(path);}
-                    }
-                    exact
-                },&{
-                    let mut by:std::collections::HashMap<String,Vec<String>>=std::collections::HashMap::new();
-                    for path in paths {
-                        let path=path.replace('\\',"/").trim_matches('/').to_string();
-                        if path.is_empty()||path=="lists"{continue}
-                        by.entry(path.rsplit('/').next().unwrap_or(&path).into()).or_default().push(path);
-                    }
-                    for values in by.values_mut(){values.sort_by_key(|p|(p.matches('/').count(),p.clone()));}
-                    by
-                }){return Some(category)}
+                let (exact, by) = category_index_maps(paths);
+                if let Some(category) = first_category(&serde_json::json!([destination]), &exact, &by) { return Some(category) }
             }
         }
     }

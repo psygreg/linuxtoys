@@ -9,6 +9,8 @@ from pathlib import Path
 import re
 import shlex
 
+from .atomic_io import atomic_write_text
+
 _SESSION_LOCK = threading.Lock()
 _SESSION_DIR = None
 
@@ -582,17 +584,7 @@ def materialize_appstream_by_target(target, script_dir):
     os.makedirs(directory, mode=0o700, exist_ok=True)
     safe = re.sub(r"[^A-Za-z0-9._-]+", "-", str(entry.get("appstream_id") or target)).strip("-._") or "appstream"
     path = os.path.join(directory, f"{safe}.sh")
-    tmp = path + ".tmp"
-    try:
-        Path(tmp).write_text(contents, encoding="utf-8")
-        os.chmod(tmp, 0o700)
-        os.replace(tmp, path)
-    except Exception:
-        try:
-            os.remove(tmp)
-        except OSError:
-            pass
-        raise
+    atomic_write_text(path, contents, mode=0o700)
 
     return {
         "path": path,

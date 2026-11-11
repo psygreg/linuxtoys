@@ -14,6 +14,7 @@ import asyncio
 import argparse
 import re
 from .parser import get_categories, get_all_scripts_recursive, get_repo_entries, get_appstream_entries
+from .atomic_io import atomic_write_text
 from . import appstream_cache, appstream_parser
 from .compat import get_system_compat_keys, script_is_compatible, is_containerized, script_is_container_compatible
 from .reboot_helper import check_ostree_pending_deployments
@@ -758,19 +759,7 @@ def export_registered_manifest(output_path=None, registry_data=None, translation
         "",
     ]
 
-    temp_path = f"{destination}.tmp-{os.getpid()}"
-    try:
-        with open(temp_path, "w", encoding="utf-8") as manifest_file:
-            manifest_file.write("\n".join(lines))
-            manifest_file.flush()
-            os.fsync(manifest_file.fileno())
-        os.replace(temp_path, destination)
-    finally:
-        try:
-            if os.path.exists(temp_path):
-                os.remove(temp_path)
-        except OSError:
-            pass
+    atomic_write_text(destination, "\n".join(lines), fsync=True)
 
     return destination, len(entries)
 

@@ -10,13 +10,13 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 from app import appstream_cache
+from ..atomic_io import atomic_write_json
 
 
 def google_translate_text(text: str, target_language: str) -> str:
@@ -202,8 +202,8 @@ def save_cached_translation(
 ) -> None:
     """Store a translation in the cache, on a best-effort basis.
 
-    Writes to a temporary file and moves it into place with
-    ``os.replace``, so readers never see a partial file. I/O errors
+    The write is atomic (staged temporary file + replace, see
+    ``app.atomic_io``), so readers never see a partial file. I/O errors
     are ignored: a failed write only means the translation is not
     cached.
 
@@ -215,12 +215,8 @@ def save_cached_translation(
     """
     path = _cache_path(info, blocks, target)
     try:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = path.with_name(path.name + ".tmp")
-        with open(tmp, "w", encoding="utf-8") as fh:
-            json.dump(
-                translated, fh, ensure_ascii=False, separators=(",", ":")
-            )
-        os.replace(tmp, path)
+        atomic_write_json(
+            path, translated, ensure_ascii=False, separators=(",", ":")
+        )
     except OSError:
         pass

@@ -27,21 +27,18 @@ bun install -g --trust @opencode/cli
 
 call_script nerdfonts
 
-if [ -f "$HOME/.sloth-bash" ]; then
-    prep_edit "$HOME/.sloth-bash"
-else
-    prep_create "$HOME/.sloth-bash"
-fi
-if [ -f "$HOME/.alias-list" ]; then
-    prep_edit "$HOME/.alias-list"
-else
-    prep_create "$HOME/.alias-list"
-fi
-if [ -f "$HOME/.config/starship.toml" ]; then
-    prep_edit "$HOME/.config/starship.toml"
-else
-    prep_create "$HOME/.config/starship.toml"
-fi
+# Prepare a dotfile for editing: back up if it exists, record creation otherwise.
+_prep_edit_or_create() {
+    if [ -f "$1" ]; then
+        prep_edit "$1"
+    else
+        prep_create "$1"
+    fi
+}
+
+_prep_edit_or_create "$HOME/.sloth-bash"
+_prep_edit_or_create "$HOME/.alias-list"
+_prep_edit_or_create "$HOME/.config/starship.toml"
 
 pkg_brew starship
 wget -O ~/.sloth-bash https://raw.githubusercontent.com/psygreg/sloth-bash/main/sloth-bash

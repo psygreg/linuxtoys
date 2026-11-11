@@ -12,6 +12,7 @@ import hmac
 import unicodedata
 from ..updater.update_helper import get_current_version
 from ..lang_utils import _
+from ..compat import TRANSMAP_PATH
 from urllib.parse import urlparse
  
 _REPORT_URL = "https://bug.linux.toys"
@@ -494,7 +495,7 @@ def _get_last_n_lines(text: str, n: int = 20) -> str:
 
 def _get_transmap_content() -> str:
     """Load and format transmap file content for the report."""
-    transmap_path = "/tmp/linuxtoys/transmap"
+    transmap_path = TRANSMAP_PATH
     try:
         if not Path(transmap_path).exists():
             return ""

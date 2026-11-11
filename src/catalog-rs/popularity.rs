@@ -129,30 +129,12 @@ pub(crate) fn featured_weighted_sample(
     let mut selected = Vec::with_capacity(wanted);
 
     for draw in draws.into_iter().take(wanted) {
-        let total: f64 = pool.iter().map(|(_, weight)| *weight).sum();
-        if total <= 0.0 || !total.is_finite() {
-            break;
-        }
-
         let unit = if draw.is_finite() {
             draw.clamp(0.0, 1.0 - f64::EPSILON)
         } else {
             0.0
         };
-        let target = unit * total;
-        let mut cumulative = 0.0;
-        let mut chosen = None;
-
-        for (position, (_, weight)) in pool.iter().enumerate() {
-            cumulative += *weight;
-            if *weight > 0.0 && target < cumulative {
-                chosen = Some(position);
-                break;
-            }
-        }
-
-        let position = chosen.or_else(|| pool.iter().rposition(|(_, weight)| *weight > 0.0));
-        let Some(position) = position else { break; };
+        let Some(position) = crate::shared::weighted_pick(&pool, unit) else { break; };
         let (original_index, _) = pool.remove(position);
         selected.push(original_index);
     }

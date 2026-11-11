@@ -8,6 +8,8 @@ import urllib.request
 import shlex
 
 from . import __version__
+from . import version_gate
+from ..dev_mode import is_dev_mode_enabled
 
 
 def get_current_version():
@@ -42,7 +44,7 @@ class UpdateHelper:
         if self_updates_disabled():
             return False
 
-        if not os.environ.get("DEV_MODE") == "1":
+        if not is_dev_mode_enabled():
             if not is_from_repository():
                 return self._check_for_updates()
 
@@ -58,31 +60,14 @@ class UpdateHelper:
     def _compare_versions(self, current, latest) -> int:
         """
         Compare two version strings.
+
+        Delegates to the shared implementation in ``version_gate``.
         Returns:
         - 1 if latest > current (update available)
         - 0 if latest == current (up to date)
         - -1 if latest < current (current is newer)
         """
-
-        def version_tuple(v):
-            # Convert version string to tuple of integers for comparison
-            # e.g., "4.3.1" -> (4, 3, 1), "4.3" -> (4, 3, 0)
-            parts = v.split(".")
-            return tuple(int(part) for part in parts) + (0,) * (3 - len(parts))
-
-        try:
-            current_tuple = version_tuple(current)
-            latest_tuple = version_tuple(latest)
-
-            if latest_tuple > current_tuple:
-                return 1
-            elif latest_tuple == current_tuple:
-                return 0
-            else:
-                return -1
-        except (ValueError, TypeError):
-            # If version parsing fails, assume no update needed
-            return 0
+        return version_gate.compare_versions(current, latest)
 
     def _get_latest_version(self, repo_owner="psygreg", repo_name="linuxtoys") -> dict:
         """
@@ -209,7 +194,7 @@ def is_current_version(version: str | None = None) -> tuple[bool, str | None]:
     DEV_MODE bypasses the release guard. If the release lookup fails, fail open so
     bug reporting remains available during network/update-service outages.
     """
-    if os.environ.get("DEV_MODE") == "1":
+    if is_dev_mode_enabled():
         return True, None
 
     current = (version or __version__).strip()

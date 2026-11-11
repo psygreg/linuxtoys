@@ -45,6 +45,8 @@ import subprocess
 import sys
 import tempfile
 import threading
+
+from .atomic_io import atomic_write_text
 import time
 import uuid
 from collections import OrderedDict, deque
@@ -1841,21 +1843,11 @@ def _app_links(entry):
 def _appstream_context():
     """Resolve the AppStream universe exactly like the GUI catalog views.
 
-    Uses the fuller curated set (repository entries plus curated scripts) so
-    MCP search results match the GUI's duplicate suppression.
-
-    ``category_paths`` must be included: without it the Rust category mapping
-    drops every non-Homebrew component, and a derived-cache rebuild triggered
-    by this server would publish that incomplete generation. (_runtime_catalog
-    now also defaults a missing context to the indexed paths, so this stays
-    correct even if the explicit context is lost.)
+    Delegates to ``parser.appstream_context`` with the fuller curated set
+    (repository entries plus curated scripts) so MCP search results match
+    the GUI's duplicate suppression.
     """
-    translations = _translations()
-    return (
-        parser.SCRIPTS_DIR,
-        parser._get_appstream_curated_entries(translations),
-        parser._indexed_category_paths(),
-    )
+    return parser.appstream_context(_translations(), curated=True)
 
 
 def _resolve_entry(app_id):
@@ -4934,11 +4926,7 @@ def install_service_unit(session_env=None):
     os.makedirs(unit_dir, exist_ok=True)
     text = build_unit_text(session_env)
     path = user_unit_path()
-    tmp = path + ".tmp"
-    with open(tmp, "w", encoding="utf-8") as handle:
-        handle.write(text)
-    os.chmod(tmp, 0o644)
-    os.replace(tmp, path)
+    atomic_write_text(path, text, mode=0o644)
     output, error = _systemctl("daemon-reload")
     if error:
         return False, error

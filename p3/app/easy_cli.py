@@ -10,13 +10,14 @@ import shutil
 from .parser import get_categories, get_all_scripts_recursive, get_appstream_entries
 from .updater import __version__, version_gate
 from .manifest_helper import (
-    run_manifest_mode, run_update_check_cli, find_script_by_name, 
-    run_script, check_package_exists, install_packages, 
-    check_flatpaks_async, install_flatpaks, check_snaps, install_snaps, export_registered_manifest
+    run_manifest_mode, run_update_check_cli, find_script_by_name,
+    run_script, check_package_exists, install_packages,
+    check_flatpaks_async, install_flatpaks, check_snaps, install_snaps, export_registered_manifest,
+    _wait_for_package_manager,
 )
 from .library_loader import script_command, script_preamble
 from .dev_mode import is_dev_mode_enabled
-from .compat import get_system_compat_keys, get_linuxtoys_cache_dir
+from .compat import get_system_compat_keys, get_linuxtoys_cache_dir, TRANSMAP_PATH
 from . import installed_packages
 from . import package_guard
 from .revert_helper import build_auto_revert_script_entry, build_uninstall_script_entry
@@ -34,13 +35,10 @@ CLI_OPTIONS = frozenset({
 def _wait_for_package_manager_cli():
     """Wait (bounded) for a running native package manager to go idle.
 
-    Returns True once idle, False if the wait timed out (the caller reports
-    the timeout and aborts).
+    Delegates to the manifest engine's shared wait; returns True once idle,
+    False if the wait timed out (the caller reports the timeout and aborts).
     """
-    idle, _name = package_guard.wait_for_idle(
-        timeout=package_guard.BUSY_WAIT_TIMEOUT_SECONDS
-    )
-    return idle
+    return _wait_for_package_manager()
 
 
 def resolve_script_dir():
@@ -326,8 +324,7 @@ def easy_cli_run_script(script_info):
 
     # Clear transmap file for new script execution
     try:
-        transmap_path = "/tmp/linuxtoys/transmap"
-        with open(transmap_path, "w") as f:
+        with open(TRANSMAP_PATH, "w") as f:
             pass  # Truncate/clear the file
     except (IOError, OSError):
         pass  # Silently ignore if transmap cannot be cleared
@@ -348,7 +345,7 @@ def easy_cli_run_script(script_info):
 
         # Save to registry and wipe transmap file if script executed successfully
         if code == 0:
-            transmap_path = "/tmp/linuxtoys/transmap"
+            transmap_path = TRANSMAP_PATH
             if not registry_disabled:
                 _save_script_to_registry(registry_name, transmap_path)
             # Clean up any temp directories created by prep_tmp_noram before removing transmap
@@ -361,7 +358,7 @@ def easy_cli_run_script(script_info):
 
         # Handle errors with auto-revert capability
         if _is_error_exit_code(code):
-            transmap_path = "/tmp/linuxtoys/transmap"
+            transmap_path = TRANSMAP_PATH
             auto_reports_enabled = False  # CLI mode doesn't have auto-reporting (yet)
             
             # Try to auto-revert if there are operations in the transmap
@@ -1260,7 +1257,7 @@ def easy_cli_handler(translations=None):
 
     # --- Skip confirmation flags ---
     def skip_confirmation(args):
-        if os.environ.get("DEV_MODE") == "1":
+        if is_dev_mode_enabled():
             return True
 
         skip_flags = ("-y", "--yes")

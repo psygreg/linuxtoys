@@ -6,13 +6,13 @@ GUI-free: every function here is safe to call from headless contexts
 
 import hashlib
 import json
-import os
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 from . import appstream_cache
 from .lang_utils import detect_system_language
+from .atomic_io import atomic_write_json
 
 
 def normalized_language(value):
@@ -50,11 +50,9 @@ def save_cached_description_translation(app_id, blocks, translated, target_langu
     """Persist a translated block list next to the GUI's own cache."""
     path = translation_cache_path(app_id, blocks, target_language)
     try:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = path.with_name(path.name + ".tmp")
-        with open(tmp, "w", encoding="utf-8") as handle:
-            json.dump(translated, handle, ensure_ascii=False, separators=(",", ":"))
-        os.replace(tmp, path)
+        atomic_write_json(
+            path, translated, ensure_ascii=False, separators=(",", ":")
+        )
     except OSError:
         pass
 

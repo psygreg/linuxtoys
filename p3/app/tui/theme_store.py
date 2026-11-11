@@ -13,6 +13,7 @@ import logging
 import os
 
 from app import compat
+from ..atomic_io import atomic_write_json
 
 logger = logging.getLogger(__name__)
 
@@ -50,10 +51,6 @@ def save_theme(name: str) -> None:
     """
     path = _theme_path()
     try:
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        tmp = f"{path}.tmp"
-        with open(tmp, "w", encoding="utf-8") as handle:
-            json.dump({"theme": name}, handle)
-        os.replace(tmp, path)
+        atomic_write_json(path, {"theme": name})
     except OSError as exc:
         logger.warning("Could not save the TUI theme: %s", exc)

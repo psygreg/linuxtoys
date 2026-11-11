@@ -15,6 +15,19 @@ fetch_from_mirror () {
     return 1
 }
 
+# Parse the DaVinci Resolve release feed shared by the Free and Studio
+# branches of getresolve: the feed has already been fetched into $_releaseinfo;
+# sets _pkgver, _releaseNum and _filever.
+_davinci_parse_release() {
+    _pkgver=$(printf "%s" "$_releaseinfo" | awk -F'[,:]' '{for(i=1;i<=NF;i++){if($i~/"major"/){print $(i+1)} if($i~/"minor"/){print $(i+1)} if($i~/"releaseNum"/){print $(i+1)}}}' | sed 'N;s/\n/./;N;s/\n/./')
+    _releaseNum=$(printf "%s" "$_releaseinfo" | awk -F'[,:]' '{for(i=1;i<=NF;i++){if($i~/"releaseNum"/){print $(i+1)}}}')
+    if [ "$_releaseNum" == "0" ]; then
+        _filever=$(printf "%s" "$_releaseinfo" | awk -F'[,:]' '{for(i=1;i<=NF;i++){if($i~/"major"/){print $(i+1)} if($i~/"minor"/){print $(i+1)}}}' | sed 'N;s/\n/./')
+    else
+        _filever="${_pkgver}"
+    fi
+}
+
 # Download DaVinci Resolve (Free or Studio, per $_upkgname) from Blackmagic Design.
 # Sets _archive_name and _archive_run_name; the archive is left as ${_archive_name}.zip.
 getresolve () {
@@ -22,6 +35,7 @@ getresolve () {
     local _product=""
     local _referid=""
     local _siteurl=""
+    local _useragent="User-Agent: Mozilla/5.0 (X11; Linux ${CARCH}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.75 Safari/537.36"
     _archive_name=""
     _archive_run_name=""
 
@@ -29,32 +43,16 @@ getresolve () {
         _product="DaVinci Resolve"
         _referid='dfd43085ef224766b06b579ce8a6d097'
         _siteurl="https://www.blackmagicdesign.com/api/support/latest-stable-version/davinci-resolve/linux"
-        local _useragent="User-Agent: Mozilla/5.0 (X11; Linux ${CARCH}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.75 Safari/537.36"
-        local _releaseinfo
         _releaseinfo=$(curl -Ls "$_siteurl")
-        _pkgver=$(printf "%s" "$_releaseinfo" | awk -F'[,:]' '{for(i=1;i<=NF;i++){if($i~/"major"/){print $(i+1)} if($i~/"minor"/){print $(i+1)} if($i~/"releaseNum"/){print $(i+1)}}}' | sed 'N;s/\n/./;N;s/\n/./')
-        _releaseNum=$(printf "%s" "$_releaseinfo" | awk -F'[,:]' '{for(i=1;i<=NF;i++){if($i~/"releaseNum"/){print $(i+1)}}}')
-        if [ "$_releaseNum" == "0" ]; then
-            _filever=$(printf "%s" "$_releaseinfo" | awk -F'[,:]' '{for(i=1;i<=NF;i++){if($i~/"major"/){print $(i+1)} if($i~/"minor"/){print $(i+1)}}}' | sed 'N;s/\n/./')
-        else
-            _filever="${_pkgver}"
-        fi
+        _davinci_parse_release
         _archive_name="DaVinci_Resolve_${_filever}_Linux"
         _archive_run_name="DaVinci_Resolve_${_filever}_Linux"
     elif [ "$pkgname" == "davinci-resolve-studio" ]; then
         _product="DaVinci Resolve Studio"
         _referid='0978e9d6e191491da9f4e6eeeb722351'
         _siteurl="https://www.blackmagicdesign.com/api/support/latest-stable-version/davinci-resolve-studio/linux"
-        local _useragent="User-Agent: Mozilla/5.0 (X11; Linux ${CARCH}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.75 Safari/537.36"
-        local _releaseinfo
         _releaseinfo=$(curl -Ls "$_siteurl")
-        _pkgver=$(printf "%s" "$_releaseinfo" | awk -F'[,:]' '{for(i=1;i<=NF;i++){if($i~/"major"/){print $(i+1)} if($i~/"minor"/){print $(i+1)} if($i~/"releaseNum"/){print $(i+1)}}}' | sed 'N;s/\n/./;N;s/\n/./')
-        _releaseNum=$(printf "%s" "$_releaseinfo" | awk -F'[,:]' '{for(i=1;i<=NF;i++){if($i~/"releaseNum"/){print $(i+1)}}}')
-        if [ "$_releaseNum" == "0" ]; then
-            _filever=$(printf "%s" "$_releaseinfo" | awk -F'[,:]' '{for(i=1;i<=NF;i++){if($i~/"major"/){print $(i+1)} if($i~/"minor"/){print $(i+1)}}}' | sed 'N;s/\n/./')
-        else
-            _filever="${_pkgver}"
-        fi
+        _davinci_parse_release
         _archive_name="DaVinci_Resolve_Studio_${_filever}_Linux"
         _archive_run_name="DaVinci_Resolve_Studio_${_filever}_Linux"
     fi

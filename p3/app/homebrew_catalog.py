@@ -16,6 +16,8 @@ from urllib.request import Request, urlopen
 
 from . import _catalog_rs
 
+from .atomic_io import atomic_write_bytes, atomic_write_json
+
 CACHE_DIR = Path(os.path.expanduser("~/.cache/linuxtoys/homebrew-catalog"))
 FORMULA_PATH = CACHE_DIR / "formula.json"
 SIGNAL_PATH = CACHE_DIR / "source-changed"
@@ -160,14 +162,7 @@ def load_or_refresh(force=False):
                     raise ValueError("Invalid Homebrew formula metadata")
                 if not enabled():
                     return None
-                CACHE_DIR.mkdir(parents=True, exist_ok=True)
-                fd, temporary = tempfile.mkstemp(prefix="formula-", dir=CACHE_DIR)
-                with os.fdopen(fd, "wb") as handle:
-                    handle.write(data)
-                    handle.flush()
-                    os.fsync(handle.fileno())
-                os.replace(temporary, FORMULA_PATH)
-                temporary = None
+                atomic_write_bytes(FORMULA_PATH, data, fsync=True)
             except Exception as error:
                 logger.warning("Homebrew metadata refresh failed; retaining cached data: %s", error)
             finally:
@@ -225,14 +220,7 @@ def refresh_popularity(force=False):
             counts = _popularity_counts(json.loads(data))
             if not enabled():
                 return
-            CACHE_DIR.mkdir(parents=True, exist_ok=True)
-            fd, temporary = tempfile.mkstemp(prefix="popularity-", dir=CACHE_DIR)
-            with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                json.dump(counts, handle, separators=(",", ":"))
-                handle.flush()
-                os.fsync(handle.fileno())
-            os.replace(temporary, path)
-            temporary = None
+            atomic_write_json(path, counts, separators=(",", ":"), fsync=True)
         except Exception as error:
             logger.warning("Homebrew popularity refresh failed; retaining cached rankings: %s", error)
         finally:

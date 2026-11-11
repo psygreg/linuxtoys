@@ -1,5 +1,4 @@
 use pyo3::prelude::*;
-use pyo3::types::{PyDict, PyList};
 use serde_json::Value;
 use std::fs;
 use std::path::{Component, Path, PathBuf};
@@ -54,12 +53,7 @@ pub(crate) fn repo_app_id(name: &str) -> Option<String> {
 
 #[pyfunction]
 pub(crate) fn normalize_appstream_overlay_id(value: &str) -> String {
-    let value = value.trim();
-    let value = value
-        .strip_suffix(".desktop")
-        .or_else(|| value.strip_suffix(".Desktop"))
-        .unwrap_or(value);
-    value.trim().to_lowercase()
+    crate::shared::normalize_appstream_id(value)
 }
 
 #[pyfunction]
@@ -120,39 +114,7 @@ pub(crate) fn scan_repo_tree(
 }
 
 fn json_to_py(py: Python<'_>, value: &Value) -> PyResult<Py<PyAny>> {
-    Ok(match value {
-        Value::Null => py.None(),
-        Value::Bool(v) => v.into_pyobject(py)?.to_owned().unbind().into_any(),
-        Value::Number(v) => {
-            if let Some(i) = v.as_i64() {
-                i.into_pyobject(py)?.to_owned().unbind().into_any()
-            } else if let Some(u) = v.as_u64() {
-                u.into_pyobject(py)?.to_owned().unbind().into_any()
-            } else {
-                v.as_f64()
-                    .unwrap_or(0.0)
-                    .into_pyobject(py)?
-                    .to_owned()
-                    .unbind()
-                    .into_any()
-            }
-        }
-        Value::String(v) => v.into_pyobject(py)?.to_owned().unbind().into_any(),
-        Value::Array(values) => {
-            let list = PyList::empty(py);
-            for v in values {
-                list.append(json_to_py(py, v)?)?;
-            }
-            list.unbind().into_any()
-        }
-        Value::Object(values) => {
-            let dict = PyDict::new(py);
-            for (k, v) in values {
-                dict.set_item(k, json_to_py(py, v)?)?;
-            }
-            dict.unbind().into_any()
-        }
-    })
+    crate::shared::json_to_py(py, value)
 }
 
 #[pyfunction]

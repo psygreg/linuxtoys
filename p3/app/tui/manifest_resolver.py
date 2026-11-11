@@ -28,13 +28,12 @@ loop.
 from __future__ import annotations
 
 import asyncio
-import os
 import re
 import shutil
-import subprocess
 from dataclasses import dataclass, field
 
 from app import homebrew_catalog
+from .helper import flathub_ready
 from app.manifest_helper import (
     _prepare_homebrew_manifest_entries,
     _select_manifest_source,
@@ -214,25 +213,13 @@ def refresh_appstream_after_homebrew() -> None:
 def _flathub_ready() -> bool:
     """Return True when Flatpak is installed and the Flathub remote exists.
 
-    BLOCKING: runs ``flatpak remote-list`` (30 s timeout). A missing
-    binary, a non-zero exit, a timeout or an OS error all return False
-    instead of raising.
+    Delegates to the shared TUI scope-based check; a missing binary
+    returns False instead of raising.
     """
-    if shutil.which("flatpak") is None:
+    flatpak = shutil.which("flatpak")
+    if not flatpak:
         return False
-    try:
-        remote = subprocess.run(
-            ["flatpak", "remote-list", "--columns=name"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.DEVNULL,
-            text=True,
-            timeout=30,
-            env=os.environ.copy(),
-        )
-    except (subprocess.TimeoutExpired, OSError):
-        return False
-    remotes = {line.strip() for line in remote.stdout.splitlines()}
-    return remote.returncode == 0 and "flathub" in remotes
+    return flathub_ready(flatpak)
 
 
 def _split_script_source(value: str) -> tuple[str, str]:

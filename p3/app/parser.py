@@ -543,6 +543,27 @@ def get_repo_entries(translations=None):
     return repo_parser.load_repo_entries(SCRIPTS_DIR, translations)
 
 
+def appstream_context(translations=None, curated=True):
+    """Assemble the AppStream resolution context.
+
+    Returns ``(scripts_dir, curated_entries, category_paths)``. ``curated``
+    selects the entry set: True uses the fuller curated set (repository
+    entries plus curated scripts — the duplicate-suppression universe the
+    GUI resolves against), False uses the repository entries alone.
+    ``category_paths`` is always included: without it the Rust category
+    mapping drops every non-Homebrew component, so a resolution would miss
+    entries the UI offers — and a background derived-cache rebuild
+    triggered by such a caller would publish that incomplete generation
+    for every other reader.
+    """
+    entries = (
+        _get_appstream_curated_entries(translations)
+        if curated
+        else get_repo_entries(translations)
+    )
+    return (SCRIPTS_DIR, entries, _indexed_category_paths())
+
+
 def _get_appstream_curated_entries(translations=None):
     """Return every LinuxToys-curated offer that should suppress AppStream duplicates."""
     return [
