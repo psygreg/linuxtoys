@@ -225,6 +225,65 @@ verify_bundled_python_tui_deps() {
     _msg info "Vendored TUI stack present in the AppDir."
 }
 
+# DEPLOY_PYTHON makes quick-sharun copy the build host's /usr/lib/python3.x
+# (site-packages included) into the AppDir, so the AppImage's Python
+# environment is exactly what the build host has installed. The app needs two
+# third-party runtime packages from it: PyGObject (gi) for the GUI and
+# requests for the network layer (bug reporting, about/contributors fetch,
+# translation endpoints). The deb/rpm/arch packages declare both as distro
+# dependencies; the AppImage has no such mechanism, so they must be installed
+# on the build host. Verify early, before spending time on any heavy build.
+verify_host_python_runtime_deps() {
+    local python_bin probe
+    # Mirror the interpreter quick-sharun deploys (command -v python, else
+    # python3): whatever it picks is what lands in the AppImage.
+    python_bin="$(command -v python || command -v python3)" || {
+        _msg error "No python interpreter found on the build host."
+        exit 1
+    }
+    if ! probe="$("$python_bin" -c 'import requests, gi; from gi.repository import Gio' 2>&1)"; then
+        _msg error "The build host's Python ($python_bin) is missing the app's runtime dependencies:"
+        _msg error "$probe"
+        _msg error "The AppImage bundles this host's Python site-packages, so the following"
+        _msg error "packages must be installed here before building:"
+        _msg error "  - python-requests (TUI and network layer)"
+        _msg error "  - python-gobject  (PyGObject bindings for the GUI)"
+        _msg error "Install them (Arch: pacman -S python-requests python-gobject) and rebuild."
+        exit 1
+    fi
+    _msg info "Host Python runtime dependencies OK (requests, PyGObject)."
+}
+
+# Verify the Python tree quick-sharun actually deployed into the AppDir:
+# site-packages must contain the runtime dependencies the app imports. This
+# catches behavior changes in quick-sharun's python deployment before the
+# AppImage is generated, instead of shipping an AppImage that fails with
+# "No module named 'requests'" (TUI) or "No module named 'gi.repository'" (GUI).
+verify_deployed_python_runtime_deps() {
+    local python_dir missing=0
+    python_dir="$(find "$APPDIR/lib" -maxdepth 1 -type d -name 'python3*' -print -quit)"
+    [[ -n "$python_dir" ]] || {
+        _msg error "quick-sharun did not deploy a Python tree into the AppDir."
+        exit 1
+    }
+    [[ -f "$python_dir/site-packages/requests/__init__.py" ]] || {
+        _msg error "Deployed Python tree is missing the 'requests' package:"
+        _msg error "$python_dir/site-packages"
+        missing=1
+    }
+    [[ -f "$python_dir/site-packages/gi/repository/__init__.py" ]] || {
+        _msg error "Deployed Python tree is missing PyGObject (gi.repository):"
+        _msg error "$python_dir/site-packages"
+        missing=1
+    }
+    [[ "$missing" -eq 0 ]] || {
+        _msg error "The AppImage bundles the build host's Python environment; install"
+        _msg error "python-requests and python-gobject on the build host and rebuild."
+        exit 1
+    }
+    _msg info "Deployed Python runtime dependencies present in the AppDir."
+}
+
 replace_upstream_glycin() {
     _msg info "Replacing upstream Glycin deployment with glycin-ng..."
 
@@ -298,6 +357,7 @@ fi
 chmod +x "$QUICK_SHARUN"
 
 verify_python_tui_deps
+verify_host_python_runtime_deps
 
 build_glycin_ng
 
@@ -416,6 +476,11 @@ WEBP_PIXBUF_LOADER="$(
 # detected GTK, quick-sharun deploys libgirepository and then copies the whole
 # girepository typelib directory (AppStream included) automatically.
 replace_upstream_glycin
+
+# The Python tree (stdlib + site-packages) is now deployed in the AppDir;
+# verify the runtime dependencies survived the copy before generating the
+# AppImage.
+verify_deployed_python_runtime_deps
 
 # Runtime env vars for the AppImage, written into the AppDir .env file sharun
 # reads at launch ("env variables can be added to a .env file in the AppDir",

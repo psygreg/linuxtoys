@@ -27,3 +27,5 @@ bash build.sh (version) (path)
 
 > [!WARNING]
 > The distrobox-backed targets (`copr/`, `deb/`, `pkg/`) require their matching container to be correctly configured with all dependencies installed for the build to succeed.
+>
+> The AppImage target additionally requires the **Arch build host/container** to have `python-requests` and `python-gobject` installed: `DEPLOY_PYTHON` makes quick-sharun copy the host's `/usr/lib/python3.x` (site-packages included) into the AppImage, so the host's Python environment is what users get. `dev/build/appimage/build.sh` verifies both packages before and after deployment.

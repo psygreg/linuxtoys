@@ -258,7 +258,7 @@ Deps: pyo3 0.24 (abi3-py310), serde/rmp-serde, quick-xml/flate2, prost/tonic/tok
 | `copr/` | RPM + source tarball via `rpmbuild` + `linuxtoys.spec` | cargo-vendors staged tree for sandboxed builds |
 | `deb/` | signed source upload to Launchpad PPA + binary `.deb` via `debuild` | Launchpad duplicate guard via API; `LINUXTOYS_TEST_MODE` skips upload probe |
 | `pkg/` | AUR: `.tar.xz` + sed-updated `PKGBUILD` + `makepkg` | |
-| `appimage/` | `LinuxToys-<v>-<arch>.AppImage` via pkgforge quick-sharun | builds glycin-ng + compat shim, replaces upstream glycin, bundles icon themes |
+| `appimage/` | `LinuxToys-<v>-<arch>.AppImage` via pkgforge quick-sharun | builds glycin-ng + compat shim, replaces upstream glycin, bundles icon themes; `DEPLOY_PYTHON` copies the build host's `/usr/lib/python3.x` (site-packages incl.) into the AppDir, so the host must have `python-requests` + `python-gobject` (runtime deps that deb/rpm/arch declare as distro dependencies) — guarded pre- and post-deployment |
 
 All four package `p3/` at `/usr/share/linuxtoys` with the same launcher heredoc (`/usr/bin/linuxtoys`) and the same permission normalization; all three distrobox-spec ones run the same maturin+cargo+wheel-extract+assert block.
 

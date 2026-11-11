@@ -1150,7 +1150,9 @@ def _launch_tui() -> int:
         from app.tui.main import main as tui_main  # adjust the path
     except ImportError as exc:
         print(f"✗ Could not load the TUI: {exc}")
-        print("  It needs the 'textual' and 'rich' packages.")
+        print("  A required Python package is missing: 'textual' and 'rich' ship")
+        print("  bundled with the app; other dependencies (e.g. 'requests') must")
+        print("  come from the system installation.")
         return 1
     return tui_main()
 
