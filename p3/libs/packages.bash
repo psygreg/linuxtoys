@@ -3039,6 +3039,50 @@ pkg_appimage_rm () {
     return 0
 }
 
+# Repair a broken npm installation. A bare "command -v npm" is not enough to
+# prove npm is usable: a dangling /usr/bin/npm symlink (e.g. left behind when
+# a global npm self-install is later reverted by the package manager) or a
+# Node.js removed from under an installed npm package both fail the PATH
+# lookup, while the package manager still reports npm as installed — so a
+# plain pkg_install prints "already installed, skipping" and every later npm
+# call dies with the confusing "env: 'npm': No such file or directory" from
+# the sudo_ env wrapper. This helper reinstalls the distro npm package
+# outright (apt/dnf/zypper/pacman pull Node.js back in where npm depends on
+# it), or performs the regular first-time install when the package is absent,
+# mirroring the distro mapping in pkg_npm. When no supported distro matches,
+# nothing is done and callers keep their original failure path.
+_pkg_npm_repair () {
+    local _npm_pkg="npm"
+    if is_fedora || is_ostree || is_rhel; then
+        _npm_pkg="nodejs-npm"
+    fi
+    pkg_exists "$_npm_pkg"
+    if [[ ${#pkg_found[@]} -gt 0 ]]; then
+        if is_ubuntu || is_debian; then
+            interrupted_apt_guard
+            apt_transaction sudo_ apt-get install -y --reinstall "$_npm_pkg" || fatal "Failed to reinstall npm"
+        elif is_arch || is_cachy; then
+            pacman_lock_guard
+            pacman_transaction sudo_ pacman -S --noconfirm "$_npm_pkg" || fatal "Failed to reinstall npm"
+        elif is_ostree; then
+            rpm_ostree_transaction sudo_ rpm-ostree install --allow-inactive "$_npm_pkg" || fatal "Failed to reinstall npm"
+        elif is_fedora || is_rhel; then
+            dnf_transaction sudo_ dnf reinstall -y "$_npm_pkg" || fatal "Failed to reinstall npm"
+        elif is_suse; then
+            zypper_transaction sudo_ zypper in -y --force "$_npm_pkg" || fatal "Failed to reinstall npm"
+        else
+            return 0
+        fi
+        npm --version &>/dev/null || fatal "npm is still unusable after reinstalling it"
+    else
+        if is_rhel; then
+            rpmfusion_chk && pkg_install "$_npm_pkg"
+        else
+            pkg_install "$_npm_pkg"
+        fi
+    fi
+}
+
 # Best-effort upgrade of npm through itself ("pkg_npm npm", used by the
 # Skills Seeker flows to get a modern npx). npm special-cases installing its
 # own package: when the running Node.js does not satisfy the candidate
@@ -3060,17 +3104,28 @@ _pkg_npm_self_upgrade () {
         warn "The latest npm requires a newer Node.js than the one installed; keeping the current npm."
         return 1
     fi
-    # Not an engine refusal: escalate as any other failing npm install would.
-    sudo_ npm install -g "${_self_flags[@]}" npm || fatal "Failed to install npm package npm"
+    # Not an engine refusal: escalate as any other failing npm install would,
+    # through the resolved npm binary so root's PATH cannot miss it.
+    local _npm_bin
+    _npm_bin="$(command -v npm 2>/dev/null)" || _npm_bin="npm"
+    sudo_ "$_npm_bin" install -g "${_self_flags[@]}" npm || fatal "Failed to install npm package npm"
 }
 
 pkg_npm () {
-    if ! command -v npm &>/dev/null; then
-        { ( is_ubuntu || is_debian || is_suse ) && pkg_install npm; }
-        { ( is_fedora || is_ostree ) && pkg_install nodejs-npm; }
-        { ( is_rhel ) && rpmfusion_chk && pkg_install nodejs-npm; }
-        { ( is_arch || is_cachy ) && pkg_install npm; }
+    # Functional check rather than a bare "command -v npm": a dangling npm
+    # symlink or a Node.js removed under an installed npm package fails this
+    # while the package manager still lists npm as installed, which previously
+    # made pkg_install skip with "already installed" and left every later npm
+    # call dying with "env: 'npm': No such file or directory" under the sudo_
+    # env wrapper (see _pkg_npm_repair).
+    if ! npm --version &>/dev/null; then
+        _pkg_npm_repair
     fi
+    # Resolved once for the escalated calls below: sudo_ runs commands through
+    # root's environment, whose PATH may not contain a user-local npm — the
+    # other half of the "env: 'npm': No such file or directory" failures.
+    local _npm_bin
+    _npm_bin="$(command -v npm 2>/dev/null)" || _npm_bin="npm"
     for rc in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
         if [ -f "$rc" ]; then
             # Check if PATH modification for .npm-global/bin already exists in the file
@@ -3112,7 +3167,7 @@ pkg_npm () {
                     _append_transmap "npm $pkg"
                 fi
             else
-                { npm install -g "${flags[@]}" "$pkg" 2>/dev/null || sudo_ npm install -g "${flags[@]}" "$pkg"; } || fatal "Failed to install npm package $pkg"
+                { npm install -g "${flags[@]}" "$pkg" 2>/dev/null || sudo_ "$_npm_bin" install -g "${flags[@]}" "$pkg"; } || fatal "Failed to install npm package $pkg"
                 _append_transmap "npm $pkg"
             fi
         fi
