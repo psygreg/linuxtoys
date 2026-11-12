@@ -9,7 +9,14 @@ from pathlib import Path
 import re
 import shlex
 
-from .atomic_io import atomic_write_text
+if __package__:
+    from .atomic_io import atomic_write_text
+else:
+    # Direct CLI execution (call_script / registry_heal) has no package
+    # context, so fall back to the sibling-script directory on sys.path.
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from atomic_io import atomic_write_text
 
 _SESSION_LOCK = threading.Lock()
 _SESSION_DIR = None

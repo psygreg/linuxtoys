@@ -22,7 +22,14 @@ import time
 from pathlib import Path
 from urllib.request import Request, urlopen
 
-from .atomic_io import atomic_write_bytes
+if __package__:
+    from .atomic_io import atomic_write_bytes
+else:
+    # Direct CLI execution (pkg_appimage_update) has no package context, so
+    # fall back to the sibling-script directory on sys.path.
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from atomic_io import atomic_write_bytes
 
 FEED_URL = "https://appimage.github.io/feed.json"
 # The hub serves per-app artwork under /database/<app>/...; the feed lists
