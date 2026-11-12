@@ -20,7 +20,7 @@ sysag_run () {
     # disable split-lock mitigation, which is not a security feature therefore is safe to disable
     call_script dsplitm
     # GPU-aware low latency wrapper for game launches
-    call_script latencydevil
+    call_script LATENCYDEVIL
     # add earlyoom configuration, Fedora already has systemd-oomd
     call_script earlyoom
     # change intel driver to Xe on discrete GPUs
