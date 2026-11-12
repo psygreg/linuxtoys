@@ -428,7 +428,7 @@ def confirm_action(prompt_message):
         if response not in ['y', 'yes']:
             print("❌ Operation cancelled.")
             return False
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, EOFError):
         print("\n⚠️  Operation cancelled by user.")
         return False
     return True

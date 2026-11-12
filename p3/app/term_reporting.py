@@ -21,28 +21,39 @@ class BugReporting:
         if terminal is None:
             return ""
 
-        text = None
-        # get_text_format() returns the full buffer as a plain string and is the
-        # modern, non-deprecated API. Avoid get_text(): in current VTE bindings its
-        # attributes handling trips an assertion and it returns (None, ...).
-        try:
-            if hasattr(terminal, "get_text_format"):
-                result = terminal.get_text_format(Vte.Format.TEXT)
-                if isinstance(result, str):
-                    text = result
-            if not isinstance(text, str) and hasattr(terminal, "get_text_range_format"):
-                rows = terminal.get_row_count()
-                result = terminal.get_text_range_format(
-                    Vte.Format.TEXT, 0, 0, rows, 0
-                )
-                if isinstance(result, tuple):
-                    text = result[0]
-                elif isinstance(result, str):
-                    text = result
-        except Exception:
-            text = None
+        def usable_text(result):
+            # PyGObject versions return either text or (text, attributes). Never
+            # stringify malformed output or salvage another tuple field.
+            if isinstance(result, tuple):
+                result = result[0] if result else None
+            return result if isinstance(result, str) and result.strip() else ""
 
-        return text if isinstance(text, str) else ""
+        # Prefer the absolute buffer range so scrollback is included. Confine
+        # binding-error handling to each API attempt; normalize results outside
+        # those handlers so unrelated processing errors are not swallowed.
+        try:
+            read_range = getattr(terminal, "get_text_range_format", None)
+            if callable(read_range):
+                _column, cursor_row = terminal.get_cursor_position()
+                result = read_range(
+                    Vte.Format.TEXT, 0, 0, cursor_row + terminal.get_row_count(), 0
+                )
+            else:
+                result = None
+        except Exception:
+            result = None
+
+        text = usable_text(result)
+        if text:
+            return text
+
+        # Missing, failed, empty or malformed range exports can still have a
+        # usable viewport. Avoid deprecated get_text() and its attributes issue.
+        try:
+            result = terminal.get_text_format(Vte.Format.TEXT)
+        except Exception:
+            return ""
+        return usable_text(result)
 
     def _get_terminal_text(self) -> str:
         """Extract the terminal output for bug reporting.
@@ -164,6 +175,39 @@ class BugReporting:
             default_response=Gtk.ResponseType.OK,
         )
 
+    def _last_terminal_line(self) -> str:
+        """The last non-blank line of the terminal output, which says why a run ended."""
+        lines = [line.strip() for line in self._get_vte_buffer_text().split("\n")]
+        return next((line for line in reversed(lines) if line), "")
+
+    def _show_bug_report_cancelled_dialog(self):
+        """Explain a cancelled or skipped run instead of filing a report for it."""
+        return run_message_dialog(
+            self,
+            title=self.translations.get("bug_report_cancelled_title", "Nothing to Report"),
+            secondary_text=self.translations.get(
+                "bug_report_cancelled_message",
+                "The last run was cancelled or skipped, so there is nothing to report.\n\nLast message: {reason}",
+            ).format(reason=self._last_terminal_line() or "-"),
+            message_type=Gtk.MessageType.INFO,
+            buttons=[("OK", Gtk.ResponseType.OK)],
+            default_response=Gtk.ResponseType.OK,
+        )
+
+    def _show_bug_report_rejected_dialog(self):
+        """The server found no text it could file from the terminal output."""
+        return run_message_dialog(
+            self,
+            title=self.translations.get("bug_report_rejected_title", "Nothing to Report"),
+            secondary_text=self.translations.get(
+                "bug_report_rejected_message",
+                "The terminal output had no text that could be sent, so the report was not submitted.",
+            ),
+            message_type=Gtk.MessageType.WARNING,
+            buttons=[("OK", Gtk.ResponseType.OK)],
+            default_response=Gtk.ResponseType.OK,
+        )
+
     def _show_bug_report_network_error_dialog(self, title: str, message: str):
         response = run_message_dialog(
             self,
@@ -191,6 +235,9 @@ class BugReporting:
  
     def on_copy_clicked(self, button):
         """Handle bug report button click."""
+        if getattr(self, "_last_exit_code", None) == 100:
+            self._show_bug_report_cancelled_dialog()
+            return
         if not self._show_bug_report_confirmation_dialog():
             return
         
@@ -254,6 +301,8 @@ class BugReporting:
 
             # Show result dialog
             self._show_bug_report_result_dialog(True, result)
+        except antenna.EmptyReportError:
+            self._show_bug_report_rejected_dialog()
         except ConnectionError:
             self._show_bug_report_network_error_dialog(
                 self.translations.get(
@@ -296,7 +345,7 @@ class BugReporting:
         """Automatically submit a bug report when a script exits with an error code."""
         # Check if auto error reports are enabled
         auto_reports_enabled = getattr(self.parent, 'auto_error_reports_enabled', False)
-        if not auto_reports_enabled:
+        if not auto_reports_enabled or getattr(self, "_last_exit_code", None) == 100:
             return
         
         try:

@@ -12,9 +12,14 @@ import hmac
 import unicodedata
 from ..updater.update_helper import get_current_version
 from ..lang_utils import _
+from ..atomic_io import atomic_write_json
 from urllib.parse import urlparse
  
 _REPORT_URL = "https://bug.linux.toys"
+
+
+class EmptyReportError(Exception):
+    """The server found no readable logs, so no report was filed."""
  
 # Cache directory for storing the generated secret (in user's config dir)
 _CACHE_DIR = Path.home() / ".cache" / "linuxtoys" / "antenna"
@@ -447,9 +452,7 @@ def _save_history(history: list) -> None:
     try:
         _CACHE_DIR.mkdir(parents=True, exist_ok=True)
         _HISTORY_FILE.parent.chmod(0o700)
-        with open(_HISTORY_FILE, "w") as f:
-            json.dump({"history": history}, f)
-        _HISTORY_FILE.chmod(0o600)
+        atomic_write_json(_HISTORY_FILE, {"history": history}, mode=0o600)
     except Exception:
         pass  # Fail silently to avoid breaking bug reports
  
@@ -807,6 +810,22 @@ def _initialize_antenna() -> None:
     _antenna_initialized = True
  
 # --- Issue submission ---
+def _rejected_for_logs(response) -> bool:
+    """Recognize a validation rejection naming the logs field."""
+    try:
+        detail = response.json().get("detail", [])
+    except (ValueError, AttributeError):
+        return False
+    if not isinstance(detail, list):
+        return False
+    return any(
+        isinstance(item, dict)
+        and isinstance(item.get("loc"), (list, tuple))
+        and "logs" in item["loc"]
+        for item in detail
+    )
+
+
 def submit_issue(
     title: str,
     logs: str = "",
@@ -816,6 +835,8 @@ def submit_issue(
     infer_related_app: bool = True,
 ) -> dict | None:
     """Submit a GitHub issue. Logs default to current captured output (last 20 lines).
+
+    Raises EmptyReportError if the server rejects the logs as unreadable.
     
     Args:
         title: Issue title
@@ -896,15 +917,16 @@ def submit_issue(
             logs = logs + "\n" + registry_content
 
     # Background AppStream installs run without any terminal; their per-job
-    # transcripts are the only output a report can carry for them.
+    # transcripts are the only output a report can carry for them. Prepend them
+    # so the terminal failure stays at the end if the server trims the report.
     try:
-        from .appstream_logs import appstream_log_context
+        from ..appstream_logs import appstream_log_context
 
         appstream_logs = appstream_log_context()
     except Exception:
         appstream_logs = ""
     if appstream_logs:
-        logs = logs + "\n\n" + appstream_logs
+        logs = appstream_logs + "\n\n" + logs
 
     # Handle upstream developer tagging
     validated_app = None
@@ -968,7 +990,10 @@ def submit_issue(
         print("[IssueReporter] Could not file issue: Connection timeout", file=sys.stderr)
         raise
     except requests.exceptions.HTTPError as e:
-        print(f"[IssueReporter] Could not file issue: Server error ({e.response.status_code})", file=sys.stderr)
+        if e.response is not None and e.response.status_code == 422 and _rejected_for_logs(e.response):
+            print("[IssueReporter] Report rejected: no readable log lines", file=sys.stderr)
+            raise EmptyReportError() from e
+        print(f"[IssueReporter] Could not file issue: Server error ({e.response.status_code if e.response is not None else 'unknown'})", file=sys.stderr)
         raise
     except Exception as e:
         print(f"[IssueReporter] Could not file issue: {e}", file=sys.stderr)

@@ -14,6 +14,7 @@ from pathlib import Path
 from urllib.request import Request, urlopen
 
 from . import _catalog_rs
+from .atomic_io import atomic_write_bytes
 
 CACHE_DIR = Path(os.path.expanduser("~/.cache/linuxtoys/homebrew-catalog"))
 FORMULA_PATH = CACHE_DIR / "formula.json"
@@ -145,7 +146,6 @@ def load_or_refresh(force=False):
         except OSError:
             fresh = False
         if force or not fresh:
-            temporary = None
             try:
                 if not enabled():
                     return None
@@ -159,22 +159,9 @@ def load_or_refresh(force=False):
                     raise ValueError("Invalid Homebrew formula metadata")
                 if not enabled():
                     return None
-                CACHE_DIR.mkdir(parents=True, exist_ok=True)
-                fd, temporary = tempfile.mkstemp(prefix="formula-", dir=CACHE_DIR)
-                with os.fdopen(fd, "wb") as handle:
-                    handle.write(data)
-                    handle.flush()
-                    os.fsync(handle.fileno())
-                os.replace(temporary, FORMULA_PATH)
-                temporary = None
+                atomic_write_bytes(FORMULA_PATH, data, fsync=True)
             except Exception as error:
                 logger.warning("Homebrew metadata refresh failed; retaining cached data: %s", error)
-            finally:
-                if temporary:
-                    try:
-                        os.unlink(temporary)
-                    except OSError:
-                        pass
         return cached_path()
 
 
