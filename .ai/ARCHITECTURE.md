@@ -139,6 +139,7 @@ The remaining `p3/app` layers follow: GUI (§4.2), core runtime (§4.3), TUI/upd
 | File | Role |
 |---|---|
 | `mcp_server.py` | Stdlib MCP server (Streamable HTTP, localhost:7420, bearer token): 23 tools over catalog/install/removal/package-files/extensions/residue/settings/translate/registry; serialized `JobManager` with merged job tracking (every job submission blocks until the run finishes and returns its final record by default; `wait=false`/`wait_seconds` to queue-and-return, re-attachable via `get_job`); systemd user-unit management; agent-question pre-answering machinery. |
+| `mcp_skill.py` | Stdlib-only installer for the bundled MCP agent skill (`app/mcp_skill/SKILL.md`): `install_agent_skill()` + the generated noninteractive `skill_install_script()` (bun fetch → offline bundled-copy fallback via direct execution, so it must never import the application stack). Installs into detected agent directories; when none exists, creates the universal `~/.agents/skills` instead. Re-exported by `mcp_server`. |
 | `uri_parser.py` | GUI-agnostic `linuxtoys://` validation + stable-target resolution. |
 | `translate_helper.py` | GTK-free description translation (Google endpoint) + shared cache — the single pipeline for GUI, TUI and MCP. |
 | `needed_helper.py` | Prerequisite-list and run-confirmation dialogs (shared `_script_row`/`_script_list_scroller` list rendering). |
