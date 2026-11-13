@@ -914,7 +914,12 @@ pkg_install () {
                     call_script paru || die "Failed to repair paru"
                     paru --version >/dev/null 2>&1 || die "Paru is still unusable after reinstalling it"
                 fi
-                pacman_transaction paru -S -a --noconfirm --skipreview "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
+                # --sudoloop keeps a background `sudo -v` refresh running while
+                # paru builds: a long compile can outlive the sudo timestamp,
+                # and then paru's own `sudo pacman -U` at the end prompts for a
+                # password on the runner's terminal — which the background
+                # AppStream PTY has nobody to answer, failing the whole job.
+                pacman_transaction paru -S -a --noconfirm --skipreview --sudoloop "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
                 [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_paru"
                 (( _bypass )) || runner_lock "package-transaction"
             fi
