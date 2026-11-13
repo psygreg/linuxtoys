@@ -287,7 +287,12 @@ def script_command(script_path, script_dir):
     source command propagates its return/exit status.
     """
     script_path = os.path.abspath(script_path)
-    from app.architecture import require_script_path
+    if __package__:
+        from .architecture import require_script_path
+    else:
+        import sys
+        sys.path.insert(0, os.path.abspath(script_dir))
+        from app.architecture import require_script_path
     require_script_path(script_path)
     text = Path(script_path).read_bytes().decode("utf-8")
     return ["/bin/bash", "-c", script_preamble(text, script_dir)

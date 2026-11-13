@@ -96,3 +96,17 @@ updated milestone branch refs and changed two ignored M4B evidence files. U1 did
 not perform or repair that operation. Full history/evidence preservation is a
 failed review gate; the detailed before/after record is in the implementation
 report and `target/u1-implementation/preservation.json`.
+
+## U2: bounded loader import compatibility (2026-11-13)
+
+Baseline is native-qualified U1 commit `20be59deb23497f75198ea4c81c2de791f5a3608`.
+`library_loader.script_command` now follows the neighboring helpers' import
+pattern: a package-relative architecture import, or caller `script_dir` bootstrap
+for standalone module use. The same architecture guard still precedes script-body
+reading and preamble construction. Direct-file and `-m` CLI interfaces, optional
+imports/error handling and the existing script writer are unchanged. No upstream
+atomic-helper import, atomic script-writer migration or AppStream probe/composer
+refactor is adopted. `dev/tests/test_library_loader_imports.py` covers those entry
+styles and optional-import success/failure cases without running Bash or network
+operations. U1's native results remain evidence for the exact U1 commit; this U2
+source patch has only the separately recorded local fixture/static qualification.
