@@ -21,6 +21,13 @@ import time
 from pathlib import Path
 from urllib.request import Request, urlopen
 
+if not __package__:
+    # The updater invokes this file directly. Resolve app from this source tree,
+    # never from the caller's cwd, SCRIPT_DIR or an unqualified sibling import.
+    import sys
+
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 FEED_URL = "https://appimage.github.io/feed.json"
 # The hub serves per-app artwork under /database/<app>/...; the feed lists
 # those paths relative to this base.
@@ -897,12 +904,18 @@ def repository_gone(info):
     return checked
 
 def _arch_match(filename):
-    from .architecture import asset_eligible
+    if __package__:
+        from .architecture import asset_eligible
+    else:
+        from app.architecture import asset_eligible
     return asset_eligible({"name": filename})
 
 
 def _release_asset(assets):
-    from .architecture import select_asset
+    if __package__:
+        from .architecture import select_asset
+    else:
+        from app.architecture import select_asset
     candidate = select_asset(assets, formats=((".appimage",),))
     url = str(candidate.get("browser_download_url") or candidate.get("download_url") or "")
     if not url.startswith("https://"):
@@ -1008,7 +1021,10 @@ def _download_appimage(url, dest_path, progress=None):
         header = handle.read(4)
     if header != b"\x7fELF":
         raise ValueError("Downloaded asset is not an ELF AppImage")
-    from .architecture_files import validate_file
+    if __package__:
+        from .architecture_files import validate_file
+    else:
+        from app.architecture_files import validate_file
     validate_file(dest_path)
 
 @contextlib.contextmanager
