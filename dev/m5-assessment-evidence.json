@@ -1,0 +1,235 @@
+{
+  "schema": 1,
+  "stage": "assessment; container qualification pending user terminal execution",
+  "date": "2026-11-14",
+  "baseline": "f8a762806abdbdc31fbf1b07511f2aef797f38a1",
+  "branch": "codex/u1-atomic-reporting",
+  "production_application_changes": false,
+  "arm64_routes_promoted": [],
+  "inventory": {
+    "script_declarations": 176,
+    "catalog_declarations": 51,
+    "inline_hooks": 9,
+    "detailed_candidates": 10,
+    "selected_experiments": [
+      "Nala",
+      "F3 (Fight Flash Fraud)"
+    ],
+    "remaining_routes": "Explicitly unverified; no blanket upstream availability assertion"
+  },
+  "tests": {
+    "host": {
+      "baseline_regressions": 122,
+      "additional_compatibility_regressions": 10,
+      "prospective_policy_fixtures": 8,
+      "failures": 0
+    },
+    "native_aarch64": {
+      "baseline_regressions": 122,
+      "additional_compatibility_regressions": 10,
+      "prospective_policy_fixtures": 8,
+      "loader_entry_probes": 14,
+      "real_readonly_package_preflights": 5,
+      "python_syntax_files": 111,
+      "final_failures": 0,
+      "retained_harness_setup_failures": 2,
+      "container_install_tests": "not run; no result observed"
+    }
+  },
+  "native_environment": {
+    "os": "Ubuntu 26.04.1 LTS Resolute",
+    "machine": "aarch64",
+    "kernel": "7.0.0-43-generic",
+    "python": "3.14.4",
+    "uid": 1000
+  },
+  "offline_inputs": {
+    "archives": 149,
+    "bytes": 43365890,
+    "signed_package_indexes": 7,
+    "direct_elfs": 597,
+    "all_direct_elf_machine": 183,
+    "vendor_assets": "Godot and LocalSend exact hashes independently checked; only Godot passes current M1"
+  },
+  "preservation": {
+    "baseline_tracked": {
+      "total": 983,
+      "matched": 983,
+      "discrepancies": []
+    },
+    "preexisting_evidence": {
+      "total": 2325,
+      "matched": 2325,
+      "discrepancies": []
+    },
+    "original_u1_evidence": {
+      "total": 2021,
+      "matched": 2021,
+      "discrepancies": []
+    },
+    "assessment_protected_m4b": {
+      "total": 80,
+      "matched": 80,
+      "discrepancies": []
+    },
+    "head": {
+      "matches_before": true
+    },
+    "branch": {
+      "matches_before": true
+    },
+    "refs": {
+      "all_ref_names_unchanged": false,
+      "delta": {
+        "refs/codex/turn-diffs/captures/1794603872045/7685597d-0612-4a94-8e4c-f8de39760744/base": {
+          "before": "889660d5d15602551249e807ae39ef8baa8761f4",
+          "after": null
+        },
+        "refs/codex/turn-diffs/captures/1794635976753/6ac60914-0bc3-4b54-a886-2de42ab8e474/base": {
+          "before": null,
+          "after": "889660d5d15602551249e807ae39ef8baa8761f4"
+        },
+        "refs/codex/turn-diffs/checkpoints/3516a97a313c4082485d4d44999b0b98/1839c25b448b7adc4d72af06840d0e75/1794601615671/903328b4-7311-473c-9618-a71484ab0c4e": {
+          "before": "889660d5d15602551249e807ae39ef8baa8761f4",
+          "after": null
+        },
+        "refs/codex/turn-diffs/checkpoints/3516a97a313c4082485d4d44999b0b98/76bd6fbb5ccf0026b25b12834cf1f071/1794605549549/af18187f-08f9-4db1-bc40-212252bca8d4": {
+          "before": null,
+          "after": "889660d5d15602551249e807ae39ef8baa8761f4"
+        }
+      },
+      "heads_and_tags_unchanged": true,
+      "interpretation": "Differences confined to refs/codex/turn-diffs capture/checkpoint names across app turns; all changed entries point to the same 889660d5 object. No agent ref mutation command was used. App-managed origin is inferred from namespace, not independently proven."
+    },
+    "reflogs": {
+      "matches_before": true
+    },
+    "index": {
+      "matches_before": true
+    },
+    "independently_pinned_files": {
+      "target/m4a-artifacts/linuxtoys_7.9.8-1~m4a1_arm64.deb": {
+        "sha256": "83173db3b42d8ef966b6bde02f064beb42ee71b4593bfd727a3fefefdb862f04",
+        "bytes": 8554000,
+        "matched": true
+      },
+      "target/m4b-runtime/completion-status.json": {
+        "sha256": "b1daa68ac265ad596a29005b667af024d5a9f3375d5bdb4dbe5c1c051dd37983",
+        "bytes": 833,
+        "matched": true
+      },
+      "target/m4b-runtime/SHA256SUMS": {
+        "sha256": "819eb5a4c9a62b380a54267966c29f749e72a24ce0e79aa2229ad03f51d8651d",
+        "bytes": 6360,
+        "matched": true
+      }
+    }
+  },
+  "vm_monitored_state": {
+    "before": 2294,
+    "after": 2294,
+    "discrepancies": {}
+  },
+  "protected_source_files": {
+    "dev/ARCHITECTURE-POLICY.md": {
+      "sha256": "00a9fd907f89a1985443f8a079d5560e192e6758efe2d548de0c289b4f739f06",
+      "unchanged": true
+    },
+    "p3/app/architecture.py": {
+      "sha256": "cab7793f0a95e843cbf347e776cb8cfb84c53bda819f2cded352757e6b0250a8",
+      "unchanged": true
+    },
+    "p3/app/architecture_cli.py": {
+      "sha256": "85b10d3d0fd3ee919a0f500e43ff32ed4eb6b0ab150bf2e415be8dcbb6b257a6",
+      "unchanged": true
+    },
+    "p3/app/architecture_files.py": {
+      "sha256": "429542d70ffc8939ec930e10eb54db328ca0834af3ee5977b48d0302e18bdf8f",
+      "unchanged": true
+    },
+    "p3/app/architecture_flatpak.py": {
+      "sha256": "dcc8db2ff8b9eca73f789354ca5719ff27bfe8ad58942cef2f9abcbab9930ca2",
+      "unchanged": true
+    },
+    "p3/app/architecture-routes.json": {
+      "sha256": "c09ae4f4a43d2504162bba397272e04308d752643962bd87f8d7a1278c2a8653",
+      "unchanged": true
+    },
+    "p3/app/script_compat.py": {
+      "sha256": "f35fa2d1d172aebb0338097ad985f985839b284c7b805f3a9f625d75bab4e93d",
+      "unchanged": true
+    },
+    "p3/app/script-revisions.json": {
+      "sha256": "6ba9188061550dfdc3cf95b41c1c801f4d9eaeb85240c195f8505f5f7a2ba27e",
+      "unchanged": true
+    },
+    "p3/scripts/.linuxtoys-scripts.json": {
+      "sha256": "083138ce4b55ccf533a215c995bf27db25eae80d60b487150ae710f14d245e5f",
+      "unchanged": true
+    },
+    "Cargo.toml": {
+      "sha256": "3fcb7306df415039a8e75771d15bf64f41927f0a012f0082687d5c104b7e032d",
+      "unchanged": true
+    },
+    "Cargo.lock": {
+      "sha256": "f022d2414f28867dc5861d538bb3779336b7a15489ec0e1aff4dae5f4415b158",
+      "unchanged": true
+    },
+    "src/catalog-rs/Cargo.toml": {
+      "sha256": "b1ede62cb7918d525d321d9ef977c6184ac76ce0f39cef9fac49ff8cfe625a39",
+      "unchanged": true
+    },
+    "src/gui-rs/Cargo.toml": {
+      "sha256": "d2f1bb2771e74e807ac3a4c0f7315aaec9274af6598cffd32d93846f37d9c2ba",
+      "unchanged": true
+    },
+    "p3/requirements.txt": {
+      "sha256": "95a608368b8411bdf15761935dd0d1cf0bb7031065a78b553f8b68ea96520df4",
+      "unchanged": true
+    },
+    "pyproject.toml": {
+      "sha256": "24ed582ef5e27f88e71cd06e48ed81f14ed1873c572f0317ebdf0f0d6d1729a5",
+      "unchanged": true
+    },
+    "src/ver": {
+      "sha256": "c9e267866a7288dcd6a1f33221b8ce5b77b2f7b647375eedc57263c0b5f3584d",
+      "unchanged": true
+    },
+    "p3/app/updater/__init__.py": {
+      "sha256": "64b42f389ef5731f9fce562a87193c5cac1de43dbe8e22ff9d030bf53a40c4eb",
+      "unchanged": true
+    }
+  },
+  "bundle": {
+    "manifest_files": 337,
+    "library_files": 132,
+    "production_revision": "083138ce4b55ccf533a215c995bf27db25eae80d60b487150ae710f14d245e5f",
+    "prospective_revision": "d530b7d3bcbc35872020b592596903f838da05cfe5764739b4c9ea32ad1546ad",
+    "published": false
+  },
+  "evidence_artifacts": {
+    "target/m5-assessment/before.json": "aeeb4a483923d43f9504bbf20155e4bc1c4c208e11a046d482f414ade304c02c",
+    "target/m5-assessment/native-apt-inventory.json": "5094953a8fb28dd1ed0778eee3ba7072c417da5d07628b12debc34e4a3280581",
+    "target/m5-assessment/native-evidence/native-payload-inspection.json": "abc4d0e93946aa6beedc1788743181e67264556af2fdd354bf8561134c669359",
+    "target/m5-assessment/native-evidence/native-input-analysis.json": "0c124313e6821049c79b6b6b8581fa30cd51dabb476062809813c7fe4710bb59",
+    "target/m5-assessment/offline-input-manifest.json": "e54ad1f6e5219997978d870848c35a8eff7a65b33130259f47dacc0681ccbed9",
+    "target/m5-assessment/native-evidence/offline-inputs-verified.json": "2ea081f6c9f4acf45ce13adb690acfd992dc2843080d260eaeb1eb498ec9a946",
+    "target/m5-assessment/native-evidence/native-imports.json": "2e702b22e8182d34238db78b3b32f3483b08bc0be09c02352188e38a777457e1",
+    "target/m5-assessment/native-evidence/native-loader-entry-modes.json": "651ce52865064966f82d5674afb289183d7448aac2bd82da20b2aa4d329e009d",
+    "target/m5-assessment/native-evidence/native-package-preflight.json": "511337840d449fc6ac1869bdbca67ee63fbf8520403a3e0001deb7da10d32268",
+    "target/m5-assessment/preservation-precommit.json": "fa7361ac0260aa58edb593b4ec450b14100c09de34c2e87a26d14b4f63003f80",
+    "target/m5-assessment/guest-before.json": "36b1a07e0ff6c0b70e459a7cba6ecb7a00087d968d52d39b8fa648c2a9baa3f1",
+    "target/m5-assessment/guest-prequalification-after.json": "4ba792997a06624b1a5f404716b62f413de4962af95e8621debd88187742ec17",
+    "target/m5-assessment/guest-state-comparison.json": "4120b38690a52d78d2fdd197b80dcfb45400899a3d70e2c24d34628a837f19ee",
+    "target/m5-assessment/CONTAINER-PLAN.md": "26b5218a6e76b2402b6cd4800eaebda67be7b6422b0737a02413a3681599532f",
+    "target/m5-assessment/container-plan-hashes.json": "1f3041d1eb3cf9bc2cac41d7cd3a3ec439c2534a94c76fe7916b8944ad4b8c21"
+  },
+  "limitations": [
+    "No new route enabled; Docker execution still awaits the user-run prepared procedure.",
+    "F3 requires separate hook approval; its full path remains refused.",
+    "Other than selected payloads/metadata, remaining routes and graphical/native dependency behavior are unqualified.",
+    "No AMD64, emulation, interactive sudo, AppImage execution, live reports or production installation claims.",
+    "Original attribution rewrite and missing original checkpoint caveat remain.",
+    "Two Codex runtime ref names changed across turns; heads/tags and reflogs did not."
+  ]
+}
