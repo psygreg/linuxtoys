@@ -1,4 +1,4 @@
-# Agent Guidelines (.ai/AGENTS.md)
+# Agent Guidelines (AGENTS.md)
 
 This document outlines the mandatory rules and workflow for all AI agents working within this repository. Adherence to these guidelines is required for task completion and code quality.
 
@@ -21,8 +21,8 @@ Agents must adhere to standard best practices for the languages used:
 - The agent's role is to prepare the changes; human review is required for committing and pushing.
 
 ## 🚫 Repository Information Upkeep
-**The [ARCHITECTURE.md](.ai/ARCHITECTURE.md) file must always be kept up-to-date.**
+**The [ARCHITECTURE.md](ARCHITECTURE.md) file must always be kept up-to-date.**
 - Any sufficiently relevant changes must be reflected in the file.
 
 ## 🗺️ Documentation
-For a detailed map of modules, functions, and application structure, please refer to [ARCHITECTURE.md](.ai/ARCHITECTURE.md).
+For a detailed map of modules, functions, and application structure, please refer to [ARCHITECTURE.md](ARCHITECTURE.md).
