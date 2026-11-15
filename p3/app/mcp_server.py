@@ -52,6 +52,23 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
+# Keep the legacy offline CLI independent of optional application imports.
+if __package__:
+    from . import mcp_skill as _mcp_skill
+else:
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from app import mcp_skill as _mcp_skill
+
+# Preserve public callables/constants for existing callers.
+install_agent_skill = _mcp_skill.install_agent_skill
+skill_install_script = _mcp_skill.skill_install_script
+SKILL_NAME = _mcp_skill.SKILL_NAME
+SKILL_REPO_URLS = _mcp_skill.SKILL_REPO_URLS
+SKILL_INSTALL_TIMEOUT = _mcp_skill.SKILL_INSTALL_TIMEOUT
+
+if __name__ == "__main__" and "--install-skill" in sys.argv:
+    sys.exit(_mcp_skill.main())
+
 if __package__:
     from . import easy_cli
     from . import installed_packages
@@ -4818,124 +4835,6 @@ def apply_service_state(enabled, session_env=None):
     return disable_service()
 
 
-def install_agent_skill():
-    """Best-effort OFFLINE install of the bundled LinuxToys MCP skill.
-
-    Fallback for when the primary path (``bun x skills add``, run through the
-    AppStream runner's hidden PTY) is unavailable — no bun/bunx on PATH or
-    every fetch source failed. Reads the bundled copy of the skill
-    (``app/mcp_skill/SKILL.md``), which every distribution method packages.
-
-    Returns a list of paths the skill was written to (may be empty).
-    """
-    home = os.path.expanduser("~")
-    skill_root = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), "mcp_skill"
-    )
-    skill_file = os.path.join(skill_root, "SKILL.md")
-    if not os.path.isfile(skill_file):
-        return []
-
-    targets = [
-        (".agents", "skills"),               # cross-agent convention (skills.sh)
-        (".claude", "skills"),
-        (".config", "opencode", "skill"),
-        (".codex", "skills"),
-        (".cursor", "skills"),
-        (".windsurf", "skills"),
-        (".gemini", "skills"),
-    ]
-    installed = []
-    for parts in targets:
-        agent_dir = os.path.join(home, *parts[:-1])
-        if not os.path.isdir(agent_dir):
-            continue
-        destination = os.path.join(home, *parts, "linuxtoys-mcp")
-        try:
-            os.makedirs(destination, exist_ok=True)
-            with open(skill_file, "r", encoding="utf-8") as source:
-                content = source.read()
-            with open(os.path.join(destination, "SKILL.md"), "w", encoding="utf-8") as handle:
-                handle.write(content)
-            installed.append(destination)
-        except OSError:
-            continue
-    return installed
-
-
-# The canonical, fetchable copy of the agent skill lives at the standard
-# repository location the `skills` CLI (skills.sh) reads from a git checkout:
-# skills/linuxtoys-mcp/SKILL.md at the repository root. It must be kept in
-# sync with the bundled fallback copy at app/mcp_skill/SKILL.md (same commit).
-SKILL_REPO_URLS = (
-    "https://github.com/psygreg/linuxtoys",
-    "https://git.linux.toys/psygreg/linuxtoys",  # Gitea mirror fallback
-)
-SKILL_NAME = "linuxtoys-mcp"
-SKILL_INSTALL_TIMEOUT = 180
-
-
-def skill_install_script():
-    """Build the noninteractive skill-installation script.
-
-    Returned as text; the caller (AppStream runner) writes it to a temporary
-    file and dispatches it through the hidden PTY. Prompt-free by design,
-    because the hidden PTY has nobody to answer questions:
-
-    - ``bun x`` never prompts for package installation (unlike npx), and
-      ``CI=1`` additionally tells CLIs to assume a noninteractive environment.
-    - The skills CLI skips all confirmations with ``-y``; an explicit
-      ``--skill`` prevents the skill picker, and NO ``--agent`` keeps the
-      CLI on its default target (every detected agent plus the universal
-      ``~/.agents/skills`` directory) — passing ``--agent`` together with
-      ``-yg`` is what triggers its interactive scope prompt (upstream
-      issue #793).
-    - ``timeout`` bounds a hypothetical prompt nobody answers: the first
-      source gets one budget, the mirror gets another, and the offline
-      bundled copy is the last resort.
-    """
-    script = """#!/usr/bin/env bash
-# Install the LinuxToys MCP agent skill for detected agents (noninteractive).
-set -u
-
-_lt_skill_cmd=()
-if command -v bun >/dev/null 2>&1; then
-    _lt_skill_cmd=(bun x skills)
-elif [ -x "$HOME/.bun/bin/bun" ]; then
-    _lt_skill_cmd=("$HOME/.bun/bin/bun" x skills)
-fi
-
-_lt_try() {
-    # --foreground: without it timeout puts the CLI in a background process
-    # group, so bun's TTY I/O raises SIGTTIN/SIGTTOU and the process stops
-    # forever (TERM cannot reach stopped children, defeating even this bound).
-    timeout --foreground %d env CI=1 "${_lt_skill_cmd[@]}" add "$1" --skill %s -g -y
-}
-
-_lt_status=1
-if [ "${#_lt_skill_cmd[@]}" -gt 0 ]; then
-    for _lt_repo in %s; do
-        if _lt_try "$_lt_repo"; then
-            _lt_status=0
-            break
-        fi
-        echo "Skill source failed: $_lt_repo"
-    done
-else
-    echo "bun/bunx not found; using the bundled skill copy."
-fi
-
-if [ "$_lt_status" != "0" ]; then
-    python3 "$SCRIPT_DIR/app/mcp_server.py" --install-skill
-fi
-""" % (
-        SKILL_INSTALL_TIMEOUT,
-        SKILL_NAME,
-        " ".join(shlex_quote(url) for url in SKILL_REPO_URLS),
-    )
-    return script
-
-
 # ---------------------------------------------------------------------------
 # Server bootstrap
 # ---------------------------------------------------------------------------
@@ -5016,15 +4915,4 @@ def run_service():
 
 
 if __name__ == "__main__":
-    if "--install-skill" in sys.argv:
-        # Non-package fallback used by the skill-install job when the bun
-        # fetch path is unavailable: copy the bundled skill directly.
-        installed = install_agent_skill()
-        if installed:
-            print("LinuxToys MCP skill installed to:")
-            for path in installed:
-                print(f"  {path}")
-            sys.exit(0)
-        print("No supported agent skill directory was found on this system.", file=sys.stderr)
-        sys.exit(1)
     sys.exit(run_service())
