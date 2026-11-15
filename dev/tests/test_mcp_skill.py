@@ -45,8 +45,10 @@ class SkillTests(unittest.TestCase):
         self.addCleanup(self.stack.close)
         self.temp = self.stack.enter_context(tempfile.TemporaryDirectory())
         self.root = Path(self.temp).resolve()
+        self.root.chmod(0o700)
         self.home = self.root / "home with spaces"
         self.home.mkdir(mode=0o700)
+        self.home.chmod(0o700)
         self.stack.enter_context(
             patch.object(skill.os.path, "expanduser", return_value=str(self.home))
         )
@@ -60,8 +62,27 @@ class SkillTests(unittest.TestCase):
     def install(self):
         return skill.install_agent_skill()
 
+    def private_directory(self, path):
+        """Create only private fixture parents; never chmod existing unsafe paths."""
+        relative = path.relative_to(self.home)
+        self.assertNotIn("..", relative.parts)
+        current = self.home
+        for part in relative.parts:
+            current = current / part
+            try:
+                current.mkdir(mode=0o700)
+            except FileExistsError:
+                pass
+            else:
+                # mkdir's mode is still masked by umask, including owner bits.
+                # Only newly created disposable fixture directories are changed.
+                current.chmod(0o700)
+            self.assertFalse(current.is_symlink())
+            self.assertEqual(current.stat().st_uid, os.geteuid())
+            self.assertEqual(stat.S_IMODE(current.stat().st_mode), 0o700)
+
     def existing(self, data=None, mode=0o640):
-        self.destination.mkdir(parents=True)
+        self.private_directory(self.destination)
         self.target.write_bytes(self.data if data is None else data)
         self.target.chmod(mode)
 
@@ -75,7 +96,7 @@ class SkillTests(unittest.TestCase):
 
     def test_detected_agents_do_not_create_an_extra_universal_directory(self):
         for relative in (".claude", ".config/opencode", ".codex"):
-            (self.home / relative).mkdir(parents=True)
+            self.private_directory(self.home / relative)
         installed = self.install()
         self.assertEqual(len(installed), 3)
         self.assertFalse((self.home / ".agents").exists())
@@ -132,23 +153,32 @@ class SkillTests(unittest.TestCase):
         )
 
     def test_customized_older_and_empty_skills_are_preserved(self):
-        self.destination.mkdir(parents=True)
+        self.private_directory(self.destination)
         for data in (b"custom instructions", b"older version", b""):
             with self.subTest(data=data):
                 self.target.write_bytes(data)
+                self.target.chmod(0o600)
                 before = self.target.stat()
+                self.stderr.seek(0)
+                self.stderr.truncate(0)
                 self.assertEqual(self.install(), [])
                 self.assertEqual(self.target.read_bytes(), data)
                 self.assertEqual(self.target.stat().st_ino, before.st_ino)
+                self.assertEqual(self.target.stat().st_mtime_ns, before.st_mtime_ns)
+                self.assertEqual(self.target.stat().st_mode, before.st_mode)
                 self.assertFalse((self.home / ".claude").exists())
-        self.assertIn("preserved", self.stderr.getvalue())
+                self.assertIn(
+                    "Existing customized or older skill preserved; resolve manually",
+                    self.stderr.getvalue(),
+                )
+                self.assertNotIn("Skill directories must", self.stderr.getvalue())
 
     def test_symlink_file_and_directory_targets_preserve_canaries(self):
         canary = self.root / "outside"
         canary.mkdir()
         data = canary / "SKILL.md"
         data.write_bytes(b"preserve outside")
-        self.destination.mkdir(parents=True)
+        self.private_directory(self.destination)
         self.target.symlink_to(data)
         self.assertEqual(self.install(), [])
         self.assertEqual(data.read_bytes(), b"preserve outside")
@@ -169,7 +199,7 @@ class SkillTests(unittest.TestCase):
         self.assertFalse((self.home / ".agents").exists())
         self.assertEqual(list(outside.iterdir()), [])
         agent.unlink()
-        (self.home / ".agents").mkdir()
+        self.private_directory(self.home / ".agents")
         (self.home / ".agents/skills").symlink_to(outside, target_is_directory=True)
         self.assertEqual(self.install(), [])
         self.assertEqual(list(outside.iterdir()), [])
@@ -187,6 +217,38 @@ class SkillTests(unittest.TestCase):
         self.assertEqual(list(agent.iterdir()), [])
         self.assertFalse((self.home / ".agents").exists())
 
+    def test_group_writable_skill_parents_preserve_existing_contents(self):
+        self.existing(data=b"existing skill in an unsafe tree", mode=0o600)
+        before = self.target.stat()
+        for directory in (
+            self.home / ".agents",
+            self.destination.parent,
+            self.destination,
+        ):
+            for mode in (0o770, 0o775, 0o777):
+                with self.subTest(
+                    directory=directory.relative_to(self.home), mode=oct(mode)
+                ):
+                    directory.chmod(mode)
+                    self.stderr.seek(0)
+                    self.stderr.truncate(0)
+                    self.assertEqual(self.install(), [])
+                    self.assertEqual(stat.S_IMODE(directory.stat().st_mode), mode)
+                    self.assertEqual(
+                        self.target.read_bytes(), b"existing skill in an unsafe tree"
+                    )
+                    self.assertEqual(self.target.stat().st_ino, before.st_ino)
+                    self.assertEqual(self.target.stat().st_mtime_ns, before.st_mtime_ns)
+                    self.assertEqual(self.target.stat().st_mode, before.st_mode)
+                    self.assertFalse((self.destination / ".install.lock").exists())
+                    self.assertIn("Skill directories must", self.stderr.getvalue())
+                    self.assertNotIn(
+                        "Existing customized or older", self.stderr.getvalue()
+                    )
+                    # Restore only this test-created directory for the next case,
+                    # after proving the installer left its unsafe mode untouched.
+                    directory.chmod(0o700)
+
     def test_existing_writable_skill_and_nonregular_files_are_refused(self):
         self.existing(mode=0o666)
         self.assertEqual(self.install(), [])
@@ -197,7 +259,7 @@ class SkillTests(unittest.TestCase):
         self.assertTrue(stat.S_ISFIFO(self.target.lstat().st_mode))
 
     def test_unsafe_lock_does_not_follow_symlink_or_modify_canary(self):
-        self.destination.mkdir(parents=True)
+        self.private_directory(self.destination)
         canary = self.root / "lock-canary"
         canary.write_text("preserve")
         (self.destination / ".install.lock").symlink_to(canary)
@@ -289,7 +351,7 @@ class SkillTests(unittest.TestCase):
         self.assertTrue(self.install())
 
     def test_staging_name_collision_preserves_existing_contents(self):
-        self.destination.mkdir(parents=True)
+        self.private_directory(self.destination)
         collision = self.destination / ".skill-fixed.tmp"
         collision.write_bytes(b"preexisting staging or user data")
         with patch.object(skill.secrets, "token_hex", return_value="fixed"):
@@ -345,7 +407,7 @@ class SkillTests(unittest.TestCase):
         )
 
     def test_restrictive_umask_cannot_publish_an_unreadable_or_wrong_mode_file(self):
-        self.destination.mkdir(parents=True)
+        self.private_directory(self.destination)
         code = f"import os,sys;sys.path.insert(0,{str(ROOT / 'p3')!r});from app.mcp_skill import main;os.umask(0o200);sys.exit(main())"
         result = self.child(code)
         self.assertEqual(result.returncode, 0, result.stderr)
