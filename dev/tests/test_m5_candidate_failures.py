@@ -150,7 +150,8 @@ class CandidateFailureTests(unittest.TestCase):
 
 
 @unittest.skipUnless(
-    shutil.which("dpkg"), "Requires existing native dpkg; no installation allowed"
+    shutil.which("dpkg-query"),
+    "Requires existing native dpkg-query; no installation allowed",
 )
 class NativeDpkgStateFixtures(unittest.TestCase):
     """Real dpkg over temporary status records; no actual package installation."""
@@ -172,18 +173,18 @@ class NativeDpkgStateFixtures(unittest.TestCase):
             (root / "status").write_text(record)
             code = (
                 "is_debian() { return 0; }; is_ubuntu() { return 0; }; "
-                "dpkg() { command "
-                + shlex.quote(shutil.which("dpkg"))
-                + " --admindir="
-                + shlex.quote(str(root))
-                + ' "$@"; }; '
                 "source "
                 + shlex.quote(str(ROOT / "p3/libs/packages.bash"))
                 + '; pkg_exists nala; printf "FOUND=%s MISSING=%s\\n" "${#pkg_found[@]}" "${#pkg_notfound[@]}"'
             )
             result = subprocess.run(
                 ["bash", "-c", code],
-                env={**os.environ, "HOME": str(root), "SCRIPT_DIR": str(ROOT / "p3")},
+                env={
+                    **os.environ,
+                    "HOME": str(root),
+                    "SCRIPT_DIR": str(ROOT / "p3"),
+                    "DPKG_ADMINDIR": str(root),
+                },
                 capture_output=True,
                 text=True,
             )
@@ -196,16 +197,12 @@ class NativeDpkgStateFixtures(unittest.TestCase):
     def test_configured_is_installed(self):
         self.assertEqual(self.classify("install ok installed"), "FOUND=1 MISSING=0")
 
-    @unittest.expectedFailure
     def test_residual_conffiles_are_not_an_installed_application(self):
-        # Baseline defect, not waived qualification: dpkg -s succeeds in this state.
         self.assertEqual(
             self.classify("deinstall ok config-files"), "FOUND=0 MISSING=1"
         )
 
-    @unittest.expectedFailure
     def test_interrupted_unpacked_state_requires_completion(self):
-        # Baseline defect: pkg_install skips before interrupted_apt_guard can run.
         self.assertEqual(self.classify("install ok unpacked"), "FOUND=0 MISSING=1")
 
 

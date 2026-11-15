@@ -110,3 +110,16 @@ refactor is adopted. `dev/tests/test_library_loader_imports.py` covers those ent
 styles and optional-import success/failure cases without running Bash or network
 operations. U1's native results remain evidence for the exact U1 commit; this U2
 source patch has only the separately recorded local fixture/static qualification.
+
+## M5: Debian package-state correction (2026-11-15)
+
+`libs/packages.bash` uses validated dpkg-query status rather than query success
+to distinguish installed, absent/conffile-only and incomplete packages. Incomplete
+installations enter the existing architecture/authorization/lock/recovery path;
+post-recovery queries prevent a repaired pre-existing package being recorded as
+a new installation. Unknown/query-error states stop processing. Partial packages
+remain removable; other package-manager query/transaction branches are unchanged.
+This client-library fix changes no script bundle, revision approval, architecture
+route or privilege policy and grants no Nala/F3 qualification. See
+`dev/NALA-PACKAGE-STATE-FIX.md` for the caller trace, native query-only fixtures,
+mocked recovery/transaction boundaries and remaining lifecycle requirements.

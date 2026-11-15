@@ -782,17 +782,47 @@ rpm_ostree_transaction () {
     done
 }
 
+# Query success alone does not mean installed: dpkg also retains conffiles and
+# interrupted states. Return only a validated status, or an explicit absence.
+_pkg_dpkg_state () {
+    local _db="${DPKG_ADMINDIR:-${DPKG_ROOT:-}/var/lib/dpkg}"
+    local _state _status=0
+    # dpkg-query otherwise treats a missing database like an absent package.
+    [[ -f "$_db/status" && -r "$_db/status" ]] || return 2
+    _state=$(dpkg-query --admindir="$_db" --show --showformat='${Status}\n' -- "$1" 2>/dev/null) || _status=$?
+    if [[ $_status -eq 1 && -z "$_state" ]]; then
+        printf '%s\n' absent
+        return 0
+    fi
+    [[ $_status -eq 0 && "$_state" =~ ^(unknown|install|hold|deinstall|purge)\ (ok|reinstreq)\ (not-installed|config-files|half-installed|unpacked|half-configured|triggers-awaited|triggers-pending|installed)$ ]] || return 2
+    printf '%s\n' "$_state"
+}
+
 pkg_exists () {
     pkg_found=()
     pkg_notfound=()
+    _pkg_dpkg_incomplete=()
+    local _dpkg_state
 
     for pak in "$@"; do
         if is_debian || is_ubuntu; then
-            if dpkg -s "$pak" &>/dev/null; then
-                pkg_found+=("$pak")
-            else
-                pkg_notfound+=("$pak")
+            if ! _dpkg_state=$(_pkg_dpkg_state "$pak"); then
+                pkg_found=()
+                pkg_notfound=()
+                _pkg_dpkg_incomplete=()
+                die "Unable to determine dpkg package state for: $pak"
             fi
+            case "$_dpkg_state" in
+                absent|*" ok not-installed"|*" ok config-files")
+                    pkg_notfound+=("$pak") ;;
+                *" ok installed")
+                    pkg_found+=("$pak") ;;
+                *)
+                    # Install must reach interrupted_apt_guard; removal must
+                    # still be able to remove a partially installed package.
+                    pkg_notfound+=("$pak")
+                    _pkg_dpkg_incomplete+=("$pak") ;;
+            esac
         elif is_arch || is_cachy || is_manjaro; then
             if pacman -Qi "$pak" &>/dev/null; then
                 pkg_found+=("$pak")
@@ -855,6 +885,17 @@ pkg_install () {
     (( _bypass )) || runner_lock "package-transaction"
     if is_debian || is_ubuntu; then
         interrupted_apt_guard
+        if [[ ${#_pkg_dpkg_incomplete[@]} -gt 0 ]]; then
+            # Recovery may have finished pre-existing packages. Do not record
+            # them as new installs (and later remove them during reversal).
+            pkg_exists "${pkg_notfound[@]}"
+            [[ ${#_pkg_dpkg_incomplete[@]} -eq 0 ]] || die "$PKG_GUARD_AUDIT_FAIL"
+            if [[ ${#pkg_notfound[@]} -eq 0 ]]; then
+                (( _bypass )) || runner_unlock
+                return 0
+            fi
+            to_install="${pkg_notfound[*]}"
+        fi
         if (( _no_recommends )); then
             apt_transaction sudo_ apt-get install -y --no-install-recommends "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         else
@@ -2303,6 +2344,7 @@ PY
 
 pkg_remove () {
     pkg_exists "$@"
+    pkg_found+=("${_pkg_dpkg_incomplete[@]}")
     [[ ${#pkg_found[@]} -eq 0 ]] && return 0
     local to_remove="${pkg_found[*]}"
 
