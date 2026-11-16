@@ -12,7 +12,7 @@ Two native Rust components: **`src/catalog-rs`** → `_catalog_rs` is compiled v
 
 ```
 linuxtoys/
-├── install.sh              # User-facing one-shot installer (deb/rpm/arch/suse/appimage routing)
+├── install.sh              # User-facing one-shot installer (deb/rpm/arch/suse/appimage routing) with self-contained package-manager lock guards (busy-wait + pacman stale-lock recovery + transaction retry, mirroring packages.bash)
 ├── build-rust.sh           # Rust components driver: build|develop|release|vendor
 ├── src/
 │   ├── ver                 # Single source of truth: app version (read by build tooling)
@@ -66,7 +66,7 @@ linuxtoys/
 | `homebrew_catalog.py` | Homebrew snapshot cache (formula.json + analytics popularity, 14-day TTL) feeding the AppStream-style catalog; `materialize_install` for queued formulae. |
 | `snap_catalog.py` | Snap Store metadata over snapd's Unix socket → AppStream-style entries (14-day cache). |
 | `appimage_catalog.py` | AppImage community feed cache + intent-based category inference; release resolution/download for installs and updates (ELF validation, 4 GiB cap). |
-| `package_guard.py` | Busy native package-manager preflight shared by every runner (lock detection + bounded wait). |
+| `package_guard.py` | Busy native package-manager preflight shared by every runner (lock detection + bounded wait); `dispatch_enters_native_transaction` additionally gates queued self-update entries as native transactions outright, because their package operations live inside the piped install.sh. |
 | `installed_packages.py` | RAM+disk cache of user-installed packages relevant to AppStream state; removal-blocker queries. |
 | `installed_features.py` / `package_view.py` | GTK views: currently-removable features; local-package-file details/install view. |
 | `featured_scripts.py` | `FeaturedCtl` mixin: home/app-page featured strip — eligibility (review-score gates, Myket-affinity personalization), sampling, geometry, crossfades, rotation timers. |
@@ -95,7 +95,7 @@ The remaining `p3/app` layers follow: GUI (§4.2), core runtime (§4.3), TUI/upd
 | `app_page.py` | `AppPageView`: entry details — native header/actions, screenshot carousel + lightbox (variant selection, disk cache, autoplay, full-res upgrade), translatable descriptions, source picker, ODRS/Snap ratings, commerce buttons, Flatpak extensions tabs, residual-data cleanup, snap revert, Featured filler. `_WidthNeutral*` widget subclasses prevent content from driving window width. |
 | `header.py` / `head_menu.py` | Invisible page header builder; hamburger popover (manifest import, language, about, registry, resync, auto-updates/auto-report/MCP toggles) + `InputDialog`. |
 | `term_header.py` / `term_view.py` | `InfosHead` (native header block shared by terminal view and app page); `TermRunScripts` (VTE terminal + controls, removal/revert confirmations, Escape handling). |
-| `term_runner.py` | `TerminalRunner` mixin: VTE execution engine — spawn with library env, serialization vs AppStream runner, package-manager busy-wait, transmap/registry lifecycle, auto-revert queueing, runner-lock channel (`/tmp/linuxtoys/runner-state-*`). |
+| `term_runner.py` | `TerminalRunner` mixin: VTE execution engine — spawn with library env, serialization vs AppStream runner, package-manager busy-wait (self-update entries count as native transactions outright: their package operations live in the piped install.sh, invisible to the static scan), transmap/registry lifecycle, auto-revert queueing, runner-lock channel (`/tmp/linuxtoys/runner-state-*`). |
 | `term_registry.py` | `ExecutionRegistry`: persistent per-script transaction registry (save with no-op skip + same-script prune, tmpdir_noram cleanup, auto-revert, expiry pruning) + `python3 term_registry.py save …` CLI used by `p3/libs/linuxtoys.bash`. The canonical save/cleanup that `easy_cli` delegates to. |
 | `term_reporting.py` | `BugReporting` mixin: manual + auto bug reports from terminal output via antenna; clipboard copy. |
 | `revealer.py` | Checklist footer (`RevealerFooter` + `SupportFooter` links over the shared `_support_links` table) + `BugReportDialog` form. |
@@ -176,7 +176,7 @@ The remaining `p3/app` layers follow: GUI (§4.2), core runtime (§4.3), TUI/upd
 | File | Role |
 |---|---|
 | `__init__.py` | `__version__` constant. |
-| `update_helper.py` | Release lookup (GitHub → Gitea fallback), install-source detection (PPA/Copr/git disables self-update), `build_update_script(mode)` — the single installer-text builder for the VTE dialog (`terminal`: library + sudo_rq, bare pipe on SteamOS, optional completion marker), the headless updater (`background`: askpass + download-then-source in the same shell) and the TUI (`tui`: minimal pipe); `is_steamos()`; `run_background_update` via generated bash script; `compare_versions` delegates here from `version_gate` (also used by `kernel_update_helper`). |
+| `update_helper.py` | Release lookup (GitHub → Gitea fallback), install-source detection (PPA/Copr/git disables self-update), `build_update_script(mode)` — the single installer-text builder for the VTE dialog (`terminal`: library + sudo_rq, bare pipe on SteamOS, optional completion marker), the headless updater (`background`: askpass + download-then-source in the same shell) and the TUI (`tui`: minimal pipe); `is_steamos()`; `run_background_update` via generated bash script (lock collisions are handled inside install.sh's own guards); `compare_versions` delegates here from `version_gate` (also used by `kernel_update_helper`). |
 | `version_gate.py` | Non-blocking cache-backed gate refusing script runs when more than `GATE_GRACE_RELEASES` releases behind; `update-state.json` cache (atomic write via `app.atomic_io`), daemon-thread refresh, fails open; `compare_versions` is the shared tri-state comparator (right-padded tuples). |
 | `update_dialog.py` | GTK dialogs: changelog `UpdateDialog` (own dependency-free Markdown renderer; writes the `build_update_script("terminal", …)` installer to `/tmp/.self_update_lt`), error dialogs, `scripts_blocked_by_version` gate flow for the GUI. |
 

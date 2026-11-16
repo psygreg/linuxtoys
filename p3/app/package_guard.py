@@ -563,6 +563,23 @@ def script_enters_native_transaction(script_path, script_dir):
     return False
 
 
+def dispatch_enters_native_transaction(script_info, script_path, script_dir):
+    """Whether dispatching this queued entry can reach a native package
+    transaction.
+
+    Self-update runs are native transactions by definition: their package
+    operations live inside the remotely-fetched install.sh (the one-shot
+    installer carries its own lock guards), which the static scan cannot see
+    through. Every non-AppImage update path removes and reinstalls a package
+    through the host's package manager, and the AppImage path's migration
+    branches drive rpm-ostree/eopkg, so a queued self-update entry is gated
+    like any other transaction instead of racing a busy manager at dispatch.
+    """
+    if script_info.get("self_update"):
+        return True
+    return script_enters_native_transaction(script_path, script_dir)
+
+
 def job_enters_native_transaction(command_text):
     """Statically decide whether a generated job command reaches a native
     transaction.

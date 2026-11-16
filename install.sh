@@ -16,10 +16,252 @@ info() { printf "\e[0;32m[INFO]\e[m %s\n" "${1}"; exit 0; }
 
 error() { printf "\e[0;31m[ERROR]\e[m %s\n" "${1}"; exit 1; }
 
+# Progress/warning printers that do not end the run (info exits by design).
+# _lt-namespaced: install.sh is also sourced into the background updater's
+# shell, where linuxtoys.bash already defines info/warn/error.
+_lt_note() { printf "\e[0;36m[INFO]\e[m %s\n" "${1}"; }
+
+_lt_warn() { printf "\e[0;33m[WARN]\e[m %s\n" "${1}"; }
+
+# ---------------------------------------------------------------------------
+# Native package-manager guard.
+#
+# install.sh drives the distribution's package manager directly, both as the
+# one-shot installer and as the self-updater's payload (the app pipes this
+# file into bash), so LinuxToys' own runtime guards — the package_guard
+# preflight and libs/packages.bash's per-manager lock trios — are not around
+# when it runs. The same postures are inlined here, mirroring packages.bash:
+# a bounded wait for a running manager, stale-lock recovery for pacman (the
+# only manager whose lock file outlives its process and blocks new
+# transactions on existence alone), and transaction wrappers that stand by
+# for a manager that starts between the guard and the call instead of
+# surfacing an opaque lock failure.
+# ---------------------------------------------------------------------------
+
+LT_GUARD_TIMEOUT=300
+LT_GUARD_TIMEOUT_MSG="Another package operation is still running and is taking too long. Please wait for the ongoing operation to finish, then try again."
+
+# fd-link lines under /proc, elevated when a cached sudo ticket is already
+# held (root-owned holders — pacman, pamac-daemon, packagekitd,
+# unattended-upgr — are invisible to an unprivileged scan); with no ticket
+# available the plain scan keeps the best-effort behavior, and the
+# named-process checks in the busy checks below still catch those holders.
+_lt_lock_fd_links () {
+	if [ "$(id -u)" -eq 0 ]; then
+		find /proc/[0-9]*/fd -maxdepth 1 -type l -printf '%l\n' 2>/dev/null || true
+	elif sudo -n true >/dev/null 2>&1; then
+		sudo -n find /proc/[0-9]*/fd -maxdepth 1 -type l -printf '%l\n' 2>/dev/null || true
+	else
+		find /proc/[0-9]*/fd -maxdepth 1 -type l -printf '%l\n' 2>/dev/null || true
+	fi
+}
+
+# Whether the lock paths matching $1 are verifiably held open by a live
+# process right now. A lock file merely existing is stale evidence (a crash
+# leftover); this is the fd-link test packages.bash and
+# package_guard._lock_actively_held use.
+_lt_lock_held () {
+	_lt_lock_fd_links | grep -Eq "$1"
+}
+
+_lt_pacman_lock_held () { _lt_lock_held '^/var/lib/pacman/db\.lck( \(deleted\))?$'; }
+_lt_deb_lock_held () { _lt_lock_held '^(/var/lib/dpkg/lock(-frontend)?|/var/lib/apt/lists/lock|/var/cache/apt/archives/lock)( \(deleted\))?$'; }
+_lt_dnf_lock_held () { _lt_lock_held '^(/var/lib/dnf/rpmdb\.lock|/run/dnf\.pid|/var/lib/dnf/lock)( \(deleted\))?$'; }
+_lt_zypp_lock_held () { _lt_lock_held '^(/run/zypp\.pid|/var/run/zypp\.pid)( \(deleted\))?$'; }
+
+# Name of a running manager of the family, else false. Transaction tools are
+# proof of a transaction on their own; resident daemons (alive whenever a
+# software centre or an auto-update timer is installed) only count while they
+# plausibly hold the package lock.
+_lt_arch_busy () {
+	local _name
+	for _name in pacman paru pamac yay; do
+		if pgrep -x "$_name" >/dev/null 2>&1; then
+			echo "$_name"
+			return 0
+		fi
+	done
+	if pgrep -x pamac-daemon >/dev/null 2>&1 && [ -e /var/lib/pacman/db.lck ]; then
+		echo "pamac-daemon"
+		return 0
+	fi
+	return 1
+}
+
+_lt_deb_busy () {
+	local _name
+	for _name in apt apt-get dpkg dpkg-deb pkcon; do
+		if pgrep -x "$_name" >/dev/null 2>&1; then
+			echo "$_name"
+			return 0
+		fi
+	done
+	for _name in unattended-upgr apt.systemd.dai packagekitd apt-key; do
+		if pgrep -x "$_name" >/dev/null 2>&1 && _lt_deb_lock_held; then
+			echo "$_name"
+			return 0
+		fi
+	done
+	return 1
+}
+
+_lt_dnf_busy () {
+	local _name
+	for _name in dnf dnf5 yum; do
+		if pgrep -x "$_name" >/dev/null 2>&1; then
+			echo "$_name"
+			return 0
+		fi
+	done
+	if pgrep -x dnf-automatic >/dev/null 2>&1 && _lt_dnf_lock_held; then
+		echo "dnf-automatic"
+		return 0
+	fi
+	return 1
+}
+
+_lt_zypp_busy () {
+	if pgrep -x zypper >/dev/null 2>&1; then
+		echo "zypper"
+		return 0
+	fi
+	if pgrep -x zypp-refresh >/dev/null 2>&1 && _lt_zypp_lock_held; then
+		echo "zypp-refresh"
+		return 0
+	fi
+	return 1
+}
+
+# Bounded wait ($1 = busy-check function name) for the running manager to go
+# idle. Returns 1 when a manager is still running after LT_GUARD_TIMEOUT.
+_lt_busy_wait () {
+	local _check="$1" _manager _waited=0
+	if ! _manager=$("$_check"); then
+		return 0
+	fi
+	_lt_warn "Another package operation (${_manager}) is in progress. Waiting for it to finish..."
+	while _manager=$("$_check"); do
+		if [ "$_waited" -ge "$LT_GUARD_TIMEOUT" ]; then
+			return 1
+		fi
+		sleep 3
+		_waited=$((_waited + 3))
+	done
+	return 0
+}
+
+# Bounded standby for a lock still held after the busy-wait (a live holder
+# the manager list cannot name — an AUR helper or another libalpm/zypp
+# client). Returns 1 when the holder outlasted LT_GUARD_TIMEOUT.
+_lt_lock_standby () {
+	local _check="$1" _waited=0
+	while "$_check"; do
+		if [ "$_waited" -ge "$LT_GUARD_TIMEOUT" ]; then
+			return 1
+		fi
+		sleep 3
+		_waited=$((_waited + 3))
+	done
+	return 0
+}
+
+# Stale-pacman-lock recovery: alpm refuses new transactions while db.lck
+# exists even when nothing holds it, so a crash leftover must be removed
+# rather than failing every call below until it is cleaned up by hand.
+# Returns 1 when there is no leftover to recover.
+_lt_stale_pacman_recovery () {
+	[ -f /var/lib/pacman/db.lck ] || return 1
+	# The caller waits out verifiably live holders before this runs, so a
+	# lock file that still exists is a crash leftover, never a live hold.
+	_lt_warn "Stale pacman lock detected. Removing /var/lib/pacman/db.lck"
+	if ! sudo rm -f /var/lib/pacman/db.lck; then
+		error "Failed to remove stale lock. Run: sudo rm /var/lib/pacman/db.lck"
+	fi
+}
+
+# Run "$@" as one native package-manager transaction with the runners'
+# guard+retry recovery (mirrors libs/packages.bash's *_transaction trios):
+# wait out a manager that is already running, recover the family's
+# crash-leftover lock where it has one (pacman), and on a lock-refused
+# attempt stand by for the holder and re-run instead of surfacing an opaque
+# lock failure.
+#
+# Contract:
+#   0        transaction completed
+#   nonzero  failed on its own; the caller's error path applies
+#   exit 1   a holder outlasted the bounded waits (the timeout message)
+_lt_transaction () {
+	local _busy="$1" _lock="$2" _stale="$3"
+	shift 3
+
+	if ! _lt_busy_wait "$_busy"; then
+		error "$LT_GUARD_TIMEOUT_MSG"
+	fi
+	if "$_lock"; then
+		# A live holder the manager list cannot name: stand by for it before
+		# the first attempt instead of costing that attempt a lock error.
+		_lt_note "Another package operation is in progress. Waiting for it to finish..."
+		if ! _lt_lock_standby "$_lock"; then
+			error "$LT_GUARD_TIMEOUT_MSG"
+		fi
+	fi
+	if [ -n "$_stale" ]; then
+		"$_stale"
+	fi
+	while true; do
+		local _status=0
+		"$@" || _status=$?
+		if [ "$_status" -eq 0 ]; then
+			return 0
+		fi
+		if "$_lock" || "$_busy" >/dev/null 2>&1; then
+			if ! _lt_busy_wait "$_busy"; then
+				error "$LT_GUARD_TIMEOUT_MSG"
+			fi
+			if "$_lock"; then
+				_lt_note "Another package operation is in progress. Waiting for it to finish..."
+				if ! _lt_lock_standby "$_lock"; then
+					error "$LT_GUARD_TIMEOUT_MSG"
+				fi
+			fi
+			# The standby exits only once the lock is free; retry below.
+		elif [ -n "$_stale" ] && "$_stale"; then
+			# A crash leftover between the entry recovery and this call:
+			# the same verified removal, not a live hold.
+			:
+		else
+			# Not attributable to a lock: the caller's own error path applies,
+			# with the same status a bare call would have produced.
+			return "$_status"
+		fi
+	done
+}
+
+pacman_transaction () {
+	_lt_transaction _lt_arch_busy _lt_pacman_lock_held _lt_stale_pacman_recovery "$@"
+}
+
+# The apt family keeps no stale branch: dpkg locks are fcntl-held and
+# released when their holder dies.
+apt_transaction () {
+	_lt_transaction _lt_deb_busy _lt_deb_lock_held '' "$@"
+}
+
+# dnf, and yum on hosts without dnf.
+dnf_transaction () {
+	_lt_transaction _lt_dnf_busy _lt_dnf_lock_held '' "$@"
+}
+
+# YaST and KDE's update applet hold the zypp lock like any other client; the
+# fd standby covers a holder the manager list cannot name.
+zypper_transaction () {
+	_lt_transaction _lt_zypp_busy _lt_zypp_lock_held '' "$@"
+}
+
 osdeb() {
 	if curl -fsSL "${_deb}" -o "/tmp/${_deb_name}"; then
-		sudo apt update || true
-		if sudo apt install -y "/tmp/${_deb_name}"; then
+		apt_transaction sudo apt update || true
+		if apt_transaction sudo apt install -y "/tmp/${_deb_name}"; then
 			info "LinuxToys installed or updated!"
 		else
 			error "Installation failed (apt)."
@@ -32,15 +274,15 @@ osdeb() {
 osrpm() {
 	if curl -fsSL "${_rpm}" -o "/tmp/${_rpm_name}"; then
 		if command -v dnf >/dev/null 2>&1; then
-			{ [ "$ID" = "rhel" ]; } && sudo subscription-manager repos --enable codeready-builder-for-rhel-$(rpm -E %rhel)-$(arch)-rpms && sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm
-			{ [[ "$ID_LIKE" = *rhel* ]] && [ "$ID" != "rhel" ]; } && sudo dnf config-manager --set-enabled crb && sudo dnf install epel-release
-			if sudo dnf install -y "/tmp/${_rpm_name}"; then
+			{ [ "$ID" = "rhel" ]; } && sudo subscription-manager repos --enable codeready-builder-for-rhel-$(rpm -E %rhel)-$(arch)-rpms && dnf_transaction sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm
+			{ [[ "$ID_LIKE" = *rhel* ]] && [ "$ID" != "rhel" ]; } && sudo dnf config-manager --set-enabled crb && dnf_transaction sudo dnf install epel-release
+			if dnf_transaction sudo dnf install -y "/tmp/${_rpm_name}"; then
 				info "LinuxToys installed or updated!"
 			else
 				error "Installation failed (dnf)."
 			fi
 		else
-			if sudo yum install -y "/tmp/${_rpm_name}"; then
+			if dnf_transaction sudo yum install -y "/tmp/${_rpm_name}"; then
 				info "LinuxToys installed or updated!"
 			else
 				error "Installation failed (yum)."
@@ -61,7 +303,7 @@ ossuse() {
                 AppStream adwaita-icon-theme libzypp-plugin-appdata
             )
             for pkg in "${dependencies[@]}"; do
-                sudo zypper --non-interactive install "${pkg}"
+                zypper_transaction sudo zypper --non-interactive install "${pkg}"
             done
             info "LinuxToys installed or updated!"
         else
@@ -77,7 +319,7 @@ osarch() {
     [ -n "${_pkg_name:-}" ] || error "Could not determine the LinuxToys Arch package filename."
 
     if pacman -Qi linuxtoys-bin &>/dev/null; then
-        sudo pacman -R --noconfirm linuxtoys-bin ||
+        pacman_transaction sudo pacman -R --noconfirm linuxtoys-bin ||
             error "Failed to remove existing linuxtoys-bin package."
     fi
 
@@ -89,10 +331,10 @@ osarch() {
                 webp-pixbuf-loader
             )
             for pkg in "${dependencies[@]}"; do
-                sudo pacman -S --noconfirm --needed "${pkg}"
+                pacman_transaction sudo pacman -S --noconfirm --needed "${pkg}"
             done
         fi
-        if sudo pacman -U --noconfirm "/tmp/${_pkg_name}"; then
+        if pacman_transaction sudo pacman -U --noconfirm "/tmp/${_pkg_name}"; then
             info "LinuxToys installed or updated!"
         else
             error "Installation failed (pacman)."
@@ -205,7 +447,7 @@ osappimage() {
 }
 
 manjaro() {
-    { sudo pamac build linuxtoys-bin && info "LinuxToys installed or updated!"; } || error "Failed to download: ${_pkg_name}"
+    { pacman_transaction sudo pamac build linuxtoys-bin && info "LinuxToys installed or updated!"; } || error "Failed to download: ${_pkg_name}"
 }
 
 requires_appimage() {
