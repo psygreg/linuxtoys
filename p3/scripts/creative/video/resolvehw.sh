@@ -5,6 +5,7 @@
 # icon: resolve.svg
 # repo: https://github.com/EdvinNilsson/ffmpeg_encoder_plugin
 # compat: ubuntu, debian, fedora, arch, cachy, rhel, suse
+# cachyos-mirrors-required: 0
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"

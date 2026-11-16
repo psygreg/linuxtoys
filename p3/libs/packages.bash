@@ -1132,7 +1132,11 @@ pkg_snap () {
     (( ${#_snap_new[@]} > 0 )) || return 0
 
     askpass
-    runner_lock "package-transaction"
+    # Snap installs talk to the Snap store, never to the distro repositories;
+    # the *external* lock keeps the runner bookkeeping without the mirror
+    # preflight (a missing snapd is bootstrapped through pkg_install above,
+    # which runs the preflight itself when a native transaction starts).
+    runner_lock "package-transaction-external"
     sudo_ snap install "${_snap_new[@]}" || {
         runner_unlock
         die "Failed to install snap packages ${_snap_new[*]}"
@@ -1187,7 +1191,9 @@ pkg_snap_file () {
     _snap_installed_names > "$before_file"
 
     askpass
-    runner_lock "package-transaction"
+    # Local snap files install through snapd (see pkg_snap): no distro
+    # repository access, so the lock stays external to the mirror preflight.
+    runner_lock "package-transaction-external"
 
     for snap_file in "$@"; do
         [[ -f "$snap_file" ]] || {
@@ -1246,8 +1252,17 @@ pkg_fromfile () {
         return $?
     fi
 
-    [[ "$1" == *.flatpak || "$1" == *.flatpakref ]] || askpass
-    runner_lock "package-transaction"
+    # Flatpak bundle files install from Flatpak's own remote through the
+    # flatpak CLI, never from the distro repositories: ask for an external
+    # transaction lock so the mirror preflight is skipped. Native package
+    # files keep the generic preflight, and only they prompt for escalation
+    # here.
+    if [[ "$1" == *.flatpak || "$1" == *.flatpakref ]]; then
+        runner_lock "package-transaction-external"
+    else
+        askpass
+        runner_lock "package-transaction"
+    fi
 
     if [[ "$1" == *.flatpak || "$1" == *.flatpakref ]]; then
         if ! command -v flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
@@ -1285,10 +1300,11 @@ pkg_fromfile () {
         local _flatpak_stderr
         if ! _flatpak_stderr=$(flatpak install --or-update "$flatpak_scope" --noninteractive "$flatpak_file" 2>&1 >/dev/null); then
             # A genuine fallback needs sudo. Authenticate while terminal input is
-            # unlocked, then restore the package-transaction lock before continuing.
+            # unlocked, then restore the (external) transaction lock before
+            # continuing: the operation is still a Flatpak bundle install.
             runner_unlock
             askpass
-            runner_lock "package-transaction"
+            runner_lock "package-transaction-external"
             _flatpak_stderr=$(
                 sudo_ flatpak install --or-update --system --noninteractive "$flatpak_file" 2>&1 >/dev/null
             ) || {
@@ -1936,7 +1952,11 @@ PY2
     if [[ "$run_command" =~ (^|[[:space:];|&()])sudo([[:space:]]|$) ]]; then
         askpass
     fi
-    runner_lock "package-transaction"
+    # The make build and its install command never touch the distro package
+    # database (build dependencies went through pkg_install above, which runs
+    # the mirror preflight itself when a native transaction starts): keep the
+    # runner bookkeeping on an external transaction lock.
+    runner_lock "package-transaction-external"
 
     ( cd -- "$make_dir" && bash -c "$run_command" ) || {
         runner_unlock
@@ -2695,7 +2715,10 @@ EOF
         }
     }
     { is_arch || is_cachy || is_solus; } && {
-        pkg_exists fuse
+        # The FUSE 2 package is named "fuse2" on Arch-family and Solus (there
+        # is no repository package literally named "fuse"), so probe the name
+        # that the fallback below would install.
+        pkg_exists fuse2
         [[ ! ${#pkg_notfound[@]} -eq 0 ]] && {
             pkg_install fuse2;
         }
@@ -3249,7 +3272,11 @@ pkg_brew () {
             echo "Homebrew formula $pak already installed, skipping."
             continue
         fi
-        runner_lock "package-transaction"
+        # Homebrew resolves and downloads formulae from its own taps, never
+        # from the distro repositories: lock externally to the mirror
+        # preflight (the brew bootstrap through call_script brew covers any
+        # native packages it needs through pkg_install).
+        runner_lock "package-transaction-external"
         status=0
         HOMEBREW_NO_ASK=1 "$brew_bin" install --formula "$pak" || status=$?
         runner_unlock

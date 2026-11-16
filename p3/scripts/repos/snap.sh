@@ -7,6 +7,7 @@
 # repo: https://snapcraft.io
 # compat: !ostree, !steamos
 # systemd: yes
+# cachyos-mirrors-required: 0
 # nocontainer
 
 snap_packages=("snapd")

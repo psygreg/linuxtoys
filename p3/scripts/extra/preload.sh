@@ -8,6 +8,7 @@
 # noconfirm: yes
 # nocontainer
 # systemd: yes
+# cachyos-mirrors-required: 0
 
 # --- Start of the script code ---
 # RAM requirement in GB. msg228 (all languages) is baked by _lang_ from this

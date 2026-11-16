@@ -7,6 +7,7 @@
 # new
 # systemd: yes
 # reboot: yes
+# cachyos-mirrors-required: 0
 
 setup_zram () {
     if is_arch; then

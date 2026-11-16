@@ -897,7 +897,10 @@ _lang_
 # The first lock of a run also lazily performs the CachyOS mirror preflight:
 # only runs that actually enter a native package transaction pay for it. Raw
 # manager calls bypass the helpers entirely, and the launcher arms the
-# preflight for those scripts through the preamble instead.
+# preflight for those scripts through the preamble instead. Backends that
+# never consult the distro repositories (snapd, Homebrew, Flatpak bundle
+# files, make builds) ask for an *external* transaction lock and skip the
+# preflight; removals skip it for the same offline-capability reason.
 runner_lock() {
     local reason="${1:-operation}"
     # ${2-default} (no colon): an explicitly empty message suppresses the echo.
@@ -909,6 +912,7 @@ runner_lock() {
     # this lock recursively. LINUXTOYS_REQUIRE_CACHYOS_MIRRORS=0 marks
     # Flatpak/Snap entries that may continue without a completed ranking.
     if [[ "$reason" != "CachyOS mirror refresh" && "$reason" != *removal*
+          && "$reason" != *external*
           && -z "${LINUXTOYS_MIRROR_PREFLIGHT_DONE:-}" ]]; then
         LINUXTOYS_MIRROR_PREFLIGHT_DONE=1
         _linuxtoys_prepare_session

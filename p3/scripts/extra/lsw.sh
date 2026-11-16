@@ -8,6 +8,7 @@
 # repo: https://github.com/TibixDev/winboat
 # systemd: yes
 # wsl: no
+# cachyos-mirrors-required: 0
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"

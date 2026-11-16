@@ -8,6 +8,7 @@
 # compat: !fedora, !solus, !rhel, !pika, !ubuntu, !steamos
 # nocontainer
 # hybridgpu: no
+# cachyos-mirrors-required: 0
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"

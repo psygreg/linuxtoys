@@ -6,6 +6,7 @@
 # reboot: yes
 # gpu: ROCm
 # compat: !steamos
+# cachyos-mirrors-required: 0
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

@@ -5,6 +5,7 @@
 # icon: mullvadvpn.svg
 # compat: ubuntu, debian, fedora, arch, cachy, ostree, ublue, rhel
 # repo: https://mullvad.net/vpn
+# cachyos-mirrors-required: 0
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
