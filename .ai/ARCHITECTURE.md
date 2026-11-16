@@ -182,7 +182,7 @@ The remaining `p3/app` layers follow: GUI (§4.2), core runtime (§4.3), TUI/upd
 
 #### `p3/app/antenna/`
 
-`antenna.py` — bug-report backend: system context string (OS/CPU/GPU/desktop/init), last-10-script history, `LogCapture` stdout/stderr tee, machine-id HMAC token bootstrap against `bug.linux.toys`, `submit_issue` POST, and a global exception hook that auto-submits unhandled exceptions. `install.sh`, CI, and each packager reference none of this directly — it is runtime-only.
+`antenna.py` — bug-report backend: system context string (OS/CPU/RAM/GPU/desktop/init), last-10-script history, `LogCapture` stdout/stderr tee, machine-id HMAC token bootstrap against `bug.linux.toys`, `submit_issue` POST, and a global exception hook that auto-submits unhandled exceptions. `install.sh`, CI, and each packager reference none of this directly — it is runtime-only.
 
 ## 5. Catalog scripts & data (`p3/scripts`)
 
