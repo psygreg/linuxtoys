@@ -10,14 +10,18 @@
 # systemd: yes
 
 # --- Start of the script code ---
+# RAM requirement in GB. msg228 (all languages) is baked by _lang_ from this
+# value at lib-source time, and the check below enforces it: keep this line
+# above the linuxtoys.lib source so one knob drives both the check and every
+# translation of the requirement message.
+_cram=8
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 # RAM check
 total_kb=$(grep MemTotal /proc/meminfo | awk '{print $2}')
 total_gb=$(( total_kb / 1024 / 1024 ))
-_cram=$(( total_gb ))
 # install only if user has enough RAM for preloading to not cause any issues
-if (( _cram > 12 )); then
+if (( total_gb > _cram )); then
     if zenity --question --text "$msg208" --width 360 --height 300; then
         sudo_rq
         if [ "$ID" == "fedora" ] || [ "$ID" == "rhel" ] ||  [[ "$ID_LIKE" =~ "fedora" ]]; then
