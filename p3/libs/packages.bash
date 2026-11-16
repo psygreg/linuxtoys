@@ -1,5 +1,9 @@
 # --- Package Management ---
 
+# Consumed by the standalone installer after sourcing this file.
+# shellcheck disable=SC2034
+LINUXTOYS_PACKAGE_GUARD_API=2
+
 # Guards against pacman and apt database locks
 
 # Localized strings for the guards, read from the same translation store the
@@ -50,8 +54,6 @@ _pkg_guard_l10n () {
             ["PKG_GUARD_WAIT", "pkg_guard_wait"],
             ["PKG_GUARD_TIMEOUT_NAMED", "pkg_guard_timeout_named"],
             ["PKG_GUARD_TIMEOUT", "pkg_guard_timeout"],
-            ["PKG_GUARD_STALE_LOCK", "pkg_guard_stale_lock"],
-            ["PKG_GUARD_STALE_FAIL", "pkg_guard_stale_fail"],
             ["PKG_GUARD_AUDIT", "pkg_guard_audit"],
             ["PKG_GUARD_BROKEN", "pkg_guard_broken"],
             ["PKG_GUARD_AUDIT_FAIL", "pkg_guard_audit_fail"],
@@ -76,8 +78,6 @@ PKG_GUARD_WAIT_NAMED='Another package operation is in progress (${manager}). Wai
 PKG_GUARD_WAIT='Another package operation is in progress. Waiting for it to finish...'
 PKG_GUARD_TIMEOUT_NAMED='Another package operation (${manager}) is still running and is taking too long. Please wait for it to finish, then try again.'
 PKG_GUARD_TIMEOUT='Another package operation is still running and is taking too long. Please wait for the ongoing operation to finish, then try again.'
-PKG_GUARD_STALE_LOCK='Stale pacman lock detected. Removing /var/lib/pacman/db.lck'
-PKG_GUARD_STALE_FAIL='Failed to remove stale lock. Run: sudo rm /var/lib/pacman/db.lck'
 PKG_GUARD_AUDIT='An interrupted package operation was detected. Attempting recovery...'
 PKG_GUARD_BROKEN='Broken package dependencies were detected. Attempting recovery...'
 PKG_GUARD_AUDIT_FAIL='Failed to recover interrupted dpkg operation. Manual user intervention required.'
@@ -116,10 +116,8 @@ _proc_fd_links () {
 
 # Whether the pacman database lock is verifiably held open by a live process
 # right now (the bash-side equivalent of package_guard._lock_actively_held).
-# Used to safety-check the stale-removal branch below: alpm refuses new
-# transactions while the lock file exists, but a file being held open by a
-# helper outside the recognized tool list (an AUR/unknown tool that uses
-# libalpm directly) is a live lock, never a removable leftover.
+# Presence also blocks transactions: libalpm can close its lock descriptor.
+# An absent descriptor is never permission to unlink the database lock.
 _pacman_lock_actively_held () {
     _proc_fd_links |
         grep -Eq '^/var/lib/pacman/db\.lck( \(deleted\))?$'
@@ -160,23 +158,8 @@ PACMAN_BUSY_WAIT_TIMEOUT=300
 # the alpm database lock in every transaction below, so it must be waited for
 # here as well, not collided with.
 pacman_busy_wait () {
-    local _manager
-    if ! _manager=$(_pacman_busy_manager); then
-        return 0
-    fi
-    info "$(_pkg_guard_fmt "$PKG_GUARD_WAIT_NAMED" "$_manager")"
-    local _waited=0
-    while _manager=$(_pacman_busy_manager); do
-        if (( _waited >= PACMAN_BUSY_WAIT_TIMEOUT )); then
-            die "$(_pkg_guard_fmt "$PKG_GUARD_TIMEOUT_NAMED" "$_manager")"
-        fi
-        sleep 3
-        _waited=$((_waited + 3))
-    done
-    # The idle exit probes the manager once more and its failed assignment is
-    # nonzero; scripts commonly run under set -e (the TUI runner generates
-    # 'set -eo pipefail'), so the success path must end with success.
-    return 0
+    _pkg_wait_until_idle pacman "$((SECONDS + PACMAN_BUSY_WAIT_TIMEOUT))" ||
+        die "$PKG_GUARD_TIMEOUT"
 }
 
 # Bounded standby for the database lock file itself, mirroring the runners'
@@ -186,83 +169,89 @@ pacman_busy_wait () {
 # collision resolves on its own and only an operation that is STILL running
 # after the shared timeout stops the run.
 pacman_lock_standby () {
-    local _waited=0
-    while _pacman_lock_actively_held; do
-        if (( _waited >= PACMAN_BUSY_WAIT_TIMEOUT )); then
-            return 1
-        fi
-        sleep 3
-        _waited=$((_waited + 3))
-    done
-    # The idle exit probes the lock once more and its failed test is
-    # nonzero; scripts commonly run under set -e (the TUI runner generates
-    # 'set -eo pipefail'), so the success path must end with success.
-    return 0
+    _pkg_wait_until_idle pacman "$((SECONDS + PACMAN_BUSY_WAIT_TIMEOUT))"
 }
 
 pacman_lock_guard () {
-    pacman_busy_wait
-    if [ -f /var/lib/pacman/db.lck ]; then
-        if _pacman_lock_actively_held; then
-            # A verifiably live holder outside the recognized tool list: the
-            # lock must never be removed. alpm fails cleanly on a live lock,
-            # so standing by for the holder (same standby+timeout posture as
-            # the runners) and carrying on once it releases is the safe
-            # recovery; only a holder that outlasts the wait stops the run.
-            info "$PKG_GUARD_WAIT"
-            pacman_lock_standby || \
-                die "$PKG_GUARD_TIMEOUT"
-        else
-            # The wait above only returns when no live manager is detected, so a
-            # remaining lock file is a crash leftover; recovery is removing it
-            # rather than surfacing an opaque pacman lock failure later.
-            warn "$PKG_GUARD_STALE_LOCK"
-            { { [ "$UPD_SERVICE" = "1" ] && rm -f /var/lib/pacman/db.lck; } || sudo_ rm -f /var/lib/pacman/db.lck; } || die "$PKG_GUARD_STALE_FAIL"
-        fi
-    fi
+    # libalpm can close its descriptor while retaining db.lck. Neither a
+    # missing PID nor an empty fd scan proves that unlinking it is safe.
+    # Wait boundedly, then require manual recovery; never remove native locks.
+    _pkg_wait_until_idle pacman "$((SECONDS + PACMAN_BUSY_WAIT_TIMEOUT))" ||
+        die "$PKG_GUARD_TIMEOUT (Pacman db.lck was not removed; verify the owner before manual recovery.)"
 }
 
-# Run $@ as one native pacman-family transaction (pacman, pamac, paru) with
-# the runners' standby+timeout recovery for the residual race the entry
-# guards cannot close: a manager that *starts* between the guard and this
-# call still holds the alpm database lock when the transaction runs, and
-# alpm refuses it with an opaque lock error. Rather than surfacing that
-# refusal as a generic failure, stand by for the holder — the same posture
-# the runners take at dispatch — then re-run the transaction once the
-# database is free.
-#
-# Contract (callers run under set -eo pipefail):
-#   0            transaction completed
-#   nonzero      failed on its own; the caller's usual error message or
-#                install fallback applies (nothing consumed the failure)
-#   die          a holder outlasted the bounded standby: the timeout
-#                message, never the caller's generic failure hint
-pacman_transaction () {
-    while true; do
-        local _status=0
-        "$@" || _status=$?
-        if [ "$_status" -eq 0 ]; then
-            return 0
+# Shared by the library and the standalone installer. Native managers own their
+# locks; we only observe them. One deadline covers preflight, collision standby
+# and retries, and only a manager's lock-refusal diagnostic authorizes replay.
+# A new unrelated process after a failed transaction is NOT replay evidence.
+_pkg_wait_until_idle () {
+    local family="$1" deadline="$2" remaining announced=0
+    while "_${family}_busy_manager" >/dev/null 2>&1 ||
+          "_${family}_lock_actively_held" ||
+          { [[ "$family" == pacman ]] && [[ -e /var/lib/pacman/db.lck ]]; }; do
+        if (( ! announced )); then
+            printf '%s\n' "$PKG_GUARD_WAIT" >&2
+            announced=1
         fi
-        if _pacman_lock_actively_held || _pacman_busy_manager >/dev/null 2>&1; then
-            pacman_busy_wait
-            if _pacman_lock_actively_held; then
-                info "$PKG_GUARD_WAIT"
-                pacman_lock_standby || \
-                    die "$PKG_GUARD_TIMEOUT"
-            fi
-            # The standby exits only once the lock is free; retry below.
-        elif [ -f /var/lib/pacman/db.lck ]; then
-            # A crash leftover from a manager between the entry guard and
-            # this call: the same verified recovery, not a live hold.
-            pacman_lock_guard
-        else
-            # Not attributable to a lock; the caller's existing error
-            # message or install fallback applies, with the same status a
-            # bare transaction call would have produced.
-            return "$_status"
-        fi
+        remaining=$((deadline - SECONDS))
+        (( remaining > 0 )) || { printf '%s\n' "$PKG_GUARD_TIMEOUT" >&2; return 124; }
+        (( remaining <= 3 )) || remaining=3
+        sleep "$remaining" || return "$?"
     done
+    return 0
+}
+
+_pkg_lock_refused () {
+    local family="$1" log="$2"
+    case "$family" in
+        apt) grep -Eqi 'Could not get lock|Unable to acquire.*lock|Unable to lock.*directory|dpkg frontend lock.*locked' "$log" ;;
+        pacman) grep -Eqi 'unable to lock database|failed to init transaction.*lock' "$log" ;;
+        dnf) grep -Eqi 'Failed to (obtain|acquire).*lock|Unable to (obtain|acquire).*lock|Another app is currently holding.*lock|can.t create transaction lock' "$log" ;;
+        zypper) grep -Eqi 'System management is locked|ZYpp is locked|Failed to acquire.*lock' "$log" ;;
+        *) return 1 ;;
+    esac
+}
+
+_pkg_transaction () (
+    # Subshell keeps cleanup, locale and temporary state away from the caller's
+    # traps, including a sourced background updater's installer cleanup trap.
+    local family="$1" timeout="$2" deadline log status attempt=0
+    shift 2
+    case "$family" in apt|dnf|pacman|zypper) ;; *) return 2 ;; esac
+    [[ "$timeout" =~ ^[0-9]+$ ]] || return 2
+    deadline=$((SECONDS + timeout))
+    log=$(mktemp "${TMPDIR:-/tmp}/linuxtoys-package.XXXXXX") || return 1
+    trap 'rm -f -- "$log"' EXIT
+    trap 'exit 129' HUP
+    trap 'exit 130' INT
+    trap 'exit 143' TERM
+    export LC_ALL=C
+    local -a statuses
+    while true; do
+        _pkg_wait_until_idle "$family" "$deadline" || return "$?"
+        # Stream diagnostics to the terminal and retain just this attempt's
+        # output for classification. PIPESTATUS preserves the manager's code.
+        if "$@" 2>&1 | tee "$log"; then
+            statuses=("${PIPESTATUS[@]}")
+        else
+            statuses=("${PIPESTATUS[@]}")
+        fi
+        status=${statuses[0]}
+        (( status == 0 )) && return "${statuses[1]}"
+        # Signals and authentication cancellation without a lock diagnostic
+        # must never turn into another transaction.
+        (( status < 128 )) || return "$status"
+        _pkg_lock_refused "$family" "$log" || return "$status"
+        (( attempt < 2 )) || return "$status"
+        (( SECONDS < deadline )) || return 124
+        attempt=$((attempt + 1))
+    done
+)
+
+# Shared bounded transaction: 124 on standby timeout, original manager/signal
+# status on failure, at most two retries of diagnosed lock refusals.
+pacman_transaction () {
+    _pkg_transaction pacman "$PACMAN_BUSY_WAIT_TIMEOUT" "$@"
 }
 
 # Whether any apt/dpkg lock is held open by a live process right now.
@@ -307,23 +296,8 @@ APT_BUSY_WAIT_TIMEOUT=300
 # shares the dpkg locks with every repair and transaction below, so it must
 # be waited for here as well, not collided with.
 apt_busy_wait () {
-    local _manager
-    if ! _manager=$(_apt_busy_manager); then
-        return 0
-    fi
-    info "$(_pkg_guard_fmt "$PKG_GUARD_WAIT_NAMED" "$_manager")"
-    local _waited=0
-    while _manager=$(_apt_busy_manager); do
-        if (( _waited >= APT_BUSY_WAIT_TIMEOUT )); then
-            die "$(_pkg_guard_fmt "$PKG_GUARD_TIMEOUT_NAMED" "$_manager")"
-        fi
-        sleep 3
-        _waited=$((_waited + 3))
-    done
-    # The idle exit probes the manager once more and its failed assignment is
-    # nonzero; scripts commonly run under set -e (the TUI runner generates
-    # 'set -eo pipefail'), so the success path must end with success.
-    return 0
+    _pkg_wait_until_idle apt "$((SECONDS + APT_BUSY_WAIT_TIMEOUT))" ||
+        die "$PKG_GUARD_TIMEOUT"
 }
 
 # Bounded standby for the dpkg/apt locks themselves, mirroring the runners'
@@ -333,56 +307,13 @@ apt_busy_wait () {
 # collision resolves on its own and only an operation that is STILL running
 # after the shared timeout stops the run.
 apt_lock_standby () {
-    local _waited=0
-    while _apt_lock_actively_held; do
-        if (( _waited >= APT_BUSY_WAIT_TIMEOUT )); then
-            return 1
-        fi
-        sleep 3
-        _waited=$((_waited + 3))
-    done
-    # The idle exit probes the lock once more and its failed test is
-    # nonzero; scripts commonly run under set -e (the TUI runner generates
-    # 'set -eo pipefail'), so the success path must end with success.
-    return 0
+    _pkg_wait_until_idle apt "$((SECONDS + APT_BUSY_WAIT_TIMEOUT))"
 }
 
-# Run $@ as one native apt/dpkg transaction with the runners' standby+timeout
-# recovery for the residual race the entry guards cannot close: a manager
-# that *starts* between the guard and this call still holds a dpkg lock when
-# the transaction runs, and apt refuses it with an opaque lock error. Rather
-# than surfacing that refusal as a generic failure, stand by for the holder —
-# the same posture the runners take at dispatch — then re-run the transaction
-# once the locks are free.
-#
-# Contract (callers run under set -eo pipefail):
-#   0            transaction completed
-#   nonzero      failed on its own; the caller's usual error message or
-#                install fallback applies (nothing consumed the failure)
-#   die          a holder outlasted the bounded standby: the timeout
-#                message, never the caller's generic failure hint
+# Shared bounded transaction: 124 on standby timeout, original manager/signal
+# status on failure, at most two retries of diagnosed lock refusals.
 apt_transaction () {
-    while true; do
-        local _status=0
-        "$@" || _status=$?
-        if [ "$_status" -eq 0 ]; then
-            return 0
-        fi
-        if _apt_lock_actively_held || _apt_busy_manager >/dev/null 2>&1; then
-            apt_busy_wait
-            if _apt_lock_actively_held; then
-                info "$PKG_GUARD_WAIT"
-                apt_lock_standby || \
-                    die "$PKG_GUARD_TIMEOUT"
-            fi
-            # The standby exits only once the locks are free; retry below.
-        else
-            # Not attributable to a lock; the caller's existing error
-            # message or install fallback applies, with the same status a
-            # bare transaction call would have produced.
-            return "$_status"
-        fi
-    done
+    _pkg_transaction apt "$APT_BUSY_WAIT_TIMEOUT" "$@"
 }
 
 interrupted_apt_guard () {
@@ -391,7 +322,7 @@ interrupted_apt_guard () {
 
     if [ -n "$(dpkg --audit 2>/dev/null)" ]; then
         info "$PKG_GUARD_AUDIT"
-        { { [ "$UPD_SERVICE" = "1" ] && dpkg --configure -a; } || sudo_ dpkg --configure -a; } || \
+        { { [ "$UPD_SERVICE" = "1" ] && apt_transaction dpkg --configure -a; } || apt_transaction sudo_ dpkg --configure -a; } || \
             die "$PKG_GUARD_AUDIT_FAIL"
         needs_repair=1
     fi
@@ -453,7 +384,7 @@ _dnf_lock_actively_held () {
 
 _dnf_busy_manager () {
     local _name
-    for _name in dnf dnf5; do
+    for _name in dnf dnf5 yum; do
         if pgrep -x "$_name" >/dev/null 2>&1; then
             echo "$_name"
             return 0
@@ -471,75 +402,18 @@ _dnf_busy_manager () {
 DNF_BUSY_WAIT_TIMEOUT=300
 
 dnf_busy_wait () {
-    local _manager
-    if ! _manager=$(_dnf_busy_manager); then
-        return 0
-    fi
-    info "$(_pkg_guard_fmt "$PKG_GUARD_WAIT_NAMED" "$_manager")"
-    local _waited=0
-    while _manager=$(_dnf_busy_manager); do
-        if (( _waited >= DNF_BUSY_WAIT_TIMEOUT )); then
-            die "$(_pkg_guard_fmt "$PKG_GUARD_TIMEOUT_NAMED" "$_manager")"
-        fi
-        sleep 3
-        _waited=$((_waited + 3))
-    done
-    # The idle exit probes the manager once more and its failed assignment is
-    # nonzero; scripts commonly run under set -e (the TUI runner generates
-    # 'set -eo pipefail'), so the success path must end with success.
-    return 0
+    _pkg_wait_until_idle dnf "$((SECONDS + DNF_BUSY_WAIT_TIMEOUT))" ||
+        die "$PKG_GUARD_TIMEOUT"
 }
 
 dnf_lock_standby () {
-    local _waited=0
-    while _dnf_lock_actively_held; do
-        if (( _waited >= DNF_BUSY_WAIT_TIMEOUT )); then
-            return 1
-        fi
-        sleep 3
-        _waited=$((_waited + 3))
-    done
-    # The idle exit probes the lock once more and its failed test is
-    # nonzero; scripts commonly run under set -e (the TUI runner generates
-    # 'set -eo pipefail'), so the success path must end with success.
-    return 0
+    _pkg_wait_until_idle dnf "$((SECONDS + DNF_BUSY_WAIT_TIMEOUT))"
 }
 
-# Run $@ as one native dnf transaction with the runners' standby+timeout
-# recovery: a manager or a lock holder that *starts* between the dispatch
-# preflight and this call still holds the package state when the transaction
-# runs, and dnf refuses it with an opaque error. Instead of surfacing that
-# refusal as a generic failure, stand by for the holder, then re-run the
-# transaction once the locks are free.
-#
-# Contract (callers run under set -eo pipefail):
-#   0            transaction completed
-#   nonzero      failed on its own; the caller's usual error message applies
-#                (nothing consumed the failure)
-#   die          a holder outlasted the bounded standby: the timeout
-#                message, never the caller's generic failure hint
+# Shared bounded transaction: 124 on standby timeout, original manager/signal
+# status on failure, at most two retries of diagnosed lock refusals.
 dnf_transaction () {
-    while true; do
-        local _status=0
-        "$@" || _status=$?
-        if [ "$_status" -eq 0 ]; then
-            return 0
-        fi
-        if _dnf_lock_actively_held || _dnf_busy_manager >/dev/null 2>&1; then
-            dnf_busy_wait
-            if _dnf_lock_actively_held; then
-                info "$PKG_GUARD_WAIT"
-                dnf_lock_standby || \
-                    die "$PKG_GUARD_TIMEOUT"
-            fi
-            # The standby exits only once the locks are free; retry below.
-        else
-            # Not attributable to a lock; the caller's existing error
-            # message applies, with the same status a bare transaction call
-            # would have produced.
-            return "$_status"
-        fi
-    done
+    _pkg_transaction dnf "$DNF_BUSY_WAIT_TIMEOUT" "$@"
 }
 
 _zypper_lock_actively_held () {
@@ -567,67 +441,18 @@ _zypper_busy_manager () {
 ZYPPER_BUSY_WAIT_TIMEOUT=300
 
 zypper_busy_wait () {
-    local _manager
-    if ! _manager=$(_zypper_busy_manager); then
-        return 0
-    fi
-    info "$(_pkg_guard_fmt "$PKG_GUARD_WAIT_NAMED" "$_manager")"
-    local _waited=0
-    while _manager=$(_zypper_busy_manager); do
-        if (( _waited >= ZYPPER_BUSY_WAIT_TIMEOUT )); then
-            die "$(_pkg_guard_fmt "$PKG_GUARD_TIMEOUT_NAMED" "$_manager")"
-        fi
-        sleep 3
-        _waited=$((_waited + 3))
-    done
-    # The idle exit probes the manager once more and its failed assignment is
-    # nonzero; scripts commonly run under set -e (the TUI runner generates
-    # 'set -eo pipefail'), so the success path must end with success.
-    return 0
+    _pkg_wait_until_idle zypper "$((SECONDS + ZYPPER_BUSY_WAIT_TIMEOUT))" ||
+        die "$PKG_GUARD_TIMEOUT"
 }
 
 zypper_lock_standby () {
-    local _waited=0
-    while _zypper_lock_actively_held; do
-        if (( _waited >= ZYPPER_BUSY_WAIT_TIMEOUT )); then
-            return 1
-        fi
-        sleep 3
-        _waited=$((_waited + 3))
-    done
-    # The idle exit probes the lock once more and its failed test is
-    # nonzero; scripts commonly run under set -e (the TUI runner generates
-    # 'set -eo pipefail'), so the success path must end with success.
-    return 0
+    _pkg_wait_until_idle zypper "$((SECONDS + ZYPPER_BUSY_WAIT_TIMEOUT))"
 }
 
-# Run $@ as one native zypper transaction with the runners' standby+timeout
-# recovery; same shape and contract as dnf_transaction. Zypper is also driven
-# through YaST and KDE's update applet, both of which hold the zypp lock like
-# any other client — the fd standby below covers someone the recognized list
-# cannot name, exactly like the pacman/apt wrappers do.
+# Shared bounded transaction: 124 on standby timeout, original manager/signal
+# status on failure, at most two retries of diagnosed lock refusals.
 zypper_transaction () {
-    while true; do
-        local _status=0
-        "$@" || _status=$?
-        if [ "$_status" -eq 0 ]; then
-            return 0
-        fi
-        if _zypper_lock_actively_held || _zypper_busy_manager >/dev/null 2>&1; then
-            zypper_busy_wait
-            if _zypper_lock_actively_held; then
-                info "$PKG_GUARD_WAIT"
-                zypper_lock_standby || \
-                    die "$PKG_GUARD_TIMEOUT"
-            fi
-            # The standby exits only once the locks are free; retry below.
-        else
-            # Not attributable to a lock; the caller's existing error
-            # message applies, with the same status a bare transaction call
-            # would have produced.
-            return "$_status"
-        fi
-    done
+    _pkg_transaction zypper "$ZYPPER_BUSY_WAIT_TIMEOUT" "$@"
 }
 
 # Echo the name of the eopkg manager currently busy, else fail (empty output).

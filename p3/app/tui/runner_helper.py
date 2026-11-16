@@ -2557,7 +2557,13 @@ class UpdateRunnerMixin:
         self._show_terminal()
         terminal = self.query_one("#terminal", Terminal)
         terminal.run_script(
-            ["bash", "-c", "curl -fsSL https://linux.toys/install.sh | bash"]
+            [
+                "bash",
+                "-o",
+                "pipefail",
+                "-c",
+                "curl -fsSL https://linux.toys/install.sh | bash",
+            ]
         )
 
     def _finish_update_run(self, exit_code: int | None) -> None:

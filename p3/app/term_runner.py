@@ -130,10 +130,14 @@ class TerminalRunner:
         # script that is merely *capable* of a transaction on an idle system
         # runs immediately, with no "waiting" flash or terminal lock.
         if not dev_mode.is_dev_mode_enabled():
-            if package_guard.script_enters_native_transaction(
-                current_script.get("path", "true"),
-                os.environ.get("SCRIPT_DIR", ""),
-            ) and package_guard.busy_native_manager_process() is not None:
+            if (
+                package_guard.dispatch_enters_native_transaction(
+                    current_script,
+                    current_script.get("path", "true"),
+                    os.environ.get("SCRIPT_DIR", ""),
+                )
+                and package_guard.busy_native_manager_process() is not None
+            ):
                 self._begin_busy_wait(current_script)
                 return
 

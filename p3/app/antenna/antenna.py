@@ -75,6 +75,22 @@ def _get_cpu_model() -> str:
 
     return "unknown"
 
+def _get_ram_info() -> str:
+    """Return the total system RAM, e.g. '15.7 GiB'."""
+    try:
+        with open("/proc/meminfo", "r", encoding="utf-8") as f:
+            for line in f:
+                if line.startswith("MemTotal:"):
+                    # Kernel reports KiB; show the measured size in GiB with
+                    # one decimal for a compact system-context field.
+                    fields = line.split()
+                    if len(fields) == 3 and fields[2] == "kB" and int(fields[1]) > 0:
+                        return f"{int(fields[1]) / 1024 / 1024:.1f} GiB"
+    except (OSError, ValueError, IndexError, OverflowError):
+        pass
+
+    return "unknown"
+
 def _get_gpu_info() -> dict:
     """Detect PCI display devices and return their human-readable names."""
     import subprocess
@@ -327,6 +343,7 @@ def get_system_context() -> str:
     os_info = _get_os_info()
     wsl_info = _get_wsl_info()
     cpu_model = _get_cpu_model()
+    ram_info = _get_ram_info()
     gpu_info = _get_gpu_info()
     init_system = _get_init_system_info()
     desktop_info = _get_desktop_info()
@@ -347,6 +364,9 @@ def get_system_context() -> str:
 
     if cpu_model != "unknown":
         context_parts.append(f"CPU: {cpu_model}")
+
+    if ram_info != "unknown":
+        context_parts.append(f"RAM: {ram_info}")
 
     for index, gpu in enumerate(gpu_info["devices"], start=1):
         if gpu_info["gpu_count"] == 1:

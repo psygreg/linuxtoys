@@ -606,8 +606,14 @@ pkg_appimage_rm() {{ touch {str(marker)!r}; }}
             ):
                 (base / "p3/app" / name).touch()
                 (base / "p3/app" / name).chmod(0o644)
+            (base / "p3/libs").mkdir(mode=0o755)
+            (base / "p3/libs/packages.bash").touch(mode=0o644)
             with patch.object(sys, "argv", ["preflight", str(base)]):
                 exec(compile(code, "local-bootstrap-trust", "exec"), {})
+                (base / "p3/libs/packages.bash").chmod(0o666)
+                with self.assertRaises(SystemExit):
+                    exec(compile(code, "local-bootstrap-trust", "exec"), {})
+                (base / "p3/libs/packages.bash").chmod(0o644)
                 (base / "p3/app/architecture.py").chmod(0o666)
                 with self.assertRaises(SystemExit):
                     exec(compile(code, "local-bootstrap-trust", "exec"), {})

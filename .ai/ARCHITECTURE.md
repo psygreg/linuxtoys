@@ -123,3 +123,22 @@ This client-library fix changes no script bundle, revision approval, architectur
 route or privilege policy and grants no Nala/F3 qualification. See
 `dev/NALA-PACKAGE-STATE-FIX.md` for the caller trace, native query-only fixtures,
 mocked recovery/transaction boundaries and remaining lifecycle requirements.
+
+## Selective 7.10.4 integration (2026-11-16)
+
+The [integration report](../dev/UPSTREAM-7.10.4-INTEGRATION.md) records the full
+review of `9ee756b6..3d19ac5` against `arm64-support`. `libs/packages.bash` owns
+shared bounded APT, DNF/YUM, Pacman and Zypper waits and diagnostic-only retries.
+The architecture-validated installer loads this same library instead of carrying
+its own lock scanners. Native locks are never deleted; persistent Pacman markers
+require verified manual recovery. Self-update terminal entries receive native
+preflight eligibility, and update pipes/child-shell cleanup preserve failures.
+
+Bug-report context includes measured RAM. Preload uses a shared translated 16 GB
+minimum, rejects unknown measurements, and remains x86-only. Its exact-byte bundle
+and reviewed digest were refreshed without changing any curated architecture set;
+the [architecture policy](../dev/ARCHITECTURE-POLICY.md) remains authoritative.
+Version metadata is 7.10.4. Existing deferred features and native lifecycle gates
+remain unchanged. Completed native MCP evidence applies to production baseline
+`d378deaddd5ef16a2d9d7e2accaf01e95780096e`; host fixtures do not extend it to
+this integration.

@@ -143,7 +143,7 @@ class ShellCase(unittest.TestCase):
             query = (
                 "command " + shlex.quote(DPKG_QUERY) + ' "$@"'
                 if real
-                else 'printf "%s" "$QUERY_OUTPUT"; return "$QUERY_EXIT"'
+                else 'if [[ -f "$EVENTS.query" ]]; then QUERY_OUTPUT=$(cat "$EVENTS.query"); QUERY_EXIT=$(cat "$EVENTS.query-exit"); fi; printf "%s" "$QUERY_OUTPUT"; return "$QUERY_EXIT"'
             )
             script = f"""
 source {shlex.quote(str(ROOT / 'p3/libs/packages.bash'))}
@@ -162,6 +162,7 @@ _append_transmap() {{ record "transmap:$*"; }}
 info() {{ record info; }}
 apt_busy_wait() {{ record busy; }}
 _apt_lock_actively_held() {{ return 1; }}
+_apt_busy_manager() {{ return 1; }}
 sudo_() {{
     record "sudo:$*"
     case "$1" in dpkg|apt-get) "$@" ;; *) die 'Unexpected privileged fixture call' ;; esac
@@ -177,8 +178,8 @@ dpkg() {{
                     # Simulate a metadata transition only in this temporary DB.
                     cp "$REPAIRED_STATUS" "$QUERY_DB/status"
                 else
-                    QUERY_OUTPUT='install ok installed'
-                    QUERY_EXIT="$REPAIR_QUERY_EXIT"
+                    printf '%s' 'install ok installed' > "$EVENTS.query"
+                    printf '%s' "$REPAIR_QUERY_EXIT" > "$EVENTS.query-exit"
                 fi
             fi
             ;;

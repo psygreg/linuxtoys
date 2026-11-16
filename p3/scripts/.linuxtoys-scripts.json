@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "requires_api": 1,
-  "architecture_policy_sha256": "c09ae4f4a43d2504162bba397272e04308d752643962bd87f8d7a1278c2a8653",
+  "architecture_policy_sha256": "4bc9f4df7d451044befcd84605d9c8af493ba0f8e7642b6c187f086a8cc838d1",
   "files": {
     "creative/audio/category-info.txt": "165f061ab56e6b58aa2cbb4512f185e204ed6c9076fd00e2d957d7e654bd5429",
     "creative/category-info.txt": "fbaf487beff4e64614cccb298a3212929e12993f93f2c4c4d76bc636e8c48596",
@@ -89,7 +89,7 @@
     "extra/ostree-autoupd.sh": "44e3fdb5c69efe3b9021634a5ae55b72b087551359b4aec359f4a86ce58f6d9e",
     "extra/pdefaults.sh": "31f4e1431007fbac5688b9a9c69a95b965222644bfbae1ad7537232b424e845c",
     "extra/preemptfedora.sh": "4003d4b44275551382c0b59f0d645e403449e8f32b70c1dd16cdba85aa618a83",
-    "extra/preload.sh": "d7285cc55c7f0d2d1e5a625767d471dfd40ffd0bde931a063aefcf21879fa5df",
+    "extra/preload.sh": "7a84d818bd8400abf7390ce92a9a985705eff23b137d910c31a23b898fe5b8e5",
     "extra/psaver.sh": "389bda31b558a6c2986019ba48ed6dc94ab8a73748c393446338dce75646696c",
     "extra/sboost.sh": "39844ac4f3d2a9ea07105bf8c4c3c9928855e918bcd62b0a02a95b4c0af34c63",
     "extra/susefix.sh": "5c918d069f448fa64f2ef6e3dd3d58e4991d8f34bb9ce21a14a47bf4941e8f79",

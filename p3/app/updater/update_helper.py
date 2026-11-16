@@ -248,7 +248,7 @@ def run_background_update():
     if is_steamos:
         script = (
             "#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n"
-            "curl -fsSL https://linux.toys/install.sh | bash\n"
+            "set -o pipefail\ncurl -fsSL https://linux.toys/install.sh | bash\n"
         )
     else:
         if not script_dir:
@@ -262,11 +262,12 @@ def run_background_update():
             "#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n"
             f"source {shlex.quote(library_path)}\n"
             "\n"
-            # Source the installer to retain the shell helper context.
-            "_lt_installer=$(mktemp \"${TMPDIR:-/tmp}/linuxtoys-installer.XXXXXX\") || exit 1\n"
+            # Run the guarded installer in a child shell so its EXIT trap cannot
+            # replace the parent cleanup of the downloaded installer.
+            '_lt_installer=$(mktemp "${TMPDIR:-/tmp}/linuxtoys-installer.XXXXXX") || exit 1\n'
             "trap 'rm -f -- \"$_lt_installer\"' EXIT\n"
-            "curl -fsSL https://linux.toys/install.sh -o \"$_lt_installer\" || exit 1\n"
-            "source \"$_lt_installer\"\n"
+            'curl -fsSL https://linux.toys/install.sh -o "$_lt_installer" || exit 1\n'
+            'bash "$_lt_installer"\n'
         )
 
     script_path = None

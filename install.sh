@@ -32,6 +32,7 @@ root = pathlib.Path(sys.argv[1]).resolve()
 paths = [root, root / 'p3', root / 'p3/app', root / 'p3/app/__init__.py']
 paths += [root / 'p3/app' / name for name in (
     'architecture.py', 'architecture_cli.py', 'architecture_files.py', 'architecture_flatpak.py')]
+paths += [root / 'p3/libs', root / 'p3/libs/packages.bash']
 for path in paths:
     metadata = path.lstat()
     if metadata.st_uid != os.getuid() or metadata.st_mode & 0o022 or stat.S_ISLNK(metadata.st_mode):
@@ -39,6 +40,7 @@ for path in paths:
 PYLOCAL
     then
         _architecture_cli="$source_dir/p3/app/architecture_cli.py"
+        _package_library="$source_dir/p3/libs/packages.bash"
     else
         revision=$(python3 -c 'import json,sys; from urllib.parse import quote; print(quote(json.load(sys.stdin)["tag_name"], safe=""))' <<< "$_api") || error "Release has no source tag."
         revision=$(curl -fsSL "https://api.github.com/repos/psygreg/linuxtoys/commits/$revision" | python3 -c 'import json,re,sys; s=json.load(sys.stdin)["sha"]; assert re.fullmatch("[0-9a-f]{40}",s); print(s)') || error "Cannot resolve immutable release source."
@@ -48,8 +50,12 @@ PYLOCAL
             curl -fsSL "https://raw.githubusercontent.com/psygreg/linuxtoys/$revision/p3/app/$file" -o "$_architecture_work/app/$file" || error "Release lacks architecture validation; use a qualified release."
         done
         _architecture_cli="$_architecture_work/app/architecture_cli.py"
+        mkdir -p "$_architecture_work/libs" || error "Cannot stage package guards."
+        _package_library="$_architecture_work/libs/packages.bash"
+        curl -fsSL "https://raw.githubusercontent.com/psygreg/linuxtoys/$revision/p3/libs/packages.bash" -o "$_package_library" || error "Release lacks package guards; use a qualified release."
     fi
     python3 "$_architecture_cli" label host >/dev/null || error "Unsupported host architecture."
+    ( _lt_load_package_guards ) || error "Release lacks the required bounded package guards."
     printf '%s' "$_api" > "$_architecture_work/release.json"
 }
 
@@ -71,14 +77,44 @@ PYHASH
     python3 "$_architecture_cli" files "$1" || error "Incompatible or unverified release payload."
 }
 
+# The same library owns lock observation and bounded retries in all launch
+# modes. A private subshell prevents its definitions from replacing this
+# installer's exit-on-success info(), or the background updater's helpers.
+_lt_load_package_guards() {
+    unset LINUXTOYS_PACKAGE_GUARD_API _PKG_GUARD_L10N_DONE
+    # shellcheck source=p3/libs/packages.bash
+    source "$_package_library" || return "$?"
+    [[ "${LINUXTOYS_PACKAGE_GUARD_API:-}" == 2 ]] || {
+        printf '%s\n' "Release lacks the required bounded package guards." >&2
+        return 1
+    }
+}
+
+_lt_installer_transaction() (
+    local family="$1"
+    shift
+    _lt_load_package_guards || return "$?"
+    "${family}_transaction" "$@"
+)
+
+# Noninteractive self-updates must not hang on a terminal password prompt.
+# Interactive installs keep sudo's ordinary authentication behavior.
+_lt_installer_sudo() {
+    if [[ "${LINUXTOYS_NONINTERACTIVE:-0}" == 1 ]]; then
+        sudo -n "$@"
+    else
+        sudo "$@"
+    fi
+}
+
 osdeb() {
 	if curl -fsSL "${_deb}" -o "${_architecture_work}/${_deb_name}"; then
         architecture_verify "${_architecture_work}/${_deb_name}"
-		sudo apt update || true
-		if sudo apt install -y "${_architecture_work}/${_deb_name}"; then
+		_lt_installer_transaction apt _lt_installer_sudo apt update || return "$?"
+		if _lt_installer_transaction apt _lt_installer_sudo apt install -y "${_architecture_work}/${_deb_name}"; then
 			info "LinuxToys installed or updated!"
 		else
-			error "Installation failed (apt)."
+			return "$?"
 		fi
 	else
 		error "Failed to download: ${_deb_name}"
@@ -89,18 +125,23 @@ osrpm() {
 	if curl -fsSL "${_rpm}" -o "${_architecture_work}/${_rpm_name}"; then
         architecture_verify "${_architecture_work}/${_rpm_name}"
 		if command -v dnf >/dev/null 2>&1; then
-			{ [ "$ID" = "rhel" ]; } && sudo subscription-manager repos --enable codeready-builder-for-rhel-$(rpm -E %rhel)-$(arch)-rpms && sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm
-			{ [[ "$ID_LIKE" = *rhel* ]] && [ "$ID" != "rhel" ]; } && sudo dnf config-manager --set-enabled crb && sudo dnf install epel-release
-			if sudo dnf install -y "${_architecture_work}/${_rpm_name}"; then
+            if [[ "$ID" == rhel ]]; then
+                _lt_installer_sudo subscription-manager repos --enable "codeready-builder-for-rhel-$(rpm -E %rhel)-$(arch)-rpms" || return "$?"
+                _lt_installer_transaction dnf _lt_installer_sudo dnf install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm" || return "$?"
+            elif [[ "$ID_LIKE" == *rhel* ]]; then
+                _lt_installer_sudo dnf config-manager --set-enabled crb || return "$?"
+                _lt_installer_transaction dnf _lt_installer_sudo dnf install -y epel-release || return "$?"
+            fi
+			if _lt_installer_transaction dnf _lt_installer_sudo dnf install -y "${_architecture_work}/${_rpm_name}"; then
 				info "LinuxToys installed or updated!"
 			else
-				error "Installation failed (dnf)."
+				return "$?"
 			fi
 		else
-			if sudo yum install -y "${_architecture_work}/${_rpm_name}"; then
+			if _lt_installer_transaction dnf _lt_installer_sudo yum install -y "${_architecture_work}/${_rpm_name}"; then
 				info "LinuxToys installed or updated!"
 			else
-				error "Installation failed (yum)."
+				return "$?"
 			fi
 		fi
 	else
@@ -111,7 +152,7 @@ osrpm() {
 ossuse() {
     if curl -fsSL "${_rpm}" -o "${_architecture_work}/${_rpm_name}"; then
         architecture_verify "${_architecture_work}/${_rpm_name}"
-        if sudo zypper --non-interactive install "${_architecture_work}/${_rpm_name}"; then
+        if _lt_installer_transaction zypper _lt_installer_sudo zypper --non-interactive install "${_architecture_work}/${_rpm_name}"; then
             dependencies=(
                 bash git curl wget zenity python3 python3-gobject gtk3
                 python3-requests python3-urllib3 python3-certifi util-linux
@@ -119,11 +160,11 @@ ossuse() {
                 AppStream adwaita-icon-theme libzypp-plugin-appdata
             )
             for pkg in "${dependencies[@]}"; do
-                sudo zypper --non-interactive install "${pkg}"
+                _lt_installer_transaction zypper _lt_installer_sudo zypper --non-interactive install "${pkg}" || return "$?"
             done
             info "LinuxToys installed or updated!"
         else
-            error "Installation failed (rpm)."
+            return "$?"
         fi
     else
         error "Failed to download: ${_rpm_name}"
@@ -137,8 +178,7 @@ osarch() {
     curl -fL --retry 3 "${_pkg}" -o "$_architecture_work/${_pkg_name}" || error "Package download failed."
     architecture_verify "$_architecture_work/${_pkg_name}"
     if pacman -Qi linuxtoys-bin &>/dev/null; then
-        sudo pacman -R --noconfirm linuxtoys-bin ||
-            error "Failed to remove existing linuxtoys-bin package."
+        _lt_installer_transaction pacman _lt_installer_sudo pacman -R --noconfirm linuxtoys-bin || return "$?"
     fi
 
     if [ -f "$_architecture_work/${_pkg_name}" ]; then
@@ -149,13 +189,13 @@ osarch() {
                 webp-pixbuf-loader
             )
             for pkg in "${dependencies[@]}"; do
-                sudo pacman -S --noconfirm --needed "${pkg}"
+                _lt_installer_transaction pacman _lt_installer_sudo pacman -S --noconfirm --needed "${pkg}" || return "$?"
             done
         fi
-        if sudo pacman -U --noconfirm "${_architecture_work}/${_pkg_name}"; then
+        if _lt_installer_transaction pacman _lt_installer_sudo pacman -U --noconfirm "${_architecture_work}/${_pkg_name}"; then
             info "LinuxToys installed or updated!"
         else
-            error "Installation failed (pacman)."
+            return "$?"
         fi
     else
         error "Failed to download: ${_pkg_name}"
@@ -348,30 +388,31 @@ installer() {
     # an immutable host to a native package installation.
     if requires_appimage; then
         osappimage
-        return
+        return "$?"
     fi
 
 	case "${ID:-}" in
-		debian|ubuntu|deepin) osdeb ;;
-		fedora|rhel|centos|rocky|almalinux) osrpm ;;
-		suse|opensuse) ossuse ;;
-		manjaro|biglinux|bigcommunity) manjaro;;
-		steamos) osappimage ;;
-		arch|cachyos|artix) osarch ;;
-		solus) osappimage ;;
+		debian|ubuntu|deepin) osdeb; return "$?" ;;
+		fedora|rhel|centos|rocky|almalinux) osrpm; return "$?" ;;
+		suse|opensuse) ossuse; return "$?" ;;
+		manjaro|biglinux|bigcommunity) manjaro; return "$?" ;;
+		steamos) osappimage; return "$?" ;;
+		arch|cachyos|artix) osarch; return "$?" ;;
+		solus) osappimage; return "$?" ;;
 	esac
 
 	case "${ID_LIKE:-}" in
-		*debian*|*ubuntu*) osdeb ;;
-		*rhel*|*fedora*) osrpm ;;
-		*manjaro*) manjaro ;;
-		*suse*) ossuse ;;
+		*debian*|*ubuntu*) osdeb; return "$?" ;;
+		*rhel*|*fedora*) osrpm; return "$?" ;;
+		*manjaro*) manjaro; return "$?" ;;
+		*suse*) ossuse; return "$?" ;;
 		*arch*)
 			if [ "${ID:-}" = "steamos" ]; then
 				osappimage
 			else
 				osarch
 			fi
+            return "$?"
 			;;
 	esac
 

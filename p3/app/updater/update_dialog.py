@@ -148,6 +148,7 @@ class UpdateDialog(Gtk.Dialog):
             with open("/tmp/.self_update_lt", "w") as f:
                 script_content = f"""#!/bin/bash
 # architectures: x86_64, aarch64
+set -o pipefail
 curl -fsSL https://linux.toys/install.sh | bash && touch {marker!r}
 """
                 f.write(script_content)
