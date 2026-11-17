@@ -7,22 +7,44 @@
 #                (commit subjects since the last tag, one per line) and
 #                vendors the TUI dependencies into p3/vendor (vendored into
 #                every package).
-#   deb-ppa    - dev/build/deb/build.sh      -> linuxtoys_<v>-1_amd64.deb,
-#                plus a signed source upload to the Launchpad PPA through
-#                dput (skipped when the required secrets are absent).
-#   rpm        - dev/build/copr/build.sh     -> .rpm and .src.rpm (the
-#                .src.rpm is fed into COPR by hand, as before).
+#   deb-ppa    - dev/build/deb/build.sh      -> linuxtoys_<v>-1_<arch>.deb for
+#                amd64 and arm64, plus ONE signed source upload to the
+#                Launchpad PPA through dput from the amd64 leg (skipped when
+#                the required secrets are absent); the arm64 leg runs
+#                build.sh --binary-only and never touches the PPA.
+#   rpm        - dev/build/copr/build.sh     -> .rpm for x86_64 and aarch64
+#                (the .src.rpm is built once, on the x86_64 leg, and is fed
+#                into COPR by hand, as before).
 #   arch-pkg   - dev/build/pkg/build.sh      -> linuxtoys-<v>.tar.xz (AUR
 #                release source), an updated PKGBUILD with the tarball hash,
-#                and linuxtoys-<v>-1-x86_64.pkg.tar.zst. AUR push stays manual.
-#   appimage   - dev/build/appimage/build.sh -> LinuxToys-<v>-x86_64.AppImage.
+#                and linuxtoys-<v>-1-<arch>.pkg.tar.zst for x86_64 and
+#                aarch64. AUR push stays manual.
+#   appimage   - dev/build/appimage/build.sh -> LinuxToys-<v>-<arch>.AppImage
+#                for x86_64 and aarch64.
 #   release    - creates the git tag (plain version, e.g. "7.9"), a GitHub
 #                release with the notes file and a sha256sums.txt asset.
 #
 # Notes and divergences from the local flow:
+#   * Every packaging job runs twice through a native-architecture matrix:
+#     the historical leg on an x86_64 runner and a second leg on an arm64
+#     runner (ubuntu-24.04-arm, free for public repositories). Both legs
+#     build natively - no QEMU emulation, no cross toolchains - inside the
+#     same distro container images, which resolve to the matching
+#     architecture variant on the arm64 runners. Artifacts carry the
+#     packaging architecture in their names (amd64/arm64 for .deb,
+#     x86_64/aarch64 elsewhere), and each leg uploads its own
+#     release-assets-<job>-<arch> artifact so the release job merges them
+#     without collisions. The x86_64 rpm leg is the only one collecting the
+#     .src.rpm, and the x86_64 arch leg is the only one collecting the AUR
+#     tarball + PKGBUILD: those are architecture-independent inputs, and a
+#     second copy under the same name would collide in dist/.
+#   * The PPA receives its source upload exactly once, from the amd64 deb
+#     leg; Launchpad then builds binaries for the architectures enabled on
+#     the PPA (adding arm64 there is a PPA-side setting, independent of this
+#     workflow). debian/control therefore declares Architecture: any.
 #   * The worker containers stand in for the distrobox containers: Fedora and
 #     Arch jobs run inside their official container images, the DEB job runs
-#     on ubuntu-24.04 (noble, matching the debian/changelog target).
+#     on the Ubuntu runner (noble, matching the debian/changelog target).
 #   * Before every packaging job, the Rust bits are built and deployed into
 #     p3/app exactly like the "develop" pass that ./build-rust.sh release
 #     performs before staging (sharun and distro builds rely on the shared
@@ -216,11 +238,21 @@ jobs:
           if-no-files-found: error
 
   deb-ppa:
-    name: DEB (ubuntu-24.04 / noble) and Launchpad PPA upload
-    runs-on: ubuntu-24.04
+    name: DEB (${{ matrix.arch }}, ubuntu / noble) and Launchpad PPA upload
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+            ppa_upload: true
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            ppa_upload: false
+    runs-on: ${{ matrix.runner }}
     needs: prepare
     if: needs.prepare.outputs.proceed == 'true'
-    timeout-minutes: 60
+    timeout-minutes: 90
     env:
       LT_VERSION: ${{ needs.prepare.outputs.version }}
       LINUXTOYS_TEST_MODE: ${{ needs.prepare.outputs.test_mode }}
@@ -248,8 +280,10 @@ jobs:
       # OpenPGP signature. Test runs always exercise the upload: signed with
       # the key (Launchpad rejects the re-used release version - the intended
       # probe outcome), unsigned without it (rejected for the missing
-      # signature instead).
+      # signature instead). Only the amd64 leg arms the upload; the arm64 leg
+      # never touches the PPA (see the build step below).
       - name: Arm or skip the PPA upload
+        if: matrix.ppa_upload
         env:
           TEST_MODE: ${{ needs.prepare.outputs.test_mode }}
           UPLOAD_PPA: ${{ needs.prepare.outputs.upload_ppa }}
@@ -266,7 +300,7 @@ jobs:
           fi
 
       - name: Import the GPG signing key
-        if: env.LINUXTOYS_SKIP_PPA_UPLOAD != '1'
+        if: matrix.ppa_upload && env.LINUXTOYS_SKIP_PPA_UPLOAD != '1'
         env:
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
@@ -307,21 +341,32 @@ jobs:
           fi
           gpg --list-secret-keys
 
-      - name: Build the .deb and upload the source package to the PPA
-        run: bash dev/build/deb/build.sh "$LT_VERSION" "$PWD/.out/deb"
+      - name: Build the .deb${{ matrix.ppa_upload == true && ' and upload the source package to the PPA' || ' (binary-only)' }}
+        # The source reaches Launchpad exactly once, from the amd64 leg (the
+        # Launchpad duplicate guard would refuse a second upload of the same
+        # version). The arm64 leg therefore runs --binary-only: it prepares
+        # the identical source tree and builds only the native arm64 binary
+        # package, without any PPA interaction. The binary Architecture comes
+        # from the build host (debian/control declares Architecture: any).
+        run: |
+          args=()
+          if [ "${{ matrix.ppa_upload }}" != "true" ]; then
+              args+=(--binary-only)
+          fi
+          bash dev/build/deb/build.sh "$LT_VERSION" "$PWD/.out/deb" "${args[@]}"
 
       - name: Collect release artifacts
         run: |
           set -e
           mkdir -p release-assets
-          cp .out/deb/linuxtoys_"$LT_VERSION"-1_amd64.deb release-assets/
+          cp .out/deb/linuxtoys_"$LT_VERSION"-1_"${{ matrix.arch }}".deb release-assets/
           ls -la release-assets
           echo "RELEASE_ASSETS_DIR=$(cd release-assets && pwd)" >> "$GITHUB_ENV"
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: release-assets-deb
+          name: release-assets-deb-${{ matrix.arch }}
           path: ${{ env.RELEASE_ASSETS_DIR }}
           # include-hidden-files guards against hidden-file filtering at the
           # uploader, so the directory can stay dot-prefixed in the future.
@@ -329,11 +374,21 @@ jobs:
           if-no-files-found: error
 
   rpm:
-    name: RPM and src.rpm (Fedora container)
-    runs-on: ubuntu-24.04
+    name: RPM (${{ matrix.arch }}, Fedora container)
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+            srpm: true
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+            srpm: false
+    runs-on: ${{ matrix.runner }}
     needs: prepare
     if: needs.prepare.outputs.proceed == 'true'
-    timeout-minutes: 60
+    timeout-minutes: 90
     env:
       LT_VERSION: ${{ needs.prepare.outputs.version }}
     container:
@@ -361,28 +416,45 @@ jobs:
         run: bash dev/build/copr/build.sh "$LT_VERSION" "$PWD/.out/rpm"
 
       - name: Collect release artifacts
+        # The binary RPM lands in RPMS/<build-host-arch>; the spec gates the
+        # buildable hosts through ExclusiveArch. The .src.rpm is the single
+        # arch-independent COPR input: build it on both legs but collect it
+        # only from the x86_64 leg, so dist/ never sees two copies of the
+        # same file name.
         run: |
           set -e
           mkdir -p release-assets
-          cp .out/rpm/RPMS/x86_64/linuxtoys-*.rpm release-assets/
-          cp .out/rpm/SRPMS/linuxtoys-*.src.rpm release-assets/
+          cp .out/rpm/RPMS/${{ matrix.arch }}/linuxtoys-*.rpm release-assets/
+          if [ "${{ matrix.srpm }}" = "true" ]; then
+              cp .out/rpm/SRPMS/linuxtoys-*.src.rpm release-assets/
+          fi
           ls -la release-assets
           echo "RELEASE_ASSETS_DIR=$(cd release-assets && pwd)" >> "$GITHUB_ENV"
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: release-assets-rpm
+          name: release-assets-rpm-${{ matrix.arch }}
           path: ${{ env.RELEASE_ASSETS_DIR }}
           include-hidden-files: true
           if-no-files-found: error
 
   arch-pkg:
-    name: Arch tarball, PKGBUILD and package
-    runs-on: ubuntu-24.04
+    name: Arch tarball, PKGBUILD and package (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+            aur_source: true
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+            aur_source: false
+    runs-on: ${{ matrix.runner }}
     needs: prepare
     if: needs.prepare.outputs.proceed == 'true'
-    timeout-minutes: 60
+    timeout-minutes: 90
     env:
       LT_VERSION: ${{ needs.prepare.outputs.version }}
     container:
@@ -419,29 +491,43 @@ jobs:
         run: su builder -c "cd \"$GITHUB_WORKSPACE\" && bash dev/build/pkg/build.sh \"$LT_VERSION\" \"$GITHUB_WORKSPACE/.out/pkg\""
 
       - name: Collect release artifacts
+        # The AUR source bundle (tarball + PKGBUILD, arch array covers both
+        # architectures) is architecture-independent: collect it once, from
+        # the x86_64 leg, so dist/ never sees two copies of the same name.
+        # makepkg names the binary package after the build host's CARCH.
         run: |
           set -e
           mkdir -p release-assets
-          cp .out/pkg/linuxtoys-"$LT_VERSION".tar.xz release-assets/
-          cp .out/pkg/PKGBUILD release-assets/
-          cp .out/pkg/linuxtoys-"$LT_VERSION"-1-x86_64.pkg.tar.zst release-assets/
+          if [ "${{ matrix.aur_source }}" = "true" ]; then
+              cp .out/pkg/linuxtoys-"$LT_VERSION".tar.xz release-assets/
+              cp .out/pkg/PKGBUILD release-assets/
+          fi
+          cp .out/pkg/linuxtoys-"$LT_VERSION"-1-"${{ matrix.arch }}".pkg.tar.zst release-assets/
           ls -la release-assets
           echo "RELEASE_ASSETS_DIR=$(cd release-assets && pwd)" >> "$GITHUB_ENV"
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: release-assets-arch
+          name: release-assets-arch-${{ matrix.arch }}
           path: ${{ env.RELEASE_ASSETS_DIR }}
           include-hidden-files: true
           if-no-files-found: error
 
   appimage:
-    name: AppImage (Arch container)
-    runs-on: ubuntu-24.04
+    name: AppImage (${{ matrix.arch }}, Arch container)
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
     needs: prepare
     if: needs.prepare.outputs.proceed == 'true'
-    timeout-minutes: 80
+    timeout-minutes: 120
     env:
       LT_VERSION: ${{ needs.prepare.outputs.version }}
     container:
@@ -488,17 +574,19 @@ jobs:
         run: bash dev/build/appimage/build.sh "$LT_VERSION" "$PWD/.out/appimage"
 
       - name: Collect release artifacts
+        # build.sh pins the AppImage name from the build host's uname -m,
+        # which matches the matrix arch on both legs.
         run: |
           set -e
           mkdir -p release-assets
-          cp .out/appimage/LinuxToys-"$LT_VERSION"-x86_64.AppImage release-assets/
+          cp .out/appimage/LinuxToys-"$LT_VERSION"-"${{ matrix.arch }}".AppImage release-assets/
           ls -la release-assets
           echo "RELEASE_ASSETS_DIR=$(cd release-assets && pwd)" >> "$GITHUB_ENV"
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: release-assets-appimage
+          name: release-assets-appimage-${{ matrix.arch }}
           path: ${{ env.RELEASE_ASSETS_DIR }}
           include-hidden-files: true
           if-no-files-found: error

@@ -2,7 +2,11 @@ Name:           linuxtoys
 Version:        7.9
 Release:        1
 Summary:        For everything Linux - tools, tweaks and software manager - ready for the age of AI.
-BuildArch:      x86_64
+# The package is built natively: on an x86_64 host it lands in RPMS/x86_64,
+# on an aarch64 host in RPMS/aarch64. ExclusiveArch gates the hosts the
+# sources may build on (and is what COPR reads from the .src.rpm), while the
+# produced binary keeps the build host's architecture.
+ExclusiveArch:  x86_64 aarch64
 
 License:        GPL3
 Source0:        linuxtoys-%{version}.tar.xz
