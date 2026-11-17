@@ -4,6 +4,8 @@
 # description: pip_desc
 # icon: pip.svg
 # repo: https://pypi.org/project/pip/
+# architectures: x86_64, aarch64
+# requires-script-api: 1
 
 # --- Start of the script code ---
 askpass

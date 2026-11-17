@@ -6,6 +6,8 @@
 # repo: https://github.com/rust-lang/cargo
 # revert: solus
 # compat: !steamos
+# architectures: x86_64, aarch64
+# requires-script-api: 1
 
 
 # --- Start of the script code ---

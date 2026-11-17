@@ -319,7 +319,9 @@ def _aarch64_pkgbuild_findings(pkgbuild_text: str) -> list[str]:
     return []
 
 
-
+def check_aur_package_security(
+    package: str, *, check_provenance: bool = False
+) -> tuple[int, str]:
     """Statically check AUR package sources for obfuscated code.
 
     BLOCKING: call from a worker thread (network clone, 45 s timeout).

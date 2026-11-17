@@ -6,6 +6,8 @@
 # repo: https://github.com/terrapkg/packages
 # compat: fedora, ostree
 # revert: ostree
+# architectures: x86_64, aarch64
+# requires-script-api: 1
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

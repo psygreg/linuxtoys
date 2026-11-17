@@ -9,6 +9,8 @@
 # systemd: yes
 # cachyos-mirrors-required: 0
 # nocontainer
+# architectures: x86_64, aarch64
+# requires-script-api: 1
 
 snap_packages=("snapd")
 is_fedora && snap_packages+=("snapd-selinux")

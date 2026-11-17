@@ -10,6 +10,7 @@ import time
 
 from . import (
     action_registry,
+    architecture,
     appstream_cache,
     homebrew_catalog,
     appstream_logs,
@@ -681,7 +682,13 @@ class AppWindow(
             ):
                 recommendations.append("rpmfusion")
 
-        if "arch" in keys:
+        # multilib is an x86_64-only repository upstream (32-bit x86 compat
+        # libs under /usr/lib32; Arch Linux ARM ships no multilib repo for
+        # aarch64), matching the x86_64 presumption of repos/multilib.sh.
+        if (
+            "arch" in keys
+            and architecture.host() is architecture.Architecture.X86_64
+        ):
             if not self._command_succeeds(["pacman", "-Slq", "multilib"]):
                 recommendations.append("multilib")
 
@@ -3946,8 +3953,12 @@ class AppWindow(
         os.makedirs(tmp_dir, exist_ok=True)
         safe_source = source.replace("/", "_")
         tmp_script = os.path.join(tmp_dir, f"skill_install_{safe_source}_{slug}.sh")
+        # Skills are .md instruction sets for AI agents: architecture-agnostic
+        # content, and npm/npx run on every supported ISA. The generated route
+        # therefore carries the host header (local/generated scripts are never
+        # ISA-pinned).
         script_content = f"""#!/bin/bash
-# architectures: x86_64
+# architectures: {architecture.host().value}
 # name: Install Skill {slug}
 # description: Install skill {source} for agent {agent}
 source "$SCRIPT_DIR/libs/linuxtoys.bash"

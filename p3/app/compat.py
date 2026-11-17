@@ -101,6 +101,8 @@ def clear_script_file_cache():
     with _SCRIPT_FILE_CACHE_LOCK:
         _SCRIPT_FILE_CACHE.clear()
         _SCRIPT_FILE_PATH_LOCKS.clear()
+    with _DEPENDENCY_COMPAT_LOCK:
+        _DEPENDENCY_COMPAT_CACHE.clear()
 
 
 def clear_host_compat_cache():
@@ -1194,6 +1196,189 @@ def get_host_device_ids():
     """Return cached normalized PCI/USB IDs as a fresh set for callers."""
     return set(_cached_host_value("host_device_ids", _detect_host_device_ids))
 
+
+# Static dependency visibility: a script is only offerable when everything it
+# declares or invokes as a prerequisite is offerable too.
+_DEPENDENCY_COMPAT_LOCK = threading.RLock()
+_DEPENDENCY_COMPAT_CACHE = {}
+_DEPENDENCY_COMPAT_ACTIVE = threading.local()
+
+
+def _sys_path_for_cli():
+    """Make the ``app`` package importable when compat.py runs as a CLI script."""
+    import sys
+
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if root not in sys.path:
+        sys.path.insert(0, root)
+
+
+def _scripts_tree_root():
+    """Return the active catalog scripts tree root, or None when unknown.
+
+    Mirrors the bash ``call_script`` search root (``$CACHE_DIR``): the
+    launchers point it at the tree currently being served, so resolution
+    follows the same tree the user browses. Without a populated environment
+    the parser's scripts directory is used.
+    """
+    cache_dir = os.environ.get("CACHE_DIR")
+    if cache_dir and os.path.isdir(cache_dir):
+        return cache_dir
+    script_dir = os.environ.get("SCRIPT_DIR")
+    if script_dir:
+        candidate = os.path.join(script_dir, "scripts")
+        if os.path.isdir(candidate):
+            return candidate
+    try:
+        if __package__:
+            from .parser import SCRIPTS_DIR
+        else:
+            _sys_path_for_cli()
+            from app.parser import SCRIPTS_DIR
+    except Exception:  # noqa: BLE001
+        return None
+    return SCRIPTS_DIR if SCRIPTS_DIR and os.path.isdir(SCRIPTS_DIR) else None
+
+
+def _static_dependency_names(script_path):
+    """Names of the scripts this script statically depends on.
+
+    ``# needed:`` headers are unconditional prerequisites. ``call_script``
+    targets are collected from non-comment lines only, and arguments that
+    are quoted or variable cannot be resolved statically and are ignored
+    (their runtime resolution applies its own host gates).
+    """
+    data = get_script_file_data(script_path)
+    needed = set()
+    declared = data["headers"].get("needed")
+    if declared:
+        needed.update(
+            token.strip() for token in str(declared).split() if token.strip()
+        )
+
+    called = set()
+    import re
+
+    for line in data["content"].splitlines():
+        stripped = line.lstrip()
+        if stripped.startswith("#"):
+            continue
+        for match in re.finditer(r"(?<![\w.-])call_script\s+([^\s;&|<>\"']+)", line):
+            token = match.group(1).strip("\"'`").strip()
+            if token and "$" not in token:
+                called.add(token)
+
+    return needed, called - needed
+
+
+def _find_called_script(name, scripts_root):
+    """Locate ``<name>.sh`` in the scripts tree the way bash call_script does.
+
+    The runtime search is ``find "$CACHE_DIR" -maxdepth 3 -type f -name
+    "<name>.sh" | head -n1``: only files up to three levels below the tree
+    root resolve, first match wins.
+    """
+    clean = str(name).strip().strip("\"'")
+    if not clean or "$" in clean or "/" in clean:
+        return None
+    target = clean if clean.endswith(".sh") else f"{clean}.sh"
+    root = os.path.abspath(scripts_root)
+    for dirpath, dirs, files in os.walk(root):
+        if dirpath == root:
+            depth = 0
+        else:
+            depth = dirpath[len(root) :].count(os.sep) + 1
+        if depth >= 3:
+            dirs[:] = []
+            continue
+        dirs.sort()
+        if target in files:
+            return os.path.join(dirpath, target)
+    return None
+
+
+def _dependencies_compatible(script_path, compat_keys, scripts_root=None):
+    """Propagate catalog visibility through statically declared dependencies.
+
+    - ``# needed:`` targets must be fully compatible: they are unconditional
+      prerequisites, so a target the host cannot run breaks the dependent.
+    - ``call_script`` targets must at least be architecture-eligible. Those
+      calls are frequently branch-local (an ostree-only branch of a
+      multi-distro script), so an OS-level mismatch is not structural — the
+      runtime ``call_script`` skips those gracefully. An ISA mismatch is
+      structural: content that can never run on this host regardless of
+      which branch the script takes.
+
+    Unknown targets change nothing (the runtime resolves them with its own
+    gates), cycles never hide anything, and any failure opens the gate:
+    the execution-time ISA checks remain authoritative.
+    """
+    path = os.path.realpath(script_path)
+    signature = _script_file_signature(path)
+    if signature is None:
+        return True
+    if __package__:
+        from .architecture import host as _arch_host
+    else:
+        _sys_path_for_cli()
+        from app.architecture import host as _arch_host
+    # The result depends on the file content, the host ISA and the compat
+    # keys; all three belong in the cache key.
+    key = (path, signature, _arch_host().value, frozenset(compat_keys))
+
+    with _DEPENDENCY_COMPAT_LOCK:
+        cached = _DEPENDENCY_COMPAT_CACHE.get(key)
+    if cached is not None:
+        return cached
+
+    active = getattr(_DEPENDENCY_COMPAT_ACTIVE, "keys", None)
+    if active is None:
+        active = set()
+        _DEPENDENCY_COMPAT_ACTIVE.keys = active
+    if key in active:
+        # Declaration cycle: never hide anything through it.
+        return True
+
+    needed, called = _static_dependency_names(script_path)
+    result = True
+    if needed or called:
+        try:
+            root = scripts_root or _scripts_tree_root()
+        except Exception:  # noqa: BLE001
+            root = None
+        if root is not None:
+            if __package__:
+                from .architecture import require_script_path
+            else:
+                _sys_path_for_cli()
+                from app.architecture import require_script_path
+            try:
+                active.add(key)
+                for name in sorted(needed):
+                    target = _find_called_script(name, root)
+                    if target is None:
+                        continue
+                    if not script_is_compatible(target, compat_keys):
+                        result = False
+                        break
+                if result:
+                    for name in sorted(called):
+                        target = _find_called_script(name, root)
+                        if target is None:
+                            continue
+                        require_script_path(target)  # ArchitectureError hides
+            except ValueError:
+                result = False
+            except Exception:  # noqa: BLE001
+                result = True
+            finally:
+                active.discard(key)
+
+    with _DEPENDENCY_COMPAT_LOCK:
+        _DEPENDENCY_COMPAT_CACHE[key] = result
+    return result
+
+
 def script_is_compatible(script_path, compat_keys):
     """
     Check if a script is compatible with the given compatibility keys.
@@ -1212,6 +1397,9 @@ def script_is_compatible(script_path, compat_keys):
         if __package__:
             from .architecture import require_script_path
         else:
+            # CLI route (python3 app/compat.py --check-script): the ``app``
+            # package is not on sys.path unless the tree root is added.
+            _sys_path_for_cli()
             from app.architecture import require_script_path
         require_script_path(script_path)
     except (OSError, ValueError):
@@ -1408,6 +1596,11 @@ def script_is_compatible(script_path, compat_keys):
 
     # If no explicit wayland header, presume neutrality (script works on both X11 and Wayland)
     # wayland_compatible remains True by default
+
+    if not _dependencies_compatible(script_path, compat_keys):
+        # A statically declared prerequisite cannot be offered on this host:
+        # the dependent entry is hidden with it.
+        return False
 
     return os_compatible and gpu_compatible and desktop_compatible and systemd_compatible and wsl_compatible and wayland_compatible and cpu_compatible and hybridgpu_compatible and device_compatible
 

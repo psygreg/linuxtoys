@@ -5,6 +5,7 @@
 # icon: aur.svg
 # compat: arch, !cachy
 # repo: https://aur.chaotic.cx/
+# architectures: x86_64
 
 # --- Start of the script code ---
 askpass

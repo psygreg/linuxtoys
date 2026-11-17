@@ -8,6 +8,8 @@
 # compat: !solus, !ostree
 # systemd: yes
 # cachyos-mirrors-required: 0
+# architectures: x86_64, aarch64
+# requires-script-api: 1
 
 # --- Start of the script code ---
 sysdetect

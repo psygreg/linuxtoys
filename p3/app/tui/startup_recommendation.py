@@ -14,7 +14,7 @@ from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.screen import ModalScreen
 from textual.widgets import Button, Checkbox, Label
 
-from app import compat
+from app import architecture, compat
 
 from .helper import flathub_ready, translations
 from ..atomic_io import atomic_write_text
@@ -96,7 +96,13 @@ def detect() -> list[str]:
         ):
             recommendations.append("rpmfusion")
 
-    if "arch" in keys:
+    # multilib is an x86_64-only repository upstream (32-bit x86 compat libs
+    # under /usr/lib32; Arch Linux ARM ships no multilib repo for aarch64),
+    # matching the x86_64 presumption of repos/multilib.sh.
+    if (
+        "arch" in keys
+        and architecture.host() is architecture.Architecture.X86_64
+    ):
         if not command_succeeds(["pacman", "-Slq", "multilib"]):
             recommendations.append("multilib")
 

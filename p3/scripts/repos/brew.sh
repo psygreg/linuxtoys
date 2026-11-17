@@ -3,6 +3,8 @@
 # description: brew_desc
 # icon: brew.png
 # repo: https://brew.sh/
+# architectures: x86_64, aarch64
+# requires-script-api: 1
 
 if ! brew_bin=$(_brew_executable); then
     brew_installer=$(mktemp) || exit 1

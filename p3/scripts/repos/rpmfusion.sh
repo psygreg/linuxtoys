@@ -5,6 +5,8 @@
 # icon: rpmfusion.svg
 # compat: fedora, ostree, rhel, !ublue
 # repo: https://rpmfusion.org
+# architectures: x86_64, aarch64
+# requires-script-api: 1
 
 # --- Start of the script code ---
 askpass

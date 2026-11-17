@@ -6,6 +6,8 @@
 # repo: https://flatpark.org
 # compat: !gregos
 # systemd: yes
+# architectures: x86_64, aarch64
+# requires-script-api: 1
 
 # --- Start of the script code ---
 sysdetect

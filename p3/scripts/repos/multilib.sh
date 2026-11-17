@@ -3,6 +3,7 @@
 # description: multilib_desc
 # icon: archpkg.png
 # compat: arch
+# architectures: x86_64
 
 pacman -Slq multilib &>/dev/null && info "$notdomsg" && exit 100;
 
