@@ -14,7 +14,6 @@ DEFAULT_CLUSTER_NAME="linuxtoys"
 CLUSTER_NAME="$DEFAULT_CLUSTER_NAME"
 INGRESS_MANIFEST_URL="https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml"
 
-sudo_rq
 # kind requires a container runtime provider.
 if ! command -v docker >/dev/null 2>&1 && \
    ! command -v podman >/dev/null 2>&1 && \
@@ -25,40 +24,21 @@ fi
 if is_arch || is_cachy; then
     pkg_install kind-bin kubectl
 else
-    arch="$(uname -m)"
-    case "$arch" in
-        x86_64) kind_arch="amd64" ;;
-        aarch64|arm64) kind_arch="arm64" ;;
-        *)
-            fatal "Unsupported architecture for Kind binary: $arch"
-            ;;
-    esac
-
+    kind_arch=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" label deb) || fatal "Unsupported architecture"
+    kind_stage=$(mktemp -d) || fatal "Cannot stage native Kubernetes tools"
+    trap 'rm -rf "$kind_stage"' EXIT
     kind_url="https://kind.sigs.k8s.io/dl/latest/kind-linux-${kind_arch}"
-
-    if ! curl -fsSL "$kind_url" -o /tmp/kind; then
-        fatal "Failed to download Kind binary."
-    fi
-
-    chmod +x /tmp/kind
-    prep_create /usr/local/bin/kind
-    if ! sudo install -Dm755 /tmp/kind /usr/local/bin/kind; then
-        fatal "Failed to install Kind to /usr/local/bin."
-    fi
-
-    kubectl_version="$(curl -fsSL https://dl.k8s.io/release/stable.txt)"
-    [ -n "$kubectl_version" ] || fatal "Failed to get latest kubectl version."
+    kubectl_version=$(curl -fsSL https://dl.k8s.io/release/stable.txt) || fatal "Cannot query kubectl version"
+    [[ "$kubectl_version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || fatal "Invalid kubectl version"
     kubectl_url="https://dl.k8s.io/release/${kubectl_version}/bin/linux/${kind_arch}/kubectl"
+    curl -fsSL "$kind_url" -o "$kind_stage/kind" || fatal "Kind download failed"
+    curl -fsSL "$kubectl_url" -o "$kind_stage/kubectl" || fatal "kubectl download failed"
+    _architecture_check files "$kind_stage/kind" "$kind_stage/kubectl"
+    sudo_rq
+    prep_create /usr/local/bin/kind /usr/local/bin/kubectl
+    sudo install -Dm755 "$kind_stage/kind" /usr/local/bin/kind || fatal "Kind installation failed"
+    sudo install -Dm755 "$kind_stage/kubectl" /usr/local/bin/kubectl || fatal "kubectl installation failed"
 
-    if ! curl -fsSL "$kubectl_url" -o /tmp/kubectl; then
-        fatal "Failed to download kubectl binary."
-    fi
-
-    chmod +x /tmp/kubectl
-    prep_create /usr/local/bin/kubectl
-    if ! sudo install -Dm755 /tmp/kubectl /usr/local/bin/kubectl; then
-        fatal "Failed to install kubectl to /usr/local/bin."
-    fi
 fi
 
 if command -v kind >/dev/null 2>&1 && command -v kubectl >/dev/null 2>&1; then

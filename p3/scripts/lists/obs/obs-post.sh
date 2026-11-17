@@ -6,13 +6,14 @@ obs_pipe () {
     mkdir obspipe
     cd obspipe
     wget https://github.com/dimtpap/obs-pipewire-audio-capture/releases/download/${ver}/linux-pipewire-audio-${ver}-flatpak-30.tar.gz || { echo "Download failed"; cd ..; rm -rf obspipe; return 1; }
+    _architecture_check files "linux-pipewire-audio-${ver}-flatpak-30.tar.gz"
     tar xvzf linux-pipewire-audio-${ver}-flatpak-30.tar.gz
     prep_dir "$HOME/.var/app/com.obsproject.Studio/config/obs-studio/plugins/linux-pipewire-audio"
     copy_ -rf linux-pipewire-audio/* $HOME/.var/app/com.obsproject.Studio/config/obs-studio/plugins/linux-pipewire-audio/
 }
 
 # intel QSV support
-is_intel && { pkg_flat org.freedesktop.Platform.VAAPI.Intel/x86_64/25.08 || fatal "Failed to install Intel VAAPI platform"; } || true
+is_intel && { pkg_flat_extension com.obsproject.Studio org.freedesktop.Platform.VAAPI.Intel || fatal "Failed to install Intel VAAPI platform"; } || true
 
 askpass
 # check dependency for Pipewire Audio Capture plugin, xwayland and virtual camera

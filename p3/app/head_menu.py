@@ -20,6 +20,7 @@ from .gtk_dialogs import WaitDialog
 import threading
 import asyncio
 import os
+import shlex
 
 
 class InputDialog(Gtk.MessageDialog):
@@ -270,25 +271,22 @@ class MenuButton(Gtk.MenuButton):
 
 	def __mcp_service_worker(self, is_enabled):
 		error = ""
+		from . import mcp_skill
+
 		try:
 			from . import mcp_server
+
 			ok, message = mcp_server.apply_service_state(is_enabled, session_env=os.environ)
 			if not ok:
 				error = message
 			elif is_enabled:
-				# Noninteractive skill fetch: primary path is `bun x skills add`
-				# through the hidden AppStream PTY (queued, serialized, visible
-				# in the queue view); the script itself ends with an offline
-				# bundled-copy fallback when bun or every source is unavailable.
 				runner = getattr(self.parent_window, "_appstream_runner", None)
-				if runner is not None:
-					try:
-						runner.enqueue_skill_install(mcp_server.skill_install_script())
-					except Exception as skill_error:
-						print(f"MCP skill install could not be queued: {skill_error}")
-						mcp_server.install_agent_skill()
-				else:
-					mcp_server.install_agent_skill()
+				mcp_skill.request_skill_install(runner)
+		except ImportError as exc:
+			# The offline helper does not depend on the optional service/UI stack.
+			if is_enabled:
+				mcp_skill.install_agent_skill()
+			error = str(exc)
 		except Exception as exc:
 			error = str(exc)
 		GLib.idle_add(self.__mcp_service_done, is_enabled, error)
@@ -457,13 +455,14 @@ class MenuButton(Gtk.MenuButton):
 		lib_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'libs', 'linuxtoys.bash')
 
 		script_content = '''#!/bin/bash
+# architectures: x86_64, aarch64
 source "''' + lib_path + '''"
 
-_packages=("''' + ' '.join(packages) + '''")
-[ "${#_packages[@]}" -eq 0 ] || { sudo_rq; _install_; }
+_packages=(''' + ' '.join(shlex.quote(package) for package in packages) + ''')
+[ "${#_packages[@]}" -eq 0 ] || pkg_install "${_packages[@]}"
 
-_flatpaks=("''' + ' '.join(flatpaks) + '''")
-_flatpak_
+_flatpaks=(''' + ' '.join(shlex.quote(package) for package in flatpaks) + ''')
+[ "${#_flatpaks[@]}" -eq 0 ] || pkg_flat "${_flatpaks[@]}"
 '''
 		with open(self._temp_sh, 'w+') as f:
 			f.write(script_content)

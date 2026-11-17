@@ -1,3 +1,12 @@
+# Reject unsupported hosts before loading helpers or touching session state.
+python3 "$SCRIPT_DIR/app/architecture_cli.py" label host >/dev/null || return 1
+
+# Shared read-only architecture preflight. Every refusal exits before a caller
+# can authenticate, alter repositories, or replace an existing installation.
+_architecture_check() {
+    python3 "$SCRIPT_DIR/app/architecture_cli.py" "$@" || die "Refusing operation: architecture/availability preflight failed"
+}
+
 # --- LinuxToys Shell Library ---
 # core modules automatically sourced
 
@@ -1180,15 +1189,7 @@ run_list_hook() {
     local hook="$1"
     local path=""
 
-    if [ -n "${CACHE_DIR:-}" ] &&
-       [ -f "$CACHE_DIR/lists/$hook" ]; then
-        path="$CACHE_DIR/lists/$hook"
-    elif [ -f "$SCRIPT_DIR/scripts/lists/$hook" ]; then
-        path="$SCRIPT_DIR/scripts/lists/$hook"
-    else
-        die "Repository hook script not found: $hook"
-    fi
-
+    path=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" hook "$SCRIPT_DIR" "${CACHE_DIR:-}" "$hook") || die "Hook architecture preflight failed"
     source "$path"
 }
 

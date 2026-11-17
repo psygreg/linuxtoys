@@ -171,11 +171,14 @@ class AppStreamRunner:
     def enqueue_skill_install(self, script_text, label="Install LinuxToys MCP skill"):
         """Queue the agent-skill installer through the hidden PTY.
 
-        Runs the noninteractive script built by ``mcp_server.skill_install_script()``
-        (bun fetch with mirror fallback, offline bundled-copy last resort). This is
-        a quick, non-package procedure: no transmap, no registry, no package-manager
-        gating — it only writes skill files into the detected agents' directories.
+        Only the canonical bundled text-copy operation is accepted. It still
+        passes through script_environment/script_command and M1 at dispatch.
+        No transmap or package-manager transaction is needed for user skill data.
         """
+        from .mcp_skill import skill_install_script
+
+        if script_text != skill_install_script():
+            raise ValueError("Unreviewed MCP skill installation operation")
         self._ensure_started()
         record = {
             "id": uuid.uuid4().hex,
@@ -821,7 +824,7 @@ class AppStreamRunner:
         self._mark_no_manifest_export(transmap_path)
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                handle.write("#!/usr/bin/env bash\n")
+                handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
                 handle.write(f"pkg_install {shlex.quote(package)}\n")
             os.chmod(path, 0o700)
             env = script_environment(script_info, os.environ.copy())
@@ -884,7 +887,7 @@ class AppStreamRunner:
         )
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                handle.write("#!/usr/bin/env bash\n")
+                handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
                 handle.write(f"pkg_snap_revert {shlex.quote(snap_name)}\n")
             os.chmod(path, 0o700)
 
@@ -938,7 +941,7 @@ class AppStreamRunner:
         )
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                handle.write("#!/usr/bin/env bash\n")
+                handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
                 handle.write("sudo_ apt-get update\n")
             os.chmod(path, 0o700)
             env = script_environment({"name": "Refresh package metadata"}, os.environ.copy())
@@ -951,50 +954,39 @@ class AppStreamRunner:
                 pass
 
     def _run_skill_install_job(self, record):
-        """Run the agent-skill installer script through the hidden PTY.
+        """Run the reviewed text-copy operation through the guarded hidden PTY.
 
-        The script is noninteractive by construction (``CI=1``, ``-y``, an
-        explicit ``--skill``, no ``--agent``, and a ``timeout`` bound per
-        source), because the hidden PTY has nobody to answer prompts. The
-        transcript is captured for the failure dialog and bug reports. No
-        transmap/registry: writing agent skill files is not a system
-        transaction.
+        Required architecture/import failures stay closed; never retry a refused
+        operation through an unguarded execution path.
         """
-        if self._process is None or self._process.poll() is not None:
-            self._close_pty()
-            self._spawn_shell()
+        from .mcp_skill import skill_install_script
 
-        directory = "/tmp/linuxtoys/appstream-overrides"
-        os.makedirs(directory, mode=0o700, exist_ok=True)
-        fd, path = tempfile.mkstemp(
-            prefix="skill-install-", suffix=".sh", dir=directory, text=True
-        )
+        if record.get("script") != skill_install_script():
+            return 1, "Unreviewed MCP skill installation operation"
         try:
-            with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                handle.write(str(record.get("script") or ""))
-            os.chmod(path, 0o700)
-            env = script_environment(
-                {"name": record.get("name", "skill install")}, os.environ.copy()
-            )
-            env.pop("LINUXTOYS_RUNNER_STATE", None)
-            exit_code, output = self._dispatch_path(path, env, capture_output=True)
-            self._append_transcript(
-                record.get("name", "skill install"), output or ""
-            )
-            if exit_code != 0:
-                reason = self._failure_reason_from_output(
-                    "The LinuxToys skill could not be installed for your agents. "
-                    "Install it manually with: bun x skills add psygreg/linuxtoys "
-                    "--skill linuxtoys-mcp -g -y",
-                    output,
+            with tempfile.TemporaryDirectory(prefix="linuxtoys-skill-") as directory:
+                path = os.path.join(directory, "install.sh")
+                with open(path, "x", encoding="utf-8") as handle:
+                    handle.write(record["script"])
+                os.chmod(path, 0o700)
+                env = script_environment(
+                    {"name": record.get("name", "skill install")}, os.environ.copy()
                 )
-                return exit_code, reason
-            return exit_code, output
-        finally:
-            try:
-                os.remove(path)
-            except OSError:
-                pass
+                env.pop("LINUXTOYS_RUNNER_STATE", None)
+                exit_code, output = self._dispatch_path(path, env, capture_output=True)
+                self._append_transcript(record.get("name", "skill install"), output or "")
+                if exit_code != 0:
+                    reason = self._failure_reason_from_output(
+                        "The bundled LinuxToys skill could not be installed. "
+                        "Existing skill contents were preserved; inspect the job log.",
+                        output,
+                    )
+                    return exit_code, reason
+                return exit_code, output
+        except (OSError, ValueError, RuntimeError, ImportError) as error:
+            reason = f"MCP skill operation refused: {error}"
+            self._append_transcript(record.get("name", "skill install"), reason)
+            return 1, reason
 
     def _dispatch_argv(self, argv):
         token = uuid.uuid4().hex
@@ -1035,7 +1027,7 @@ class AppStreamRunner:
         fd, script_path = tempfile.mkstemp(prefix="local-package-", suffix=".sh", dir=directory, text=True)
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                handle.write("#!/usr/bin/env bash\n")
+                handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
                 handle.write(f"{function} {shlex.quote(package_path)}\n")
             os.chmod(script_path, 0o700)
             payload = dict(script_info)
@@ -1342,7 +1334,7 @@ class AppStreamRunner:
         )
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                handle.write("#!/usr/bin/env bash\n")
+                handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
                 handle.write("\n".join(lines))
                 handle.write("\n")
             os.chmod(path, 0o700)
@@ -1393,7 +1385,7 @@ class AppStreamRunner:
         )
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as handle:
-                handle.write("#!/usr/bin/env bash\n")
+                handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
                 handle.write("\n".join(lines))
                 handle.write("\n")
             os.chmod(path, 0o700)

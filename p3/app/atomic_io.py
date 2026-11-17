@@ -1,9 +1,10 @@
-"""Atomic file writes shared by every cache/persistence site.
+"""Atomic file writes for explicitly migrated cache/persistence sites.
 
 Every helper stages content in a uniquely named temporary file inside the
 target's directory and moves it into place with ``os.replace``, so readers
-never observe a partial file and a crashed writer never corrupts the target.
-The temp file is always cleaned up on failure.
+never observe a partial file. Ordinary failures attempt to clean up the staging file;
+a process crash can leave it behind. File fsync is optional; directory fsync
+and read-modify-write locking are not provided.
 
 Sites that previously used deterministic ``<path>.tmp`` names get a
 ``mkstemp``-generated name instead: concurrent writers can no longer clobber
@@ -32,7 +33,8 @@ def atomic_write_bytes(
         path: Destination file (created if missing, parents included).
         data: Raw bytes to write.
         mode: Optional permission bits applied to the staged file before the
-            replace (e.g. ``0o700`` for executable scripts).
+            replace. Without it, mkstemp's private 0600 mode is retained,
+            including when replacing an existing destination.
         tmp_suffix: Suffix for the staged temporary file.
         fsync: Flush and fsync the staged file before the replace, for sites
             that need the content on disk before proceeding.
@@ -44,7 +46,9 @@ def atomic_write_bytes(
         prefix=os.path.basename(path) + ".", suffix=tmp_suffix, dir=directory
     )
     try:
-        with os.fdopen(fd, "wb") as handle:
+        handle = os.fdopen(fd, "wb")
+        fd = None  # Ownership transferred to the file object.
+        with handle:
             handle.write(data)
             if fsync:
                 handle.flush()
@@ -54,6 +58,8 @@ def atomic_write_bytes(
         os.replace(tmp, path)
         tmp = None
     finally:
+        if fd is not None:
+            os.close(fd)
         if tmp is not None:
             try:
                 os.unlink(tmp)

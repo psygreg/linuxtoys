@@ -19,25 +19,18 @@ cleanup() {
 }
 trap cleanup EXIT
 
-if ! command -v curl >/dev/null 2>&1 || ! command -v tar >/dev/null 2>&1; then
-    sudo_rq
-    pkg_install curl tar
-fi
-
-case "$(uname -m)" in
-    x86_64) k6_arch="amd64" ;;
-    aarch64|arm64) k6_arch="arm64" ;;
-    *)
-        fatal "Unsupported architecture for k6: $(uname -m)"
-        ;;
-esac
+command -v curl >/dev/null 2>&1 && command -v tar >/dev/null 2>&1 || fatal "curl and tar are required before native release preflight"
+k6_arch=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" label deb) || fatal "Unsupported architecture"
 
 K6_JSON="$(curl -fsSL "$K6_API_URL")" || fatal "Failed to query the latest k6 release."
-K6_URL="$(echo "$K6_JSON" | grep 'browser_download_url' | grep "linux-${k6_arch}\\.tar\\.gz\"" | head -1 | cut -d'"' -f4)"
+printf '%s' "$K6_JSON" > "$K6_TMP_DIR/release.json"
+K6_URL=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" release --kind tar --pattern '*linux-*.tar.gz' "$K6_TMP_DIR/release.json") || fatal "No unique native k6 asset"
+
 
 [ -n "$K6_URL" ] || fatal "Could not find a Linux k6 binary for architecture: $k6_arch"
 
 curl -fsSL "$K6_URL" -o "$K6_ARCHIVE" || fatal "Failed to download k6."
+_architecture_check files "$K6_ARCHIVE"
 tar -xzf "$K6_ARCHIVE" -C "$K6_TMP_DIR" || fatal "Failed to extract k6 archive."
 
 K6_BIN="$(find "$K6_TMP_DIR" -type f -name k6 | head -1)"

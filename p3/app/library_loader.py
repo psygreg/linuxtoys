@@ -72,34 +72,22 @@ def _words(text):
 
 def _list_hook_paths(script_text, script_dir):
     """Return statically referenced run_list_hook scripts."""
+    if __package__:
+        from .architecture import resolve_hook_path
+    else:
+        import sys
+        sys.path.insert(0, os.path.abspath(script_dir))
+        from app.architecture import resolve_hook_path
     paths = []
-    base_paths = []
-
-    cache_dir = os.environ.get("CACHE_DIR")
-    if cache_dir:
-        base_paths.append(Path(cache_dir) / "scripts" / "lists")
-
-    base_paths.append(Path(script_dir) / "scripts" / "lists")
-
     for line in script_text.splitlines():
         try:
             words = shlex.split(line, comments=True)
         except ValueError:
             continue
-
-        if len(words) != 2 or words[0] != "run_list_hook":
-            continue
-
-        hook = words[1]
-
-        for base in base_paths:
-            path = base / hook
-
-            if path.is_file():
-                paths.append(path)
-                break
-
+        if len(words) == 2 and words[0] == "run_list_hook":
+            paths.append(resolve_hook_path(script_dir, words[1], os.environ.get("CACHE_DIR", "")))
     return paths
+
 
 def library_flags(script_text, script_dir):
     """Return (flags, referenced) for direct references and transitive deps.
@@ -159,8 +147,19 @@ def library_flags(script_text, script_dir):
     return flags, referenced
 
 
-def script_preamble(script_text, script_dir):
+def script_preamble(script_text, script_dir, *, internal=False):
     """Set invocation-local flags and always load the core before script code."""
+    if __package__:
+        from .architecture import host, require_script, require_script_path
+    else:
+        import sys
+        sys.path.insert(0, os.path.abspath(script_dir))
+        from app.architecture import host, require_script, require_script_path
+    host()
+    if not internal:
+        require_script(script_text)
+    for hook_path in _list_hook_paths(script_text, script_dir):
+        require_script_path(hook_path)
     script_dir = os.path.abspath(script_dir)
     flags, referenced = library_flags(script_text, script_dir)
     lines = ["export SCRIPT_DIR=" + shlex.quote(script_dir),
@@ -205,6 +204,14 @@ def _requires_cachyos_mirrors(script_info):
 def script_environment(script_info, base_env=None):
     """Return a child environment enriched with invocation-local app metadata."""
     env = dict(os.environ if base_env is None else base_env)
+    if __package__:
+        from .architecture import require_overrides
+    else:
+        import sys
+        sys.path.insert(0, env["SCRIPT_DIR"])
+        from app.architecture import require_overrides
+    overrides = script_info.get("appstream_overrides") or script_info.get("overrides") or {}
+    require_overrides(overrides, env["SCRIPT_DIR"], env.get("CACHE_DIR", ""))
     env.setdefault("LINUXTOYS_EXECUTION_SESSION_DIR", _execution_session_dir())
     # Reset for every invocation: a nested native/curated script must not inherit
     # the exemption granted to its plain Flatpak/Snap caller.
@@ -288,7 +295,14 @@ def script_command(script_path, script_dir):
     source command propagates its return/exit status.
     """
     script_path = os.path.abspath(script_path)
-    text = Path(script_path).read_text(encoding="utf-8")
+    if __package__:
+        from .architecture import require_script_path
+    else:
+        import sys
+        sys.path.insert(0, os.path.abspath(script_dir))
+        from app.architecture import require_script_path
+    require_script_path(script_path)
+    text = Path(script_path).read_bytes().decode("utf-8")
     return ["/bin/bash", "-c", script_preamble(text, script_dir)
             + 'source "$0" "$@"\n', script_path]
 
@@ -572,7 +586,7 @@ def materialize_appstream_by_target(target, script_dir):
         lines = lines[1:]
     install_body = "\n".join(lines).strip()
 
-    contents = "#!/usr/bin/env bash\n"
+    contents = "#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n"
     contents += f"# name: {str(entry.get('name') or target).replace(chr(10), ' ')}\n"
     contents += f"# description: {str(entry.get('description') or '').replace(chr(10), ' ')}\n"
     contents += f"# icon: {str(entry.get('icon') or 'application-x-executable').replace(chr(10), ' ')}\n"

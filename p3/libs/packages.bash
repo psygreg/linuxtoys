@@ -1,5 +1,10 @@
 # --- Package Management ---
 
+# Consumed by the standalone installer after sourcing this file.
+# shellcheck disable=SC2034
+LINUXTOYS_PACKAGE_GUARD_API=2
+
+# Guards against pacman and apt database locks
 
 # Localized strings for the guards, read from the same translation store the
 # GUI uses (libs/lang/<code>.json) so dialogs emitted while a package script
@@ -49,8 +54,6 @@ _pkg_guard_l10n () {
             ["PKG_GUARD_WAIT", "pkg_guard_wait"],
             ["PKG_GUARD_TIMEOUT_NAMED", "pkg_guard_timeout_named"],
             ["PKG_GUARD_TIMEOUT", "pkg_guard_timeout"],
-            ["PKG_GUARD_STALE_LOCK", "pkg_guard_stale_lock"],
-            ["PKG_GUARD_STALE_FAIL", "pkg_guard_stale_fail"],
             ["PKG_GUARD_AUDIT", "pkg_guard_audit"],
             ["PKG_GUARD_BROKEN", "pkg_guard_broken"],
             ["PKG_GUARD_AUDIT_FAIL", "pkg_guard_audit_fail"],
@@ -75,8 +78,6 @@ PKG_GUARD_WAIT_NAMED='Another package operation is in progress (${manager}). Wai
 PKG_GUARD_WAIT='Another package operation is in progress. Waiting for it to finish...'
 PKG_GUARD_TIMEOUT_NAMED='Another package operation (${manager}) is still running and is taking too long. Please wait for it to finish, then try again.'
 PKG_GUARD_TIMEOUT='Another package operation is still running and is taking too long. Please wait for the ongoing operation to finish, then try again.'
-PKG_GUARD_STALE_LOCK='Stale pacman lock detected. Removing /var/lib/pacman/db.lck'
-PKG_GUARD_STALE_FAIL='Failed to remove stale lock. Run: sudo rm /var/lib/pacman/db.lck'
 PKG_GUARD_AUDIT='An interrupted package operation was detected. Attempting recovery...'
 PKG_GUARD_BROKEN='Broken package dependencies were detected. Attempting recovery...'
 PKG_GUARD_AUDIT_FAIL='Failed to recover interrupted dpkg operation. Manual user intervention required.'
@@ -115,10 +116,8 @@ _proc_fd_links () {
 
 # Whether the pacman database lock is verifiably held open by a live process
 # right now (the bash-side equivalent of package_guard._lock_actively_held).
-# Used to safety-check the stale-removal branch below: alpm refuses new
-# transactions while the lock file exists, but a file being held open by a
-# helper outside the recognized tool list (an AUR/unknown tool that uses
-# libalpm directly) is a live lock, never a removable leftover.
+# Presence also blocks transactions: libalpm can close its lock descriptor.
+# An absent descriptor is never permission to unlink the database lock.
 _pacman_lock_actively_held () {
     _proc_fd_links |
         grep -Eq '^/var/lib/pacman/db\.lck( \(deleted\))?$'
@@ -159,23 +158,8 @@ PACMAN_BUSY_WAIT_TIMEOUT=300
 # the alpm database lock in every transaction below, so it must be waited for
 # here as well, not collided with.
 pacman_busy_wait () {
-    local _manager
-    if ! _manager=$(_pacman_busy_manager); then
-        return 0
-    fi
-    info "$(_pkg_guard_fmt "$PKG_GUARD_WAIT_NAMED" "$_manager")"
-    local _waited=0
-    while _manager=$(_pacman_busy_manager); do
-        if (( _waited >= PACMAN_BUSY_WAIT_TIMEOUT )); then
-            die "$(_pkg_guard_fmt "$PKG_GUARD_TIMEOUT_NAMED" "$_manager")"
-        fi
-        sleep 3
-        _waited=$((_waited + 3))
-    done
-    # The idle exit probes the manager once more and its failed assignment is
-    # nonzero; scripts commonly run under set -e (the TUI runner generates
-    # 'set -eo pipefail'), so the success path must end with success.
-    return 0
+    _pkg_wait_until_idle pacman "$((SECONDS + PACMAN_BUSY_WAIT_TIMEOUT))" ||
+        die "$PKG_GUARD_TIMEOUT"
 }
 
 # Bounded standby for the database lock file itself, mirroring the runners'
@@ -185,83 +169,89 @@ pacman_busy_wait () {
 # collision resolves on its own and only an operation that is STILL running
 # after the shared timeout stops the run.
 pacman_lock_standby () {
-    local _waited=0
-    while _pacman_lock_actively_held; do
-        if (( _waited >= PACMAN_BUSY_WAIT_TIMEOUT )); then
-            return 1
-        fi
-        sleep 3
-        _waited=$((_waited + 3))
-    done
-    # The idle exit probes the lock once more and its failed test is
-    # nonzero; scripts commonly run under set -e (the TUI runner generates
-    # 'set -eo pipefail'), so the success path must end with success.
-    return 0
+    _pkg_wait_until_idle pacman "$((SECONDS + PACMAN_BUSY_WAIT_TIMEOUT))"
 }
 
 pacman_lock_guard () {
-    pacman_busy_wait
-    if [ -f /var/lib/pacman/db.lck ]; then
-        if _pacman_lock_actively_held; then
-            # A verifiably live holder outside the recognized tool list: the
-            # lock must never be removed. alpm fails cleanly on a live lock,
-            # so standing by for the holder (same standby+timeout posture as
-            # the runners) and carrying on once it releases is the safe
-            # recovery; only a holder that outlasts the wait stops the run.
-            info "$PKG_GUARD_WAIT"
-            pacman_lock_standby || \
-                die "$PKG_GUARD_TIMEOUT"
-        else
-            # The wait above only returns when no live manager is detected, so a
-            # remaining lock file is a crash leftover; recovery is removing it
-            # rather than surfacing an opaque pacman lock failure later.
-            warn "$PKG_GUARD_STALE_LOCK"
-            { { [ "$UPD_SERVICE" = "1" ] && rm -f /var/lib/pacman/db.lck; } || sudo_ rm -f /var/lib/pacman/db.lck; } || die "$PKG_GUARD_STALE_FAIL"
-        fi
-    fi
+    # libalpm can close its descriptor while retaining db.lck. Neither a
+    # missing PID nor an empty fd scan proves that unlinking it is safe.
+    # Wait boundedly, then require manual recovery; never remove native locks.
+    _pkg_wait_until_idle pacman "$((SECONDS + PACMAN_BUSY_WAIT_TIMEOUT))" ||
+        die "$PKG_GUARD_TIMEOUT (Pacman db.lck was not removed; verify the owner before manual recovery.)"
 }
 
-# Run $@ as one native pacman-family transaction (pacman, pamac, paru) with
-# the runners' standby+timeout recovery for the residual race the entry
-# guards cannot close: a manager that *starts* between the guard and this
-# call still holds the alpm database lock when the transaction runs, and
-# alpm refuses it with an opaque lock error. Rather than surfacing that
-# refusal as a generic failure, stand by for the holder — the same posture
-# the runners take at dispatch — then re-run the transaction once the
-# database is free.
-#
-# Contract (callers run under set -eo pipefail):
-#   0            transaction completed
-#   nonzero      failed on its own; the caller's usual error message or
-#                install fallback applies (nothing consumed the failure)
-#   die          a holder outlasted the bounded standby: the timeout
-#                message, never the caller's generic failure hint
-pacman_transaction () {
-    while true; do
-        local _status=0
-        "$@" || _status=$?
-        if [ "$_status" -eq 0 ]; then
-            return 0
+# Shared by the library and the standalone installer. Native managers own their
+# locks; we only observe them. One deadline covers preflight, collision standby
+# and retries, and only a manager's lock-refusal diagnostic authorizes replay.
+# A new unrelated process after a failed transaction is NOT replay evidence.
+_pkg_wait_until_idle () {
+    local family="$1" deadline="$2" remaining announced=0
+    while "_${family}_busy_manager" >/dev/null 2>&1 ||
+          "_${family}_lock_actively_held" ||
+          { [[ "$family" == pacman ]] && [[ -e /var/lib/pacman/db.lck ]]; }; do
+        if (( ! announced )); then
+            printf '%s\n' "$PKG_GUARD_WAIT" >&2
+            announced=1
         fi
-        if _pacman_lock_actively_held || _pacman_busy_manager >/dev/null 2>&1; then
-            pacman_busy_wait
-            if _pacman_lock_actively_held; then
-                info "$PKG_GUARD_WAIT"
-                pacman_lock_standby || \
-                    die "$PKG_GUARD_TIMEOUT"
-            fi
-            # The standby exits only once the lock is free; retry below.
-        elif [ -f /var/lib/pacman/db.lck ]; then
-            # A crash leftover from a manager between the entry guard and
-            # this call: the same verified recovery, not a live hold.
-            pacman_lock_guard
-        else
-            # Not attributable to a lock; the caller's existing error
-            # message or install fallback applies, with the same status a
-            # bare transaction call would have produced.
-            return "$_status"
-        fi
+        remaining=$((deadline - SECONDS))
+        (( remaining > 0 )) || { printf '%s\n' "$PKG_GUARD_TIMEOUT" >&2; return 124; }
+        (( remaining <= 3 )) || remaining=3
+        sleep "$remaining" || return "$?"
     done
+    return 0
+}
+
+_pkg_lock_refused () {
+    local family="$1" log="$2"
+    case "$family" in
+        apt) grep -Eqi 'Could not get lock|Unable to acquire.*lock|Unable to lock.*directory|dpkg frontend lock.*locked' "$log" ;;
+        pacman) grep -Eqi 'unable to lock database|failed to init transaction.*lock' "$log" ;;
+        dnf) grep -Eqi 'Failed to (obtain|acquire).*lock|Unable to (obtain|acquire).*lock|Another app is currently holding.*lock|can.t create transaction lock' "$log" ;;
+        zypper) grep -Eqi 'System management is locked|ZYpp is locked|Failed to acquire.*lock' "$log" ;;
+        *) return 1 ;;
+    esac
+}
+
+_pkg_transaction () (
+    # Subshell keeps cleanup, locale and temporary state away from the caller's
+    # traps, including a sourced background updater's installer cleanup trap.
+    local family="$1" timeout="$2" deadline log status attempt=0
+    shift 2
+    case "$family" in apt|dnf|pacman|zypper) ;; *) return 2 ;; esac
+    [[ "$timeout" =~ ^[0-9]+$ ]] || return 2
+    deadline=$((SECONDS + timeout))
+    log=$(mktemp "${TMPDIR:-/tmp}/linuxtoys-package.XXXXXX") || return 1
+    trap 'rm -f -- "$log"' EXIT
+    trap 'exit 129' HUP
+    trap 'exit 130' INT
+    trap 'exit 143' TERM
+    export LC_ALL=C
+    local -a statuses
+    while true; do
+        _pkg_wait_until_idle "$family" "$deadline" || return "$?"
+        # Stream diagnostics to the terminal and retain just this attempt's
+        # output for classification. PIPESTATUS preserves the manager's code.
+        if "$@" 2>&1 | tee "$log"; then
+            statuses=("${PIPESTATUS[@]}")
+        else
+            statuses=("${PIPESTATUS[@]}")
+        fi
+        status=${statuses[0]}
+        (( status == 0 )) && return "${statuses[1]}"
+        # Signals and authentication cancellation without a lock diagnostic
+        # must never turn into another transaction.
+        (( status < 128 )) || return "$status"
+        _pkg_lock_refused "$family" "$log" || return "$status"
+        (( attempt < 2 )) || return "$status"
+        (( SECONDS < deadline )) || return 124
+        attempt=$((attempt + 1))
+    done
+)
+
+# Shared bounded transaction: 124 on standby timeout, original manager/signal
+# status on failure, at most two retries of diagnosed lock refusals.
+pacman_transaction () {
+    _pkg_transaction pacman "$PACMAN_BUSY_WAIT_TIMEOUT" "$@"
 }
 
 # Whether any apt/dpkg lock is held open by a live process right now.
@@ -306,23 +296,8 @@ APT_BUSY_WAIT_TIMEOUT=300
 # shares the dpkg locks with every repair and transaction below, so it must
 # be waited for here as well, not collided with.
 apt_busy_wait () {
-    local _manager
-    if ! _manager=$(_apt_busy_manager); then
-        return 0
-    fi
-    info "$(_pkg_guard_fmt "$PKG_GUARD_WAIT_NAMED" "$_manager")"
-    local _waited=0
-    while _manager=$(_apt_busy_manager); do
-        if (( _waited >= APT_BUSY_WAIT_TIMEOUT )); then
-            die "$(_pkg_guard_fmt "$PKG_GUARD_TIMEOUT_NAMED" "$_manager")"
-        fi
-        sleep 3
-        _waited=$((_waited + 3))
-    done
-    # The idle exit probes the manager once more and its failed assignment is
-    # nonzero; scripts commonly run under set -e (the TUI runner generates
-    # 'set -eo pipefail'), so the success path must end with success.
-    return 0
+    _pkg_wait_until_idle apt "$((SECONDS + APT_BUSY_WAIT_TIMEOUT))" ||
+        die "$PKG_GUARD_TIMEOUT"
 }
 
 # Bounded standby for the dpkg/apt locks themselves, mirroring the runners'
@@ -332,56 +307,13 @@ apt_busy_wait () {
 # collision resolves on its own and only an operation that is STILL running
 # after the shared timeout stops the run.
 apt_lock_standby () {
-    local _waited=0
-    while _apt_lock_actively_held; do
-        if (( _waited >= APT_BUSY_WAIT_TIMEOUT )); then
-            return 1
-        fi
-        sleep 3
-        _waited=$((_waited + 3))
-    done
-    # The idle exit probes the lock once more and its failed test is
-    # nonzero; scripts commonly run under set -e (the TUI runner generates
-    # 'set -eo pipefail'), so the success path must end with success.
-    return 0
+    _pkg_wait_until_idle apt "$((SECONDS + APT_BUSY_WAIT_TIMEOUT))"
 }
 
-# Run $@ as one native apt/dpkg transaction with the runners' standby+timeout
-# recovery for the residual race the entry guards cannot close: a manager
-# that *starts* between the guard and this call still holds a dpkg lock when
-# the transaction runs, and apt refuses it with an opaque lock error. Rather
-# than surfacing that refusal as a generic failure, stand by for the holder —
-# the same posture the runners take at dispatch — then re-run the transaction
-# once the locks are free.
-#
-# Contract (callers run under set -eo pipefail):
-#   0            transaction completed
-#   nonzero      failed on its own; the caller's usual error message or
-#                install fallback applies (nothing consumed the failure)
-#   die          a holder outlasted the bounded standby: the timeout
-#                message, never the caller's generic failure hint
+# Shared bounded transaction: 124 on standby timeout, original manager/signal
+# status on failure, at most two retries of diagnosed lock refusals.
 apt_transaction () {
-    while true; do
-        local _status=0
-        "$@" || _status=$?
-        if [ "$_status" -eq 0 ]; then
-            return 0
-        fi
-        if _apt_lock_actively_held || _apt_busy_manager >/dev/null 2>&1; then
-            apt_busy_wait
-            if _apt_lock_actively_held; then
-                info "$PKG_GUARD_WAIT"
-                apt_lock_standby || \
-                    die "$PKG_GUARD_TIMEOUT"
-            fi
-            # The standby exits only once the locks are free; retry below.
-        else
-            # Not attributable to a lock; the caller's existing error
-            # message or install fallback applies, with the same status a
-            # bare transaction call would have produced.
-            return "$_status"
-        fi
-    done
+    _pkg_transaction apt "$APT_BUSY_WAIT_TIMEOUT" "$@"
 }
 
 interrupted_apt_guard () {
@@ -390,7 +322,7 @@ interrupted_apt_guard () {
 
     if [ -n "$(dpkg --audit 2>/dev/null)" ]; then
         info "$PKG_GUARD_AUDIT"
-        { { [ "$UPD_SERVICE" = "1" ] && dpkg --configure -a; } || sudo_ dpkg --configure -a; } || \
+        { { [ "$UPD_SERVICE" = "1" ] && apt_transaction dpkg --configure -a; } || apt_transaction sudo_ dpkg --configure -a; } || \
             die "$PKG_GUARD_AUDIT_FAIL"
         needs_repair=1
     fi
@@ -452,7 +384,7 @@ _dnf_lock_actively_held () {
 
 _dnf_busy_manager () {
     local _name
-    for _name in dnf dnf5; do
+    for _name in dnf dnf5 yum; do
         if pgrep -x "$_name" >/dev/null 2>&1; then
             echo "$_name"
             return 0
@@ -470,75 +402,18 @@ _dnf_busy_manager () {
 DNF_BUSY_WAIT_TIMEOUT=300
 
 dnf_busy_wait () {
-    local _manager
-    if ! _manager=$(_dnf_busy_manager); then
-        return 0
-    fi
-    info "$(_pkg_guard_fmt "$PKG_GUARD_WAIT_NAMED" "$_manager")"
-    local _waited=0
-    while _manager=$(_dnf_busy_manager); do
-        if (( _waited >= DNF_BUSY_WAIT_TIMEOUT )); then
-            die "$(_pkg_guard_fmt "$PKG_GUARD_TIMEOUT_NAMED" "$_manager")"
-        fi
-        sleep 3
-        _waited=$((_waited + 3))
-    done
-    # The idle exit probes the manager once more and its failed assignment is
-    # nonzero; scripts commonly run under set -e (the TUI runner generates
-    # 'set -eo pipefail'), so the success path must end with success.
-    return 0
+    _pkg_wait_until_idle dnf "$((SECONDS + DNF_BUSY_WAIT_TIMEOUT))" ||
+        die "$PKG_GUARD_TIMEOUT"
 }
 
 dnf_lock_standby () {
-    local _waited=0
-    while _dnf_lock_actively_held; do
-        if (( _waited >= DNF_BUSY_WAIT_TIMEOUT )); then
-            return 1
-        fi
-        sleep 3
-        _waited=$((_waited + 3))
-    done
-    # The idle exit probes the lock once more and its failed test is
-    # nonzero; scripts commonly run under set -e (the TUI runner generates
-    # 'set -eo pipefail'), so the success path must end with success.
-    return 0
+    _pkg_wait_until_idle dnf "$((SECONDS + DNF_BUSY_WAIT_TIMEOUT))"
 }
 
-# Run $@ as one native dnf transaction with the runners' standby+timeout
-# recovery: a manager or a lock holder that *starts* between the dispatch
-# preflight and this call still holds the package state when the transaction
-# runs, and dnf refuses it with an opaque error. Instead of surfacing that
-# refusal as a generic failure, stand by for the holder, then re-run the
-# transaction once the locks are free.
-#
-# Contract (callers run under set -eo pipefail):
-#   0            transaction completed
-#   nonzero      failed on its own; the caller's usual error message applies
-#                (nothing consumed the failure)
-#   die          a holder outlasted the bounded standby: the timeout
-#                message, never the caller's generic failure hint
+# Shared bounded transaction: 124 on standby timeout, original manager/signal
+# status on failure, at most two retries of diagnosed lock refusals.
 dnf_transaction () {
-    while true; do
-        local _status=0
-        "$@" || _status=$?
-        if [ "$_status" -eq 0 ]; then
-            return 0
-        fi
-        if _dnf_lock_actively_held || _dnf_busy_manager >/dev/null 2>&1; then
-            dnf_busy_wait
-            if _dnf_lock_actively_held; then
-                info "$PKG_GUARD_WAIT"
-                dnf_lock_standby || \
-                    die "$PKG_GUARD_TIMEOUT"
-            fi
-            # The standby exits only once the locks are free; retry below.
-        else
-            # Not attributable to a lock; the caller's existing error
-            # message applies, with the same status a bare transaction call
-            # would have produced.
-            return "$_status"
-        fi
-    done
+    _pkg_transaction dnf "$DNF_BUSY_WAIT_TIMEOUT" "$@"
 }
 
 _zypper_lock_actively_held () {
@@ -566,67 +441,18 @@ _zypper_busy_manager () {
 ZYPPER_BUSY_WAIT_TIMEOUT=300
 
 zypper_busy_wait () {
-    local _manager
-    if ! _manager=$(_zypper_busy_manager); then
-        return 0
-    fi
-    info "$(_pkg_guard_fmt "$PKG_GUARD_WAIT_NAMED" "$_manager")"
-    local _waited=0
-    while _manager=$(_zypper_busy_manager); do
-        if (( _waited >= ZYPPER_BUSY_WAIT_TIMEOUT )); then
-            die "$(_pkg_guard_fmt "$PKG_GUARD_TIMEOUT_NAMED" "$_manager")"
-        fi
-        sleep 3
-        _waited=$((_waited + 3))
-    done
-    # The idle exit probes the manager once more and its failed assignment is
-    # nonzero; scripts commonly run under set -e (the TUI runner generates
-    # 'set -eo pipefail'), so the success path must end with success.
-    return 0
+    _pkg_wait_until_idle zypper "$((SECONDS + ZYPPER_BUSY_WAIT_TIMEOUT))" ||
+        die "$PKG_GUARD_TIMEOUT"
 }
 
 zypper_lock_standby () {
-    local _waited=0
-    while _zypper_lock_actively_held; do
-        if (( _waited >= ZYPPER_BUSY_WAIT_TIMEOUT )); then
-            return 1
-        fi
-        sleep 3
-        _waited=$((_waited + 3))
-    done
-    # The idle exit probes the lock once more and its failed test is
-    # nonzero; scripts commonly run under set -e (the TUI runner generates
-    # 'set -eo pipefail'), so the success path must end with success.
-    return 0
+    _pkg_wait_until_idle zypper "$((SECONDS + ZYPPER_BUSY_WAIT_TIMEOUT))"
 }
 
-# Run $@ as one native zypper transaction with the runners' standby+timeout
-# recovery; same shape and contract as dnf_transaction. Zypper is also driven
-# through YaST and KDE's update applet, both of which hold the zypp lock like
-# any other client — the fd standby below covers someone the recognized list
-# cannot name, exactly like the pacman/apt wrappers do.
+# Shared bounded transaction: 124 on standby timeout, original manager/signal
+# status on failure, at most two retries of diagnosed lock refusals.
 zypper_transaction () {
-    while true; do
-        local _status=0
-        "$@" || _status=$?
-        if [ "$_status" -eq 0 ]; then
-            return 0
-        fi
-        if _zypper_lock_actively_held || _zypper_busy_manager >/dev/null 2>&1; then
-            zypper_busy_wait
-            if _zypper_lock_actively_held; then
-                info "$PKG_GUARD_WAIT"
-                zypper_lock_standby || \
-                    die "$PKG_GUARD_TIMEOUT"
-            fi
-            # The standby exits only once the locks are free; retry below.
-        else
-            # Not attributable to a lock; the caller's existing error
-            # message applies, with the same status a bare transaction call
-            # would have produced.
-            return "$_status"
-        fi
-    done
+    _pkg_transaction zypper "$ZYPPER_BUSY_WAIT_TIMEOUT" "$@"
 }
 
 # Echo the name of the eopkg manager currently busy, else fail (empty output).
@@ -781,17 +607,47 @@ rpm_ostree_transaction () {
     done
 }
 
+# Query success alone does not mean installed: dpkg also retains conffiles and
+# interrupted states. Return only a validated status, or an explicit absence.
+_pkg_dpkg_state () {
+    local _db="${DPKG_ADMINDIR:-${DPKG_ROOT:-}/var/lib/dpkg}"
+    local _state _status=0
+    # dpkg-query otherwise treats a missing database like an absent package.
+    [[ -f "$_db/status" && -r "$_db/status" ]] || return 2
+    _state=$(dpkg-query --admindir="$_db" --show --showformat='${Status}\n' -- "$1" 2>/dev/null) || _status=$?
+    if [[ $_status -eq 1 && -z "$_state" ]]; then
+        printf '%s\n' absent
+        return 0
+    fi
+    [[ $_status -eq 0 && "$_state" =~ ^(unknown|install|hold|deinstall|purge)\ (ok|reinstreq)\ (not-installed|config-files|half-installed|unpacked|half-configured|triggers-awaited|triggers-pending|installed)$ ]] || return 2
+    printf '%s\n' "$_state"
+}
+
 pkg_exists () {
     pkg_found=()
     pkg_notfound=()
+    _pkg_dpkg_incomplete=()
+    local _dpkg_state
 
     for pak in "$@"; do
         if is_debian || is_ubuntu; then
-            if dpkg -s "$pak" &>/dev/null; then
-                pkg_found+=("$pak")
-            else
-                pkg_notfound+=("$pak")
+            if ! _dpkg_state=$(_pkg_dpkg_state "$pak"); then
+                pkg_found=()
+                pkg_notfound=()
+                _pkg_dpkg_incomplete=()
+                die "Unable to determine dpkg package state for: $pak"
             fi
+            case "$_dpkg_state" in
+                absent|*" ok not-installed"|*" ok config-files")
+                    pkg_notfound+=("$pak") ;;
+                *" ok installed")
+                    pkg_found+=("$pak") ;;
+                *)
+                    # Install must reach interrupted_apt_guard; removal must
+                    # still be able to remove a partially installed package.
+                    pkg_notfound+=("$pak")
+                    _pkg_dpkg_incomplete+=("$pak") ;;
+            esac
         elif is_arch || is_cachy || is_manjaro; then
             if pacman -Qi "$pak" &>/dev/null; then
                 pkg_found+=("$pak")
@@ -843,10 +699,28 @@ pkg_install () {
     [[ ${#pkg_found[@]} -gt 0 ]] && echo "Packages ${pkg_found[*]} already installed, skipping."
     [[ ${#pkg_notfound[@]} -eq 0 ]] && return 0
     local to_install="${pkg_notfound[*]}"
+    local architecture_manager
+    if is_debian || is_ubuntu; then architecture_manager=apt
+    elif is_arch || is_cachy || is_manjaro; then architecture_manager=pacman
+    elif is_suse; then architecture_manager=zypper
+    elif is_solus; then architecture_manager=eopkg
+    else architecture_manager=dnf; fi
+    _architecture_check packages "$architecture_manager" "${pkg_notfound[@]}"
     askpass
     (( _bypass )) || runner_lock "package-transaction"
     if is_debian || is_ubuntu; then
         interrupted_apt_guard
+        if [[ ${#_pkg_dpkg_incomplete[@]} -gt 0 ]]; then
+            # Recovery may have finished pre-existing packages. Do not record
+            # them as new installs (and later remove them during reversal).
+            pkg_exists "${pkg_notfound[@]}"
+            [[ ${#_pkg_dpkg_incomplete[@]} -eq 0 ]] || die "$PKG_GUARD_AUDIT_FAIL"
+            if [[ ${#pkg_notfound[@]} -eq 0 ]]; then
+                (( _bypass )) || runner_unlock
+                return 0
+            fi
+            to_install="${pkg_notfound[*]}"
+        fi
         if (( _no_recommends )); then
             apt_transaction sudo_ apt-get install -y --no-install-recommends "${pkg_notfound[@]}" || fatal "Failed to install $to_install"
         else
@@ -982,10 +856,20 @@ pkg_flat() {
     # remote's bootstrap script configures it (plus whatever runtimes it needs)
     # and owns its own session idempotency.
     local _skip_user=0
-    local _next_remote=0
+    local _next_remote=0 _next_scope=0 _explicit_scope=""
     local _remote="flathub"
     local -a _flatpak_args=()
     for arg in "$@"; do
+        if [[ $_next_scope -eq 1 ]]; then
+            [[ "$arg" == user || "$arg" == system ]] || die "Invalid Flatpak scope"
+            _explicit_scope="--$arg"
+            _next_scope=0
+            continue
+        fi
+        if [[ "$arg" == "--scope" ]]; then
+            _next_scope=1
+            continue
+        fi
         if [[ $_next_remote -eq 1 ]]; then
             _remote="$arg"
             _next_remote=0
@@ -999,29 +883,13 @@ pkg_flat() {
             _flatpak_args+=("$arg")
         fi
     done
-    [[ $_next_remote -eq 0 ]] || die "pkg_flat --remote requires a remote name"
+    [[ $_next_remote -eq 0 && $_next_scope -eq 0 ]] || die "pkg_flat --remote/--scope requires a value"
     if [[ "$_remote" != "flathub" ]]; then
         [[ "$_remote" =~ ^[a-z0-9][a-z0-9._-]*$ ]] \
             || die "pkg_flat: unsupported Flatpak remote: $_remote"
     fi
 
-    if [[ "$_remote" == "flathub" ]]; then
-        if ! command -v flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
-            call_script flathub
-            # Installing Flatpak or adding Flathub changes the AppStream source universe.
-            # Keep the last completed catalog usable, but force the next AppStream check
-            # to rebuild it against the newly available source.
-            rm -f "$HOME/.cache/linuxtoys/appstream/state.json"
-        fi
-    else
-        if ! command -v flatpak &>/dev/null || ! flatpak remote-list | grep -Fxq "$_remote"; then
-            call_script "$_remote"
-            # A newly configured remote can add an AppStream source (and the
-            # whole Flatpak stack on first use), so the next catalog check
-            # must rebuild against the newly available universe.
-            rm -f "$HOME/.cache/linuxtoys/appstream/state.json"
-        fi
-    fi
+    command -v flatpak >/dev/null 2>&1 || die "Configure Flatpak and its native remote before installing applications"
     local flatpak_scope="--user"
     if [[ $_skip_user -eq 1 ]]; then
         flatpak_scope="--system"
@@ -1034,6 +902,12 @@ pkg_flat() {
          ! flatpak remote-list --user 2>/dev/null | grep -Fxq "$_remote"; then
         flatpak_scope="--system"
     fi
+
+    [[ -z "$_explicit_scope" ]] || flatpak_scope="$_explicit_scope"
+    local resolved_refs
+    resolved_refs=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" flatpak "$_remote" "${flatpak_scope#--}" "${_flatpak_args[@]}") || die "Flatpak architecture/availability preflight failed"
+    [[ -n "$resolved_refs" ]] || die "No native Flatpak refs resolved"
+    mapfile -t _flatpak_args <<< "$resolved_refs"
 
     local -a _flatpak_normal=()
     local -a _flatpak_new=()
@@ -1066,7 +940,7 @@ pkg_flat() {
             mapfile -t _runtime_new < <(_flatpak_runtime_extension_delta "$_runtime_before" "$flatpak_scope")
             rm -f "$_runtime_before"
             if [[ ${#_runtime_new[@]} -gt 0 ]]; then
-                _append_transmap "flatpak ${_runtime_new[*]}"
+                _append_transmap "flatpak $flatpak_scope ${_runtime_new[*]}"
             fi
         else
             _flatpak_normal+=("$arg")
@@ -1093,9 +967,20 @@ pkg_flat() {
                 fatal "Failed to install flatpak package $basename"
         done
         if [[ ${#_flatpak_new[@]} -gt 0 ]]; then
-            _append_transmap "flatpak ${_flatpak_new[*]}"
+            _append_transmap "flatpak $flatpak_scope ${_flatpak_new[*]}"
         fi
     fi
+}
+
+pkg_flat_extension() {
+    [[ $# -eq 2 ]] || die "Usage: pkg_flat_extension APP_ID EXTENSION_ID"
+    local refs
+    refs=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" extension "$1" "$2") || die "Native extension unavailable for the installed application runtime"
+    [[ -n "$refs" ]] || die "No native extension refs resolved"
+    local -a plan=()
+    mapfile -t plan <<< "$refs"
+    [[ ${#plan[@]} -ge 3 ]] || die "Invalid native extension plan"
+    pkg_flat --scope "${plan[0]}" --remote "${plan[1]}" "${plan[@]:2}"
 }
 
 # Snap requires a real host system. Keep this check centralized so Store,
@@ -1119,6 +1004,7 @@ pkg_snap () {
         call_script snap || die "Failed to install Snap support"
         command -v snap >/dev/null 2>&1 || die "Snap is unavailable after installing Snap support"
     fi
+    _architecture_check snap "$@"
 
     local -a _snap_new=()
     local pak
@@ -1178,6 +1064,7 @@ _snap_installed_names () {
 
 pkg_snap_file () {
     (( $# > 0 )) || die "No Snap package files provided"
+    _architecture_check files "$@"
     _snap_supported_host || die "Snap packages are unsupported on this system"
 
     if ! command -v snap >/dev/null 2>&1; then
@@ -1239,6 +1126,9 @@ pkg_fromfile () {
 
     # Use filtered args for the rest of the function
     set -- "${_filtered_args[@]}"
+
+    # Validate every input before authenticating or installing any item in a batch.
+    _architecture_check files "$@"
 
     # Snap files are handled by snapd rather than the host package manager.
     # Keep this outside the generic lock because installing Snap support may
@@ -1328,7 +1218,7 @@ pkg_fromfile () {
             rm -f "$_runtime_before"
             [[ -n "$_runtime_before_system" ]] && rm -f "$_runtime_before_system"
             if [[ ${#_runtime_new[@]} -gt 0 ]]; then
-                _append_transmap "flatpak ${_runtime_new[*]}"
+                _append_transmap "flatpak $flatpak_scope ${_runtime_new[*]}"
             fi
         else
             _append_transmap "pkg file $flatpak_file"
@@ -1338,10 +1228,8 @@ pkg_fromfile () {
     fi
 
     if is_debian || is_ubuntu; then
-        # Wrapper only stands by (and retries) on lock collisions; a plain
-        # failure falls through to the dpkg fallback, as before.
-        if ! { apt_transaction sudo_ apt-get -o APT::Sandbox::User=root install -y "${@}" || \
-                apt_transaction sudo_ dpkg -i "${@}"; }; then
+        # Retry lock collisions without bypassing APT dependency verification.
+        if ! apt_transaction sudo_ apt-get install -y "${@}"; then
             fatal "Failed to install $*"
         fi
         _append_transmap "pkg file $*"
@@ -1399,6 +1287,7 @@ pkg_tarball () {
     local member normalized first_component common_root has_nested
     local -a members=()
 
+    _architecture_check files "$@"
     apps_dir="$HOME/.local/linuxtoys/apps"
     mkdir -p -- "$apps_dir" || die "Failed to create application directory: $apps_dir"
 
@@ -1538,6 +1427,7 @@ pkg_binary () {
     local apps_dir="$HOME/.local/linuxtoys/apps"
     local target_dir target_file
 
+    _architecture_check files "$binary"
     [ -f "$binary" ] || die "Binary file not found: $binary"
     [ -n "$app_name" ] || die "LinuxToys app name is unavailable"
 
@@ -1695,6 +1585,9 @@ pkg_fromurl () {
         package_files+=("$package_file")
     done
 
+    # The whole download batch must be safe before its first install starts.
+    _architecture_check files "${package_files[@]}"
+
     for package_file in "${package_files[@]}"; do
         if [[ $_binary -eq 1 ]]; then
             if [[ $_no_shortcut -eq 1 ]]; then
@@ -1813,49 +1706,6 @@ pkg_make () {
 
     [[ "$source" == https://* ]] || die "pkg_make only accepts HTTPS sources"
 
-    local user_level_make=0 steamos_readonly_toggled=0
-    if [[ ! "$install_command" =~ (^|[[:space:];|&()])sudo([[:space:]]|$) ]]; then
-        user_level_make=1
-    fi
-
-    if is_steamos && (( user_level_make )); then
-        # User-level Make applications are SteamOS-compatible. Their declared
-        # native dependencies are treated as build-only Arch packages. Temporarily
-        # unlock the system image only while installing the build toolchain.
-        local -a steamos_build_packages=(base-devel)
-        if (( ! uninstall )); then
-            steamos_build_packages+=("${build_dependencies[@]}")
-        fi
-
-                command -v steamos-readonly >/dev/null 2>&1 || \
-            die "steamos-readonly is required for pkg_make on SteamOS"
-
-        if steamos-readonly status 2>/dev/null | grep -qi 'enabled'; then
-            sudo_ steamos-readonly disable || die "Failed to disable SteamOS read-only mode"
-            steamos_readonly_toggled=1
-        fi
-
-        pacman_lock_guard
-        if ! sudo_ pacman -S --needed --noconfirm "${steamos_build_packages[@]}"; then
-            if (( steamos_readonly_toggled )); then
-                sudo_ steamos-readonly enable || warn "Failed to restore SteamOS read-only mode after package installation failure"
-            fi
-            die "Failed to install SteamOS make build dependencies"
-        fi
-
-        if (( steamos_readonly_toggled )); then
-            sudo_ steamos-readonly enable || die "Failed to restore SteamOS read-only mode"
-            steamos_readonly_toggled=0
-        fi
-    else
-        if ! command -v make >/dev/null 2>&1; then
-                        pkg_install --ostreecheck make
-        fi
-        if (( ! uninstall && ${#build_dependencies[@]} > 0 )); then
-                        pkg_install --ostreecheck --ignore-appends "${build_dependencies[@]}"
-        fi
-    fi
-
     local workdir source_dir archive make_dir run_command="$install_command"
     local -a makefiles=()
     prep_tmp_noram
@@ -1879,6 +1729,7 @@ pkg_make () {
             die "Failed to download make source: $source"
         }
 
+        _architecture_check files --content-kind source "$archive"
         # Reject archive path traversal before extraction.
         local member normalized
         while IFS= read -r member; do
@@ -1901,6 +1752,54 @@ pkg_make () {
             rm -rf -- "$workdir"
             die "Failed to extract make tarball: $source"
         }
+    fi
+
+    _architecture_check tree --content-kind source "$source_dir"
+
+    local user_level_make=0 steamos_readonly_toggled=0
+    if [[ ! "$install_command" =~ (^|[[:space:];|&()])sudo([[:space:]]|$) ]]; then
+        user_level_make=1
+    fi
+
+    if is_steamos && (( user_level_make )); then
+        # User-level Make applications are SteamOS-compatible. Their declared
+        # native dependencies are treated as build-only Arch packages. Temporarily
+        # unlock the system image only while installing the build toolchain.
+        local -a steamos_build_packages=(base-devel)
+        if (( ! uninstall )); then
+            steamos_build_packages+=("${build_dependencies[@]}")
+        fi
+
+                command -v steamos-readonly >/dev/null 2>&1 || \
+            die "steamos-readonly is required for pkg_make on SteamOS"
+
+        _architecture_check packages pacman "${steamos_build_packages[@]}"
+        if steamos-readonly status 2>/dev/null | grep -qi 'enabled'; then
+            sudo_ steamos-readonly disable || die "Failed to disable SteamOS read-only mode"
+            steamos_readonly_toggled=1
+        fi
+
+        pacman_lock_guard
+        if ! sudo_ pacman -S --needed --noconfirm "${steamos_build_packages[@]}"; then
+            if (( steamos_readonly_toggled )); then
+                sudo_ steamos-readonly enable || warn "Failed to restore SteamOS read-only mode after package installation failure"
+            fi
+            die "Failed to install SteamOS make build dependencies"
+        fi
+
+        if (( steamos_readonly_toggled )); then
+            sudo_ steamos-readonly enable || die "Failed to restore SteamOS read-only mode"
+            steamos_readonly_toggled=0
+        fi
+    else
+        local -a required_build_packages=()
+        command -v make >/dev/null 2>&1 || required_build_packages+=(make)
+        if (( ! uninstall )); then
+            required_build_packages+=("${build_dependencies[@]}")
+        fi
+        if (( ${#required_build_packages[@]} > 0 )); then
+            pkg_install --ostreecheck --ignore-appends "${required_build_packages[@]}"
+        fi
     fi
 
     # Prefer a top-level makefile. If there is none, accept exactly one makefile
@@ -2045,7 +1944,7 @@ pkg_fromrelease () {
         native_type=eopkg
     fi
 
-    package_url=$(python3 - "$1" "${2:-*}" "$native_type" "$(uname -m)" "$_tarball" "$_binary" "$_snap" "$snap_release_allowed" <<'PY'
+    package_url=$(python3 - "$1" "${2:-*}" "$native_type" "$(python3 "$SCRIPT_DIR/app/architecture_cli.py" label host)" "$_tarball" "$_binary" "$_snap" "$snap_release_allowed" "$_make" <<'PY'
 import fnmatch
 import json
 import re
@@ -2123,7 +2022,7 @@ def normalize_release(host, release):
     return normalized
 
 
-repository, pattern, native, machine, tarball_mode, binary_mode, snap_mode, snap_allowed = sys.argv[1:]
+repository, pattern, native, machine, tarball_mode, binary_mode, snap_mode, snap_allowed, source_mode = sys.argv[1:]
 tarball_mode = tarball_mode == "1"
 binary_mode = binary_mode == "1"
 snap_mode = snap_mode == "1"
@@ -2143,24 +2042,11 @@ if not isinstance(version, str) or not version:
     fail("Latest release has no tag name")
 pattern = pattern.replace("$APP_GIT_VERSION", version)
 
-aliases = {
-    "x86_64": ("x86_64", "amd64", "x64"),
-    "aarch64": ("aarch64", "arm64"),
-    "i686": ("i386", "i486", "i586", "i686", "ia32", "x86"),
-    "armv7l": ("armv7l", "armv7", "armhf"),
-    "armv6l": ("armv6l", "armv6", "armel"),
-    "riscv64": ("riscv64",),
-    "ppc64le": ("ppc64le", "ppc64el"),
-    "ppc64": ("ppc64",),
-    "s390x": ("s390x",),
-    "loongarch64": ("loongarch64",),
-}
-architecture = next((key for key, values in aliases.items() if machine in values), None)
-if architecture is None:
-    fail(f"Unsupported architecture: {machine}")
-# Match longer aliases first so x86_64 is not mistaken for x86.
-labels = sorted((label for values in aliases.values() for label in values), key=len, reverse=True)
-arch_re = re.compile(r"(?<![a-z0-9])(" + "|".join(map(re.escape, labels)) + r")(?![a-z0-9])")
+# The same policy serves Python catalogs, Rust indexing and this shell path.
+import os
+sys.path.insert(0, os.environ["SCRIPT_DIR"])
+from app.architecture import select_asset, ArchitectureError
+
 native_extensions = {"arch": (".pacman", ".pkg.tar.zst"), "rpm": (".rpm",),
                      "deb": (".deb",), "eopkg": (".eopkg",)}
 if binary_mode:
@@ -2179,48 +2065,18 @@ else:
     ]
     if snap_allowed:
         formats.append((".snap",))
-candidates = []
-for asset in release["assets"]:
-    name, url = asset.get("name", ""), asset.get("browser_download_url", "")
-    if not isinstance(name, str) or not isinstance(url, str):
-        continue
-    lower = name.lower()
-    if urlsplit(url).scheme != "https":
-        continue
-    if binary_mode:
-        if name != pattern:
-            continue
-    elif not fnmatch.fnmatchcase(lower, pattern.lower()):
-        continue
-    if re.search(r"(?:^|[._-])(?:debug|debuginfo|debugsource|devel|source|src)(?:[._-]|$)", lower):
-        continue
-    if binary_mode:
-        kind = 0
-    else:
-        kind = next((i for i, extensions in enumerate(formats) if lower.endswith(extensions)), None)
-        if kind is None:
-            continue
-    detected = set(arch_re.findall(lower))
-    x86_fallback = False
-    if detected and not detected.intersection(aliases[architecture]):
-        if architecture == "x86_64" and detected.intersection(aliases["i686"]):
-            x86_fallback = True
-        else:
-            continue
-    # Use 32-bit x86 only when no native or architecture-unlabelled asset matches.
-    # Within each tier, retain AppImage > Flatpak > native package > Snap preference.
-    # Explicit architecture matches outrank assets whose names omit architecture.
-    candidates.append(((x86_fallback, kind, 0 if detected else 1), name, url))
-if not candidates:
-    fail(f"No compatible release package for {machine} ({native or 'portable only'})")
-best_rank = min(item[0] for item in candidates)
-best = [item for item in candidates if item[0] == best_rank]
-if len(best) != 1:
-    fail("Multiple matching packages; pass an ASSET_GLOB to choose one:\n" +
-         "\n".join(item[1] for item in best))
-print(f"Selected {best[0][1]} from {version}", file=sys.stderr)
+try:
+    selected = select_asset(release["assets"], machine=machine, pattern=pattern,
+                            formats=None if binary_mode else tuple(formats),
+                            exact=binary_mode, source=source_mode == "1")
+except ArchitectureError as error:
+    fail(str(error))
+selected_url = selected["browser_download_url"]
+if urlsplit(selected_url).scheme != "https":
+    fail("Selected release asset must use HTTPS")
+print(f"Selected {selected['name']} from {version}", file=sys.stderr)
 print(version)
-print(best[0][2])
+print(selected_url)
 PY
     ) || die "Failed to select a release package"
 
@@ -2321,6 +2177,7 @@ PY
 
 pkg_remove () {
     pkg_exists "$@"
+    pkg_found+=("${_pkg_dpkg_incomplete[@]}")
     [[ ${#pkg_found[@]} -eq 0 ]] && return 0
     local to_remove="${pkg_found[*]}"
 
@@ -2627,6 +2484,7 @@ pkg_appimage_update () {
 
 pkg_appimage () {
     [[ $# -gt 0 ]] || die "No AppImage files provided"
+    _architecture_check files "$@"
     # update handling
     local appimage_input previous_appimage
     local -a appimage_inputs=()
@@ -2654,11 +2512,6 @@ pkg_appimage () {
             esac
         fi
     fi
-    if [[ -n "$previous_appimage" ]]; then
-        [[ $# -eq 1 ]] || die "Cannot map multiple new AppImages to one installed AppImage"
-        [[ "$1" != "$(realpath -- "$HOME/AppImages/$previous_appimage")" ]] || die "Update input is the installed AppImage itself"
-        pkg_appimage_rm --skip-appends "$previous_appimage" || die "Failed to remove previous AppImage: $previous_appimage"
-    fi
 
     { is_ubuntu || is_debian; } && {
         # FUSE 2 changed package names across Debian/Ubuntu releases. Prefer the
@@ -2669,43 +2522,8 @@ pkg_appimage () {
             pkg_install libfuse2t64
         elif LC_ALL=C apt-cache policy libfuse2 | grep -Eq '^[[:space:]]*Candidate: [^ (]'; then
             pkg_install libfuse2
-        elif is_ubuntu; then
-            # Ubuntu publishes libfuse2t64 in universe. If APT cannot see either
-            # compatibility package, enable universe and refresh metadata once.
-            # add-apt-repository is idempotent and supports deb822 Ubuntu sources.
-            command -v add-apt-repository >/dev/null 2>&1 || \
-                die "Cannot enable Ubuntu universe: add-apt-repository is unavailable"
-            sudo_ add-apt-repository -y universe || \
-                die "Failed to enable Ubuntu universe repository"
-            apt_transaction sudo_ apt-get update || die "Failed to refresh APT repositories after enabling universe"
-            if LC_ALL=C apt-cache policy libfuse2t64 | grep -Eq '^[[:space:]]*Candidate: [^ (]'; then
-                pkg_install libfuse2t64
-            elif LC_ALL=C apt-cache policy libfuse2 | grep -Eq '^[[:space:]]*Candidate: [^ (]'; then
-                pkg_install libfuse2
-            else
-                die "No FUSE 2 compatibility package is available after enabling Ubuntu universe"
-            fi
-        elif is_debian; then
-            # Debian testing may temporarily lack a FUSE 2 compatibility package.
-            # Expose only Trixie's libfuse2t64 through a narrowly pinned source.
-            sudo_ mkdir -p /etc/apt/preferences.d /etc/apt/sources.list.d
-            prep_create "/etc/apt/sources.list.d/linuxtoys-trixie-fuse.list" \
-                        "/etc/apt/preferences.d/linuxtoys-trixie-fuse"
-            echo 'deb https://deb.debian.org/debian trixie main' | \
-                sudo_ tee /etc/apt/sources.list.d/linuxtoys-trixie-fuse.list >/dev/null
-            sudo_ tee /etc/apt/preferences.d/linuxtoys-trixie-fuse >/dev/null <<'EOF'
-Package: *
-Pin: release n=trixie
-Pin-Priority: -1
-
-Package: libfuse2t64
-Pin: release n=trixie
-Pin-Priority: 990
-EOF
-            apt_transaction sudo_ apt-get update || die "Failed to refresh APT repositories for FUSE 2 compatibility"
-            pkg_install libfuse2t64
         else
-            die "No FUSE 2 compatibility package is available from this system's APT repositories"
+            die "No native FUSE 2 candidate is available; configure a supported repository before installing this AppImage"
         fi
     }
     { is_fedora || is_ostree || is_rhel; } && {
@@ -2723,6 +2541,22 @@ EOF
             pkg_install fuse2;
         }
     }
+    # Resolve optional integration availability before removing a prior copy.
+    local _native_gearlever=0
+    if is_systemd; then
+        if _pkg_appimage_gearlever_installed; then
+            _native_gearlever=1
+        elif command -v flatpak >/dev/null 2>&1 &&
+             python3 "$SCRIPT_DIR/app/architecture_cli.py" flatpak flathub user it.mijorus.gearlever >/dev/null 2>&1; then
+            _native_gearlever=1
+        fi
+    fi
+    if [[ -n "$previous_appimage" ]]; then
+        [[ $# -eq 1 ]] || die "Cannot map multiple new AppImages to one installed AppImage"
+        [[ "$1" != "$(realpath -- "$HOME/AppImages/$previous_appimage")" ]] || die "Update input is the installed AppImage itself"
+        pkg_appimage_rm --skip-appends "$previous_appimage" || die "Failed to remove previous AppImage: $previous_appimage"
+    fi
+
     prep_dir "$HOME/AppImages"
 
     # Inputs Gear Lever did NOT carry to completion. Base the list on every
@@ -2735,7 +2569,7 @@ EOF
 
     # Prefer Gear Lever on systemd systems. If it cannot inspect/integrate an
     # otherwise valid AppImage, fall back to LinuxToys' own simple integration.
-    if is_systemd; then
+    if is_systemd && [[ $_native_gearlever -eq 1 ]]; then
         if ! _pkg_appimage_gearlever_installed; then
             info "$gearlevermsg"
             _pkg_appimage_install_gearlever
@@ -3111,17 +2945,6 @@ _pkg_npm_repair () {
     fi
 }
 
-# Best-effort upgrade of npm through itself ("pkg_npm npm", used by the
-# Skills Seeker flows to get a modern npx). npm special-cases installing its
-# own package: when the running Node.js does not satisfy the candidate
-# version's "engines" requirement, npm refuses the self-install with a hard
-# EBADENGINE error — for every other package that same mismatch is only a
-# warning. Distro-provided npm (Debian/Ubuntu/Fedora) often pairs an older
-# Node with a perfectly usable npx, so an engine refusal must not abort the
-# caller: this helper treats it as a skip and leaves the installed npm
-# untouched (returns 1 so no transaction gets recorded). Genuine failures
-# (network, permissions) keep the original sudo escalation and fatal path.
-# Returns 0 when npm was actually upgraded, 1 when the upgrade was skipped.
 _pkg_npm_self_upgrade () {
     local -a _self_flags=("$@")
     local _self_log
@@ -3154,6 +2977,7 @@ pkg_npm () {
     # other half of the "env: 'npm': No such file or directory" failures.
     local _npm_bin
     _npm_bin="$(command -v npm 2>/dev/null)" || _npm_bin="npm"
+    # PATH config
     for rc in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
         if [ -f "$rc" ]; then
             # Check if PATH modification for .npm-global/bin already exists in the file
@@ -3164,6 +2988,7 @@ pkg_npm () {
             fi
         fi
     done
+    # for fish shells
     fish_config="$HOME/.config/fish/config.fish"
     if [ -f "$fish_config" ]; then
         if ! grep -E "set.*PATH.*/home/$USER/.npm-global/bin|/home/$USER/\.npm-global/bin" "$fish_config" > /dev/null 2>&1; then
@@ -3175,6 +3000,7 @@ pkg_npm () {
 
     local -a flags=()
     local -a packages=()
+    # Separate flags from package names, filtering out -g flag
     for arg in "$@"; do
         if [[ "$arg" == -* ]]; then
             if [[ "$arg" != "-g" && "$arg" != "--global" ]]; then
@@ -3218,6 +3044,7 @@ pkg_bun () {
             fi
         fi
     done
+    # for fish shells
     fish_config="$HOME/.config/fish/config.fish"
     if [ -f "$fish_config" ]; then
         if ! grep -E "set.*PATH.*/home/$USER/.bun/bin|/home/$USER/.bun/bin" "$fish_config" > /dev/null 2>&1; then

@@ -174,7 +174,7 @@ def build_aur_install_script(package: str) -> str:
         prefix="aur-install-", suffix=".sh", dir=_OVERRIDES_DIR, text=True
     )
     with os.fdopen(fd, "w", encoding="utf-8") as handle:
-        handle.write("#!/usr/bin/env bash\n")
+        handle.write("#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n")
         handle.write(f"pkg_install {shlex.quote(package)}\n")
     os.chmod(path, 0o700)
     return path

@@ -1,0 +1,1591 @@
+{
+  "version": 1,
+  "scripts": {
+    "44b4135dc4dcb8298769bdd2a2e911180e41816ab6aaa9fb694607cfbe023997": {
+      "path": "creative/video/davinci.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "5ee929c65eab57e5071341e939180f9a7fe294a06d782781a28284a5cf6de379": {
+      "path": "creative/video/marmalade.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "f7a841077bb6d340b420afcab99f9e1d64de8cceaf4d979b951e650f1e6ba8e1": {
+      "path": "creative/video/resolveaac.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "dcc123def17dd33d2b5703bd80fe20eacf3a40a69d88bbbd51b85db1850f139c": {
+      "path": "creative/video/resolvehw.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "7800d6f8da50017520f9989efb41955f0a2ed12d0d6f87e7d5694f20b1f24072": {
+      "path": "devs/adoptium-jdk.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "212533c9dbbe58c9e13a7346b07d0b32fe5daadbeffec89e4b37677d97c042a9": {
+      "path": "devs/ai_agents/claude-code.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "84b0e3e315c6fa719d32f190fa201bc4bd1619326247bc08f3a005a37a150722": {
+      "path": "devs/ai_agents/codex.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "ae07f53391e16a4fa33fa5332c75a7639ff153ccadb66468a67c2f769607022d": {
+      "path": "devs/ai_agents/omp.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "a022c6c5e579efe31bb2a2f6b59593411905ce3d992721b9dc0aef97acc7075d": {
+      "path": "devs/ai_agents/opencode.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "bf5abcd3a0bfa5885ab9547cfcea34f66bc056be9df084a3ea5c156cd5e2442e": {
+      "path": "devs/ai_agents/pi.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "fcb16e18e73666c30b87dbb0c2f48f4b7bbac1e39507b764d030f071a9c37de1": {
+      "path": "devs/ai_agents/skills-seeker.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "756610b5a70094b96526601bf07147fa2681516cce907142c2b85a4b220b4dce": {
+      "path": "devs/astahpro.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "fe88defec6213f666c4c587643f903b1f64a2b1b704ec34092f3c2084c2099b1": {
+      "path": "devs/docker.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "1e8c2147f6008c4698ed14766a8b7926f1f5006d5dcbf7981650c89b9f409bde": {
+      "path": "devs/dotnet.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "2f2eec97b405f6adfe21e6ec03c83d79ae09a6b3e8d931ab7b3fd9eae89a37b6": {
+      "path": "devs/fisher.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "1f7e030b27be963d5d75a10b29f50da851002ee58ef3f2b5f93238361c5fca30": {
+      "path": "devs/ides/code.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "3bdd37aa0fa10ce0386144610332bd8636bbeb4f9efd2de654fec55fba4412ae": {
+      "path": "devs/ides/codium.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "30e0ba73296a48b8b52e876a779c3e6d5a9d77038d0682799f2c978c515bbea1": {
+      "path": "devs/ides/godot.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "3b1678a30cf1f05365fdc5036eaa8a4a3e2fb1c36b71fd69df5ec39b5f35de97": {
+      "path": "devs/ides/godotsharp.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "c45d20a55b487681c83140975e6ff8edb1e5affea722c7688564194d6207e294": {
+      "path": "devs/ides/jetbrains-toolbox.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "6987864dd7702e8a4011c0f2dcea6ea4cd040f76bdc865c48d2da1867955a807": {
+      "path": "devs/ides/lazyman.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "c86734630c59ad3b40566872cb7046a60ee08d96d20c3948598dc0116cd5788a": {
+      "path": "devs/ides/positron.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "be8e5eb57367aeae2947ace4bde33a5f5d62c32b7d0731bf4afc41be96974b83": {
+      "path": "devs/ides/rstudio.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "502176b34c4cb2bc4c224f3ad79d74a89fe4ce0790d7b755a71e6a30e7491c08": {
+      "path": "devs/java.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "7165794eb97f14f72bb2c39cbfb8aadd4711ad4edaf105fc3254835587567d26": {
+      "path": "devs/k6.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "a069eff2e14bfe838f9acd956010c27df7edf0f1beaa99f003c0eb91facbee06": {
+      "path": "devs/kind.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "85fcde5b57ea54c16eec78485352d0da816b74b1e9ef5fdd378819f56fa62301": {
+      "path": "devs/lazydocker.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "522636b67a1bda3ec733b08f58a4e6b202caa18a09fbe660ec5f39bf47886042": {
+      "path": "devs/libvirt-config.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "7fa23a0ccec12a6cdb8fd5530b48733012046a33dd37a6f185547acb292fc9ec": {
+      "path": "devs/mise.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "6666b47e69f1fa8e48c4b2dc7a31c18500c2b15b5069fe1530312d92f68995ed": {
+      "path": "devs/nvm.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "cd8e49ffb1076d7c24dca65ac53c344ae0d0708814a6a61e2485f5aa6b15d91f": {
+      "path": "devs/ohmyba.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "dc0bdae88fefb47ce5b34120be30c2d9e3f3574f81e13ce7c86dc65d10e6101f": {
+      "path": "devs/ohmyz.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "3e5fddf1747e38acd36dfae079b8f604c6ff3b7e439c9526bfba258d1c2c7d93": {
+      "path": "devs/pnpm.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "5c0749ad6ba5c65b070e8bafea4aff89d6b23f01c3c0c1e100fc214c0663bc41": {
+      "path": "devs/portainer.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "5e042941a6944030e3a2731268483cb69e3cb92d53f54dd66d6b7d2a73b9eb09": {
+      "path": "devs/pyenv.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "0b01dc41512b1fc02c8f888ae4d1380fae4c239da11d1b122712328e85fd24f0": {
+      "path": "devs/sdkman.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "98ee6879a4ce85d51541eb2814fe7b6e62de0a7fa3711c62a268005b15514504": {
+      "path": "devs/starship.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "4de95e37d3e0532f86855777c307693e8e3efef2fbe9c9c6b1f955141c5e42f7": {
+      "path": "devs/tailscale.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "9131f1d9c45dd3485532f640fc995ec69d5efcd6aa773ebdf250d2a27828334b": {
+      "path": "devs/txt/sublimetext.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "57e77ae37b24a3cfd292ed94cc43fc1a847c8bec47cf095c8c03511bfcb63d5c": {
+      "path": "devs/unity.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "8f91c88626f794239b7af69a54ed56639174cc1de30228a5cb6af615b8cbf383": {
+      "path": "devs/virtualbox.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "3b9fa4f83b6f2d491ff3a34c16d87446a5346b1f14c61046ce683c3acb2d53ec": {
+      "path": "devs/zerotier.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "741bd499a8ddcd07e652355df688ae54e3b719fa56b321aa48cb30bbb51904f7": {
+      "path": "edu/tacwriter.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "326ab3bdf1e8a2596fbf0efb53a759bdad7810438d28f029225e765340d8d551": {
+      "path": "extra/ananicy.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "c258a980eb9cb025cb555580c3436677e829ab4301d1745314846ebdc92669f1": {
+      "path": "extra/apparmor.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "337586fed5ba851bdbc1f2f385416684a83cba16b15b7af40ab3f078d903a667": {
+      "path": "extra/archsb.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "b23faf8106e769acc1870aa91c91d810ca5205a87ef4982d090dcc1f1d82bb15": {
+      "path": "extra/bbr.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "ed5a5b2e27f1ff4a61af115bc296243a024b1cb23d005334c3d9df517904f5b5": {
+      "path": "extra/btassist.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "1a7ab83fe8a9949209ab215c82b6817322ea93ce9429db286c43feaa05aeb05c": {
+      "path": "extra/bwrapfix.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "79b7583e128ed16d8412edccb014df593ac60d8f340fbef09844090a37311bc3": {
+      "path": "extra/cachyconfs.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "7a948a36f93592c24e829da5a3551e61bf0cd208ae820e11d6eab0f945cc4456": {
+      "path": "extra/cachykrn.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "0d6ad46f897d5aa4ad31b562c79f342404a6832692d6b441abfca4e4f3d632cc": {
+      "path": "extra/cnfh.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "dca222f86e904936ae711b39677d9a70ea0bc7bf60e399f75661ffacd48eb5de": {
+      "path": "extra/codecfix.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "0a775a8a397262a2e567ffe7a6fece11836bd9b64accd02b4c3e4aa677d05f7c": {
+      "path": "extra/corefonts.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "f215ea868d3ffbdd201933500230b1b1db28dbd94d3a9dff19c30e6f4d69034d": {
+      "path": "extra/dnsmasq.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "a372dcfef0db14d7d5dfbbb0d6d93e29599dbfa2c679edaa173b4a0f77a7a23a": {
+      "path": "extra/dsplitm.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "b90c1e38503c09aa1103287e5e67bcf3892f974a59c0a5889099c61503b0c9cd": {
+      "path": "extra/earlyoom.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "cdc26fe02c983bc96a48ad12bdfe0d4ed04bbb4dd56bf003502c9539c0f341d6": {
+      "path": "extra/grubtrfs.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "e6a0acffd8eec2ecdc2d492c1a786112b30ecb1c079e8f4e782e7950bab9077a": {
+      "path": "extra/gtk-bmg-fix.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "93d5b1c2fb6a1f393c979c4ffde653c8b448139a997287442b8e019502e55ee4": {
+      "path": "extra/iwd.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "98093925b16afad7ecbf159034332c74b5b3f6d14c14caf6f940415eb501e3bd": {
+      "path": "extra/kconnect.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "ddbf8d729c5610f3bc8285af1a60d1108eecca1fc6a4642a0aa8a602e6babbad": {
+      "path": "extra/lsw.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "4280133cb6c89cba90873d7e6794992555996eebcede9c1819aba07e24503d10": {
+      "path": "extra/minfreefix.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "4a6281bb52afab78977fa975b3fffa59571cc58be2846eede8e5d907e945e543": {
+      "path": "extra/mtuprobe.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "65e27582a3dcf4c79f19d811c2abc1ff2dad303e1da1098d349dee27a12dd9bb": {
+      "path": "extra/ondemand.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "bede435e127ecd9f3e6c4c3ec549e5a8c724b245a3ad919d7ebba88b50c67e6c": {
+      "path": "extra/optivram.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "44e3fdb5c69efe3b9021634a5ae55b72b087551359b4aec359f4a86ce58f6d9e": {
+      "path": "extra/ostree-autoupd.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "481994c77e7d38d3a421e9037fba49c4e0c03ff5eb23aab79004bf6b08a1394b": {
+      "path": "extra/pdefaults.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "4003d4b44275551382c0b59f0d645e403449e8f32b70c1dd16cdba85aa618a83": {
+      "path": "extra/preemptfedora.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "6f1d33941175fe9d08e74f23bba0f2e889289e1ec435b90601e5862e7bc93e63": {
+      "path": "extra/preload.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "389bda31b558a6c2986019ba48ed6dc94ab8a73748c393446338dce75646696c": {
+      "path": "extra/psaver.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "39844ac4f3d2a9ea07105bf8c4c3c9928855e918bcd62b0a02a95b4c0af34c63": {
+      "path": "extra/sboost.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "5c918d069f448fa64f2ef6e3dd3d58e4991d8f34bb9ce21a14a47bf4941e8f79": {
+      "path": "extra/susefix.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "0be43e0b6619181f57d5afa25c61f79d28f230da43a979a42b2b94f0ba258b25": {
+      "path": "extra/swapfile.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "e55a83c5c86ad6280afd2d0fdf9bea2ef114634e935ccb7112a09280cfd54835": {
+      "path": "extra/ubuntuv3.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "a6577b690bd27ff0e93bf7992dd9ea003bbe147e3bf9dc0548c280298bd0d9cb": {
+      "path": "extra/ufw.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "be01e84903bd3e0ee4717f1f12187667d0307ddbf1f93da67a614f7a06b45cc4": {
+      "path": "extra/umip.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "d8a2e263690f43e8787ad66ae62e2e42213061037883e99e6710605a95dbac00": {
+      "path": "extra/wayproton.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "e67b2137d0afc9ac43185fa96996db92d7259c15f2bc2bbf1a295a6ed904a828": {
+      "path": "extra/zram.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "90cd4bfc237d8a4ab646f785b9716781d7e32bcf8953527261f832c6aece4bc6": {
+      "path": "game/gfn.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "43454fd2d57df25633db39e9b60821c79b30de4a32bb921ec5e21308fd7e681e": {
+      "path": "game/gscope.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "4d94e12ada331e3b7dbb19650e5ed299d8069d4f5f745411445fb5d717973a16": {
+      "path": "game/sunshine.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "0ddc509131d26d5eac32df9e14ee7d4130e0697a996dc92b3818ef1ff21daad7": {
+      "path": "health/accessibility/atkinson.sh",
+      "architectures": [
+        "x86_64",
+        "aarch64"
+      ]
+    },
+    "44a8f6b82ad89d47597260fa55a6a6572a1a065e20346b19180033cdd1019909": {
+      "path": "health/accessibility/opendyslexic.sh",
+      "architectures": [
+        "x86_64",
+        "aarch64"
+      ]
+    },
+    "ba7fc1bb64da2b9aaf3906896a07e54a18b629b189e8de7380601171545370a1": {
+      "path": "health/accessibility/typeboost.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "ef7394251447b668e0b5c03486821f8615559cdc45d61fb6a34786cc58071ed1": {
+      "path": "lists/androidstudio/android-pre.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "40e303eee1c24f019529342937ffbd1eac5ba80d3435c88337d82de260aa1a71": {
+      "path": "lists/asusctl/asusctl-pre.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "3ad386eba800eab039e9f8a16f468989566cb9f6026d395c36ddf57a4bdd5e14": {
+      "path": "lists/blender/blender-pre.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "169a98469f1fad1176f33befb161e3eac6a89f5bf1e87c1dd19150e5393eb5c4": {
+      "path": "lists/ghelper/ghelper-post.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "8e9884ab060f98281d082a0ebdc4d55db40c649fc2d43c56c28c8ba09e93595b": {
+      "path": "lists/gimp/photogimp.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "55686f447125ae2d0f86e94aee378dc735ceb960c5ecd0f2b1bc64dd57b6fe6a": {
+      "path": "lists/kdenlive/kdenlive-pre.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "a26b6583220578b2fab3f450a2a64ab11255b799f5f17bba74ee2c1851fcc476": {
+      "path": "lists/localsend/localsend.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "7119074abf07ee864f9eb53791e75570f9d018e8af420aeed68b0a9a67c59285": {
+      "path": "lists/obs/obs-post.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "7c30886ebb490c76c555e855c3fe18eb082553edc232ddc0d1d9ac88efc98148": {
+      "path": "lists/punktfunk/punktfunk-post.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "092452f9c051eb1f8d1317d56151f2b59667b3f11e2c39ee808f3e96027308fd": {
+      "path": "lists/punktfunk/punktfunk-pre.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "9c41f29aa7bc408ac8a0c5f8f3531a557be7650c8e9a9099dee14d72f52ef388": {
+      "path": "lists/slothbash/slothbash-pre.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "1a595abcd90f71a6f96ad38b6ade31e63d6f19116b5c438887469a18a2471877": {
+      "path": "lists/steam/steam.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "4536911ecf2e5cc9142e1f8556163ce5363d188b925e8e711a2b99289100d15b": {
+      "path": "lists/volt/volt-post.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "1a71579a2c431b7900c34232083665507a443a1422f991c56a2a294df75eeeee": {
+      "path": "lists/webmin/webmin-pre.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "4d84f0b7bcb630b5e8f048e33e08f1f6c818df2329c625ad4e81a5ddb83146dc": {
+      "path": "lists/zotero/zotero-post.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "e8e34f7be4e320a20fa34232f6df3e90ccf173e0c4c06f6be6eba8aec1488ee0": {
+      "path": "network/p2p/activedirectory.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "d70f465dfd4ff5f3b9260a24d193d471eb4049c4fb186eb6fb13d60b6c0c9168": {
+      "path": "network/remote/anydesk.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "aadfed08101aecee4bda95c5da93e6be0df4d1696202f48077ede78d96376ce8": {
+      "path": "network/remote/cockpit.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "6a5c85727fecbc99ef62b4267ce99dd5d0fc8025be54c58c02d8c597040bce3e": {
+      "path": "office/boxadv.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "79f75e4b3ec764695b572da140a1277534426494af18079abf1f9bc033a264a2": {
+      "path": "office/fin/mt5.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "11a1b01987a2af98c002a4231593b0bd43127944828d7df9552b9604feb9b384": {
+      "path": "repos/brew.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "471747f51addda63b837caee5fb2d27819f8381c05b3b35b5c78d85ae8db9b77": {
+      "path": "repos/cargo.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "d6b05cda1b4fa2889873d40821a15d78d323bad06b6e6e131319b795aef38bea": {
+      "path": "repos/chaotic.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "bc9414032b92471167ed36fa8f8a8cef018a4f265c7f87dde50a4708590291b5": {
+      "path": "repos/flathub.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "cf3a823ffe03c3d8ad733b0f95ad5b4627b7c66bd2a98e0c37d0121921ebc1f3": {
+      "path": "repos/flatpark.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "666dea328a75b230a14255d791ae11f778ea4dac86131ecd99c3013052815fbf": {
+      "path": "repos/multilib.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "11c7d815ffde36e65d85ce5954356e6d91e659aa36d5001c32340c0e0529fab9": {
+      "path": "repos/nix.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "e734af51cf4d8b630aedabbe0285adc167524e0a6747321e5c622e26064338b0": {
+      "path": "repos/pacstall.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "e05067655ca06f569d83cbf61af50206a96948f10ddd42c08caaabef046fe08f": {
+      "path": "repos/pip.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "875c34d372c06de86457293931641e5294903eb688b56e2f4c09cfe162f6e0d2": {
+      "path": "repos/rpmfusion.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "0392bb9cb22858f4a179a2919abdcd563d8896060076cdb3f312e3fdce965edf": {
+      "path": "repos/snap.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "70a120d92c70c839fc7cd8d8d81ec22d86a4d40515ec8b7acf105b0f4cb5b877": {
+      "path": "repos/terra.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "6b82f045426696be0cde144226418fc8190db7f61ae28b7e24418ec0469adde7": {
+      "path": "sys/drivers/amdgpu.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "49fc0d5a9939c33086dbd1ca9b4359d08f326b7615244ace5b87f983bcb9d36e": {
+      "path": "sys/drivers/ax900.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "e19c2834012cdafbc82774f55a8331f02a98be1ae0a9bc9282baf39915909c68": {
+      "path": "sys/drivers/bcm.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "ad84d9bd5d55c81e560f2e79232f1b824598d0b0860c7af0ab85d1a429a67c32": {
+      "path": "sys/drivers/damx.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "7ad93be921d14c5de71a2f333b4d720ce3076edc5d875c80f9ee7670f6b2399c": {
+      "path": "sys/drivers/icr.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "e22d2e0c975d787747d89fdc67a3cdaa129f840948c8305791ba83021a68ddc1": {
+      "path": "sys/drivers/intelxe.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "ce22eb592ae0acc3e63daafd47dec86647ca6b1c7eded50a7bf9e691c53ab2d7": {
+      "path": "sys/drivers/kisak-mesa.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "64fff73764f6ae63ba2917f62b0c1e8cd53b5cbd877a392a6345e26350c90439": {
+      "path": "sys/drivers/modsign.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "13c932dbca206cbd16c7dfee47414f88bba96220bef5e1f56544aa674aa0c9da": {
+      "path": "sys/drivers/nv-580-ostree.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "04ef6884cde4dd84b91a9dd05375811277abdf2538b670030a3a43251574c309": {
+      "path": "sys/drivers/nv-580.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "fa4e9f3a5fc3d6178ef75237cf062dc5df715a66b252ab227af5d12d834aa739": {
+      "path": "sys/drivers/nv-deb.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "027a32f1ab42524bda2b5aeadd7f5315b150ebc027f0b387d66196674079acd7": {
+      "path": "sys/drivers/nv-ostree.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "f9c8441bc6732fdeb4712f3a76a64ea0f775d06b0caad8c3e971fb64ef00f4a4": {
+      "path": "sys/drivers/nv-pacman-470.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "79ee7353e318b9b45ac104fae8cc0b9a41f7989e59cff94171bafaeefac9b9bb": {
+      "path": "sys/drivers/nv-pacman.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "1872f749df10dbcf97513e3c1321abf6a9d29766b56036632575b6ac3a8d238a": {
+      "path": "sys/drivers/nv-rpm.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "77499919c291dc612570aff053fca2375fe0fbdc609cecc75e2dabd903bb417a": {
+      "path": "sys/drivers/nv-solus.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "2bca255f80d1618e38b7fd7d675c8599869fdacc64a471f16c422801fa8c9582": {
+      "path": "sys/drivers/nv-suse.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "b91233c000465ce69ccb9aa9cdf0c9971734ba4b77da361dc3bd2273f6cdbfc1": {
+      "path": "sys/drivers/optimusui.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "b8449e2c3e8854b628c39edac7163105d6f99a81c0846a9e1a4462c08449d566": {
+      "path": "sys/drivers/rocm.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "f575fb203ded8f7b5827a1993c5517018dab1c4fc7b9732a71e87f3942370d02": {
+      "path": "sys/drivers/rtl8821ce-arch.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "a93ffa46fad21f863729c991aa60cbb9f171e65a1803e9de861e5c1d03c07300": {
+      "path": "sys/drivers/rtl8821ce-deb.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "53b2e6fa32b29d43ae64f01bf60e60cc988bcfa6050cff0fff862e42dbff524a": {
+      "path": "sys/drivers/rtl8821ce-rpm.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "d3d8ecf7a9ab2e67a10db0298730f766db304200ec89e1694e99032a8ec75597": {
+      "path": "sys/drivers/rusticl.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "b12db90ad21857cb5cf5b61c09299f60d438f503bf54dfba8d2932e55a16e1b5": {
+      "path": "sys/drivers/xpadneo.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "5d623e53a9f64b25144e27a9857d7d8be7202b82ee06d64a9c6686cfe03e5e24": {
+      "path": "sys/medicat.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "21089fd3046ee540206eeff74e1beb34a89e6e0130c2718cc979377772ddd774": {
+      "path": "sys/sec/cloudflare-warp.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "06ec899f787140cdb2305fe2f354f3d27f1bf8e498e2ac589c12d27352a9ba1f": {
+      "path": "sys/sec/express-vpn.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "07785a0b89641ea30b33bbea17effe53fe51140b5a8894337c69666ee43e579e": {
+      "path": "sys/sec/hiddify.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "8e2f567c39dfd9e65d229e3652ba0402e31ce4d16cb7bc4510fe821a1c6384d7": {
+      "path": "sys/sec/ivpn.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "3bf15a4f525b12e71658df9c2eb07efb60f24784c76de2334ccd818996ca08fe": {
+      "path": "sys/sec/mullvad-vpn.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "c4502ae82f7fdbbf473f36d59bf22738031ae137dbc299eed6be5d47696ad820": {
+      "path": "sys/sec/nord-vpn.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "194c79210db32e21dee12e11659aeb23198cdc0bc256c099d2c3578d5ac71099": {
+      "path": "sys/sec/windscribe-vpn.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "db07c742b762205d023aabc7d883d490d1942e4cbab5a105af5c3fb426b46e84": {
+      "path": "sys/sec/wireguard.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "18e82294893373bc1ba9ba3b853118dfac5396686eff24147ee405986fb57116": {
+      "path": "sys/sysadm/archupd.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "8909ba361deb7301b0e42851159c29de3ce34fb1b4ba89f2185944be598b5be5": {
+      "path": "sys/sysadm/paru.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "309ee1123f7591c90e0bed737ff85fa011e5831342aa2ddab7e5f3f87d1d51e4": {
+      "path": "sys/sysadm/shelly.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "acc739c98c4949c9cd4fa731e6fa279f2ed08fda7a1f1c22a6b32bd2d5a44425": {
+      "path": "sys/sysadm/solseek.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "cd59dc2de0fb77767633028aea98bdb6cc300849bee5e2729c496f17f26bcc3e": {
+      "path": "sys/sysadm/topgrade.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "409ac883342501b685bde64fa6b5a6aea06c759fac6d6bd22da7806e66f57167": {
+      "path": "sys/sysadm/updater.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "ae78e45178912872266cb9c943568f4c87c2b2500e3dec707e98430ea5784d2c": {
+      "path": "sys/sysadm/yay.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "585f99759982225ca03b5472bc2607db4b9a4b1f7ad24f9d4a7ebcc6111b2885": {
+      "path": "sys/zashterminal.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "c35d95b45daece7b808adcb1ec0d6061a92157043e3d345da33285459e6a8fd4": {
+      "path": "sysup.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "ff32d25c34a98ab2273cdeaea81994fd960ec4e4ecbe84d686bd1adc0bbe5e3f": {
+      "path": "utils/distroshelf.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "e1458622e801fc5fff18bc1bd4463d269e04e0fa502fbdfc92dd00c122d36d45": {
+      "path": "utils/nerdfonts.sh",
+      "architectures": [
+        "x86_64",
+        "aarch64"
+      ]
+    },
+    "0724477706ab762ad8f069ed6edf446ae2707e3d8898f926ee5f8afe30e646ae": {
+      "path": "utils/occt.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "54c7d0cc43303e756d01bc755058ab0520550d393a2cdccdd9c73d556f4a6dff": {
+      "path": "utils/peripherals/openlinkhub.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "1ff12d8fe1ae2f36400efdb303b0a1af691e9ae40962eb386f0b69b72c0806f6": {
+      "path": "utils/peripherals/oprgb.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "023e0e1188281b2dd8df72667dac48feb4207bd6995bcfd030d69d95acf40cbb": {
+      "path": "utils/peripherals/oprzr-ublue.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "abfe97c87f3d98f90c105affdc73d29f44a1f54bc1d114586073b0617cc9289f": {
+      "path": "utils/peripherals/oprzr.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "f2f7b9183d991fad8eb4e9b60a385cc435972b0b1d524968bfe4449c8251da66": {
+      "path": "utils/peripherals/piper.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "bec7d96be5b374797df3f99defbc9d43b9c1e70f625639ae1fd078610fa5f903": {
+      "path": "utils/peripherals/remapper.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "3f84a0eee587a9dc550fa92b96d169f56bcb70a3d3287ebac81088602982f6c8": {
+      "path": "utils/peripherals/solaar.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "1fce88ec10650d458252eda539fab7c430fe9929a239fa41853e97f104dc6d23": {
+      "path": "utils/peripherals/steer.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "1727d5a5fe3eed960bfa9c7d9f5b72ba0f66544dd03a4553133bd8a7bbe3ef02": {
+      "path": "utils/peripherals/touchegg.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "3a51f9ef31624176c9b0b5a69a80ea41e820d19cd7df458cf3537bc678fb0e20": {
+      "path": "utils/peripherals/udevpass.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "6752356cdc724fa10f5b04a66e9c10869aeca4427f77e79232406f323908f910": {
+      "path": "utils/peripherals/wivrn.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "ede5dbd277d8438681ce343a0d7769089871d377f6518b48f7dbd1ab74574773": {
+      "path": "utils/theming/flattheme.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "52d08314d5d0955d94a40aa75dea9534bf2c69c2d1e05eb7791dc920c3e28ef0": {
+      "path": "utils/waydroid.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    },
+    "1a754cbcb665cfa55c76466606e3522a9c952ee10939c73a9a3a4c3130227a1f": {
+      "path": "utils/waylume.sh",
+      "architectures": [
+        "x86_64"
+      ]
+    }
+  },
+  "catalogs": {
+    "Recordly": {
+      "repo": "https://github.com/webadderallorg/Recordly",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "73d60adcbdace525b1bcd9e4734a97b13294dc3e80a57118690f9cbfef758ec2"
+      ]
+    },
+    "Figma": {
+      "repo": "https://github.com/arximus88/figma-linux-next",
+      "architectures": [
+        "x86_64",
+        "aarch64"
+      ],
+      "declarations": [
+        "336f948080fc9e0cd5accecca63452120e40a7caaa0d87c074469e20ac9464c1"
+      ]
+    },
+    "Audacity": {
+      "repo": "https://github.com/audacity/audacity",
+      "architectures": [
+        "x86_64",
+        "aarch64"
+      ],
+      "declarations": [
+        "4dba12ad3e8ca9ec02d65e634ce8729418ea8bfca6f2c1c5bad459c5aa488684"
+      ]
+    },
+    "OpenLogi": {
+      "repo": "https://github.com/AprilNEA/OpenLogi",
+      "architectures": [
+        "x86_64",
+        "aarch64"
+      ],
+      "declarations": [
+        "5bda04ba3caca03fb4e5ceb91aaefaaa59d06982fa96181384a747d02af69531"
+      ]
+    },
+    "Amethyst Mod Manager": {
+      "repo": "https://github.com/ChrisDKN/Amethyst-Mod-Manager",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "7401974d3120b3f170e31730631ba530152ebfffe109b8d0bec2902bcf60efee"
+      ]
+    },
+    "OpenBoardView": {
+      "repo": "https://github.com/OpenBoardView/OpenBoardView",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "ec48caeeaee0dd8f6f4d668952fd1ea8ede7152ad1cfd693e5b4d163f8be0eb2"
+      ]
+    },
+    "ZenNotes": {
+      "repo": "https://github.com/ZenNotes/zennotes",
+      "architectures": [
+        "x86_64",
+        "aarch64"
+      ],
+      "declarations": [
+        "53a163c397d7b8d24b0d1fc3c41278908ffa2400c9c49f0896622d21b845fab4"
+      ]
+    },
+    "Gamemode": {
+      "repo": "https://github.com/feralinteractive/gamemode",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "a09fddb49864204af7168936467bb7bc9dc0707fab1674e06f0908745f2089af"
+      ]
+    },
+    "LeShade": {
+      "repo": "https://github.com/Ishidawg/LeShade",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "8f0822c7a7849c89a5bcbce4b0cf214d978256ddc33166416d92825756a68d21"
+      ]
+    },
+    "com.dec05eba.gpu_screen_recorder": {
+      "repo": "",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "1f5ae34861de7a26a32079c0604362d81d063d30930018c41d0b92a95dc630f7"
+      ]
+    },
+    "com.valvesoftware.Steam": {
+      "repo": "",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "592547bbd3387700b474cc66b8f8aef29c901c9a6959f4c9c222ac51e18f01e4",
+        "49b65be5816a0bb42d42fc5c48196445549ed9007ef796ea4a70d1267dc271e5"
+      ]
+    },
+    "Heroic Games Launcher": {
+      "repo": "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "b1959412adcc85fad204081fc772c60458bad0f9e3fc71fafacb78260ec9a7b9"
+      ]
+    },
+    "MangoJuice": {
+      "repo": "https://github.com/radiolamp/mangojuice",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "31acf11a6100045d2564be8a78dc9688b2f037da3e0a3772d200667580ae7d41"
+      ]
+    },
+    "io.github.Faugus.faugus-launcher": {
+      "repo": "",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "24c01e7640c291984aebb756eb5faea56e321fa8d357a391bc4f0451c67c8cc6"
+      ]
+    },
+    "GOverlay": {
+      "repo": "https://github.com/benjamimgois/goverlay",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "70a9a06849c0344d771d50d03a801e7cce7bee0fd4defaccde2a94310666914e"
+      ]
+    },
+    "QDiskInfo": {
+      "repo": "https://github.com/edisionnano/QDiskInfo",
+      "architectures": [
+        "x86_64",
+        "aarch64"
+      ],
+      "declarations": [
+        "6c504296e672f02726357c74a64e16475bd80230ee2969861f9b5ce11ccd6116"
+      ]
+    },
+    "Helium Browser": {
+      "repo": "https://github.com/imputnet/helium-linux",
+      "architectures": [
+        "x86_64",
+        "aarch64"
+      ],
+      "declarations": [
+        "03b841ce7088942dd9d2ecbfc1233a784bc35d9605c07e9829aacc36f1b7872c"
+      ]
+    },
+    "QtScrcpy": {
+      "repo": "https://github.com/barry-ran/QtScrcpy",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "169eaa44a59ee2775c8495e182f5f55dbd9dcbdc1e0959e9d7bb538319ae94fe"
+      ]
+    },
+    "F3 (Fight Flash Fraud)": {
+      "repo": "https://github.com/AltraMayor/f3",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "bc44a1a42b1b0c61d258f1ef1ad394582369dd1a1b328f94aaf1181b67782ea3"
+      ]
+    },
+    "Nala": {
+      "repo": "https://gitlab.com/volian/nala",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "273b51ee0a8244f3129e2d783adad1d9813cfe1819ac05b43ff6828a7e598e5e"
+      ]
+    },
+    "HTTPie": {
+      "repo": "https://github.com/httpie/desktop",
+      "architectures": [
+        "x86_64",
+        "aarch64"
+      ],
+      "declarations": [
+        "21be5885715be36324d73d1fb194e6b72e61752ae9e6a2a4a6195b0105187193"
+      ]
+    },
+    "Maven": {
+      "repo": "https://maven.apache.org",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "c80ccfcfdff1d48f911dc8b5a5866085955a66c315581b2dc9155ea8bc57cb60"
+      ]
+    },
+    "Postman": {
+      "repo": "https://www.postman.com",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "5d4e8c82d8b7f11f11696b8fa348dd397080760877d493b0940e8b6c088beb09"
+      ]
+    },
+    "LM Studio": {
+      "repo": "https://lmstudio.ai",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "8c609c60181ed4270e5d4fc00012fdc8d13411847d12f5fc2435cd051ff63a5a"
+      ]
+    },
+    "Rclone UI": {
+      "repo": "https://github.com/rclone-ui/rclone-ui",
+      "architectures": [
+        "x86_64",
+        "aarch64"
+      ],
+      "declarations": [
+        "efc173833c69979a806316e86d054ff01a953a07b95bf4141427673d303a0393"
+      ]
+    },
+    "Quarto": {
+      "repo": "https://github.com/quarto-dev/quarto-cli",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "cd19d3dab7ff82c71e241ce81f16416fe683c7201566a092642a019c15847f10"
+      ]
+    },
+    "R": {
+      "repo": "https://www.r-project.org/",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "ce5ed46c21b795768613be407c6c45745d2cdb1b9328e65494b0d5fc36b81a17"
+      ]
+    },
+    "at.vintagestory.VintageStory": {
+      "repo": "",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "02f7e94b61aeef8a293cf11b48ba17cafb8dc1775b66c0b0f3cdf46006d18bb2"
+      ]
+    },
+    "Android Studio": {
+      "repo": "https://developer.android.com/studio",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "e0920d1867b8a6a8363ce76845b495bc5482b54336148f0feceec6049bb0188d"
+      ]
+    },
+    "ArtCraft Launcher": {
+      "repo": "https://github.com/storytold/craft-launcher",
+      "architectures": [
+        "x86_64",
+        "aarch64"
+      ],
+      "declarations": [
+        "d6c39090822555193783f76e7f6172750907da3bfcc9489b50545218e86a63b5"
+      ]
+    },
+    "ROG Control Center": {
+      "repo": "https://github.com/OpenGamingCollective/asusctl",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "e905be70a01d84e5247ca0dd40117cfb22b33da6f1dabf981e2c40c51ac1ca82"
+      ]
+    },
+    "BedrockOnLinux": {
+      "repo": "https://github.com/Wyze3306/BedrockOnLinux",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "55b5c00ffaa5dcdcca7bd41108279609d74ef1ad32315b4e01cf63ca5274c282"
+      ]
+    },
+    "Blender": {
+      "repo": "https://www.blender.org",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "601439f61a121aa1e6927b7bedea7b79e4530528d9000a20089468825800ff56"
+      ]
+    },
+    "CutWire Drift": {
+      "repo": "https://github.com/CutWire-Studios/Drift",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "ceb375b058b49ead3d20b1f838110745b64545a8e47ef46cc808aa67cb9346b6"
+      ]
+    },
+    "CutWire Prism": {
+      "repo": "https://github.com/CutWire-Studios/Prism",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "69e0e110ef35b98f8fb6da5d605dc95f324ebdbf7e5879de4dabf1ed6d3dd514"
+      ]
+    },
+    "Epic Games Launcher": {
+      "repo": "https://store.epicgames.com/",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "b3673f304b3c9e8714f964c3bf0969d630bb3bcecc13a1701bf5221069532412"
+      ]
+    },
+    "G-Helper": {
+      "repo": "https://github.com/utajum/g-helper-linux",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "26602cc466cc1f350b2c8849b7e7ea6836bbbdeba91bea89dd4048d068a3d846"
+      ]
+    },
+    "org.gimp.GIMP": {
+      "repo": "",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "23be38ba3667a18f395a5203bdc5028b0f7ae2f1d24e4d33d7015266fac27d3f"
+      ]
+    },
+    "Kdenlive": {
+      "repo": "https://kdenlive.org",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "4afce7328ad395ec00cb1955f2c4d4cc274874f3cb87f7f859e01cdcd7f23927"
+      ]
+    },
+    "LatencyDevil": {
+      "repo": "https://github.com/psygreg/latencydevil",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "daabe3b7017cccffd11f42050f612e9a1682d61274829a8566d966a221678855"
+      ]
+    },
+    "org.localsend.localsend_app": {
+      "repo": "",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "6dc1056f067e94030808a08e09d4d6e74b18fdd3367297d2303d130ed3de9205"
+      ]
+    },
+    "com.obsproject.Studio": {
+      "repo": "",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "bc3639b68ec8111cf81f6bdeeb6f0f042c6e38671fc0821e393537e44fe0f8ff"
+      ]
+    },
+    "Optiscaler Client": {
+      "repo": "https://github.com/Optiscaler-Client/Optiscaler-Client",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "11a305765a1a8429d2ec34e336cbb9472269ae6648b36870370162dac2404b62"
+      ]
+    },
+    "Photon Studio": {
+      "repo": "https://tenzen.studio/photon",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "4a3daef9b51accf23ef0bc4282a53372b434bedb6fbbb66cb745303e21e04449"
+      ]
+    },
+    "Punktfunk Client": {
+      "repo": "https://punktfunk.unom.io",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "427d8281d3e12334a590adfe0593ba5621cb6b6cf87a3b1a0f36cfacaed1d5ac"
+      ]
+    },
+    "Punktfunk Host": {
+      "repo": "https://punktfunk.unom.io",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "12687556ad38b5551065fec5fe577bcb7e0009dccd74f5f9904a9c96ee44ce87"
+      ]
+    },
+    "Sloth-Bash": {
+      "repo": "https://github.com/psygreg/sloth-bash",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "df6cf4ade9721b4a5e36ce9708ed8e3dd9608effb071057647cc59c8c9e85217"
+      ]
+    },
+    "Volt": {
+      "repo": "https://github.com/pythonlover02/volt-gui",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "e1bd33baf5ba970749e81e239615693cc5dd20936f635f4a2ae36972b6083ac4"
+      ]
+    },
+    "Webmin": {
+      "repo": "https://webmin.com",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "7c16dc0ad7801262bd570c664e95ab6e726d32426b1a9db3c7a939708717f457"
+      ]
+    },
+    "Zed": {
+      "repo": "https://github.com/zed-industries/zed",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "485ccf81cb6dbd5fb9c2c9116ee0161088b4a0b5e271e3f31cd8c44f569e5180"
+      ]
+    },
+    "Zotero": {
+      "repo": "https://www.zotero.org",
+      "architectures": [
+        "x86_64"
+      ],
+      "declarations": [
+        "002e615ff657af4879b0ea1e347714650217e42d4bd471ab1cbc9b580b8ecd46"
+      ]
+    }
+  },
+  "inline_hooks": {
+    "aae2f2f4f239ff4bb47ec37f318d140b151027bb9dabba2d99164a609db99c65": {
+      "architectures": [
+        "x86_64"
+      ],
+      "feature": "Gamemode"
+    },
+    "24cfa87f5ad8f45286e7330edff19d3870688ccbc2ef3dbfef1227c63f456e49": {
+      "architectures": [
+        "x86_64"
+      ],
+      "feature": "com.dec05eba.gpu_screen_recorder"
+    },
+    "c87a49ca4b0b79b5bd0b8067717e43ae278677c49db059f8bae1a727c9c8f12c": {
+      "architectures": [
+        "x86_64"
+      ],
+      "feature": "F3 (Fight Flash Fraud)"
+    },
+    "171936c9b5fb7f22ec15418719f4352813afb415f1b73ff47ae5155cd9430df4": {
+      "architectures": [
+        "x86_64"
+      ],
+      "feature": "Postman"
+    },
+    "5f831a9ff4c420a45a5452e4252189054396927e9016a01287a95ceae3198c3d": {
+      "architectures": [
+        "x86_64"
+      ],
+      "feature": "Quarto"
+    },
+    "9aa8be848fafcd618ff26172ccfaaf8644cd4ea5cd9cae1d05e80534fce7a062": {
+      "architectures": [
+        "x86_64"
+      ],
+      "feature": "Android Studio"
+    },
+    "637095ec051af5472885874c8f79a80c57e040c72711ed83b02f61c5cb560e36": {
+      "architectures": [
+        "x86_64"
+      ],
+      "feature": "Blender"
+    },
+    "3cdaa73b4613254671eba13308c3cac9d194f36a84aac3ae313b2a9ab155cc41": {
+      "architectures": [
+        "x86_64"
+      ],
+      "feature": "LatencyDevil"
+    },
+    "6731e4f00e4d8aa542193e613119789d8fac1b36e69cea9f53050b6bc5e71f3a": {
+      "architectures": [
+        "x86_64"
+      ],
+      "feature": "Zed"
+    }
+  }
+}

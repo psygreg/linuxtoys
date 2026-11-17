@@ -1185,7 +1185,10 @@ def _flatpak_appstream_sources():
         base = remote["root"] / "appstream" / remote["remote"]
         if not base.is_dir():
             continue
+        from .architecture import label
         for arch_dir in base.iterdir():
+            if arch_dir.name != label("flatpak"):
+                continue
             active = arch_dir / "active"
             if not active.is_dir():
                 continue

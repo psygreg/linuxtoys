@@ -21,7 +21,7 @@ bash build.sh (version) (path)
 ## Build Targets
 
 - **copr/**: Build RPM packages for Fedora/COPR (requires Fedora distrobox container)
-- **deb/**: Build DEB packages for Debian/Ubuntu (requires Debian distrobox container)
+- **deb/**: Build DEB packages for Debian/Ubuntu (requires Debian distrobox container). `build.sh --native <version> <output>` builds a local native-only DEB on this host instead (no signing/upload) — the ARM64 development build path: the host must be Linux with a matching dpkg architecture, the reviewed script bundle must validate, and the finished package is payload-verified (`package.py` + `architecture_cli.py`).
 - **pkg/**: Build AUR packages for Arch Linux (requires Arch distrobox container)
 - **appimage/**: Build the universal AppImage via pkgforge quick-sharun
 

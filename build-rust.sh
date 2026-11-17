@@ -107,7 +107,7 @@ build_python_component() {
         mkdir -p "$OUT_DIR"
         (
             cd "$dir"
-            maturin build "${COMMON[@]}" --out "$OUT_DIR"
+            maturin build --locked "${COMMON[@]}" --out "$OUT_DIR"
         )
     else
         local wheel_dir="${ROOT}/target/develop-wheels/${name}"
@@ -119,7 +119,7 @@ build_python_component() {
 
         (
             cd "$dir"
-            maturin build "${COMMON[@]}" --out "$wheel_dir"
+            maturin build --locked "${COMMON[@]}" --out "$wheel_dir"
         )
 
         local wheel
@@ -152,7 +152,7 @@ build_python_component() {
 build_gui_component() {
     local dir="${ROOT}/src/gui-rs"
     local profile_dir="debug"
-    local cargo_args=(build --manifest-path "${dir}/Cargo.toml")
+    local cargo_args=(build --locked --manifest-path "${dir}/Cargo.toml")
 
     [[ "$MODE" == "release" ]] && {
         cargo_args+=(--release)
@@ -162,7 +162,9 @@ build_gui_component() {
     echo "==> ${COMMAND}: linuxtoys_gui"
     cargo "${cargo_args[@]}"
 
-    local library="${ROOT}/target/${profile_dir}/liblinuxtoys_gui.so"
+    local target_dir="${CARGO_TARGET_DIR:-${ROOT}/target}"
+    [[ "$target_dir" = /* ]] || target_dir="$PWD/$target_dir"
+    local library="${target_dir}/${profile_dir}/liblinuxtoys_gui.so"
     [[ -f "$library" ]] || {
         echo "error: native GUI library not found: ${library}" >&2
         exit 1

@@ -76,7 +76,7 @@ _NATIVE_HELPER_WORDS = frozenset({
 # per-line by _line_enters_native_transaction below.
 _RAW_MANAGER_WORDS = frozenset({
     "pacman", "paru", "pamac", "apt", "apt-get",
-    "dnf", "dnf5", "zypper", "rpm-ostree", "eopkg",
+    "dnf", "dnf5", "yum", "zypper", "rpm-ostree", "eopkg",
 })
 
 _NATIVE_TRANSACTION_WORDS = _NATIVE_HELPER_WORDS | _RAW_MANAGER_WORDS
@@ -178,6 +178,9 @@ _TRANSACTIONAL_HINTS = {
         "install", "remove", "erase", "upgrade", "update", "distro-sync",
         "reinstall", "swap", "autoremove",
     ),
+    "yum": (
+        "install", "remove", "erase", "upgrade", "update", "reinstall", "autoremove",
+    ),
     "zypper": (
         "install", "remove", "upgrade", "update", "dup", "dist-upgrade",
         "purge-kernels", "in ", "rm ",
@@ -271,7 +274,7 @@ _FAMILY_MANAGER_PROCESSES = {
     "debian": ("apt", "apt-get", "dpkg", "dpkg-deb", "pkcon"),
     "arch": ("pacman", "paru", "pamac", "yay"),
     "ostree": ("rpm-ostree",),
-    "fedora": ("dnf", "dnf5"),
+    "fedora": ("dnf", "dnf5", "yum"),
     "suse": ("zypper",),
     "solus": ("eopkg",),
 }
@@ -529,6 +532,12 @@ def _manager_line_is_transactional(lowered, manager):
         return False
 
     verbs = _TRANSACTIONAL_HINTS.get(manager, ())
+    if manager == "yum":
+        # yum verbs collide with common prose words ("remove", "update"), so
+        # only whole-word matches count for this manager.
+        return any(
+            re.search(r"\b" + re.escape(verb) + r"\b", lowered) for verb in verbs
+        )
     return any(verb in lowered for verb in verbs)
 
 

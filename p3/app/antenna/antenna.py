@@ -13,6 +13,7 @@ import unicodedata
 from ..updater.update_helper import get_current_version
 from ..lang_utils import _
 from ..compat import TRANSMAP_PATH
+from ..atomic_io import atomic_write_json
 from urllib.parse import urlparse
  
 _REPORT_URL = "https://bug.linux.toys"
@@ -471,9 +472,7 @@ def _save_history(history: list) -> None:
     try:
         _CACHE_DIR.mkdir(parents=True, exist_ok=True)
         _HISTORY_FILE.parent.chmod(0o700)
-        with open(_HISTORY_FILE, "w") as f:
-            json.dump({"history": history}, f)
-        _HISTORY_FILE.chmod(0o600)
+        atomic_write_json(_HISTORY_FILE, {"history": history}, mode=0o600)
     except Exception:
         pass  # Fail silently to avoid breaking bug reports
  
@@ -832,7 +831,14 @@ def _rejected_for_logs(response) -> bool:
         detail = response.json().get("detail", [])
     except (ValueError, AttributeError):
         return False
-    return any(isinstance(item, dict) and "logs" in item.get("loc", []) for item in detail)
+    if not isinstance(detail, list):
+        return False
+    return any(
+        isinstance(item, dict)
+        and isinstance(item.get("loc"), (list, tuple))
+        and "logs" in item["loc"]
+        for item in detail
+    )
 
 
 def submit_issue(

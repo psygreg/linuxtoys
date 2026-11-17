@@ -109,6 +109,7 @@ def _run_deepin_immutable_enable(parent_window, translations=None):
         # Create temporary script
         with open("/tmp/.deepin_immutable_enable", "w") as f:
             script_content = """#!/bin/bash
+# architectures: x86_64
 source "$SCRIPT_DIR/libs/linuxtoys.bash"
 sudo_rq
 sudo deepin-immutable-writable enable

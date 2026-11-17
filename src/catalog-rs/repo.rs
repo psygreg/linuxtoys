@@ -1123,64 +1123,14 @@ fn normalize_git_repo_url_core_rs(raw: &str) -> Option<String> {
     Some(format!("https://{host}/{}", parts.join("/")))
 }
 
-// Alias table for git release asset architecture detection. The canonical keys
-// double as the `architectures` values stored in git-db.json and matched by
-// canonical_machine_rs at runtime, so any change here must stay in sync.
-const GIT_ARCH_ALIASES_RS: &[(&str, &[&str])] = &[
-    ("x86_64", &["x86_64", "amd64", "x64"]),
-    ("aarch64", &["aarch64", "arm64"]),
-    ("i686", &["i386", "i486", "i586", "i686", "ia32", "x86"]),
-    ("armv7l", &["armv7l", "armv7", "armhf"]),
-    ("armv6l", &["armv6l", "armv6", "armel"]),
-    ("riscv64", &["riscv64"]),
-    ("ppc64le", &["ppc64le", "ppc64el"]),
-    ("ppc64", &["ppc64"]),
-    ("s390x", &["s390x"]),
-    ("loongarch64", &["loongarch64"]),
-];
-
-fn is_git_arch_word_char(c: char) -> bool {
-    c.is_ascii_lowercase() || c.is_ascii_digit()
-}
-
+// Architecture policy lives in app.architecture. Keep the public entry point for
+// existing callers, but never maintain a second alias table or permissive fallback.
 #[pyfunction]
-pub(crate) fn git_asset_architectures(name: &str) -> Vec<String> {
-    // Mirrors the historical Python builder regex: alias tokens surrounded by
-    // non-[a-z0-9] boundaries, scanned left-to-right, longest label first.
-    let chars: Vec<char> = name.to_ascii_lowercase().chars().collect();
-    let mut labels: Vec<&str> = GIT_ARCH_ALIASES_RS
-        .iter()
-        .flat_map(|(_, aliases)| aliases.iter().copied())
-        .collect();
-    labels.sort_by_key(|label| std::cmp::Reverse(label.len()));
-
-    let mut detected: std::collections::HashSet<&str> = std::collections::HashSet::new();
-    let mut i = 0usize;
-    while i < chars.len() {
-        if i > 0 && is_git_arch_word_char(chars[i - 1]) {
-            i += 1;
-            continue;
-        }
-        let mut matched = 0usize;
-        for label in &labels {
-            let end = i + label.len();
-            if end <= chars.len()
-                && chars[i..end].iter().copied().eq(label.chars())
-                && (end == chars.len() || !is_git_arch_word_char(chars[end]))
-            {
-                detected.insert(label);
-                matched = label.len();
-                break;
-            }
-        }
-        i += matched.max(1);
-    }
-
-    GIT_ARCH_ALIASES_RS
-        .iter()
-        .filter(|(_, aliases)| aliases.iter().any(|alias| detected.contains(alias)))
-        .map(|(arch, _)| arch.to_string())
-        .collect()
+pub(crate) fn git_asset_architectures(py: Python<'_>, name: &str) -> PyResult<Vec<String>> {
+    py.import("app.architecture")?
+        .getattr("asset_architectures")?
+        .call1((name,))?
+        .extract()
 }
 
 #[pyfunction]
@@ -1188,34 +1138,14 @@ pub(crate) fn normalize_git_repo_url(value: &str) -> Option<String> {
     normalize_git_repo_url_core_rs(value)
 }
 
-fn canonical_machine_rs(machine: &str) -> Option<&'static str> {
-    match machine.to_ascii_lowercase().as_str() {
-        "x86_64" | "amd64" | "x64" => Some("x86_64"),
-        "i386" | "i486" | "i586" | "i686" | "ia32" | "x86" => Some("i686"),
-        "aarch64" | "arm64" => Some("aarch64"),
-        "armv7l" | "armv7" | "armhf" => Some("armv7l"),
-        "armv6l" | "armv6" | "armel" => Some("armv6l"),
-        "riscv64" => Some("riscv64"),
-        "ppc64le" | "ppc64el" => Some("ppc64le"),
-        "ppc64" => Some("ppc64"),
-        "s390x" => Some("s390x"),
-        "loongarch64" => Some("loongarch64"),
-        _ => None,
-    }
-}
-
 fn git_asset_matches_machine_rs(asset: &serde_json::Map<String, Value>, machine: &str) -> bool {
-    let Some(canon) = canonical_machine_rs(machine) else {
-        return false;
-    };
-    let Some(a) = asset.get("architectures").and_then(Value::as_array) else {
-        return true;
-    };
-    if a.is_empty() {
-        return true;
-    }
-    let detected: Vec<&str> = a.iter().filter_map(Value::as_str).collect();
-    detected.contains(&canon) || (canon == "x86_64" && detected.contains(&"i686"))
+    Python::with_gil(|py| -> PyResult<bool> {
+        py.import("app.architecture")?
+            .getattr("asset_eligible_json")?
+            .call1((Value::Object(asset.clone()).to_string(), machine))?
+            .extract()
+    })
+    .unwrap_or(false)
 }
 
 fn git_db_requirement_matches_rs(
@@ -1225,7 +1155,7 @@ fn git_db_requirement_matches_rs(
     db: &serde_json::Map<String, Value>,
     machine: &str,
 ) -> bool {
-    if entry.get("os").is_some() || ty != "git" {
+    if ty != "git" {
         return true;
     }
     let Some(repo) = normalize_git_repo_url_rs(entry.get("repo")) else {
@@ -1406,8 +1336,7 @@ pub(crate) fn build_repo_catalog(
                 continue;
             }
 
-            if !(dev_mode && !dev_override)
-                && !git_db_requirement_matches_rs(&map, &compat_keys, &ty, &git_db, &machine)
+            if !git_db_requirement_matches_rs(&map, &compat_keys, &ty, &git_db, &machine)
             {
                 continue;
             }
@@ -1965,32 +1894,8 @@ mod runtime_compat_tests {
         );
     }
 
-    #[test]
-    fn git_asset_architectures_detects_canonical_arches() {
-        assert_eq!(
-            git_asset_architectures("app-linux-x86_64.AppImage"),
-            vec!["x86_64"]
-        );
-        assert_eq!(git_asset_architectures("pkg-amd64.deb"), vec!["x86_64"]);
-        assert_eq!(git_asset_architectures("arm64.tar.gz"), vec!["aarch64"]);
-        assert_eq!(git_asset_architectures("i386.pkg.tar.zst"), vec!["i686"]);
-        // Longest-label-first keeps embedded aliases from splitting matches.
-        assert_eq!(
-            git_asset_architectures("tool-armv7l.tar.xz"),
-            vec!["armv7l"]
-        );
-        // Multiple architectures keep the canonical declaration order.
-        assert_eq!(
-            git_asset_architectures("bundle_aarch64_x86_64.AppImage"),
-            vec!["x86_64", "aarch64"]
-        );
-        // Word boundaries: a label inside a longer alphanumeric run is not one.
-        assert_eq!(git_asset_architectures("ax64.tar.gz"), Vec::<String>::new());
-        assert_eq!(
-            git_asset_architectures("no-arch-here.flatpak"),
-            Vec::<String>::new()
-        );
-    }
+    // Alias/architecture fixtures live in dev/tests/test_architecture.py and test
+    // the authoritative Python policy, including this bridge's JSON contract.
 
     fn bin_entry_with_post(post: Value) -> serde_json::Map<String, Value> {
         let mut e = entry(serde_json::json!({

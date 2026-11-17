@@ -14,6 +14,7 @@ from . import official_index, new_index
 from .lang_utils import detect_system_language
 
 from . import _catalog_rs as _rs
+from . import architecture
 
 
 # Repository metadata is consumed by several startup caches in parallel.  Keep
@@ -500,7 +501,10 @@ def _resolve_developer_name(entry):
 
 
 
-APPSTREAM_OVERLAY_KEYS = {"appstream-name", "snap-name", "purchase", "overrides", "dependencies"}
+APPSTREAM_OVERLAY_KEYS = {
+    "appstream-name", "snap-name", "purchase", "overrides", "dependencies",
+    "architectures",
+}
 
 
 def _normalize_appstream_overlay_id(value):
@@ -552,10 +556,15 @@ def load_appstream_overlays(scripts_dir, list_paths=None):
     AppStream overlays never become standalone repository entries. They may add
     commerce metadata, reviewed pre/post/Flatpak overrides, and dependencies to
     an upstream AppStream component without replacing its normal install source.
+
+    Overlays are presumed x86_64-only: without an explicit ``architectures``
+    list in their record they only apply on x86_64 hosts, and an aarch64 host
+    installs the plain AppStream app without the overlay.
     """
     if list_paths is None:
         list_paths = _get_repo_list_paths(scripts_dir)
 
+    host_arch = architecture.host().value
     overlays = {}
     for path in list_paths:
         for entry in _load_json_entries(path):
@@ -565,6 +574,29 @@ def load_appstream_overlays(scripts_dir, list_paths=None):
             # _list_source is parser-internal metadata added by _load_json_entries.
             public_keys = set(entry) - {"_list_source"}
             if not public_keys <= APPSTREAM_OVERLAY_KEYS:
+                continue
+
+            declared_architectures = entry.get("architectures")
+            if declared_architectures is None:
+                overlay_architectures = ["x86_64"]
+            elif (
+                isinstance(declared_architectures, list)
+                and declared_architectures
+                and all(
+                    isinstance(value, str)
+                    and value.strip().lower() in ("x86_64", "aarch64")
+                    for value in declared_architectures
+                )
+            ):
+                overlay_architectures = [
+                    value.strip().lower() for value in declared_architectures
+                ]
+            else:
+                # Malformed marker: refuse the overlay instead of guessing.
+                continue
+            if host_arch not in overlay_architectures:
+                # Not marked for this ISA: the plain AppStream app installs
+                # without the overlay's extras.
                 continue
 
             appstream_id = _normalize_appstream_overlay_id(entry.get("appstream-name"))
@@ -685,7 +717,7 @@ def _build_repo_entries(scripts_dir, translations=None, list_paths=None, compat_
         bool(is_containerized()),
         bool(is_wsl()),
         bool(should_override_container_checks()),
-        os.uname().machine.lower() if hasattr(os, "uname") else "",
+        architecture.host().value,
         translations_json,
         language,
     ))
@@ -695,6 +727,15 @@ def _build_repo_entries(scripts_dir, translations=None, list_paths=None, compat_
         if not isinstance(entry, dict):
             continue
 
+        try:
+            architecture.require_entry(entry)
+            architecture.require_overrides(
+                entry.get("overrides") or {},
+                os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                scripts_dir,
+            )
+        except architecture.ArchitectureError:
+            continue
         name = entry.get("name", "")
         repo_app_id = _repo_app_id(name)
         if not repo_app_id:
@@ -702,7 +743,7 @@ def _build_repo_entries(scripts_dir, translations=None, list_paths=None, compat_
 
         item = dict(entry)
         install_type = item.pop("_rust_resolved_type", None)
-        item.pop("_list_source", None)
+        item["_architecture_source"] = item.pop("_list_source", None)
         if "license" in item and isinstance(item["license"], str):
             item["license"] = item["license"].strip()
 
@@ -1016,6 +1057,7 @@ def compose_install_script(entry) -> str:
     the AppStream runner dispatches them itself (see create_install_script
     for the runner's "nothing to dispatch" convention).
     """
+    architecture.require_entry(entry)
     install_type = entry.get("type", "git")
     name = _metadata_line(entry["name"])
     description = _metadata_line(entry["description"])
@@ -1049,10 +1091,6 @@ def compose_install_script(entry) -> str:
         dependency_commands = [
             cmd for cmd in dependency_commands if not cmd.startswith("pkg_install ")
         ]
-    needs_askpass = any(
-        cmd.startswith("pkg_install ")
-        for cmd in dependency_commands
-    )
     command = None
 
     if install_type == "git":
@@ -1144,7 +1182,6 @@ def compose_install_script(entry) -> str:
                 f"pkg_install {shlex.quote(package)}"
                 for package in packages
             )
-        needs_askpass = True
 
     elif install_type == "url":
         compat_keys = get_system_compat_keys()
@@ -1216,29 +1253,16 @@ python3 "$SCRIPT_DIR/app/library_loader.py" "$_external_script" || exit $?
     override_commands = _create_override_commands(entry)
     service_commands = _create_service_commands(entry)
 
-    # Authenticate before any generated pkg_install can engage the runner lock.
-    # Keep this at script level so multiple native packages/dependencies share one
-    # authentication request. pkg_fromfile handles downloaded native packages itself.
-    auth_commands = ["askpass"] if needs_askpass else []
-
-    # A system service also requires authentication, but avoid emitting a second
-    # askpass when the package installation already requested it above.
-    if needs_askpass and service_commands and service_commands[0] == "askpass":
-        service_commands = service_commands[1:]
-
-    commands = (
-        auth_commands
-        + dependency_commands
-        + [command]
-        + override_commands
-        + service_commands
-    )
+    # Each helper preflights before authenticating. Services request their own
+    # authorization after the package transaction succeeds.
+    commands = dependency_commands + [command] + override_commands + service_commands
 
     command_block = "\n".join(commands)
     finish_command = "" if entry.get("is_appstream_entry") else 'info "$finishmsg"'
 
     contents = f"""#!/usr/bin/env bash
 # name: {name}
+# architectures: {architecture.host().value}
 # description: {description}
 # icon: {icon}
 # repo: {repo_metadata}
@@ -1404,11 +1428,20 @@ def _create_dependency_commands(entry, compat_keys):
                     "Flathub dependency has no package-name"
                 )
 
-            skip_user_flag = " --skip-user" if _skip_user_override(entry) else ""
-            commands.extend(
-                f"pkg_flat{skip_user_flag} {shlex.quote(package)}"
-                for package in packages
-            )
+            extension_app = dependency.get("extension-of")
+            if extension_app:
+                if not isinstance(extension_app, str) or not re.fullmatch(r"[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+){2,}", extension_app):
+                    raise ValueError("Extension dependency requires a valid installed application ID")
+                commands.extend(
+                    f"pkg_flat_extension {shlex.quote(extension_app)} {shlex.quote(package)}"
+                    for package in packages
+                )
+            else:
+                skip_user_flag = " --skip-user" if _skip_user_override(entry) else ""
+                commands.extend(
+                    f"pkg_flat{skip_user_flag} {shlex.quote(package)}"
+                    for package in packages
+                )
 
         elif dependency_type == "snap":
             packages = _normalize_package_names(dependency["package-name"])

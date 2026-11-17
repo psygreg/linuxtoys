@@ -238,16 +238,31 @@ def build_update_script(mode, library_path=None, marker=None):
       controlling TTY (a piped ``bash`` would lose it). Requires
       ``library_path``.
     - ``"tui"``: minimal pipe; the TUI terminal owns user interaction.
+
+    Every generated script carries the shared ``# architectures:`` header so
+    the ISA policy accepts it as trusted local code on both supported ISAs,
+    and ``set -o pipefail`` so a failed installer download never reports
+    success through the pipe.
     """
     curl_pipe = f"curl -fsSL {INSTALLER_URL} | bash"
 
     if mode == "tui":
-        return f"#!/usr/bin/env bash\n{curl_pipe}\n"
+        return (
+            "#!/usr/bin/env bash\n"
+            "# architectures: x86_64, aarch64\n"
+            "set -o pipefail\n"
+            f"{curl_pipe}\n"
+        )
 
     if is_steamos():
         # install.sh takes the user-level AppImage/Gear Lever update path on
         # SteamOS: no library pre-auth, no native package operations.
-        script = f"#!/bin/bash\n{curl_pipe}"
+        script = (
+            "#!/bin/bash\n"
+            "# architectures: x86_64, aarch64\n"
+            "set -o pipefail\n"
+            f"{curl_pipe}"
+        )
         if mode == "terminal" and marker:
             script += f" && touch {marker!r}"
         return script + "\n"
@@ -255,6 +270,8 @@ def build_update_script(mode, library_path=None, marker=None):
     if mode == "terminal":
         script = (
             "#!/bin/bash\n"
+            "# architectures: x86_64, aarch64\n"
+            "set -o pipefail\n"
             'source "$SCRIPT_DIR/libs/linuxtoys.bash"\n'
             "sudo_rq\n"
             "\n"
@@ -270,6 +287,8 @@ def build_update_script(mode, library_path=None, marker=None):
         library_path = shlex.quote(library_path)
         return (
             "#!/usr/bin/env bash\n"
+            "# architectures: x86_64, aarch64\n"
+            "set -o pipefail\n"
             f"source {library_path}\n"
             "askpass\n"
             "\n"
