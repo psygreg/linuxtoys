@@ -1074,7 +1074,8 @@
     "Figma": {
       "repo": "https://github.com/arximus88/figma-linux-next",
       "architectures": [
-        "x86_64"
+        "x86_64",
+        "aarch64"
       ],
       "declarations": [
         "336f948080fc9e0cd5accecca63452120e40a7caaa0d87c074469e20ac9464c1"
@@ -1083,7 +1084,8 @@
     "Audacity": {
       "repo": "https://github.com/audacity/audacity",
       "architectures": [
-        "x86_64"
+        "x86_64",
+        "aarch64"
       ],
       "declarations": [
         "4dba12ad3e8ca9ec02d65e634ce8729418ea8bfca6f2c1c5bad459c5aa488684"
@@ -1092,7 +1094,8 @@
     "OpenLogi": {
       "repo": "https://github.com/AprilNEA/OpenLogi",
       "architectures": [
-        "x86_64"
+        "x86_64",
+        "aarch64"
       ],
       "declarations": [
         "5bda04ba3caca03fb4e5ceb91aaefaaa59d06982fa96181384a747d02af69531"
@@ -1119,7 +1122,8 @@
     "ZenNotes": {
       "repo": "https://github.com/ZenNotes/zennotes",
       "architectures": [
-        "x86_64"
+        "x86_64",
+        "aarch64"
       ],
       "declarations": [
         "53a163c397d7b8d24b0d1fc3c41278908ffa2400c9c49f0896622d21b845fab4"
@@ -1201,7 +1205,8 @@
     "QDiskInfo": {
       "repo": "https://github.com/edisionnano/QDiskInfo",
       "architectures": [
-        "x86_64"
+        "x86_64",
+        "aarch64"
       ],
       "declarations": [
         "6c504296e672f02726357c74a64e16475bd80230ee2969861f9b5ce11ccd6116"
@@ -1210,7 +1215,8 @@
     "Helium Browser": {
       "repo": "https://github.com/imputnet/helium-linux",
       "architectures": [
-        "x86_64"
+        "x86_64",
+        "aarch64"
       ],
       "declarations": [
         "03b841ce7088942dd9d2ecbfc1233a784bc35d9605c07e9829aacc36f1b7872c"
@@ -1246,7 +1252,8 @@
     "HTTPie": {
       "repo": "https://github.com/httpie/desktop",
       "architectures": [
-        "x86_64"
+        "x86_64",
+        "aarch64"
       ],
       "declarations": [
         "21be5885715be36324d73d1fb194e6b72e61752ae9e6a2a4a6195b0105187193"
@@ -1282,7 +1289,8 @@
     "Rclone UI": {
       "repo": "https://github.com/rclone-ui/rclone-ui",
       "architectures": [
-        "x86_64"
+        "x86_64",
+        "aarch64"
       ],
       "declarations": [
         "efc173833c69979a806316e86d054ff01a953a07b95bf4141427673d303a0393"
@@ -1327,7 +1335,8 @@
     "ArtCraft Launcher": {
       "repo": "https://github.com/storytold/craft-launcher",
       "architectures": [
-        "x86_64"
+        "x86_64",
+        "aarch64"
       ],
       "declarations": [
         "d6c39090822555193783f76e7f6172750907da3bfcc9489b50545218e86a63b5"

@@ -501,7 +501,10 @@ def _resolve_developer_name(entry):
 
 
 
-APPSTREAM_OVERLAY_KEYS = {"appstream-name", "snap-name", "purchase", "overrides", "dependencies"}
+APPSTREAM_OVERLAY_KEYS = {
+    "appstream-name", "snap-name", "purchase", "overrides", "dependencies",
+    "architectures",
+}
 
 
 def _normalize_appstream_overlay_id(value):
@@ -553,10 +556,15 @@ def load_appstream_overlays(scripts_dir, list_paths=None):
     AppStream overlays never become standalone repository entries. They may add
     commerce metadata, reviewed pre/post/Flatpak overrides, and dependencies to
     an upstream AppStream component without replacing its normal install source.
+
+    Overlays are presumed x86_64-only: without an explicit ``architectures``
+    list in their record they only apply on x86_64 hosts, and an aarch64 host
+    installs the plain AppStream app without the overlay.
     """
     if list_paths is None:
         list_paths = _get_repo_list_paths(scripts_dir)
 
+    host_arch = architecture.host().value
     overlays = {}
     for path in list_paths:
         for entry in _load_json_entries(path):
@@ -566,6 +574,29 @@ def load_appstream_overlays(scripts_dir, list_paths=None):
             # _list_source is parser-internal metadata added by _load_json_entries.
             public_keys = set(entry) - {"_list_source"}
             if not public_keys <= APPSTREAM_OVERLAY_KEYS:
+                continue
+
+            declared_architectures = entry.get("architectures")
+            if declared_architectures is None:
+                overlay_architectures = ["x86_64"]
+            elif (
+                isinstance(declared_architectures, list)
+                and declared_architectures
+                and all(
+                    isinstance(value, str)
+                    and value.strip().lower() in ("x86_64", "aarch64")
+                    for value in declared_architectures
+                )
+            ):
+                overlay_architectures = [
+                    value.strip().lower() for value in declared_architectures
+                ]
+            else:
+                # Malformed marker: refuse the overlay instead of guessing.
+                continue
+            if host_arch not in overlay_architectures:
+                # Not marked for this ISA: the plain AppStream app installs
+                # without the overlay's extras.
                 continue
 
             appstream_id = _normalize_appstream_overlay_id(entry.get("appstream-name"))

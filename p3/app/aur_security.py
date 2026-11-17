@@ -260,9 +260,66 @@ def _check_github_source_provenance(pkgbuild_text):
     return findings
 
 
-def check_aur_package_security(
-    package: str, *, check_provenance: bool = False
-) -> tuple[int, str]:
+def _pkgbuild_architectures(pkgbuild_text: str) -> list[str] | None:
+    """Statically read the PKGBUILD ``arch`` array without evaluating it.
+
+    Returns the declared tokens, or None when the declaration cannot be
+    recognized (makepkg's implicit x86_64-only default is NOT assumed here;
+    callers decide how to treat an unreadable declaration).
+    """
+    match = re.search(
+        r"(?m)^[ \t]*arch=(?:(\()|\[[ \t]*)", pkgbuild_text
+    )
+    if match is None:
+        return None
+    start = match.end()
+    depth = 1
+    index = start
+    while index < len(pkgbuild_text) and depth:
+        char = pkgbuild_text[index]
+        if char == "(":
+            depth += 1
+        elif char == ")":
+            depth -= 1
+        index += 1
+    if depth:
+        return None
+    body = pkgbuild_text[start : index - 1]
+    return re.findall(r"""["']?([A-Za-z0-9_]+)["']?""", body)
+
+
+# Tokens that make a PKGBUILD installable on an aarch64 host: the 64-bit ARM
+# port names plus makepkg's "any" (architecture-independent).
+_AARCH64_ARCH_TOKENS = frozenset({"aarch64", "armv8h", "any"})
+
+
+def _aarch64_pkgbuild_findings(pkgbuild_text: str) -> list[str]:
+    """Refuse PKGBUILDs that do not build for aarch64 when running on one."""
+    from .architecture import Architecture, host
+
+    if host() is not Architecture.AARCH64:
+        return []
+    declared = _pkgbuild_architectures(pkgbuild_text)
+    if declared is None:
+        return [
+            "PKGBUILD: the arch array could not be read statically, so "
+            "aarch64 compatibility could not be verified"
+        ]
+    if not declared:
+        return [
+            "PKGBUILD: the arch array is empty, so aarch64 compatibility "
+            "could not be verified"
+        ]
+    if not any(token.lower() in _AARCH64_ARCH_TOKENS for token in declared):
+        return [
+            "PKGBUILD: arch array declares "
+            f"({', '.join(declared)}) without an aarch64 port; this package "
+            "does not support aarch64"
+        ]
+    return []
+
+
+
     """Statically check AUR package sources for obfuscated code.
 
     BLOCKING: call from a worker thread (network clone, 45 s timeout).
@@ -404,6 +461,9 @@ def check_aur_package_security(
             findings.extend(
                 scan_aur_text_for_obfuscation(relative, source)
             )
+
+        if pkgbuild_source is not None:
+            findings.extend(_aarch64_pkgbuild_findings(pkgbuild_source))
 
         if check_provenance and pkgbuild_source is not None:
             findings.extend(

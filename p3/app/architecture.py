@@ -296,8 +296,10 @@ def _declaration_allowed(values: Any, arch: Architecture) -> bool:
 def require_script(text: str, machine: str | None = None) -> None:
     """Check a reviewed script or explicit header, before its preamble can mutate.
 
-    Legacy curated scripts are pinned by source digest. Call require_script_path
-    for files: a managed bundle must also pass client-owned revision approval.
+    Scripts are presumed x86_64-only unless a ``# architectures:`` header tags
+    them otherwise; an aarch64 host needs that explicit tag (or an approved
+    route-policy declaration) to run anything. Call require_script_path for
+    files: a managed bundle must also pass client-owned revision approval.
     Explicit headers are for trusted local/generated code, not remote approval.
     """
     from .script_compat import require_api
@@ -314,7 +316,11 @@ def require_script(text: str, machine: str | None = None) -> None:
         values = list(declarations[0])
     else:
         digest = hashlib.sha256(text.encode()).hexdigest()
-        values = route_policy()["scripts"].get(digest, {}).get("architectures", [])
+        values = route_policy()["scripts"].get(digest, {}).get("architectures")
+    if not values:
+        # Headerless, unpinned scripts are x86_64 by presumption; other ISAs
+        # must be tagged explicitly.
+        values = ["x86_64"]
     if not _declaration_allowed(values, arch):
         raise ArchitectureError(
             f"This installer is not qualified for {arch.value}. "
@@ -323,52 +329,65 @@ def require_script(text: str, machine: str | None = None) -> None:
 
 
 def require_entry(entry: Mapping[str, Any], machine: str | None = None) -> None:
-    """Enforce ISA eligibility on catalog metadata before hooks/dependencies run."""
+    """Enforce ISA eligibility on catalog metadata before hooks/dependencies run.
+
+    The reviewed route table is the single authority for repository entries:
+    record-level ``architectures`` declarations are baked into it by
+    dev/refresh_architecture_routes.py, never trusted from the listing itself
+    (a repository cannot approve its own ISA). AppStream native/Flatpak/Snap
+    sources declare the host: the package managers and Flatpak resolve
+    architecture at their own discretion.
+    """
     arch = host() if machine is None else normalize(machine)
     if entry.get("name") == "Volt":
         raise ArchitectureError(
             "Volt's external Flatpak extension build requires native preflight qualification"
         )
-    values = entry.get("architectures")
-    if (
-        values is None
-        and entry.get("is_appstream_entry")
-        and entry.get("type") in {"native", "flathub", "snap"}
-    ):
-        # Native package managers/Flatpak/snapd supply host-specific metadata.
-        # Execution still requires their read-only availability preflight.
-        values = [arch.value]
-    if values is None:
-        declaration = route_policy()["catalogs"].get(
-            str(entry.get("name") or entry.get("appstream-name")), {}
-        )
-        values = declaration.get("architectures", [])
-        source = entry.get("_list_source") or entry.get("_architecture_source")
-        approved = False
-        if isinstance(source, str):
-            try:
-                records = json.loads(Path(source).read_text())
-                if isinstance(records, dict):
-                    records = [records]
-                for record in records:
-                    if not isinstance(record, dict):
-                        continue
-                    name = record.get("name") or record.get("appstream-name")
-                    if name != (entry.get("name") or entry.get("appstream-name")):
-                        continue
-                    digest = hashlib.sha256(
-                        json.dumps(
-                            record,
-                            sort_keys=True,
-                            separators=(",", ":"),
-                            ensure_ascii=False,
-                        ).encode()
-                    ).hexdigest()
-                    approved = approved or digest in declaration.get("declarations", [])
-            except (OSError, ValueError, TypeError):
-                approved = False
-        if not approved or declaration.get("repo", "") != entry.get("repo", ""):
-            values = []
+    if entry.get("is_appstream_entry") and entry.get("type") in {
+        "native", "flathub", "snap", "homebrew",
+    }:
+        # Self-managed sources: the AppStream data, snapd and Homebrew only
+        # offer what the host can use, and their installers resolve ISA.
+        for dependency in entry.get("dependencies") or []:
+            if "architectures" in dependency and not _declaration_allowed(
+                dependency["architectures"], arch
+            ):
+                raise ArchitectureError(
+                    "A required dependency does not support this architecture"
+                )
+            for token in asset_architectures(json.dumps(dependency)):
+                require_native([token], arch.value)
+        return
+    declaration = route_policy()["catalogs"].get(
+        str(entry.get("name") or entry.get("appstream-name")), {}
+    )
+    values = declaration.get("architectures", [])
+    source = entry.get("_list_source") or entry.get("_architecture_source")
+    approved = False
+    if isinstance(source, str):
+        try:
+            records = json.loads(Path(source).read_text())
+            if isinstance(records, dict):
+                records = [records]
+            for record in records:
+                if not isinstance(record, dict):
+                    continue
+                name = record.get("name") or record.get("appstream-name")
+                if name != (entry.get("name") or entry.get("appstream-name")):
+                    continue
+                digest = hashlib.sha256(
+                    json.dumps(
+                        record,
+                        sort_keys=True,
+                        separators=(",", ":"),
+                        ensure_ascii=False,
+                    ).encode()
+                ).hexdigest()
+                approved = approved or digest in declaration.get("declarations", [])
+        except (OSError, ValueError, TypeError):
+            approved = False
+    if not approved or declaration.get("repo", "") != entry.get("repo", ""):
+        values = []
     if not _declaration_allowed(values, arch):
         raise ArchitectureError(
             f"{entry.get('name', 'Catalog route')} is not qualified for {arch.value}"

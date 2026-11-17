@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "requires_api": 1,
-  "architecture_policy_sha256": "358a1560d17b3c65eea1bcddf9b1844e74cc84f5f146a7c8b70820fc18076752",
+  "architecture_policy_sha256": "fab771c35a6a75287348e1159f0ca728ed5271e61737dc356b74d671fa98b6c8",
   "files": {
     "creative/audio/category-info.txt": "165f061ab56e6b58aa2cbb4512f185e204ed6c9076fd00e2d957d7e654bd5429",
     "creative/category-info.txt": "fbaf487beff4e64614cccb298a3212929e12993f93f2c4c4d76bc636e8c48596",
