@@ -81,7 +81,6 @@ is_suse() {
     sysdetect_once
     if [[ "$ID" == "suse" || "$ID" == "opensuse" || "$ID_LIKE" =~ "suse" ]]; then
         { [ "$ID" = "opensuse-leap" ] || [[ "$VERSION_ID" =~ ^[0-9]+\.[0-9]+$ ]]; } && suse_leap="1"
-        [ "$ID" = "opensuse-tumbleweed" ] && suse_tumbleweed="1"
         return 0
     else
         return 1
@@ -131,23 +130,6 @@ is_amd() {
     local amdGPU
     amdGPU=$(lspci | grep -Ei 'vga|3d|display' | grep -Ei 'amd|radeon')
     [[ -n "$amdGPU" ]]
-}
-amd_dgpu() {
-    local dev drm vram
-    for dev in /sys/bus/pci/devices/*; do
-        [[ -r "$dev/vendor" && -r "$dev/class" ]] || continue
-        [[ "$(<"$dev/vendor")" == "0x1002" ]] || continue
-        [[ "$(<"$dev/class")" == 0x03* ]] || continue
-        for drm in "$dev"/drm/card*; do
-            [[ -r "$drm/device/mem_info_vram_total" ]] || continue
-            vram=$(<"$drm/device/mem_info_vram_total")
-            # dGPUs have substantial dedicated VRAM.
-            if (( vram >= 2073741824 )); then
-                return 0
-            fi
-        done
-    done
-    return 1
 }
 # GCN/Polaris/Vega PCI IDs from Linux amdgpu_drv.c (2026-10-09).
 # https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c

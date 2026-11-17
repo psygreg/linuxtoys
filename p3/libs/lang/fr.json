@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "La récupération de l'opération dpkg interrompue a échoué. Une intervention manuelle de l'utilisateur est requise.",
   "pkg_guard_broken": "Des dépendances de paquets cassées ont été détectées. Tentative de récupération...",
   "pkg_guard_broken_fail": "Impossible de réparer les paquets cassés. Une intervention manuelle de l'utilisateur est requise.",
-  "pkg_guard_broken_pending": "Les dépendances des paquets sont toujours cassées. Une intervention manuelle de l'utilisateur est requise."
+  "pkg_guard_broken_pending": "Les dépendances des paquets sont toujours cassées. Une intervention manuelle de l'utilisateur est requise.",
+  "privilege_required_title": "Accès administrateur requis",
+  "privilege_required_message": "Cet utilisateur ne peut pas utiliser sudo, LinuxToys ne peut donc pas installer, mettre à jour ni supprimer de logiciels. Assurez-vous que sudo est installé, ajoutez l'utilisateur au groupe sudo (Debian, Ubuntu) ou au groupe wheel (Fedora, Arch, openSUSE), puis ouvrez à nouveau LinuxToys.",
+  "bug_report_cancelled_title": "Rien à signaler",
+  "bug_report_cancelled_message": "La dernière exécution a été annulée ou ignorée, il n'y a donc rien à signaler.\n\nDernier message : {reason}",
+  "bug_report_rejected_title": "Rien à signaler",
+  "bug_report_rejected_message": "La sortie du terminal ne contenait aucun texte pouvant être envoyé, le rapport n'a donc pas été soumis."
 }

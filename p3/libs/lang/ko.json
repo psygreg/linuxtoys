@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "중단된 dpkg 작업을 복구하지 못했습니다. 사용자의 수동 개입이 필요합니다.",
   "pkg_guard_broken": "손상된 패키지 의존성이 감지되었습니다. 복구를 시도하고 있습니다...",
   "pkg_guard_broken_fail": "손상된 패키지를 수정하지 못했습니다. 사용자의 수동 개입이 필요합니다.",
-  "pkg_guard_broken_pending": "패키지 의존성이 여전히 손상되어 있습니다. 사용자의 수동 개입이 필요합니다."
+  "pkg_guard_broken_pending": "패키지 의존성이 여전히 손상되어 있습니다. 사용자의 수동 개입이 필요합니다.",
+  "privilege_required_title": "관리자 권한이 필요합니다",
+  "privilege_required_message": "이 사용자는 sudo를 사용할 수 없으므로 LinuxToys는 소프트웨어를 설치, 업데이트 또는 제거할 수 없습니다. sudo가 설치되어 있는지 확인하고, 사용자를 sudo 그룹(Debian, Ubuntu) 또는 wheel 그룹(Fedora, Arch, openSUSE)에 추가한 다음 LinuxToys를 다시 여십시오.",
+  "bug_report_cancelled_title": "보고할 내용이 없습니다",
+  "bug_report_cancelled_message": "마지막 실행이 취소되거나 건너뛰어져 보고할 내용이 없습니다.\n\n마지막 메시지: {reason}",
+  "bug_report_rejected_title": "보고할 내용이 없습니다",
+  "bug_report_rejected_message": "터미널 출력에 보낼 수 있는 텍스트가 없어 보고서가 제출되지 않았습니다."
 }

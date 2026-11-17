@@ -452,11 +452,17 @@ jobs:
       # libraries of GUI binaries; appstream supplies libappstream.so.5 and
       # its GObject typelib, webp-pixbuf-loader is passed explicitly to
       # quick-sharun, and zenity/util-linux/jq are bundled into the AppDir.
+      # python-requests and python-gobject are runtime Python dependencies of
+      # the app itself: DEPLOY_PYTHON makes quick-sharun copy this container's
+      # /usr/lib/python3.x (site-packages included) into the AppDir, so unlike
+      # the deb/rpm/arch packages the AppImage has no distro dependency system
+      # to provide them (TUI: requests; GUI: gi). build.sh verifies both.
       - name: Install build dependencies
         run: |
           pacman -Syu --noconfirm
           pacman -S --noconfirm --needed \
               git curl wget rust cargo maturin python python-pip \
+              python-requests python-gobject \
               pkgconf patchelf gtk3 appstream gobject-introspection \
               zenity util-linux webp-pixbuf-loader xorg-server-xvfb \
               adwaita-icon-theme jq

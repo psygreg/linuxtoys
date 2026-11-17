@@ -2,10 +2,7 @@
 
 [LinuxToys](https://linux.toys) is a software distribution platform for Linux systems. It aims to make powerful Linux functionality simple and accessible to all users through an intuitive interface, and enable developers to ship their apps consistently and reliably by giving them control over the installation process of their apps, all in one solution for dozens of Linux distributions.
 
-This fork's **`arm64-support`** branch adds experimental Ubuntu ARM64 support,
-architecture-aware installation safeguards and focused reliability improvements.
-See [ARM64 support and development status](dev/ARM64-STATUS.md) for completed
-work, verified features, test results and remaining qualification requirements.
+LinuxToys runs on both **x86-64** and **AArch64 (ARM64)** computers. The application is architecture-aware: scripts and release payloads are checked against the host ISA before anything privileged runs, so an unsupported payload is refused instead of half-installed.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="src/screenshot-dark.webp">
@@ -28,39 +25,11 @@ LinuxToys is compatible with the following Linux distributions, provided they ar
 *   **Deepin**
 *   **SteamOS**, **Bluefin Dakota**, **Gnome OS** and **KDE Linux**
 
-**ARM64 in this branch:** native builds and bounded CLI, TUI, GTK and VTE checks
-have passed on **Ubuntu 26.04.1 AArch64**, including Wayland and Xwayland. The
-reviewed ARM64 installation routes are **Atkinson Hyperlegible, OpenDyslexic and
-Nerd Fonts**, with pinned payloads and tested user-data preservation. Other
-applications need individual architecture and lifecycle qualification; Nala and
-F3 remain disabled on ARM64. A published ARM64 release, other ARM64 distributions
-and ARMv6/ARMv7 support are outside the verified scope. The distribution list
-above does not imply ARM64 coverage for every distribution or application.
+Support for non-systemd init systems is limited, and some features of the app cannot be offered for them.
 
-Existing x86-64 routes retain regression coverage; this work has not established
-new native AMD64 build/runtime qualification. Support for non-systemd init
-systems is limited, and some features cannot be offered for them.
-
-### Improvements in this branch
-
-- Central architecture checks reject unknown, mixed or foreign native payloads
-  before privileged installation, with explicit approval for independent data.
-- Exact script-bundle hashes, client-approved revisions and verified offline
-  fallback keep script updates compatible with the installed client.
-- Native Ubuntu ARM64 builds and a locally qualified DEB construction path
-  preserve the project's dependency locks and native-library interfaces.
-- Atomic Homebrew/Antenna cache writes, VTE reporting fallbacks and CLI EOF
-  cancellation improve failure handling without submitting test reports.
-- Loader and AppImage catalog imports work through their reviewed package and
-  direct execution modes, retaining trusted paths and architecture enforcement.
-- Debian package-state handling distinguishes installed, conffile-only and
-  incomplete packages; recovery rechecks protect transaction/reversal records.
+**About ARM64:** on AArch64 hosts LinuxToys runs natively and offers the AppStream catalog (native packages, Flatpak, Snap, Homebrew), while curated catalog scripts must declare ARM64 support explicitly. The first qualified ARM64 script routes are the **Atkinson Hyperlegible, OpenDyslexic and Nerd Fonts** installers; more routes are added as each payload is verified for the architecture. A published ARM64 release is still pending, and ARMv6/ARMv7 systems are not supported.
 
 ## Installation
-
-The installation commands below target the upstream distribution. They do not
-install this experimental branch or a new ARM64 release. ARM64 developers should
-review the [native build and qualification notes](dev/ARM64-STATUS.md#building-and-testing).
 
 ### Automatic Installation
 

@@ -8,39 +8,38 @@
 # noconfirm: yes
 # nocontainer
 # systemd: yes
+# cachyos-mirrors-required: 0
 
 # --- Start of the script code ---
-# Decimal GB minimum, shared by the check and translated messages. Preserve
-# the existing documented 16 GB floor rather than adopting upstream's 8 GB.
-_cram=16
+# RAM requirement in GB. msg228 (all languages) is baked by _lang_ from this
+# value at lib-source time, and the check below enforces it: keep this line
+# above the linuxtoys.lib source so one knob drives both the check and every
+# translation of the requirement message.
+_cram=8
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
-# MemTotal is KiB. Avoid truncation to GiB, malformed arithmetic, overflow and
-# treating an absent measurement as permission to enable a memory-heavy daemon.
-total_kb=$(awk '$1 == "MemTotal:" && $3 == "kB" { print $2; exit }' /proc/meminfo 2>/dev/null) || total_kb=""
-if [[ ! $total_kb =~ ^[1-9][0-9]{0,11}$ ]]; then
-    nonfatal "Unable to detect system RAM safely. Preload was not enabled."
-    exit 1
-fi
-required_kb=$(( (_cram * 1000000000 + 1023) / 1024 ))
-if (( total_kb >= required_kb )); then
-    if zenity --question --text "$msg208" --width 360 --height 300; then
-        sudo_rq
-        if [ "$ID" == "fedora" ] || [ "$ID" == "rhel" ] ||  [[ "$ID_LIKE" =~ "fedora" ]]; then
-            if is_ostree; then
-                prep_tmp
-                wget https://copr.fedorainfracloud.org/coprs/elxreno/preload/repo/fedora-$(rpm -E %fedora)/elxreno-preload-fedora-$(rpm -E %fedora).repo
-                sudo install -o 0 -g 0 elxreno-preload-fedora-$(rpm -E %fedora).repo /etc/yum.repos.d/elxreno-preload-fedora-$(rpm -E %fedora).repo
-                rpm-ostree refresh-md
-            else
-                sudo dnf copr enable elxreno/preload -y
-            fi
-        fi
-        pkg_install --ostreecheck preload
-        sysd_enable preload
-        sysd_start preload
-        zeninf "$msg036"
-    fi
-else
+# RAM check: MemTotal is in KiB units; the knob is decimal GB (what users and
+# module labels call GB). Refuse only on a measured shortfall: a detection
+# that yields nothing valid (masked/absent meminfo, missing tools, junk
+# match) must never masquerade as "0 GB" and hard-refuse - it falls through
+# to the question so the user decides.
+total_kb=$(grep -m1 '^MemTotal:' /proc/meminfo 2>/dev/null | awk '{print $2}')
+if [[ $total_kb =~ ^[1-9][0-9]*$ ]] && (( total_kb * 1024 <= _cram * 1000000000 )); then
     nonfatal "$msg228"
+elif zenity --question --text "$msg208" --width 360 --height 300; then
+    sudo_rq
+    if [ "$ID" == "fedora" ] || [ "$ID" == "rhel" ] ||  [[ "$ID_LIKE" =~ "fedora" ]]; then
+        if is_ostree; then
+            prep_tmp
+            wget https://copr.fedorainfracloud.org/coprs/elxreno/preload/repo/fedora-$(rpm -E %fedora)/elxreno-preload-fedora-$(rpm -E %fedora).repo
+            sudo install -o 0 -g 0 elxreno-preload-fedora-$(rpm -E %fedora).repo /etc/yum.repos.d/elxreno-preload-fedora-$(rpm -E %fedora).repo
+            rpm-ostree refresh-md
+        else
+            sudo dnf copr enable elxreno/preload -y
+        fi
+    fi
+    pkg_install --ostreecheck preload
+    sysd_enable preload
+    sysd_start preload
+    zeninf "$msg036"
 fi

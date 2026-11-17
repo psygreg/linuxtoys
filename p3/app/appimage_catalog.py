@@ -22,11 +22,14 @@ from pathlib import Path
 from urllib.request import Request, urlopen
 
 if not __package__:
-    # The updater invokes this file directly. Resolve app from this source tree,
-    # never from the caller's cwd, SCRIPT_DIR or an unqualified sibling import.
+    # The updater invokes this file directly (pkg_appimage_update). Resolve the
+    # app package from this source tree, never from the caller's cwd, so the
+    # shared policy modules stay importable in every direct-execution mode.
     import sys
-
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from app.atomic_io import atomic_write_bytes
+else:
+    from .atomic_io import atomic_write_bytes
 
 FEED_URL = "https://appimage.github.io/feed.json"
 # The hub serves per-app artwork under /database/<app>/...; the feed lists
@@ -121,7 +124,7 @@ def _website_and_install_links(pairs):
 def _split_description(text):
     """First sentence becomes the summary; the whole text stays the long one."""
     text = re.sub(r"(?i)<br\s*/?>", "\n", text or "")
-    text = re.sub(r"(?i)</p\s*>", "\n\n", text)  # feed descriptions may carry HTML
+    text = re.sub(r"(?i)</p\s*>", "\n\n", text)
     text = re.sub(r"<[^>]+>", " ", text)
     text = html.unescape(text)
     paragraphs = []
@@ -798,13 +801,7 @@ def load_or_refresh(path, *, force=False):
         entries = normalize(feed)
         if not entries:
             raise ValueError("AppImage feed has no usable entries")
-        path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = path.with_name(path.name + ".tmp")
-        try:
-            tmp.write_bytes(payload)
-            os.replace(tmp, path)
-        finally:
-            tmp.unlink(missing_ok=True)
+        atomic_write_bytes(path, payload)
         return entries
     except Exception as exc:
         logging.warning("AppImage community feed unavailable: %s", exc)
@@ -904,12 +901,12 @@ def repository_gone(info):
     return checked
 
 def _arch_match(filename):
+    """Feed-entry eligibility over the shared architecture policy."""
     if __package__:
         from .architecture import asset_eligible
     else:
         from app.architecture import asset_eligible
     return asset_eligible({"name": filename})
-
 
 def _release_asset(assets):
     if __package__:
@@ -921,7 +918,6 @@ def _release_asset(assets):
     if not url.startswith("https://"):
         raise ValueError("AppImage release asset has no HTTPS URL")
     return url
-
 
 def tracked_app_id(info):
     """Stable registry identity for one AppImage app.

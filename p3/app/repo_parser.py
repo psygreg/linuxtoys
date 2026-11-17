@@ -8,6 +8,7 @@ import threading
 from urllib.parse import urlparse
 
 from .compat import get_system_compat_keys, is_containerized, is_wsl
+from .atomic_io import atomic_write_text
 from .dev_mode import get_effective_compat_keys, get_dev_compat_override, is_dev_mode_enabled
 from . import official_index, new_index
 from .lang_utils import detect_system_language
@@ -64,18 +65,6 @@ OS_KEYS = {
 }
 
 VALID_TYPES = {"git", "tar", "bin", "make", "flathub", "snap", "native", "repository", "url", "external"}
-
-URL_PACKAGE_KEYS = {
-    "deb",
-    "rpm",
-    "pacman",
-    "pkg.tar.zst",
-    "flatpak",
-    "snap",
-    "appimage",
-    "tar",
-    "bin",
-}
 
 NATIVE_PACKAGE_KEY_PRIORITY = (
     "ublue",
@@ -273,24 +262,6 @@ def _get_repo_list_paths(scripts_dir):
     """Return all repository-list JSON files in deterministic order."""
     json_paths, _, _ = _scan_repo_tree(scripts_dir)
     return list(json_paths)
-
-
-DESCRIPTION_FILE_KEYS = ("descriptions", "description-file")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-SCREENSHOT_EXTENSIONS = (".png", ".jpg", ".jpeg", ".webp", ".svg")
 
 
 def _safe_list_relative_path(entry, scripts_dir, value):
@@ -661,22 +632,6 @@ def load_appstream_overlays(scripts_dir, list_paths=None):
             overlays.setdefault(appstream_id, overlay)
 
     return overlays
-
-
-def load_appstream_commerce_overlays(scripts_dir, list_paths=None):
-    """Backward-compatible commerce-only view of AppStream overlays."""
-    commerce_keys = {
-        "purchase_url", "purchase_price", "purchase_currency_symbol",
-        "purchase_options", "subscription_price",
-        "subscription_currency_symbol", "subscription_options",
-    }
-    return {
-        key: {name: value for name, value in overlay.items() if name in commerce_keys}
-        for key, overlay in load_appstream_overlays(scripts_dir, list_paths).items()
-        if any(name in commerce_keys for name in overlay)
-    }
-
-
 
 
 def _resolve_hook_paths(entry, scripts_dir):
@@ -1063,20 +1018,16 @@ def _metadata_line(value):
     return str(value).replace("\r", " ").replace("\n", " ").strip()
 
 
-def create_install_script(entry):
+def compose_install_script(entry) -> str:
     """
-    Create the transient .sh consumed by the normal LinuxToys execution flow.
+    Build the install script text for a repository/AppStream entry.
 
-    Returns its filesystem path.
+    Raises ValueError for AppImage entries: they have no terminal script —
+    the AppStream runner dispatches them itself (see create_install_script
+    for the runner's "nothing to dispatch" convention).
     """
     architecture.require_entry(entry)
     install_type = entry.get("type", "git")
-    if install_type == "appimage":
-        # AppImage catalog entries are resolved, downloaded and installed by
-        # the AppStream runner (appimage_catalog.resolve_download + pkg_appimage)
-        # when their queued job starts. No terminal script exists for them; the
-        # runner's own convention for "nothing to dispatch" is the "true" path.
-        return "true"
     name = _metadata_line(entry["name"])
     description = _metadata_line(entry["description"])
     repo = entry["repo"]
@@ -1295,6 +1246,26 @@ python3 "$SCRIPT_DIR/app/library_loader.py" "$_external_script" || exit $?
 {finish_command}
 """
 
+    return contents
+
+
+def create_install_script(entry):
+    """
+    Create the transient .sh consumed by the normal LinuxToys execution flow.
+
+    Returns its filesystem path.
+    """
+    install_type = entry.get("type", "git")
+    if install_type == "appimage":
+        # AppImage catalog entries are resolved, downloaded and installed by
+        # the AppStream runner (appimage_catalog.resolve_download + pkg_appimage)
+        # when their queued job starts. No terminal script exists for them; the
+        # runner's own convention for "nothing to dispatch" is the "true" path.
+        return "true"
+
+    contents = compose_install_script(entry)
+
+    name = _metadata_line(entry["name"])
     tmp_dir = "/tmp/linuxtoys/repo-scripts"
     os.makedirs(tmp_dir, mode=0o700, exist_ok=True)
 
@@ -1303,20 +1274,8 @@ python3 "$SCRIPT_DIR/app/library_loader.py" "$_external_script" || exit $?
         f"{entry.get('name', '')}\0{entry.get('repo', '')}".encode("utf-8")
     ).hexdigest()[:12]
     path = os.path.join(tmp_dir, f"{safe_name}-{identity}.sh")
-    tmp_path = f"{path}.tmp"
 
-    try:
-        with open(tmp_path, "w", encoding="utf-8") as file:
-            file.write(contents)
-
-        os.chmod(tmp_path, 0o700)
-        os.replace(tmp_path, path)
-    except Exception:
-        try:
-            os.unlink(tmp_path)
-        except OSError:
-            pass
-        raise
+    atomic_write_text(path, contents, mode=0o700)
 
     return path
 
@@ -1533,7 +1492,6 @@ def _validate_overrides(entry):
     if not isinstance(overrides, dict):
         return False
 
-    # Only supported override types.
     if set(overrides) - {"flatpak", "pre", "post", "skip-user"}:
         return False
 
@@ -1541,14 +1499,12 @@ def _validate_overrides(entry):
     if skip_user is not None and not isinstance(skip_user, bool):
         return False
 
-    # Validate pre/post hooks.
     for key in ("pre", "post"):
         value = overrides.get(key)
 
         if value is not None and not _validate_hook(value):
             return False
 
-    # Validate Flatpak overrides.
     flatpak = overrides.get("flatpak")
 
     if flatpak is None:
@@ -1626,11 +1582,9 @@ def _create_hook_command(entry, key):
     if value is None:
         return ""
 
-    # Inline shell.
     if isinstance(value, str):
         return value.strip()
 
-    # Script shipped under scripts/lists.
     if isinstance(value, dict):
         script = value.get("script", "").strip()
 
@@ -1687,7 +1641,6 @@ def _normalize_services(entry):
         }
 
     elif isinstance(services, dict):
-        # Only supported scopes.
         if set(services) - {"system", "user"}:
             return None
 

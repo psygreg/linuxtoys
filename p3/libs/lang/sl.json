@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Obnova prekinjene dpkg operacije ni uspela. Potreben je ročni poseg uporabnika.",
   "pkg_guard_broken": "Zaznane so bile poškodovane odvisnosti paketov. Poteka poskus obnove...",
   "pkg_guard_broken_fail": "Popravljanje poškodovanih paketov ni uspelo. Potreben je ročni poseg uporabnika.",
-  "pkg_guard_broken_pending": "Odvisnosti paketov so še vedno poškodovane. Potreben je ročni poseg uporabnika."
+  "pkg_guard_broken_pending": "Odvisnosti paketov so še vedno poškodovane. Potreben je ročni poseg uporabnika.",
+  "privilege_required_title": "Potreben je skrbniški dostop",
+  "privilege_required_message": "Ta uporabnik ne more uporabljati sudo, zato LinuxToys ne more namestiti, posodobiti ali odstraniti programske opreme. Poskrbite, da je sudo nameščen, dodajte uporabnika v skupino sudo (Debian, Ubuntu) ali v skupino wheel (Fedora, Arch, openSUSE) in nato znova odprite LinuxToys.",
+  "bug_report_cancelled_title": "Ničesar ni za prijavo",
+  "bug_report_cancelled_message": "Zadnji zagon je bil preklican ali preskočen, zato ničesar ni za prijavo.\n\nZadnje sporočilo: {reason}",
+  "bug_report_rejected_title": "Ničesar ni za prijavo",
+  "bug_report_rejected_message": "Izhod terminala ni vseboval besedila, ki bi ga bilo mogoče poslati, zato poročilo ni bilo poslano."
 }

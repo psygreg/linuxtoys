@@ -1,4 +1,5 @@
 from .gtk_common import Gdk, Gtk, GLib, resolve_symbolic_icon
+from .gtk_dialogs import run_message_dialog
 from . import manifest_helper
 from . import language_selector
 from . import about_helper
@@ -294,16 +295,13 @@ class MenuButton(Gtk.MenuButton):
 		self.mcp_server_toggle.set_sensitive(True)
 		if error:
 			_ = create_translator()
-			dialog = Gtk.MessageDialog(
-				transient_for=self.get_toplevel(),
-				flags=0,
+			run_message_dialog(
+				self,
+				title=_("mcp_service_failed_title"),
+				secondary_text=error,
 				message_type=Gtk.MessageType.ERROR,
-				buttons=Gtk.ButtonsType.OK,
-				text=_("mcp_service_failed_title"),
+				buttons_type=Gtk.ButtonsType.OK,
 			)
-			dialog.format_secondary_text(error)
-			dialog.run()
-			dialog.destroy()
 			# Reflect the actual state after a failed transition, without
 			# re-triggering the service operation.
 			actual = self.__mcp_initial_state()
@@ -331,18 +329,6 @@ class MenuButton(Gtk.MenuButton):
 		save_automatic_updates(is_enabled)
 		if self.parent_window:
 			self.parent_window.set_automatic_updates_enabled(is_enabled)
-
-	def __on_language_select(self, widget):
-		"""Handle language selection menu item click"""
-		if self.parent_window:
-			from . import lang_utils
-			current_translations = lang_utils.load_translations()
-			selector = language_selector.LanguageSelector(
-				self.parent_window, 
-				current_translations, 
-				self.on_language_changed
-			)
-			selector.show_language_selector()
 
 	def __on_about(self, widget):
 		"""Handle about menu item click"""

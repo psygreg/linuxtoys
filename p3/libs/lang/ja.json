@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "中断された dpkg 操作の復旧に失敗しました。ユーザーによる手動での対処が必要です。",
   "pkg_guard_broken": "壊れたパッケージの依存関係を検出しました。復旧を試みています...",
   "pkg_guard_broken_fail": "壊れたパッケージの修復に失敗しました。ユーザーによる手動での対処が必要です。",
-  "pkg_guard_broken_pending": "パッケージの依存関係はまだ壊れています。ユーザーによる手動での対処が必要です。"
+  "pkg_guard_broken_pending": "パッケージの依存関係はまだ壊れています。ユーザーによる手動での対処が必要です。",
+  "privilege_required_title": "管理者権限が必要です",
+  "privilege_required_message": "このユーザーは sudo を使用できないため、LinuxToys はソフトウェアのインストール、更新、削除ができません。sudo がインストールされていることを確認し、ユーザーを sudo グループ（Debian、Ubuntu）または wheel グループ（Fedora、Arch、openSUSE）に追加してから、LinuxToys を再度開いてください。",
+  "bug_report_cancelled_title": "報告するものはありません",
+  "bug_report_cancelled_message": "最後の実行はキャンセルまたはスキップされたため、報告するものはありません。\n\n最後のメッセージ: {reason}",
+  "bug_report_rejected_title": "報告するものはありません",
+  "bug_report_rejected_message": "ターミナルの出力に送信できるテキストがなかったため、レポートは送信されませんでした。"
 }

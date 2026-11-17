@@ -1,92 +1,64 @@
 import sys
 from requests.exceptions import ConnectionError, Timeout
 
-from .gtk_common import Gdk, Gtk, Vte
+from .gtk_common import Gtk, Vte
 from .gtk_dialogs import run_message_dialog
 from .term_registry import ExecutionRegistry
 from .antenna import antenna
 
+BUG_REPORT_MAX_LINES = 200
+
+def _report_tail(text: str) -> str:
+    """Keep the most recent terminal lines, without blank lines at either edge."""
+    lines = text.split("\n")
+    while lines and not lines[-1].strip():
+        lines.pop()
+    while lines and not lines[0].strip():
+        lines.pop(0)
+    return "\n".join(lines[-BUG_REPORT_MAX_LINES:])
+
 class BugReporting:
     def _get_vte_buffer_text(self) -> str:
-        """Read the terminal's scrollback buffer directly from VTE.
+        """Read the terminal's whole buffer, scrollback included, from VTE.
 
         The script output is rendered into the VTE widget through a PTY and never
         passes through the Python process's stdout/stderr, so antenna's log_capture
-        buffer is empty for real script runs. Reading the widget's own text buffer
-        is therefore the reliable source and needs no clipboard round-trip (which is
-        prone to returning None/empty under Wayland, without a selection owner, or
-        when wait_for_text() times out).
+        buffer is empty for real script runs.
+
+        get_text_format() exports only the rows on screen, so output scrolled out of
+        view was lost, and an unmapped or squeezed terminal exported nothing although
+        the output was in the buffer. A range from the first retained row down to a
+        screen below the cursor does not depend on the viewport; rows past the end
+        of the buffer come back blank and are trimmed.
         """
         terminal = getattr(self, "terminal", None)
         if terminal is None:
             return ""
 
-        def usable_text(result):
-            # PyGObject versions return either text or (text, attributes). Never
-            # stringify malformed output or salvage another tuple field.
-            if isinstance(result, tuple):
-                result = result[0] if result else None
-            return result if isinstance(result, str) and result.strip() else ""
-
-        # Prefer the absolute buffer range so scrollback is included. Confine
-        # binding-error handling to each API attempt; normalize results outside
-        # those handlers so unrelated processing errors are not swallowed.
         try:
-            read_range = getattr(terminal, "get_text_range_format", None)
-            if callable(read_range):
+            if hasattr(terminal, "get_text_range_format"):
                 _column, cursor_row = terminal.get_cursor_position()
-                result = read_range(
+                result = terminal.get_text_range_format(
                     Vte.Format.TEXT, 0, 0, cursor_row + terminal.get_row_count(), 0
                 )
             else:
-                result = None
-        except Exception:
-            result = None
-
-        text = usable_text(result)
-        if text:
-            return text
-
-        # Missing, failed, empty or malformed range exports can still have a
-        # usable viewport. Avoid deprecated get_text() and its attributes issue.
-        try:
-            result = terminal.get_text_format(Vte.Format.TEXT)
+                result = terminal.get_text_format(Vte.Format.TEXT)
         except Exception:
             return ""
-        return usable_text(result)
+
+        text = result[0] if isinstance(result, tuple) else result
+        return _report_tail(text) if isinstance(text, str) else ""
 
     def _get_terminal_text(self) -> str:
         """Extract the terminal output for bug reporting.
 
         Order of preference:
-        1. The VTE text buffer directly (reliable, no clipboard).
-        2. A clipboard round-trip (legacy behaviour).
-        3. antenna's in-memory log_capture buffer (only has Python-side output).
+        1. The VTE text buffer, scrollback included.
+        2. antenna's in-memory log_capture buffer (only has Python-side output).
         """
         text = self._get_vte_buffer_text()
         if text.strip():
             return text
-
-        # Legacy clipboard fallback.
-        try:
-            if hasattr(self.terminal, "select_all"):
-                self.terminal.select_all()
-
-            if hasattr(self.terminal, "copy_clipboard_format"):
-                self.terminal.copy_clipboard_format(Vte.Format.TEXT)
-            else:
-                self.terminal.copy_clipboard()
-
-            clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
-            clip_text = clipboard.wait_for_text()
-
-            if hasattr(self.terminal, "unselect_all"):
-                self.terminal.unselect_all()
-
-            if isinstance(clip_text, str) and clip_text.strip():
-                return clip_text
-        except Exception:
-            pass
 
         # Last resort: Python-side captured stdout/stderr.
         try:
@@ -235,6 +207,8 @@ class BugReporting:
  
     def on_copy_clicked(self, button):
         """Handle bug report button click."""
+        # Exit 100 is LinuxToys' cancellation status (authentication refused, a
+        # skipped script): nothing to report, so explain that instead.
         if getattr(self, "_last_exit_code", None) == 100:
             self._show_bug_report_cancelled_dialog()
             return
@@ -345,7 +319,7 @@ class BugReporting:
         """Automatically submit a bug report when a script exits with an error code."""
         # Check if auto error reports are enabled
         auto_reports_enabled = getattr(self.parent, 'auto_error_reports_enabled', False)
-        if not auto_reports_enabled or getattr(self, "_last_exit_code", None) == 100:
+        if not auto_reports_enabled:
             return
         
         try:

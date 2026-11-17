@@ -6,6 +6,7 @@
 # compat: !ublue, !steamos
 # nocontainer
 # repo: https://openrazer.github.io
+# cachyos-mirrors-required: 0
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

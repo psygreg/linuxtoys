@@ -321,11 +321,6 @@ _FAMILY_LOCK_FILES = {
 }
 
 
-def native_manager_process_names():
-    """Process names of the distribution's native package-manager path."""
-    return _FAMILY_MANAGER_PROCESSES.get(_native_manager_family(), ())
-
-
 def _running_comm_names():
     """Set of comm names currently present in /proc (15-char, casefolded)."""
     found = set()
@@ -532,15 +527,14 @@ def _manager_line_is_transactional(lowered, manager):
     # Single-dash simulate/quiet forms ("apt-get -s autoremove", "dnf -q ...")
     # are dry-run/read-only even when they carry a mutating verb. A "-s" that is
     # part of a combined short flag ("pacman -Syu") is not matched here.
-    if (
-        re.search(r"(?:^|\s)-(?:s|y\s+--simulate)(?:\s|$)", lowered)
-        or re.search(r"(?:^|\s)-[a-z]*s[a-z]*(?:\s|$)", lowered)
-        and "pacman" not in lowered
-    ):
+    if re.search(r"(?:^|\s)-(?:s|y\s+--simulate)(?:\s|$)", lowered) or \
+            re.search(r"(?:^|\s)-[a-z]*s[a-z]*(?:\s|$)", lowered) and "pacman" not in lowered:
         return False
 
     verbs = _TRANSACTIONAL_HINTS.get(manager, ())
     if manager == "yum":
+        # yum verbs collide with common prose words ("remove", "update"), so
+        # only whole-word matches count for this manager.
         return any(
             re.search(r"\b" + re.escape(verb) + r"\b", lowered) for verb in verbs
         )
@@ -584,7 +578,7 @@ def dispatch_enters_native_transaction(script_info, script_path, script_dir):
 
     Self-update runs are native transactions by definition: their package
     operations live inside the remotely-fetched install.sh (the one-shot
-    installer loads the shared library guards), which the static scan cannot see
+    installer carries its own lock guards), which the static scan cannot see
     through. Every non-AppImage update path removes and reinstalls a package
     through the host's package manager, and the AppImage path's migration
     branches drive rpm-ostree/eopkg, so a queued self-update entry is gated

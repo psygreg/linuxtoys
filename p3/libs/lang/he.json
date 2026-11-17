@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "לא ניתן היה לשחזר את הפעולה שהופסקה של dpkg. נדרשת התערבות ידנית של המשתמש.",
   "pkg_guard_broken": "זוהו תלויות חבילות שבורות. מתבצע ניסיון שחזור...",
   "pkg_guard_broken_fail": "לא ניתן היה לתקן את החבילות השבורות. נדרשת התערבות ידנית של המשתמש.",
-  "pkg_guard_broken_pending": "תלויות החבילות עדיין שבורות. נדרשת התערבות ידנית של המשתמש."
+  "pkg_guard_broken_pending": "תלויות החבילות עדיין שבורות. נדרשת התערבות ידנית של המשתמש.",
+  "privilege_required_title": "נדרשת גישת מנהל",
+  "privilege_required_message": "משתמש זה אינו יכול להשתמש ב-sudo, ולכן LinuxToys אינו יכול להתקין, לעדכן או להסיר תוכנה. ודאו ש-sudo מותקן, הוסיפו את המשתמש לקבוצת sudo (Debian, Ubuntu) או לקבוצת wheel (Fedora, Arch, openSUSE) ולאחר מכן פתחו את LinuxToys שוב.",
+  "bug_report_cancelled_title": "אין מה לדווח",
+  "bug_report_cancelled_message": "ההרצה האחרונה בוטלה או דולגה, ולכן אין מה לדווח.\n\nהודעה אחרונה: {reason}",
+  "bug_report_rejected_title": "אין מה לדווח",
+  "bug_report_rejected_message": "פלט הטרמינל לא הכיל טקסט שניתן היה לשלוח, ולכן הדוח לא נשלח."
 }

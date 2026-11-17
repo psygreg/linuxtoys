@@ -29,12 +29,6 @@ class AppStreamExtensionsView(Gtk.ScrolledWindow):
         self.add(self.content)
         self._populated = False
 
-    def set_source(self, source_info, extensions):
-        self.source_info = dict(source_info)
-        self.extensions = [dict(item) for item in extensions]
-        if self._populated:
-            self.refresh()
-
     def ensure_populated(self):
         """Populate extension state/rows only when the tab is first shown."""
         if self._populated:

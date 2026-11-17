@@ -5,6 +5,7 @@
 # icon: windscribe.svg
 # repo: https://windscribe.com
 # compat: !solus
+# cachyos-mirrors-required: 0
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

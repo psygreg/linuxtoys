@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "No se pudo recuperar la operación dpkg interrumpida. Se requiere la intervención manual del usuario.",
   "pkg_guard_broken": "Se han detectado dependencias de paquetes rotas. Intentando recuperarlas...",
   "pkg_guard_broken_fail": "No se pudieron reparar los paquetes rotos. Se requiere la intervención manual del usuario.",
-  "pkg_guard_broken_pending": "Las dependencias de los paquetes siguen rotas. Se requiere la intervención manual del usuario."
+  "pkg_guard_broken_pending": "Las dependencias de los paquetes siguen rotas. Se requiere la intervención manual del usuario.",
+  "privilege_required_title": "Se requiere acceso de administrador",
+  "privilege_required_message": "Este usuario no puede usar sudo, por lo que LinuxToys no puede instalar, actualizar ni eliminar software. Asegúrese de que sudo esté instalado, añada el usuario al grupo sudo (Debian, Ubuntu) o al grupo wheel (Fedora, Arch, openSUSE) y luego abra LinuxToys de nuevo.",
+  "bug_report_cancelled_title": "Nada que informar",
+  "bug_report_cancelled_message": "La última ejecución fue cancelada u omitida, así que no hay nada que informar.\n\nÚltimo mensaje: {reason}",
+  "bug_report_rejected_title": "Nada que informar",
+  "bug_report_rejected_message": "La salida de la terminal no tenía texto que pudiera enviarse, por lo que no se envió el informe."
 }

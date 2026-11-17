@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Không thể khôi phục thao tác dpkg bị gián đoạn. Yêu cầu người dùng can thiệp thủ công.",
   "pkg_guard_broken": "Phát hiện các phần phụ thuộc gói bị hỏng. Đang thử khôi phục...",
   "pkg_guard_broken_fail": "Không thể sửa các gói bị hỏng. Yêu cầu người dùng can thiệp thủ công.",
-  "pkg_guard_broken_pending": "Các phần phụ thuộc của gói vẫn bị hỏng. Yêu cầu người dùng can thiệp thủ công."
+  "pkg_guard_broken_pending": "Các phần phụ thuộc của gói vẫn bị hỏng. Yêu cầu người dùng can thiệp thủ công.",
+  "privilege_required_title": "Yêu cầu quyền quản trị viên",
+  "privilege_required_message": "Người dùng này không thể dùng sudo, do đó LinuxToys không thể cài đặt, cập nhật hay gỡ phần mềm. Hãy đảm bảo sudo đã được cài đặt, thêm người dùng vào nhóm sudo (Debian, Ubuntu) hoặc nhóm wheel (Fedora, Arch, openSUSE), rồi mở lại LinuxToys.",
+  "bug_report_cancelled_title": "Không có gì để báo cáo",
+  "bug_report_cancelled_message": "Lần chạy cuối đã bị hủy hoặc bỏ qua, do đó không có gì để báo cáo.\n\nTin nhắn cuối: {reason}",
+  "bug_report_rejected_title": "Không có gì để báo cáo",
+  "bug_report_rejected_message": "Đầu ra của terminal không có văn bản nào có thể gửi được, do đó báo cáo không được gửi đi."
 }

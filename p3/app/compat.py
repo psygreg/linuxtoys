@@ -1,4 +1,7 @@
+import grp
 import os
+import pwd
+import shutil
 import threading
 
 
@@ -7,6 +10,40 @@ _SCRIPT_FILE_CACHE = {}
 _SCRIPT_FILE_PATH_LOCKS = {}
 _HOST_COMPAT_CACHE_LOCK = threading.RLock()
 _HOST_COMPAT_CACHE = {}
+
+# Transaction map written by the bash core libraries during script runs
+# (same literal in p3/libs/linuxtoys.bash). Consumed by registry saving,
+# auto-revert and bug reports.
+TRANSMAP_PATH = "/tmp/linuxtoys/transmap"
+
+
+def native_package_family() -> str:
+    """Return this host's native package-manager family ("" = unknown).
+
+    One compat-key mapping shared by the installed-state tracker
+    (``installed_packages``) and the AUR gate (``aur_cache``). The busy-manager
+    preflight (``package_guard``) deliberately mirrors the os-release
+    predicates of ``libs/sysinfo.bash`` instead, because it must inspect
+    exactly the managers the distribution execution path drives.
+
+    Families: "ostree" (rpm-ostree/ublue immutable), "arch" (pacman, incl.
+    CachyOS/Manjaro), "debian" (apt: Debian/Ubuntu/Deepin/Zorin/Pika),
+    "fedora" (dnf), "suse" (zypper).
+    """
+    keys = set(get_system_compat_keys())
+    if keys.intersection({"steamos", "dakota", "gnomeos", "kde-linux"}):
+        return ""
+    if "ostree" in keys or "ublue" in keys:
+        return "ostree"
+    if "cachy" in keys or "arch" in keys or "manjaro" in keys:
+        return "arch"
+    if keys.intersection({"ubuntu", "debian", "pika", "deepin", "zorin"}):
+        return "debian"
+    if "fedora" in keys or "rhel" in keys:
+        return "fedora"
+    if "suse" in keys:
+        return "suse"
+    return ""
 
 
 def _script_file_signature(path):
@@ -70,12 +107,6 @@ def clear_host_compat_cache():
     """Discard cached host probes used to build compatibility context."""
     with _HOST_COMPAT_CACHE_LOCK:
         _HOST_COMPAT_CACHE.clear()
-
-
-def clear_runtime_caches():
-    """Discard all compatibility-layer runtime caches."""
-    clear_script_file_cache()
-    clear_host_compat_cache()
 
 
 def _cached_host_value(key, builder):
@@ -443,6 +474,44 @@ def is_supported_system():
 
     # Check if any OS compatibility key matches
     return bool(compat_keys & supported_os_keys)
+
+
+_ESCALATION_GROUPS = ("sudo", "wheel", "admin")
+_ESCALATION_COMMANDS = ("sudo", "sudo-rs", "run0-sudo")
+
+
+def _account_group_ids(username: str, primary_gid: int) -> set[int]:
+    """Group IDs from the account database, which is what sudo matches against."""
+    try:
+        return set(os.getgrouplist(username, primary_gid))
+    except OSError:
+        return set(os.getgroups()) | {primary_gid}
+
+
+def can_escalate_privileges() -> bool:
+    """Return True when the current user can use sudo, or is root.
+
+    sudo asks for a password before it decides whether a user has any rights,
+    so `sudo -n` cannot tell an unauthorized user from one who needs a password.
+    The check therefore looks at membership in the groups that the default
+    sudoers policies grant (sudo, wheel, admin), without prompting for anything.
+    """
+    if os.geteuid() == 0:
+        return True
+    if not any(shutil.which(command) for command in _ESCALATION_COMMANDS):
+        return False
+    try:
+        account = pwd.getpwuid(os.getuid())
+    except KeyError:
+        return False
+    group_ids = _account_group_ids(account.pw_name, account.pw_gid)
+    for group_name in _ESCALATION_GROUPS:
+        try:
+            if grp.getgrnam(group_name).gr_gid in group_ids:
+                return True
+        except KeyError:
+            continue
+    return False
 
 
 def get_system_compat_keys():

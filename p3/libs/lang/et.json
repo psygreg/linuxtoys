@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Katkestatud dpkg operatsiooni ei õnnestunud taastada. Vajalik on kasutaja käsitsi sekkumine.",
   "pkg_guard_broken": "Tuvastati vigased paketi sõltuvused. Proovitakse taastada...",
   "pkg_guard_broken_fail": "Vigased paketid ei õnnestunud parandada. Vajalik on kasutaja käsitsi sekkumine.",
-  "pkg_guard_broken_pending": "Paketi sõltuvused on endiselt vigased. Vajalik on kasutaja käsitsi sekkumine."
+  "pkg_guard_broken_pending": "Paketi sõltuvused on endiselt vigased. Vajalik on kasutaja käsitsi sekkumine.",
+  "privilege_required_title": "Vajalik on administraatoriõigus",
+  "privilege_required_message": "See kasutaja ei saa kasutada käsku sudo, seetõttu ei saa LinuxToys tarkvara paigaldada, uuendada ega eemaldada. Veenduge, et sudo on paigaldatud, lisage kasutaja sudo rühma (Debian, Ubuntu) või wheel rühma (Fedora, Arch, openSUSE) ja avage seejärel LinuxToys uuesti.",
+  "bug_report_cancelled_title": "Teatamiseks pole midagi",
+  "bug_report_cancelled_message": "Viimane käivitamine tühistati või jäeti vahele, seetõttu pole teatamiseks midagi.\n\nViimane sõnum: {reason}",
+  "bug_report_rejected_title": "Teatamiseks pole midagi",
+  "bug_report_rejected_message": "Terminali väljundis ei olnud teksti, mida saaks saata, seetõttu raportit ei esitatud."
 }

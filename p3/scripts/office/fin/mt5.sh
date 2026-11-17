@@ -3,6 +3,7 @@
 # description: mt5_desc
 # icon: mt5.png
 # repo: https://www.metatrader5.com
+# cachyos-mirrors-required: 0
 # nocontainer
 # new
 

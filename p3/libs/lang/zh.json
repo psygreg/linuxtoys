@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "无法恢复被中断的 dpkg 操作。需要用户手动干预。",
   "pkg_guard_broken": "检测到损坏的软件包依赖关系。正在尝试恢复...",
   "pkg_guard_broken_fail": "无法修复损坏的软件包。需要用户手动干预。",
-  "pkg_guard_broken_pending": "软件包依赖关系仍然损坏。需要用户手动干预。"
+  "pkg_guard_broken_pending": "软件包依赖关系仍然损坏。需要用户手动干预。",
+  "privilege_required_title": "需要管理员权限",
+  "privilege_required_message": "该用户无法使用 sudo，因此 LinuxToys 无法安装、更新或卸载软件。请确认已安装 sudo，并将该用户加入 sudo 组（Debian、Ubuntu）或 wheel 组（Fedora、Arch、openSUSE），然后重新打开 LinuxToys。",
+  "bug_report_cancelled_title": "没有可报告的内容",
+  "bug_report_cancelled_message": "上次运行已被取消或跳过，因此没有可报告的内容。\n\n最后一条消息：{reason}",
+  "bug_report_rejected_title": "没有可报告的内容",
+  "bug_report_rejected_message": "终端输出中没有可以发送的文本，因此未提交报告。"
 }

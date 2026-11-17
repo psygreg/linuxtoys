@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Nepavyko atkurti pertrauktos dpkg operacijos. Reikalingas vartotojo įsikišimas rankiniu būdu.",
   "pkg_guard_broken": "Aptiktos pažeistos paketų priklausomybės. Bandoma atkurti...",
   "pkg_guard_broken_fail": "Nepavyko pataisyti pažeistų paketų. Reikalingas vartotojo įsikišimas rankiniu būdu.",
-  "pkg_guard_broken_pending": "Paketų priklausomybės vis dar pažeistos. Reikalingas vartotojo įsikišimas rankiniu būdu."
+  "pkg_guard_broken_pending": "Paketų priklausomybės vis dar pažeistos. Reikalingas vartotojo įsikišimas rankiniu būdu.",
+  "privilege_required_title": "Reikalinga administratoriaus prieiga",
+  "privilege_required_message": "Šis naudotojas negali naudoti sudo, todėl LinuxToys negali įdiegti, atnaujinti ar pašalinti programinės įrangos. Įsitikinkite, kad sudo įdiegtas, pridėkite naudotoją prie sudo grupės (Debian, Ubuntu) arba wheel grupės (Fedora, Arch, openSUSE), tada vėl atidarykite LinuxToys.",
+  "bug_report_cancelled_title": "Nėra ką pranešti",
+  "bug_report_cancelled_message": "Paskutinis paleidimas buvo atšauktas arba praleistas, todėl nėra ką pranešti.\n\nPaskutinis pranešimas: {reason}",
+  "bug_report_rejected_title": "Nėra ką pranešti",
+  "bug_report_rejected_message": "Terminalo išvestyje nebuvo teksto, kurį būtų galima išsiųsti, todėl ataskaita nepateikta."
 }

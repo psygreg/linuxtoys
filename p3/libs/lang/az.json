@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Kəsilmiş dpkg əməliyyatını bərpa etmək alınmadı. İstifadəçinin əl ilə müdaxiləsi lazımdır.",
   "pkg_guard_broken": "Pozulmuş paket asılılıqları aşkarlandı. Bərpa cəhd olunur...",
   "pkg_guard_broken_fail": "Pozulmuş paketləri düzəltmək alınmadı. İstifadəçinin əl ilə müdaxiləsi lazımdır.",
-  "pkg_guard_broken_pending": "Paket asılılıqları hələ də pozulub. İstifadəçinin əl ilə müdaxiləsi lazımdır."
+  "pkg_guard_broken_pending": "Paket asılılıqları hələ də pozulub. İstifadəçinin əl ilə müdaxiləsi lazımdır.",
+  "privilege_required_title": "Administrator Girişi Tələb Olunur",
+  "privilege_required_message": "Bu istifadəçi sudo istifadə edə bilmir, ona görə LinuxToys proqram quraşdıra, yeniləyə və ya silə bilmir. sudo-nun quraşdırıldığından əmin olun, istifadəçini sudo qrupuna (Debian, Ubuntu) və ya wheel qrupuna (Fedora, Arch, openSUSE) əlavə edin, sonra LinuxToys-u yenidən açın.",
+  "bug_report_cancelled_title": "Bildiriləcək Heç Nə Yoxdur",
+  "bug_report_cancelled_message": "Son işə salma ləğv edildi və ya ötürüldü, ona görə bildiriləcək heç nə yoxdur.\n\nSon mesaj: {reason}",
+  "bug_report_rejected_title": "Bildiriləcək Heç Nə Yoxdur",
+  "bug_report_rejected_message": "Terminal çıxışında göndərilə bilən heç bir mətn yox idi, ona görə hesabat göndərilmədi."
 }

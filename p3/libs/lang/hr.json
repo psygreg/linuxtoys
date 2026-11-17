@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Oporavak prekinute dpkg radnje nije uspio. Potrebna je ručna intervencija korisnika.",
   "pkg_guard_broken": "Otkrivene su pokvarene zavisnosti paketa. Pokušava se oporavak...",
   "pkg_guard_broken_fail": "Popravka pokvarenih paketa nije uspjela. Potrebna je ručna intervencija korisnika.",
-  "pkg_guard_broken_pending": "Zavisnosti paketa su i dalje pokvarene. Potrebna je ručna intervencija korisnika."
+  "pkg_guard_broken_pending": "Zavisnosti paketa su i dalje pokvarene. Potrebna je ručna intervencija korisnika.",
+  "privilege_required_title": "Potrebna administratorska dozvola",
+  "privilege_required_message": "Ovaj korisnik ne može koristiti sudo, pa LinuxToys ne može instalirati, ažurirati ni ukloniti softver. Provjerite je li sudo instaliran, dodajte korisnika u sudo grupu (Debian, Ubuntu) ili wheel grupu (Fedora, Arch, openSUSE), a zatim ponovo otvorite LinuxToys.",
+  "bug_report_cancelled_title": "Nema ništa za prijaviti",
+  "bug_report_cancelled_message": "Posljednje pokretanje je otkazano ili preskočeno, pa nema ništa za prijaviti.\n\nPosljednja poruka: {reason}",
+  "bug_report_rejected_title": "Nema ništa za prijaviti",
+  "bug_report_rejected_message": "Izlaz terminala nije imao tekst koji se može poslati, pa izvještaj nije poslan."
 }

@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Rikuperimi i veprimit dpkg të ndërprerë dështoi. Kërkohet ndërhyrja manuale e përdoruesit.",
   "pkg_guard_broken": "U zbuluan varësi paketash të prishura. Po provohet rikuperimi...",
   "pkg_guard_broken_fail": "Riparimi i paketave të prishura dështoi. Kërkohet ndërhyrja manuale e përdoruesit.",
-  "pkg_guard_broken_pending": "Varësitë e paketave janë ende të prishura. Kërkohet ndërhyrja manuale e përdoruesit."
+  "pkg_guard_broken_pending": "Varësitë e paketave janë ende të prishura. Kërkohet ndërhyrja manuale e përdoruesit.",
+  "privilege_required_title": "Kërkohet qasje e administratorit",
+  "privilege_required_message": "Ky përdorues nuk mund të përdorë sudo, kështu që LinuxToys nuk mund të instalojë, përditësojë ose heqë software. Sigurohuni që sudo është i instaluar, shtoni përdoruesin në grupin sudo (Debian, Ubuntu) ose në grupin wheel (Fedora, Arch, openSUSE), pastaj hapni përsëri LinuxToys.",
+  "bug_report_cancelled_title": "Nuk ka gjë për të raportuar",
+  "bug_report_cancelled_message": "Ekzekutimi i fundit u anulua ose u anashkalua, kështu që nuk ka gjë për të raportuar.\n\nMesazhi i fundit: {reason}",
+  "bug_report_rejected_title": "Nuk ka gjë për të raportuar",
+  "bug_report_rejected_message": "Dalja e terminalit nuk kishte tekst që mund të dërgohej, kështu që raporti nuk u dorëzua."
 }

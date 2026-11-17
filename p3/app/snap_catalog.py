@@ -1,10 +1,12 @@
 """Snap Store metadata ingestion for the LinuxToys AppStream-style catalog."""
 from __future__ import annotations
-import http.client, json, os, socket, time
+import http.client, json, socket, time
 from pathlib import Path
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
+
+from .atomic_io import atomic_write_json
 
 SNAPD_SOCKET = "/run/snapd.socket"
 CACHE_MAX_AGE = 14 * 24 * 60 * 60
@@ -235,10 +237,9 @@ def load_or_refresh(cache_path, force=False):
                 if item: merged[item["snap_name"]]=item
         values=sorted(merged.values(), key=lambda x:x["name"].casefold())
         if values:
-            path.parent.mkdir(parents=True,exist_ok=True)
-            tmp=path.with_suffix(path.suffix+".tmp")
-            tmp.write_text(json.dumps(values,ensure_ascii=False,separators=(",",":")),encoding="utf-8")
-            os.replace(tmp,path)
+            atomic_write_json(
+                path, values, ensure_ascii=False, separators=(",", ":")
+            )
             return values
     except (OSError,ValueError,TypeError,json.JSONDecodeError):
         pass

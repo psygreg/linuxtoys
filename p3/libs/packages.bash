@@ -788,7 +788,12 @@ pkg_install () {
                     call_script paru || die "Failed to repair paru"
                     paru --version >/dev/null 2>&1 || die "Paru is still unusable after reinstalling it"
                 fi
-                pacman_transaction paru -S -a --noconfirm --skipreview "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
+                # --sudoloop keeps a background `sudo -v` refresh running while
+                # paru builds: a long compile can outlive the sudo timestamp,
+                # and then paru's own `sudo pacman -U` at the end prompts for a
+                # password on the runner's terminal — which the background
+                # AppStream PTY has nobody to answer, failing the whole job.
+                pacman_transaction paru -S -a --noconfirm --skipreview --sudoloop "${_paru_pkgs[@]}" || die "Failed to install $to_install_paru"
                 [[ $_ignore_appends -eq 0 ]] && _append_transmap "pkg $to_install_paru"
                 (( _bypass )) || runner_lock "package-transaction"
             fi
@@ -995,8 +1000,11 @@ _snap_supported_host () {
 pkg_snap () {
     _snap_supported_host || die "Snap packages are unsupported on this system"
     (( $# > 0 )) || return 0
+    if ! command -v snap >/dev/null 2>&1; then
+        call_script snap || die "Failed to install Snap support"
+        command -v snap >/dev/null 2>&1 || die "Snap is unavailable after installing Snap support"
+    fi
     _architecture_check snap "$@"
-    command -v snap >/dev/null 2>&1 || die "Configure native snapd before installing Store packages"
 
     local -a _snap_new=()
     local pak
@@ -1010,7 +1018,11 @@ pkg_snap () {
     (( ${#_snap_new[@]} > 0 )) || return 0
 
     askpass
-    runner_lock "package-transaction"
+    # Snap installs talk to the Snap store, never to the distro repositories;
+    # the *external* lock keeps the runner bookkeeping without the mirror
+    # preflight (a missing snapd is bootstrapped through pkg_install above,
+    # which runs the preflight itself when a native transaction starts).
+    runner_lock "package-transaction-external"
     sudo_ snap install "${_snap_new[@]}" || {
         runner_unlock
         die "Failed to install snap packages ${_snap_new[*]}"
@@ -1045,28 +1057,6 @@ pkg_snap_revert () {
     runner_unlock
 }
 
-pkg_snap_remove () {
-    (( $# > 0 )) || return 0
-    command -v snap >/dev/null 2>&1 || return 0
-
-    local -a _snap_found=()
-    local pak
-    for pak in "$@"; do
-        if snap list "$pak" >/dev/null 2>&1; then
-            _snap_found+=("$pak")
-        fi
-    done
-    (( ${#_snap_found[@]} > 0 )) || return 0
-
-    askpass
-    runner_lock "package-removal"
-    sudo_ snap remove "${_snap_found[@]}" || {
-        runner_unlock
-        fatal "Failed to remove snap packages ${_snap_found[*]}"
-    }
-    runner_unlock
-}
-
 _snap_installed_names () {
     command -v snap >/dev/null 2>&1 || return 0
     snap list 2>/dev/null | awk 'NR > 1 { print $1 }' | sort -u
@@ -1088,7 +1078,9 @@ pkg_snap_file () {
     _snap_installed_names > "$before_file"
 
     askpass
-    runner_lock "package-transaction"
+    # Local snap files install through snapd (see pkg_snap): no distro
+    # repository access, so the lock stays external to the mirror preflight.
+    runner_lock "package-transaction-external"
 
     for snap_file in "$@"; do
         [[ -f "$snap_file" ]] || {
@@ -1097,8 +1089,10 @@ pkg_snap_file () {
             die "Snap package file not found: $snap_file"
         }
 
-        # Never bypass snapd assertion or confinement verification.
-        sudo_ snap install "$snap_file" || {
+        # Local snaps obtained outside the Store do not carry a Store assertion,
+        # so snapd requires --dangerous. --classic is harmless for strict snaps
+        # and is required when the package itself declares classic confinement.
+        sudo_ snap install --dangerous --classic "$snap_file" || {
             rm -f "$before_file"
             runner_unlock
             die "Failed to install Snap package from file: $snap_file"
@@ -1148,8 +1142,17 @@ pkg_fromfile () {
         return $?
     fi
 
-    [[ "$1" == *.flatpak || "$1" == *.flatpakref ]] || askpass
-    runner_lock "package-transaction"
+    # Flatpak bundle files install from Flatpak's own remote through the
+    # flatpak CLI, never from the distro repositories: ask for an external
+    # transaction lock so the mirror preflight is skipped. Native package
+    # files keep the generic preflight, and only they prompt for escalation
+    # here.
+    if [[ "$1" == *.flatpak || "$1" == *.flatpakref ]]; then
+        runner_lock "package-transaction-external"
+    else
+        askpass
+        runner_lock "package-transaction"
+    fi
 
     if [[ "$1" == *.flatpak || "$1" == *.flatpakref ]]; then
         if ! command -v flatpak &>/dev/null || ! flatpak remote-list | grep -q flathub; then
@@ -1187,10 +1190,11 @@ pkg_fromfile () {
         local _flatpak_stderr
         if ! _flatpak_stderr=$(flatpak install --or-update "$flatpak_scope" --noninteractive "$flatpak_file" 2>&1 >/dev/null); then
             # A genuine fallback needs sudo. Authenticate while terminal input is
-            # unlocked, then restore the package-transaction lock before continuing.
+            # unlocked, then restore the (external) transaction lock before
+            # continuing: the operation is still a Flatpak bundle install.
             runner_unlock
             askpass
-            runner_lock "package-transaction"
+            runner_lock "package-transaction-external"
             _flatpak_stderr=$(
                 sudo_ flatpak install --or-update --system --noninteractive "$flatpak_file" 2>&1 >/dev/null
             ) || {
@@ -1847,7 +1851,11 @@ PY2
     if [[ "$run_command" =~ (^|[[:space:];|&()])sudo([[:space:]]|$) ]]; then
         askpass
     fi
-    runner_lock "package-transaction"
+    # The make build and its install command never touch the distro package
+    # database (build dependencies went through pkg_install above, which runs
+    # the mirror preflight itself when a native transaction starts): keep the
+    # runner bookkeeping on an external transaction lock.
+    runner_lock "package-transaction-external"
 
     ( cd -- "$make_dir" && bash -c "$run_command" ) || {
         runner_unlock
@@ -2525,7 +2533,10 @@ pkg_appimage () {
         }
     }
     { is_arch || is_cachy || is_solus; } && {
-        pkg_exists fuse
+        # The FUSE 2 package is named "fuse2" on Arch-family and Solus (there
+        # is no repository package literally named "fuse"), so probe the name
+        # that the fallback below would install.
+        pkg_exists fuse2
         [[ ! ${#pkg_notfound[@]} -eq 0 ]] && {
             pkg_install fuse2;
         }
@@ -2890,13 +2901,82 @@ pkg_appimage_rm () {
     return 0
 }
 
-pkg_npm () {
-    if ! command -v npm &>/dev/null; then
-        { ( is_ubuntu || is_debian || is_suse ) && pkg_install npm; }
-        { ( is_fedora || is_ostree ) && pkg_install nodejs-npm; }
-        { ( is_rhel ) && rpmfusion_chk && pkg_install nodejs-npm; }
-        { ( is_arch || is_cachy ) && pkg_install npm; }
+# Repair a broken npm installation. A bare "command -v npm" is not enough to
+# prove npm is usable: a dangling /usr/bin/npm symlink (e.g. left behind when
+# a global npm self-install is later reverted by the package manager) or a
+# Node.js removed from under an installed npm package both fail the PATH
+# lookup, while the package manager still reports npm as installed — so a
+# plain pkg_install prints "already installed, skipping" and every later npm
+# call dies with the confusing "env: 'npm': No such file or directory" from
+# the sudo_ env wrapper. This helper reinstalls the distro npm package
+# outright (apt/dnf/zypper/pacman pull Node.js back in where npm depends on
+# it), or performs the regular first-time install when the package is absent,
+# mirroring the distro mapping in pkg_npm. When no supported distro matches,
+# nothing is done and callers keep their original failure path.
+_pkg_npm_repair () {
+    local _npm_pkg="npm"
+    if is_fedora || is_ostree || is_rhel; then
+        _npm_pkg="nodejs-npm"
     fi
+    pkg_exists "$_npm_pkg"
+    if [[ ${#pkg_found[@]} -gt 0 ]]; then
+        if is_ubuntu || is_debian; then
+            interrupted_apt_guard
+            apt_transaction sudo_ apt-get install -y --reinstall "$_npm_pkg" || fatal "Failed to reinstall npm"
+        elif is_arch || is_cachy; then
+            pacman_lock_guard
+            pacman_transaction sudo_ pacman -S --noconfirm "$_npm_pkg" || fatal "Failed to reinstall npm"
+        elif is_ostree; then
+            rpm_ostree_transaction sudo_ rpm-ostree install --allow-inactive "$_npm_pkg" || fatal "Failed to reinstall npm"
+        elif is_fedora || is_rhel; then
+            dnf_transaction sudo_ dnf reinstall -y "$_npm_pkg" || fatal "Failed to reinstall npm"
+        elif is_suse; then
+            zypper_transaction sudo_ zypper in -y --force "$_npm_pkg" || fatal "Failed to reinstall npm"
+        else
+            return 0
+        fi
+        npm --version &>/dev/null || fatal "npm is still unusable after reinstalling it"
+    else
+        if is_rhel; then
+            rpmfusion_chk && pkg_install "$_npm_pkg"
+        else
+            pkg_install "$_npm_pkg"
+        fi
+    fi
+}
+
+_pkg_npm_self_upgrade () {
+    local -a _self_flags=("$@")
+    local _self_log
+    if _self_log=$(npm install -g "${_self_flags[@]}" npm 2>&1); then
+        return 0
+    fi
+    if grep -qiE 'EBADENGINE|Unsupported engine|Not compatible with your version of node/npm' <<<"$_self_log"; then
+        warn "The latest npm requires a newer Node.js than the one installed; keeping the current npm."
+        return 1
+    fi
+    # Not an engine refusal: escalate as any other failing npm install would,
+    # through the resolved npm binary so root's PATH cannot miss it.
+    local _npm_bin
+    _npm_bin="$(command -v npm 2>/dev/null)" || _npm_bin="npm"
+    sudo_ "$_npm_bin" install -g "${_self_flags[@]}" npm || fatal "Failed to install npm package npm"
+}
+
+pkg_npm () {
+    # Functional check rather than a bare "command -v npm": a dangling npm
+    # symlink or a Node.js removed under an installed npm package fails this
+    # while the package manager still lists npm as installed, which previously
+    # made pkg_install skip with "already installed" and left every later npm
+    # call dying with "env: 'npm': No such file or directory" under the sudo_
+    # env wrapper (see _pkg_npm_repair).
+    if ! npm --version &>/dev/null; then
+        _pkg_npm_repair
+    fi
+    # Resolved once for the escalated calls below: sudo_ runs commands through
+    # root's environment, whose PATH may not contain a user-local npm — the
+    # other half of the "env: 'npm': No such file or directory" failures.
+    local _npm_bin
+    _npm_bin="$(command -v npm 2>/dev/null)" || _npm_bin="npm"
     # PATH config
     for rc in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
         if [ -f "$rc" ]; then
@@ -2932,8 +3012,18 @@ pkg_npm () {
     done
     for pkg in "${packages[@]}"; do
         if ! npm list -g "$pkg" &>/dev/null; then
-            { npm install -g "${flags[@]}" "$pkg" 2>/dev/null || sudo_ npm install -g "${flags[@]}" "$pkg"; } || fatal "Failed to install npm package $pkg"
-            _append_transmap "npm $pkg"
+            if [[ "$pkg" == "npm" ]]; then
+                # Installing npm through npm is a self-upgrade, not a regular
+                # package: an engine-incompatible Node makes npm refuse it
+                # outright. Skipped upgrades leave the existing npm in place,
+                # so only real upgrades are recorded for reversal.
+                if _pkg_npm_self_upgrade "${flags[@]}"; then
+                    _append_transmap "npm $pkg"
+                fi
+            else
+                { npm install -g "${flags[@]}" "$pkg" 2>/dev/null || sudo_ "$_npm_bin" install -g "${flags[@]}" "$pkg"; } || fatal "Failed to install npm package $pkg"
+                _append_transmap "npm $pkg"
+            fi
         fi
     done
 }
@@ -3009,7 +3099,11 @@ pkg_brew () {
             echo "Homebrew formula $pak already installed, skipping."
             continue
         fi
-        runner_lock "package-transaction"
+        # Homebrew resolves and downloads formulae from its own taps, never
+        # from the distro repositories: lock externally to the mirror
+        # preflight (the brew bootstrap through call_script brew covers any
+        # native packages it needs through pkg_install).
+        runner_lock "package-transaction-external"
         status=0
         HOMEBREW_NO_ASK=1 "$brew_bin" install --formula "$pak" || status=$?
         runner_unlock

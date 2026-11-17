@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Keskeytetyn dpkg-toiminnon palautus epäonnistui. Manuaalinen käyttäjän toimenpide tarvitaan.",
   "pkg_guard_broken": "Havaittiin rikkoutuneita pakettiriippuvuuksia. Yritetään palautusta...",
   "pkg_guard_broken_fail": "Rikkoutuneiden pakettien korjaus epäonnistui. Manuaalinen käyttäjän toimenpide tarvitaan.",
-  "pkg_guard_broken_pending": "Pakettiriippuvuudet ovat yhä rikki. Manuaalinen käyttäjän toimenpide tarvitaan."
+  "pkg_guard_broken_pending": "Pakettiriippuvuudet ovat yhä rikki. Manuaalinen käyttäjän toimenpide tarvitaan.",
+  "privilege_required_title": "Järjestelmänvalvojan oikeudet vaaditaan",
+  "privilege_required_message": "Tämä käyttäjä ei voi käyttää sudo-komentoa, joten LinuxToys ei voi asentaa, päivittää tai poistaa ohjelmistoja. Varmista, että sudo on asennettu, lisää käyttäjä sudo-ryhmään (Debian, Ubuntu) tai wheel-ryhmään (Fedora, Arch, openSUSE) ja avaa sitten LinuxToys uudelleen.",
+  "bug_report_cancelled_title": "Ei raportoitavaa",
+  "bug_report_cancelled_message": "Viimeisin suoritus peruutettiin tai ohitettiin, joten ei ole raportoitavaa.\n\nViimeisin viesti: {reason}",
+  "bug_report_rejected_title": "Ei raportoitavaa",
+  "bug_report_rejected_message": "Päätteen tulosteessa ei ollut tekstiä, joka olisi voitu lähettää, joten raporttia ei lähetetty."
 }

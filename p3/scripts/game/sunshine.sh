@@ -5,6 +5,7 @@
 # icon: sunshine.png
 # repo: https://github.com/LizardByte/Sunshine
 # compat: !steamos
+# cachyos-mirrors-required: 0
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

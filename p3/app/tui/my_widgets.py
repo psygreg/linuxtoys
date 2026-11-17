@@ -670,11 +670,9 @@ class Terminal(Widget, can_focus=True):
         a worker for the whole widget lifetime.
         """
         while True:
-            # Pega a primeira mensagem
             message = await self.pty.send_queue.get()
             messages = [message]
 
-            # Drena todas as mensagens já disponíveis na fila (batching)
             while not self.pty.send_queue.empty():
                 try:
                     messages.append(self.pty.send_queue.get_nowait())
@@ -699,11 +697,9 @@ class Terminal(Widget, can_focus=True):
                     self.post_message(ScriptFinished(None))
                     self._spawn_pty()
 
-            # Renderiza apenas uma vez por lote acumulado
             if has_stdout:
                 self._render_screen()
 
-            # Cede o loop para processar eventos de teclado/mouse sem lag
             await asyncio.sleep(0.01)
 
     def _check_exit_marker(self, chars: str) -> None:
@@ -719,7 +715,7 @@ class Terminal(Widget, can_focus=True):
         buffer = self._exit_scan_buffer + chars
         match = None
         for match in self._EXIT_CODE_RE.finditer(buffer):
-            pass  # fica com a última ocorrência
+            pass
         if match is not None:
             self._awaiting_exit_code = False
             self._exit_scan_buffer = ""

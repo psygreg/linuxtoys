@@ -1,4 +1,5 @@
 from . import get_icon_path
+from .gtk_dialogs import run_message_dialog
 from .gtk_common import Gtk, GLib
 import threading
 from .antenna import antenna
@@ -138,6 +139,36 @@ class BugReportDialog(Gtk.Dialog):
     def get_selected_app(self):
         return self.selected_app
 
+def _support_links(
+    translations: dict[str, str] | None,
+) -> list[tuple[str, str, str, bool]]:
+    """Canonical SupportFooter link table (url, label, icon, is_link).
+
+    Single source shared by construction and language updates so URLs,
+    icons and translation keys cannot drift apart."""
+    translations = translations or {}
+    return [
+        ("https://linux.toys/documentation.html", "Wiki", "wiki.svg", True),
+        (
+            "",
+            translations.get("report_label", "Report Bug"),
+            "report.svg",
+            True,
+        ),
+        (
+            "https://dev.linux.toys",
+            translations.get("devportal_label", "Credits"),
+            "credits.svg",
+            True,
+        ),
+        (
+            "https://ko-fi.com/psygreg",
+            translations.get("support_footer", "Support this project"),
+            "sponsor.svg",
+            True,
+        ),
+    ]
+
 class SupportFooter(Gtk.Box):
     def __init__(self, translations, parent_window=None):
         super().__init__(orientation=Gtk.Orientation.HORIZONTAL, spacing=20)
@@ -147,27 +178,7 @@ class SupportFooter(Gtk.Box):
         self.set_margin_bottom(10)
         self.set_halign(Gtk.Align.CENTER)
 
-        self.urls_labels = [
-            ("https://linux.toys/documentation.html", "Wiki", "wiki.svg", True),
-            (
-                "",
-                self.translations.get("report_label", "Report Bug"),
-                "report.svg",
-                True,
-            ),
-            (
-                "https://dev.linux.toys",
-                self.translations.get("devportal_label", "Credits"),
-                "credits.svg",
-                True,
-            ),
-            (
-                "https://ko-fi.com/psygreg",
-                self.translations.get("support_footer", "Support this project"),
-                "sponsor.svg",
-                True,
-            ),
-        ]
+        self.urls_labels = _support_links(self.translations)
         
         # Store button references for later updates
         self.buttons = []
@@ -195,29 +206,9 @@ class SupportFooter(Gtk.Box):
     def update_translations(self, new_translations):
         """Update footer with new translations when language changes"""
         self.translations = new_translations or {}
-        
-        # Update the urls_labels with new translations
-        self.urls_labels = [
-            ("https://linux.toys/knowledgebase.html", "Wiki", "wiki.svg", True),
-            (
-                "",
-                self.translations.get("report_label", "Report Bug"),
-                "report.svg",
-                True,
-            ),
-            (
-                "https://linux.toys/credits.html",
-                self.translations.get("credits_label", "Credits"),
-                "credits.svg",
-                True,
-            ),
-            (
-                "https://ko-fi.com/psygreg",
-                self.translations.get("support_footer", "Support this project"),
-                "sponsor.svg",
-                True,
-            ),
-        ]
+
+        # URLs and icons are constant; only labels follow the translations.
+        self.urls_labels = _support_links(self.translations)
         
         # Update button labels
         for button, index in self.buttons:
@@ -249,21 +240,16 @@ class SupportFooter(Gtk.Box):
                 )
             else:
                 # Show error if no comment provided
-                error_dialog = Gtk.MessageDialog(
-                    parent=parent,
-                    flags=0,
-                    message_type=Gtk.MessageType.ERROR,
-                    buttons=Gtk.ButtonsType.OK,
-                    text=self.translations.get("error_label", "Error"),
-                )
-                error_dialog.format_secondary_text(
-                    self.translations.get(
+                run_message_dialog(
+                    parent,
+                    title=self.translations.get("error_label", "Error"),
+                    secondary_text=self.translations.get(
                         "bug_report_empty",
                         "Please provide a description of the issue."
-                    )
+                    ),
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons_type=Gtk.ButtonsType.OK,
                 )
-                error_dialog.run()
-                error_dialog.destroy()
         else:
             dialog.destroy()
     
@@ -298,39 +284,29 @@ class SupportFooter(Gtk.Box):
     
     def _show_success(self, parent_window):
         """Show success dialog."""
-        dialog = Gtk.MessageDialog(
-            parent=parent_window,
-            flags=0,
-            message_type=Gtk.MessageType.INFO,
-            buttons=Gtk.ButtonsType.OK,
-            text=self.translations.get("success_label", "Success"),
-        )
-        dialog.format_secondary_text(
-            self.translations.get(
+        run_message_dialog(
+            parent_window,
+            title=self.translations.get("success_label", "Success"),
+            secondary_text=self.translations.get(
                 "bug_report_submitted",
                 "Thank you! Your bug report has been submitted."
-            )
+            ),
+            message_type=Gtk.MessageType.INFO,
+            buttons_type=Gtk.ButtonsType.OK,
         )
-        dialog.run()
-        dialog.destroy()
     
     def _show_error(self, parent_window, error_msg: str):
         """Show error dialog."""
-        dialog = Gtk.MessageDialog(
-            parent=parent_window,
-            flags=0,
-            message_type=Gtk.MessageType.ERROR,
-            buttons=Gtk.ButtonsType.OK,
-            text=self.translations.get("error_label", "Error"),
-        )
-        dialog.format_secondary_text(
-            self.translations.get(
+        run_message_dialog(
+            parent_window,
+            title=self.translations.get("error_label", "Error"),
+            secondary_text=self.translations.get(
                 "bug_report_failed",
                 "Failed to submit bug report: "
-            ) + error_msg
+            ) + error_msg,
+            message_type=Gtk.MessageType.ERROR,
+            buttons_type=Gtk.ButtonsType.OK,
         )
-        dialog.run()
-        dialog.destroy()
 
 class RevealerFooter(Gtk.Revealer):
     def __init__(self, parent):

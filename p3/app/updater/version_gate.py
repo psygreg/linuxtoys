@@ -30,6 +30,7 @@ import urllib.error
 import urllib.request
 
 from .. import compat
+from ..atomic_io import atomic_write_json
 
 GATE_GRACE_RELEASES = 2
 """Published releases newer than the installed one that still run scripts.
@@ -153,11 +154,7 @@ def _write_cache_state(state: dict) -> None:
     if not path:
         return
     try:
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        tmp_path = f"{path}.tmp"
-        with open(tmp_path, "w", encoding="utf-8") as state_file:
-            json.dump(state, state_file)
-        os.replace(tmp_path, path)
+        atomic_write_json(path, state)
     except OSError:
         pass
 
@@ -272,6 +269,31 @@ def _refresh_worker() -> None:
     finally:
         with _LOCK:
             _FETCHING = False
+
+
+def compare_versions(current: str, latest: str) -> int:
+    """Compare two version strings (shared by the updater flows).
+
+    Returns:
+    - 1 if latest > current (update available)
+    - 0 if latest == current or either side does not parse (fail open)
+    - -1 if latest < current (current is newer)
+
+    Both sides are parsed with :func:`parse_release_version` and compared
+    right-padded with zeros, so "4.3" equals "4.3.0".
+    """
+    current_tuple = parse_release_version(current)
+    latest_tuple = parse_release_version(latest)
+    if not current_tuple or not latest_tuple:
+        return 0
+    width = max(len(current_tuple), len(latest_tuple))
+    current_tuple += (0,) * (width - len(current_tuple))
+    latest_tuple += (0,) * (width - len(latest_tuple))
+    if latest_tuple > current_tuple:
+        return 1
+    if latest_tuple == current_tuple:
+        return 0
+    return -1
 
 
 def count_newer_releases(current: str, releases) -> int:

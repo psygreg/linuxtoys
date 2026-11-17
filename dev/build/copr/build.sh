@@ -7,7 +7,6 @@ ROOT_DIR="$PWD"
 while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do ROOT_DIR="${ROOT_DIR%/*}"; done
 source "$ROOT_DIR/dev/libs/utils.lib"
 
-# Check CLI arguments
 if [ $# -ne 2 ]; then
     _msg error "Usage: $0 <version> <output_path>"
     _msg info "Example: $0 1.1 /tmp/builds"
@@ -20,7 +19,6 @@ OUTPUT_PATH="$2"
 _msg info "Building LinuxToys version $LT_VERSION for COPR/RPM..."
 _msg info "Output path: $OUTPUT_PATH"
 
-# Delete output directory if it exists
 rm -rf "$OUTPUT_PATH"
 
 # Stage the complete source needed by the distro build environment.
@@ -41,7 +39,6 @@ mkdir -p "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION"/.cargo
 # Source tarball for COPR/RPM. Rust is compiled by rpmbuild, not prebuilt here.
 tar -cJf "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION.tar.xz" -C "$OUTPUT_PATH/SOURCES" "linuxtoys-$LT_VERSION"
 rm -rf "$OUTPUT_PATH/SOURCES/linuxtoys-$LT_VERSION"
-# set up rpmbuild
 # cp -r "$OUTPUT_PATH/linuxtoys-$LT_VERSION" "$HOME/rpmbuild/SOURCES/"
 day=$(date +%d)
 day_abbr=$(LC_TIME=C date +%a) # This will always be in English

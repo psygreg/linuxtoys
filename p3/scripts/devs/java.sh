@@ -110,43 +110,15 @@ java_in() {
     while true; do
         case "$distro_group" in
             fedora_rhel)
-                chosen_javas=$(zenity --list --checklist \
-                    --title="Java JDK" \
-                    --column="" \
-                    --column="$msg277" \
-                    FALSE "Java 21 LTS" \
-                    FALSE "Java 25 LTS" \
-                    FALSE "Java Latest" \
-                    --height=410 \
-                    --width=300 \
-                    --separator="|")
+                chosen_javas=$(listselect --title "Java JDK" --text "$msg277" "Java 21 LTS" "Java 25 LTS" "Java Latest")
                 ;;
 
             solus)
-                chosen_javas=$(zenity --list --checklist \
-                    --title="Java JDK" \
-                    --column="" \
-                    --column="$msg277" \
-                    FALSE "Java 21 LTS" \
-                    FALSE "Java 25 LTS" \
-                    --height=410 \
-                    --width=300 \
-                    --separator="|")
+                chosen_javas=$(listselect --title "Java JDK" --text "$msg277" "Java 21 LTS" "Java 25 LTS")
                 ;;
 
             *)
-                chosen_javas=$(zenity --list --checklist \
-                    --title="Java JDK" \
-                    --column="" \
-                    --column="$msg277" \
-                    FALSE "Java 8 LTS" \
-                    FALSE "Java 11 LTS" \
-                    FALSE "Java 17 LTS" \
-                    FALSE "Java 21 LTS" \
-                    FALSE "Java Latest" \
-                    --height=410 \
-                    --width=300 \
-                    --separator="|")
+                chosen_javas=$(listselect --title "Java JDK" --text "$msg277" "Java 8 LTS" "Java 11 LTS" "Java 17 LTS" "Java 21 LTS" "Java Latest")
                 ;;
         esac
 
@@ -157,7 +129,7 @@ java_in() {
             warn "Please select at least one Java version."
             continue
         fi
-        IFS='|' read -ra javas <<< "$chosen_javas"
+        mapfile -t javas <<< "$chosen_javas"
 
         for chosen_jav in "${javas[@]}"; do
             case "$chosen_jav" in

@@ -9,6 +9,15 @@ from pathlib import Path
 import re
 import shlex
 
+if __package__:
+    from .atomic_io import atomic_write_text
+else:
+    # Direct CLI execution (call_script / registry_heal) has no package
+    # context, so fall back to the sibling-script directory on sys.path.
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from atomic_io import atomic_write_text
+
 _SESSION_LOCK = threading.Lock()
 _SESSION_DIR = None
 
@@ -38,7 +47,6 @@ LIBRARY_FLAGS = {
 
 LEGACY_SUMMONS = {
     "summon_helpers": "helpers.bash",
-    "summon_optimizers": "optimizers.bash",
 }
 
 # Raw native package-manager commands in plain script bodies. These bypass the
@@ -491,8 +499,8 @@ def _resolution_scripts_trees(script_dir):
     return trees
 
 
-def materialize_appstream_by_target(target, script_dir):
-    """Resolve and materialize an AppStream app for nested call_script execution.
+def _appstream_entry_finder(script_dir):
+    """Return find(target) resolving AppStream entries the way call_script does.
 
     IDs are preferred; exact localized/canonical display names are accepted as a
     convenience. Source selection and reviewed overlays come from appstream_parser,
@@ -515,7 +523,7 @@ def materialize_appstream_by_target(target, script_dir):
         if relative != ".":
             category_paths.append(relative)
 
-    def find_entry():
+    def find_entry(target):
         entry = appstream_parser.find_entry_by_id(
             scripts_dir,
             target,
@@ -531,13 +539,32 @@ def materialize_appstream_by_target(target, script_dir):
             )
         return entry
 
-    entry = find_entry()
+    return find_entry
+
+
+def appstream_app_offered(target, script_dir):
+    """Whether call_script's AppStream resolver offers target. Never refreshes."""
+    return _appstream_entry_finder(script_dir)(target) is not None
+
+
+def materialize_appstream_by_target(target, script_dir):
+    """Resolve and materialize an AppStream app for nested call_script execution."""
+    import sys
+
+    script_dir = os.path.abspath(script_dir)
+    if script_dir not in sys.path:
+        sys.path.insert(0, script_dir)
+
+    from app import repo_parser
+
+    find_entry = _appstream_entry_finder(script_dir)
+    entry = find_entry(target)
     if entry is None:
         # The catalog can be cold or starter-only (native components only) on a
         # fresh install. One synchronous refresh repopulates it — including the
         # local Flathub AppStream database — then the lookup is retried once.
         _refresh_cold_appstream_catalog()
-        entry = find_entry()
+        entry = find_entry(target)
     if entry is None:
         return None
 
@@ -578,17 +605,7 @@ def materialize_appstream_by_target(target, script_dir):
     os.makedirs(directory, mode=0o700, exist_ok=True)
     safe = re.sub(r"[^A-Za-z0-9._-]+", "-", str(entry.get("appstream_id") or target)).strip("-._") or "appstream"
     path = os.path.join(directory, f"{safe}.sh")
-    tmp = path + ".tmp"
-    try:
-        Path(tmp).write_text(contents, encoding="utf-8")
-        os.chmod(tmp, 0o700)
-        os.replace(tmp, path)
-    except Exception:
-        try:
-            os.remove(tmp)
-        except OSError:
-            pass
-        raise
+    atomic_write_text(path, contents, mode=0o700)
 
     return {
         "path": path,
@@ -670,6 +687,10 @@ if __name__ == "__main__":
         print(entry["appstream_id"])
         print(entry["source"])
         sys.exit(0)
+
+    if len(sys.argv) >= 3 and sys.argv[1] == "--probe-appstream":
+        # Read-only verdict for registry_heal: 0 = offered, 3 = not offered.
+        sys.exit(0 if appstream_app_offered(sys.argv[2], os.environ["SCRIPT_DIR"]) else 3)
 
     if len(sys.argv) >= 3 and sys.argv[1] == "--materialize-repo":
         status, entry = materialize_repo_by_app_id(

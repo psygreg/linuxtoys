@@ -16,7 +16,251 @@ info() { printf "\e[0;32m[INFO]\e[m %s\n" "${1}"; exit 0; }
 
 error() { printf "\e[0;31m[ERROR]\e[m %s\n" "${1}"; exit 1; }
 
-# Delegate ISA policy to the application; never maintain installer alias tables.
+# Progress/warning printers that do not end the run (info exits by design).
+# _lt-namespaced: install.sh is also sourced into the background updater's
+# shell, where linuxtoys.bash already defines info/warn/error.
+_lt_note() { printf "\e[0;36m[INFO]\e[m %s\n" "${1}"; }
+
+_lt_warn() { printf "\e[0;33m[WARN]\e[m %s\n" "${1}"; }
+
+# ---------------------------------------------------------------------------
+# Native package-manager guard.
+#
+# install.sh drives the distribution's package manager directly, both as the
+# one-shot installer and as the self-updater's payload (the app pipes this
+# file into bash), so LinuxToys' own runtime guards — the package_guard
+# preflight and libs/packages.bash's per-manager lock trios — are not around
+# when it runs. The same postures are inlined here, mirroring packages.bash:
+# a bounded wait for a running manager, stale-lock recovery for pacman (the
+# only manager whose lock file outlives its process and blocks new
+# transactions on existence alone), and transaction wrappers that stand by
+# for a manager that starts between the guard and the call instead of
+# surfacing an opaque lock failure.
+# ---------------------------------------------------------------------------
+
+LT_GUARD_TIMEOUT=300
+LT_GUARD_TIMEOUT_MSG="Another package operation is still running and is taking too long. Please wait for the ongoing operation to finish, then try again."
+
+# fd-link lines under /proc, elevated when a cached sudo ticket is already
+# held (root-owned holders — pacman, pamac-daemon, packagekitd,
+# unattended-upgr — are invisible to an unprivileged scan); with no ticket
+# available the plain scan keeps the best-effort behavior, and the
+# named-process checks in the busy checks below still catch those holders.
+_lt_lock_fd_links () {
+	if [ "$(id -u)" -eq 0 ]; then
+		find /proc/[0-9]*/fd -maxdepth 1 -type l -printf '%l\n' 2>/dev/null || true
+	elif sudo -n true >/dev/null 2>&1; then
+		sudo -n find /proc/[0-9]*/fd -maxdepth 1 -type l -printf '%l\n' 2>/dev/null || true
+	else
+		find /proc/[0-9]*/fd -maxdepth 1 -type l -printf '%l\n' 2>/dev/null || true
+	fi
+}
+
+# Whether the lock paths matching $1 are verifiably held open by a live
+# process right now. A lock file merely existing is stale evidence (a crash
+# leftover); this is the fd-link test packages.bash and
+# package_guard._lock_actively_held use.
+_lt_lock_held () {
+	_lt_lock_fd_links | grep -Eq "$1"
+}
+
+_lt_pacman_lock_held () { _lt_lock_held '^/var/lib/pacman/db\.lck( \(deleted\))?$'; }
+_lt_deb_lock_held () { _lt_lock_held '^(/var/lib/dpkg/lock(-frontend)?|/var/lib/apt/lists/lock|/var/cache/apt/archives/lock)( \(deleted\))?$'; }
+_lt_dnf_lock_held () { _lt_lock_held '^(/var/lib/dnf/rpmdb\.lock|/run/dnf\.pid|/var/lib/dnf/lock)( \(deleted\))?$'; }
+_lt_zypp_lock_held () { _lt_lock_held '^(/run/zypp\.pid|/var/run/zypp\.pid)( \(deleted\))?$'; }
+
+# Name of a running manager of the family, else false. Transaction tools are
+# proof of a transaction on their own; resident daemons (alive whenever a
+# software centre or an auto-update timer is installed) only count while they
+# plausibly hold the package lock.
+_lt_arch_busy () {
+	local _name
+	for _name in pacman paru pamac yay; do
+		if pgrep -x "$_name" >/dev/null 2>&1; then
+			echo "$_name"
+			return 0
+		fi
+	done
+	if pgrep -x pamac-daemon >/dev/null 2>&1 && [ -e /var/lib/pacman/db.lck ]; then
+		echo "pamac-daemon"
+		return 0
+	fi
+	return 1
+}
+
+_lt_deb_busy () {
+	local _name
+	for _name in apt apt-get dpkg dpkg-deb pkcon; do
+		if pgrep -x "$_name" >/dev/null 2>&1; then
+			echo "$_name"
+			return 0
+		fi
+	done
+	for _name in unattended-upgr apt.systemd.dai packagekitd apt-key; do
+		if pgrep -x "$_name" >/dev/null 2>&1 && _lt_deb_lock_held; then
+			echo "$_name"
+			return 0
+		fi
+	done
+	return 1
+}
+
+_lt_dnf_busy () {
+	local _name
+	for _name in dnf dnf5 yum; do
+		if pgrep -x "$_name" >/dev/null 2>&1; then
+			echo "$_name"
+			return 0
+		fi
+	done
+	if pgrep -x dnf-automatic >/dev/null 2>&1 && _lt_dnf_lock_held; then
+		echo "dnf-automatic"
+		return 0
+	fi
+	return 1
+}
+
+_lt_zypp_busy () {
+	if pgrep -x zypper >/dev/null 2>&1; then
+		echo "zypper"
+		return 0
+	fi
+	if pgrep -x zypp-refresh >/dev/null 2>&1 && _lt_zypp_lock_held; then
+		echo "zypp-refresh"
+		return 0
+	fi
+	return 1
+}
+
+# Bounded wait ($1 = busy-check function name) for the running manager to go
+# idle. Returns 1 when a manager is still running after LT_GUARD_TIMEOUT.
+_lt_busy_wait () {
+	local _check="$1" _manager _waited=0
+	if ! _manager=$("$_check"); then
+		return 0
+	fi
+	_lt_warn "Another package operation (${_manager}) is in progress. Waiting for it to finish..."
+	while _manager=$("$_check"); do
+		if [ "$_waited" -ge "$LT_GUARD_TIMEOUT" ]; then
+			return 1
+		fi
+		sleep 3
+		_waited=$((_waited + 3))
+	done
+	return 0
+}
+
+# Bounded standby for a lock still held after the busy-wait (a live holder
+# the manager list cannot name — an AUR helper or another libalpm/zypp
+# client). Returns 1 when the holder outlasted LT_GUARD_TIMEOUT.
+_lt_lock_standby () {
+	local _check="$1" _waited=0
+	while "$_check"; do
+		if [ "$_waited" -ge "$LT_GUARD_TIMEOUT" ]; then
+			return 1
+		fi
+		sleep 3
+		_waited=$((_waited + 3))
+	done
+	return 0
+}
+
+# Stale-pacman-lock recovery: alpm refuses new transactions while db.lck
+# exists even when nothing holds it, so a crash leftover must be removed
+# rather than failing every call below until it is cleaned up by hand.
+# Returns 1 when there is no leftover to recover.
+_lt_stale_pacman_recovery () {
+	[ -f /var/lib/pacman/db.lck ] || return 1
+	# The caller waits out verifiably live holders before this runs, so a
+	# lock file that still exists is a crash leftover, never a live hold.
+	_lt_warn "Stale pacman lock detected. Removing /var/lib/pacman/db.lck"
+	if ! sudo rm -f /var/lib/pacman/db.lck; then
+		error "Failed to remove stale lock. Run: sudo rm /var/lib/pacman/db.lck"
+	fi
+}
+
+# Run "$@" as one native package-manager transaction with the runners'
+# guard+retry recovery (mirrors libs/packages.bash's *_transaction trios):
+# wait out a manager that is already running, recover the family's
+# crash-leftover lock where it has one (pacman), and on a lock-refused
+# attempt stand by for the holder and re-run instead of surfacing an opaque
+# lock failure.
+#
+# Contract:
+#   0        transaction completed
+#   nonzero  failed on its own; the caller's error path applies
+#   exit 1   a holder outlasted the bounded waits (the timeout message)
+_lt_transaction () {
+	local _busy="$1" _lock="$2" _stale="$3"
+	shift 3
+
+	if ! _lt_busy_wait "$_busy"; then
+		error "$LT_GUARD_TIMEOUT_MSG"
+	fi
+	if "$_lock"; then
+		# A live holder the manager list cannot name: stand by for it before
+		# the first attempt instead of costing that attempt a lock error.
+		_lt_note "Another package operation is in progress. Waiting for it to finish..."
+		if ! _lt_lock_standby "$_lock"; then
+			error "$LT_GUARD_TIMEOUT_MSG"
+		fi
+	fi
+	if [ -n "$_stale" ]; then
+		"$_stale"
+	fi
+	while true; do
+		local _status=0
+		"$@" || _status=$?
+		if [ "$_status" -eq 0 ]; then
+			return 0
+		fi
+		if "$_lock" || "$_busy" >/dev/null 2>&1; then
+			if ! _lt_busy_wait "$_busy"; then
+				error "$LT_GUARD_TIMEOUT_MSG"
+			fi
+			if "$_lock"; then
+				_lt_note "Another package operation is in progress. Waiting for it to finish..."
+				if ! _lt_lock_standby "$_lock"; then
+					error "$LT_GUARD_TIMEOUT_MSG"
+				fi
+			fi
+			# The standby exits only once the lock is free; retry below.
+		elif [ -n "$_stale" ] && "$_stale"; then
+			# A crash leftover between the entry recovery and this call:
+			# the same verified removal, not a live hold.
+			:
+		else
+			# Not attributable to a lock: the caller's own error path applies,
+			# with the same status a bare call would have produced.
+			return "$_status"
+		fi
+	done
+}
+
+pacman_transaction () {
+	_lt_transaction _lt_arch_busy _lt_pacman_lock_held _lt_stale_pacman_recovery "$@"
+}
+
+# The apt family keeps no stale branch: dpkg locks are fcntl-held and
+# released when their holder dies.
+apt_transaction () {
+	_lt_transaction _lt_deb_busy _lt_deb_lock_held '' "$@"
+}
+
+# dnf, and yum on hosts without dnf.
+dnf_transaction () {
+	_lt_transaction _lt_dnf_busy _lt_dnf_lock_held '' "$@"
+}
+
+# YaST and KDE's update applet hold the zypp lock like any other client; the
+# fd standby covers a holder the manager list cannot name.
+zypper_transaction () {
+	_lt_transaction _lt_zypp_busy _lt_zypp_lock_held '' "$@"
+}
+
+# Delegate ISA policy to the application; the installer never keeps its own
+# alias tables. Stage the release's own read-only validation code, gate the
+# host, and payload-verify every downloaded release artifact.
 architecture_prepare() {
     command -v python3 >/dev/null 2>&1 || error "Python 3 is required for safe architecture validation."
     _architecture_work=$(mktemp -d "${TMPDIR:-/tmp}/linuxtoys-preflight.XXXXXX") || error "Cannot stage preflight."
@@ -32,7 +276,6 @@ root = pathlib.Path(sys.argv[1]).resolve()
 paths = [root, root / 'p3', root / 'p3/app', root / 'p3/app/__init__.py']
 paths += [root / 'p3/app' / name for name in (
     'architecture.py', 'architecture_cli.py', 'architecture_files.py', 'architecture_flatpak.py')]
-paths += [root / 'p3/libs', root / 'p3/libs/packages.bash']
 for path in paths:
     metadata = path.lstat()
     if metadata.st_uid != os.getuid() or metadata.st_mode & 0o022 or stat.S_ISLNK(metadata.st_mode):
@@ -40,7 +283,6 @@ for path in paths:
 PYLOCAL
     then
         _architecture_cli="$source_dir/p3/app/architecture_cli.py"
-        _package_library="$source_dir/p3/libs/packages.bash"
     else
         revision=$(python3 -c 'import json,sys; from urllib.parse import quote; print(quote(json.load(sys.stdin)["tag_name"], safe=""))' <<< "$_api") || error "Release has no source tag."
         revision=$(curl -fsSL "https://api.github.com/repos/psygreg/linuxtoys/commits/$revision" | python3 -c 'import json,re,sys; s=json.load(sys.stdin)["sha"]; assert re.fullmatch("[0-9a-f]{40}",s); print(s)') || error "Cannot resolve immutable release source."
@@ -50,12 +292,8 @@ PYLOCAL
             curl -fsSL "https://raw.githubusercontent.com/psygreg/linuxtoys/$revision/p3/app/$file" -o "$_architecture_work/app/$file" || error "Release lacks architecture validation; use a qualified release."
         done
         _architecture_cli="$_architecture_work/app/architecture_cli.py"
-        mkdir -p "$_architecture_work/libs" || error "Cannot stage package guards."
-        _package_library="$_architecture_work/libs/packages.bash"
-        curl -fsSL "https://raw.githubusercontent.com/psygreg/linuxtoys/$revision/p3/libs/packages.bash" -o "$_package_library" || error "Release lacks package guards; use a qualified release."
     fi
     python3 "$_architecture_cli" label host >/dev/null || error "Unsupported host architecture."
-    ( _lt_load_package_guards ) || error "Release lacks the required bounded package guards."
     printf '%s' "$_api" > "$_architecture_work/release.json"
 }
 
@@ -77,44 +315,14 @@ PYHASH
     python3 "$_architecture_cli" files "$1" || error "Incompatible or unverified release payload."
 }
 
-# The same library owns lock observation and bounded retries in all launch
-# modes. A private subshell prevents its definitions from replacing this
-# installer's exit-on-success info(), or the background updater's helpers.
-_lt_load_package_guards() {
-    unset LINUXTOYS_PACKAGE_GUARD_API _PKG_GUARD_L10N_DONE
-    # shellcheck source=p3/libs/packages.bash
-    source "$_package_library" || return "$?"
-    [[ "${LINUXTOYS_PACKAGE_GUARD_API:-}" == 2 ]] || {
-        printf '%s\n' "Release lacks the required bounded package guards." >&2
-        return 1
-    }
-}
-
-_lt_installer_transaction() (
-    local family="$1"
-    shift
-    _lt_load_package_guards || return "$?"
-    "${family}_transaction" "$@"
-)
-
-# Noninteractive self-updates must not hang on a terminal password prompt.
-# Interactive installs keep sudo's ordinary authentication behavior.
-_lt_installer_sudo() {
-    if [[ "${LINUXTOYS_NONINTERACTIVE:-0}" == 1 ]]; then
-        sudo -n "$@"
-    else
-        sudo "$@"
-    fi
-}
-
 osdeb() {
-	if curl -fsSL "${_deb}" -o "${_architecture_work}/${_deb_name}"; then
-        architecture_verify "${_architecture_work}/${_deb_name}"
-		_lt_installer_transaction apt _lt_installer_sudo apt update || return "$?"
-		if _lt_installer_transaction apt _lt_installer_sudo apt install -y "${_architecture_work}/${_deb_name}"; then
+	if curl -fsSL "${_deb}" -o "/tmp/${_deb_name}"; then
+		architecture_verify "/tmp/${_deb_name}"
+		apt_transaction sudo apt update || true
+		if apt_transaction sudo apt install -y "/tmp/${_deb_name}"; then
 			info "LinuxToys installed or updated!"
 		else
-			return "$?"
+			error "Installation failed (apt)."
 		fi
 	else
 		error "Failed to download: ${_deb_name}"
@@ -122,26 +330,21 @@ osdeb() {
 }
 
 osrpm() {
-	if curl -fsSL "${_rpm}" -o "${_architecture_work}/${_rpm_name}"; then
-        architecture_verify "${_architecture_work}/${_rpm_name}"
+	if curl -fsSL "${_rpm}" -o "/tmp/${_rpm_name}"; then
+		architecture_verify "/tmp/${_rpm_name}"
 		if command -v dnf >/dev/null 2>&1; then
-            if [[ "$ID" == rhel ]]; then
-                _lt_installer_sudo subscription-manager repos --enable "codeready-builder-for-rhel-$(rpm -E %rhel)-$(arch)-rpms" || return "$?"
-                _lt_installer_transaction dnf _lt_installer_sudo dnf install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm" || return "$?"
-            elif [[ "$ID_LIKE" == *rhel* ]]; then
-                _lt_installer_sudo dnf config-manager --set-enabled crb || return "$?"
-                _lt_installer_transaction dnf _lt_installer_sudo dnf install -y epel-release || return "$?"
-            fi
-			if _lt_installer_transaction dnf _lt_installer_sudo dnf install -y "${_architecture_work}/${_rpm_name}"; then
+			{ [ "$ID" = "rhel" ]; } && sudo subscription-manager repos --enable codeready-builder-for-rhel-$(rpm -E %rhel)-$(arch)-rpms && dnf_transaction sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-$(rpm -E %rhel).noarch.rpm
+			{ [[ "$ID_LIKE" = *rhel* ]] && [ "$ID" != "rhel" ]; } && sudo dnf config-manager --set-enabled crb && dnf_transaction sudo dnf install epel-release
+			if dnf_transaction sudo dnf install -y "/tmp/${_rpm_name}"; then
 				info "LinuxToys installed or updated!"
 			else
-				return "$?"
+				error "Installation failed (dnf)."
 			fi
 		else
-			if _lt_installer_transaction dnf _lt_installer_sudo yum install -y "${_architecture_work}/${_rpm_name}"; then
+			if dnf_transaction sudo yum install -y "/tmp/${_rpm_name}"; then
 				info "LinuxToys installed or updated!"
 			else
-				return "$?"
+				error "Installation failed (yum)."
 			fi
 		fi
 	else
@@ -150,9 +353,9 @@ osrpm() {
 }
 
 ossuse() {
-    if curl -fsSL "${_rpm}" -o "${_architecture_work}/${_rpm_name}"; then
-        architecture_verify "${_architecture_work}/${_rpm_name}"
-        if _lt_installer_transaction zypper _lt_installer_sudo zypper --non-interactive install "${_architecture_work}/${_rpm_name}"; then
+    if curl -fsSL "${_rpm}" -o "/tmp/${_rpm_name}"; then
+        architecture_verify "/tmp/${_rpm_name}"
+        if sudo rpm -U --nodeps --replacefiles --replacepkgs "/tmp/${_rpm_name}"; then
             dependencies=(
                 bash git curl wget zenity python3 python3-gobject gtk3
                 python3-requests python3-urllib3 python3-certifi util-linux
@@ -160,11 +363,11 @@ ossuse() {
                 AppStream adwaita-icon-theme libzypp-plugin-appdata
             )
             for pkg in "${dependencies[@]}"; do
-                _lt_installer_transaction zypper _lt_installer_sudo zypper --non-interactive install "${pkg}" || return "$?"
+                zypper_transaction sudo zypper --non-interactive install "${pkg}"
             done
             info "LinuxToys installed or updated!"
         else
-            return "$?"
+            error "Installation failed (rpm)."
         fi
     else
         error "Failed to download: ${_rpm_name}"
@@ -175,13 +378,13 @@ osarch() {
     [ -n "${_pkg:-}" ] || error "No Arch Linux package was found in the latest LinuxToys release."
     [ -n "${_pkg_name:-}" ] || error "Could not determine the LinuxToys Arch package filename."
 
-    curl -fL --retry 3 "${_pkg}" -o "$_architecture_work/${_pkg_name}" || error "Package download failed."
-    architecture_verify "$_architecture_work/${_pkg_name}"
     if pacman -Qi linuxtoys-bin &>/dev/null; then
-        _lt_installer_transaction pacman _lt_installer_sudo pacman -R --noconfirm linuxtoys-bin || return "$?"
+        pacman_transaction sudo pacman -R --noconfirm linuxtoys-bin ||
+            error "Failed to remove existing linuxtoys-bin package."
     fi
 
-    if [ -f "$_architecture_work/${_pkg_name}" ]; then
+    if curl -fL --retry 3 "${_pkg}" -o "/tmp/${_pkg_name}"; then
+        architecture_verify "/tmp/${_pkg_name}"
         if [ "$ID" = "cachyos" ]; then
             dependencies=(
                 bash git curl wget zenity appstream archlinux-appstream-data
@@ -189,13 +392,13 @@ osarch() {
                 webp-pixbuf-loader
             )
             for pkg in "${dependencies[@]}"; do
-                _lt_installer_transaction pacman _lt_installer_sudo pacman -S --noconfirm --needed "${pkg}" || return "$?"
+                pacman_transaction sudo pacman -S --noconfirm --needed "${pkg}"
             done
         fi
-        if _lt_installer_transaction pacman _lt_installer_sudo pacman -U --noconfirm "${_architecture_work}/${_pkg_name}"; then
+        if pacman_transaction sudo pacman -U --noconfirm "/tmp/${_pkg_name}"; then
             info "LinuxToys installed or updated!"
         else
-            return "$?"
+            error "Installation failed (pacman)."
         fi
     else
         error "Failed to download: ${_pkg_name}"
@@ -207,12 +410,6 @@ osappimage() {
 
 	[ -n "${_appimage:-}" ] || error "No AppImage was found in the latest LinuxToys release."
 	[ -n "${_appimage_name:-}" ] || error "Could not determine the LinuxToys AppImage filename."
-
-    _appimage_dir="$_architecture_work/appimage"
-    mkdir -p "$_appimage_dir" || error "Cannot stage AppImage."
-    _appimage_file="${_appimage_dir}/${_appimage_name}"
-    curl -fL --retry 3 "${_appimage}" -o "${_appimage_file}" || error "AppImage download failed."
-    architecture_verify "${_appimage_file}"
 
 	if ! command -v flatpak >/dev/null 2>&1; then
 		error "Flatpak is required to install the LinuxToys AppImage on this system."
@@ -259,6 +456,15 @@ osappimage() {
 		fi
 	fi
 
+	_appimage_dir=$(mktemp -d "${TMPDIR:-/tmp}/linuxtoys-appimage.XXXXXX") ||
+		error "Failed to create temporary AppImage directory."
+	trap 'rm -rf -- "${_appimage_dir}"' EXIT
+	_appimage_file="${_appimage_dir}/${_appimage_name}"
+
+	printf "\e[0;36m[INFO]\e[m Downloading LinuxToys AppImage...\n"
+	curl -fL --retry 3 "${_appimage}" -o "${_appimage_file}" ||
+		error "Failed to download: ${_appimage_name}"
+	architecture_verify "${_appimage_file}"
 	chmod +x "${_appimage_file}" || error "Failed to make the AppImage executable."
 	mkdir -p "${HOME}/AppImages" || error "Failed to create ${HOME}/AppImages."
 
@@ -302,24 +508,8 @@ osappimage() {
 	info "LinuxToys installed or updated!"
 }
 
-ossolus() {
-	if curl -fsSL "${_eopkg}" -o "/tmp/${_eopkg_name}"; then
-		if command -v eopkg >/dev/null 2>&1; then
-			if sudo eopkg install -y "/tmp/${_eopkg_name}"; then
-				info "LinuxToys installed or updated!"
-			else
-				error "Installation failed (eopkg)."
-			fi
-		else
-			error "eopkg command not found on Solus system."
-		fi
-	else
-		error "Failed to download: ${_eopkg_name}"
-	fi
-}
-
 manjaro() {
-    osarch
+    { pacman_transaction sudo pamac build linuxtoys-bin && info "LinuxToys installed or updated!"; } || error "Failed to download: ${_pkg_name}"
 }
 
 requires_appimage() {
@@ -342,11 +532,9 @@ requires_appimage() {
 }
 
 installer() {
-	# Try GitHub first as primary source
 	printf "\e[0;36m[INFO]\e[m Fetching latest release from GitHub...\n"
 	_api=$(curl -fsSL "https://api.github.com/repos/psygreg/linuxtoys/releases/latest" 2>/dev/null)
 
-	# If GitHub fails, fallback to Gitea server
 	if [ -z "${_api}" ]; then
 		printf "\e[0;33m[WARN]\e[m GitHub unavailable, trying Gitea server at git.linux.toys...\n"
 		_api=$(curl -fsSL "https://git.linux.toys/api/v1/repos/psygreg/linuxtoys/releases/latest" 2>/dev/null)
@@ -356,9 +544,14 @@ installer() {
 		error "Failed to fetch release information from GitHub and git.linux.toys"
 	fi
 
-    architecture_prepare
-    _checksum_url=$(python3 -c 'import json,sys; a=[x["browser_download_url"] for x in json.load(sys.stdin).get("assets",[]) if x.get("name")=="sha256sums.txt"]; assert len(a)==1 and a[0].startswith("https://"); print(a[0])' <<< "$_api") || error "Release has no unique checksum manifest."
-    curl -fsSL "$_checksum_url" -o "$_architecture_work/sha256sums.txt" || error "Cannot download release checksums."
+	_tag_name=$(echo "${_api}" | grep -Pio '"tag_name":\s*"\K[^"]+')
+
+	# Stage the release's own architecture validation, verify the host, and
+	# select exactly one verified native release asset with its checksum
+	# manifest (no positional/foreign fallback).
+	architecture_prepare
+	_checksum_url=$(python3 -c 'import json,sys; a=[x["browser_download_url"] for x in json.load(sys.stdin).get("assets",[]) if x.get("name")=="sha256sums.txt"]; assert len(a)==1 and a[0].startswith("https://"); print(a[0])' <<< "$_api") || error "Release has no unique checksum manifest."
+	curl -fsSL "$_checksum_url" -o "$_architecture_work/sha256sums.txt" || error "Cannot download release checksums."
 
 	if [ -r /etc/os-release ]; then
 		. /etc/os-release
@@ -366,53 +559,52 @@ installer() {
 		error "Unsupported operating system (no /etc/os-release)."
 	fi
 
-    local kind selected
-    if requires_appimage || [ "${ID:-}" = solus ]; then kind=appimage
-    else
-        case "${ID:-} ${ID_LIKE:-}" in
-            *debian*|*ubuntu*|*deepin*) kind=deb ;;
-            *suse*|*fedora*|*rhel*|*centos*|*rocky*|*almalinux*) kind=rpm ;;
-            *arch*|*manjaro*|*biglinux*|*bigcommunity*|*cachyos*|*artix*) kind=arch ;;
-            *) error "Unsupported operating system." ;;
-        esac
-    fi
-    selected=$(python3 "$_architecture_cli" release --kind "$kind" "$_architecture_work/release.json") || error "No unique verified native LinuxToys release asset."
-    case "$kind" in
-        deb) _deb="$selected"; _deb_name=$(basename "$_deb") ;;
-        rpm) _rpm="$selected"; _rpm_name=$(basename "$_rpm") ;;
-        arch) _pkg="$selected"; _pkg_name=$(basename "$_pkg") ;;
-        appimage) _appimage="$selected"; _appimage_name=$(basename "$_appimage") ;;
-    esac
+	local kind selected
+	if requires_appimage || [ "${ID:-}" = solus ]; then kind=appimage
+	else
+		case "${ID:-} ${ID_LIKE:-}" in
+			*debian*|*ubuntu*|*deepin*) kind=deb ;;
+			*suse*|*fedora*|*rhel*|*centos*|*rocky*|*almalinux*) kind=rpm ;;
+			*arch*|*manjaro*|*biglinux*|*bigcommunity*|*cachyos*|*artix*) kind=arch ;;
+			*) error "Unsupported operating system." ;;
+		esac
+	fi
+	selected=$(python3 "$_architecture_cli" release --kind "$kind" "$_architecture_work/release.json") || error "No unique verified native LinuxToys release asset."
+	case "$kind" in
+		deb) _deb="$selected"; _deb_name=$(basename "$_deb") ;;
+		rpm) _rpm="$selected"; _rpm_name=$(basename "$_rpm") ;;
+		arch) _pkg="$selected"; _pkg_name=$(basename "$_pkg") ;;
+		appimage) _appimage="$selected"; _appimage_name=$(basename "$_appimage") ;;
+	esac
 
     # Select the AppImage before either the ostree check or ID_LIKE can route
     # an immutable host to a native package installation.
     if requires_appimage; then
         osappimage
-        return "$?"
+        return
     fi
 
 	case "${ID:-}" in
-		debian|ubuntu|deepin) osdeb; return "$?" ;;
-		fedora|rhel|centos|rocky|almalinux) osrpm; return "$?" ;;
-		suse|opensuse) ossuse; return "$?" ;;
-		manjaro|biglinux|bigcommunity) manjaro; return "$?" ;;
-		steamos) osappimage; return "$?" ;;
-		arch|cachyos|artix) osarch; return "$?" ;;
-		solus) osappimage; return "$?" ;;
+		debian|ubuntu|deepin) osdeb ;;
+		fedora|rhel|centos|rocky|almalinux) osrpm ;;
+		suse|opensuse) ossuse ;;
+		manjaro|biglinux|bigcommunity) manjaro;;
+		steamos) osappimage ;;
+		arch|cachyos|artix) osarch ;;
+		solus) osappimage ;;
 	esac
 
 	case "${ID_LIKE:-}" in
-		*debian*|*ubuntu*) osdeb; return "$?" ;;
-		*rhel*|*fedora*) osrpm; return "$?" ;;
-		*manjaro*) manjaro; return "$?" ;;
-		*suse*) ossuse; return "$?" ;;
+		*debian*|*ubuntu*) osdeb ;;
+		*rhel*|*fedora*) osrpm ;;
+		*manjaro*) manjaro ;;
+		*suse*) ossuse ;;
 		*arch*)
 			if [ "${ID:-}" = "steamos" ]; then
 				osappimage
 			else
 				osarch
 			fi
-            return "$?"
 			;;
 	esac
 

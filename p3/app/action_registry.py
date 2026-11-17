@@ -10,10 +10,13 @@ from gi.repository import GLib
 from .gtk_common import Gtk, resolve_symbolic_icon
 from .gtk_dialogs import run_message_dialog
 from .lang_utils import create_translator, load_translations
-from .registry_utils import normalize_registry_content, parse_registry_file, search_registry_entries
+from .registry_utils import (
+    parse_registry_file,
+    search_registry_entries,
+    remove_script_entries,
+)
 from .manifest_helper import export_registered_manifest
 from .parser import get_display_name
-from .compat import get_linuxtoys_cache_dir
 
 
 def _find_backup_files_for_script(script_name, registry_data):
@@ -58,59 +61,11 @@ def _remove_script_from_registry(script_name):
     """
     Remove all entries for a script from the registry file.
 
-    Returns True if successful, False otherwise.
+    Delegates to the canonical remover in ``registry_utils``: True only when
+    at least one entry was actually deleted (exact stored-name match).
     """
-    registry_file = os.path.join(get_linuxtoys_cache_dir(), "registry")
-
-    if not os.path.exists(registry_file):
-        return False
-
-    try:
-        with open(registry_file, "r") as f:
-            content = f.read()
-    except Exception:
-        return False
-
-    # Normalize first so legacy glued (missing-newline) entries are still
-    # split into one entry per header.
-    content = normalize_registry_content(content)
-
-    # Split by registry entries
-    entries = content.split("---\n")
-
-    # Filter out entries for the script we want to remove
-    filtered_entries = []
-    found = False
-
-    for entry in entries:
-        entry_stripped = entry.strip()
-        if not entry_stripped:
-            continue
-
-        lines = entry_stripped.split("\n")
-        first_line = lines[0] if lines else ""
-
-        # Check if this entry belongs to the script we're removing
-        if f"Script: {script_name}" in first_line:
-            found = True
-            continue  # Skip this entry
-
-        filtered_entries.append(entry_stripped)
-
-    if not found:
-        return False
-
-    # Reconstruct the registry file in the canonical layout. The previous
-    # "---\n".join() here glued entries together and left the file without a
-    # trailing newline, corrupting every entry appended afterwards.
-    new_content = "\n---\n\n".join(filtered_entries) + "\n---\n\n"
-
-    try:
-        with open(registry_file, "w") as f:
-            f.write(new_content)
-        return True
-    except Exception:
-        return False
+    removed, _ok = remove_script_entries(script_name)
+    return removed
 
 
 def _remove_backup_files(backup_files):

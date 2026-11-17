@@ -7,6 +7,7 @@
 # repo: https://github.com/pedrohqb/distrobox-adv-br
 # systemd: yes
 # compat: !steamos
+# cachyos-mirrors-required: 0
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

@@ -1,5 +1,6 @@
 import os
 import re
+import subprocess
 import threading
 from collections.abc import Mapping
 from enum import Enum, auto
@@ -15,6 +16,33 @@ from app.search_helper import (
 )
 
 translations = load_translations()
+
+
+def flathub_ready(flatpak: str) -> bool:
+    """Return True if a ``flathub`` remote exists in either scope.
+
+    BLOCKING: runs ``flatpak remotes`` for ``--user`` and ``--system``
+    (8 s timeout each). A scope that fails is skipped.
+
+    Args:
+        flatpak: Path of the ``flatpak`` executable.
+    """
+    for scope in ("--user", "--system"):
+        try:
+            result = subprocess.run(
+                [flatpak, scope, "remotes", "--columns=name"],
+                capture_output=True,
+                text=True,
+                timeout=8,
+                check=False,
+            )
+        except (OSError, subprocess.SubprocessError):
+            continue
+        if result.returncode == 0 and "flathub" in {
+            line.strip() for line in result.stdout.splitlines()
+        }:
+            return True
+    return False
 
 _category_cache: CategoryCache | None = None
 _script_cache: ScriptCache | None = None
@@ -116,15 +144,12 @@ def warm_search_and_category_index(trans=None) -> SearchEngine:
         if _search_engine is not None:
             return _search_engine
 
-        # 1. Parse categories concurrently (ThreadPoolExecutor)
         cat_cache = CategoryCache()
         cat_cache.populate(active_translations, max_workers=4)
 
-        # 2. Build script cache directly from category data without re-reading the filesystem
         scr_cache = ScriptCache()
         scr_cache.populate_from_category_cache(cat_cache)
 
-        # 3. Create SearchEngine and warm the Rust index
         engine = create_search_engine(active_translations, scr_cache)
         engine._ensure_rust_search_index()
 
@@ -152,7 +177,6 @@ def search_scripts_fast(query: str) -> list[dict]:
         return []
 
     groups = _search_engine.search(query.strip())
-    # Flatten items or return grouped
     return [
         result.item_info for group in groups for result in group["scripts"]
     ]

@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Nabigo ang pag-ayos ng naputol na dpkg operasyon. Kailangan ng manual na interbensyon ng gumagamit.",
   "pkg_guard_broken": "Nakita ang mga sirang dependency ng pakete. Sinasubukang maitayos...",
   "pkg_guard_broken_fail": "Nabigo ang pag-aayos ng mga sirang pakete. Kailangan ng manual na interbensyon ng gumagamit.",
-  "pkg_guard_broken_pending": "Ang mga dependency ng pakete ay nananatiling sira. Kailangan ng manual na interbensyon ng gumagamit."
+  "pkg_guard_broken_pending": "Ang mga dependency ng pakete ay nananatiling sira. Kailangan ng manual na interbensyon ng gumagamit.",
+  "privilege_required_title": "Kinakailangan ang Access ng Administrator",
+  "privilege_required_message": "Hindi makagamit ng sudo ang user na ito, kaya hindi makapag-install, mag-update o mag-alis ng software ang LinuxToys. Siguraduhing naka-install ang sudo, idagdag ang user sa sudo group (Debian, Ubuntu) o sa wheel group (Fedora, Arch, openSUSE), pagkatapos ay buksan muli ang LinuxToys.",
+  "bug_report_cancelled_title": "Walang Ipe-report",
+  "bug_report_cancelled_message": "Na-cancel o na-skip ang huling pagtakbo, kaya walang ipe-report.\n\nHuling mensahe: {reason}",
+  "bug_report_rejected_title": "Walang Ipe-report",
+  "bug_report_rejected_message": "Walang teksto sa output ng terminal na maaaring ipadala, kaya hindi naipadala ang report."
 }

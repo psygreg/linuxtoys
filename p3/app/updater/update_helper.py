@@ -8,6 +8,8 @@ import urllib.request
 import shlex
 
 from . import __version__
+from . import version_gate
+from ..dev_mode import is_dev_mode_enabled
 
 
 def get_current_version():
@@ -42,7 +44,7 @@ class UpdateHelper:
         if self_updates_disabled():
             return False
 
-        if not os.environ.get("DEV_MODE") == "1":
+        if not is_dev_mode_enabled():
             if not is_from_repository():
                 return self._check_for_updates()
 
@@ -58,31 +60,14 @@ class UpdateHelper:
     def _compare_versions(self, current, latest) -> int:
         """
         Compare two version strings.
+
+        Delegates to the shared implementation in ``version_gate``.
         Returns:
         - 1 if latest > current (update available)
         - 0 if latest == current (up to date)
         - -1 if latest < current (current is newer)
         """
-
-        def version_tuple(v):
-            # Convert version string to tuple of integers for comparison
-            # e.g., "4.3.1" -> (4, 3, 1), "4.3" -> (4, 3, 0)
-            parts = v.split(".")
-            return tuple(int(part) for part in parts) + (0,) * (3 - len(parts))
-
-        try:
-            current_tuple = version_tuple(current)
-            latest_tuple = version_tuple(latest)
-
-            if latest_tuple > current_tuple:
-                return 1
-            elif latest_tuple == current_tuple:
-                return 0
-            else:
-                return -1
-        except (ValueError, TypeError):
-            # If version parsing fails, assume no update needed
-            return 0
+        return version_gate.compare_versions(current, latest)
 
     def _get_latest_version(self, repo_owner="psygreg", repo_name="linuxtoys") -> dict:
         """
@@ -139,9 +124,6 @@ class UpdateHelper:
         except Exception as e:
             print(f"Error fetching from {source_name}: {e}")
             return None
-
-    def _is_from_repository(self):
-        return is_from_repository()
 
 
 def _is_from_ppa() -> bool:
@@ -212,7 +194,7 @@ def is_current_version(version: str | None = None) -> tuple[bool, str | None]:
     DEV_MODE bypasses the release guard. If the release lookup fails, fail open so
     bug reporting remains available during network/update-service outages.
     """
-    if os.environ.get("DEV_MODE") == "1":
+    if is_dev_mode_enabled():
         return True, None
 
     current = (version or __version__).strip()
@@ -224,33 +206,119 @@ def is_current_version(version: str | None = None) -> tuple[bool, str | None]:
     return helper._compare_versions(current, latest) != 1, latest
 
 
-def run_background_update():
-    """Install the latest LinuxToys release without opening the VTE viewer.
+INSTALLER_URL = "https://linux.toys/install.sh"
 
-    The installer validates architecture and availability before requesting
-    privileges. Returns (success, error_message).
-    """
-    env = os.environ.copy()
-    script_dir = os.environ.get("SCRIPT_DIR")
-    env["LINUXTOYS_NONINTERACTIVE"] = "1"
 
-    is_steamos = False
+def is_steamos() -> bool:
+    """Whether this host is SteamOS (its installer takes the AppImage path)."""
     try:
         with open("/etc/os-release", "r", encoding="utf-8") as os_release:
             for line in os_release:
                 if line.startswith("ID="):
-                    os_id = line.split("=", 1)[1].strip().strip('\"\'')
-                    is_steamos = os_id == "steamos"
-                    break
+                    return line.split("=", 1)[1].strip().strip('"\'') == "steamos"
     except OSError:
         pass
+    return False
 
-    if is_steamos:
-        script = (
-            "#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n"
-            "set -o pipefail\ncurl -fsSL https://linux.toys/install.sh | bash\n"
+
+def build_update_script(mode, library_path=None, marker=None):
+    """Build the shell text that installs the latest LinuxToys release.
+
+    Single source shared by the GUI update dialog, the background updater
+    and the TUI. ``mode`` selects the run context:
+
+    - ``"terminal"``: interactive VTE run — on non-SteamOS hosts the core
+      library is sourced and privileges are pre-authenticated with
+      ``sudo_rq`` before the installer runs; SteamOS skips both because
+      install.sh uses the user-level AppImage/Gear Lever path there.
+      ``marker`` optionally appends a completion-marker touch.
+    - ``"background"``: headless run — the same library pre-auth via
+      ``askpass``, but the installer is downloaded and sourced in the same
+      shell so sudo's cached authorization stays available without a
+      controlling TTY (a piped ``bash`` would lose it). Requires
+      ``library_path``.
+    - ``"tui"``: minimal pipe; the TUI terminal owns user interaction.
+
+    Every generated script carries the shared ``# architectures:`` header so
+    the ISA policy accepts it as trusted local code on both supported ISAs,
+    and ``set -o pipefail`` so a failed installer download never reports
+    success through the pipe.
+    """
+    curl_pipe = f"curl -fsSL {INSTALLER_URL} | bash"
+
+    if mode == "tui":
+        return (
+            "#!/usr/bin/env bash\n"
+            "# architectures: x86_64, aarch64\n"
+            "set -o pipefail\n"
+            f"{curl_pipe}\n"
         )
-    else:
+
+    if is_steamos():
+        # install.sh takes the user-level AppImage/Gear Lever update path on
+        # SteamOS: no library pre-auth, no native package operations.
+        script = (
+            "#!/bin/bash\n"
+            "# architectures: x86_64, aarch64\n"
+            "set -o pipefail\n"
+            f"{curl_pipe}"
+        )
+        if mode == "terminal" and marker:
+            script += f" && touch {marker!r}"
+        return script + "\n"
+
+    if mode == "terminal":
+        script = (
+            "#!/bin/bash\n"
+            "# architectures: x86_64, aarch64\n"
+            "set -o pipefail\n"
+            'source "$SCRIPT_DIR/libs/linuxtoys.bash"\n'
+            "sudo_rq\n"
+            "\n"
+            f"{curl_pipe}"
+        )
+        if marker:
+            script += f" && touch {marker!r}"
+        return script + "\n"
+
+    if mode == "background":
+        if not library_path:
+            raise ValueError("background update requires library_path")
+        library_path = shlex.quote(library_path)
+        return (
+            "#!/usr/bin/env bash\n"
+            "# architectures: x86_64, aarch64\n"
+            "set -o pipefail\n"
+            f"source {library_path}\n"
+            "askpass\n"
+            "\n"
+            # Keep install.sh in the same shell that ran askpass. In the
+            # background updater there is no controlling TTY, so spawning a
+            # separate `bash` via a pipe can make sudo's cached authorization
+            # unavailable to the installer.
+            "_lt_installer=$(mktemp \"${TMPDIR:-/tmp}/linuxtoys-installer.XXXXXX\") || exit 1\n"
+            "trap 'rm -f -- \"$_lt_installer\"' EXIT\n"
+            f"curl -fsSL {INSTALLER_URL} -o \"$_lt_installer\" || exit 1\n"
+            "source \"$_lt_installer\"\n"
+        )
+
+    raise ValueError(f"unknown update script mode: {mode!r}")
+
+
+def run_background_update():
+    """Install the latest LinuxToys release without opening the VTE viewer.
+
+    Keep LinuxToys' normal askpass pre-authentication on systems that may need
+    native package operations, but bypass it on SteamOS where install.sh uses
+    the user-level AppImage/Gear Lever update path. Returns
+    (success, error_message).
+    """
+    env = os.environ.copy()
+    env["LINUXTOYS_NONINTERACTIVE"] = "1"
+
+    library_path = None
+    if not is_steamos():
+        script_dir = os.environ.get("SCRIPT_DIR")
         if not script_dir:
             return False, "SCRIPT_DIR environment variable is not set."
 
@@ -258,17 +326,7 @@ def run_background_update():
         if not os.path.isfile(library_path):
             return False, f"LinuxToys shell library was not found: {library_path}"
 
-        script = (
-            "#!/usr/bin/env bash\n# architectures: x86_64, aarch64\n"
-            f"source {shlex.quote(library_path)}\n"
-            "\n"
-            # Run the guarded installer in a child shell so its EXIT trap cannot
-            # replace the parent cleanup of the downloaded installer.
-            '_lt_installer=$(mktemp "${TMPDIR:-/tmp}/linuxtoys-installer.XXXXXX") || exit 1\n'
-            "trap 'rm -f -- \"$_lt_installer\"' EXIT\n"
-            'curl -fsSL https://linux.toys/install.sh -o "$_lt_installer" || exit 1\n'
-            'bash "$_lt_installer"\n'
-        )
+    script = build_update_script("background", library_path=library_path)
 
     script_path = None
     try:

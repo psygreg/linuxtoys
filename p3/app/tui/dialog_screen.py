@@ -552,10 +552,8 @@ class ReportBugDialog(ModalScreen[bool]):
     def handle_cancel(self) -> None:
         self.dismiss()
 
-    # Handle the OK / Send button
     @on(Button.Pressed, "#execute-btn-bug")
     def handle_execute(self) -> None:
-        # Read the values directly from the widgets
         comment = self.query_one("#bug-description", TextArea).text.strip()
         selected_app = self.query_one("#select-app", Select).value
 

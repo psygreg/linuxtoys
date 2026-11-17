@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Kunde inte återställa den avbrutna dpkg-åtgärden. Manuellt ingripande från användaren krävs.",
   "pkg_guard_broken": "Skadade paketberoenden upptäcktes. Försöker återställa...",
   "pkg_guard_broken_fail": "Kunde inte reparera de skadade paketen. Manuellt ingripande från användaren krävs.",
-  "pkg_guard_broken_pending": "Paketberoendena är fortfarande skadade. Manuellt ingripande från användaren krävs."
+  "pkg_guard_broken_pending": "Paketberoendena är fortfarande skadade. Manuellt ingripande från användaren krävs.",
+  "privilege_required_title": "Administratörsåtkomst krävs",
+  "privilege_required_message": "Denna användare kan inte använda sudo, så LinuxToys kan inte installera, uppdatera eller ta bort programvara. Se till att sudo är installerat, lägg till användaren i sudo-gruppen (Debian, Ubuntu) eller wheel-gruppen (Fedora, Arch, openSUSE) och öppna sedan LinuxToys igen.",
+  "bug_report_cancelled_title": "Inget att rapportera",
+  "bug_report_cancelled_message": "Den senaste körningen avbröts eller hoppades över, så det finns inget att rapportera.\n\nSenaste meddelande: {reason}",
+  "bug_report_rejected_title": "Inget att rapportera",
+  "bug_report_rejected_message": "Terminalutdatan innehöll ingen text som kunde skickas, så rapporten skickades inte in."
 }

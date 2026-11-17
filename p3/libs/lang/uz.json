@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Uzilgan dpkg operatsiyasini tiklash bajarilmadi. Foydalanuvchining qo'lda aralashuvi kerak.",
   "pkg_guard_broken": "Buzilgan paket bog'liqliklari aniqlandi. Tiklashga urinilmoqda...",
   "pkg_guard_broken_fail": "Buzilgan paketlarni tuzatish bajarilmadi. Foydalanuvchining qo'lda aralashuvi kerak.",
-  "pkg_guard_broken_pending": "Paket bog'liqliklari hali buzilgan holatda. Foydalanuvchining qo'lda aralashuvi kerak."
+  "pkg_guard_broken_pending": "Paket bog'liqliklari hali buzilgan holatda. Foydalanuvchining qo'lda aralashuvi kerak.",
+  "privilege_required_title": "Administrator huquqi talab qilinadi",
+  "privilege_required_message": "Bu foydalanuvchi sudo dan foydalana olmaydi, shu sababli LinuxToys dasturlarni o'rnatishi, yangilashi yoki o'chirishi mumkin emas. sudo o'rnatilganiga ishonch hosil qiling, foydalanuvchini sudo guruhi (Debian, Ubuntu) yoki wheel guruhi (Fedora, Arch, openSUSE) tarkibiga qo'shing, so'ng LinuxToysni qayta oching.",
+  "bug_report_cancelled_title": "Hisobot qiladigan hech narsa yo'q",
+  "bug_report_cancelled_message": "Oxirgi ishga tushirish bekor qilindi yoki tashlab ketildi, shu sababli hisobot qiladigan hech narsa yo'q.\n\nOxirgi xabar: {reason}",
+  "bug_report_rejected_title": "Hisobot qiladigan hech narsa yo'q",
+  "bug_report_rejected_message": "Terminal chiqishida yuborish mumkin bo'lgan matn bo'lmagan, shu sababli hisobot yuborilmadi."
 }

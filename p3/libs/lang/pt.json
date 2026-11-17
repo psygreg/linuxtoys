@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Não foi possível recuperar a operação dpkg interrompida. É necessária a intervenção manual do usuário.",
   "pkg_guard_broken": "Detectadas dependências de pacotes corrompidas. Tentando recuperar...",
   "pkg_guard_broken_fail": "Não foi possível corrigir os pacotes corrompidos. É necessária a intervenção manual do usuário.",
-  "pkg_guard_broken_pending": "As dependências dos pacotes continuam corrompidas. É necessária a intervenção manual do usuário."
+  "pkg_guard_broken_pending": "As dependências dos pacotes continuam corrompidas. É necessária a intervenção manual do usuário.",
+  "privilege_required_title": "Permissão de administrador necessária",
+  "privilege_required_message": "Este usuário não pode usar o sudo, então o LinuxToys não consegue instalar, atualizar nem remover programas. Verifique se o sudo está instalado, adicione o usuário ao grupo sudo (Debian, Ubuntu) ou ao grupo wheel (Fedora, Arch, openSUSE) e depois abra o LinuxToys novamente.",
+  "bug_report_cancelled_title": "Nada para reportar",
+  "bug_report_cancelled_message": "A última execução foi cancelada ou ignorada, então não há nada para reportar.\n\nÚltima mensagem: {reason}",
+  "bug_report_rejected_title": "Nada para reportar",
+  "bug_report_rejected_message": "A saída do terminal não tinha texto que pudesse ser enviado, então o relatório não foi enviado."
 }

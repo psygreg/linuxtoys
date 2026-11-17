@@ -128,16 +128,16 @@ class TerminalRunner:
         # share filesystem locks with it and would fail opaquely mid-run (see
         # package_guard). Only wait when a manager is actually present — a
         # script that is merely *capable* of a transaction on an idle system
-        # runs immediately, with no "waiting" flash or terminal lock.
+        # runs immediately, with no "waiting" flash or terminal lock. Self-update
+        # entries count as native transactions outright: their package
+        # operations live in the remotely-fetched install.sh, which the static
+        # scan cannot see through.
         if not dev_mode.is_dev_mode_enabled():
-            if (
-                package_guard.dispatch_enters_native_transaction(
-                    current_script,
-                    current_script.get("path", "true"),
-                    os.environ.get("SCRIPT_DIR", ""),
-                )
-                and package_guard.busy_native_manager_process() is not None
-            ):
+            if package_guard.dispatch_enters_native_transaction(
+                current_script,
+                current_script.get("path", "true"),
+                os.environ.get("SCRIPT_DIR", ""),
+            ) and package_guard.busy_native_manager_process() is not None:
                 self._begin_busy_wait(current_script)
                 return
 

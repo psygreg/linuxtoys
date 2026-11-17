@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Odzyskiwanie przerwanej operacji dpkg nie powiodło się. Wymagana ręczna interwencja użytkownika.",
   "pkg_guard_broken": "Wykryto uszkodzone zależności pakietów. Próba odzyskiwania...",
   "pkg_guard_broken_fail": "Naprawa uszkodzonych paketów nie powiodła się. Wymagana ręczna interwencja użytkownika.",
-  "pkg_guard_broken_pending": "Zależności pakietów nadal są uszkodzone. Wymagana ręczna interwencja użytkownika."
+  "pkg_guard_broken_pending": "Zależności pakietów nadal są uszkodzone. Wymagana ręczna interwencja użytkownika.",
+  "privilege_required_title": "Wymagany dostęp administratora",
+  "privilege_required_message": "Ten użytkownik nie może używać sudo, więc LinuxToys nie może instalować, aktualizować ani usuwać oprogramowania. Upewnij się, że sudo jest zainstalowane, dodaj użytkownika do grupy sudo (Debian, Ubuntu) lub grupy wheel (Fedora, Arch, openSUSE), a następnie otwórz ponownie LinuxToys.",
+  "bug_report_cancelled_title": "Nie ma czego zgłaszać",
+  "bug_report_cancelled_message": "Ostatnie uruchomienie zostało anulowane lub pominięte, więc nie ma czego zgłaszać.\n\nOstatnia wiadomość: {reason}",
+  "bug_report_rejected_title": "Nie ma czego zgłaszać",
+  "bug_report_rejected_message": "Wyjście terminala nie zawierało tekstu, który można byłoby wysłać, więc zgłoszenie nie zostało wysłane."
 }

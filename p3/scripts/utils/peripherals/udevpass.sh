@@ -12,31 +12,30 @@ _lang_
 
 # USB device list fetch
 select_usb_device() {
-    local -a rows
-    local line vendor_id product_id vendor_name product
+    local -a labels=() vendor_ids=() product_ids=() vendor_names=() products=()
+    local line vendor_id product_id vendor_name product chosen i
     while IFS= read -r line; do
         vendor_id=$(awk '{print $6}' <<<"$line" | cut -d: -f1)
         product_id=$(awk '{print $6}' <<<"$line" | cut -d: -f2)
         vendor_name=$(awk '{print $7}' <<<"$line")
         product=$(cut -d' ' -f7- <<<"$line")
-        rows+=("$vendor_id" "$product_id" "$vendor_name" "$product")
+        vendor_ids+=("$vendor_id")
+        product_ids+=("$product_id")
+        vendor_names+=("$vendor_name")
+        products+=("$product")
+        labels+=("$product [$vendor_id:$product_id]")
     done < <(lsusb)
 
-    [[ ${#rows[@]} -eq 0 ]] && return 1
+    [[ ${#labels[@]} -eq 0 ]] && return 1
 
-    zenity --list \
-        --title="Select USB Device" \
-        --column="Vendor ID" \
-        --column="Product ID" \
-        --column="Vendor" \
-        --column="Device" \
-        --hide-column=1 \
-        --hide-column=2 \
-        --hide-column=3 \
-        --print-column=ALL \
-        "${rows[@]}" \
-        --height=400 \
-        --width=600
+    chosen=$(radioselect --no-default --title "Select USB Device" "${labels[@]}") || return 1
+    for i in "${!labels[@]}"; do
+        if [[ "${labels[i]}" == "$chosen" ]]; then
+            printf '%s|%s|%s|%s\n' "${vendor_ids[i]}" "${product_ids[i]}" "${vendor_names[i]}" "${products[i]}"
+            return 0
+        fi
+    done
+    return 1
 }
 
 # udev rule creator

@@ -4,6 +4,7 @@
 # description: distroshelf_desc
 # icon: distroshelf.svg
 # repo: https://github.com/ranfdev/DistroShelf
+# cachyos-mirrors-required: 0
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/linuxtoys.lib"

@@ -1,6 +1,4 @@
-# --- Bootloader & INITRAMFS Management ---
 
-# bootloader update
 bootloader_upd() {
     if ! is_ostree; then
         local exit_status

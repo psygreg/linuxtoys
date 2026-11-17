@@ -1,7 +1,7 @@
 {
   "version": 1,
   "scripts": {
-    "6c25ac9d65c361eb7e7ed4338163dbb57b1a8d1935f5458b71df8500e14aee9c": {
+    "44b4135dc4dcb8298769bdd2a2e911180e41816ab6aaa9fb694607cfbe023997": {
       "path": "creative/video/davinci.sh",
       "architectures": [
         "x86_64"
@@ -19,7 +19,7 @@
         "x86_64"
       ]
     },
-    "868527911bbfe28531a155070b9c8bf0f2eaf0cb817db0efa8c44b93d81583e0": {
+    "dcc123def17dd33d2b5703bd80fe20eacf3a40a69d88bbbd51b85db1850f139c": {
       "path": "creative/video/resolvehw.sh",
       "architectures": [
         "x86_64"
@@ -61,7 +61,7 @@
         "x86_64"
       ]
     },
-    "a3f6e27d94aef76625f737f20878443e7e18a772a28dbf13d09af714db574586": {
+    "fcb16e18e73666c30b87dbb0c2f48f4b7bbac1e39507b764d030f071a9c37de1": {
       "path": "devs/ai_agents/skills-seeker.sh",
       "architectures": [
         "x86_64"
@@ -73,13 +73,13 @@
         "x86_64"
       ]
     },
-    "54ff69ded85945cf7cadeef320bc40ad91a4cfbfe2eb4a65eda9a8581e6c0ae9": {
+    "fe88defec6213f666c4c587643f903b1f64a2b1b704ec34092f3c2084c2099b1": {
       "path": "devs/docker.sh",
       "architectures": [
         "x86_64"
       ]
     },
-    "308f36fa5f8699db972eaac77d5b405e1e177ec87cbcdd9b7c77134abc634598": {
+    "1e8c2147f6008c4698ed14766a8b7926f1f5006d5dcbf7981650c89b9f409bde": {
       "path": "devs/dotnet.sh",
       "architectures": [
         "x86_64"
@@ -91,13 +91,13 @@
         "x86_64"
       ]
     },
-    "32ea3136c46a81ce9fb5c47142798d2860f512c048fba5a5023a4243f25e7efd": {
+    "1f7e030b27be963d5d75a10b29f50da851002ee58ef3f2b5f93238361c5fca30": {
       "path": "devs/ides/code.sh",
       "architectures": [
         "x86_64"
       ]
     },
-    "0e1c18b703e95383c65e9ffb7ddf40484da6a3c1af1045056caee771bbdf73a7": {
+    "3bdd37aa0fa10ce0386144610332bd8636bbeb4f9efd2de654fec55fba4412ae": {
       "path": "devs/ides/codium.sh",
       "architectures": [
         "x86_64"
@@ -121,7 +121,7 @@
         "x86_64"
       ]
     },
-    "27a45a04ee406496a97ea62df4b9e7831b28c47159e1287a70037f2602d09224": {
+    "6987864dd7702e8a4011c0f2dcea6ea4cd040f76bdc865c48d2da1867955a807": {
       "path": "devs/ides/lazyman.sh",
       "architectures": [
         "x86_64"
@@ -139,7 +139,7 @@
         "x86_64"
       ]
     },
-    "510b9059258c6e45cea6b1b875322074946d8436305d263a3a6b73ee765779f0": {
+    "502176b34c4cb2bc4c224f3ad79d74a89fe4ce0790d7b755a71e6a30e7491c08": {
       "path": "devs/java.sh",
       "architectures": [
         "x86_64"
@@ -151,7 +151,7 @@
         "x86_64"
       ]
     },
-    "dd88ff6f951bca68d90d551b706cb5aed6cc03036887304e36754b1bfe1fa0b8": {
+    "a069eff2e14bfe838f9acd956010c27df7edf0f1beaa99f003c0eb91facbee06": {
       "path": "devs/kind.sh",
       "architectures": [
         "x86_64"
@@ -265,7 +265,7 @@
         "x86_64"
       ]
     },
-    "4b928803269d4e0d8f9e3ef762ecaa6f72036ec3808ee2621923348a880cc333": {
+    "c258a980eb9cb025cb555580c3436677e829ab4301d1745314846ebdc92669f1": {
       "path": "extra/apparmor.sh",
       "architectures": [
         "x86_64"
@@ -367,7 +367,7 @@
         "x86_64"
       ]
     },
-    "cf77e70536122c1223a411357a36c8c8787edb354e6888f1eb540629255de9ac": {
+    "ddbf8d729c5610f3bc8285af1a60d1108eecca1fc6a4642a0aa8a602e6babbad": {
       "path": "extra/lsw.sh",
       "architectures": [
         "x86_64"
@@ -403,7 +403,7 @@
         "x86_64"
       ]
     },
-    "31f4e1431007fbac5688b9a9c69a95b965222644bfbae1ad7537232b424e845c": {
+    "481994c77e7d38d3a421e9037fba49c4e0c03ff5eb23aab79004bf6b08a1394b": {
       "path": "extra/pdefaults.sh",
       "architectures": [
         "x86_64"
@@ -415,7 +415,7 @@
         "x86_64"
       ]
     },
-    "7a84d818bd8400abf7390ce92a9a985705eff23b137d910c31a23b898fe5b8e5": {
+    "6f1d33941175fe9d08e74f23bba0f2e889289e1ec435b90601e5862e7bc93e63": {
       "path": "extra/preload.sh",
       "architectures": [
         "x86_64"
@@ -439,7 +439,7 @@
         "x86_64"
       ]
     },
-    "6107a8756ee138b69aa78eb903878c439c4300d98a243442f420be7e7eb46296": {
+    "0be43e0b6619181f57d5afa25c61f79d28f230da43a979a42b2b94f0ba258b25": {
       "path": "extra/swapfile.sh",
       "architectures": [
         "x86_64"
@@ -469,7 +469,7 @@
         "x86_64"
       ]
     },
-    "2e88ddf2210f7d3b5beb8e535a3da2dc39b8a58699d0c520d164f130a91a8f8f": {
+    "e67b2137d0afc9ac43185fa96996db92d7259c15f2bc2bbf1a295a6ed904a828": {
       "path": "extra/zram.sh",
       "architectures": [
         "x86_64"
@@ -481,13 +481,13 @@
         "x86_64"
       ]
     },
-    "0f8999971f4d771894dec7422918982bca797cf1a33cef8e92f8d906d8b06cdf": {
+    "43454fd2d57df25633db39e9b60821c79b30de4a32bb921ec5e21308fd7e681e": {
       "path": "game/gscope.sh",
       "architectures": [
         "x86_64"
       ]
     },
-    "3947fb7d2d6f4dac3b98bdc2952acc434e40f5bd22a18814e6a751cb58ae42e3": {
+    "4d94e12ada331e3b7dbb19650e5ed299d8069d4f5f745411445fb5d717973a16": {
       "path": "game/sunshine.sh",
       "architectures": [
         "x86_64"
@@ -615,19 +615,19 @@
         "x86_64"
       ]
     },
-    "6645e5e33c17443a6af6ee0b76e08ca2243cdc8e132312d0e42059adb8937e1b": {
+    "aadfed08101aecee4bda95c5da93e6be0df4d1696202f48077ede78d96376ce8": {
       "path": "network/remote/cockpit.sh",
       "architectures": [
         "x86_64"
       ]
     },
-    "f471636de10cc3be67a982d40436643652a237674cf2113cc0e671367659c3ef": {
+    "6a5c85727fecbc99ef62b4267ce99dd5d0fc8025be54c58c02d8c597040bce3e": {
       "path": "office/boxadv.sh",
       "architectures": [
         "x86_64"
       ]
     },
-    "91ed482f874118d65d81f5553dbe5db01f2caaf980ddc445be01bfdba8a01345": {
+    "79f75e4b3ec764695b572da140a1277534426494af18079abf1f9bc033a264a2": {
       "path": "office/fin/mt5.sh",
       "architectures": [
         "x86_64"
@@ -651,7 +651,7 @@
         "x86_64"
       ]
     },
-    "a36e3af5569ef33e78d2eb59c500054684afffab61f14773c8655619af4ff200": {
+    "bc9414032b92471167ed36fa8f8a8cef018a4f265c7f87dde50a4708590291b5": {
       "path": "repos/flathub.sh",
       "architectures": [
         "x86_64"
@@ -693,7 +693,7 @@
         "x86_64"
       ]
     },
-    "b38cf687bede496eff1242f2103bbd600c8828adcb1b7588b8c29e210c21873b": {
+    "0392bb9cb22858f4a179a2919abdcd563d8896060076cdb3f312e3fdce965edf": {
       "path": "repos/snap.sh",
       "architectures": [
         "x86_64"
@@ -735,7 +735,7 @@
         "x86_64"
       ]
     },
-    "5195c9d5470c4f779a543b97509b7ec59b6756c00350da20160beff86e875c10": {
+    "e22d2e0c975d787747d89fdc67a3cdaa129f840948c8305791ba83021a68ddc1": {
       "path": "sys/drivers/intelxe.sh",
       "architectures": [
         "x86_64"
@@ -813,7 +813,7 @@
         "x86_64"
       ]
     },
-    "7c092729019c2f0302d55940a0b24d801762b8bd2620f1d254909e91c06dd06e": {
+    "b8449e2c3e8854b628c39edac7163105d6f99a81c0846a9e1a4462c08449d566": {
       "path": "sys/drivers/rocm.sh",
       "architectures": [
         "x86_64"
@@ -837,7 +837,7 @@
         "x86_64"
       ]
     },
-    "9c6a2af263dcdb55afd2faf09018ed35ab99ac7e90f43e51ef395b594bc60be9": {
+    "d3d8ecf7a9ab2e67a10db0298730f766db304200ec89e1694e99032a8ec75597": {
       "path": "sys/drivers/rusticl.sh",
       "architectures": [
         "x86_64"
@@ -879,7 +879,7 @@
         "x86_64"
       ]
     },
-    "d396b7cced71f97151d0607633d018d593498ccd6e7f0efe383aa40be6157d50": {
+    "3bf15a4f525b12e71658df9c2eb07efb60f24784c76de2334ccd818996ca08fe": {
       "path": "sys/sec/mullvad-vpn.sh",
       "architectures": [
         "x86_64"
@@ -891,7 +891,7 @@
         "x86_64"
       ]
     },
-    "2c57a94cf49301ae740ff83caba0db69657036c463a67486aa6b071c696bc570": {
+    "194c79210db32e21dee12e11659aeb23198cdc0bc256c099d2c3578d5ac71099": {
       "path": "sys/sec/windscribe-vpn.sh",
       "architectures": [
         "x86_64"
@@ -951,19 +951,19 @@
         "x86_64"
       ]
     },
-    "6daa8cf9eca9a5e0c40affab5d8816a631350bf8b23bf5e6aa2a3f9b650f059d": {
+    "c35d95b45daece7b808adcb1ec0d6061a92157043e3d345da33285459e6a8fd4": {
       "path": "sysup.sh",
       "architectures": [
         "x86_64"
       ]
     },
-    "784e490737abdee1623ecdf7cfb1113cfa3974584d0e699a2406c8ca1cb669c9": {
+    "ff32d25c34a98ab2273cdeaea81994fd960ec4e4ecbe84d686bd1adc0bbe5e3f": {
       "path": "utils/distroshelf.sh",
       "architectures": [
         "x86_64"
       ]
     },
-    "0b82fcd801dc302b5ba553aa92a85c7b1e747a6fe1608136456add84be96bae8": {
+    "e1458622e801fc5fff18bc1bd4463d269e04e0fa502fbdfc92dd00c122d36d45": {
       "path": "utils/nerdfonts.sh",
       "architectures": [
         "x86_64",
@@ -994,7 +994,7 @@
         "x86_64"
       ]
     },
-    "44e9d8e8e12d583611c3471cf90c6e19c6b52bb2c82e0e6519c3b03fc9814d60": {
+    "abfe97c87f3d98f90c105affdc73d29f44a1f54bc1d114586073b0617cc9289f": {
       "path": "utils/peripherals/oprzr.sh",
       "architectures": [
         "x86_64"
@@ -1030,7 +1030,7 @@
         "x86_64"
       ]
     },
-    "5465431a5c0d9f48f9aa3d94b3ddc750c7c4e7bad985ab592a4baa49d46a0395": {
+    "3a51f9ef31624176c9b0b5a69a80ea41e820d19cd7df458cf3537bc678fb0e20": {
       "path": "utils/peripherals/udevpass.sh",
       "architectures": [
         "x86_64"
@@ -1048,7 +1048,7 @@
         "x86_64"
       ]
     },
-    "e4a9779c4243c5d316d5c64201f30b4a50dd9d5f366c74c5ec7f062aae35ac12": {
+    "52d08314d5d0955d94a40aa75dea9534bf2c69c2d1e05eb7791dc920c3e28ef0": {
       "path": "utils/waydroid.sh",
       "architectures": [
         "x86_64"

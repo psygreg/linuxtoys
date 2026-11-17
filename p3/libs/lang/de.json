@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Die unterbrochene dpkg-Operation konnte nicht wiederhergestellt werden. Manueller Eingriff des Benutzers erforderlich.",
   "pkg_guard_broken": "Beschädigte Paketabhängigkeiten wurden erkannt. Wiederherstellung läuft...",
   "pkg_guard_broken_fail": "Beschädigte Pakete konnten nicht repariert werden. Manueller Eingriff des Benutzers erforderlich.",
-  "pkg_guard_broken_pending": "Die Paketabhängigkeiten sind weiterhin beschädigt. Manueller Eingriff des Benutzers erforderlich."
+  "pkg_guard_broken_pending": "Die Paketabhängigkeiten sind weiterhin beschädigt. Manueller Eingriff des Benutzers erforderlich.",
+  "privilege_required_title": "Administratorzugriff erforderlich",
+  "privilege_required_message": "Dieser Benutzer kann sudo nicht verwenden, daher kann LinuxToys keine Software installieren, aktualisieren oder entfernen. Stellen Sie sicher, dass sudo installiert ist, fügen Sie den Benutzer der sudo-Gruppe (Debian, Ubuntu) oder der wheel-Gruppe (Fedora, Arch, openSUSE) hinzu und öffnen Sie LinuxToys dann erneut.",
+  "bug_report_cancelled_title": "Nichts zu melden",
+  "bug_report_cancelled_message": "Der letzte Lauf wurde abgebrochen oder übersprungen, daher gibt es nichts zu melden.\n\nLetzte Meldung: {reason}",
+  "bug_report_rejected_title": "Nichts zu melden",
+  "bug_report_rejected_message": "Die Terminalausgabe enthielt keinen Text, der gesendet werden konnte, daher wurde der Bericht nicht übermittelt."
 }

@@ -11,16 +11,18 @@ from pathlib import Path
 from .parser import get_categories, get_all_scripts_recursive, get_appstream_entries
 from .updater import __version__, version_gate
 from .manifest_helper import (
-    run_manifest_mode, run_update_check_cli, find_script_by_name, 
-    run_script, check_package_exists, install_packages, 
-    check_flatpaks_async, install_flatpaks, check_snaps, install_snaps, export_registered_manifest
+    run_manifest_mode, run_update_check_cli, find_script_by_name,
+    run_script, check_package_exists, install_packages,
+    check_flatpaks_async, install_flatpaks, check_snaps, install_snaps, export_registered_manifest,
+    _wait_for_package_manager,
 )
 from .library_loader import script_command, script_preamble
 from .dev_mode import is_dev_mode_enabled
-from .compat import get_system_compat_keys, get_linuxtoys_cache_dir
+from .compat import get_system_compat_keys, TRANSMAP_PATH
 from . import installed_packages
 from . import package_guard
 from .revert_helper import build_auto_revert_script_entry, build_uninstall_script_entry
+from .term_registry import ExecutionRegistry
 from .repo_parser import materialize_repo_script
 
 CLI_OPTIONS = frozenset({
@@ -35,13 +37,10 @@ CLI_OPTIONS = frozenset({
 def _wait_for_package_manager_cli():
     """Wait (bounded) for a running native package manager to go idle.
 
-    Returns True once idle, False if the wait timed out (the caller reports
-    the timeout and aborts).
+    Delegates to the manifest engine's shared wait; returns True once idle,
+    False if the wait timed out (the caller reports the timeout and aborts).
     """
-    idle, _name = package_guard.wait_for_idle(
-        timeout=package_guard.BUSY_WAIT_TIMEOUT_SECONDS
-    )
-    return idle
+    return _wait_for_package_manager()
 
 
 def resolve_script_dir():
@@ -80,79 +79,21 @@ def resolve_script_dir():
     sys.exit(1)
 
 def _cleanup_tmp_noram_dirs(transmap_path):
+    """Clean up tmpdir_noram directories recorded in the transmap.
+
+    Shared implementation lives in ``term_registry.ExecutionRegistry``.
     """
-    Clean up temporary directories created by prep_tmp_noram.
-    Reads transmap file for tmpdir_noram entries and removes those directories.
-    """
-    if not os.path.exists(transmap_path):
-        return
-    
-    try:
-        with open(transmap_path, 'r') as f:
-            content = f.read()
-        
-        # Find all tmpdir_noram entries
-        pattern = r'tmpdir_noram\s+(\S+)'
-        matches = re.findall(pattern, content)
-        
-        for tmpdir_path in matches:
-            if os.path.exists(tmpdir_path):
-                try:
-                    shutil.rmtree(tmpdir_path)
-                except Exception:
-                    pass  # Silently ignore cleanup errors
-    except Exception:
-        pass  # Silently ignore transmap read errors
+    ExecutionRegistry._cleanup_tmp_noram_dirs(transmap_path)
+
 
 def _save_script_to_registry(script_name, transmap_path):
-    """Save script execution record to registry."""
-    try:
-        import datetime
-        registry_dir = get_linuxtoys_cache_dir()
-        registry_file = os.path.join(registry_dir, "registry")
-        
-        # Create directory if it doesn't exist
-        os.makedirs(registry_dir, exist_ok=True)
-        
-        # Read transmap contents
-        transmap_contents = ""
-        if os.path.exists(transmap_path):
-            try:
-                with open(transmap_path, "r") as f:
-                    transmap_contents = f.read().strip()
-            except (IOError, OSError):
-                pass
-        
-        # Format entry with timestamp
-        timestamp = datetime.datetime.now().isoformat()
-        entry = f"[{timestamp}] Script: {script_name}\n"
-        if transmap_contents:
-            entry += f"Changes:\n"
-            for line in transmap_contents.split("\n"):
-                if line.strip():
-                    entry += f"  - {line}\n"
-        else:
-            entry += "Changes: (none)\n"
-        entry += "---\n\n"
-        
-        # A legacy writer could leave the file without a trailing newline;
-        # appending after that would glue this entry's header onto the
-        # previous entry's last line and hide it from line-based parsing.
-        try:
-            if os.path.exists(registry_file) and os.path.getsize(registry_file) > 0:
-                with open(registry_file, "rb") as handle:
-                    handle.seek(-1, os.SEEK_END)
-                    if handle.read(1) != b"\n":
-                        with open(registry_file, "a") as fixup:
-                            fixup.write("\n")
-        except OSError:
-            pass
+    """Save a script execution record via the shared ExecutionRegistry.
 
-        # Append to registry file
-        with open(registry_file, "a") as f:
-            f.write(entry)
-    except Exception:
-        pass  # Silently ignore registry errors
+    Follows the GUI path: runs that made no changes (empty transmap) are
+    skipped so the latest useful run is preserved, and older entries for
+    the same script are pruned.
+    """
+    ExecutionRegistry._save_to_registry(script_name, transmap_path)
 
 def create_temp_file(script_path):
     """
@@ -332,8 +273,7 @@ def easy_cli_run_script(script_info):
 
     # Clear transmap file for new script execution
     try:
-        transmap_path = "/tmp/linuxtoys/transmap"
-        with open(transmap_path, "w") as f:
+        with open(TRANSMAP_PATH, "w") as f:
             pass  # Truncate/clear the file
     except (IOError, OSError):
         pass  # Silently ignore if transmap cannot be cleared
@@ -354,7 +294,7 @@ def easy_cli_run_script(script_info):
 
         # Save to registry and wipe transmap file if script executed successfully
         if code == 0:
-            transmap_path = "/tmp/linuxtoys/transmap"
+            transmap_path = TRANSMAP_PATH
             if not registry_disabled:
                 _save_script_to_registry(registry_name, transmap_path)
             # Clean up any temp directories created by prep_tmp_noram before removing transmap
@@ -367,7 +307,7 @@ def easy_cli_run_script(script_info):
 
         # Handle errors with auto-revert capability
         if _is_error_exit_code(code):
-            transmap_path = "/tmp/linuxtoys/transmap"
+            transmap_path = TRANSMAP_PATH
             auto_reports_enabled = False  # CLI mode doesn't have auto-reporting (yet)
             
             # Try to auto-revert if there are operations in the transmap
@@ -431,6 +371,9 @@ def confirm_action(prompt_message):
     except (KeyboardInterrupt, EOFError):
         print("\n⚠️  Operation cancelled by user.")
         return False
+    except EOFError:
+        print("\n❌ Operation cancelled: no input available.")
+        return False
     return True
 
 
@@ -454,12 +397,15 @@ def execute_scripts_with_feedback(scripts_found):
         elif exit_code == 130:
             print("\n⚠️  Execution interrupted by the user.")
             break
+
+        elif exit_code == 100:
+            print(f"⚠️  {name} was cancelled.")
+            # Only ask when more scripts remain: a cancel on the last one ends the run.
+            if index < total and not confirm_action("Do you want to continue with the remaining scripts?"):
+                break
+
         else:
             print(f"✗ {name} Failed with exit code: {exit_code}.")
-            # Ask the user if they want to continue with the remaining scripts
-            if not confirm_action("Do you want to continue with the remaining scripts?"):
-                print("❌ Operation cancelled.")
-                break
 
 
 def _refuse_outdated_scripts() -> bool:
@@ -599,9 +545,12 @@ def execute_uninstalls_with_feedback(scripts_found, translations):
             print("\n⚠️  Removal interrupted by the user.")
             break
         else:
-            print(f"✗ {name} removal failed with exit code: {exit_code}.")
-            if not confirm_action("Do you want to continue with the remaining removals?"):
-                print("❌ Operation cancelled.")
+            if exit_code == 100:
+                print(f"⚠️  {name} removal was cancelled.")
+            else:
+                print(f"✗ {name} removal failed with exit code: {exit_code}.")
+            # Only ask when more removals remain; the last one ends the run either way.
+            if index < total and not confirm_action("Do you want to continue with the remaining removals?"):
                 break
 
 
@@ -685,8 +634,7 @@ def remove_packages_with_feedback(packages):
             print(f"✓ Package '{package}' removed successfully.")
         else:
             print(f"✗ Package '{package}' removal failed with exit code: {exit_code}.")
-            if not confirm_action("Do you want to continue with the remaining removals?"):
-                print("❌ Operation cancelled.")
+            if index < total and not confirm_action("Do you want to continue with the remaining removals?"):
                 break
 
 
@@ -778,9 +726,8 @@ def install_packages_with_feedback(packages_found):
             failed_items.append(('PACKAGE', package, 1))
             print(f"Package '{package}' installation failed")
             
-            # Ask if user wants to continue on failure
-            if not confirm_action("Do you want to continue with the remaining installations?"):
-                print("❌ Operation cancelled.")
+            # Ask only when more packages remain; the last one ends the run either way.
+            if current_item < total_items and not confirm_action("Do you want to continue with the remaining installations?"):
                 break
 
 def packages_install(args: list, skip_confirmation, translations):
@@ -1210,7 +1157,9 @@ def _launch_tui() -> int:
         from app.tui.main import main as tui_main  # adjust the path
     except ImportError as exc:
         print(f"✗ Could not load the TUI: {exc}")
-        print("  It needs the 'textual' and 'rich' packages.")
+        print("  A required Python package is missing: 'textual' and 'rich' ship")
+        print("  bundled with the app; other dependencies (e.g. 'requests') must")
+        print("  come from the system installation.")
         return 1
     return tui_main()
 
@@ -1260,7 +1209,7 @@ def easy_cli_handler(translations=None):
 
     # --- Skip confirmation flags ---
     def skip_confirmation(args):
-        if os.environ.get("DEV_MODE") == "1":
+        if is_dev_mode_enabled():
             return True
 
         skip_flags = ("-y", "--yes")

@@ -9,6 +9,7 @@
 # repo: https://waydro.id/
 # systemd: yes
 # wayland: yes
+# cachyos-mirrors-required: 0
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"

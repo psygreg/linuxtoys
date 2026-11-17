@@ -5,6 +5,7 @@
 # icon: resolve.svg
 # repo: https://github.com/EdvinNilsson/ffmpeg_encoder_plugin
 # compat: ubuntu, debian, fedora, arch, cachy, rhel, suse
+# cachyos-mirrors-required: 0
 
 # --- Start of the script code ---
 source "$SCRIPT_DIR/libs/helpers.lib"
@@ -64,16 +65,10 @@ elif [ "$AUTO_DVNAT" = "1" ]; then
     install_nobox
 else
     while true; do
-        CHOICE=$(zenity --list --title "DaVinci Resolve FFMPEG Plugin" --text "$msg229" \
-            --column "Options" \
+        CHOICE=$(radioselect --no-default --title "DaVinci Resolve FFMPEG Plugin" --text "$msg229" \
             "DaVinciBox" \
             "Local Installation" \
-            "Cancel" \
-            --width 360 --height 360 )
-
-        if [ $? -ne 0 ]; then
-            exit 100
-        fi
+            "Cancel") || exit 100
 
         case $CHOICE in
             "DaVinciBox" ) install_dvbox && break;;

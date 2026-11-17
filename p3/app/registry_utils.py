@@ -10,6 +10,7 @@ else:
 
 
 _PARSE_CACHE = {"key": None, "data": {}}
+_TRANSACTIONS_CACHE = {"key": None, "entries": []}
 
 
 def parse_registry_file():
@@ -184,6 +185,128 @@ def normalize_registry_content(content):
     return "\n---\n\n".join(entries) + "\n---\n\n"
 
 
+def load_registry_transactions():
+    """Load registry transactions in chronological order (mtime-memoized).
+
+    Returns entries as ``[{"name": <script>, "operations": [op, ...]}, ...]``
+    in stored order — callers that derive entry INDICES depend on this view,
+    unlike the grouped dict from :func:`parse_registry_file`. Noise
+    transactions (sysup) are excluded via ``normalize_registry_content``.
+    """
+    global _TRANSACTIONS_CACHE
+    registry_file = os.path.join(get_linuxtoys_cache_dir(), "registry")
+
+    if not os.path.exists(registry_file):
+        _TRANSACTIONS_CACHE = {"key": None, "entries": []}
+        return []
+
+    try:
+        stat = os.stat(registry_file)
+        cache_key = (stat.st_mtime_ns, stat.st_size)
+    except OSError:
+        return []
+
+    if _TRANSACTIONS_CACHE["key"] == cache_key:
+        return _TRANSACTIONS_CACHE["entries"]
+
+    try:
+        with open(registry_file, "r") as f:
+            content = f.read()
+    except Exception:
+        return []
+
+    entries = []
+
+    for raw_entry in normalize_registry_content(content).split("---\n"):
+        raw_entry = raw_entry.strip()
+        if not raw_entry:
+            continue
+
+        lines = raw_entry.splitlines()
+        if not lines or "Script: " not in lines[0]:
+            continue
+
+        script_name = lines[0].split("Script: ", 1)[1].strip()
+        operations = []
+
+        for line in lines[1:]:
+            line = line.strip()
+            if line.startswith("- "):
+                op_line = line[2:].strip()
+                if op_line and op_line not in (
+                    "Changes:",
+                    "Changes: (none)",
+                ):
+                    operations.append(op_line)
+
+        entries.append({
+            "name": script_name,
+            "operations": operations,
+        })
+
+    _TRANSACTIONS_CACHE = {"key": cache_key, "entries": entries}
+    return entries
+
+
+def remove_script_entries(script_name):
+    """Remove every registry entry stored under *script_name* (exact match).
+
+    Returns ``(removed, ok)``: ``removed`` is True when at least one entry
+    was deleted from the registry file; ``ok`` is False only on read/write
+    errors — a missing registry file or a script without entries simply
+    leaves the file untouched and reports ``removed=False, ok=True``.
+    """
+    registry_file = os.path.join(get_linuxtoys_cache_dir(), "registry")
+
+    if not os.path.exists(registry_file):
+        return False, True
+
+    try:
+        with open(registry_file, "r") as f:
+            content = f.read()
+    except Exception:
+        return False, False
+
+    # Use regex to find all entries and filter by script name
+    entry_pattern = r'\[\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[^\]]*\] Script: ([^\n]+)'
+    matches = list(re.finditer(entry_pattern, content))
+
+    if not matches:
+        return False, True  # No entries found, nothing to filter
+
+    # Build list of ranges to keep (entries NOT matching this script)
+    ranges_to_keep = []
+    removed_any = False
+    for i, match in enumerate(matches):
+        script_name_in_entry = match.group(1).strip()
+        if script_name_in_entry == script_name:
+            # Skip this entry
+            removed_any = True
+            continue
+
+        entry_start = match.start()
+        entry_end = matches[i + 1].start() if i + 1 < len(matches) else len(content)
+        ranges_to_keep.append((entry_start, entry_end))
+
+    # Reconstruct file from kept ranges
+    try:
+        if not ranges_to_keep:
+            # All entries were for this script, clear the file
+            new_content = ""
+        else:
+            # Normalizing here also heals legacy glued (missing-newline)
+            # entries on the next registry write.
+            new_content = normalize_registry_content(
+                "".join(content[start:end] for start, end in ranges_to_keep)
+            )
+
+        with open(registry_file, "w") as f:
+            f.write(new_content)
+        return removed_any, True
+    except Exception:
+        return False, False
+
+
 def search_registry_entries(registry_data, query):
     """
     Search registry entries by script name, timestamp, or operation text.
@@ -240,26 +363,59 @@ def search_registry_entries(registry_data, query):
 
     return results
 
+
+_GIT_RELEASE_APP_ID_RE = re.compile(r"^[A-Z_][A-Z0-9_]*$")
+_GIT_RELEASE_REPO_RE = re.compile(r"^https://(?:github\.com|codeberg\.org)/[^/]+/[^/]+/?$")
+
+
+def _parse_git_release_operation(operation):
+    """Return (app_id, version, repo) for a well-formed git-release operation, else None."""
+    if not operation.startswith("git-release "):
+        return None
+    parts = operation.split(None, 3)
+    if len(parts) != 4:
+        return None
+    _kind, app_id, version, repo = parts
+    if not _GIT_RELEASE_APP_ID_RE.fullmatch(app_id) or not version or not _GIT_RELEASE_REPO_RE.fullmatch(repo):
+        return None
+    return app_id, version, repo
+
+
+def get_repo_release_transactions(registry_data=None):
+    """Return {script_name: repo_app_id} for transactions that installed a repository release.
+
+    A name recording more than one repository app is ambiguous and is left out.
+    """
+    if registry_data is None:
+        registry_data = parse_registry_file()
+
+    transactions = {}
+    for script_name, executions in registry_data.items():
+        app_ids = set()
+        for _timestamp, operations in executions:
+            for operation in operations:
+                parsed = _parse_git_release_operation(operation)
+                if parsed is not None:
+                    app_ids.add(parsed[0])
+        if len(app_ids) == 1:
+            transactions[script_name] = app_ids.pop()
+    return transactions
+
+
 def get_git_release_apps(registry_data=None):
     """Return latest registered pkg_fromrelease metadata keyed by repo_app_id."""
     if registry_data is None:
         registry_data = parse_registry_file()
 
     apps = {}
-    app_id_re = re.compile(r"^[A-Z_][A-Z0-9_]*$")
-    repo_re = re.compile(r"^https://(?:github\.com|codeberg\.org)/[^/]+/[^/]+/?$")
 
     for _script_name, executions in registry_data.items():
         for timestamp, operations in executions:
             for operation in operations:
-                if not operation.startswith("git-release "):
+                parsed = _parse_git_release_operation(operation)
+                if parsed is None:
                     continue
-                parts = operation.split(None, 3)
-                if len(parts) != 4:
-                    continue
-                _kind, app_id, version, repo = parts
-                if not app_id_re.fullmatch(app_id) or not version or not repo_re.fullmatch(repo):
-                    continue
+                app_id, version, repo = parsed
                 previous = apps.get(app_id)
                 if previous is None or str(timestamp or "") >= previous["timestamp"]:
                     apps[app_id] = {

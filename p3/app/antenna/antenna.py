@@ -12,6 +12,7 @@ import hmac
 import unicodedata
 from ..updater.update_helper import get_current_version
 from ..lang_utils import _
+from ..compat import TRANSMAP_PATH
 from ..atomic_io import atomic_write_json
 from urllib.parse import urlparse
  
@@ -19,9 +20,9 @@ _REPORT_URL = "https://bug.linux.toys"
 
 
 class EmptyReportError(Exception):
-    """The server found no readable logs, so no report was filed."""
- 
-# Cache directory for storing the generated secret (in user's config dir)
+    """The server found no log text it could file, so nothing was submitted."""
+
+
 _CACHE_DIR = Path.home() / ".cache" / "linuxtoys" / "antenna"
 _SECRET_CACHE = _CACHE_DIR / "bootstrap.json"
 _HISTORY_FILE = _CACHE_DIR / "history.json"
@@ -81,12 +82,11 @@ def _get_ram_info() -> str:
         with open("/proc/meminfo", "r", encoding="utf-8") as f:
             for line in f:
                 if line.startswith("MemTotal:"):
-                    # Kernel reports KiB; show the measured size in GiB with
-                    # one decimal for a compact system-context field.
+                    # Kernel reports KiB; one decimal keeps the measured
+                    # value exact without rounding games.
                     fields = line.split()
-                    if len(fields) == 3 and fields[2] == "kB" and int(fields[1]) > 0:
-                        return f"{int(fields[1]) / 1024 / 1024:.1f} GiB"
-    except (OSError, ValueError, IndexError, OverflowError):
+                    return f"{int(fields[1]) / 1024 / 1024:.1f} GiB"
+    except (OSError, ValueError, IndexError):
         pass
 
     return "unknown"
@@ -480,12 +480,10 @@ def add_script_to_history(script_name: str) -> None:
     """Add a script execution to history (keep last 10)."""
     try:
         history = _load_history()
-        # Add new entry with timestamp
         history.append({
             "name": script_name,
             "timestamp": time.time()
         })
-        # Keep only last 10
         history = history[-10:]
         _save_history(history)
     except Exception:
@@ -515,7 +513,7 @@ def _get_last_n_lines(text: str, n: int = 20) -> str:
 
 def _get_transmap_content() -> str:
     """Load and format transmap file content for the report."""
-    transmap_path = "/tmp/linuxtoys/transmap"
+    transmap_path = TRANSMAP_PATH
     try:
         if not Path(transmap_path).exists():
             return ""
@@ -580,10 +578,7 @@ class LogCapture:
  
     def get_logs(self) -> str:
         return self._buffer.getvalue()
- 
-    def clear(self):
-        self._buffer = StringIO()
- 
+
 log_capture = LogCapture()
 _antenna_initialized = False
  
@@ -831,7 +826,7 @@ def _initialize_antenna() -> None:
  
 # --- Issue submission ---
 def _rejected_for_logs(response) -> bool:
-    """Recognize a validation rejection naming the logs field."""
+    """True when the server's 422 names the logs field, the only way it refuses an empty report."""
     try:
         detail = response.json().get("detail", [])
     except (ValueError, AttributeError):
@@ -856,7 +851,7 @@ def submit_issue(
 ) -> dict | None:
     """Submit a GitHub issue. Logs default to current captured output (last 20 lines).
 
-    Raises EmptyReportError if the server rejects the logs as unreadable.
+    Raises EmptyReportError when the server has no log text left to file.
     
     Args:
         title: Issue title
@@ -890,7 +885,6 @@ def submit_issue(
         )
         return None
 
-    # Initialize antenna on first bug report submission
     _initialize_antenna()
     
     # Track if logs were explicitly provided (vs captured from stdout)
@@ -937,8 +931,9 @@ def submit_issue(
             logs = logs + "\n" + registry_content
 
     # Background AppStream installs run without any terminal; their per-job
-    # transcripts are the only output a report can carry for them. Prepend them
-    # so the terminal failure stays at the end if the server trims the report.
+    # transcripts are the only output a report can carry for them. They go
+    # before the terminal output: when the server trims a long report it keeps
+    # the end, which is where the terminal shows the failure.
     try:
         from ..appstream_logs import appstream_log_context
 
@@ -948,7 +943,6 @@ def submit_issue(
     if appstream_logs:
         logs = appstream_logs + "\n\n" + logs
 
-    # Handle upstream developer tagging
     validated_app = None
     if related_app:
         try:
@@ -1013,7 +1007,7 @@ def submit_issue(
         if e.response is not None and e.response.status_code == 422 and _rejected_for_logs(e.response):
             print("[IssueReporter] Report rejected: no readable log lines", file=sys.stderr)
             raise EmptyReportError() from e
-        print(f"[IssueReporter] Could not file issue: Server error ({e.response.status_code if e.response is not None else 'unknown'})", file=sys.stderr)
+        print(f"[IssueReporter] Could not file issue: Server error ({e.response.status_code})", file=sys.stderr)
         raise
     except Exception as e:
         print(f"[IssueReporter] Could not file issue: {e}", file=sys.stderr)

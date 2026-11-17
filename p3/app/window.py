@@ -31,6 +31,7 @@ from . import (
     needed_helper,
     parser,
     reboot_helper,
+    registry_heal,
     revealer,
     revert_helper,
     search_helper,
@@ -43,6 +44,7 @@ from . import (
     package_guard,
     package_view
 )
+from .atomic_io import atomic_write_json
 from .gtk_common import Gdk, GLib, Gtk, GdkPixbuf, resolve_symbolic_icon
 from gi.repository import Gio
 from .window_items import ItemWidgetFactory
@@ -169,6 +171,7 @@ class AppWindow(
         self._update_state = "checking" if self.automatic_updates_enabled else "disabled"
         self._appstream_state = "hidden"
         self._apt_appstream_refresh_enqueued = False
+        self._registry_self_heal_started = False
         # Only the bootstrap case blocks the main menu. Once both artifacts exist,
         # future AppStream refreshes remain fully background operations.
         self._appstream_pickle_missing_at_startup = (
@@ -1007,6 +1010,9 @@ class AppWindow(
                         "the normal parser path will rebuild it."
                     )
 
+            if not result.get("starter"):
+                GLib.idle_add(self._start_registry_self_heal)
+
             if initial_build:
                 GLib.idle_add(
                     self._finish_initial_appstream_build,
@@ -1355,46 +1361,6 @@ class AppWindow(
         threading.Thread(target=populate_in_background, daemon=True).start()
         return False
 
-    def _populate_search_cache(self):
-        """Populate the search cache in a background thread to avoid blocking the UI."""
-
-        def populate_in_background():
-            try:
-                self.script_cache.populate(self.translations)
-            except Exception as e:
-                print(f"Error populating search cache: {e}")
-
-        threading.Thread(target=populate_in_background, daemon=True).start()
-        return False  # Remove from idle callbacks
-
-    def _populate_category_cache(self):
-        """Populate the category cache in a background thread to avoid blocking the UI."""
-
-        def populate_in_background():
-            try:
-                self.category_cache.populate(self.translations)
-            except Exception as e:
-                print(f"Error populating category cache: {e}")
-
-        threading.Thread(target=populate_in_background, daemon=True).start()
-        return False  # Remove from idle callbacks
-
-    def _populate_all_scripts(self):
-        """Populate the all_scripts cache in a background thread for random scripts display."""
-
-        def populate_in_background():
-            try:
-                self.all_scripts = self._collect_all_scripts()
-                self._invalidate_featured_eligibility_cache()
-                # Start the timer if we're on the main menu and scripts were collected
-                if self.should_start_random_timer and self.all_scripts:
-                    GLib.idle_add(self._deferred_start_random_scripts_refresh_timer)
-            except Exception as e:
-                print(f"Error populating all scripts cache: {e}")
-
-        threading.Thread(target=populate_in_background, daemon=True).start()
-        return False  # Remove from idle callbacks
-
     def _start_scripts_synchronization(self):
         """Synchronize remote scripts after the GTK window has started."""
         if self._scripts_sync_started or dev_mode.is_dev_mode_enabled():
@@ -1733,6 +1699,50 @@ class AppWindow(
                 logger.info("Pruned %d expired removal registry entries", removed)
         except Exception as exc:
             logger.warning("Registry prune failed: %s", exc)
+
+    def _start_registry_self_heal(self):
+        """Once per session, look for registry transactions LinuxToys no longer offers.
+
+        Starts only after a complete AppStream catalog is published. The check
+        treats a missing or starter catalog as unknown, never as discontinued.
+        """
+        if self._registry_self_heal_started:
+            return False
+        self._registry_self_heal_started = True
+
+        def worker():
+            try:
+                candidates = registry_heal.find_discontinued_transactions()
+            except Exception as exc:
+                logger.warning("Registry self-heal check failed: %s", exc)
+                candidates = []
+            GLib.idle_add(self._queue_registry_self_heal, candidates)
+
+        threading.Thread(
+            target=worker, daemon=True, name="linuxtoys-registry-heal"
+        ).start()
+        return False
+
+    def _queue_registry_self_heal(self, candidates):
+        """Queue background removal of discontinued transactions (GTK thread)."""
+        if not candidates or version_gate.check().get("blocked"):
+            return False
+        for candidate in candidates:
+            name = candidate["name"]
+            if installed_packages.removal_blocked({"name": name, "registry_name": name}):
+                logger.info("Keeping %s: installed features still depend on it", name)
+                continue
+            remove_entry = revert_helper.build_uninstall_script_entry(
+                {"name": name, "registry_name": name}, self.translations
+            )
+            if remove_entry is None:
+                logger.info("Keeping %s: no reversible operations are recorded", name)
+                continue
+            logger.info("Removing %s: repository app %s is no longer offered", name, candidate["app_id"])
+            self._appstream_runner.enqueue_registry_removal(
+                {"name": name, "registry_name": name}, remove_entry
+            )
+        return False
 
     def _refresh_installed_features_view(self):
         # Hidden Installed Features views can be expensive to rebuild and GTK will
@@ -2797,19 +2807,7 @@ class AppWindow(
     @staticmethod
     def _find_named_descendant(root, widget_name):
         """Find a named GTK descendant without rebuilding or rebinding its card."""
-        if root is None:
-            return None
-        try:
-            if root.get_name() == widget_name:
-                return root
-        except (AttributeError, TypeError):
-            pass
-        if isinstance(root, Gtk.Container):
-            for child in root.get_children():
-                found = AppWindow._find_named_descendant(child, widget_name)
-                if found is not None:
-                    return found
-        return None
+        return gui_rs.card_child(root, widget_name)
 
     def _refresh_root_category_translations_in_place(self):
         """Refresh root-menu language strings without invalidating its card widgets.
@@ -3563,10 +3561,9 @@ class AppWindow(
             try:
                 # The refresh publishes catalog.bin atomically. Do not materialize
                 # the AUR here: category browsing is paged directly from Rust.
-                aur_cache.refresh_if_stale()
                 # Prewarm the lazy catalog off GTK too: loading/filtering the
                 # binary and querying pacman's repositories can be expensive.
-                aur_cache.browse_entries()
+                aur_cache.refresh_catalog()
             except Exception as error:
                 logger.warning("AUR catalog refresh failed: %s", error)
                 GLib.idle_add(finish_loading, str(error))
@@ -3805,18 +3802,15 @@ class AppWindow(
 
     def show_external_install_error(self, message):
         """Show a safe user-facing error for an external URI request."""
-        dialog = Gtk.MessageDialog(
-            transient_for=self,
-            flags=0,
-            message_type=Gtk.MessageType.ERROR,
-            buttons=Gtk.ButtonsType.OK,
-            text=self.translations.get(
+        gtk_dialogs.run_message_dialog(
+            self,
+            title=self.translations.get(
                 "uri_install_error_title", "Unable to open LinuxToys link"
             ),
+            secondary_text=message,
+            message_type=Gtk.MessageType.ERROR,
+            buttons_type=Gtk.ButtonsType.OK,
         )
-        dialog.format_secondary_text(message)
-        dialog.run()
-        dialog.destroy()
 
     def handle_external_install_request(self, target_id):
         """Resolve a browser-requested installation by stable ID.
@@ -3995,39 +3989,23 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
         Returns:
             bool: True if user confirmed to cancel, False if user chose to continue
         """
-        dialog = Gtk.MessageDialog(
-            transient_for=self,
-            flags=0,
-            message_type=Gtk.MessageType.WARNING,
-            buttons=Gtk.ButtonsType.NONE,
-            text=self.translations.get("cancel_script_title", "Cancel Running Script?"),
-        )
-
-        dialog.format_secondary_text(
-            self.translations.get(
+        # Return True if user clicked "Cancel Script" (YES), False otherwise
+        return gtk_dialogs.run_message_dialog(
+            self,
+            title=self.translations.get("cancel_script_title", "Cancel Running Script?"),
+            secondary_text=self.translations.get(
                 "cancel_script_message",
                 "A script is currently running. If you go back now, the running task will be cancelled. Are you sure you want to cancel?",
-            )
-        )
-
-        # Add buttons
-        dialog.add_button(
-            self.translations.get("cancel_script_continue_btn", "Continue Running"),
-            Gtk.ResponseType.NO,
-        )
-        dialog.add_button(
-            self.translations.get("cancel_script_cancel_btn", "Cancel Script"),
-            Gtk.ResponseType.YES,
-        )
-
-        # Set focus to the "Continue Running" button (safer default)
-        dialog.set_default_response(Gtk.ResponseType.NO)
-
-        response = dialog.run()
-        dialog.destroy()
-
-        # Return True if user clicked "Cancel Script" (YES), False otherwise
-        return response == Gtk.ResponseType.YES
+            ),
+            message_type=Gtk.MessageType.WARNING,
+            buttons=[
+                (self.translations.get("cancel_script_continue_btn", "Continue Running"),
+                 Gtk.ResponseType.NO),
+                (self.translations.get("cancel_script_cancel_btn", "Cancel Script"),
+                 Gtk.ResponseType.YES),
+            ],
+            default_response=Gtk.ResponseType.NO,
+        ) == Gtk.ResponseType.YES
 
     def _on_close_requested(self, _widget, _event):
         """Guard application shutdown while AppStream work is still active."""
@@ -4041,46 +4019,32 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
 
     def _show_queue_close_warning_dialog(self):
         """Warn before closing while queued or running operations remain."""
-        dialog = Gtk.MessageDialog(
-            transient_for=self,
-            flags=0,
-            message_type=Gtk.MessageType.WARNING,
-            buttons=Gtk.ButtonsType.NONE,
-            text=self.translations.get(
+        # Return True if user clicked "Close Anyway" (YES), False otherwise
+        return gtk_dialogs.run_message_dialog(
+            self,
+            title=self.translations.get(
                 "queue_close_title",
                 "Operations Are Still Running",
             ),
-        )
-
-        dialog.format_secondary_text(
-            self.translations.get(
+            secondary_text=self.translations.get(
                 "queue_close_message",
                 "Closing LinuxToys will stop all queued and running operations. "
                 "Interrupting an operation while it is in progress may cause "
                 "problems with your system. Are you sure you want to close?",
-            )
-        )
-
-        dialog.add_button(
-            self.translations.get(
-                "queue_close_continue_btn",
-                "Keep LinuxToys Open",
             ),
-            Gtk.ResponseType.NO,
-        )
-        close_button = dialog.add_button(
-            self.translations.get(
-                "queue_close_close_btn",
-                "Close Anyway",
-            ),
-            Gtk.ResponseType.YES,
-        )
-        close_button.get_style_context().add_class("destructive-action")
-        dialog.set_default_response(Gtk.ResponseType.NO)
-
-        response = dialog.run()
-        dialog.destroy()
-        return response == Gtk.ResponseType.YES
+            message_type=Gtk.MessageType.WARNING,
+            buttons=[
+                (self.translations.get(
+                    "queue_close_continue_btn",
+                    "Keep LinuxToys Open",
+                ), Gtk.ResponseType.NO),
+                (self.translations.get(
+                    "queue_close_close_btn",
+                    "Close Anyway",
+                ), Gtk.ResponseType.YES, "destructive-action"),
+            ],
+            default_response=Gtk.ResponseType.NO,
+        ) == Gtk.ResponseType.YES
 
 
     def _window_state_path(self):
@@ -4381,11 +4345,7 @@ npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
 
         state_path = self._window_state_path()
         try:
-            os.makedirs(os.path.dirname(state_path), exist_ok=True)
-            temporary_path = f"{state_path}.tmp"
-            with open(temporary_path, "w", encoding="utf-8") as state_file:
-                json.dump(state, state_file)
-            os.replace(temporary_path, state_path)
+            atomic_write_json(state_path, state)
         except OSError as exc:
             logger.warning("Could not save window state: %s", exc)
 

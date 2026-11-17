@@ -8,6 +8,7 @@ from dataclasses import dataclass
 
 from app.skills_fetcher import fetch_popular as _fetch_popular
 from app.skills_fetcher import search_skills as _search_skills
+from app.dev_mode import is_dev_mode_enabled
 
 SKILLS_SH_URL = "https://skills.sh"
 
@@ -95,7 +96,7 @@ class OpResult:
 
 
 def is_dev_mode() -> bool:
-    return os.environ.get("DEV_MODE") == "1"
+    return is_dev_mode_enabled()
 
 
 def format_installs(count) -> str:

@@ -7,6 +7,7 @@
 # repo: https://flathub.org
 # compat: !solus, !ostree
 # systemd: yes
+# cachyos-mirrors-required: 0
 
 # --- Start of the script code ---
 sysdetect

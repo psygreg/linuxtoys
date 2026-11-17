@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "Failed to recover interrupted dpkg operation. Manual user intervention required.",
   "pkg_guard_broken": "Broken package dependencies were detected. Attempting recovery...",
   "pkg_guard_broken_fail": "Failed to fix broken packages. Manual user intervention required.",
-  "pkg_guard_broken_pending": "Package dependencies remain broken. Manual user intervention required."
+  "pkg_guard_broken_pending": "Package dependencies remain broken. Manual user intervention required.",
+  "privilege_required_title": "Administrator Access Required",
+  "privilege_required_message": "This user cannot use sudo, so LinuxToys cannot install, update or remove software. Make sure sudo is installed, add the user to the sudo group (Debian, Ubuntu) or the wheel group (Fedora, Arch, openSUSE), then open LinuxToys again.",
+  "bug_report_cancelled_title": "Nothing to Report",
+  "bug_report_cancelled_message": "The last run was cancelled or skipped, so there is nothing to report.\n\nLast message: {reason}",
+  "bug_report_rejected_title": "Nothing to Report",
+  "bug_report_rejected_message": "The terminal output had no text that could be sent, so the report was not submitted."
 }

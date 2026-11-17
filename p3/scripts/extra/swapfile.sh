@@ -60,23 +60,17 @@ elif is_gregos; then
 else
     # menu
     while true; do
-        CHOICE=$(zenity --list --title "Swapfile Creator" --text "Create swapfile on:" \
-            --column "Options" \
+        CHOICE=$(radioselect --no-default --title "Swapfile Creator" --text "Create swapfile on:" \
             "/ (root)" \
             "/home (home)" \
             "Custom path..." \
-            "Cancel" \
-            --height 330 --width 300)
-
-        if [ $? -ne 0 ]; then
-            exit 100
-        fi
+            "Cancel") || exit 100
 
         case $CHOICE in
         "/ (root)") create_swap "/" && break;;
         "/home (home)") create_swap "/home" && break;;
         "Custom path...")
-            CUSTOM_PATH=$(zenity --entry --title "Swapfile Creator" --text "Enter the mount point path for swapfile:\n(e.g., /var, /opt, or any other mount point)")
+            CUSTOM_PATH=$(userinput --title "Swapfile Creator" --text "Enter the mount point path for swapfile:\n(e.g., /var, /opt, or any other mount point)")
             if [ $? -eq 0 ] && [ -n "$CUSTOM_PATH" ]; then
                 if [ "$CUSTOM_PATH" = "/tmp" ] || [[ "$CUSTOM_PATH" == /tmp/* ]]; then
                     zenwrn "/tmp is not suitable for swapfile storage.\nPlease choose a different location."

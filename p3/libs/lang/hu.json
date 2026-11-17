@@ -626,5 +626,11 @@
   "pkg_guard_audit_fail": "A megszakadt dpkg-művelet helyreállítása nem sikerült. A felhasználó kézi beavatkozása szükséges.",
   "pkg_guard_broken": "Sérült csomagfüggőségek észlelve. Helyreállítási kísérlet folyamatban...",
   "pkg_guard_broken_fail": "A sérült csomagok javítása nem sikerült. A felhasználó kézi beavatkozása szükséges.",
-  "pkg_guard_broken_pending": "A csomagfüggőségek továbbra is sérültek. A felhasználó kézi beavatkozása szükséges."
+  "pkg_guard_broken_pending": "A csomagfüggőségek továbbra is sérültek. A felhasználó kézi beavatkozása szükséges.",
+  "privilege_required_title": "Rendszergazdai hozzáférés szükséges",
+  "privilege_required_message": "Ez a felhasználó nem használhatja a sudo-t, ezért a LinuxToys nem tud szoftvereket telepíteni, frissíteni vagy eltávolítani. Győződjön meg róla, hogy a sudo telepítve van, adja hozzá a felhasználót a sudo csoporthoz (Debian, Ubuntu) vagy a wheel csoporthoz (Fedora, Arch, openSUSE), majd nyissa meg újra a LinuxToys-t.",
+  "bug_report_cancelled_title": "Nincs mit jelenteni",
+  "bug_report_cancelled_message": "Az utolsó futtatás megszakadt vagy kihagyásra került, ezért nincs mit jelenteni.\n\nUtolsó üzenet: {reason}",
+  "bug_report_rejected_title": "Nincs mit jelenteni",
+  "bug_report_rejected_message": "A terminál kimenetében nem volt elküldhető szöveg, ezért a jelentés nem került elküldésre."
 }

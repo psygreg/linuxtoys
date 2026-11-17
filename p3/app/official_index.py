@@ -75,29 +75,6 @@ def is_verified_name(name):
     normalized = str(name).strip().casefold()
     return normalized in _VERIFIED_SCRIPT_NAMES
 
-def get_verified_names():
-    """Return first-party-supported software names in display-friendly order."""
-    return sorted(VERIFIED_SCRIPTS, key=str.casefold)
-
-def get_verified_entries(translations=None):
-    """
-    Return (internal_name, display_name) pairs for officially supported apps.
-    """
-    from . import parser
-
-    entries = [
-        (
-            name,
-            parser.get_display_name(name, translations),
-        )
-        for name in VERIFIED_SCRIPTS
-    ]
-
-    return sorted(
-        entries,
-        key=lambda item: item[1].casefold(),
-    )
-
 def get_bug_report_entries(translations=None):
     """
     Return officially supported applications eligible for upstream

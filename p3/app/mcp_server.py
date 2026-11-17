@@ -52,23 +52,6 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
-# Keep the legacy offline CLI independent of optional application imports.
-if __package__:
-    from . import mcp_skill as _mcp_skill
-else:
-    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    from app import mcp_skill as _mcp_skill
-
-# Preserve public callables/constants for existing callers.
-install_agent_skill = _mcp_skill.install_agent_skill
-skill_install_script = _mcp_skill.skill_install_script
-SKILL_NAME = _mcp_skill.SKILL_NAME
-SKILL_REPO_URLS = _mcp_skill.SKILL_REPO_URLS
-SKILL_INSTALL_TIMEOUT = _mcp_skill.SKILL_INSTALL_TIMEOUT
-
-if __name__ == "__main__" and "--install-skill" in sys.argv:
-    sys.exit(_mcp_skill.main())
-
 if __package__:
     from . import easy_cli
     from . import installed_packages
@@ -101,6 +84,8 @@ if __package__:
     from .repo_parser import materialize_repo_script
     from .term_registry import ExecutionRegistry
     from .updater import __version__
+    from .atomic_io import atomic_write_text
+    from .mcp_skill import install_agent_skill, skill_install_script
 else:
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     from app import easy_cli
@@ -134,6 +119,8 @@ else:
     from app.repo_parser import materialize_repo_script
     from app.term_registry import ExecutionRegistry
     from app.updater import __version__
+    from app.atomic_io import atomic_write_text
+    from app.mcp_skill import install_agent_skill, skill_install_script
 
 
 SERVER_NAME = "linuxtoys"
@@ -145,6 +132,11 @@ MAX_SCREENSHOT_BYTES = 8 * 1024 * 1024
 SESSION_IDLE_TTL = 24 * 60 * 60
 JOB_LOG_LINES = 400
 JOB_WAIT_MAX_SECONDS = 20
+# Merged job tracking: a submission tool (install_app, update_system, ...)
+# blocks until its queued job finishes by default, so one request carries the
+# job from queue to outcome. wait_seconds can bound that block; this is the
+# hard cap for it (0/omitted means "wait until the job finishes").
+JOB_TRACK_MAX_SECONDS = 2 * 60 * 60
 
 def shlex_quote(value):
     return shlex.quote(str(value))
@@ -296,14 +288,16 @@ def _system_update_entry():
 # ---------------------------------------------------------------------------
 # Agent script-dialog machinery
 #
-# Scripts raise dialogs through four helper families in libs/linuxtoys.bash:
-# question/zenask, radioselect, listselect and warn/zenwrn/nonfatal/die/fatal.
+# Scripts raise dialogs through five helper families in libs/linuxtoys.bash:
+# question/zenask, radioselect, listselect, userinput and
+# warn/zenwrn/nonfatal/die/fatal.
 # Agent behavior:
 #
 # - Questions: statically extracted from the script text and returned by
 #   install_app/update_system BEFORE any run (requires_answers payload).
-#   The agent asks the user (options + default are provided), then re-calls
-#   the tool with `answers`; the run carries a prepared-answers file that
+#   The agent asks the user (options + default are provided; a userinput
+#   prompt is a text question answered with the text the user typed), then
+#   re-calls the tool with `answers`; the run carries a prepared-answers file that
 #   the helpers consult instead of showing a dialog. Calls the service
 #   cannot pre-ask (variable args, continuations, exotic escapes) are
 #   counted as dynamic prompts: they keep their live dialog behavior and
@@ -326,11 +320,17 @@ _UNIT_SEP = "\x1f"
 _QUESTION_ID_LEN = 12
 
 _DIALOG_HELPER_RE = re.compile(
-    r"(?:^|[^A-Za-z0-9_-])(zenask|question|radioselect|listselect)(?![A-Za-z0-9_-])"
+    r"(?:^|[^A-Za-z0-9_-])(zenask|question|radioselect|listselect|userinput)(?![A-Za-z0-9_-])"
 )
+_INPUT_COMMAND_POSITION_RE = re.compile(
+    r"(?:^|[;&|({`!]|\$\(|\b(?:then|do|else|if|elif|while|until))\s*$"
+)
+_INPUT_ANSWER_MAX = 1024
+_INPUT_CONTROL_RE = re.compile(r"[\x00-\x1f\x7f]")
 _DQ_VAR_RE = re.compile(r"\$\{([A-Za-z_][A-Za-z0-9_]*)\}|\$([A-Za-z_][A-Za-z0-9_]*)")
 _NAV_FORM_RE = re.compile(r"^\$\{([A-Za-z_][A-Za-z0-9_]*)\}$|^\$([A-Za-z_][A-Za-z0-9_]*)$")
 _LANG_ASSIGN_RE = re.compile(r'^\s*([A-Za-z_][A-Za-z0-9_]*)=(.*)$')
+_BARE_FLAG_RE = re.compile(r"--[A-Za-z0-9-]*")
 
 
 def _clean_field(value):
@@ -517,6 +517,9 @@ def _agent_prompt_entry(kind, fields, title="", message=""):
     elif kind == "radio":
         options = fields
         default = options[0] if options else ""
+    elif kind == "input":
+        options = []
+        default = fields[2] if len(fields) > 2 else ""
     else:
         options = fields
         default = ""
@@ -528,6 +531,87 @@ def _agent_prompt_entry(kind, fields, title="", message=""):
         "options": list(options),
         "default": default,
     }
+
+
+def _selector_fields(kind, fields):
+    """Split a radioselect/listselect call into (title, message, options).
+
+    Mirrors the helpers' leading flags: `--title VALUE`, `--text VALUE`,
+    `--all` (list only), `--no-default` (radio only) and an optional `--`
+    terminator. Options comes back
+    as None when a flag has no value or its text escape cannot be represented,
+    so the call stays a dynamic prompt.
+    """
+    title = ""
+    message = ""
+    index = 0
+    while index < len(fields):
+        field = fields[index]
+        if field in ("--title", "--text"):
+            if index + 1 >= len(fields):
+                return title, message, None
+            if field == "--title":
+                title = fields[index + 1]
+            else:
+                message = _printf_unescape(fields[index + 1])
+                if message is None:
+                    return title, message, None
+            index += 2
+            continue
+        if field == "--all" and kind == "list":
+            index += 1
+            continue
+        if field == "--no-default" and kind == "radio":
+            index += 1
+            continue
+        if field == "--":
+            index += 1
+        break
+    return title, message, fields[index:]
+
+
+def _input_command_position(prefix):
+    """True when a userinput name starts a command, not an argument or text."""
+    return _INPUT_COMMAND_POSITION_RE.search(prefix.rstrip()) is not None
+
+
+def _input_fields(fields):
+    """Split one userinput call into (title, message, default); None when the
+    call cannot be pinned statically.
+
+    Mirrors userinput's options: `--title`, `--text` and `--default`, each
+    with one value (the `--opt=VALUE` form arrives here as two fields). The
+    text is unescaped and loses trailing newlines the way $(...) does on the
+    bash side, so the answer key matches at runtime.
+    """
+    title = "LinuxToys"
+    message = ""
+    default = ""
+    index = 0
+    while index < len(fields):
+        option = fields[index]
+        if option not in ("--title", "--text", "--default") or index + 1 >= len(fields):
+            return None
+        value = fields[index + 1]
+        if option == "--title":
+            title = value
+        elif option == "--text":
+            message = _printf_unescape(value)
+            if message is None or "\x00" in message:
+                return None
+            message = message.rstrip("\n")
+        else:
+            default = value
+        index += 2
+    return title, message, default
+
+
+def _input_answer_problem(text):
+    if len(text) > _INPUT_ANSWER_MAX:
+        return f"is longer than {_INPUT_ANSWER_MAX} characters"
+    if _INPUT_CONTROL_RE.search(text):
+        return "must be one line without control characters"
+    return None
 
 
 def _agent_scan_line(line, resolver):
@@ -549,8 +633,11 @@ def _agent_scan_line(line, resolver):
         kind = (
             "question" if helper in ("question", "zenask")
             else "radio" if helper == "radioselect"
+            else "input" if helper == "userinput"
             else "list"
         )
+        if kind == "input" and not _input_command_position(line[:match.start(1)]):
+            continue  # the word sits in an argument or text, not a call
         fields = []
         dynamic_call = False
         parse_end = match.end()
@@ -615,12 +702,39 @@ def _agent_scan_line(line, resolver):
                 index += len(var_match.group(0))
                 parse_end = index
                 continue
+            flag_match = _BARE_FLAG_RE.match(line, index)
+            if flag_match and (
+                flag_match.end() == len(line) or line[flag_match.end()] in " \t)"
+            ):
+                fields.append(flag_match.group(0))  # selector flags: --title, --all, --
+                index = flag_match.end()
+                parse_end = index
+                continue
+            if (
+                kind == "input" and flag_match
+                and flag_match.end() < len(line) and line[flag_match.end()] == "="
+            ):
+                fields.append(flag_match.group(0))  # userinput --opt=VALUE
+                index = flag_match.end() + 1
+                parse_end = index
+                if index >= len(line) or line[index] in " \t)":
+                    fields.append("")  # empty `--opt=` value
+                continue
             if char == "#":
                 break  # trailing comment: the call's arguments end here
             break  # redirect / pipe / other token: arguments complete
 
         if dynamic_call:
             dynamic += 1
+        elif kind == "input":
+            parsed = _input_fields(fields)
+            if parsed is None:
+                dynamic += 1  # unknown or unpaired option: runtime prompt only
+                continue
+            title, message, default = parsed
+            entries.append(_agent_prompt_entry(
+                "input", [title, message, default], title=title, message=message,
+            ))
         elif fields:
             if kind == "question":
                 title = fields[0] if fields else ""
@@ -635,10 +749,16 @@ def _agent_scan_line(line, resolver):
                     "question", [title, message], title=title, message=message,
                 ))
             else:
-                if len(set(fields)) != len(fields):
+                title, message, options = _selector_fields(kind, fields)
+                if options is None:
+                    dynamic += 1
+                    continue
+                if len(set(options)) != len(options):
                     dynamic += 1  # duplicated options: ambiguous answer key
                     continue
-                entries.append(_agent_prompt_entry(kind, fields))
+                entries.append(_agent_prompt_entry(
+                    kind, options, title=title, message=message,
+                ))
     return entries, dynamic
 
 
@@ -918,6 +1038,23 @@ def _agent_compile_arms(scope_dir, conditions):
 _AGENT_ASSIGN_RE = re.compile(r"^\s*(?:export\s+|local\s+)?([A-Za-z_][A-Za-z0-9_]*)=(\"[^\"]*\"|'[^']*')\s*$")
 
 
+_AGENT_DEFAULT_RE = re.compile(r'^\s*:\s+"\$\{([A-Za-z_][A-Za-z0-9_]*):=([^}"]*)\}"\s*$')
+
+
+def _agent_script_default_table(text):
+    """`: "${name:=value}"` fallbacks: the value applies only where the lang
+    table does not define the name, as the shell does at runtime."""
+    table = {}
+    for line in text.split("\n"):
+        match = _AGENT_DEFAULT_RE.match(line)
+        if not match:
+            continue
+        value = _lang_assignment_value(f'"{match.group(2)}"')
+        if value is not None:
+            table[match.group(1)] = value
+    return table
+
+
 def _agent_script_var_table(text):
     """Static constant assignments inside one script (name="literal"), with
     runtime-result assignments deliberately excluded.
@@ -951,7 +1088,8 @@ def _agent_script_scan(text):
     lang_table = _lang_table()
     scope_dir = _script_dir()
     script_vars = _agent_script_var_table(text)
-    merged_vars = dict(lang_table)
+    merged_vars = _agent_script_default_table(text)
+    merged_vars.update(lang_table)
     merged_vars.update(script_vars)
 
     def resolver(name):
@@ -1415,6 +1553,22 @@ def _agent_records(questions, answers):
                     f"question '{question_id}' expects 'yes' or 'no', got {value!r}"
                 )
             continue
+        if kind == "input":
+            if not isinstance(value, str):
+                problems.append(
+                    f"text question '{question_id}' expects one text answer, got {value!r}"
+                )
+                continue
+            problem = _input_answer_problem(value)
+            if problem:
+                problems.append(f"text question '{question_id}' {problem}")
+                continue
+            records.append({
+                "kind": "input",
+                "fields": [entry["title"], entry["message"], entry["default"]],
+                "value": value,
+            })
+            continue
         if kind == "radio":
             if isinstance(value, list):
                 text = str(value[0]) if len(value) == 1 else None
@@ -1696,21 +1850,11 @@ def _app_links(entry):
 def _appstream_context():
     """Resolve the AppStream universe exactly like the GUI catalog views.
 
-    Uses the fuller curated set (repository entries plus curated scripts) so
-    MCP search results match the GUI's duplicate suppression.
-
-    ``category_paths`` must be included: without it the Rust category mapping
-    drops every non-Homebrew component, and a derived-cache rebuild triggered
-    by this server would publish that incomplete generation. (_runtime_catalog
-    now also defaults a missing context to the indexed paths, so this stays
-    correct even if the explicit context is lost.)
+    Delegates to ``parser.appstream_context`` with the fuller curated set
+    (repository entries plus curated scripts) so MCP search results match
+    the GUI's duplicate suppression.
     """
-    translations = _translations()
-    return (
-        parser.SCRIPTS_DIR,
-        parser._get_appstream_curated_entries(translations),
-        parser._indexed_category_paths(),
-    )
+    return parser.appstream_context(_translations(), curated=True)
 
 
 def _resolve_entry(app_id):
@@ -2229,8 +2373,9 @@ class Job:
         self.created = time.time()
         self.started = 0.0
         self.finished = 0.0
-        # Set once the job has finished (success or error), so get_job can
-        # wait for the outcome instead of making the caller poll.
+        # Set once the job has finished (success or error), so the waiting
+        # submission request (merged job tracking) and get_job can watch the
+        # outcome instead of making the caller poll.
         self.done = threading.Event()
         # Agent dialog machinery (script jobs only): prepared answers from
         # a pre-ask flow and the per-job directory with its event file.
@@ -3084,6 +3229,35 @@ def _bool_schema(description):
     return {"type": "boolean", "description": description}
 
 
+def _job_tracking_schema():
+    """The shared wait/wait_seconds properties of every job-submitting tool.
+
+    Merged job tracking: by default the submission request stays open until
+    the queued job finishes and its response is the job's final record.
+    wait=false answers at once with the job id (for multitasking), and
+    wait_seconds bounds the block.
+    """
+    return {
+        "wait": _bool_schema(
+            "Block until the queued job finishes and return its final "
+            "outcome (state, exit code, log tail and the script's dialog "
+            "events) — default true. Pass false to queue it and answer at "
+            "once with the job id to watch via get_job."
+        ),
+        "wait_seconds": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": JOB_TRACK_MAX_SECONDS,
+            "description": (
+                "Cap on the blocking wait in seconds; 0 or omitted waits "
+                "until the job finishes. When the cap expires with the job "
+                "still running, the answer is the current snapshot to "
+                "re-attach to with get_job."
+            ),
+        },
+    }
+
+
 def tool_schemas():
     return [
         {
@@ -3115,10 +3289,17 @@ def tool_schemas():
                 "Run the official LinuxToys self-update as a tracked job — "
                 "the same silent updater the GUI uses. Always get the user's "
                 "approval first. A password dialog may appear on the user's "
-                "screen. Poll get_job; afterwards restart the linuxtoys-mcp "
-                "service so it runs the new version."
+                "screen. Blocks until the update finishes and returns its "
+                "final outcome by default (wait=false queues it and returns "
+                "the job id); afterwards restart the linuxtoys-mcp service "
+                "so it runs the new version."
             ),
-            "inputSchema": {"type": "object", "properties": {}},
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    **_job_tracking_schema(),
+                },
+            },
         },
         {
             "name": "update_system",
@@ -3130,18 +3311,20 @@ def tool_schemas():
                 "own self-update (update_linuxtoys does that). Always get "
                 "the user's approval first: it changes the whole system, "
                 "needs root (the password dialog appears on the user's "
-                "screen) and may take a long time. May return "
-                "requires_answers first (release-upgrade choices): ask the "
-                "user, then re-call with answers. Refused while LinuxToys "
-                "itself is more than two releases behind, like any LinuxToys "
-                "script run. Returns a job id — poll get_job."
+                "screen) and may take a very long time — the request blocks "
+                "until it finishes and returns the final outcome (wait="
+                "false queues it and returns the job id to watch with "
+                "get_job). May return requires_answers first (release-"
+                "upgrade choices): ask the user, then re-call with answers. "
+                "Refused while LinuxToys itself is more than two releases "
+                "behind, like any LinuxToys script run."
             ),
             "inputSchema": {
                 "type": "object",
                 "properties": {
                     "answers": {
                         "type": "object",
-                        "description": "User choices from an earlier requires_answers response: {question id: choice}.",
+                        "description": "User choices from an earlier requires_answers response: {question id: choice}; a text question takes the exact text the user typed.",
                         "additionalProperties": {
                             "anyOf": [
                                 {"type": "string"},
@@ -3149,6 +3332,7 @@ def tool_schemas():
                             ],
                         },
                     },
+                    **_job_tracking_schema(),
                 },
             },
         },
@@ -3203,8 +3387,10 @@ def tool_schemas():
                 "install: when root is required the password dialog appears on the "
                 "user's screen. Curated scripts may ask questions first — when the "
                 "tool answers requires_answers, show each question to the user and "
-                "re-call it with answers={question id: choice}. Returns a job id "
-                "— poll get_job until success/error."
+                "re-call it with answers={question id: choice}. By default the "
+                "call blocks until the job finishes and returns its final outcome "
+                "(state, exit code, log tail, dialog events); pass wait=false to "
+                "queue it and get a job id to watch with get_job."
             ),
             "inputSchema": {
                 "type": "object",
@@ -3217,7 +3403,9 @@ def tool_schemas():
                             "requires_answers response: {question id: choice}. "
                             "question values are 'yes'/'no'; radio expects one "
                             "exact option; multi-select expects option string(s) "
-                            "(comma-separated) or an array. All ids must be covered."
+                            "(comma-separated) or an array; a text question takes the "
+                            "exact text the user typed, on one line (at most 1024 "
+                            "characters). All ids must be covered."
                         ),
                         "additionalProperties": {
                             "anyOf": [
@@ -3226,6 +3414,7 @@ def tool_schemas():
                             ],
                         },
                     },
+                    **_job_tracking_schema(),
                 },
                 "required": ["app_id"],
             },
@@ -3269,12 +3458,15 @@ def tool_schemas():
                 ".pkg.tar.*, .pacman, .eopkg, .flatpak, .flatpakref, .snap, "
                 ".appimage) through the same guarded machinery the GUI's package "
                 "view uses. When root is needed the password dialog appears on "
-                "the user's screen. Returns a job id — poll get_job."
+                "the user's screen. Blocks until the install finishes and "
+                "returns its final outcome by default; pass wait=false to "
+                "queue it and get a job id to watch with get_job."
             ),
             "inputSchema": {
                 "type": "object",
                 "properties": {
                     "path": {"type": "string", "description": "Path of the package file (absolute or ~-prefixed)"},
+                    **_job_tracking_schema(),
                 },
                 "required": ["path"],
             },
@@ -3284,13 +3476,16 @@ def tool_schemas():
             "description": (
                 "Install one Flathub extension/addon of an app (VLC plugins, "
                 "Steam compatibility tools, ...). Identify it with "
-                "list_app_extensions. Returns a job id — poll get_job."
+                "list_app_extensions. Blocks until the install finishes and "
+                "returns its final outcome by default; pass wait=false to "
+                "queue it and get a job id to watch with get_job."
             ),
             "inputSchema": {
                 "type": "object",
                 "properties": {
                     "app_id": {"type": "string", "description": "Stable catalog ID of the app the extension belongs to"},
                     "extension": {"type": "string", "description": "Extension component id (e.g. org.videolan.VLC.Plugin.bdj) or its full flatpak ref"},
+                    **_job_tracking_schema(),
                 },
                 "required": ["app_id", "extension"],
             },
@@ -3299,13 +3494,16 @@ def tool_schemas():
             "name": "remove_app_extension",
             "description": (
                 "Remove one installed Flathub extension/addon of an app. "
-                "Returns a job id — poll get_job."
+                "Blocks until the removal finishes and returns its final "
+                "outcome by default; pass wait=false to queue it and get a "
+                "job id to watch with get_job."
             ),
             "inputSchema": {
                 "type": "object",
                 "properties": {
                     "app_id": {"type": "string", "description": "Stable catalog ID of the app the extension belongs to"},
                     "extension": {"type": "string", "description": "Extension component id or its full flatpak ref"},
+                    **_job_tracking_schema(),
                 },
                 "required": ["app_id", "extension"],
             },
@@ -3329,11 +3527,16 @@ def tool_schemas():
             "name": "remove_app",
             "description": (
                 "Remove an app/feature installed through LinuxToys, by stable ID. "
-                "Returns a job id — poll get_job until success/error."
+                "Blocks until the removal finishes and returns its final "
+                "outcome by default; pass wait=false to queue it and get a "
+                "job id to watch with get_job."
             ),
             "inputSchema": {
                 "type": "object",
-                "properties": {"app_id": {"type": "string", "description": "Stable catalog ID"}},
+                "properties": {
+                    "app_id": {"type": "string", "description": "Stable catalog ID"},
+                    **_job_tracking_schema(),
+                },
                 "required": ["app_id"],
             },
         },
@@ -3346,12 +3549,17 @@ def tool_schemas():
                 "page. get_app_details reports flatpak_residual_data when "
                 "eligible; the tool refuses apps that are still installed. "
                 "Confirm with the user first: the deletion is permanent and "
-                "needs no password (the data lives in their home). Returns a "
-                "job id — poll get_job."
+                "needs no password (the data lives in their home). Blocks "
+                "until the removal finishes and returns its final outcome by "
+                "default; pass wait=false to queue it and get a job id to "
+                "watch with get_job."
             ),
             "inputSchema": {
                 "type": "object",
-                "properties": {"app_id": {"type": "string", "description": "Stable catalog ID"}},
+                "properties": {
+                    "app_id": {"type": "string", "description": "Stable catalog ID"},
+                    **_job_tracking_schema(),
+                },
                 "required": ["app_id"],
             },
         },
@@ -3359,14 +3567,18 @@ def tool_schemas():
             "name": "get_job",
             "description": (
                 "Status, exit code and log tail of one install/remove/system "
-                "update job. The log tail fills in while the script runs. "
-                "wait_seconds blocks until the job finishes (or that many "
-                "seconds pass), so monitoring a run needs no timer: call it "
-                "again while state is queued or running. Also carries the "
-                "script dialogs that phoned home during the run: warnings "
-                "(attention-required messages to relay — not failures), "
-                "live_prompts (dialogs answered by the user on screen) and "
-                "error_detail (the fatal dialog text when the run failed)."
+                "update job — mostly for re-attaching: after a wait=false "
+                "submission, after a submission's wait cap expired, or to "
+                "fetch a longer log tail (submissions already return the "
+                "final outcome by default). The log tail fills in while the "
+                "script runs. wait_seconds blocks until the job finishes (or "
+                "that many seconds pass, max 20), so monitoring a run needs "
+                "no timer: call it again while state is queued or running. "
+                "Also carries the script dialogs that phoned home during the "
+                "run: warnings (attention-required messages to relay — not "
+                "failures), live_prompts (dialogs answered by the user on "
+                "screen) and error_detail (the fatal dialog text when the "
+                "run failed)."
             ),
             "inputSchema": {
                 "type": "object",
@@ -3597,7 +3809,7 @@ def _tool_get_update_status():
     return result
 
 
-def _tool_update_linuxtoys():
+def _tool_update_linuxtoys(wait=True, wait_seconds=None):
     """Run the official self-update as a tracked job."""
     from .compat import self_updates_disabled
     from .updater.update_helper import UpdateHelper, get_current_version, is_from_repository
@@ -3630,21 +3842,19 @@ def _tool_update_linuxtoys():
     except Exception as exc:
         raise ValueError(f"Could not queue the update: {exc}")
 
-    return {
-        "job_id": job.id,
-        "name": job.name,
-        "state": job.state,
-        "note": (
-            "The official updater runs the same flow as the app's silent "
-            "update: a password dialog may pop on the user's screen for the "
-            "grant — wait for them to type it, never ask for the password. "
-            "Poll get_job; on success restart the service (systemctl --user "
-            "restart linuxtoys-mcp.service) so it runs the new version."
-        ),
-    }
+    return _job_submission_result(
+        job,
+        "The official updater runs the same flow as the app's silent update: "
+        "a password dialog may pop on the user's screen for the grant — wait "
+        "for them to type it, never ask for the password. On success restart "
+        "the service (systemctl --user restart linuxtoys-mcp.service) so it "
+        "runs the new version.",
+        wait=wait,
+        wait_seconds=wait_seconds,
+    )
 
 
-def _tool_update_system(answers=None):
+def _tool_update_system(answers=None, wait=True, wait_seconds=None):
     """Queue a full system update by running the app's own sysup script."""
     try:
         entry = _system_update_entry()
@@ -3673,23 +3883,20 @@ def _tool_update_system(answers=None):
         raise
     except Exception as exc:
         raise ValueError(f"Could not queue the system update: {exc}")
-    return {
-        "job_id": job.id,
-        "name": job.name,
-        "state": job.state,
-        "note": (
-            "This runs the app's full system update: distribution packages, "
-            "Flatpaks, Snaps, Homebrew/Bun updates, orphan cleanup and "
-            "leftover desktop-shortcut removal. It needs root, so the "
-            "password dialog appears on the user's screen — wait for them to "
-            "type it, never ask for the password. Ubuntu/Fedora release "
-            "upgrade choices come from the answer you validated; warnings "
-            "and prompts raised during the run arrive through get_job. Poll "
-            "get_job rather than re-submitting and report the reboot "
-            "recommendation it prints at the end. update_system updates the "
-            "system; the app itself is updated by update_linuxtoys."
-        ),
-    }
+    return _job_submission_result(
+        job,
+        "This runs the app's full system update: distribution packages, "
+        "Flatpaks, Snaps, Homebrew/Bun updates, orphan cleanup and "
+        "leftover desktop-shortcut removal. It needs root, so the password "
+        "dialog appears on the user's screen — wait for them to type it, "
+        "never ask for the password. Ubuntu/Fedora release upgrade choices "
+        "come from the answer you validated; warnings and prompts raised "
+        "during the run arrive with the job record. Report the reboot "
+        "recommendation the run prints at the end. update_system updates "
+        "the system; the app itself is updated by update_linuxtoys.",
+        wait=wait,
+        wait_seconds=wait_seconds,
+    )
 
 
 def _tool_categories():
@@ -3761,9 +3968,12 @@ def _requires_answers_payload(entry, questions, dynamic_count, branch_skipped=0)
             "listed), then call this tool again with "
             "answers={question id: choice}; choices must match the offered "
             "options exactly (question expects 'yes' or 'no', the "
-            "multi-select may also take an array of selections). Every "
-            "question id must be covered. Warnings and fatal dialogs of the "
-            "run arrive through get_job."
+            "multi-select may also take an array of selections; a text "
+            "question (kind 'input') takes the exact text the user typed, "
+            "on one line, and its default is only the suggestion to offer). "
+            "Every question id must be covered. Warnings and fatal dialogs "
+            "of the run arrive with the job record (the submission's "
+            "response, or get_job while re-attached)."
         ),
     }
     if branch_skipped:
@@ -3771,7 +3981,7 @@ def _requires_answers_payload(entry, questions, dynamic_count, branch_skipped=0)
     return payload
 
 
-def _tool_install(app_id, answers=None):
+def _tool_install(app_id, answers=None, wait=True, wait_seconds=None):
     entry = _resolve_entry(app_id)
     if entry is None:
         hint = _extension_parent_hint(app_id)
@@ -3807,17 +4017,15 @@ def _tool_install(app_id, answers=None):
         if hint:
             raise ValueError(f"{exc} {hint}")
         raise
-    return {
-        "job_id": job.id,
-        "name": job.name,
-        "state": job.state,
-        "note": (
-            "The install runs like a normal user install. If it needs root, the "
-            "password dialog appears on the user's screen — wait for them to "
-            "type it. Poll get_job for the outcome; its warnings list relays "
-            "the script dialogs you must tell the user about."
-        ),
-    }
+    return _job_submission_result(
+        job,
+        "The install runs like a normal user install. If it needs root, the "
+        "password dialog appears on the user's screen — wait for them to "
+        "type it; the job record carries the script's warnings and prompts "
+        "to relay to the user.",
+        wait=wait,
+        wait_seconds=wait_seconds,
+    )
 
 
 def _tool_fetch_package_url(url):
@@ -3931,7 +4139,7 @@ def _tool_get_package_file_details(path):
     return _package_details_payload(path)
 
 
-def _tool_install_package_file(path):
+def _tool_install_package_file(path, wait=True, wait_seconds=None):
     details = _package_details_payload(path)
     if not details.get("supported_on_host"):
         raise ValueError(
@@ -3946,18 +4154,16 @@ def _tool_install_package_file(path):
         "signature": package_file_signature(real),
     }
     job = JOBS.submit_file(spec)
-    return {
-        "job_id": job.id,
-        "name": job.name,
-        "path": real,
-        "kind": details["kind"],
-        "state": job.state,
-        "note": (
-            "The install runs exactly like a package-view install. If it needs "
-            "root, the password dialog appears on the user's screen — wait for "
-            "them to type it. Poll get_job for the outcome."
-        ),
-    }
+    return _job_submission_result(
+        job,
+        "The install runs exactly like a package-view install. If it needs "
+        "root, the password dialog appears on the user's screen — wait for "
+        "them to type it.",
+        wait=wait,
+        wait_seconds=wait_seconds,
+        path=real,
+        kind=details["kind"],
+    )
 
 
 def _tool_list_app_extensions(app_id):
@@ -3972,52 +4178,48 @@ def _tool_list_app_extensions(app_id):
     }
 
 
-def _tool_install_app_extension(app_id, extension):
+def _tool_install_app_extension(app_id, extension, wait=True, wait_seconds=None):
     entry, records = _flatpak_extension_records(app_id)
     target = _find_app_extension(records, extension)
     job = JOBS.submit_extension(entry, target, remove=False)
-    return {
-        "job_id": job.id,
-        "app": _stable_id(entry),
-        "extension": str(target.get("id") or target.get("flatpak_ref")),
-        "name": job.name,
-        "state": job.state,
-        "note": (
-            "The extension runs through flatpak like a GUI extension install. "
-            "System-scope installs may show a password dialog on the user's "
-            "screen. Poll get_job for the outcome; verify with list_app_extensions."
-        ),
-    }
+    return _job_submission_result(
+        job,
+        "The extension runs through flatpak like a GUI extension install. "
+        "System-scope installs may show a password dialog on the user's "
+        "screen; verify the installed state with list_app_extensions.",
+        wait=wait,
+        wait_seconds=wait_seconds,
+        app=_stable_id(entry),
+        extension=str(target.get("id") or target.get("flatpak_ref")),
+    )
 
 
-def _tool_remove_app_extension(app_id, extension):
+def _tool_remove_app_extension(app_id, extension, wait=True, wait_seconds=None):
     entry, records = _flatpak_extension_records(app_id)
     target = _find_app_extension(records, extension)
     job = JOBS.submit_extension(entry, target, remove=True)
-    return {
-        "job_id": job.id,
-        "app": _stable_id(entry),
-        "extension": str(target.get("id") or target.get("flatpak_ref")),
-        "name": job.name,
-        "state": job.state,
-        "note": (
-            "Removal runs flatpak uninstall for that extension ref. Poll get_job "
-            "for the outcome; verify with list_app_extensions."
-        ),
-    }
+    return _job_submission_result(
+        job,
+        "Removal runs flatpak uninstall for that extension ref; verify the "
+        "installed state with list_app_extensions.",
+        wait=wait,
+        wait_seconds=wait_seconds,
+        app=_stable_id(entry),
+        extension=str(target.get("id") or target.get("flatpak_ref")),
+    )
 
 
-def _tool_remove(app_id):
+def _tool_remove(app_id, wait=True, wait_seconds=None):
     job = JOBS.submit("remove", app_id)
-    return {
-        "job_id": job.id,
-        "name": job.name,
-        "state": job.state,
-        "note": "Poll get_job for the outcome.",
-    }
+    return _job_submission_result(
+        job,
+        "The removal runs like a normal user removal.",
+        wait=wait,
+        wait_seconds=wait_seconds,
+    )
 
 
-def _tool_remove_flatpak_data(app_id):
+def _tool_remove_flatpak_data(app_id, wait=True, wait_seconds=None):
     """Queue the leftover-data cleanup of one uninstalled Flatpak app."""
     entry = _resolve_entry(app_id)
     if entry is None:
@@ -4036,18 +4238,15 @@ def _tool_remove_flatpak_data(app_id):
         raise
     except Exception as exc:
         raise ValueError(f"Could not queue the data removal: {exc}")
-    return {
-        "job_id": job.id,
-        "app": _stable_id(entry),
-        "name": job.name,
-        "path": str(target),
-        "state": job.state,
-        "note": (
-            "The removal is confined to the user's home and needs no password. "
-            "Poll get_job; get_app_details afterwards reports "
-            "flatpak_residual_data false."
-        ),
-    }
+    return _job_submission_result(
+        job,
+        "The removal is confined to the user's home and needs no password; "
+        "get_app_details afterwards reports flatpak_residual_data false.",
+        wait=wait,
+        wait_seconds=wait_seconds,
+        app=_stable_id(entry),
+        path=str(target),
+    )
 
 
 def _job_wait_seconds(value):
@@ -4058,13 +4257,39 @@ def _job_wait_seconds(value):
     return min(max(seconds, 0.0), JOB_WAIT_MAX_SECONDS)
 
 
-def _tool_get_job(job_id, tail_lines=40, wait_seconds=0):
-    job = JOBS.get(job_id)
-    if job is None:
-        raise ValueError(f"Unknown or expired job id '{job_id}'. Jobs reset when the service restarts.")
-    wait = _job_wait_seconds(wait_seconds)
-    if wait:
-        job.done.wait(wait)
+def _job_track_seconds(value):
+    """Blocking-wait cap for merged job tracking (None = wait to completion).
+
+    Distinct from get_job's wait_seconds: here 0, a missing value or a
+    non-numeric one means "no cap" — the request waits until the job
+    finishes — while a positive value is clamped to JOB_TRACK_MAX_SECONDS.
+    """
+    if value is None or value == "":
+        return None
+    try:
+        seconds = float(value)
+    except (TypeError, ValueError):
+        return None
+    if seconds <= 0:
+        return None
+    return min(seconds, JOB_TRACK_MAX_SECONDS)
+
+
+def _arg_bool(value, default):
+    """Coerce a boolean tool argument, tolerating stringly 'false' values."""
+    if value is None:
+        return default
+    if isinstance(value, str):
+        return value.strip().casefold() not in ("", "0", "false", "no", "off")
+    return bool(value)
+
+
+def _job_watch_payload(job: "Job", tail_lines: int = 40) -> dict:
+    """One job's full record: state, log tail and its script's dialog events.
+
+    Shared by get_job and the submission tools' merged tracking so both
+    surfaces always answer the same shape.
+    """
     payload = job.public(tail=tail_lines)
     warnings, prompts, errors = _read_agent_events(job.agent_event_dir)
     payload["warnings"] = warnings
@@ -4087,6 +4312,59 @@ def _tool_get_job(job_id, tail_lines=40, wait_seconds=0):
             "agent cannot preset); relay what was asked and answered."
         )
     return payload
+
+
+def _job_submission_result(
+    job: "Job",
+    note: str,
+    wait: bool = True,
+    wait_seconds=None,
+    **extra,
+) -> dict:
+    """Merge job tracking into a submission tool's response.
+
+    The default request blocks until the queued job finishes, so the agent
+    watches the run as it unfolds and the response IS the outcome: the
+    job's final record (state, exit code, log tail and dialog events) plus
+    the tool's contextual fields, with ``final`` true. wait=false queues
+    the job and answers at once with its job id; wait_seconds bounds the
+    block (0/omitted = no cap) and, when it expires with the job still
+    running, answers with the current snapshot (``final`` false) so the
+    agent can re-attach with get_job.
+    """
+    final = bool(wait)
+    if wait:
+        if not job.done.wait(_job_track_seconds(wait_seconds)):
+            final = False
+    payload = _job_watch_payload(job)
+    payload.update(extra)
+    payload["final"] = final
+    if final:
+        payload["note"] = note
+    else:
+        payload["note"] = (
+            f"{note} The job is {payload['state']}: watch it with get_job "
+            "(pass its job_id; its wait_seconds blocks up to that many "
+            "seconds per call)."
+        )
+        if wait:
+            payload["still_running_note"] = (
+                "The wait cap expired while the job is still running. Keep "
+                "watching with get_job (pass its job_id, optionally "
+                "wait_seconds) until state is success or error — the run "
+                "itself continues either way."
+            )
+    return payload
+
+
+def _tool_get_job(job_id, tail_lines=40, wait_seconds=0):
+    job = JOBS.get(job_id)
+    if job is None:
+        raise ValueError(f"Unknown or expired job id '{job_id}'. Jobs reset when the service restarts.")
+    wait = _job_wait_seconds(wait_seconds)
+    if wait:
+        job.done.wait(wait)
+    return _job_watch_payload(job, tail_lines=tail_lines)
 
 
 def _tool_list_jobs(limit=20):
@@ -4269,9 +4547,15 @@ def dispatch_tool(name, arguments):
     if name == "get_update_status":
         return _tool_get_update_status()
     if name == "update_linuxtoys":
-        return _tool_update_linuxtoys()
+        return _tool_update_linuxtoys(
+            _arg_bool(arguments.get("wait"), True), arguments.get("wait_seconds")
+        )
     if name == "update_system":
-        return _tool_update_system(arguments.get("answers"))
+        return _tool_update_system(
+            arguments.get("answers"),
+            _arg_bool(arguments.get("wait"), True),
+            arguments.get("wait_seconds"),
+        )
     if name == "search_apps":
         return {"results": _search_catalog(arguments.get("query"), arguments.get("limit", 20))}
     if name == "get_app_details":
@@ -4279,27 +4563,46 @@ def dispatch_tool(name, arguments):
     if name == "get_screenshot":
         return _tool_get_screenshot(arguments.get("app_id"), arguments.get("index", 0))
     if name == "install_app":
-        return _tool_install(arguments.get("app_id"), arguments.get("answers"))
+        return _tool_install(
+            arguments.get("app_id"),
+            arguments.get("answers"),
+            _arg_bool(arguments.get("wait"), True),
+            arguments.get("wait_seconds"),
+        )
     if name == "fetch_package_url":
         return _tool_fetch_package_url(arguments.get("url"))
     if name == "get_package_file_details":
         return _tool_get_package_file_details(arguments.get("path"))
     if name == "install_package_file":
-        return _tool_install_package_file(arguments.get("path"))
+        return _tool_install_package_file(
+            arguments.get("path"),
+            _arg_bool(arguments.get("wait"), True),
+            arguments.get("wait_seconds"),
+        )
     if name == "install_app_extension":
         return _tool_install_app_extension(
-            arguments.get("app_id"), arguments.get("extension")
+            arguments.get("app_id"), arguments.get("extension"),
+            _arg_bool(arguments.get("wait"), True), arguments.get("wait_seconds"),
         )
     if name == "remove_app_extension":
         return _tool_remove_app_extension(
-            arguments.get("app_id"), arguments.get("extension")
+            arguments.get("app_id"), arguments.get("extension"),
+            _arg_bool(arguments.get("wait"), True), arguments.get("wait_seconds"),
         )
     if name == "list_app_extensions":
         return _tool_list_app_extensions(arguments.get("app_id"))
     if name == "remove_app":
-        return _tool_remove(arguments.get("app_id"))
+        return _tool_remove(
+            arguments.get("app_id"),
+            _arg_bool(arguments.get("wait"), True),
+            arguments.get("wait_seconds"),
+        )
     if name == "remove_flatpak_data":
-        return _tool_remove_flatpak_data(arguments.get("app_id"))
+        return _tool_remove_flatpak_data(
+            arguments.get("app_id"),
+            _arg_bool(arguments.get("wait"), True),
+            arguments.get("wait_seconds"),
+        )
     if name == "get_job":
         return _tool_get_job(
             arguments.get("job_id"),
@@ -4393,22 +4696,29 @@ def _initialize_result(requested_version):
         },
         "instructions": (
             "LinuxToys is a cross-distro app manager. Typical flow: search_apps "
-            "-> get_app_details -> install_app, then poll get_job. A local or "
-            "downloaded package file (.deb, .rpm, .appimage, ...) can be "
-            "installed the same guarded way: get_package_file_details -> "
-            "install_package_file, with fetch_package_url for downloads. "
-            "Flathub apps may offer extensions/addons: when get_app_details "
-            "reports extensions_available, use list_app_extensions / "
+            "-> get_app_details -> install_app — every job submission (install, "
+            "removal, package file, extensions, leftover-data cleanup, updates) "
+            "blocks until the job finishes and returns its final outcome (state, "
+            "exit code, log tail, dialog events); pass wait=false to queue it "
+            "and answer at once with the job id, then watch it with get_job. "
+            "For a user-given batch of jobs, run one job per subagent so each "
+            "submission waits for itself. A local or downloaded package file "
+            "(.deb, .rpm, .appimage, ...) can be installed the same way: "
+            "get_package_file_details -> install_package_file, with "
+            "fetch_package_url for downloads. Flathub apps may offer "
+            "extensions/addons: when get_app_details reports "
+            "extensions_available, use list_app_extensions / "
             "install_app_extension / remove_app_extension. Uninstalled "
             "Flatpak apps can leave leftover user data under ~/.var/app: "
             "get_app_details reports it as flatpak_residual_data, and "
-            "remove_flatpak_data removes it as a tracked job once the user "
-            "confirms — it always refuses apps that are still installed. "
+            "remove_flatpak_data removes it once the user confirms — it "
+            "always refuses apps that are still installed. "
             "Scripts can ask questions: install_app/update_system answer "
             "requires_answers first; show every listed question (options "
             "and default provided) to the user through your own question "
-            "UI, then re-call the tool with answers={id: choice}. During "
-            "any run get_job relays the script dialogs: warnings are "
+            "UI, then re-call the tool with answers={id: choice} (a text "
+            "question takes the text the user typed). The job record "
+            "relays the script dialogs of the run: warnings are "
             "attention-required messages to convey promptly (they do not "
             "mean failure), live_prompts are dialogs the user answered on "
             "screen, and error_detail carries the fatal message of a "
@@ -4418,14 +4728,13 @@ def _initialize_result(requested_version):
             "and screenshots can be read and translated with translate_text / "
             "translate_app_description. The app updates itself: "
             "get_update_status, then update_linuxtoys with the user's "
-            "approval (poll get_job and restart the linuxtoys-mcp service "
-            "afterwards). The full system update is separate: "
-            "update_system runs the app's own 'Update System' script "
-            "after user approval — refused while the app version is too "
-            "far behind, like any LinuxToys script run. When install_app "
-            "or remove_app is refused because the installed version is "
-            "too far behind the newest release, update LinuxToys first — "
-            "package installs keep working."
+            "approval (restart the linuxtoys-mcp service afterwards). The "
+            "full system update is separate: update_system runs the app's "
+            "own 'Update System' script after user approval — refused while "
+            "the app version is too far behind, like any LinuxToys script "
+            "run. When install_app or remove_app is refused because the "
+            "installed version is too far behind the newest release, "
+            "update LinuxToys first — package installs keep working."
         ),
     }
 
@@ -4784,11 +5093,7 @@ def install_service_unit(session_env=None):
     os.makedirs(unit_dir, exist_ok=True)
     text = build_unit_text(session_env)
     path = user_unit_path()
-    tmp = path + ".tmp"
-    with open(tmp, "w", encoding="utf-8") as handle:
-        handle.write(text)
-    os.chmod(tmp, 0o644)
-    os.replace(tmp, path)
+    atomic_write_text(path, text, mode=0o644)
     output, error = _systemctl("daemon-reload")
     if error:
         return False, error
@@ -4915,4 +5220,7 @@ def run_service():
 
 
 if __name__ == "__main__":
+    # The offline skill fallback (`--install-skill`) moved to app/mcp_skill.py:
+    # it must load nothing beyond the standard library, so it no longer routes
+    # through this module's import stack.
     sys.exit(run_service())

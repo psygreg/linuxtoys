@@ -1,6 +1,6 @@
 import os
 
-from .gtk_common import Gdk, GLib, Gtk, load_scaled_pixbuf
+from .gtk_common import Gdk, GLib, Gtk, load_scaled_pixbuf, widget_within
 from gi.repository import Pango
 from . import get_icon_path, compat, revert_helper, official_index, installed_packages
 from .gtk_dialogs import run_message_dialog
@@ -162,15 +162,7 @@ class ItemWidgetFactory:
     @staticmethod
     def _widget_within(widget, root):
         """Whether a widget is `root` or sits inside its subtree."""
-        node = widget
-        while node is not None:
-            if node is root:
-                return True
-            try:
-                node = node.get_parent()
-            except (AttributeError, RuntimeError):
-                node = None
-        return False
+        return widget_within(widget, root)
 
     def animate_item_batch(
         self,

@@ -34,10 +34,6 @@ summon_helpers() {
     [ -n "$HELPERS_OPS" ] && return 0
     source "$SCRIPT_DIR/libs/helpers.lib" || fatal "Helpers library not found"
 }
-summon_optimizers() {
-    [ -n "$OPTIMIZER_OPS" ] && return 0
-    source "$SCRIPT_DIR/libs/optimizers.lib" || fatal "Optimizers library not found"
-}
 
 # --- Zenity compatibility layer ---
 _zenity_can_run() {
@@ -488,13 +484,9 @@ _msg() {
     case "$type" in
         # Echo before the dialog so the terminal buffer always holds the
         # message for bug reporting; the dialog is purely the visible surface.
-        info)
+        info|warning)
             echo "$text"
-            _zenity_run --info --text "$text" --width 360 --height 300 || true
-            ;;
-        warning)
-            echo "$text"
-            _zenity_run --warning --text "$text" --width 360 --height 300 || true
+            _zenity_run --"$type" --text "$text" --width 360 --height 300 || true
             ;;
         error)
             echo "$text"
@@ -534,45 +526,141 @@ question() {
     [[ "$_reply" =~ ^[Yy]$ ]]
 }
 
+# Prints terminal prompts for the selectors: on the terminal stdin is attached
+# to when there is one (so callers that silence stderr still show the menu),
+# otherwise on stderr. Arguments are printf arguments.
+_cli_out() {
+    if [[ -t 0 ]] && { : >/dev/fd/0; } 2>/dev/null; then
+        printf "$@" >/dev/fd/0
+    else
+        printf "$@" >&2
+    fi
+}
+
+# Terminal selection behind radioselect/listselect when no dialog can be shown
+# (CLI, TUI). Shows the title, the question and the numbered options, then
+# reads the choice from stdin. Radio prints the chosen label; list prints one
+# label per line. Returns 1 when nothing is chosen, which is the cancel status
+# of the dialogs. Agent runs never prompt: their answers come from the
+# prepared-answers file.
 _cli_select() {
-    local mode="$1"
-    shift
-    local -a options=("$@")
-    local reply token index
-    local -a selected=()
+    local mode="$1" title="$2" text="$3" preselect="$4"
+    shift 4
+    local -a options=("$@") defaults=() toks=() picks=()
+    local -A seen=()
+    local reply tok index
 
     (( ${#options[@]} > 0 )) || return 1
+    if _lt_agent_active; then
+        return 1
+    fi
 
-    printf '%s\n' "Select an option:" >&2
+    if [[ -n "$title" ]]; then
+        _cli_out '\n%s\n' "$title"
+    fi
+    if [[ -n "$text" ]]; then
+        _cli_out '%s\n' "$text"
+    fi
     for index in "${!options[@]}"; do
-        printf '  %d) %s\n' "$((index + 1))" "${options[index]}" >&2
+        _cli_out '  %d) %s\n' "$((index + 1))" "${options[index]}"
     done
 
-    if [[ "$mode" == "radio" ]]; then
-        read -r -p "Selection [1]: " reply || return 1
-        reply="${reply:-1}"
+    if [[ "$mode" == radio ]]; then
+        if [[ "$preselect" == none ]]; then
+            _cli_out 'Selection: '
+        else
+            _cli_out 'Selection [1]: '
+        fi
+        read -r reply || return 1
+        reply="${reply//[[:space:]]/}"
+        if [[ "$preselect" != none ]]; then
+            reply="${reply:-1}"
+        fi
         [[ "$reply" =~ ^[0-9]+$ ]] || return 1
+        reply=$(( 10#$reply ))
         (( reply >= 1 && reply <= ${#options[@]} )) || return 1
         printf '%s\n' "${options[reply - 1]}"
         return 0
     fi
 
-    read -r -p "Selections (space/comma separated): " reply || return 1
-    [[ -n "$reply" ]] || return 1
+    if [[ "$preselect" == all ]]; then
+        for (( index = 1; index <= ${#options[@]}; index++ )); do
+            defaults+=("$index")
+        done
+        _cli_out 'Selections (space or comma separated; Enter keeps all): '
+    else
+        _cli_out 'Selections (space or comma separated): '
+    fi
+    read -r reply || return 1
+    if [[ -z "${reply//[[:space:]]/}" ]]; then
+        reply="${defaults[*]-}"
+    fi
     reply="${reply//,/ }"
-
-    for token in $reply; do
-        [[ "$token" =~ ^[0-9]+$ ]] || return 1
-        (( token >= 1 && token <= ${#options[@]} )) || return 1
-        selected+=("${options[token - 1]}")
+    read -r -a toks <<< "$reply"
+    (( ${#toks[@]} > 0 )) || return 1
+    for tok in "${toks[@]}"; do
+        [[ "$tok" =~ ^[0-9]+$ ]] || return 1
+        tok=$(( 10#$tok ))
+        (( tok >= 1 && tok <= ${#options[@]} )) || return 1
+        if [[ -z "${seen[$tok]-}" ]]; then
+            seen[$tok]=1
+            picks+=("${options[tok - 1]}")
+        fi
     done
-
-    (( ${#selected[@]} > 0 )) || return 1
-    printf '%s\n' "${selected[@]}"
+    printf '%s\n' "${picks[@]}"
+    return 0
 }
 
+# radioselect [--title TITLE] [--text TEXT] [--no-default] [--] OPTION...
+# Shared option parsing for radioselect/listselect: fills SELECT_TITLE,
+# SELECT_TEXT and SELECT_FLAG ("1" when $2 — the selector-specific boolean
+# option, possibly empty — was given), and appends the remaining choices to
+# the array named by $1. Returns 1 on malformed options or no choices.
+_select_parse_options() {
+    local -n _choices_ref="$1"
+    local _bool_flag="$2"
+    shift 2
+    SELECT_TITLE="LinuxToys"
+    SELECT_TEXT=""
+    SELECT_FLAG=""
+    _choices_ref=()
+    while (( $# > 0 )); do
+        case "$1" in
+            --title)
+                (( $# >= 2 )) || return 1
+                SELECT_TITLE="$2"
+                shift 2
+                ;;
+            --text)
+                (( $# >= 2 )) || return 1
+                SELECT_TEXT="$(_msg_unescape "$2")"
+                shift 2
+                ;;
+            "$_bool_flag")
+                SELECT_FLAG="1"
+                shift
+                ;;
+            --)
+                shift
+                break
+                ;;
+            *)
+                break
+                ;;
+        esac
+    done
+    _choices_ref=("$@")
+    (( ${#_choices_ref[@]} > 0 )) || return 1
+}
+
+# radioselect [--title TITLE] [--text TEXT] [--no-default] [--] OPTION...
+# The first option starts selected unless --no-default is given: then nothing
+# is selected and Enter cancels.
 radioselect() {
-    (( $# > 0 )) || return 1
+    local -a _options=()
+    _select_parse_options _options --no-default "$@" || return 1
+    local title="$SELECT_TITLE" text="$SELECT_TEXT" nodefault="$SELECT_FLAG"
+    set -- "${_options[@]}"
 
     if _lt_agent_active; then
         local _pref
@@ -584,22 +672,34 @@ radioselect() {
     fi
 
     if _zenity_can_run; then
-        local -a rows=()
+        local -a rows=() text_args=()
         local option state="TRUE"
+        if [[ -n "$nodefault" ]]; then
+            state="FALSE"
+        fi
         for option in "$@"; do
             rows+=("$state" "$option")
             state="FALSE"
         done
-        _zenity_run --list --radiolist --title="LinuxToys" \
+        if [[ -n "$text" ]]; then
+            text_args=(--text="$text")
+        fi
+        _zenity_run --list --radiolist --title="$title" "${text_args[@]}" \
             --column="" --column="Option" "${rows[@]}"
         return $?
     fi
 
-    _cli_select radio "$@"
+    _cli_select radio "$title" "$text" "${nodefault:+none}" "$@"
 }
 
+# listselect [--title TITLE] [--text TEXT] [--all] [--] OPTION...
+# --all starts with every option checked; Enter keeps those on the terminal.
 listselect() {
-    (( $# > 0 )) || return 1
+    local -a _options=()
+    _select_parse_options _options --all "$@" || return 1
+    local title="$SELECT_TITLE" text="$SELECT_TEXT" preselect=""
+    [[ -n "$SELECT_FLAG" ]] && preselect=all
+    set -- "${_options[@]}"
 
     if _lt_agent_active; then
         local _pref _sep=$'\x1f' _nl=$'\n'
@@ -613,12 +713,110 @@ listselect() {
     fi
 
     if _zenity_can_run; then
-        _zenity_run --list --multiple --title="LinuxToys" \
-            --column="Option" --separator=$'\n' "$@"
+        local -a rows=() text_args=()
+        local option state="FALSE"
+        if [[ "$preselect" == all ]]; then
+            state="TRUE"
+        fi
+        for option in "$@"; do
+            rows+=("$state" "$option")
+        done
+        if [[ -n "$text" ]]; then
+            text_args=(--text="$text")
+        fi
+        _zenity_run --list --checklist --title="$title" "${text_args[@]}" \
+            --column="" --column="Option" --separator=$'\n' "${rows[@]}"
         return $?
     fi
 
-    _cli_select list "$@"
+    _cli_select list "$title" "$text" "$preselect" "$@"
+}
+
+# Terminal entry behind userinput when no dialog can be shown (CLI, TUI).
+# Enter keeps the default. Agent runs never prompt (see userinput).
+_cli_input() {
+    local title="$1" text="$2" default="$3" reply
+
+    if _lt_agent_active; then
+        return 1
+    fi
+
+    if [[ -n "$title" ]]; then
+        _cli_out '\n%s\n' "$title"
+    fi
+    if [[ -n "$text" ]]; then
+        _cli_out '%s\n' "$text"
+    fi
+    if [[ -n "$default" ]]; then
+        _cli_out 'Entry [%s]: ' "$default"
+    else
+        _cli_out 'Entry: '
+    fi
+
+    IFS= read -r reply || return 1
+    if [[ -z "$reply" ]]; then
+        reply="$default"
+    fi
+    printf '%s\n' "$reply"
+    return 0
+}
+
+# userinput [--title TITLE] [--text TEXT] [--default VALUE]
+# Asks for one line of text and prints it. Returns 0 with the entry, which is
+# empty when nothing was typed and there is no default; returns 1 when the user
+# cancels or no input can be read. Each option takes `--opt VALUE` or
+# `--opt=VALUE`. In agent runs a prompt the service pre-asked is answered from
+# the prepared answers; any other prompt is logged and shown live, the way
+# question() handles prompts it could not pre-ask.
+userinput() {
+    local title="LinuxToys" text="" default="" _opt _val
+
+    while (( $# > 0 )); do
+        case "$1" in
+            --title=*|--text=*|--default=*)
+                _opt="${1%%=*}"
+                _val="${1#*=}"
+                shift
+                ;;
+            --title|--text|--default)
+                (( $# >= 2 )) || return 1
+                _opt="$1"
+                _val="$2"
+                shift 2
+                ;;
+            *)
+                return 1
+                ;;
+        esac
+        case "$_opt" in
+            --title) title="$_val" ;;
+            --text) text="$(_msg_unescape "$_val")" ;;
+            --default) default="$_val" ;;
+        esac
+    done
+
+    if _lt_agent_active; then
+        local _pref
+        if _pref=$(_lt_agent_lookup input "$title" "$text" "$default"); then
+            printf '%s\n' "$_pref"
+            return 0
+        fi
+        _lt_agent_event prompt "input: $title ($text)"
+    fi
+
+    if _zenity_can_run; then
+        local -a entry_args=()
+        if [[ -n "$text" ]]; then
+            entry_args+=(--text="$text")
+        fi
+        if [[ -n "$default" ]]; then
+            entry_args+=(--entry-text="$default")
+        fi
+        _zenity_run --entry --title="$title" "${entry_args[@]}"
+        return $?
+    fi
+
+    _cli_input "$title" "$text" "$default"
 }
 
 info() {
@@ -681,7 +879,6 @@ die() {
 }
 
 # legacy function calls
-zenpass() { askpass password "$@"; }
 sudo_rq() { askpass sudo "$@"; }
 zenask() { question "$@"; }
 zenwrn() { warn "$@"; }
@@ -709,7 +906,10 @@ _lang_
 # The first lock of a run also lazily performs the CachyOS mirror preflight:
 # only runs that actually enter a native package transaction pay for it. Raw
 # manager calls bypass the helpers entirely, and the launcher arms the
-# preflight for those scripts through the preamble instead.
+# preflight for those scripts through the preamble instead. Backends that
+# never consult the distro repositories (snapd, Homebrew, Flatpak bundle
+# files, make builds) ask for an *external* transaction lock and skip the
+# preflight; removals skip it for the same offline-capability reason.
 runner_lock() {
     local reason="${1:-operation}"
     # ${2-default} (no colon): an explicitly empty message suppresses the echo.
@@ -721,6 +921,7 @@ runner_lock() {
     # this lock recursively. LINUXTOYS_REQUIRE_CACHYOS_MIRRORS=0 marks
     # Flatpak/Snap entries that may continue without a completed ranking.
     if [[ "$reason" != "CachyOS mirror refresh" && "$reason" != *removal*
+          && "$reason" != *external*
           && -z "${LINUXTOYS_MIRROR_PREFLIGHT_DONE:-}" ]]; then
         LINUXTOYS_MIRROR_PREFLIGHT_DONE=1
         _linuxtoys_prepare_session

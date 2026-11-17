@@ -12,10 +12,9 @@ import subprocess
 import shlex
 
 from .compat import get_linuxtoys_cache_dir
-from .registry_utils import normalize_registry_content
+from .registry_utils import normalize_registry_content, load_registry_transactions
 
 
-_LOAD_ENTRIES_CACHE = {"key": None, "entries": []}
 _EXECUTED_NAMES_CACHE = {"key": None, "executed": frozenset()}
 
 
@@ -115,60 +114,11 @@ def _load_last_execution(script_name):
 
 
 def _load_registry_entries():
-    """Load registry transactions in chronological order (mtime-memoized)."""
-    global _LOAD_ENTRIES_CACHE
-    registry_file = os.path.join(get_linuxtoys_cache_dir(), "registry")
+    """Load registry transactions in chronological order (mtime-memoized).
 
-    if not os.path.exists(registry_file):
-        _LOAD_ENTRIES_CACHE = {"key": None, "entries": []}
-        return []
-
-    try:
-        stat = os.stat(registry_file)
-        cache_key = (stat.st_mtime_ns, stat.st_size)
-    except OSError:
-        return []
-
-    if _LOAD_ENTRIES_CACHE["key"] == cache_key:
-        return _LOAD_ENTRIES_CACHE["entries"]
-
-    try:
-        with open(registry_file, "r") as f:
-            content = f.read()
-    except Exception:
-        return []
-
-    entries = []
-
-    for raw_entry in normalize_registry_content(content).split("---\n"):
-        raw_entry = raw_entry.strip()
-        if not raw_entry:
-            continue
-
-        lines = raw_entry.splitlines()
-        if not lines or "Script: " not in lines[0]:
-            continue
-
-        script_name = lines[0].split("Script: ", 1)[1].strip()
-        operations = []
-
-        for line in lines[1:]:
-            line = line.strip()
-            if line.startswith("- "):
-                op_line = line[2:].strip()
-                if op_line and op_line not in (
-                    "Changes:",
-                    "Changes: (none)",
-                ):
-                    operations.append(op_line)
-
-        entries.append({
-            "name": script_name,
-            "operations": operations,
-        })
-
-    _LOAD_ENTRIES_CACHE = {"key": cache_key, "entries": entries}
-    return entries
+    Delegates to the canonical ordered view in ``registry_utils``.
+    """
+    return load_registry_transactions()
 
 
 def _find_registry_execution(entries, script_name, before_index=None):
@@ -424,6 +374,18 @@ def _reverse_package_removal(packages, package_manager):
     return [f"pkg_install {pkg_args}"]
 
 
+def _flatpak_remove_command(app_id):
+    """Compose the scoped flatpak-uninstall command shared by the reversers."""
+    app_id = shlex.quote(app_id)
+    return (
+        f"if flatpak info --user {app_id} >/dev/null 2>&1; then "
+        f"flatpak uninstall --user --noninteractive {app_id}; "
+        f"elif flatpak info --system {app_id} >/dev/null 2>&1; then "
+        f"sudo_rq && sudo_ flatpak uninstall --system --noninteractive {app_id}; "
+        f"fi"
+    )
+
+
 def _reverse_package_fromfile(file_paths):
     """Reverse a package-from-file installation by removing it(s).
 
@@ -497,16 +459,7 @@ def _reverse_package_fromfile(file_paths):
 
     if flatpak_app_ids:
         for app_id in flatpak_app_ids:
-            app_id = shlex.quote(app_id)
-
-            cmd = (
-                f"if flatpak info --user {app_id} >/dev/null 2>&1; then "
-                f"flatpak uninstall --user --noninteractive {app_id}; "
-                f"elif flatpak info --system {app_id} >/dev/null 2>&1; then "
-                f"sudo_rq && sudo_ flatpak uninstall --system --noninteractive {app_id}; "
-                f"fi"
-            )
-            reversal_commands.append(cmd)
+            reversal_commands.append(_flatpak_remove_command(app_id))
 
     return reversal_commands
 
@@ -561,7 +514,13 @@ def _reverse_file_restoration(file_path):
     )
 
 def _reverse_flatpak_removal(app_ids):
-    """Reverse Flatpak installation(s) by removing them from their installed scope."""
+    """Reverse Flatpak installation(s) by removing them from their installed scope.
+
+    Scoped records (``flatpak --user <ids>`` / ``flatpak --system <ids>``,
+    written by the shared package library) reverse inside their recorded scope;
+    unscoped records keep the historical user-then-system probe. Malformed
+    operands refuse instead of guessing.
+    """
     if isinstance(app_ids, str):
         app_ids = [app_ids]
 
@@ -577,23 +536,15 @@ def _reverse_flatpak_removal(app_ids):
     commands = []
 
     for app_id in app_ids:
-        app_id = shlex.quote(app_id)
         if scope is not None:
+            quoted = shlex.quote(app_id)
             prefix = "sudo_rq && sudo_ " if scope == "--system" else ""
             commands.append(
-                f"if flatpak info {scope} {app_id} >/dev/null 2>&1; then "
-                f"{prefix}flatpak uninstall {scope} --noninteractive {app_id}; fi"
+                f"if flatpak info {scope} {quoted} >/dev/null 2>&1; then "
+                f"{prefix}flatpak uninstall {scope} --noninteractive {quoted}; fi"
             )
             continue
-
-        cmd = (
-            f"if flatpak info --user {app_id} >/dev/null 2>&1; then "
-            f"flatpak uninstall --user --noninteractive {app_id}; "
-            f"elif flatpak info --system {app_id} >/dev/null 2>&1; then "
-            f"sudo_rq && sudo_ flatpak uninstall --system --noninteractive {app_id}; "
-            f"fi"
-        )
-        commands.append(cmd)
+        commands.append(_flatpak_remove_command(app_id))
 
     return commands
 
@@ -1145,6 +1096,138 @@ def _reverse_operation(op_line, package_manager):
     return []
 
 
+def _revert_script_preamble(reverse_commands):
+    """Shared shell preamble for revert scripts.
+
+    Environment, library sourcing and the sudo pre-authorization that keeps
+    privileged package operations from racing the terminal lock.
+    """
+    script_dir = os.environ.get('SCRIPT_DIR', os.path.dirname(os.path.dirname(__file__)))
+
+    lines = [
+        "#!/bin/bash",
+        "# architectures: x86_64, aarch64",
+        "set -eo pipefail",
+        f'SCRIPT_DIR="{script_dir}"',
+        'source "$SCRIPT_DIR/libs/linuxtoys.bash"',
+        'source "$SCRIPT_DIR/libs/helpers.bash"',
+    ]
+
+    # Pre-authorize privileged package operations before the terminal can be locked.
+    # Keep the existing direct-sudo detection for other unconditional reversals.
+    needs_sudo = any(
+        cmd.strip().startswith(("sudo ", "pkg_remove ", "pkg_install "))
+        for cmd in reverse_commands
+    )
+
+    if needs_sudo:
+        lines.append("")
+        lines.append("# Request sudo authorization")
+        lines.append("sudo_rq")
+
+    return lines
+
+
+def _registry_cleanup_heredoc(remove_names):
+    """Lines of the embedded python that drops reverted registry entries.
+
+    Rebuilt entries are matched by exact stored transaction name so legacy
+    glued writes (missing trailing newlines) cannot shift the entry bounds,
+    and removals stay stable under concurrent registry writes.
+    """
+    lines = [
+        "",
+        "# Remove reverted transactions from action registry",
+        "python3 - <<'PY'",
+        "import os",
+        "import re",
+        f"reg = {os.path.join(get_linuxtoys_cache_dir(), 'registry')!r}",
+        f"remove_names = {repr(tuple(sorted(remove_names)))}",
+        "",
+        "if remove_names and os.path.exists(reg):",
+        "    with open(reg, 'r') as f:",
+        "        content = f.read()",
+        "",
+        "    # Rebuild entries from header matches so legacy glued writes",
+        "    # (missing trailing newlines) cannot shift the entry bounds.",
+        "    pattern = re.compile(r'\\[\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[^\\]]*\\] Script: ')",
+        "    matches = list(pattern.finditer(content))",
+        "    kept_entries = []",
+        "    for index, match in enumerate(matches):",
+        "        start = match.start()",
+        "        end = matches[index + 1].start() if index + 1 < len(matches) else len(content)",
+        "        text = content[start:end].strip()",
+        "        if text.endswith('---'):",
+        "            text = text[:-3].rstrip()",
+        "        if not text:",
+        "            continue",
+        "        # Drop by exact transaction name: every execution per name is the",
+        "        # one context (removals and reinstalls replace each other), and",
+        "        # names are stable under concurrent index shifts.",
+        "        name = text[len(match.group(0)):].split('\\n', 1)[0].strip()",
+        "        if name in remove_names:",
+        "            continue",
+        "        kept_entries.append(text)",
+        "",
+        "    if kept_entries:",
+        "        cleaned_content = '\\n---\\n\\n'.join(kept_entries) + '\\n---\\n\\n'",
+        "        with open(reg, 'w') as f:",
+        "            f.write(cleaned_content)",
+        "    else:",
+        "        os.remove(reg)",
+        "PY",
+    ]
+    return lines
+
+
+def _write_revert_script(lines, prefix):
+    """Write a temporary revert script (mode 0700); returns its path or None."""
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w", prefix=prefix, suffix=".sh", delete=False
+        ) as temp_script:
+            temp_script.write("\n".join(lines) + "\n")
+            temp_path = temp_script.name
+    except Exception:
+        return None
+
+    os.chmod(temp_path, 0o700)
+    return temp_path
+
+
+def _revert_entry(script_info, translations, *, action_key, action_default,
+                  desc_key, desc_default, registry_prefix, temp_path):
+    """Assemble the shared script_info-like return shape for revert entries."""
+    script_name_display = script_info.get("name", "Script")
+    name = (
+        translations.get(action_key, action_default)
+        if translations
+        else action_default
+    ).format(name=script_name_display)
+
+    # Stable, untranslated registry identity so revert entries stay
+    # pattern-matchable (expiry pruning) in every language; the localized
+    # action name is presentation-only (see get_display_name).
+    registry_identity = str(
+        script_info.get("registry_name") or script_name_display
+    ).strip()
+
+    return {
+        "icon": script_info.get("icon", "application-x-executable"),
+        "name": name,
+        "registry_name": f"{registry_prefix}: {registry_identity}",
+        "description": (
+            translations.get(desc_key, desc_default)
+            if translations
+            else desc_default
+        ),
+        "repo": script_info.get("repo", ""),
+        "path": temp_path,
+        "is_script": True,
+        "cleanup_path": temp_path,
+    }
+
+
 def build_uninstall_script_entry(script_info, translations=None):
     """
     Build a temporary uninstall script for a given LinuxToys script.
@@ -1206,119 +1289,33 @@ def build_uninstall_script_entry(script_info, translations=None):
             )
     reverted_names_repr = repr(tuple(sorted(reverted_registry_names)))
 
-    script_dir = os.environ.get('SCRIPT_DIR', os.path.dirname(os.path.dirname(__file__)))
-
-    lines = [
-        "#!/bin/bash",
-        "# architectures: x86_64, aarch64",
-        "set -eo pipefail",
-        f'SCRIPT_DIR="{script_dir}"',
-        'source "$SCRIPT_DIR/libs/linuxtoys.bash"',
-        'source "$SCRIPT_DIR/libs/helpers.bash"',
-    ]
-
-    # Pre-authorize privileged package operations before the terminal can be locked.
-    # Keep the existing direct-sudo detection for other unconditional reversals.
-    needs_sudo = any(
-        cmd.strip().startswith(("sudo ", "pkg_remove ", "pkg_install "))
-        for cmd in reverse_commands
-    )
-
-    if needs_sudo:
-        lines.append("")
-        lines.append("# Request sudo authorization")
-        lines.append("sudo_rq")
-
+    lines = _revert_script_preamble(reverse_commands)
     lines.append("")
     lines.append("# Reverse operations (in reverse order, most recent first)")
     lines.extend(reverse_commands)
     lines.append("")
-    lines.append("")
-    lines.append("# Remove reverted transactions from action registry")
-
-    lines.append("python3 - <<'PY'")
-    lines.append("import os")
-    lines.append("import re")
-    lines.append(f"reg = {os.path.join(get_linuxtoys_cache_dir(), 'registry')!r}")
-    lines.append(f"remove_names = {reverted_names_repr}")
-    lines.append("")
-    lines.append("if remove_names and os.path.exists(reg):")
-    lines.append("    with open(reg, 'r') as f:")
-    lines.append("        content = f.read()")
-    lines.append("")
-    lines.append("    # Rebuild entries from header matches so legacy glued writes")
-    lines.append("    # (missing trailing newlines) cannot shift the entry bounds.")
-    lines.append("    pattern = re.compile(r'\\[\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[^\\]]*\\] Script: ')")
-    lines.append("    matches = list(pattern.finditer(content))")
-    lines.append("    kept_entries = []")
-    lines.append("    for index, match in enumerate(matches):")
-    lines.append("        start = match.start()")
-    lines.append("        end = matches[index + 1].start() if index + 1 < len(matches) else len(content)")
-    lines.append("        text = content[start:end].strip()")
-    lines.append("        if text.endswith('---'):")
-    lines.append("            text = text[:-3].rstrip()")
-    lines.append("        if not text:")
-    lines.append("            continue")
-    lines.append("        # Drop by exact transaction name: every execution per name is the")
-    lines.append("        # one context (removals and reinstalls replace each other), and")
-    lines.append("        # names are stable under concurrent index shifts.")
-    lines.append("        name = text[len(match.group(0)):].split('\\n', 1)[0].strip()")
-    lines.append("        if name in remove_names:")
-    lines.append("            continue")
-    lines.append("        kept_entries.append(text)")
-    lines.append("")
-    lines.append("    if kept_entries:")
-    lines.append("        cleaned_content = '\\n---\\n\\n'.join(kept_entries) + '\\n---\\n\\n'")
-    lines.append("        with open(reg, 'w') as f:")
-    lines.append("            f.write(cleaned_content)")
-    lines.append("    else:")
-    lines.append("        os.remove(reg)")
-    lines.append("PY")
+    lines.extend(_registry_cleanup_heredoc(reverted_registry_names))
     lines.append("")
     lines.append('echo "Removal completed."')
 
-    # Write temporary script
-    try:
-        with tempfile.NamedTemporaryFile(
-            mode="w", prefix="linuxtoys-uninstall-", suffix=".sh", delete=False
-        ) as temp_script:
-            temp_script.write("\n".join(lines) + "\n")
-            temp_path = temp_script.name
-    except Exception:
+    temp_path = _write_revert_script(lines, "linuxtoys-uninstall-")
+    if temp_path is None:
         return None
 
-    os.chmod(temp_path, 0o700)
-
     # Prepare return entry
-    script_name_display = script_info.get("name", "Script")
-    remove_name = (
-        translations.get("remove_action_name", "Remove {name}")
-        if translations
-        else "Remove {name}"
-    ).format(name=script_name_display)
-
-    # The registry identity keeps a stable, untranslated prefix so removal
-    # entries stay pattern-matchable (expiry pruning) in every language; the
-    # localized "Remove {name}" is presentation-only (see get_display_name).
-    registry_identity = str(
-        script_info.get("registry_name") or script_name_display
-    ).strip()
-
-    return {
-        "icon": script_info.get("icon", "application-x-executable"),
-        "name": remove_name,
-        "registry_name": f"Remove: {registry_identity}",
-        "description": translations.get(
-            "remove_action_desc",
-            "Automatically removes components installed by this script using the registry.",
-        )
-        if translations
-        else "Automatically removes components installed by this script using the registry.",
-        "repo": script_info.get("repo", ""),
-        "path": temp_path,
-        "is_script": True,
-        "cleanup_path": temp_path,
-    }
+    return _revert_entry(
+        script_info,
+        translations,
+        action_key="remove_action_name",
+        action_default="Remove {name}",
+        desc_key="remove_action_desc",
+        desc_default=(
+            "Automatically removes components installed by this script using "
+            "the registry."
+        ),
+        registry_prefix="Remove",
+        temp_path=temp_path,
+    )
 
 
 def build_auto_revert_script_entry(script_info, transmap_path, translations=None):
@@ -1362,115 +1359,32 @@ def build_auto_revert_script_entry(script_info, transmap_path, translations=None
         if 0 <= child_index < len(registry_entries):
             reverted_registry_names.add(str(registry_entries[child_index]["name"]).strip())
 
-    script_dir = os.environ.get('SCRIPT_DIR', os.path.dirname(os.path.dirname(__file__)))
-
-    lines = [
-        "#!/bin/bash",
-        "# architectures: x86_64, aarch64",
-        "set -eo pipefail",
-        f'SCRIPT_DIR="{script_dir}"',
-        'source "$SCRIPT_DIR/libs/linuxtoys.bash"',
-        'source "$SCRIPT_DIR/libs/helpers.bash"',
-    ]
-
-    # Pre-authorize privileged package operations before the terminal can be locked.
-    # Keep the existing direct-sudo detection for other unconditional reversals.
-    needs_sudo = any(
-        cmd.strip().startswith(("sudo ", "pkg_remove ", "pkg_install "))
-        for cmd in reverse_commands
-    )
-
-    if needs_sudo:
-        lines.append("")
-        lines.append("# Request sudo authorization")
-        lines.append("sudo_rq")
-
+    lines = _revert_script_preamble(reverse_commands)
     lines.append("")
     lines.append("# Reverse operations from failed script execution (in reverse order)")
     lines.extend(reverse_commands)
-    lines.append("")
-    lines.append("# Remove reverted child transactions from action registry")
-    reverted_names_repr = repr(tuple(sorted(reverted_registry_names)))
-
-    lines.append("python3 - <<'PY'")
-    lines.append("import os")
-    lines.append("import re")
-    lines.append(f"reg = {os.path.join(get_linuxtoys_cache_dir(), 'registry')!r}")
-    lines.append(f"remove_names = {reverted_names_repr}")
-    lines.append("")
-    lines.append("if remove_names and os.path.exists(reg):")
-    lines.append("    with open(reg, 'r') as f:")
-    lines.append("        content = f.read()")
-    lines.append("")
-    lines.append("    # Rebuild entries from header matches so legacy glued writes")
-    lines.append("    # (missing trailing newlines) cannot shift the entry bounds.")
-    lines.append("    pattern = re.compile(r'\\[\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}[^\\]]*\\] Script: ')")
-    lines.append("    matches = list(pattern.finditer(content))")
-    lines.append("    kept_entries = []")
-    lines.append("    for index, match in enumerate(matches):")
-    lines.append("        start = match.start()")
-    lines.append("        end = matches[index + 1].start() if index + 1 < len(matches) else len(content)")
-    lines.append("        text = content[start:end].strip()")
-    lines.append("        if text.endswith('---'):")
-    lines.append("            text = text[:-3].rstrip()")
-    lines.append("        if not text:")
-    lines.append("            continue")
-    lines.append("        # Drop by exact transaction name (see build_uninstall_script_entry).")
-    lines.append("        name = text[len(match.group(0)):].split('\\n', 1)[0].strip()")
-    lines.append("        if name in remove_names:")
-    lines.append("            continue")
-    lines.append("        kept_entries.append(text)")
-    lines.append("")
-    lines.append("    if kept_entries:")
-    lines.append("        cleaned_content = '\\n---\\n\\n'.join(kept_entries) + '\\n---\\n\\n'")
-    lines.append("        with open(reg, 'w') as f:")
-    lines.append("            f.write(cleaned_content)")
-    lines.append("    else:")
-    lines.append("        os.remove(reg)")
-    lines.append("PY")
+    lines.extend(_registry_cleanup_heredoc(reverted_registry_names))
     lines.append("")
     lines.append('echo "Automatic reversion completed."')
 
-    # Write temporary script
-    try:
-        with tempfile.NamedTemporaryFile(
-            mode="w", prefix="linuxtoys-auto-revert-", suffix=".sh", delete=False
-        ) as temp_script:
-            temp_script.write("\n".join(lines) + "\n")
-            temp_path = temp_script.name
-    except Exception:
+    temp_path = _write_revert_script(lines, "linuxtoys-auto-revert-")
+    if temp_path is None:
         return None
 
-    os.chmod(temp_path, 0o700)
-
     # Prepare return entry
-    script_name_display = script_info.get("name", "Script")
-    revert_name = (
-        translations.get("auto_revert_action_name", "Auto-revert {name}")
-        if translations
-        else "Auto-revert {name}"
-    ).format(name=script_name_display)
-
-    # Stable, untranslated registry identity — see build_uninstall_script_entry.
-    registry_identity = str(
-        script_info.get("registry_name") or script_name_display
-    ).strip()
-
-    return {
-        "icon": script_info.get("icon", "application-x-executable"),
-        "name": revert_name,
-        "registry_name": f"Auto-revert: {registry_identity}",
-        "description": translations.get(
-            "auto_revert_action_desc",
-            "Automatically reverts components installed by this script before it failed.",
-        )
-        if translations
-        else "Automatically reverts components installed by this script before it failed.",
-        "repo": script_info.get("repo", ""),
-        "path": temp_path,
-        "is_script": True,
-        "cleanup_path": temp_path,
-    }
+    return _revert_entry(
+        script_info,
+        translations,
+        action_key="auto_revert_action_name",
+        action_default="Auto-revert {name}",
+        desc_key="auto_revert_action_desc",
+        desc_default=(
+            "Automatically reverts components installed by this script "
+            "before it failed."
+        ),
+        registry_prefix="Auto-revert",
+        temp_path=temp_path,
+    )
 
 def _build_reverse_commands(
     operations,

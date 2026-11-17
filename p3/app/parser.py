@@ -543,6 +543,27 @@ def get_repo_entries(translations=None):
     return repo_parser.load_repo_entries(SCRIPTS_DIR, translations)
 
 
+def appstream_context(translations=None, curated=True):
+    """Assemble the AppStream resolution context.
+
+    Returns ``(scripts_dir, curated_entries, category_paths)``. ``curated``
+    selects the entry set: True uses the fuller curated set (repository
+    entries plus curated scripts — the duplicate-suppression universe the
+    GUI resolves against), False uses the repository entries alone.
+    ``category_paths`` is always included: without it the Rust category
+    mapping drops every non-Homebrew component, so a resolution would miss
+    entries the UI offers — and a background derived-cache rebuild
+    triggered by such a caller would publish that incomplete generation
+    for every other reader.
+    """
+    entries = (
+        _get_appstream_curated_entries(translations)
+        if curated
+        else get_repo_entries(translations)
+    )
+    return (SCRIPTS_DIR, entries, _indexed_category_paths())
+
+
 def _get_appstream_curated_entries(translations=None):
     """Return every LinuxToys-curated offer that should suppress AppStream duplicates."""
     return [
@@ -555,15 +576,6 @@ def get_appstream_entries(translations=None):
     """Return the last published AppStream catalog as repository-like entries."""
     return appstream_parser.load_entries(
         SCRIPTS_DIR,
-        curated_entries=_get_appstream_curated_entries(translations),
-        category_paths=_indexed_category_paths(),
-    )
-
-def get_appstream_entries_for_category(category_path, translations=None):
-    """Materialize only one category from the Rust-owned AppStream catalog."""
-    return appstream_parser.get_entries_for_category(
-        SCRIPTS_DIR,
-        category_path,
         curated_entries=_get_appstream_curated_entries(translations),
         category_paths=_indexed_category_paths(),
     )
@@ -623,16 +635,6 @@ def get_appstream_featured_descriptors(translations=None):
     )
 
 
-def materialize_appstream_featured_entries(indices, translations=None):
-    """Materialize only AppStream Featured candidates selected by Python."""
-    return appstream_parser.materialize_featured_entries(
-        SCRIPTS_DIR,
-        indices,
-        curated_entries=_get_appstream_curated_entries(translations),
-        category_paths=_indexed_category_paths(),
-    )
-
-
 def materialize_appstream_featured_entries_by_ids(appstream_ids, translations=None):
     """Materialize selected Featured candidates by stable AppStream component ID."""
     return appstream_parser.materialize_featured_entries_by_ids(
@@ -671,15 +673,6 @@ def get_repository_map():
             repositories[normalized_id] = repo.strip()
 
     return repositories
-
-def get_repository(name):
-    """Return the upstream repository for a script/repository-list entry."""
-    if not name:
-        return None
-
-    return get_repository_map().get(
-        str(name).strip().casefold()
-    )
 
 _DISPLAY_NAME_CACHE = {"translations": None, "resolved": {}}
 
@@ -991,19 +984,6 @@ def get_breadcrumb_path(current_path, translations=None):
     
     return breadcrumbs
 
-
-def is_nested_category(category_path):
-    """
-    Check if a given path represents a nested category (not a top-level category).
-    """
-    scripts_path = os.path.abspath(SCRIPTS_DIR)
-    category_abs_path = os.path.abspath(category_path)
-    
-    if not category_abs_path.startswith(scripts_path):
-        return False
-    
-    rel_path = os.path.relpath(category_abs_path, scripts_path)
-    return os.sep in rel_path
 
 def _should_skip_directory(name):
     return name.startswith(".") or name in RESERVED_DIRECTORIES

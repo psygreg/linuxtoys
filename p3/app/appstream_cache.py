@@ -21,6 +21,8 @@ import threading
 import time
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
+
+from .atomic_io import atomic_write_json
 from pathlib import Path
 
 from . import popularity
@@ -39,7 +41,6 @@ STATE_PATH = CACHE_DIR / "state.json"
 CATALOG_PATH = CACHE_DIR / "catalog.json"
 EXTENSIONS_PATH = CACHE_DIR / "extensions.json"
 PARTIAL_PATH = CACHE_DIR / "native.partial.json"
-FLATPAK_PARTIAL_PATH = CACHE_DIR / "flatpak.partial.json"
 SNAP_CATALOG_PATH = CACHE_DIR / "snap.json"
 APPIMAGE_CATALOG_PATH = CACHE_DIR / "appimage-feed.json"
 SOURCE_INVENTORY_PATH = CACHE_DIR / "source-inventory.json"
@@ -110,13 +111,9 @@ def _flatpak_supported_host() -> bool:
 
 
 def _atomic_json_write(path: Path, value) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    tmp = path.with_name(path.name + ".tmp")
-    with open(tmp, "w", encoding="utf-8") as handle:
-        json.dump(value, handle, ensure_ascii=False, separators=(",", ":"))
-        handle.flush()
-        os.fsync(handle.fileno())
-    os.replace(tmp, path)
+    atomic_write_json(
+        path, value, ensure_ascii=False, separators=(",", ":"), fsync=True
+    )
 
 
 def _read_json(path: Path, default):

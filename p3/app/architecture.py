@@ -1,7 +1,10 @@
 """Authoritative architecture policy. No GUI, native extension or network imports.
 
 Names are selection hints, never permission to execute. Installation also requires
-payload inspection through architecture_files. Unknown is not architecture-neutral.
+payload inspection through architecture_files. aarch64 additionally requires
+explicit reviewed evidence everywhere; x86_64 keeps the historical matcher
+(neutral unlabelled assets, 32-bit last-resort fallback) the installed base
+relies on.
 """
 
 from __future__ import annotations
@@ -139,6 +142,54 @@ def require_native(values: Iterable[str], machine: str | None = None) -> Archite
 
 def asset_eligible(asset: Mapping[str, Any], machine: str | None = None) -> bool:
     """Check release hints; independent data/source must be explicitly declared."""
+    return _asset_tier(asset, machine) is not None
+
+
+# 32-bit x86 aliases collapse onto the i686 evidence token, mirroring the
+# historical matcher's alias table.
+_X86_32_EVIDENCE = frozenset({"i386", "i486", "i586", "i686", "ia32", "x86"})
+
+
+def _evidence_tier(hints: Iterable[str], arch: Architecture) -> tuple[int, bool] | None:
+    """Rank one asset's combined architecture evidence, or None when refused.
+
+    x86_64 keeps the installed base's historical three-tier matcher: assets
+    without any architecture evidence stay neutral (tier 0, ranked below
+    explicitly named ones), 32-bit x86 assets remain a last-resort fallback
+    (tier 1), and any evidence naming the host qualifies. aarch64 keeps the
+    reviewed-evidence-only policy of this integration: exactly one consistent
+    native declaration, no unlabelled payloads and no fallbacks. Actual
+    execution keeps payload verification (architecture_files, require_native)
+    authoritative on every ISA.
+    """
+    evidence: set[str] = set()
+    for value in hints:
+        value = str(value).lower()
+        if value in _ALIASES:
+            evidence.add(_ALIASES[value].value)
+        elif value in _X86_32_EVIDENCE:
+            evidence.add("i686")
+        else:
+            evidence.add(value)
+    if arch is Architecture.AARCH64:
+        try:
+            require_native(sorted(evidence), arch.value)
+        except ArchitectureError:
+            return None
+        return (0, True)
+    if not evidence:
+        return (0, False)
+    if arch.value in evidence:
+        return (0, True)
+    if "i686" in evidence:
+        return (1, True)
+    return None
+
+
+def _asset_tier(
+    asset: Mapping[str, Any], machine: str | None = None
+) -> tuple[int, bool] | None:
+    """Eligibility + ranking tier for one release asset, or None when refused."""
     arch = host() if machine is None else normalize(machine)
     hints = asset_architectures(str(asset.get("name", "")))
     metadata = asset.get("architectures")
@@ -146,16 +197,14 @@ def asset_eligible(asset: Mapping[str, Any], machine: str | None = None) -> bool
         if not isinstance(metadata, list) or not all(
             isinstance(x, str) for x in metadata
         ):
-            return False
+            return None
         # Cached/declared evidence cannot override contradictory filename hints.
         hints += metadata
     if asset.get("content_kind") in {"data", "source"}:
-        return not hints and asset.get("architecture_independent") is True
-    try:
-        require_native(hints, arch.value)
-    except ArchitectureError:
-        return False
-    return True
+        return (0, False) if (
+            not hints and asset.get("architecture_independent") is True
+        ) else None
+    return _evidence_tier(hints, arch)
 
 
 def select_asset(
@@ -167,9 +216,14 @@ def select_asset(
     exact: bool = False,
     source: bool = False,
 ) -> Mapping[str, Any]:
-    """Select exactly one best native asset. There is no positional/foreign fallback."""
+    """Select exactly one best native release asset for the host.
+
+    Ranking mirrors the historical three-tier matcher: explicitly named host
+    assets outrank architecture-unlabelled ones, and the 32-bit x86 fallback
+    ranks last. Foreign or contradictory evidence never qualifies.
+    """
     arch = host() if machine is None else normalize(machine)
-    candidates: list[tuple[int, Mapping[str, Any]]] = []
+    candidates: list[tuple[tuple[int, int, int], Mapping[str, Any]]] = []
     for asset in assets:
         name = asset.get("name")
         if not isinstance(name, str):
@@ -192,9 +246,11 @@ def select_asset(
         if source:
             # This option is explicit source-build intent, not an automatic guess.
             candidate.update(content_kind="source", architecture_independent=True)
-        if not asset_eligible(candidate, arch.value):
+        tiers = _asset_tier(candidate, arch.value)
+        if tiers is None:
             continue
-        rank = (
+        fallback_tier, explicit = tiers
+        format_rank = (
             0
             if formats is None
             else next(
@@ -206,8 +262,8 @@ def select_asset(
                 -1,
             )
         )
-        if rank >= 0:
-            candidates.append((rank, asset))
+        if format_rank >= 0:
+            candidates.append(((fallback_tier, format_rank, 0 if explicit else 1), asset))
     if not candidates:
         raise ArchitectureError(
             f"No verified native release asset for {arch.value} matching {pattern!r}"
