@@ -6,9 +6,8 @@
 # repo: https://www.nerdfonts.com
 
 # --- Start of the script code ---
+# architectures: x86_64, aarch64
 # requires-script-api: 1
-# Refuse older clients before loading installation code.
-python3 "$SCRIPT_DIR/app/script_compat.py" "${BASH_SOURCE[0]}" || exit 1
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_

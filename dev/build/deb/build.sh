@@ -81,7 +81,6 @@ print(output)
 PY
 )"
     for tool in cargo maturin dpkg-deb dpkg-shlibdeps; do command -v "$tool" >/dev/null; done
-    python3 "$ROOT_DIR/dev/prepare_script_rollout.py" --check
     python3 "$ROOT_DIR/dev/build/deb/package.py" check-inputs "$ROOT_DIR/p3"
     mkdir -p -- "$OUTPUT_PATH"
     WORK="$OUTPUT_PATH/build"

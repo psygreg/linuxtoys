@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Synchronize only client-approved, immutable script revisions.
+"""Synchronize the script catalog from the upstream mirror repository.
 
-Network failures retain a qualified cache or the verified bundled snapshot.
-Unversioned remote HEAD is never an execution authority.
+The psygreg/scripts mirror's default branch is the content source: live script
+fixes flow to installed clients without a client release. Network failures
+retain the previous cache or the bundled snapshot. All execution still passes
+through the architecture policy gates.
 """
 
 import os
@@ -16,7 +18,6 @@ import fcntl
 from pathlib import Path
 
 from .dev_mode import is_dev_mode_enabled
-from .script_compat import require_bundle, preferred_tag
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -175,6 +176,23 @@ def _cleanup_retired_cache(path):
         logger.warning(f"Could not remove retired scripts cache {path}: {e}")
 
 
+def _looks_like_scripts_tree(path):
+    """Cheap structural sanity check for a candidate scripts tree.
+
+    A healthy tree always carries the git release index and at least one
+    install script; anything else (empty clone, error page, partial copy) is
+    never promoted or executed.
+    """
+    if not os.path.isdir(path):
+        return False
+    if not os.path.isfile(os.path.join(path, "git-db.json")):
+        return False
+    for _directory, _dirs, names in os.walk(path):
+        if any(name.endswith(".sh") for name in names):
+            return True
+    return False
+
+
 def _promote_staged_scripts_cache(staging_dir=None):
     """Atomically-ish swap a validated staging clone into the active cache path.
 
@@ -184,8 +202,7 @@ def _promote_staged_scripts_cache(staging_dir=None):
     If promotion fails, restore the previous tree whenever possible.
     """
     staging_dir = staging_dir or GIT_SCRIPTS_STAGING_DIR
-    require_bundle(staging_dir)
-    if not os.path.isdir(staging_dir):
+    if not _looks_like_scripts_tree(staging_dir):
         raise FileNotFoundError(
             f"Scripts staging directory does not exist: {staging_dir}"
         )
@@ -223,10 +240,9 @@ def _promote_staged_scripts_cache(staging_dir=None):
 
 
 def _clone_scripts_repo(progress_callback=None):
-    """Fetch the pinned tag into private staging; validate before promotion."""
+    """Clone the mirror's default branch into private staging; promote on success."""
     if not _ensure_cache_dir():
         return False
-    tag = preferred_tag()
     urls = (
         (GITHUB_REPO_URL, "scripts_init_cloning_github"),
         (GITLINUXTOYS_REPO_URL, "scripts_init_cloning_linux_toys"),
@@ -237,13 +253,14 @@ def _clone_scripts_repo(progress_callback=None):
         staging = tempfile.mkdtemp(prefix="scripts.updating.", dir=CACHE_DIR)
         try:
             success, _, error = _run_git_command(
-                ["clone", "--depth=1", "--single-branch", "--branch", tag,
-                 "--", repo_url, staging]
+                ["clone", "--depth=1", "--single-branch", "--", repo_url, staging]
             )
             if not success:
-                logger.warning("Approved scripts fetch failed: %s", error)
+                logger.warning("Scripts mirror fetch failed: %s", error)
                 continue
-            require_bundle(staging)
+            if not _looks_like_scripts_tree(staging):
+                logger.warning("Rejected synchronized scripts: incomplete tree")
+                continue
             _promote_staged_scripts_cache(staging)
             _write_update_timestamp()
             if progress_callback:
@@ -281,24 +298,15 @@ def get_bundled_scripts_dir():
 
 
 def _cached_scripts_are_readily_available():
-    """Check exact approved content without invoking git or the network."""
-    if not _git_repo_exists():
-        return False
-    try:
-        require_bundle(GIT_SCRIPTS_CACHE_DIR)
-        return True
-    except (OSError, ValueError) as exc:
-        logger.debug("Cached scripts are not qualified: %s", exc)
-        return False
+    """Check cached-tree sanity without invoking git or the network."""
+    return _looks_like_scripts_tree(GIT_SCRIPTS_CACHE_DIR) and _git_repo_exists()
 
 
 def get_available_scripts_dir():
-    """Select a verified source; missing metadata never grants permission."""
+    """Select a usable source; a broken cache falls back to the bundled tree."""
     if not is_dev_mode_enabled() and _cached_scripts_are_readily_available():
         return GIT_SCRIPTS_CACHE_DIR
-    bundled = get_bundled_scripts_dir()
-    require_bundle(bundled)
-    return bundled
+    return get_bundled_scripts_dir()
 
 
 def _synchronize_scripts_unlocked(progress_callback=None, force=False):
@@ -361,7 +369,7 @@ def _synchronize_scripts_unlocked(progress_callback=None, force=False):
 
 
 def synchronize_scripts(progress_callback=None, force=False):
-    """Serialize promotion across threads/processes; readers only see approved trees."""
+    """Serialize promotion across threads/processes; readers only see whole trees."""
     with _SYNC_LOCK:
         if not _ensure_cache_dir():
             return {"success": False, "changed": False, "performed": False,

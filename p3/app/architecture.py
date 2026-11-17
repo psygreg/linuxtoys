@@ -2,18 +2,21 @@
 
 Names are selection hints, never permission to execute. Installation also requires
 payload inspection through architecture_files. aarch64 additionally requires
-explicit reviewed evidence everywhere; x86_64 keeps the historical matcher
+explicit evidence everywhere; x86_64 keeps the historical matcher
 (neutral unlabelled assets, 32-bit last-resort fallback) the installed base
 relies on.
+
+Scripts and repository listings follow sane defaults with explicit handling:
+content is x86_64-only by presumption, and aarch64 eligibility is declared in
+the tree itself — a script's ``# architectures:`` header, a listing record's
+``architectures`` marker, or git-db.json release-asset evidence for its repo.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from functools import lru_cache
 import fnmatch
-import hashlib
 import json
 from pathlib import Path
 import platform
@@ -23,6 +26,23 @@ from typing import Any, Iterable, Mapping
 
 class ArchitectureError(ValueError):
     """A route or payload lacks consistent, supported architecture evidence."""
+
+
+SCRIPT_API = 1
+
+
+def require_api(text: str) -> None:
+    """Reject explicit newer/older/conflicting script capability requirements.
+
+    The scripts tree is a live-synced upstream catalog, so this header is the
+    only version gate: a script written for a different script API must never
+    run against this client's bash core.
+    """
+    requirements = re.findall(r"(?m)^# requires-script-api:\s*(.*)$", text)
+    if requirements and any(value.strip() != str(SCRIPT_API) for value in requirements):
+        raise ArchitectureError(
+            f"Script requires a different client script API (installed: {SCRIPT_API})"
+        )
 
 
 class Architecture(str, Enum):
@@ -278,12 +298,6 @@ def select_asset(
     return best[0]
 
 
-@lru_cache(maxsize=1)
-def route_policy() -> dict[str, Any]:
-    """Read reviewed route declarations shipped with this application version."""
-    return json.loads(Path(__file__).with_name("architecture-routes.json").read_text())
-
-
 def _declaration_allowed(values: Any, arch: Architecture) -> bool:
     if not isinstance(values, list) or not values:
         return False
@@ -293,17 +307,146 @@ def _declaration_allowed(values: Any, arch: Architecture) -> bool:
         return False
 
 
-def require_script(text: str, machine: str | None = None) -> None:
-    """Check a reviewed script or explicit header, before its preamble can mutate.
+# Release-asset kinds a git-type entry can actually install from. Tarball
+# assets only count for tar entries, and bin entries need their exact
+# declared asset; anything else is presumed x86_64-only.
+_GIT_KINDS = frozenset({"appimage", "flatpak", "snap", "pacman", "rpm", "deb", "eopkg"})
 
-    Scripts are presumed x86_64-only unless a ``# architectures:`` header tags
-    them otherwise; an aarch64 host needs that explicit tag (or an approved
-    route-policy declaration) to run anything. Call require_script_path for
-    files: a managed bundle must also pass client-owned revision approval.
-    Explicit headers are for trusted local/generated code, not remote approval.
+
+def _git_db_for(source: Any) -> dict[str, Any]:
+    """Load the git-db release index of the tree that owns a listing record."""
+    if not isinstance(source, str) or not source:
+        return {}
+    directory = Path(source).resolve().parent
+    for _ in range(4):
+        candidate = directory / "git-db.json"
+        if candidate.is_file():
+            try:
+                data = json.loads(candidate.read_text())
+            except (OSError, ValueError):
+                return {}
+            repositories = data.get("repositories") if isinstance(data, dict) else None
+            return repositories if isinstance(repositories, dict) else {}
+        if directory.parent == directory:
+            break
+        directory = directory.parent
+    return {}
+
+
+def _git_db_asset_architectures(asset: Mapping[str, Any]) -> set[str]:
+    """Explicit architecture evidence of one cached asset; unlabelled = none."""
+    values = asset.get("architectures")
+    if not isinstance(values, list):
+        return set()
+    return {
+        value.strip().lower()
+        for value in values
+        if isinstance(value, str) and value.strip().lower() in ("x86_64", "aarch64")
+    }
+
+
+def _proven_record_architectures(
+    record: Mapping[str, Any], git_db: Mapping[str, Any]
+) -> set[str]:
+    """ISAs a repository listing is explicitly proven for, beyond x86_64.
+
+    Assets without architecture evidence, single-binary assets and tarball
+    assets are presumed x86_64-only; only explicit aarch64 evidence grants
+    the ISA, and only through an installable kind for the entry's type.
     """
-    from .script_compat import require_api
+    proven: set[str] = set()
+    entry_type = str(record.get("type") or "git")
+    record_data = git_db.get(str(record.get("repo") or ""))
+    if not isinstance(record_data, dict):
+        return proven
+    assets = record_data.get("assets")
+    if not isinstance(assets, list):
+        return proven
+    if entry_type == "git":
+        wanted_kinds = _GIT_KINDS
+    elif entry_type == "tar":
+        wanted_kinds = {"tar"}
+    elif entry_type == "bin":
+        wanted_kinds = None  # exact declared asset only
+    else:
+        return proven
+    wanted_asset = str(record.get("package-name") or "").strip()
+    for asset in assets:
+        if not isinstance(asset, dict):
+            continue
+        if wanted_kinds is None:
+            if str(asset.get("name") or "") != wanted_asset:
+                continue
+        elif asset.get("kind") not in wanted_kinds:
+            continue
+        if "aarch64" in _git_db_asset_architectures(asset):
+            proven.add("aarch64")
+    return proven
 
+
+def _record_declared_architectures(record: Mapping[str, Any]) -> list[str] | None:
+    """Explicit per-record declaration, validated against the supported ISAs."""
+    values = record.get("architectures")
+    if values is None:
+        return None
+    if (
+        isinstance(values, list)
+        and values
+        and all(
+            isinstance(value, str) and value.strip().lower() in ("x86_64", "aarch64")
+            for value in values
+        )
+    ):
+        ordered: list[str] = []
+        for value in values:
+            token = value.strip().lower()
+            if token not in ordered:
+                ordered.append(token)
+        return ordered
+    raise ArchitectureError(
+        f"Record {record.get('name')!r} declares invalid architectures: {values!r}"
+    )
+
+
+def _listing_record(entry: Mapping[str, Any]) -> Mapping[str, Any] | None:
+    """Locate the listing record an entry was materialized from.
+
+    Reads the record from its own listing file (never the materialized copy),
+    preferring an exact name+repo match over a name-only match.
+    """
+    source = entry.get("_list_source") or entry.get("_architecture_source")
+    if not isinstance(source, str) or not source:
+        return None
+    name = entry.get("name") or entry.get("appstream-name")
+    repo = str(entry.get("repo") or "")
+    fallback: Mapping[str, Any] | None = None
+    try:
+        records = json.loads(Path(source).read_text())
+    except (OSError, ValueError, TypeError):
+        return None
+    if isinstance(records, dict):
+        records = [records]
+    if not isinstance(records, list):
+        return None
+    for candidate in records:
+        if not isinstance(candidate, dict):
+            continue
+        if (candidate.get("name") or candidate.get("appstream-name")) != name:
+            continue
+        if str(candidate.get("repo") or "") == repo:
+            return candidate
+        if fallback is None:
+            fallback = candidate
+    return fallback
+
+
+def require_script(text: str, machine: str | None = None) -> None:
+    """Check a script's ISA declarations before its preamble can mutate.
+
+    Sane default: scripts are presumed x86_64-only unless a
+    ``# architectures:`` header tags them otherwise; an aarch64 host needs
+    that explicit tag to run anything. Call require_script_path for files.
+    """
     require_api(text)
     arch = host() if machine is None else normalize(machine)
     headers = re.findall(r"(?mi)^# architectures:\s*(.+)$", text)
@@ -315,11 +458,6 @@ def require_script(text: str, machine: str | None = None) -> None:
             raise ArchitectureError("Conflicting script architecture declarations")
         values = list(declarations[0])
     else:
-        digest = hashlib.sha256(text.encode()).hexdigest()
-        values = route_policy()["scripts"].get(digest, {}).get("architectures")
-    if not values:
-        # Headerless, unpinned scripts are x86_64 by presumption; other ISAs
-        # must be tagged explicitly.
         values = ["x86_64"]
     if not _declaration_allowed(values, arch):
         raise ArchitectureError(
@@ -331,10 +469,11 @@ def require_script(text: str, machine: str | None = None) -> None:
 def require_entry(entry: Mapping[str, Any], machine: str | None = None) -> None:
     """Enforce ISA eligibility on catalog metadata before hooks/dependencies run.
 
-    The reviewed route table is the single authority for repository entries:
-    record-level ``architectures`` declarations are baked into it by
-    dev/refresh_architecture_routes.py, never trusted from the listing itself
-    (a repository cannot approve its own ISA). AppStream native/Flatpak/Snap
+    Repository listings are x86_64-only by sane default. An entry qualifies
+    for aarch64 through an explicit ``architectures`` marker in its own
+    listing record or through git-db.json release-asset evidence for its repo
+    (an asset without architecture evidence, a single-binary asset or a
+    tarball asset never grants ARM). AppStream native/Flatpak/Snap/Homebrew
     sources declare the host: the package managers and Flatpak resolve
     architecture at their own discretion.
     """
@@ -348,6 +487,8 @@ def require_entry(entry: Mapping[str, Any], machine: str | None = None) -> None:
     }:
         # Self-managed sources: the AppStream data, snapd and Homebrew only
         # offer what the host can use, and their installers resolve ISA.
+        # Only explicit dependency markers are honored here; payload-level
+        # verification stays authoritative at execution time.
         for dependency in entry.get("dependencies") or []:
             if "architectures" in dependency and not _declaration_allowed(
                 dependency["architectures"], arch
@@ -355,39 +496,18 @@ def require_entry(entry: Mapping[str, Any], machine: str | None = None) -> None:
                 raise ArchitectureError(
                     "A required dependency does not support this architecture"
                 )
-            for token in asset_architectures(json.dumps(dependency)):
-                require_native([token], arch.value)
         return
-    declaration = route_policy()["catalogs"].get(
-        str(entry.get("name") or entry.get("appstream-name")), {}
+    record = _listing_record(entry)
+    declared = (
+        _record_declared_architectures(record) if record is not None else None
     )
-    values = declaration.get("architectures", [])
-    source = entry.get("_list_source") or entry.get("_architecture_source")
-    approved = False
-    if isinstance(source, str):
-        try:
-            records = json.loads(Path(source).read_text())
-            if isinstance(records, dict):
-                records = [records]
-            for record in records:
-                if not isinstance(record, dict):
-                    continue
-                name = record.get("name") or record.get("appstream-name")
-                if name != (entry.get("name") or entry.get("appstream-name")):
-                    continue
-                digest = hashlib.sha256(
-                    json.dumps(
-                        record,
-                        sort_keys=True,
-                        separators=(",", ":"),
-                        ensure_ascii=False,
-                    ).encode()
-                ).hexdigest()
-                approved = approved or digest in declaration.get("declarations", [])
-        except (OSError, ValueError, TypeError):
-            approved = False
-    if not approved or declaration.get("repo", "") != entry.get("repo", ""):
-        values = []
+    if declared is not None:
+        values = declared
+    else:
+        proven = _proven_record_architectures(
+            record or {}, _git_db_for(entry.get("_list_source") or entry.get("_architecture_source"))
+        )
+        values = ["x86_64", *sorted(proven - {"x86_64"})]
     if not _declaration_allowed(values, arch):
         raise ArchitectureError(
             f"{entry.get('name', 'Catalog route')} is not qualified for {arch.value}"
@@ -399,8 +519,6 @@ def require_entry(entry: Mapping[str, Any], machine: str | None = None) -> None:
             raise ArchitectureError(
                 "A required dependency does not support this architecture"
             )
-        for token in asset_architectures(json.dumps(dependency)):
-            require_native([token], arch.value)
 
 
 def script_eligible(text: str, machine: str | None = None) -> bool:
@@ -421,10 +539,7 @@ def asset_eligible_json(raw: str, machine: str) -> bool:
 
 
 def require_script_path(path: str | Path, machine: str | None = None) -> None:
-    """Check managed revision integrity before applying the shared ISA policy."""
-    from .script_compat import require_managed_script
-
-    require_managed_script(path)
+    """Apply the shared ISA policy to a script file before execution."""
     text = Path(path).read_bytes().decode("utf-8")
     require_script(text, machine)
 
@@ -457,11 +572,12 @@ def require_overrides(
         if isinstance(value, dict) and isinstance(value.get("script"), str):
             require_script_path(resolve_hook_path(script_dir, value["script"], cache_dir))
         elif isinstance(value, str):
-            digest = hashlib.sha256(value.strip().encode()).hexdigest()
-            declaration = route_policy().get("inline_hooks", {}).get(digest, {})
-            if not _declaration_allowed(declaration.get("architectures"), arch):
+            # Inline hook snippets are x86_64-only by the same sane default;
+            # ARM-qualified entries declare their hooks as header-tagged files.
+            if arch is not Architecture.X86_64:
                 raise ArchitectureError(
-                    f"Inline {phase} hook lacks reviewed {arch.value} eligibility"
+                    f"Inline {phase} hook lacks {arch.value} eligibility; "
+                    "convert it to a header-tagged file hook"
                 )
         else:
             raise ArchitectureError("Invalid installer hook declaration")

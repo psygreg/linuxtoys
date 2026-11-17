@@ -107,8 +107,8 @@ def create_temp_file(script_path):
     require_script_path(script_path)
     lines = Path(script_path).read_bytes().decode("utf-8").splitlines(keepends=True)
     if "# requires-script-api:" in "".join(lines):
-        # API guards validate BASH_SOURCE against the original approved bytes.
-        # The currently qualified font routes contain no xdg-open calls.
+        # API-guarded routes execute in place; the currently qualified font
+        # routes contain no xdg-open calls.
         if any("xdg-open" in line for line in lines):
             raise ValueError("API-guarded scripts with xdg-open need a reviewed CLI route")
         return script_path
@@ -354,7 +354,7 @@ def easy_cli_run_script(script_info):
         print(f"✗ Error while executing the script: {e}")
         return 1
     finally:
-        # API-guarded routes retain their original approved source file.
+        # API-guarded routes retain their original source file.
         if os.path.abspath(temp_file_path) != os.path.abspath(script_path):
             os.remove(temp_file_path)
 

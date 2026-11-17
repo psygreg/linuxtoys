@@ -18,7 +18,6 @@ ROOT_DIR = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT_DIR / "p3"))
 from app.architecture import label  # noqa: E402
 from app.architecture_files import validate_file  # noqa: E402
-from app.script_compat import require_bundle  # noqa: E402
 
 
 def digest(path: Path) -> str:
@@ -136,7 +135,6 @@ cd /usr/lib/linuxtoys
 exec /usr/bin/python3 -B /usr/lib/linuxtoys/linuxtoys.py "$@"
 """)
     launcher.chmod(0o755)
-    require_bundle(app / "scripts")
 
 
 def control(
