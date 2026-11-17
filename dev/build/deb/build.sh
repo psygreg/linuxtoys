@@ -1,24 +1,37 @@
 #!/bin/bash
 # Debian/DEB build script for LinuxToys
-# Usage: build.sh <version> <output_path> [--native]
+# Usage: build.sh <version> <output_path> [--native] [--binary-only]
 # Example: build.sh 1.1 /tmp/builds
 #
 # Default: signed source upload to the Launchpad PPA plus the binary .deb.
 # --native: construct a local native-only DEB on this host (the host must be
 # Linux with a matching dpkg architecture — this is the ARM64 development
 # build path). No signing or upload happens in native mode.
+# --binary-only: prepare the same source tree as the default mode but build
+# only the native binary package (debuild without the -S source upload, the
+# Launchpad duplicate guard or dput). This is the release-workflow path for
+# the second architecture leg: the source reaches Launchpad exactly once
+# from the amd64 leg, and the aarch64 leg builds its own binary package
+# (debian/control declares both architectures).
 
-# Flag parsing (both modes take <version> <output_path>).
+# Flag parsing (all modes take <version> <output_path>).
 NATIVE_MODE=0
+BINARY_ONLY=0
 ARGS=()
 for arg in "$@"; do
     if [[ "$arg" == "--native" ]]; then
         NATIVE_MODE=1
+    elif [[ "$arg" == "--binary-only" ]]; then
+        BINARY_ONLY=1
     else
         ARGS+=("$arg")
     fi
 done
 set -- "${ARGS[@]}"
+if [[ "$NATIVE_MODE" == 1 && "$BINARY_ONLY" == 1 ]]; then
+    echo "ERROR: --native and --binary-only are mutually exclusive." >&2
+    exit 2
+fi
 
 ROOT_DIR="$PWD"
 while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do ROOT_DIR="${ROOT_DIR%/*}"; done
@@ -26,7 +39,7 @@ source "$ROOT_DIR/dev/libs/utils.lib"
 
 # Check CLI arguments
 if [ $# -ne 2 ]; then
-    _msg error "Usage: $0 <version> <output_path> [--native]"
+    _msg error "Usage: $0 <version> <output_path> [--native|--binary-only]"
     _msg info "Example: $0 1.1 /tmp/builds"
     exit 1
 fi
@@ -240,7 +253,7 @@ Standards-Version: 4.6.2
 Homepage: https://linux.toys
 
 Package: linuxtoys
-Architecture: amd64
+Architecture: any
 Depends: ${shlibs:Depends},
  ${misc:Depends},
  bash,
@@ -414,6 +427,22 @@ else:
     print((data.get("entries") or [{}])[0].get("status", "unknown"))
 LPPY
 }
+
+# Binary-only construction (the release workflow's second architecture leg,
+# and any host where the source upload already happened or is not wanted):
+# the source tree above is identical to the default mode's, so the binary
+# package is the same debuild product Launchpad builds from the uploaded
+# source — just without the -S upload, the duplicate guard or dput. The
+# debian/control Architecture list decides which arch this host produces.
+if (( BINARY_ONLY )); then
+    _msg info "Binary-only mode: building the native binary package without a PPA upload..."
+    (
+        cd "$OUTPUT_PATH/linuxtoys-$LT_VERSION" || exit 1
+        debuild -us -uc # this builder script requires devscripts!!
+    )
+    rm -rf "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig/" "$OUTPUT_PATH/linuxtoys_$LT_VERSION.orig.tar.xz" "$OUTPUT_PATH/linuxtoys-$LT_VERSION/"
+    echo "All done (binary-only)" && sleep 3 && exit 0
+fi
 
 # Launchpad-side duplicate guard. dput "Successfully uploaded packages" only
 # means the transfer landed in the Launchpad incoming queue; duplicate
