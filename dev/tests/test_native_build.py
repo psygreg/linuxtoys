@@ -138,7 +138,13 @@ class UpdateArchitectureTests(unittest.TestCase):
             ):
                 shutil.copyfile(ROOT / "p3/app" / name, app / name)
                 (app / name).chmod(0o644)
-            for path in (source, source / "p3", app):
+            # The installer trusts a local checkout only when its shared
+            # package guards are present alongside the architecture helpers.
+            libs = source / "p3/libs"
+            libs.mkdir()
+            shutil.copyfile(ROOT / "p3/libs/packages.bash", libs / "packages.bash")
+            (libs / "packages.bash").chmod(0o644)
+            for path in (source, source / "p3", app, libs):
                 path.chmod(0o755)
             installer = (ROOT / "install.sh").read_text()
             # Exercise the real installer functions, without the interactive entry.

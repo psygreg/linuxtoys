@@ -361,20 +361,22 @@ fake() {{ record attempt:; echo {shlex.quote(diagnostic)}; return {status}; }}
 
     def test_concurrent_mock_transactions_are_serialized_by_native_mock_lock(self):
         # The mock manager owns an atomic mkdir lock, just as a real manager
-        # must own its native lock. LinuxToys never steals this fixture lock.
+        # must own its native lock. Use the POSIX calls directly so EEXIST
+        # refuses the losing contender regardless of mkdir tool behavior.
+        # LinuxToys never steals this fixture lock.
         code = """
 _apt_busy_manager() { return 1; }
 _apt_lock_actively_held() { [[ -d "$FIXTURE/manager-lock" ]]; }
 sleep() { /bin/sleep 0.02; SECONDS=$((SECONDS + 1)); }
 APT_BUSY_WAIT_TIMEOUT=30
 fake() {
-    if ! mkdir "$FIXTURE/manager-lock" 2>/dev/null; then
+    if ! python3 -c 'import os,sys; os.mkdir(sys.argv[1])' "$FIXTURE/manager-lock" 2>/dev/null; then
         echo 'Could not get lock'; return 42
     fi
     record enter
     /bin/sleep 0.1
     record leave
-    rmdir "$FIXTURE/manager-lock"
+    python3 -c 'import os,sys; os.rmdir(sys.argv[1])' "$FIXTURE/manager-lock"
 }
 apt_transaction fake
 """
