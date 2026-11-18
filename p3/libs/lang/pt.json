@@ -213,6 +213,7 @@
   "unsupported_os_message": "Sistema operacional não suportado.",
   "dnsmasq_desc": "Configure o cache DNS local para acelerar a resolução de nomes de domínio, melhorar o desempenho de navegação e corrigir problemas com perda de velocidade de download no Steam.",
   "intelxe_desc": "Alterna os drivers Intel para o driver Xe mais recente em GPUs discretas suportadas (Battlemage/Alchemist) para melhorar o desempenho e a compatibilidade.",
+  "ipu6_desc": "Configura câmeras integradas de notebooks que usam o Intel IPU6 (Tiger Lake a Meteor Lake) com o driver open-source do kernel, libcamera e PipeWire. Nenhum módulo de driver externo é instalado. Requer Linux 6.10 ou mais recente.",
   "term_view_execute": " Executar ",
   "term_view_running_label": " Executando ",
   "term_view_done": " Concluído ",

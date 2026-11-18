@@ -215,6 +215,7 @@
   "gtk_bmg_fix": "GTK Rendering Fix",
   "gtk_bmg_fix_desc": "Fixes rendering issues with GTK applications on Intel Battlemage (B-series) and Nvidia GPUs.",
   "intelxe_desc": "Switches Intel drivers to the newer Xe driver on supported discrete GPUs (Battlemage/Alchemist) to improve performance and compatibility.",
+  "ipu6_desc": "Sets up built-in laptop cameras that use the Intel IPU6 (Tiger Lake to Meteor Lake) with the open-source in-kernel driver, libcamera and PipeWire. No out-of-tree driver modules are installed. Requires Linux 6.10 or newer.",
   "term_view_execute": " Execute ",
   "term_view_running_label": " Running ",
   "term_view_done": " Done ",
