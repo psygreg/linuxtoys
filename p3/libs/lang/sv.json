@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "Inget att rapportera",
   "bug_report_cancelled_message": "Den senaste körningen avbröts eller hoppades över, så det finns inget att rapportera.\n\nSenaste meddelande: {reason}",
   "bug_report_rejected_title": "Inget att rapportera",
-  "bug_report_rejected_message": "Terminalutdatan innehöll ingen text som kunde skickas, så rapporten skickades inte in."
+  "bug_report_rejected_message": "Terminalutdatan innehöll ingen text som kunde skickas, så rapporten skickades inte in.",
+  "pkg_flat_invalid_scope": "Ogiltig Flatpak-omfattning (scope)",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope kräver ett värde",
+  "pkg_flat_setup_required": "Konfigurera Flatpak och dess nativa arkiv innan du installerar program",
+  "pkg_flat_preflight_failed": "Flatpak-förhandskontrollen av arkitektur/tillgänglighet misslyckades",
+  "pkg_flat_no_refs": "Ingen nativ Flatpak-ref kunde lösas",
+  "pkg_ext_usage": "Användning: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Ingen nativ utökning tillgänglig för det installerade programmets körtid",
+  "pkg_ext_no_refs": "Ingen nativ utökningsref kunde lösas",
+  "pkg_ext_invalid_plan": "Ogiltig plan för nativ utökning",
+  "pkg_appimage_no_fuse_candidate": "Ingen nativ FUSE 2-kandidat är tillgänglig; konfigurera ett stödt arkiv innan du installerar detta AppImage",
+  "aur_arch_unreadable": "PKGBUILD: arch-vektorn kunde inte läsas statiskt, därför kunde aarch64-kompatibilitet inte verifieras",
+  "aur_arch_empty": "PKGBUILD: arch-vektorn är tom, därför kunde aarch64-kompatibilitet inte verifieras",
+  "aur_arch_no_port": "PKGBUILD: arch-vektorn deklarerar (${archs}) utan en aarch64-port; detta paket stöder inte aarch64"
 }

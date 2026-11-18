@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "Няма какво да се докладва",
   "bug_report_cancelled_message": "Последното изпълнение беше прекъснато или пропуснато, затова няма какво да се докладва.\n\nПоследно съобщение: {reason}",
   "bug_report_rejected_title": "Няма какво да се докладва",
-  "bug_report_rejected_message": "Изходът на терминала не съдържаше текст, който да може да бъде изпратен, затова докладът не беше изпратен."
+  "bug_report_rejected_message": "Изходът на терминала не съдържаше текст, който да може да бъде изпратен, затова докладът не беше изпратен.",
+  "pkg_flat_invalid_scope": "Невалиден обхват (scope) на Flatpak",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope изисква стойност",
+  "pkg_flat_setup_required": "Настройте Flatpak и неговото собствено хранилище преди да инсталирате приложения",
+  "pkg_flat_preflight_failed": "Предварителната проверка на архитектура/наличност за Flatpak се провали",
+  "pkg_flat_no_refs": "Не беше разрешена нито една собствена Flatpak препратка (ref)",
+  "pkg_ext_usage": "Употреба: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Собственото разширение не е налично за изпълнимата среда на инсталираното приложение",
+  "pkg_ext_no_refs": "Не беше разрешена нито една собствена препратка (ref) за разширение",
+  "pkg_ext_invalid_plan": "Невалиден план за собствено разширение",
+  "pkg_appimage_no_fuse_candidate": "Няма наличен собствен кандидат за FUSE 2; настройте поддържано хранилище преди да инсталирате този AppImage",
+  "aur_arch_unreadable": "PKGBUILD: масивът arch не можа да бъде прочетен статично, затова съвместимостта с aarch64 не можа да бъде проверена",
+  "aur_arch_empty": "PKGBUILD: масивът arch е празен, затова съвместимостта с aarch64 не можа да бъде проверена",
+  "aur_arch_no_port": "PKGBUILD: масивът arch декларира (${archs}) без aarch64 порт; този пакет не поддържа aarch64"
 }

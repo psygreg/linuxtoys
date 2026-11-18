@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "रिपोर्ट गर्न केही छैन",
   "bug_report_cancelled_message": "अन्तिम रन रद्द वा छोडिएको थियो, त्यसैले रिपोर्ट गर्न केही छैन।\n\nअन्तिम सन्देश: {reason}",
   "bug_report_rejected_title": "रिपोर्ट गर्न केही छैन",
-  "bug_report_rejected_message": "टर्मिनलको आउटपुटमा पठाउन मिल्ने कुनै पाठ थिएन, त्यसैले रिपोर्ट पेश गरिएन।"
+  "bug_report_rejected_message": "टर्मिनलको आउटपुटमा पठाउन मिल्ने कुनै पाठ थिएन, त्यसैले रिपोर्ट पेश गरिएन।",
+  "pkg_flat_invalid_scope": "अमान्य Flatpak स्कोप",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope लाई एउटा मान चाहिन्छ",
+  "pkg_flat_setup_required": "अनुप्रयोगहरू स्थापना गर्नु अघि Flatpak र यसको नेटिभ भण्डार कन्फिगर गर्नुहोस्",
+  "pkg_flat_preflight_failed": "Flatpak को आर्किटेक्चर/उपलब्धता पूर्व-जाँच असफल भयो",
+  "pkg_flat_no_refs": "कुनै नेटिभ Flatpak रेफ समाधान भएन",
+  "pkg_ext_usage": "प्रयोग: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "स्थापित अनुप्रयोगको रनटाइमका लागि नेटिभ एक्सटेन्सन उपलब्ध छैन",
+  "pkg_ext_no_refs": "कुनै नेटिभ एक्सटेन्सन रेफ समाधान भएन",
+  "pkg_ext_invalid_plan": "अमान्य नेटिभ एक्सटेन्सन योजना",
+  "pkg_appimage_no_fuse_candidate": "FUSE 2 को कुनै नेटिभ उम्मेदवार उपलब्ध छैन; यो AppImage स्थापना गर्नु अघि समर्थित भण्डार कन्फिगर गर्नुहोस्",
+  "aur_arch_unreadable": "PKGBUILD: arch एरे स्थिर रूपमा पढ्न सकिएन, त्यसैले aarch64 अनुकूलता प्रमाणित गर्न सकिएन",
+  "aur_arch_empty": "PKGBUILD: arch एरे खाली छ, त्यसैले aarch64 अनुकूलता प्रमाणित गर्न सकिएन",
+  "aur_arch_no_port": "PKGBUILD: arch एरेले aarch64 पोर्ट बिना (${archs}) घोषणा गर्दछ; यो प्याकेजले aarch64 समर्थन गर्दैन"
 }

@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "Nu există nimic de raportat",
   "bug_report_cancelled_message": "Ultima rulare a fost anulată sau omisă, deci nu există nimic de raportat.\n\nUltimul mesaj: {reason}",
   "bug_report_rejected_title": "Nu există nimic de raportat",
-  "bug_report_rejected_message": "Rezultatul terminalului nu conținea text care să poată fi trimis, deci raportul nu a fost trimis."
+  "bug_report_rejected_message": "Rezultatul terminalului nu conținea text care să poată fi trimis, deci raportul nu a fost trimis.",
+  "pkg_flat_invalid_scope": "Domeniu (scope) Flatpak invalid",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope necesită o valoare",
+  "pkg_flat_setup_required": "Configurați Flatpak și depozitul său nativ înainte de a instala aplicații",
+  "pkg_flat_preflight_failed": "Verificarea prealabilă de arhitectură/disponibilitate pentru Flatpak a eșuat",
+  "pkg_flat_no_refs": "Niciun ref nativ Flatpak nu a fost rezolvat",
+  "pkg_ext_usage": "Utilizare: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Extensia nativă nu este disponibilă pentru mediul de execuție al aplicației instalate",
+  "pkg_ext_no_refs": "Niciun ref nativ de extensie nu a fost rezolvat",
+  "pkg_ext_invalid_plan": "Plan de extensie nativă invalid",
+  "pkg_appimage_no_fuse_candidate": "Nu există niciun candidat nativ pentru FUSE 2; configurați un depozit compatibil înainte de a instala acest AppImage",
+  "aur_arch_unreadable": "PKGBUILD: vectorul arch nu a putut fi citit static, deci compatibilitatea cu aarch64 nu a putut fi verificată",
+  "aur_arch_empty": "PKGBUILD: vectorul arch este gol, deci compatibilitatea cu aarch64 nu a putut fi verificată",
+  "aur_arch_no_port": "PKGBUILD: vectorul arch declară (${archs}) fără un port aarch64; acest pachet nu suportă aarch64"
 }

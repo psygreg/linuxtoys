@@ -3,8 +3,12 @@ python3 "$SCRIPT_DIR/app/architecture_cli.py" label host >/dev/null || return 1
 
 # Shared read-only architecture preflight. Every refusal exits before a caller
 # can authenticate, alter repositories, or replace an existing installation.
+# Dialog lines come from libs/lang/<code>.lib; the inline floors keep the
+# refusal legible when a language file predates these keys (synced scripts can
+# run against an older installed app tree).
 _architecture_check() {
-    python3 "$SCRIPT_DIR/app/architecture_cli.py" "$@" || die "Refusing operation: architecture/availability preflight failed"
+    : "${arch_preflight_refused:=Refusing operation: architecture/availability preflight failed}"
+    python3 "$SCRIPT_DIR/app/architecture_cli.py" "$@" || die "$arch_preflight_refused"
 }
 
 # --- LinuxToys Shell Library ---
@@ -1189,7 +1193,8 @@ run_list_hook() {
     local hook="$1"
     local path=""
 
-    path=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" hook "$SCRIPT_DIR" "${CACHE_DIR:-}" "$hook") || die "Hook architecture preflight failed"
+    : "${arch_preflight_hook_failed:=Hook architecture preflight failed}"
+    path=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" hook "$SCRIPT_DIR" "${CACHE_DIR:-}" "$hook") || die "$arch_preflight_hook_failed"
     source "$path"
 }
 

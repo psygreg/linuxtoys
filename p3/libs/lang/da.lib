@@ -156,3 +156,5 @@ ipu6_conflict="Et IPU6-kamerastak uden for kernen eller proprietært er installe
 ipu6_done="Open source-IPU6-kamerastakken er installeret. Genstart, og brug derefter kameraet i programmer, der tilgår kameraer via PipeWire (Firefox, GNOME Snapshot, OBS). I Chrome/Chromium skal du aktivere chrome://flags/#enable-webrtc-pipewire-camera. Kameraer fundet nu:"
 ipu6_nofw="IPU6-firmwaren mangler, og pakken firmware-misc-nonfree er ikke tilgængelig. Aktivér komponenten non-free-firmware i dine APT-kilder og prøv igen."
 ipu6_nocam="ingen endnu. Hvis kameraet stadig ikke vises efter genstart, understøttes dets sensor endnu ikke i hovedkernen."
+arch_preflight_refused="Handling nægtet: forkontrollen af arkitektur/tilgængelighed mislykkedes"
+arch_preflight_hook_failed="Forkontrollen af hook-arkitekturen mislykkedes"

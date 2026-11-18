@@ -155,3 +155,5 @@ ipu6_conflict="آؤٹ آف ٹری یا ملکیت والا IPU6 کیمرہ اس�
 ipu6_done="اوپن سورس IPU6 کیمرہ اسٹیک انسٹال ہو گیا ہے۔ ری بوٹ کریں، پھر PipeWire کے ذریعے کیمروں تک رسائی رکھنے والی ایپس میں کیمرہ استعمال کریں (Firefox, GNOME Snapshot, OBS)۔ Chrome/Chromium میں chrome://flags/#enable-webrtc-pipewire-camera فعال کریں۔ ابھی ملنے والے کیمرے:"
 ipu6_nofw="IPU6 فرم ویئر موجود نہیں اور firmware-misc-nonfree پیکیج دستیاب نہیں۔ اپنے APT سورسز میں non-free-firmware جزو فعال کریں اور دوبارہ کوشش کریں۔"
 ipu6_nocam="ابھی کوئی نہیں۔ اگر ری بوٹ کے بعد بھی کیمرہ نظر نہ آئے، تو اس کا سینسر ابھی مین لائن کرنل سے سپورٹڈ نہیں ہے۔"
+arch_preflight_refused="عمل مسترد کر دی گئی: فنِ تعمیر/دستیابی کی ابتدائی جانچ ناکام ہو گئی"
+arch_preflight_hook_failed="ہک (hook) کی فنِ تعمیر کی ابتدائی جانچ ناکام ہو گئی"

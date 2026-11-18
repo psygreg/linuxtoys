@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "Nuk ka gjë për të raportuar",
   "bug_report_cancelled_message": "Ekzekutimi i fundit u anulua ose u anashkalua, kështu që nuk ka gjë për të raportuar.\n\nMesazhi i fundit: {reason}",
   "bug_report_rejected_title": "Nuk ka gjë për të raportuar",
-  "bug_report_rejected_message": "Dalja e terminalit nuk kishte tekst që mund të dërgohej, kështu që raporti nuk u dorëzua."
+  "bug_report_rejected_message": "Dalja e terminalit nuk kishte tekst që mund të dërgohej, kështu që raporti nuk u dorëzua.",
+  "pkg_flat_invalid_scope": "Shtrirje (scope) Flatpak e pavlefshme",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope kërkon një vlerë",
+  "pkg_flat_setup_required": "Konfiguroni Flatpak dhe deponë e tij origjinale përpara instalimit të aplikacioneve",
+  "pkg_flat_preflight_failed": "Parakontrolli i arkitekturës/disponueshmërisë së Flatpak dështoi",
+  "pkg_flat_no_refs": "Asnjë ref origjinale e Flatpak nuk u zgjidh",
+  "pkg_ext_usage": "Përdorimi: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Zgjerimi origjinal nuk është i disponueshëm për runtime-un e aplikacionit të instaluar",
+  "pkg_ext_no_refs": "Asnjë ref origjinale e zgjerimit nuk u zgjidh",
+  "pkg_ext_invalid_plan": "Plan i pavlefshëm i zgjerimit origjinal",
+  "pkg_appimage_no_fuse_candidate": "Nuk ka kandidat origjinal për FUSE 2; konfiguroni një depo të mbështetur përpara instalimit të këtij AppImage",
+  "aur_arch_unreadable": "PKGBUILD: vargu (array) arch nuk mund të lexohej statikisht, kështu që përputhshmëria me aarch64 nuk mund të verifikohej",
+  "aur_arch_empty": "PKGBUILD: vargu arch është bosh, kështu që përputhshmëria me aarch64 nuk mund të verifikohej",
+  "aur_arch_no_port": "PKGBUILD: vargu arch deklaron (${archs}) pa portën aarch64; ky paket nuk mbështet aarch64"
 }

@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "Bildiriləcək Heç Nə Yoxdur",
   "bug_report_cancelled_message": "Son işə salma ləğv edildi və ya ötürüldü, ona görə bildiriləcək heç nə yoxdur.\n\nSon mesaj: {reason}",
   "bug_report_rejected_title": "Bildiriləcək Heç Nə Yoxdur",
-  "bug_report_rejected_message": "Terminal çıxışında göndərilə bilən heç bir mətn yox idi, ona görə hesabat göndərilmədi."
+  "bug_report_rejected_message": "Terminal çıxışında göndərilə bilən heç bir mətn yox idi, ona görə hesabat göndərilmədi.",
+  "pkg_flat_invalid_scope": "Yanlış Flatpak əhatə dairəsi (scope)",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope bir dəyər tələb edir",
+  "pkg_flat_setup_required": "Tətbiqlər quraşdırmazdan əvvəl Flatpak və yerli anbarını konfiqurasiya edin",
+  "pkg_flat_preflight_failed": "Flatpak arxitektura/mövcudluq ön yoxlaması uğursuz oldu",
+  "pkg_flat_no_refs": "Heç bir yerli Flatpak ref həll edilmədi",
+  "pkg_ext_usage": "İstifadə: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Quraşdırılmış tətbiqin runtime-u üçün yerli uzantı əlçatmazdır",
+  "pkg_ext_no_refs": "Heç bir yerli uzantı ref həll edilmədi",
+  "pkg_ext_invalid_plan": "Yanlış yerli uzantı planı",
+  "pkg_appimage_no_fuse_candidate": "FUSE 2 üçün yerli namizəd yoxdur; bu AppImage-i quraşdırmazdan əvvəl dəstəklənən bir anbar konfiqurasiya edin",
+  "aur_arch_unreadable": "PKGBUILD: arch massivi statik oxunmadı, buna görə aarch64 uyğunluğu təsdiqlənmədi",
+  "aur_arch_empty": "PKGBUILD: arch massivi boşdur, buna görə aarch64 uyğunluğu təsdiqlənmədi",
+  "aur_arch_no_port": "PKGBUILD: arch massivi aarch64 portu olmadan (${archs}) elan edir; bu paket aarch64 dəstəkləmir"
 }

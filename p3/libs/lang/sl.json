@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "Ničesar ni za prijavo",
   "bug_report_cancelled_message": "Zadnji zagon je bil preklican ali preskočen, zato ničesar ni za prijavo.\n\nZadnje sporočilo: {reason}",
   "bug_report_rejected_title": "Ničesar ni za prijavo",
-  "bug_report_rejected_message": "Izhod terminala ni vseboval besedila, ki bi ga bilo mogoče poslati, zato poročilo ni bilo poslano."
+  "bug_report_rejected_message": "Izhod terminala ni vseboval besedila, ki bi ga bilo mogoče poslati, zato poročilo ni bilo poslano.",
+  "pkg_flat_invalid_scope": "Neveljaven obseg (scope) Flatpak",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope zahteva vrednost",
+  "pkg_flat_setup_required": "Pred namestitvijo programov nastavite Flatpak in njegovo izvorno shrambo",
+  "pkg_flat_preflight_failed": "Predhodno preverjanje arhitekture/razpoložljivosti za Flatpak ni uspelo",
+  "pkg_flat_no_refs": "Nobena izvorna referenca (ref) Flatpak ni bila razrešena",
+  "pkg_ext_usage": "Uporaba: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Izvorna razširitev ni na voljo za izvajalno okolje nameščenega programa",
+  "pkg_ext_no_refs": "Nobena izvorna referenca (ref) razširitve ni bila razrešena",
+  "pkg_ext_invalid_plan": "Neveljaven načrt izvorne razširitve",
+  "pkg_appimage_no_fuse_candidate": "Ni na voljo izvornega kandidata za FUSE 2; pred namestitvijo tega AppImage nastavite podprto shrambo",
+  "aur_arch_unreadable": "PKGBUILD: polja arch ni bilo mogoče statično prebrati, zato združljivosti z aarch64 ni bilo mogoče preveriti",
+  "aur_arch_empty": "PKGBUILD: polje arch je prazno, zato združljivosti z aarch64 ni bilo mogoče preveriti",
+  "aur_arch_no_port": "PKGBUILD: polje arch deklarira (${archs}) brez vrata aarch64; ta paket ne podpira aarch64"
 }

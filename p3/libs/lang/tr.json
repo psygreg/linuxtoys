@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "Bildirilecek Bir Şey Yok",
   "bug_report_cancelled_message": "Son çalıştırma iptal edildi veya atlandı, bu nedenle bildirilecek bir şey yok.\n\nSon mesaj: {reason}",
   "bug_report_rejected_title": "Bildirilecek Bir Şey Yok",
-  "bug_report_rejected_message": "Terminal çıktısında gönderilebilecek metin yoktu, bu nedenle rapor gönderilmedi."
+  "bug_report_rejected_message": "Terminal çıktısında gönderilebilecek metin yoktu, bu nedenle rapor gönderilmedi.",
+  "pkg_flat_invalid_scope": "Geçersiz Flatpak kapsamı (scope)",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope bir değer gerektiriyor",
+  "pkg_flat_setup_required": "Uygulama kurmadan önce Flatpak ve yerel deposunu yapılandırın",
+  "pkg_flat_preflight_failed": "Flatpak mimari/kullanılabilirlik ön kontrolü başarısız oldu",
+  "pkg_flat_no_refs": "Yerel Flatpak referansı (ref) çözülemedi",
+  "pkg_ext_usage": "Kullanım: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Kurulu uygulamanın çalışma zamanı için yerel uzantı kullanılamıyor",
+  "pkg_ext_no_refs": "Yerel uzantı referansı (ref) çözülemedi",
+  "pkg_ext_invalid_plan": "Geçersiz yerel uzantı planı",
+  "pkg_appimage_no_fuse_candidate": "Kullanılabilir yerel FUSE 2 adayı yok; bu AppImage'i kurmadan önce desteklenen bir depo yapılandırın",
+  "aur_arch_unreadable": "PKGBUILD: arch dizisi statik olarak okunamadı, bu nedenle aarch64 uyumluluğu doğrulanamadı",
+  "aur_arch_empty": "PKGBUILD: arch dizisi boş, bu nedenle aarch64 uyumluluğu doğrulanamadı",
+  "aur_arch_no_port": "PKGBUILD: arch dizisi, aarch64 portu olmadan (${archs}) bildiriyor; bu paket aarch64'ü desteklemiyor"
 }

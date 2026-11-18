@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "Tiada Apa yang Perlu Dilaporkan",
   "bug_report_cancelled_message": "Pelaksanaan terakhir telah dibatalkan atau dilangkau, jadi tiada apa yang perlu dilaporkan.\n\nMesej terakhir: {reason}",
   "bug_report_rejected_title": "Tiada Apa yang Perlu Dilaporkan",
-  "bug_report_rejected_message": "Output terminal tiada teks yang boleh dihantar, jadi laporan tidak dihantar."
+  "bug_report_rejected_message": "Output terminal tiada teks yang boleh dihantar, jadi laporan tidak dihantar.",
+  "pkg_flat_invalid_scope": "Skop (scope) Flatpak tidak sah",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope memerlukan satu nilai",
+  "pkg_flat_setup_required": "Konfigurasikan Flatpak dan repositori natifnya sebelum memasang aplikasi",
+  "pkg_flat_preflight_failed": "Prapemeriksaan senibina/ketersediaan Flatpak gagal",
+  "pkg_flat_no_refs": "Tiada ref natif Flatpak yang diselesaikan",
+  "pkg_ext_usage": "Penggunaan: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Sambungan natif tidak tersedia untuk masa jalan (runtime) aplikasi yang dipasang",
+  "pkg_ext_no_refs": "Tiada ref natif sambungan yang diselesaikan",
+  "pkg_ext_invalid_plan": "Pelan sambungan natif tidak sah",
+  "pkg_appimage_no_fuse_candidate": "Tiada calon natif FUSE 2 tersedia; konfigurasikan repositori yang disokong sebelum memasang AppImage ini",
+  "aur_arch_unreadable": "PKGBUILD: tatasusunan (array) arch tidak dapat dibaca secara statik, maka keserasian aarch64 tidak dapat disahkan",
+  "aur_arch_empty": "PKGBUILD: tatasusunan arch kosong, maka keserasian aarch64 tidak dapat disahkan",
+  "aur_arch_no_port": "PKGBUILD: tatasusunan arch mengisytiharkan (${archs}) tanpa port aarch64; pakej ini tidak menyokong aarch64"
 }

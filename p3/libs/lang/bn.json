@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "রিপোর্ট করার কিছু নেই",
   "bug_report_cancelled_message": "শেষ রানটি বাতিল বা এড়িয়ে যাওয়া হয়েছে, তাই রিপোর্ট করার কিছু নেই।\n\nশেষ বার্তা: {reason}",
   "bug_report_rejected_title": "রিপোর্ট করার কিছু নেই",
-  "bug_report_rejected_message": "টার্মিনাল আউটপুটে পাঠানোর মতো কোনো টেক্সট ছিল না, তাই রিপোর্টটি জমা দেওয়া হয়নি।"
+  "bug_report_rejected_message": "টার্মিনাল আউটপুটে পাঠানোর মতো কোনো টেক্সট ছিল না, তাই রিপোর্টটি জমা দেওয়া হয়নি।",
+  "pkg_flat_invalid_scope": "অবৈধ Flatpak স্কোপ",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope-এর একটি মান প্রয়োজন",
+  "pkg_flat_setup_required": "অ্যাপ্লিকেশন ইনস্টল করার আগে Flatpak এবং এর নেটিভ রিপোজিটরি কনফিগার করুন",
+  "pkg_flat_preflight_failed": "Flatpak-এর আর্কিটেকচার/প্রাপ্যতা প্রি-চেক ব্যর্থ হয়েছে",
+  "pkg_flat_no_refs": "কোনো নেটিভ Flatpak রেফ সমাধান করা যায়নি",
+  "pkg_ext_usage": "ব্যবহার: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "ইনস্টল করা অ্যাপ্লিকেশনের রানটাইমের জন্য নেটিভ এক্সটেনশন অনুপলব্ধ",
+  "pkg_ext_no_refs": "কোনো নেটিভ এক্সটেনশন রেফ সমাধান করা যায়নি",
+  "pkg_ext_invalid_plan": "অবৈধ নেটিভ এক্সটেনশন পরিকল্পনা",
+  "pkg_appimage_no_fuse_candidate": "FUSE 2-এর কোনো নেটিভ প্রার্থী উপলব্ধ নেই; এই AppImage ইনস্টল করার আগে একটি সমর্থিত রিপোজিটরি কনফিগার করুন",
+  "aur_arch_unreadable": "PKGBUILD: arch অ্যারেটি স্থিরভাবে পড়া যায়নি, তাই aarch64 সামঞ্জস্যতা যাচাই করা যায়নি",
+  "aur_arch_empty": "PKGBUILD: arch অ্যারেটি খালি, তাই aarch64 সামঞ্জস্যতা যাচাই করা যায়নি",
+  "aur_arch_no_port": "PKGBUILD: arch অ্যারে aarch64 পোর্ট ছাড়াই (${archs}) ঘোষণা করে; এই প্যাকেজটি aarch64 সমর্থন করে না"
 }

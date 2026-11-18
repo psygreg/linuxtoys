@@ -156,3 +156,5 @@ ipu6_conflict="یک پشته دوربین IPU6 خارج از درخت یا ما�
 ipu6_done="پشته دوربین IPU6 متن‌باز نصب شد. رایانه را دوباره راه‌اندازی کنید، سپس دوربین را در برنامه‌هایی که از طریق PipeWire به دوربین‌ها دسترسی دارند استفاده کنید (Firefox، GNOME Snapshot، OBS). در Chrome/Chromium گزینه chrome://flags/#enable-webrtc-pipewire-camera را فعال کنید. دوربین‌های یافت‌شده اکنون:"
 ipu6_nofw="firmware مربوط به IPU6 وجود ندارد و بسته firmware-misc-nonfree در دسترس نیست. مؤلفه non-free-firmware را در منابع APT خود فعال کنید و دوباره تلاش کنید."
 ipu6_nocam="هنوز هیچ. اگر دوربین پس از راه‌اندازی مجدد هم ظاهر نشد، سنسور آن هنوز در هسته اصلی پشتیبانی نمی‌شود."
+arch_preflight_refused="عملیات رد شد: پیش‌آزمون معماری/دسترس‌پذیری ناموفق بود"
+arch_preflight_hook_failed="پیش‌آزمون معماری هوک (hook) ناموفق بود"

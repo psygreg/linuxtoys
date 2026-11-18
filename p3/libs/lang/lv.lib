@@ -156,3 +156,5 @@ ipu6_conflict="Ir instalēts IPU6 kameras steks ārpus koda bāzes vai ar slēgt
 ipu6_done="Atvērtā koda IPU6 kameras steks ir instalēts. Restartējiet un pēc tam izmantojiet kameru lietotnēs, kas piekļūst kamerām caur PipeWire (Firefox, GNOME Snapshot, OBS). Chrome/Chromium iespējojiet chrome://flags/#enable-webrtc-pipewire-camera. Tagad atrastās kameras:"
 ipu6_nofw="IPU6 aparatūras aprīkojums (firmware) trūkst un pakotne firmware-misc-nonfree nav pieejama. Ieslēdziet non-free-firmware komponenti savos APT avotos un mēģiniet vēlreiz."
 ipu6_nocam="vēl neviena. Ja kamera pēc restartēšanas joprojām neparādās, tās sensors galvenajā kodolā vēl netiek atbalstīts."
+arch_preflight_refused="Darbība atteikta: arhitektūras/pieejamības iepriekšējā pārbaude neizdevās"
+arch_preflight_hook_failed="Hook arhitektūras iepriekšējā pārbaude neizdevās"

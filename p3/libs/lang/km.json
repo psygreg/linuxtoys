@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "គ្មានអ្វីត្រូវរាយការណ៍",
   "bug_report_cancelled_message": "ដំណើរការចុងក្រោយត្រូវបានបោះបង់ឬរំលង ដូច្នេះគ្មានអ្វីត្រូវរាយការណ៍ទេ។\n\nសារចុងក្រោយ៖ {reason}",
   "bug_report_rejected_title": "គ្មានអ្វីត្រូវរាយការណ៍",
-  "bug_report_rejected_message": "លទ្ធផល terminal គ្មានអត្ថបទដែលអាចផ្ញើបាន ដូច្នេះរបាយការណ៍មិនត្រូវបានផ្ញើទេ។"
+  "bug_report_rejected_message": "លទ្ធផល terminal គ្មានអត្ថបទដែលអាចផ្ញើបាន ដូច្នេះរបាយការណ៍មិនត្រូវបានផ្ញើទេ។",
+  "pkg_flat_invalid_scope": "វិសាលគម (scope) Flatpak មិនត្រឹមត្រូវ",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope ត្រូវការតម្លៃមួយ",
+  "pkg_flat_setup_required": "កំណត់រចនាសម្ព័ន្ធឃ្លាំងដើមរបស់ Flatpak មុននឹងដំឡើងកម្មវិធី",
+  "pkg_flat_preflight_failed": "ការពិនិត្យជាមុនស្ថាបត្យកម្ម/ភាពអាចរកបានរបស់ Flatpak បរាជ័យ",
+  "pkg_flat_no_refs": "មិនអាចដោះស្រាយ ref ដើមរបស់ Flatpak ណាមួយបានទេ",
+  "pkg_ext_usage": "ការប្រើប្រាស់៖ pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "ផ្នែកបន្ថែមដើមមិនអាចប្រើបានសម្រាប់ runtime នៃកម្មវិធីដែលបានដំឡើងទេ",
+  "pkg_ext_no_refs": "មិនអាចដោះស្រាយ ref ដើមនៃផ្នែកបន្ថែមណាមួយបានទេ",
+  "pkg_ext_invalid_plan": "ផែនការផ្នែកបន្ថែមដើមមិនត្រឹមត្រូវ",
+  "pkg_appimage_no_fuse_candidate": "គ្មានបេក្ខជនដើមសម្រាប់ FUSE 2 ទេ។ សូមកំណត់រចនាសម្ព័ន្ធឃ្លាំងដែលគាំទ្រមុននឹងដំឡើង AppImage នេះ",
+  "aur_arch_unreadable": "PKGBUILD៖ មិនអាចអានអារេ (array) arch ដោយផ្ទាល់បានទេ ដូច្នេះមិនអាចផ្ទៀងផ្ទាត់ភាពឆបគ្នាជាមួយ aarch64 បានទេ",
+  "aur_arch_empty": "PKGBUILD៖ អារេ arch គឺទំនេរ ដូច្នេះមិនអាចផ្ទៀងផ្ទាត់ភាពឆបគ្នាជាមួយ aarch64 បានទេ",
+  "aur_arch_no_port": "PKGBUILD៖ អារេ arch ប្រកាស (${archs}) ដោយគ្មានច្រក aarch64 កញ្ចប់នេះមិនគាំទ្រ aarch64 ទេ"
 }

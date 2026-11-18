@@ -509,7 +509,7 @@ osappimage() {
 }
 
 manjaro() {
-    { pacman_transaction sudo pamac build linuxtoys-bin && info "LinuxToys installed or updated!"; } || error "Failed to download: ${_pkg_name}"
+    { pacman_transaction sudo pamac build linuxtoys-bin && info "LinuxToys installed or updated!"; } || error "Failed to build linuxtoys-bin from the AUR."
 }
 
 requires_appimage() {
@@ -529,6 +529,37 @@ requires_appimage() {
             ;;
     esac
     [[ "$distro_like" == *" gnomeos "* ]]
+}
+
+# Resolve the installation route for this host: which handler runs and which
+# release-asset kind that handler consumes (empty when the handler needs no
+# package asset at all — the Manjaro-family AUR build). $ID wins; $ID_LIKE is
+# only the fallback when no known ID matches, mirroring os-release semantics.
+# Immutable hosts and Solus always take the AppImage route.
+_resolve_route() {
+    if requires_appimage || [ "${ID:-}" = solus ]; then
+        _route_handler=osappimage
+        _route_kind=appimage
+        return 0
+    fi
+    case "${ID:-}" in
+        debian|ubuntu|deepin) _route_handler=osdeb; _route_kind=deb ;;
+        fedora|rhel|centos|rocky|almalinux) _route_handler=osrpm; _route_kind=rpm ;;
+        suse|opensuse) _route_handler=ossuse; _route_kind=rpm ;;
+        manjaro|biglinux|bigcommunity) _route_handler=manjaro; _route_kind="" ;;
+        steamos) _route_handler=osappimage; _route_kind=appimage ;;
+        arch|cachyos|artix) _route_handler=osarch; _route_kind=arch ;;
+        *)
+            case "${ID_LIKE:-}" in
+                *debian*|*ubuntu*) _route_handler=osdeb; _route_kind=deb ;;
+                *rhel*|*fedora*) _route_handler=osrpm; _route_kind=rpm ;;
+                *manjaro*) _route_handler=manjaro; _route_kind="" ;;
+                *suse*) _route_handler=ossuse; _route_kind=rpm ;;
+                *arch*) _route_handler=osarch; _route_kind=arch ;;
+                *) return 1 ;;
+            esac
+            ;;
+    esac
 }
 
 installer() {
@@ -559,56 +590,45 @@ installer() {
 		error "Unsupported operating system (no /etc/os-release)."
 	fi
 
-	local kind selected
-	if requires_appimage || [ "${ID:-}" = solus ]; then kind=appimage
-	else
-		case "${ID:-} ${ID_LIKE:-}" in
-			*debian*|*ubuntu*|*deepin*) kind=deb ;;
-			*suse*|*fedora*|*rhel*|*centos*|*rocky*|*almalinux*) kind=rpm ;;
-			*arch*|*manjaro*|*biglinux*|*bigcommunity*|*cachyos*|*artix*) kind=arch ;;
-			*) error "Unsupported operating system." ;;
-		esac
+	# Resolve the route first, then select only the release asset that route
+	# consumes. The staged ISA policy (architecture_prepare/verify) refuses
+	# foreign or unreviewed payloads, so a host whose architecture has no
+	# native package of its kind in the release — an aarch64 host on an
+	# x86-only release — has no candidate at all here.
+	_route_handler="" _route_kind=""
+	_resolve_route || error "Unsupported operating system."
+
+	local selected _kind_label
+	if [ -n "${_route_kind}" ]; then
+		if selected=$(python3 "$_architecture_cli" release --kind "${_route_kind}" "$_architecture_work/release.json"); then
+			case "${_route_kind}" in
+				deb) _deb="$selected"; _deb_name=$(basename "$_deb") ;;
+				rpm) _rpm="$selected"; _rpm_name=$(basename "$_rpm") ;;
+				arch) _pkg="$selected"; _pkg_name=$(basename "$_pkg") ;;
+				appimage) _appimage="$selected"; _appimage_name=$(basename "$_appimage") ;;
+			esac
+		# Availability fallback: the AppImage route itself has nothing to fall
+		# back to, but a native-package route may still find a verified native
+		# AppImage for this host. Route through Gear Lever instead of failing
+		# closed; the notice is the only thing separating this path from an
+		# immutable-host installation.
+		elif [ "${_route_kind}" != "appimage" ] &&
+			_appimage=$(python3 "$_architecture_cli" release --kind appimage "$_architecture_work/release.json"); then
+			_appimage_name=$(basename "$_appimage")
+			case "${_route_kind}" in
+				deb) _kind_label="Debian" ;;
+				rpm) _kind_label="RPM" ;;
+				arch) _kind_label="Arch Linux" ;;
+			esac
+			_lt_warn "No native ${_kind_label} package for this architecture was found in the latest release. Falling back to the AppImage installation."
+			osappimage
+			return
+		else
+			error "No unique verified native LinuxToys release asset."
+		fi
 	fi
-	selected=$(python3 "$_architecture_cli" release --kind "$kind" "$_architecture_work/release.json") || error "No unique verified native LinuxToys release asset."
-	case "$kind" in
-		deb) _deb="$selected"; _deb_name=$(basename "$_deb") ;;
-		rpm) _rpm="$selected"; _rpm_name=$(basename "$_rpm") ;;
-		arch) _pkg="$selected"; _pkg_name=$(basename "$_pkg") ;;
-		appimage) _appimage="$selected"; _appimage_name=$(basename "$_appimage") ;;
-	esac
 
-    # Select the AppImage before either the ostree check or ID_LIKE can route
-    # an immutable host to a native package installation.
-    if requires_appimage; then
-        osappimage
-        return
-    fi
-
-	case "${ID:-}" in
-		debian|ubuntu|deepin) osdeb ;;
-		fedora|rhel|centos|rocky|almalinux) osrpm ;;
-		suse|opensuse) ossuse ;;
-		manjaro|biglinux|bigcommunity) manjaro;;
-		steamos) osappimage ;;
-		arch|cachyos|artix) osarch ;;
-		solus) osappimage ;;
-	esac
-
-	case "${ID_LIKE:-}" in
-		*debian*|*ubuntu*) osdeb ;;
-		*rhel*|*fedora*) osrpm ;;
-		*manjaro*) manjaro ;;
-		*suse*) ossuse ;;
-		*arch*)
-			if [ "${ID:-}" = "steamos" ]; then
-				osappimage
-			else
-				osarch
-			fi
-			;;
-	esac
-
-	error "Unsupported operating system."
+	"$_route_handler"
 }
 
 if [ -t 0 ] && [ "${LINUXTOYS_NONINTERACTIVE:-0}" != "1" ]; then

@@ -156,3 +156,5 @@ ipu6_conflict="Nameščen je IPU6 kamerni sklad zunaj jedra ali zaprte kode. Me�
 ipu6_done="Odprti IPU6 kamerni sklad je nameščen. Znova zaženite računalnik in nato uporabite kamero v aplikacijah, ki dostopajo do kamer prek PipeWire (Firefox, GNOME Snapshot, OBS). V Chrome/Chromium omogočite chrome://flags/#enable-webrtc-pipewire-camera. Zdaj najdene kamere:"
 ipu6_nofw="Manjka vdelana programska oprema IPU6 in paket firmware-misc-nonfree ni na voljo. Omogočite komponento non-free-firmware v svojih APT virih in poskusite znova."
 ipu6_nocam="zaenkrat nič. Če se kamera po ponovnem zagonu še vedno ne prikaže, njen senzor še ni podprt v glavnem jedru."
+arch_preflight_refused="Dejanje zavrnjeno: predhodno preverjanje arhitekture/razpoložljivosti ni uspelo"
+arch_preflight_hook_failed="Predhodno preverjanje arhitekture kljuke (hook) ni uspelo"

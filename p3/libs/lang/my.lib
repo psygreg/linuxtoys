@@ -154,3 +154,5 @@ ipu6_conflict="kernel ပြင်ပ သို့မဟုတ် proprietary IP
 ipu6_done="open-source IPU6 camera stack ကို ထည့်သွင်းပြီးပါပြီ။ Reboot ပြုလုပ်ပါ၊ ထို့နောက် PipeWire မှတဆင့် ကင်မရာများကို ဝင်ရောက်သော application များတွင် ကင်မရာကို အသုံးပြုပါ (Firefox, GNOME Snapshot, OBS)။ Chrome/Chromium တွင် chrome://flags/#enable-webrtc-pipewire-camera ကို ဖွင့်ပါ။ ယခု တွေ့ရှိသော ကင်မရာများ:"
 ipu6_nofw="IPU6 firmware ပျောက်နေပြီး firmware-misc-nonfree package ကို ရရှိနိုင်မည် မဟုတ်ပါ။ သင်၏ APT sources တွင် non-free-firmware component ကို ဖွင့်ပြီး ထပ်မံကြိုးစားပါ။"
 ipu6_nocam="မရှိသေးပါ။ Reboot ပြီးနောက်တွင် ကင်မရာ မပေါ်လာပါက ၎င်း၏ sensor ကို mainline kernel မှ အားပေးထားခြင်း မရှိသေးပါ။"
+arch_preflight_refused="လုပ်ဆောင်ချက်ကို ငြင်းပယ်သည်- ဗိသုကာ/ရရှိနိုင်မှု ကြိုစစ်ဆေးမှု မအောင်မြင်ပါ"
+arch_preflight_hook_failed="hook ၏ ဗိသုကာ ကြိုစစ်ဆေးမှု မအောင်မြင်ပါ"

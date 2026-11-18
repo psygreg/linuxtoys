@@ -156,3 +156,5 @@ ipu6_conflict="En IPU6-kamerastack utanför kärnan eller proprietär är instal
 ipu6_done="Öppen källkod-IPU6-kamerastacken är installerad. Starta om och använd sedan kameran i program som ansluter till kameror via PipeWire (Firefox, GNOME Snapshot, OBS). I Chrome/Chromium aktiverar du chrome://flags/#enable-webrtc-pipewire-camera. Kameror hittade nu:"
 ipu6_nofw="IPU6-firmware saknas och paketet firmware-misc-nonfree är inte tillgängligt. Aktivera komponenten non-free-firmware i dina APT-källor och försök igen."
 ipu6_nocam="inga ännu. Om kameran fortfarande inte visas efter omstart stöds dess sensor ännu inte i huvudkärnan."
+arch_preflight_refused="Åtgärden nekades: förhandskontrollen av arkitektur/tillgänglighet misslyckades"
+arch_preflight_hook_failed="Förhandskontrollen av hookens arkitektur misslyckades"

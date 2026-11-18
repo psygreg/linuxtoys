@@ -156,3 +156,5 @@ ipu6_conflict="มีสแตกกล้อง IPU6 ภายนอกเค�
 ipu6_done="ติดตั้งสแตกกล้อง IPU6 แบบโอเพนซอร์สแล้ว รีบูตแล้วใช้กล้องในแอปที่เข้าถึงกล้องผ่าน PipeWire (Firefox, GNOME Snapshot, OBS) ใน Chrome/Chromium เปิดใช้ chrome://flags/#enable-webrtc-pipewire-camera กล้องที่พบตอนนี้:"
 ipu6_nofw="ไฟร์แวร์ IPU6 หายไปและแพ็กเกจ firmware-misc-nonfree ไม่พร้อมใช้งาน เปิดใช้คอมโพเนนต์ non-free-firmware ในแหล่ง APT ของคุณแล้วลองอีกครั้ง"
 ipu6_nocam="ยังไม่มีเลย หากกล้องยังไม่ปรากฏหลังรีบูต เซนเซอร์ของมันยังไม่ได้รับการสนับสนุนในเคอร์เนลหลัก"
+arch_preflight_refused="ปฏิเสธการทำงาน: การตรวจสอบก่อนด้านสถาปัตยกรรม/ความพร้อมใช้ล้มเหลว"
+arch_preflight_hook_failed="การตรวจสอบก่อนด้านสถาปัตยกรรมของ hook ล้มเหลว"

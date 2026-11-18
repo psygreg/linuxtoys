@@ -156,3 +156,5 @@ ipu6_conflict="حزمة كاميرا IPU6 من خارج الشجرة أو ممل
 ipu6_done="ثُبّتت حزمة الكاميرا IPU6 مفتوحة المصدر. أعد التشغيل، ثم استخدم الكاميرا في التطبيقات التي تصل إلى الكاميرات عبر PipeWire (Firefox وGNOME Snapshot وOBS). في Chrome/Chromium فعّل chrome://flags/#enable-webrtc-pipewire-camera. الكاميرات الموجودة الآن:"
 ipu6_nofw="برنامج IPU6 الثابت مفقود وحزمة firmware-misc-nonfree غير متوفرة. فعّل مكوّن non-free-firmware في مصادر APT ثم حاول مجددًا."
 ipu6_nocam="لا شيء بعد. إذا لم تظهر الكاميرا بعد إعادة التشغيل، فمستشعرها غير مدعوم في النواة الرئيسية بعد."
+arch_preflight_refused="رفض العملية: فشل الفحص المسبق للبنية/التوافر"
+arch_preflight_hook_failed="فشل الفحص المسبق لبنية الخطاف (hook)"

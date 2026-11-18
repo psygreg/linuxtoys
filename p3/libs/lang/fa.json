@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "چیزی برای گزارش نیست",
   "bug_report_cancelled_message": "آخرین اجرا لغو شد یا رد شد، بنابراین چیزی برای گزارش نیست.\n\nآخرین پیام: {reason}",
   "bug_report_rejected_title": "چیزی برای گزارش نیست",
-  "bug_report_rejected_message": "خروجی پایانه هیچ متنی قابل ارسال نداشت، بنابراین گزارش ارسال نشد."
+  "bug_report_rejected_message": "خروجی پایانه هیچ متنی قابل ارسال نداشت، بنابراین گزارش ارسال نشد.",
+  "pkg_flat_invalid_scope": "دامنه (scope) Flatpak نامعتبر است",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope به یک مقدار نیاز دارد",
+  "pkg_flat_setup_required": "پیش از نصب برنامه‌ها، Flatpak و مخزن بومی آن را پیکربندی کنید",
+  "pkg_flat_preflight_failed": "پیش‌آزمون معماری/دسترس‌پذیری Flatpak ناموفق بود",
+  "pkg_flat_no_refs": "هیچ ref بومی Flatpak حل نشد",
+  "pkg_ext_usage": "کاربرد: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "افزونه بومی برای زمان اجرای برنامه نصب‌شده در دسترس نیست",
+  "pkg_ext_no_refs": "هیچ ref بومی افزونه حل نشد",
+  "pkg_ext_invalid_plan": "طرح افزونه بومی نامعتبر است",
+  "pkg_appimage_no_fuse_candidate": "هیچ گزینه بومی برای FUSE 2 موجود نیست؛ پیش از نصب این AppImage، یک مخزن پشتیبانی‌شده پیکربندی کنید",
+  "aur_arch_unreadable": "PKGBUILD: آرایه arch به‌صورت ایستا خوانده نشد، بنابراین سازگاری با aarch64 تأیید نشد",
+  "aur_arch_empty": "PKGBUILD: آرایه arch خالی است، بنابراین سازگاری با aarch64 تأیید نشد",
+  "aur_arch_no_port": "PKGBUILD: آرایه arch مقدار (${archs}) را بدون درگاه aarch64 اعلام می‌کند؛ این بسته از aarch64 پشتیبانی نمی‌کند"
 }

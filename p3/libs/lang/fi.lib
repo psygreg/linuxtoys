@@ -156,3 +156,5 @@ ipu6_conflict="Ytimen ulkopuolinen tai suljettu IPU6-kamerapino on asennettu. Se
 ipu6_done="Avoimen lähdekoodin IPU6-kamerapino on asennettu. Käynnistä uudelleen ja käytä sitten kameraa sovelluksissa, jotka käyttävät kameroita PipeWiren kautta (Firefox, GNOME Snapshot, OBS). Ota Chrome/Chromiumissa käyttöön chrome://flags/#enable-webrtc-pipewire-camera. Nyt löydetyt kamerat:"
 ipu6_nofw="IPU6-firmware puuttuu ja paketti firmware-misc-nonfree ei ole saatavilla. Ota käyttöön non-free-firmware-komponentti APT-lähteissäsi ja yritä uudelleen."
 ipu6_nocam="ei vielä yhtään. Jos kamera ei vieläkään ilmesty uudelleenkäynnistyksen jälkeen, sen sensoria ei vielä tueta pääytimessä."
+arch_preflight_refused="Toiminta hylätty: arkkitehtuurin/käytettävyyden esitarkistus epäonnistui"
+arch_preflight_hook_failed="Hookin arkkitehtuurin esitarkistus epäonnistui"

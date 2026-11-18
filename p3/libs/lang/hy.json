@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "Հաղորդելու բան չկա",
   "bug_report_cancelled_message": "Վերջին գործարկումը չեղարկվել կամ բաց է թողնվել, ուստի հաղորդելու բան չկա։\n\nՎերջին հաղորդագրությունը՝ {reason}",
   "bug_report_rejected_title": "Հաղորդելու բան չկա",
-  "bug_report_rejected_message": "Տերմինալի ելքում չկար ուղարկելի տեքստ, ուստի հաշվետվությունը չի ներկայացվել։"
+  "bug_report_rejected_message": "Տերմինալի ելքում չկար ուղարկելի տեքստ, ուստի հաշվետվությունը չի ներկայացվել։",
+  "pkg_flat_invalid_scope": "Անվավեր Flatpak շրջանակ (scope)",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope-ը պահանջում է արժեք",
+  "pkg_flat_setup_required": "Հավելվածներ տեղադրելուց առաջ կարգավորեք Flatpak-ը և իր բնիկ պահեստը",
+  "pkg_flat_preflight_failed": "Flatpak-ի ճարտարապետության/հասանելիության նախնական ստուգումը ձախողվեց",
+  "pkg_flat_no_refs": "Ոչ մի բնիկ Flatpak ref չլուծվեց",
+  "pkg_ext_usage": "Օգտագործում. pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Բնիկ ընդլայնումը հասանելի չէ տեղադրված հավելվածի runtime-ի համար",
+  "pkg_ext_no_refs": "Ոչ մի բնիկ ընդլայնման ref չլուծվեց",
+  "pkg_ext_invalid_plan": "Անվավեր բնիկ ընդլայնման պլան",
+  "pkg_appimage_no_fuse_candidate": "FUSE 2-ի բնիկ թեկնածու չկա. տեղադրելուց առաջ կարգավորեք աջակցվող պահեստ",
+  "aur_arch_unreadable": "PKGBUILD. arch զանգվածը հնարավոր չեղավ ստատիկ կարդալ, ուստի aarch64 համատեղելիությունը չհաստատվեց",
+  "aur_arch_empty": "PKGBUILD. arch զանգվածը դատարկ է, ուստի aarch64 համատեղելիությունը չհաստատվեց",
+  "aur_arch_no_port": "PKGBUILD. arch զանգվածը հայտարարում է (${archs}) առանց aarch64 պորտի. այս փաթեթը չի աջակցում aarch64"
 }

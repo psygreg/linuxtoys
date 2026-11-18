@@ -156,3 +156,5 @@ ipu6_conflict="カーネル外または独自の IPU6 カメラスタックが�
 ipu6_done="オープンソースの IPU6 カメラスタックがインストールされました。再起動後、PipeWire 経由でカメラにアクセスするアプリケーションでカメラを使用してください（Firefox、GNOME Snapshot、OBS）。Chrome/Chromium では chrome://flags/#enable-webrtc-pipewire-camera を有効にしてください。現在見つかったカメラ:"
 ipu6_nofw="IPU6 のファームウェアが見つからず、firmware-misc-nonfree パッケージも利用できません。APT のソースで non-free-firmware コンポーネントを有効にして、再試行してください。"
 ipu6_nocam="まだありません。再起動後もカメラが表示されない場合は、そのセンサーはまだメインラインカーネルでサポートされていません。"
+arch_preflight_refused="操作を拒否しました：アーキテクチャ/可用性の事前チェックに失敗しました"
+arch_preflight_hook_failed="フック（hook）のアーキテクチャ事前チェックに失敗しました"

@@ -155,3 +155,5 @@ ipu6_conflict="커널 외부 또는 독점 IPU6 카메라 스택이 설치되어
 ipu6_done="오픈소스 IPU6 카메라 스택이 설치되었습니다. 재부팅 후 PipeWire를 통해 카메라에 접근하는 앱에서 카메라를 사용하세요(Firefox, GNOME Snapshot, OBS). Chrome/Chromium에서는 chrome://flags/#enable-webrtc-pipewire-camera를 활성화하세요. 현재 발견된 카메라:"
 ipu6_nofw="IPU6 펌웨어가 없고 firmware-misc-nonfree 패키지를 사용할 수 없습니다. APT 소스에서 non-free-firmware 구성 요소를 활성화한 후 다시 시도하세요."
 ipu6_nocam="아직 없음. 재부팅 후에도 카메라가 나타나지 않으면 센서가 아직 메인라인 커널에서 지원되지 않는 것입니다."
+arch_preflight_refused="작업이 거부되었습니다: 아키텍처/가용성 사전 검사에 실패했습니다"
+arch_preflight_hook_failed="훅(hook) 아키텍처 사전 검사에 실패했습니다"

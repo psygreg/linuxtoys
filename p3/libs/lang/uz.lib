@@ -155,3 +155,5 @@ ipu6_conflict="Yadro tashqarisidagi yoki yopiq IPU6 kamera steki o'rnatilgan. Un
 ipu6_done="Ochiq kodli IPU6 kamera steki o'rnatildi. Qayta ishga tushiring, so'ng kamerani PipeWire orqali kameralarga murojaat qiladigan ilovalarda ishlatib ko'ring (Firefox, GNOME Snapshot, OBS). Chrome/Chromium'da chrome://flags/#enable-webrtc-pipewire-camera imkoniyatini yoqing. Hozir topilgan kameralar:"
 ipu6_nofw="IPU6 firmware'i yo'q va firmware-misc-nonfree paketi mavjud emas. APT manbalarida non-free-firmware komponentini yoqing va qayta urinib ko'ring."
 ipu6_nocam="hozircha yo'q. Agar qayta ishga tushirgandan keyin ham kamera ko'rinmasa, uning sensori asosiy yadro tomonidan hali qo'llab-quvvatlanmaydi."
+arch_preflight_refused="Amal rad etildi: arxitektura/mavjudlik oldindan tekshiruvi muvaffaqiyatsiz bo'ldi"
+arch_preflight_hook_failed="Hook (ilova) arxitekturasi oldindan tekshiruvi muvaffaqiyatsiz bo'ldi"

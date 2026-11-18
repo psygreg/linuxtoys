@@ -156,3 +156,5 @@ ipu6_conflict="Instaliran je IPU6 kamera stek izvan kernela ili vlasnički. Mije
 ipu6_done="Otvoreni IPU6 kamera stek je instaliran. Ponovo pokrenite računar, a zatim koristite kameru u aplikacijama koje pristupaju kamerama preko PipeWire-a (Firefox, GNOME Snapshot, OBS). U Chrome/Chromium-u omogućite chrome://flags/#enable-webrtc-pipewire-camera. Kamera pronađeno sada:"
 ipu6_nofw="IPU6 firmware nedostaje i paket firmware-misc-nonfree nije dostupan. Omogućite komponentu non-free-firmware u vašim APT izvorima, pa pokušajte ponovo."
 ipu6_nocam="zasad nijedna. Ako se kamera i dalje ne pojavi nakon ponovnog pokretanja, njen senzor još nije podržan u glavnom kernelu."
+arch_preflight_refused="Operacija odbijena: pretpregled arhitekture/dostupnosti nije uspio"
+arch_preflight_hook_failed="Pretpregled arhitekture hook-a nije uspio"

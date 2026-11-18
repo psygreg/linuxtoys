@@ -155,3 +155,5 @@ ipu6_conflict="Çekirdek dışı veya sahipli bir IPU6 kamera yığını kurulu.
 ipu6_done="Açık kaynaklı IPU6 kamera yığını kuruldu. Yeniden başlatın, sonra kamerayı PipeWire üzerinden kameraya erişen uygulamalarda kullanın (Firefox, GNOME Snapshot, OBS). Chrome/Chromium'da chrome://flags/#enable-webrtc-pipewire-camera seçeneğini etkinleştirin. Şimdi bulunan kameralar:"
 ipu6_nofw="IPU6 aygıt yazılımı eksik ve firmware-misc-nonfree paketi mevcut değil. APT kaynaklarınızda non-free-firmware bileşenini etkinleştirin ve yeniden deneyin."
 ipu6_nocam="henüz yok. Yeniden başlatmadan sonra kamera hâlâ görünmüyorsa, sensörü ana çekirdek tarafından henüz desteklenmiyor."
+arch_preflight_refused="İşlem reddedildi: mimari/kullanılabilirlik ön kontrolü başarısız oldu"
+arch_preflight_hook_failed="Hook (kanca) mimari ön kontrolü başarısız oldu"

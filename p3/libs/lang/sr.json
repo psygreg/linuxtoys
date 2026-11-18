@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "Нема ништа за пријавити",
   "bug_report_cancelled_message": "Последње покретање је отказано или прескочено, па нема ништа за пријавити.\n\nПоследња порука: {reason}",
   "bug_report_rejected_title": "Нема ништа за пријавити",
-  "bug_report_rejected_message": "Терминалски излаз није имао текст који се може послати, па извештај није послат."
+  "bug_report_rejected_message": "Терминалски излаз није имао текст који се може послати, па извештај није послат.",
+  "pkg_flat_invalid_scope": "Неисправан опсег (scope) Flatpak-а",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope захтева вредност",
+  "pkg_flat_setup_required": "Подесите Flatpak и његово изворно складиште пре инсталирања програма",
+  "pkg_flat_preflight_failed": "Претходна провера архитектуре/доступности за Flatpak није успела",
+  "pkg_flat_no_refs": "Ниједан изворни Flatpak ref није разрешен",
+  "pkg_ext_usage": "Употреба: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Изворни додатак није доступан за извршно окружење инсталираног програма",
+  "pkg_ext_no_refs": "Ниједан изворни ref додатка није разрешен",
+  "pkg_ext_invalid_plan": "Неисправан план изворног додатка",
+  "pkg_appimage_no_fuse_candidate": "Нема доступног изворног кандидата за FUSE 2; подесите подржано складиште пре инсталирања овог AppImage-а",
+  "aur_arch_unreadable": "PKGBUILD: низ arch није могао бити прочитан статички, па компатибилност са aarch64 није могла бити потврђена",
+  "aur_arch_empty": "PKGBUILD: низ arch је празан, па компатибилност са aarch64 није могла бити потврђена",
+  "aur_arch_no_port": "PKGBUILD: низ arch декларише (${archs}) без aarch64 порта; овај пакет не подржава aarch64"
 }

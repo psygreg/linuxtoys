@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "მოხსენების არაფერია",
   "bug_report_cancelled_message": "ბოლო გაშვება გაუქმდა ან გამოტოვებულ იქნა, ამიტომ მოხსენების არაფერია.\n\nბოლო შეტყობინება: {reason}",
   "bug_report_rejected_title": "მოხსენების არაფერია",
-  "bug_report_rejected_message": "ტერმინალის გამოტანაში არ იყო გასაგზავნი ტექსტი, ამიტომ მოხსენება არ გაიგზავნა."
+  "bug_report_rejected_message": "ტერმინალის გამოტანაში არ იყო გასაგზავნი ტექსტი, ამიტომ მოხსენება არ გაიგზავნა.",
+  "pkg_flat_invalid_scope": "არასწორი Flatpak არე (scope)",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope მნიშვნელობას მოითხოვს",
+  "pkg_flat_setup_required": "აპლიკაციების დაყენებამდე მოაწყვეთ Flatpak და მისი მშობლიური საცავი",
+  "pkg_flat_preflight_failed": "Flatpak-ის არქიტექტურის/ხელმისაწვდომობის წინასწარი შემოწმება ჩავარდა",
+  "pkg_flat_no_refs": "არცერთი მშობლიური Flatpak ref არ გადაწყდა",
+  "pkg_ext_usage": "გამოყენება: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "მშობლიური გაფართოება მიუწვდომელია დაყენებული აპლიკაციის runtime-ისთვის",
+  "pkg_ext_no_refs": "არცერთი მშობლიური გაფართოების ref არ გადაწყდა",
+  "pkg_ext_invalid_plan": "არასწორი მშობლიური გაფართოების გეგმა",
+  "pkg_appimage_no_fuse_candidate": "FUSE 2-ის მშობლიური კანდიდატი მიუწვდომელია; დააყენეთ მხარდაჭერილი საცავი ამ AppImage-ის დაყენებამდე",
+  "aur_arch_unreadable": "PKGBUILD: arch მასივი სტატიურად ვერ წაიკითხა, ამიტომ aarch64 თავსებადობა ვერ დადასტურდა",
+  "aur_arch_empty": "PKGBUILD: arch მასივი ცარიელია, ამიტომ aarch64 თავსებადობა ვერ დადასტურდა",
+  "aur_arch_no_port": "PKGBUILD: arch მასივი აცხადებს (${archs}) aarch64 პორტის გარეშე; ეს პაკეტი aarch64-ს არ უჭერს მხარს"
 }

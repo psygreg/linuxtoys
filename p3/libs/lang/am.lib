@@ -156,3 +156,5 @@ ipu6_conflict="ከ kernel ውጭ ያለ ወይም የተዘጋ የ IPU6 ካሜ�
 ipu6_done="open-source የ IPU6 ካሜራ stack ተተክሏል። ኮምፒውተሩን ዳግም ያስነሱ፣ ከዚያ ካሜራውን በ PipeWire ካሜራዎችን በሚያገኙ መተግበሪያዎች ውስጥ ይጠቀሙ (Firefox፣ GNOME Snapshot፣ OBS)። በ Chrome/Chromium ውስጥ chrome://flags/#enable-webrtc-pipewire-camera ን ያንቀሳቅሱ። አሁን የተገኙ ካሜራዎች:"
 ipu6_nofw="የ IPU6 firmware የለም እና የ firmware-misc-nonfree ጥቅል አይገኝም። በ APT ምንጮችዎ ውስጥ የ non-free-firmware ክፍልን ያንቁ እና እንደገና ይሞክሩ።"
 ipu6_nocam="እስካሁን የለም። ከዳግም ማስነሳት በኋላ ካሜራው አልታየም ከሆነ፣ የእሱ sensor እስካሁን በ mainline kernel አይደገፍም።"
+arch_preflight_refused="ተግባሩ ተቀብሏል፦ የቅርጽና የተገኝነት ቅድመ-ፍተሻ አልተሳካም።"
+arch_preflight_hook_failed="የhook ቅርጽ ቅድመ-ፍተሻ አልተሳካም።"

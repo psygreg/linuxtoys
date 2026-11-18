@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "Walang Ipe-report",
   "bug_report_cancelled_message": "Na-cancel o na-skip ang huling pagtakbo, kaya walang ipe-report.\n\nHuling mensahe: {reason}",
   "bug_report_rejected_title": "Walang Ipe-report",
-  "bug_report_rejected_message": "Walang teksto sa output ng terminal na maaaring ipadala, kaya hindi naipadala ang report."
+  "bug_report_rejected_message": "Walang teksto sa output ng terminal na maaaring ipadala, kaya hindi naipadala ang report.",
+  "pkg_flat_invalid_scope": "Imbalidong Flatpak scope",
+  "pkg_flat_arg_requires_value": "Kailangan ng halaga ng pkg_flat --remote/--scope",
+  "pkg_flat_setup_required": "I-configure ang Flatpak at ang katutubong repositoryo nito bago mag-install ng mga application",
+  "pkg_flat_preflight_failed": "Nabigo ang pre-check ng arkitektura/availability ng Flatpak",
+  "pkg_flat_no_refs": "Walang naresolbeng katutubong Flatpak ref",
+  "pkg_ext_usage": "Paggamit: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Hindi available ang katutubong extension para sa runtime ng naka-install na application",
+  "pkg_ext_no_refs": "Walang naresolbeng katutubong extension ref",
+  "pkg_ext_invalid_plan": "Imbalidong plano ng katutubong extension",
+  "pkg_appimage_no_fuse_candidate": "Walang available na katutubong kandidato para sa FUSE 2; mag-configure ng suportadong repositoryo bago i-install ang AppImage na ito",
+  "aur_arch_unreadable": "PKGBUILD: hindi mabasa nang static ang arch array, kaya hindi ma-verify ang compatibility sa aarch64",
+  "aur_arch_empty": "PKGBUILD: walang laman ang arch array, kaya hindi ma-verify ang compatibility sa aarch64",
+  "aur_arch_no_port": "PKGBUILD: nagdedeklara ang arch array ng (${archs}) nang walang aarch64 port; hindi sinusuportahan ng package na ito ang aarch64"
 }
