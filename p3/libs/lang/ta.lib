@@ -156,3 +156,5 @@ ipu6_conflict="kernel-க்கு வெளியே அல்லது உர�
 ipu6_done="open-source IPU6 கேமரா stack நிறுவப்பட்டுள்ளது. மறுதொடக்கம் செய்து, பின் PipeWire மூலம் கேமராக்களை அணுகும் பயன்பாடுகளில் கேமராவைப் பயன்படுத்தவும் (Firefox, GNOME Snapshot, OBS). Chrome/Chromium-இல் chrome://flags/#enable-webrtc-pipewire-camera-ஐ இயக்கவும். இப்போது கிடைத்த கேமராக்கள்:"
 ipu6_nofw="IPU6 firmware இல்லை மற்றும் firmware-misc-nonfree தொகுப்பு கிடைக்கவில்லை. உங்கள் APT மூலங்களில் non-free-firmware கூறுகளை இயக்கவும், பின் மீண்டும் முயற்சிக்கவும்."
 ipu6_nocam="இன்னும் எதுவும் இல்லை. மறுதொடக்கத்திற்குப் பிறகும் கேமரா தோன்றவில்லை என்றால், அதன் sensor ஆனது mainline kernel ஆல் இன்னும் ஆதரிக்கப்படவில்லை."
+arch_preflight_refused="செயல் மறுக்கப்பட்டது: கட்டிடஅமைப்பு/கிடைக்கும்தன்மை முன்சோதனை தோல்வியுற்றது"
+arch_preflight_hook_failed="ஹூக்கின் (hook) கட்டிடஅமைப்பு முன்சோதனை தோல்வியுற்றது"

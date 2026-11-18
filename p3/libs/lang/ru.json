@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "Нечего отправлять",
   "bug_report_cancelled_message": "Последний запуск был отменён или пропущен, поэтому отправлять нечего.\n\nПоследнее сообщение: {reason}",
   "bug_report_rejected_title": "Нечего отправлять",
-  "bug_report_rejected_message": "В выводе терминала не было текста, который можно было бы отправить, поэтому отчёт не был отправлен."
+  "bug_report_rejected_message": "В выводе терминала не было текста, который можно было бы отправить, поэтому отчёт не был отправлен.",
+  "pkg_flat_invalid_scope": "Недопустимая область (scope) Flatpak",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope требует значения",
+  "pkg_flat_setup_required": "Настройте Flatpak и его нативный репозиторий перед установкой приложений",
+  "pkg_flat_preflight_failed": "Предварительная проверка архитектуры/доступности Flatpak не пройдена",
+  "pkg_flat_no_refs": "Не удалось разрешить ни одну нативную ссылку (ref) Flatpak",
+  "pkg_ext_usage": "Использование: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Нативное расширение недоступно для среды выполнения установленного приложения",
+  "pkg_ext_no_refs": "Не удалось разрешить ни одну нативную ссылку (ref) расширения",
+  "pkg_ext_invalid_plan": "Недопустимый план нативного расширения",
+  "pkg_appimage_no_fuse_candidate": "Доступного нативного кандидата FUSE 2 нет; настройте поддерживаемый репозиторий перед установкой этого AppImage",
+  "aur_arch_unreadable": "PKGBUILD: массив arch не удалось прочитать статически, поэтому совместимость с aarch64 проверить не удалось",
+  "aur_arch_empty": "PKGBUILD: массив arch пуст, поэтому совместимость с aarch64 проверить не удалось",
+  "aur_arch_no_port": "PKGBUILD: массив arch объявляет (${archs}) без порта aarch64; этот пакет не поддерживает aarch64"
 }

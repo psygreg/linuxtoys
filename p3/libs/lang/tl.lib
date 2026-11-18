@@ -155,3 +155,5 @@ ipu6_conflict="May naka-install na out-of-tree o proprietary na IPU6 camera stac
 ipu6_done="Naka-install na ang open-source na IPU6 camera stack. Mag-reboot, pagkatapos gamitin ang camera sa mga app na gumagamit ng mga camera sa pamamagitan ng PipeWire (Firefox, GNOME Snapshot, OBS). Sa Chrome/Chromium, i-enable ang chrome://flags/#enable-webrtc-pipewire-camera. Mga camera na nahanap ngayon:"
 ipu6_nofw="Kulang ang IPU6 firmware at hindi available ang firmware-misc-nonfree na package. I-enable ang non-free-firmware na component sa iyong mga APT source, pagkatapos ay subukan ulit."
 ipu6_nocam="wala pa. Kapag hindi pa rin lumabas ang camera pagkatapos mag-reboot, hindi pa suportado ang sensor nito ng mainline kernel."
+arch_preflight_refused="Tinanggihan ang operasyon: nabigo ang pre-check ng arkitektura/availability"
+arch_preflight_hook_failed="Nabigo ang pre-check ng arkitektura ng hook"

@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "Nav ko ziņot",
   "bug_report_cancelled_message": "Pēdējā palaišana tika atcelta vai izlaista, tāpēc nav ko ziņot.\n\nPēdējais ziņojums: {reason}",
   "bug_report_rejected_title": "Nav ko ziņot",
-  "bug_report_rejected_message": "Termināla izvadē nebija teksta, ko varētu nosūtīt, tāpēc ziņojums netika iesniegts."
+  "bug_report_rejected_message": "Termināla izvadē nebija teksta, ko varētu nosūtīt, tāpēc ziņojums netika iesniegts.",
+  "pkg_flat_invalid_scope": "Nederīgs Flatpak darbības apjoms (scope)",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope pieprasa vērtību",
+  "pkg_flat_setup_required": "Pirms lietotņu instalēšanas iestatiet Flatpak un tā natīvo repozitoriju",
+  "pkg_flat_preflight_failed": "Flatpak arhitektūras/pieejamības iepriekšējā pārbaude neizdevās",
+  "pkg_flat_no_refs": "Netika atrisināts neviens natīvs Flatpak refs",
+  "pkg_ext_usage": "Lietošana: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Natīvs paplašinājums nav pieejams instalētās lietotnes izpildlaikam (runtime)",
+  "pkg_ext_no_refs": "Netika atrisināts neviens natīvs paplašinājuma refs",
+  "pkg_ext_invalid_plan": "Nederīgs natīva paplašinājuma plāns",
+  "pkg_appimage_no_fuse_candidate": "Nav pieejams natīvs FUSE 2 kandidāts; pirms šī AppImage instalēšanas iestatiet atbalstītu repozitoriju",
+  "aur_arch_unreadable": "PKGBUILD: arch masīvu nevarēja nolasīt statiski, tāpēc nevarēja apstiprināt aarch64 saderību",
+  "aur_arch_empty": "PKGBUILD: arch masīvs ir tukšs, tāpēc nevarēja apstiprināt aarch64 saderību",
+  "aur_arch_no_port": "PKGBUILD: arch masīvs deklarē (${archs}) bez aarch64 porta; šī pakotne neatbalsta aarch64"
 }

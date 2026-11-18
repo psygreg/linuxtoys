@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "Teatamiseks pole midagi",
   "bug_report_cancelled_message": "Viimane käivitamine tühistati või jäeti vahele, seetõttu pole teatamiseks midagi.\n\nViimane sõnum: {reason}",
   "bug_report_rejected_title": "Teatamiseks pole midagi",
-  "bug_report_rejected_message": "Terminali väljundis ei olnud teksti, mida saaks saata, seetõttu raportit ei esitatud."
+  "bug_report_rejected_message": "Terminali väljundis ei olnud teksti, mida saaks saata, seetõttu raportit ei esitatud.",
+  "pkg_flat_invalid_scope": "Vigane Flatpak ulatus (scope)",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope nõuab väärtust",
+  "pkg_flat_setup_required": "Seadistage Flatpak ja selle natiivne hoidla enne rakenduste paigaldamist",
+  "pkg_flat_preflight_failed": "Flatpaki arhitektuuri/saadavuse eelkontroll ebaõnnestus",
+  "pkg_flat_no_refs": "Ühtegi natiivset Flatpak viitet (ref) ei lahendatud",
+  "pkg_ext_usage": "Kasutamine: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Natiivne laiendus pole saadaval paigaldatud rakenduse käitusaja jaoks",
+  "pkg_ext_no_refs": "Ühtegi natiivset laienduse viitet (ref) ei lahendatud",
+  "pkg_ext_invalid_plan": "Vigane natiivse laienduse plaan",
+  "pkg_appimage_no_fuse_candidate": "FUSE 2 jaoks pole natiivset kandidaati saadaval; seadistage enne selle AppImage'i paigaldamist toetatud hoidla",
+  "aur_arch_unreadable": "PKGBUILD: arch-massiivi ei saanud staatiliselt lugeda, seetõttu ei saanud aarch64 ühilduvust kinnitada",
+  "aur_arch_empty": "PKGBUILD: arch-massiiv on tühi, seetõttu ei saanud aarch64 ühilduvust kinnitada",
+  "aur_arch_no_port": "PKGBUILD: arch-massiiv deklareerib (${archs}) ilma aarch64 pordita; see pakett ei toeta aarch64"
 }

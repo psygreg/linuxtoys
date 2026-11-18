@@ -156,3 +156,5 @@ ipu6_conflict="מותקן ערמת מצלמה IPU6 מחוץ לעץ או קניי
 ipu6_done="ערמת המצלמה IPU6 בקוד פתוח מותקנת. אתחלו, ואז השתמשו במצלמה ביישומים שניגשים למצלמות דרך PipeWire (Firefox, GNOME Snapshot, OBS). ב-Chrome/Chromium הפעילו chrome://flags/#enable-webrtc-pipewire-camera. מצלמות שנמצאו כעת:"
 ipu6_nofw="קושחת ה-IPU6 חסרה והחבילה firmware-misc-nonfree אינה זמינה. הפעילו את רכיב non-free-firmware במקורות ה-APT שלכם ונסו שוב."
 ipu6_nocam="אף אחת עדיין. אם המצלמה לא מופיעה גם לאחר האתחול, החיישן שלה עדיין לא נתמך בליבה הראשית."
+arch_preflight_refused="הפעולה נדחתה: בדיקה מקדימה של ארכיטקטורה/זמינות נכשלה"
+arch_preflight_hook_failed="בדיקה מקדימה של ארכיטקטורת ה-hook נכשלה"

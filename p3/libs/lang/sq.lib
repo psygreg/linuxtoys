@@ -156,3 +156,5 @@ ipu6_conflict="Një stack kamera IPU6 jashtë kernelit ose pronësor është i i
 ipu6_done="Stack-i i kamerës IPU6 open-source është i instaluar. Rinisni kompjuterin, pastaj përdorni kamerën në aplikacionet që hyjnë në kamerat përmes PipeWire (Firefox, GNOME Snapshot, OBS). Në Chrome/Chromium aktivizoni chrome://flags/#enable-webrtc-pipewire-camera. Kamerat e gjetura tani:"
 ipu6_nofw="Mungon firmware-i i IPU6 dhe paketa firmware-misc-nonfree nuk është e disponueshme. Aktivizoni komponentin non-free-firmware në burimet APT dhe provoni përsëri."
 ipu6_nocam="asnjë deri tani. Nëse kamera nuk shfaqet edhe pas rinisjes, sensori i saj nuk mbështetet ende nga kerneli kryesor."
+arch_preflight_refused="Veprimi u refuzua: parakontrolli i arkitekturës/disponueshmërisë dështoi"
+arch_preflight_hook_failed="Parakontrolli i arkitekturës së hook-it dështoi"

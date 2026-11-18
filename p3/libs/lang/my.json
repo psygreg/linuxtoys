@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "အစီရင်ခံရန် မရှိပါ",
   "bug_report_cancelled_message": "နောက်ဆုံးလုပ်ဆောင်မှုကို ဖျက်သိမ်းခြင်း သို့မဟုတ် ကျော်လွှားခြင်း ခံရသဖြင့် အစီရင်ခံရန် မရှိပါ။\n\nနောက်ဆုံးစာတို: {reason}",
   "bug_report_rejected_title": "အစီရင်ခံရန် မရှိပါ",
-  "bug_report_rejected_message": "တာမီနယ် ရလဒ်တွင် ပေးပို့နိုင်သည့် စာသား မရှိသဖြင့် အစီရင်ခံစာ မတင်ပြခဲ့ပါ။"
+  "bug_report_rejected_message": "တာမီနယ် ရလဒ်တွင် ပေးပို့နိုင်သည့် စာသား မရှိသဖြင့် အစီရင်ခံစာ မတင်ပြခဲ့ပါ။",
+  "pkg_flat_invalid_scope": "မှားယွင်းသော Flatpak scope",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope သည် တန်ဖိုးတစ်ခု လိုအပ်သည်",
+  "pkg_flat_setup_required": "အက်ပလီကေးရှင်းများ ထည့်သွင်းမီ Flatpak နှင့် ၎င်း၏ မူရင်းစတိုးကို ပြင်ဆင်ပါ",
+  "pkg_flat_preflight_failed": "Flatpak ၏ ဗိသုကာ/ရရှိနိုင်မှု ကြိုစစ်ဆေးမှု မအောင်မြင်ပါ",
+  "pkg_flat_no_refs": "မူရင်း Flatpak ref ကို ဖြေရှင်း၍မရပါ",
+  "pkg_ext_usage": "အသုံးပြုပုံ- pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "ထည့်သွင်းထားသော အက်ပလီကေးရှင်း၏ runtime အတွက် မူရင်း extension မရနိုင်ပါ",
+  "pkg_ext_no_refs": "မူရင်း extension ref ကို ဖြေရှင်း၍မရပါ",
+  "pkg_ext_invalid_plan": "မမှန်ကန်သော မူရင်း extension အစီအစဉ်",
+  "pkg_appimage_no_fuse_candidate": "FUSE 2 အတွက် မူရင်းကိုယ်စားလှယ် မရနိုင်ပါ; ဤ AppImage ကို ထည့်သွင်းမီ ပံ့ပိုးထားသော စတိုးတစ်ခုကို ပြင်ဆင်ပါ",
+  "aur_arch_unreadable": "PKGBUILD- arch array ကို static အားဖြင့် ဖတ်၍မရပါ၊ ထို့ကြောင့် aarch64 နှင့် ကိုက်ညီမှုကို စစ်ဆေး၍မရပါ",
+  "aur_arch_empty": "PKGBUILD- arch array သည် ဗလာဖြစ်သည်၊ ထို့ကြောင့် aarch64 နှင့် ကိုက်ညီမှုကို စစ်ဆေး၍မရပါ",
+  "aur_arch_no_port": "PKGBUILD- arch array သည် aarch64 port မရှိဘဲ (${archs}) ကို ကြေညာသည်၊ ဤ package သည် aarch64 ကို ပံ့ပိုးမထားပါ"
 }

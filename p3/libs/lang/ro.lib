@@ -154,3 +154,5 @@ ipu6_conflict="Este instalat un stack de cameră IPU6 în afara kernel-ului sau 
 ipu6_done="Stack-ul de cameră IPU6 open-source este instalat. Reporniți, apoi utilizați camera în aplicațiile care accesează camerele prin PipeWire (Firefox, GNOME Snapshot, OBS). În Chrome/Chromium, activați chrome://flags/#enable-webrtc-pipewire-camera. Camere găsite acum:"
 ipu6_nofw="Firmware-ul IPU6 lipsește și pachetul firmware-misc-nonfree nu este disponibil. Activați componenta non-free-firmware în sursele dvs. APT și încercați din nou."
 ipu6_nocam="încă niciuna. Dacă camera tot nu apare după repornire, senzorul ei nu este încă suportat de kernel-ul principal."
+arch_preflight_refused="Operație refuzată: verificarea prealabilă de arhitectură/disponibilitate a eșuat"
+arch_preflight_hook_failed="Verificarea prealabilă a arhitecturii hook-ului a eșuat"

@@ -157,3 +157,5 @@ ipu6_conflict="Hay una pila de cámara IPU6 fuera del núcleo o propietaria inst
 ipu6_done="La pila de cámara IPU6 de código abierto está instalada. Reinicie y luego use la cámara en aplicaciones que accedan a las cámaras mediante PipeWire (Firefox, GNOME Snapshot, OBS). En Chrome/Chromium, active chrome://flags/#enable-webrtc-pipewire-camera. Cámaras encontradas ahora:"
 ipu6_nofw="Falta el firmware del IPU6 y el paquete firmware-misc-nonfree no está disponible. Active el componente non-free-firmware en sus fuentes de APT e inténtelo de nuevo."
 ipu6_nocam="ninguna todavía. Si la cámara sigue sin aparecer tras reiniciar, su sensor aún no está soportado por el núcleo principal."
+arch_preflight_refused="Operación rechazada: la verificación previa de arquitectura/disponibilidad falló"
+arch_preflight_hook_failed="La verificación previa de arquitectura del hook falló"

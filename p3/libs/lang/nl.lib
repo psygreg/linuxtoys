@@ -156,3 +156,5 @@ ipu6_conflict="Er is een IPU6-camerastack buiten de kernel of een proprietäre g
 ipu6_done="De open-source IPU6-camerastack is geïnstalleerd. Herstart en gebruik daarna de camera in toepassingen die via PipeWire bij camera's komen (Firefox, GNOME Snapshot, OBS). Schakel in Chrome/Chromium chrome://flags/#enable-webrtc-pipewire-camera in. Camera's nu gevonden:"
 ipu6_nofw="De IPU6-firmware ontbreekt en het pakket firmware-misc-nonfree is niet beschikbaar. Schakel de component non-free-firmware in uw APT-bronnen in en probeer het opnieuw."
 ipu6_nocam="nog geen. Als de camera na de herstart nog steeds niet verschijnt, wordt de sensor nog niet ondersteund door de hoofdkernel."
+arch_preflight_refused="Bewerking geweigerd: de voorcontrole van architectuur/beschikbaarheid is mislukt"
+arch_preflight_hook_failed="De voorcontrole van de hook-architectuur is mislukt"

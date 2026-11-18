@@ -155,3 +155,5 @@ ipu6_conflict="已安装内核外或专有的 IPU6 摄像头栈。将其与开�
 ipu6_done="开源 IPU6 摄像头栈已安装。重启后，请在通过 PipeWire 访问摄像头的应用中使用摄像头（Firefox、GNOME Snapshot、OBS）。在 Chrome/Chromium 中启用 chrome://flags/#enable-webrtc-pipewire-camera。现在找到的摄像头："
 ipu6_nofw="缺少 IPU6 固件，且 firmware-misc-nonfree 软件包不可用。请在您的 APT 源中启用 non-free-firmware 组件，然后重试。"
 ipu6_nocam="暂无。如果重启后摄像头仍未出现，则其传感器尚未被主线内核支持。"
+arch_preflight_refused="已拒绝操作：架构/可用性预检失败"
+arch_preflight_hook_failed="挂钩（hook）架构预检失败"

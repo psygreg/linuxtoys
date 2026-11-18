@@ -155,3 +155,5 @@ ipu6_conflict="ដំឡើង stack កាមេរ៉ា IPU6 នៅក្រ�
 ipu6_done="ដំឡើង stack កាមេរ៉ា IPU6 open-source រួចរាល់ហើយ។ ចាប់ផ្តើមឡើងវិញ បន្ទាប់មកប្រើកាមេរ៉ាក្នុងកម្មវិធីដែលចូលប្រើកាមេរ៉ាតាមរយៈ PipeWire (Firefox, GNOME Snapshot, OBS)។ ក្នុង Chrome/Chromium បើក chrome://flags/#enable-webrtc-pipewire-camera។ កាមេរ៉ារកឃើញឥឡូវនេះ:"
 ipu6_nofw="firmware IPU6 បាត់បង់ ហើយកញ្ចប់ firmware-misc-nonfree មិនមានទេ។ បើកសមាសភាគ non-free-firmware ក្នុងប្រភព APT របស់អ្នក ហើយព្យាយាមម្តងទៀត។"
 ipu6_nocam="មិនទាន់មានទេ។ ប្រសិនបើកាមេរ៉ានៅតែមិនបង្ហាញបន្ទាប់ពីចាប់ផ្តើមឡើងវិញ sensor របស់វាមិនត្រូវបានគាំទ្រនៅក្នុង kernel mainline នៅឡើយទេ។"
+arch_preflight_refused="បដិសេធប្រតិបត្តិការ៖ ការពិនិត្យជាមុនស្ថាបត្យកម្ម/ភាពអាចរកបានបរាជ័យ"
+arch_preflight_hook_failed="ការពិនិត្យជាមុនស្ថាបត្យកម្ម hook បរាជ័យ"

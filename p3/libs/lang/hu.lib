@@ -156,3 +156,5 @@ ipu6_conflict="Kernelen kívüli vagy zárt forráskódú IPU6 kamerakészlet va
 ipu6_done="A nyílt forráskódú IPU6 kamerakészlet telepítve van. Indítsa újra, majd használja a kamerát azokban az alkalmazásokban, amelyek PipeWire-en keresztül érik el a kamerákat (Firefox, GNOME Snapshot, OBS). A Chrome/Chromium-ban engedélyezze a chrome://flags/#enable-webrtc-pipewire-camera beállítást. Most talált kamerák:"
 ipu6_nofw="Az IPU6 firmware hiányzik, és a firmware-misc-nonfree csomag nem érhető el. Engedélyezze a non-free-firmware komponenst az APT forrásaiban, és próbálja újra."
 ipu6_nocam="egy sem még. Ha a kamera az újraindítás után sem jelenik meg, az érzékelőjét a fő kernel még nem támogatja."
+arch_preflight_refused="Művelet elutasítva: az architektúra/elérhetőség előzetes ellenőrzése sikertelen"
+arch_preflight_hook_failed="A hook (horog) architektúrájának előzetes ellenőrzése sikertelen"

@@ -156,3 +156,5 @@ ipu6_conflict="On paigaldatud IPU6 kaamerapinu tuumast väljaspool või omandiõ
 ipu6_done="Avatud lähtekoodiga IPU6 kaamerapinu on paigaldatud. Taaskäivitage ja kasutage seejärel kaameraid rakendustes, mis pääsevad kaameratele ligi PipeWire kaudu (Firefox, GNOME Snapshot, OBS). Aktiveerige Chrome/Chromium-is chrome://flags/#enable-webrtc-pipewire-camera. Praegu leitud kaamerad:"
 ipu6_nofw="IPU6 püsivara puudub ja pakett firmware-misc-nonfree pole saadaval. Lülitage oma APT lähtetes sisse komponent non-free-firmware ja proovige uuesti."
 ipu6_nocam="siiani ühtegi. Kui kaamera ei ilmu pärast taaskäivitamist ikka nähtavale, siis selle andurit ei toetata peatuumas veel."
+arch_preflight_refused="Tegevus lükati tagasi: arhitektuuri/saadavuse eelkontroll ebaõnnestus"
+arch_preflight_hook_failed="Hooki arhitektuuri eelkontroll ebaõnnestus"

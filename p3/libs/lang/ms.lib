@@ -156,3 +156,5 @@ ipu6_conflict="Tindanan kamera IPU6 luar pokok atau proprietari dipasang. Mencam
 ipu6_done="Tindanan kamera IPU6 sumber terbuka telah dipasang. Mulakan semula, kemudian gunakan kamera dalam aplikasi yang mengakses kamera melalui PipeWire (Firefox, GNOME Snapshot, OBS). Dalam Chrome/Chromium, aktifkan chrome://flags/#enable-webrtc-pipewire-camera. Kamera dijumpai sekarang:"
 ipu6_nofw="Firmware IPU6 tiada dan pakej firmware-misc-nonfree tidak tersedia. Aktifkan komponen non-free-firmware dalam sumber APT anda, kemudian cuba lagi."
 ipu6_nocam="tiada lagi buat masa ini. Jika kamera masih tidak muncul selepas but semula, sensornya belum disokong oleh kernel utama."
+arch_preflight_refused="Operasi ditolak: prapemeriksaan senibina/ketersediaan gagal"
+arch_preflight_hook_failed="Prapemeriksaan senibina hook gagal"

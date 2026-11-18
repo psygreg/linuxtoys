@@ -155,3 +155,5 @@ ipu6_conflict="IPU6 myndavélastafl utan kjarnans eða lokaður er uppsettur. A�
 ipu6_done="Opna IPU6 myndavélastaflinn er uppsettur. Endurræstu og notaðu síðan myndavélina í forritum sem nálgast myndavélar í gegnum PipeWire (Firefox, GNOME Snapshot, OBS). Í Chrome/Chromium virkjaðu chrome://flags/#enable-webrtc-pipewire-camera. Myndavélar fundnar nú:"
 ipu6_nofw="IPU6 fastbúnaði vantar og pakki firmware-misc-nonfree er ekki tiltækt. Virkjaðu non-free-firmware eininguna í APT-heimildum þínum og reyndu aftur."
 ipu6_nocam="engin ennþá. Ef myndavélin birtist ekki eftir endurræsingu, þá er skynjarinn hennar ekki ennþá studdur í aðalkjarnanum."
+arch_preflight_refused="Aðgerð hafnað: forskoðun arkitektúr/fáanleika mistókst"
+arch_preflight_hook_failed="Forskoðun arkitektúr hooks mistókst"

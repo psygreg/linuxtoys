@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "ምንም የሚሰበክ ነገር የለም",
   "bug_report_cancelled_message": "የመጨረሻው ሥራ ተሰርዟል ወይም ተለፍቷል፣ ስለዚህ ምንም የሚሰበክ ነገር የለም።\n\nየመጨረሻ መልእክት: {reason}",
   "bug_report_rejected_title": "ምንም የሚሰበክ ነገር የለም",
-  "bug_report_rejected_message": "የተርሚናሉ ውጤት ለመላክ የሚችል ጽሑፍ የለም፣ ስለዚህ ሪፖርቱ አልተላከም።"
+  "bug_report_rejected_message": "የተርሚናሉ ውጤት ለመላክ የሚችል ጽሑፍ የለም፣ ስለዚህ ሪፖርቱ አልተላከም።",
+  "pkg_flat_invalid_scope": "ልክ ያልሆነ Flatpak ወሰን (scope)",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope እሴት ይፈልጋል።",
+  "pkg_flat_setup_required": "መተግበሪያዎችን ከመጫን በፊት Flatpak እና የወጥ ማከማቻውን ያዘጋጁ።",
+  "pkg_flat_preflight_failed": "የFlatpak የቅርጽና የተገኝነት ቅድመ-ፍተሻ አልተሳካም።",
+  "pkg_flat_no_refs": "የወጥ Flatpak ref አልተፈታም።",
+  "pkg_ext_usage": "አጠቃቀም፦ pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "ለተጫነው መተግበሪያ የሂደት ጊዜ (runtime) የሚሆን የወጥ ተጨማሪ አልተገኘም።",
+  "pkg_ext_no_refs": "የወጥ የተጨማሪ ref አልተፈታም።",
+  "pkg_ext_invalid_plan": "ትክክል ያልሆነ የወጥ የተጨማሪ ዕቅድ።",
+  "pkg_appimage_no_fuse_candidate": "ለFUSE 2 የወጥ አማራጭ የለም፦ ይህን AppImage ከመጫን በፊት የሚደገፍ ማከማቻ ያዘጋጁ።",
+  "aur_arch_unreadable": "PKGBUILD፦ የarch ደርደርን (array) በቀጥታ ማንበብ አልተቻለም፣ ስለዚህ ከaarch64 ጋር መስማማት ሊረጋገጥ አልቻለም።",
+  "aur_arch_empty": "PKGBUILD፦ የarch ደርደር ባዶ ነው፣ ስለዚህ ከaarch64 ጋር መስማማት ሊረጋገጥ አልቻለም።",
+  "aur_arch_no_port": "PKGBUILD፦ የarch ደርደር የaarch64 በር ሳይኖረው (${archs}) አስታውቋል፦ ይህ ጥቅል aarch64ን አይደግፍም።"
 }

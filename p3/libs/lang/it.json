@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "Niente da segnalare",
   "bug_report_cancelled_message": "L'ultima esecuzione è stata annullata o saltata, quindi non c'è niente da segnalare.\n\nUltimo messaggio: {reason}",
   "bug_report_rejected_title": "Niente da segnalare",
-  "bug_report_rejected_message": "L'output del terminale non conteneva testo inviabile, quindi la segnalazione non è stata inviata."
+  "bug_report_rejected_message": "L'output del terminale non conteneva testo inviabile, quindi la segnalazione non è stata inviata.",
+  "pkg_flat_invalid_scope": "Ambito Flatpak non valido",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope richiede un valore",
+  "pkg_flat_setup_required": "Configura Flatpak e il suo repository nativo prima di installare applicazioni",
+  "pkg_flat_preflight_failed": "La verifica preliminare di architettura/disponibilità di Flatpak non è riuscita",
+  "pkg_flat_no_refs": "Nessuna ref nativa di Flatpak risolta",
+  "pkg_ext_usage": "Uso: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Estensione nativa non disponibile per il runtime dell'applicazione installata",
+  "pkg_ext_no_refs": "Nessuna ref nativa di estensione risolta",
+  "pkg_ext_invalid_plan": "Piano di estensione nativa non valido",
+  "pkg_appimage_no_fuse_candidate": "Nessun candidato nativo per FUSE 2 disponibile; configura un repository supportato prima di installare questo AppImage",
+  "aur_arch_unreadable": "PKGBUILD: l'array arch non ha potuto essere letto staticamente, quindi la compatibilità aarch64 non ha potuto essere verificata",
+  "aur_arch_empty": "PKGBUILD: l'array arch è vuoto, quindi la compatibilità aarch64 non ha potuto essere verificata",
+  "aur_arch_no_port": "PKGBUILD: l'array arch dichiara (${archs}) senza una porta aarch64; questo pacchetto non supporta aarch64"
 }

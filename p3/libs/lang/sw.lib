@@ -157,3 +157,5 @@ ipu6_conflict="Mkoba (stack) wa kamera wa IPU6 wa nje ya kernel au wa kibinafsi 
 ipu6_done="Mkoba wa kamera wa IPU6 wa chanzo wazi umesakinishwa. Washa upya kompyuta, kisha tumia kamera katika programu zinazofikia kamera kupitia PipeWire (Firefox, GNOME Snapshot, OBS). Kwenye Chrome/Chromium wezesha chrome://flags/#enable-webrtc-pipewire-camera. Kamera zilizopatikana sasa:"
 ipu6_nofw="Firmware ya IPU6 haipo na kifurushi firmware-misc-nonfree hakipatikani. Wezesha kipengele cha non-free-firmware katika vyanzo vyako vya APT kisha ujaribu tena."
 ipu6_nocam="hakuna kwa sasa. Ikiwa kamera haionekani tena baada ya kuwasha upya, sensor yake bado haiwezi kutumika na kernel kuu."
+arch_preflight_refused="Operesheni imekataliwa: ukaguzi wa awali wa usanifu/patikanefu ulifeli"
+arch_preflight_hook_failed="Ukaguzi wa awali wa usanifu wa hook ulifeli"

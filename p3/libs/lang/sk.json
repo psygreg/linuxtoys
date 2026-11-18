@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "Nie je čo nahlásiť",
   "bug_report_cancelled_message": "Posledné spustenie bolo zrušené alebo preskočené, takže nie je čo nahlásiť.\n\nPosledná správa: {reason}",
   "bug_report_rejected_title": "Nie je čo nahlásiť",
-  "bug_report_rejected_message": "Výstup terminálu neobsahoval žiadny text, ktorý by bolo možné odoslať, takže hlásenie nebolo odoslané."
+  "bug_report_rejected_message": "Výstup terminálu neobsahoval žiadny text, ktorý by bolo možné odoslať, takže hlásenie nebolo odoslané.",
+  "pkg_flat_invalid_scope": "Neplatný rozsah (scope) Flatpaku",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope vyžaduje hodnotu",
+  "pkg_flat_setup_required": "Pred inštaláciou aplikácií nastavte Flatpak a jeho natívny repozitár",
+  "pkg_flat_preflight_failed": "Predbežná kontrola architektúry/dostupnosti pre Flatpak zlyhala",
+  "pkg_flat_no_refs": "Nebola vyriešená žiadna natívna Flatpak ref",
+  "pkg_ext_usage": "Použitie: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Natívne rozšírenie nie je dostupné pre runtime nainštalovanej aplikácie",
+  "pkg_ext_no_refs": "Nebola vyriešená žiadna natívna ref rozšírenia",
+  "pkg_ext_invalid_plan": "Neplatný plán natívneho rozšírenia",
+  "pkg_appimage_no_fuse_candidate": "Nie je dostupný žiadny natívny kandidát na FUSE 2; pred inštaláciou tohto AppImage nastavte podporovaný repozitár",
+  "aur_arch_unreadable": "PKGBUILD: pole arch nebolo možné staticky prečítať, preto sa nemohla overiť kompatibilita s aarch64",
+  "aur_arch_empty": "PKGBUILD: pole arch je prázdne, preto sa nemohla overiť kompatibilita s aarch64",
+  "aur_arch_no_port": "PKGBUILD: pole arch deklaruje (${archs}) bez portu aarch64; tento balík nepodporuje aarch64"
 }

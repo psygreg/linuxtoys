@@ -156,3 +156,5 @@ ipu6_conflict="Une pile de caméra IPU6 hors noyau ou propriétaire est install�
 ipu6_done="La pile de caméra IPU6 open source est installée. Redémarrez, puis utilisez la caméra dans les applications qui accèdent aux caméras via PipeWire (Firefox, GNOME Snapshot, OBS). Dans Chrome/Chromium, activez chrome://flags/#enable-webrtc-pipewire-camera. Caméras trouvées maintenant :"
 ipu6_nofw="Le micrologiciel IPU6 est absent et le paquet firmware-misc-nonfree n'est pas disponible. Activez le composant non-free-firmware dans vos sources APT, puis réessayez."
 ipu6_nocam="aucune pour l'instant. Si la caméra n'apparaît toujours pas après le redémarrage, son capteur n'est pas encore pris en charge par le noyau principal."
+arch_preflight_refused="Opération refusée : la vérification préalable d'architecture/disponibilité a échoué"
+arch_preflight_hook_failed="La vérification préalable d'architecture du hook a échoué"

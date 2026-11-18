@@ -155,3 +155,5 @@ ipu6_conflict="ມີ camera stack ຂອງ IPU6 ນອກ kernel ຫຼືແ�
 ipu6_done="ຕິດຕັ້ງ camera stack ຂອງ IPU6 ແບບ open-source ແລ້ວ. ຣີບູດ, ຈາກນັ້ນໃຊ້ກ້ອງໃນແອັບທີ່ເຂົ້າເຖິງກ້ອງຜ່ານ PipeWire (Firefox, GNOME Snapshot, OBS). ໃນ Chrome/Chromium ເປີດ chrome://flags/#enable-webrtc-pipewire-camera. ກ້ອງທີ່ພົບຕອນນີ້:"
 ipu6_nofw="firmware ຂອງ IPU6 ບໍ່ມີ ແລະ ຊຸດ firmware-misc-nonfree ບໍ່ສາມາດໃຊ້ໄດ້. ເປີດສ່ວນປະກອບ non-free-firmware ໃນແຫຼ່ງ APT ຂອງທ່ານແລ້ວລອງໃໝ່."
 ipu6_nocam="ຍັງບໍ່ມີເທື່ອ. ຖ້າກ້ອງຍັງບໍ່ປະກົດຫຼັງຈາກຣີບູດ, sensor ຂອງມັນຍັງບໍ່ຖືກຮອງຮັບໃນ kernel mainline."
+arch_preflight_refused="ປະຕິເສດການດຳເນີນງານ: ການກວດສອບກ່ອນສະຖາປັດຕະຍະກຳ/ຄວາມສາມາດນຳໃຊ້ລົ້ມເຫຼວ"
+arch_preflight_hook_failed="ການກວດສອບກ່ອນສະຖາປັດຕະຍະກຳຂອງ hook ລົ້ມເຫຼວ"

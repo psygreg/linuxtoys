@@ -156,3 +156,5 @@ ipu6_conflict="Tumpukan kamera IPU6 di luar tree atau berpemilik terinstal. Menc
 ipu6_done="Tumpukan kamera IPU6 sumber terbuka telah terinstal. Nyalakan ulang, lalu gunakan kamera di aplikasi yang mengakses kamera melalui PipeWire (Firefox, GNOME Snapshot, OBS). Di Chrome/Chromium, aktifkan chrome://flags/#enable-webrtc-pipewire-camera. Kamera yang ditemukan sekarang:"
 ipu6_nofw="Firmware IPU6 hilang dan paket firmware-misc-nonfree tidak tersedia. Aktifkan komponen non-free-firmware di sumber APT Anda, lalu coba lagi."
 ipu6_nocam="belum ada. Jika kamera tetap tidak muncul setelah boot ulang, sensornya belum didukung oleh kernel mainline."
+arch_preflight_refused="Operasi ditolak: pra-pemeriksaan arsitektur/ketersediaan gagal"
+arch_preflight_hook_failed="Pra-pemeriksaan arsitektur hook gagal"

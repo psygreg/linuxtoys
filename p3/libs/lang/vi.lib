@@ -155,3 +155,5 @@ ipu6_conflict="Một chồng camera IPU6 ngoài nhân hoặc độc quyền đan
 ipu6_done="Chồng camera IPU6 mã nguồn mở đã được cài đặt. Khởi động lại, rồi dùng camera trong các ứng dụng truy cập camera qua PipeWire (Firefox, GNOME Snapshot, OBS). Trong Chrome/Chromium, bật chrome://flags/#enable-webrtc-pipewire-camera. Các camera tìm thấy bây giờ:"
 ipu6_nofw="Thiếu phần vững (firmware) IPU6 và gói firmware-misc-nonfree không khả dụng. Bật thành phần non-free-firmware trong nguồn APT của bạn rồi thử lại."
 ipu6_nocam="chưa có camera nào. Nếu camera vẫn không xuất hiện sau khi khởi động lại, cảm biến của nó chưa được nhân chính hỗ trợ."
+arch_preflight_refused="Đã từ chối thao tác: kiểm tra trước kiến trúc/tính sẵn có thất bại"
+arch_preflight_hook_failed="Kiểm tra trước kiến trúc hook thất bại"

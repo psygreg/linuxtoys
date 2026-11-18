@@ -633,5 +633,18 @@
   "bug_report_cancelled_title": "Мэдээлэх зүйл байхгүй",
   "bug_report_cancelled_message": "Сүүлийн ажиллуулалтыг цуцалсан эсвэл алгассан тул мэдээлэх зүйл байхгүй.\n\nСүүлийн зурвас: {reason}",
   "bug_report_rejected_title": "Мэдээлэх зүйл байхгүй",
-  "bug_report_rejected_message": "Терминалын гаралтад илгээх боломжтой текст байсангүй тул тайлан илгээгдээгүй."
+  "bug_report_rejected_message": "Терминалын гаралтад илгээх боломжтой текст байсангүй тул тайлан илгээгдээгүй.",
+  "pkg_flat_invalid_scope": "Flatpak-ийн хүрээ (scope) буруу байна",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope утга шаардана",
+  "pkg_flat_setup_required": "Програм суулгахаас өмнө Flatpak болон түүний нутгийн сан (repository)-г тохируулна уу",
+  "pkg_flat_preflight_failed": "Flatpak-ийн архитектур/боломжийн урьдчилсан шалгалт амжилтгүй боллоо",
+  "pkg_flat_no_refs": "Flatpak-ийн нутгийн ref-ийг тогтоож чадсангүй",
+  "pkg_ext_usage": "Хэрэглээ: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Суулгасан программын runtime-д нутгийн өргөтгөл байхгүй байна",
+  "pkg_ext_no_refs": "Өргөтгөлийн нутгийн ref-ийг тогтоож чадсангүй",
+  "pkg_ext_invalid_plan": "Нутгийн өргөтгөлийн төлөвлөгөө буруу байна",
+  "pkg_appimage_no_fuse_candidate": "FUSE 2-ийн нутгийн нэр дэвшигч байхгүй; энэ AppImage-ийг суулгахаас өмнө дэмжигдсэн сан тохируулна уу",
+  "aur_arch_unreadable": "PKGBUILD: arch массивийг статикаар уншиж чадсангүй, тиймээс aarch64-той нийцлийг баталгаажуулж чадсангүй",
+  "aur_arch_empty": "PKGBUILD: arch массив хоосон байна, тиймээс aarch64-той нийцлийг баталгаажуулж чадсангүй",
+  "aur_arch_no_port": "PKGBUILD: arch массив aarch64 портгүйгээр (${archs}) зарлаж байна; энэ багц aarch64-ийг дэмждэггүй"
 }

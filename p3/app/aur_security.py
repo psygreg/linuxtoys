@@ -23,6 +23,8 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 
+from .lang_utils import create_translator
+
 # Status codes surfaced to the runners: OK flows through, UNAVAILABLE
 # degrades to a warning, BLOCKED refuses the installation.
 AUR_SECURITY_OK = 0
@@ -299,22 +301,17 @@ def _aarch64_pkgbuild_findings(pkgbuild_text: str) -> list[str]:
 
     if host() is not Architecture.AARCH64:
         return []
+    # The refusal lines reach the user verbatim (TUI security dialog and job
+    # reasons), so they are translated with the same store the GUI uses.
+    _ = create_translator()
     declared = _pkgbuild_architectures(pkgbuild_text)
     if declared is None:
-        return [
-            "PKGBUILD: the arch array could not be read statically, so "
-            "aarch64 compatibility could not be verified"
-        ]
+        return [_("aur_arch_unreadable")]
     if not declared:
-        return [
-            "PKGBUILD: the arch array is empty, so aarch64 compatibility "
-            "could not be verified"
-        ]
+        return [_("aur_arch_empty")]
     if not any(token.lower() in _AARCH64_ARCH_TOKENS for token in declared):
         return [
-            "PKGBUILD: arch array declares "
-            f"({', '.join(declared)}) without an aarch64 port; this package "
-            "does not support aarch64"
+            _("aur_arch_no_port").replace("${archs}", ", ".join(declared))
         ]
     return []
 

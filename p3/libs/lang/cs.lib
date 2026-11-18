@@ -156,3 +156,5 @@ ipu6_conflict="Je nainstalován IPU6 kamerový stack mimo jádro nebo proprietá
 ipu6_done="Open-source IPU6 kamerový stack je nainstalován. Restartujte a poté kameru používejte v aplikacích, které přistupují ke kamerám přes PipeWire (Firefox, GNOME Snapshot, OBS). V Chrome/Chromium zapněte chrome://flags/#enable-webrtc-pipewire-camera. Nyní nalezené kamery:"
 ipu6_nofw="Chybí firmware pro IPU6 a balíček firmware-misc-nonfree není k dispozici. Povolte komponentu non-free-firmware ve zdrojích APT a zkuste to znovu."
 ipu6_nocam="zatím žádná. Pokud se kamera po restartu stále nezobrazí, její senzor zatím není v hlavní verzi jádra podporován."
+arch_preflight_refused="Operace odmítnuta: předběžná kontrola architektury/dostupnosti selhala"
+arch_preflight_hook_failed="Předběžná kontrola architektury hooku selhala"
