@@ -144,6 +144,7 @@
   "topgrade_desc": "Eszköz minden telepített csomag frissítéséhez bármely Linux rendszeren.",
   "mergerfs_desc": "Telepíti a mergerfs-t, és több meghajtót egyetlen mappába von össze, hozzáadva a /etc/fstab-hoz, hogy induláskor csatlakozzon. Minden meghajtó megtartja saját fájljait, így egy meghajtó elvesztése nem érinti a többit.",
   "adir_desc": "Telepíti az összes szükséges csomagot Active Directory domain-ek csatlakozásához realmd használatával.",
+  "sambashare_desc": "Megoszt egy mappát a helyi hálózatodon Samba segítségével, hogy Windowsról, macOS-ról, Linuxról és telefonokról is megnyitható legyen. Megkérdezi a megosztás nevét, a mappát és hogy ki férhet hozzá.",
   "select_language": "Nyelv kiválasztása",
   "select_language_title": "Nyelvválasztás",
   "select_language_message": "Kérjük, válassza ki a preferált nyelvet:",

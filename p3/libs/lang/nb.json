@@ -144,6 +144,7 @@
   "topgrade_desc": "Et verktøy for å oppgradere alle installerte pakker på ethvert Linux-system.",
   "mergerfs_desc": "Installerer mergerfs og slår sammen flere disker til én mappe som legges til i /etc/fstab slik at den monteres ved oppstart. Hver disk beholder sine egne filer, så tap av én disk påvirker ikke de andre.",
   "adir_desc": "Installerer alle pakker nødvendige for å bli med i Active Directory-domener ved hjelp av realmd.",
+  "sambashare_desc": "Deler en mappe på det lokale nettverket ditt med Samba, slik at den kan åpnes fra Windows, macOS, Linux og telefoner. Spør om delingens navn, mappen og hvem som kan få tilgang.",
   "select_language": "Velg språk",
   "select_language_title": "Språkvalg",
   "select_language_message": "Velg ditt foretrukne språk:",

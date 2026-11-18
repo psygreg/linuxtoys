@@ -145,6 +145,7 @@
   "topgrade_desc": "升级任何Linux系统上所有已安装软件包的工具。",
   "mergerfs_desc": "安装 mergerfs 并把多个磁盘合并为一个文件夹，写入 /etc/fstab 以便开机挂载。每个磁盘保留自己的文件，因此单个磁盘损坏不影响其他磁盘。",
   "adir_desc": "安装使用realmd加入Active Directory域所需的所有软件包。",
+  "sambashare_desc": "通过 Samba 在本地网络共享一个文件夹，以便从 Windows、macOS、Linux 和手机打开。会询问共享名称、文件夹以及谁可以访问。",
   "select_language": "选择语言",
   "select_language_title": "语言选择",
   "select_language_message": "请选择您的首选语言：",

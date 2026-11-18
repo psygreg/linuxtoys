@@ -145,6 +145,7 @@
   "topgrade_desc": "任意のLinuxシステムでインストール済みの全パッケージをアップグレードするツール。",
   "mergerfs_desc": "mergerfs をインストールし、複数のドライブを 1 つのフォルダにプールして /etc/fstab に追加することで起動時にマウントします。各ドライブは自分のファイルを保持するため、1 つのドライブが失われても他には影響しません。",
   "adir_desc": "realmdを使用してActive Directoryドメインに参加するために必要な全パッケージをインストール。",
+  "sambashare_desc": "Sambaでローカルネットワーク上のフォルダを共有し、Windows、macOS、Linux、スマートフォンから開けるようにします。共有名、フォルダ、アクセスできる人を尋ねます。",
   "select_language": "言語を選択",
   "select_language_title": "言語選択",
   "select_language_message": "お好みの言語を選択してください：",

@@ -145,6 +145,7 @@
   "topgrade_desc": "Uno strumento per aggiornare tutti i pacchetti installati su qualsiasi sistema Linux.",
   "mergerfs_desc": "Installa mergerfs e raggruppa più dischi in un'unica cartella, aggiungendola a /etc/fstab per montarla all'avvio. Ogni disco mantiene i propri file, quindi la perdita di un disco non influenza gli altri.",
   "adir_desc": "Installa tutti i pacchetti necessari per unirsi a domini Active Directory usando realmd.",
+  "sambashare_desc": "Condivide una cartella nella rete locale con Samba, così può essere aperta da Windows, macOS, Linux e telefoni. Chiede il nome della condivisione, la cartella e chi può accedervi.",
   "select_language": "Seleziona Lingua",
   "select_language_title": "Selezione Lingua",
   "select_language_message": "Seleziona la tua lingua preferita:",

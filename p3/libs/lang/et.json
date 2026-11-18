@@ -144,6 +144,7 @@
   "topgrade_desc": "Tööriist kõigi installitud pakettide uuendamiseks mis tahes Linuxi süsteemil.",
   "mergerfs_desc": "Paigaldab mergerfs ja ühendab mitu ketast üheks kaustaks, lisades selle /etc/fstab-i, et see ühendataks käivitamisel. Iga ketas hoiab oma faile, mistõttu ühe ketta kadu ei mõjuta teisi.",
   "adir_desc": "Installib kõik paketid, mis on vajalikud Active Directory domeenidesse liitumiseks realmd'i abil.",
+  "sambashare_desc": "Jagab Samba kaudu kausta kohalikus võrgus, nii et seda saab avada Windowsist, macOSist, Linuxist ja telefonidest. Küsib jagamise nime, kausta ja seda, kes pääseb ligi.",
   "select_language": "Vali keel",
   "select_language_title": "Keele valik",
   "select_language_message": "Palun valige oma eelistatud keel:",

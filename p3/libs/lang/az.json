@@ -144,6 +144,7 @@
   "topgrade_desc": "Hər hansı Linux sistemində bütün quraşdırılmış paketləri yeniləmək üçün vasitə.",
   "mergerfs_desc": "mergerfs quraşdırır və bir neçə diski bir qovluqda birləşdirir; açılışda bağlanması üçün /etc/fstab-a əlavə edilir. Hər disk öz fayllarını saxlayır, ona görə bir diskin itməsi digərlərinə təsir etmir.",
   "adir_desc": "Realmd istifadə edərək Active Directory domenlərinə qoşulmaq üçün lazım olan bütün paketləri quraşdırır.",
+  "sambashare_desc": "Samba ilə yerli şəbəkənizdə qovluq paylaşır, ona görə də Windows, macOS, Linux və telefondan açıla bilər. Paylaşmanın adını, qovluğu və kimin girişi olduğunu soruşur.",
   "select_language": "Dili seç",
   "select_language_title": "Dil seçimi",
   "select_language_message": "Zəhmət olmasa üstünlük verdiyiniz dili seçin:",

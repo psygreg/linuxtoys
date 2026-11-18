@@ -144,6 +144,7 @@
   "topgrade_desc": "Një mjet për përmirësimin e të gjitha paketave të instaluara në çdo sistem Linux.",
   "mergerfs_desc": "Instalon mergerfs dhe bashkon disqet në një dosje të vetme, duke e shtuar në /etc/fstab që të montohet në nisje. Çdo disk ruan skedarët e vet, kështu që humbja e një diski nuk prek të tjerat.",
   "adir_desc": "Instalon të gjitha paketat e nevojshme për t'u bashkuar domenëve Active Directory duke përdorur realmd.",
+  "sambashare_desc": "Nda një dosje në rrjetin tuaj lokal me Samba, që të mund të hapet nga Windows, macOS, Linux dhe telefonat. Pyet emrin e ndarjes, dosjen dhe kush mund të hyjë.",
   "select_language": "Zgjidh Gjuhën",
   "select_language_title": "Zgjedhja e Gjuhës",
   "select_language_message": "Ju lutemi zgjidhni gjuhën tuaj të preferuar:",

@@ -145,6 +145,7 @@
   "topgrade_desc": "Chombo cha kuboresha vifurushi vyote vilivyosakinishwa kwenye mfumo wowote wa Linux.",
   "mergerfs_desc": "Husakinisha mergerfs na kuchanganya diski kadhaa kuwa folda moja, ikiongezwa kwenye /etc/fstab ili imountiwe wakati wa boot. Kila diski huhifadhi faili zake, hivyo kupoteza diski moja hakugusa nyingine.",
   "adir_desc": "Inasakinisha vifurushi vyote vinavyohitajika kujiunga na maeneo ya Active Directory kwa kutumia realmd.",
+  "sambashare_desc": "Inashiriki folda kwenye mtandao wako wa karibu kwa kutumia Samba, ili iweze kufunguliwa kutoka Windows, macOS, Linux na simu. Huuliza jina la ushiriki, folda na nani anaweza kufikia.",
   "select_language": "Chagua Lugha",
   "select_language_title": "Uchaguzi wa Lugha",
   "select_language_message": "Tafadhali chagua lugha unayopendelea:",

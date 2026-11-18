@@ -144,6 +144,7 @@
   "topgrade_desc": "Rīks visu instalēto pakotņu atjaunināšanai jebkurā Linux sistēmā.",
   "mergerfs_desc": "Instalē mergerfs un apvieno vairākus diskus vienā mapē, pievienojot to /etc/fstab, lai to pievienotu palaišanas laikā. Katrs disks saglabā savus failus, tāpēc viena diska zaudēšana neietekmē pārējos.",
   "adir_desc": "Instalē visas nepieciešamās pakotnes, lai pievienotos Active Directory domēniem, izmantojot realmd.",
+  "sambashare_desc": "Kopīgo mapi jūsu lokālajā tīklā ar Samba, lai to var atvērt no Windows, macOS, Linux un telefoniem. Vaicā pēc kopīgojuma nosaukuma, mapes un tā, kas var piekļūt.",
   "select_language": "Atlasīt valodu",
   "select_language_title": "Valodas atlase",
   "select_language_message": "Lūdzu, atlasiet savu vēlamo valodu:",

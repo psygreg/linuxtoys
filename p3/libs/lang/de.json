@@ -145,6 +145,7 @@
   "topgrade_desc": "Ein Tool zum Upgraden aller installierten Pakete auf jedem Linux-System.",
   "mergerfs_desc": "Installiert mergerfs und fasst mehrere Laufwerke in einem Ordner zusammen, der /etc/fstab hinzugefügt wird, damit er beim Start eingehängt wird. Jedes Laufwerk behält seine eigenen Dateien, daher beeinträchtigt der Verlust eines Laufwerks die anderen nicht.",
   "adir_desc": "Installiert alle notwendigen Pakete zum Beitritt zu Active Directory-Domains mit realmd.",
+  "sambashare_desc": "Gibt einen Ordner in Ihrem lokalen Netzwerk über Samba frei, damit er von Windows, macOS, Linux und Telefonen geöffnet werden kann. Fragt nach dem Namen der Freigabe, dem Ordner und wer darauf zugreifen kann.",
   "select_language": "Sprache auswählen",
   "select_language_title": "Sprachauswahl",
   "select_language_message": "Bitte wählen Sie Ihre bevorzugte Sprache:",

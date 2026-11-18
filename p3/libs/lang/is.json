@@ -144,6 +144,7 @@
   "topgrade_desc": "Tól fyrir að uppfæra alla uppsetta pakka á hvaða Linux kerfi sem er.",
   "mergerfs_desc": "Setur upp mergerfs og sameinar mög drif í eina möppu sem bætt er við /etc/fstab svo hún tengist við ræsingu. Hvert drif heldur sínum skrám, svo tap eins drifs hefur ekki áhrif á önnur.",
   "adir_desc": "Setur upp alla nauðsynlega pakka til að ganga í Active Directory lén með realmd.",
+  "sambashare_desc": "Deilir möppu á staðarnetinu þínu með Samba svo hægt sé að opna hana úr Windows, macOS, Linux og símum. Spyr um nafn deilingarinnar, möppuna og hver komast í hana.",
   "select_language": "Veldu tungumál",
   "select_language_title": "Tungumálaval",
   "select_language_message": "Vinsamlegast veldu æskilegt tungumál þitt:",

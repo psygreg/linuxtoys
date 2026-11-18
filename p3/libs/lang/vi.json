@@ -145,6 +145,7 @@
   "topgrade_desc": "Công cụ để nâng cấp tất cả các gói đã cài đặt trên bất kỳ hệ thống Linux nào.",
   "mergerfs_desc": "Cài đặt mergerfs và gộp nhiều ổ đĩa thành một thư mục, thêm vào /etc/fstab để gắn lúc khởi động. Mỗi ổ đĩa giữ tập tin của riêng nó, nên mất một ổ không ảnh hưởng các ổ khác.",
   "adir_desc": "Cài đặt tất cả các gói cần thiết để tham gia domain Active Directory bằng realmd.",
+  "sambashare_desc": "Chia sẻ một thư mục trong mạng cục bộ của bạn bằng Samba, để có thể mở từ Windows, macOS, Linux và điện thoại. Hỏi tên chia sẻ, thư mục và ai có thể truy cập.",
   "select_language": "Chọn ngôn ngữ",
   "select_language_title": "Lựa chọn ngôn ngữ",
   "select_language_message": "Vui lòng chọn ngôn ngữ ưa thích của bạn:",

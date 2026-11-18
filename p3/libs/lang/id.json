@@ -145,6 +145,7 @@
   "topgrade_desc": "Alat untuk meng-upgrade semua paket yang diinstal di sistem Linux mana pun.",
   "mergerfs_desc": "Menginstal mergerfs dan menggabungkan beberapa drive menjadi satu folder, ditambahkan ke /etc/fstab agar dimount saat boot. Setiap drive menyimpan filenya sendiri, jadi hilangnya satu drive tidak memengaruhi yang lain.",
   "adir_desc": "Menginstal semua paket yang diperlukan untuk bergabung dengan domain Active Directory menggunakan realmd.",
+  "sambashare_desc": "Membagikan folder di jaringan lokal Anda dengan Samba, agar bisa dibuka dari Windows, macOS, Linux, dan ponsel. Menanyakan nama berbagi, foldernya, dan siapa yang bisa mengaksesnya.",
   "select_language": "Pilih Bahasa",
   "select_language_title": "Pemilihan Bahasa",
   "select_language_message": "Silakan pilih bahasa pilihan Anda:",

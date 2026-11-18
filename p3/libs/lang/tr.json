@@ -145,6 +145,7 @@
   "topgrade_desc": "Herhangi bir Linux sisteminde yüklü tüm paketleri yükseltmek için araç.",
   "mergerfs_desc": "mergerfs kurar ve birden çok diski tek klasörde havuzlar; açılışta bağlanması için /etc/fstab dosyasına eklenir. Her disk kendi dosyalarını korur, dolayısıyla bir diskin kaybı diğerlerini etkilemez.",
   "adir_desc": "realmd kullanarak Active Directory etki alanlarına katılmak için gerekli tüm paketleri yükler.",
+  "sambashare_desc": "Samba ile yerel ağınızda bir klasörü paylaşır, böylece Windows, macOS, Linux ve telefonlardan açılabilir. Paylaşım adını, klasörü ve kimin erişebileceğini sorar.",
   "select_language": "Dil Seç",
   "select_language_title": "Dil Seçimi",
   "select_language_message": "Lütfen tercih ettiğiniz dili seçin:",

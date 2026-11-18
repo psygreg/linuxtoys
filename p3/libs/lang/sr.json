@@ -144,6 +144,7 @@
   "topgrade_desc": "Alat za nadogradnju svih instaliranih paketa na bilo kom Linux sistemu.",
   "mergerfs_desc": "Инсталира mergerfs и обједињује више дискова у један директоријум, додајући га у /etc/fstab како би се монтирао при покретању. Сваки диск чува своје датотеке, па губитак једног диска не утиче на остале.",
   "adir_desc": "Instalira sve pakete neophodne za pridruživanje Active Directory domenama koristeći realmd.",
+  "sambashare_desc": "Дели фасциклу на вашој локалној мрежи преко Самбе, тако да се може отворити са Windows, macOS, Linux-а и телефона. Тражи назив дељења, фасциклу и ко може да приступи.",
   "select_language": "Izaberi jezik",
   "select_language_title": "Izbor jezika",
   "select_language_message": "Izaberite vaš preferirani jezik:",

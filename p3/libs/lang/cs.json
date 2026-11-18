@@ -145,6 +145,7 @@
   "topgrade_desc": "Nástroj pro upgrade všech nainstalovaných balíčků na jakémkoli Linux systému.",
   "mergerfs_desc": "Instaluje mergerfs a spojuje několik disků do jedné složky, kterou přidá do /etc/fstab, aby se připojovala při startu. Každý disk si ponechává své soubory, takže ztráta jednoho disku neovlivní ostatní.",
   "adir_desc": "Instaluje všechny balíčky nezbytné pro připojení k Active Directory doménám pomocí realmd.",
+  "sambashare_desc": "Sdílí složku ve vaší místní síti pomocí Samby, aby ji bylo možné otevřít z Windows, macOS, Linuxu a telefonů. Ptá se na název sdílení, složku a na to, kdo k ní má přístup.",
   "select_language": "Vybrat jazyk",
   "select_language_title": "Výběr jazyka",
   "select_language_message": "Vyberte prosím váš preferovaný jazyk:",

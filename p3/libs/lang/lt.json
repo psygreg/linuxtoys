@@ -144,6 +144,7 @@
   "topgrade_desc": "Įrankis atnaujinti visus įdiegtus paketus bet kurioje Linux sistemoje.",
   "mergerfs_desc": "Įdiegia mergerfs ir sujungia kelis diskus į vieną aplanką, įtraukiamą į /etc/fstab, kad būtų prijungiamas paleidžiant. Kiekvienas diskas laiko savo failus, todėl vieno diskneto praradimas neturi įtakos kitiems.",
   "adir_desc": "Įdiegia visus reikalingus paketus prisijungti prie Active Directory domenų naudojant realmd.",
+  "sambashare_desc": "Bendrina aplanką jūsų vietiniame tinkle per Samba, kad jį būtų galima atidaryti iš Windows, macOS, Linux ir telefonų. Klausiama bendrinimo pavadinimo, aplanko ir kas gali prie jo prieiti.",
   "select_language": "Pasirinkti kalbą",
   "select_language_title": "Kalbos pasirinkimas",
   "select_language_message": "Prašome pasirinkti pageidaujamą kalbą:",

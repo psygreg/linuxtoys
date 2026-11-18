@@ -145,6 +145,7 @@
   "topgrade_desc": "Tool para sa pag-upgrade ng lahat ng installed packages sa kahit anong Linux system.",
   "mergerfs_desc": "Nag-i-install ng mergerfs at pinagsasama ang ilang drive sa iisang folder, idinadagdag sa /etc/fstab upang i-mount sa boot. Bawat drive ay may sariling mga file, kaya ang pagkawala ng isang drive ay hindi nakakaapekto sa iba.",
   "adir_desc": "Nag-i-install ng lahat ng packages na kailangan para makasali sa Active Directory domains gamit ang realmd.",
+  "sambashare_desc": "Nagbabahagi ng folder sa iyong lokal na network gamit ang Samba, para ito ay mabuksan mula sa Windows, macOS, Linux at mga telepono. Nagtatanong ng pangalan ng share, ang folder at sino ang makaka-access.",
   "select_language": "Pumili ng Wika",
   "select_language_title": "Pagpili ng Wika",
   "select_language_message": "Pakipili ang inyong preferred na wika:",

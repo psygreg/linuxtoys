@@ -144,6 +144,7 @@
   "topgrade_desc": "Har qanday Linux tizimida barcha o'rnatilgan paketlarni yangilash vositasi.",
   "mergerfs_desc": "mergerfs o'rnatadi va bir nechta diskni bitta papkada birlashtiradi, ishga tushirishda ulanishi uchun /etc/fstab ga qo'shadi. Har bir disk o'z fayllarini saqlaydi, shuning uchun bitta diskning yo'qolishi boshqalarga ta'sir qilmaydi.",
   "adir_desc": "Realmd yordamida Active Directory domenlariga qo'shilish uchun kerakli barcha paketlarni o'rnatadi.",
+  "sambashare_desc": "Samba yordamida mahalliy tarmogʻingizdagi papkani ulashadi, shuning uchun uni Windows, macOS, Linux va telefondan ochish mumkin. Ulashish nomi, papka va kim kirishi mumkinligini soʻraydi.",
   "select_language": "Tilni tanlash",
   "select_language_title": "Til tanlovi",
   "select_language_message": "Iltimos, o'z afzal tilingizni tanlang:",

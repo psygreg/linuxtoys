@@ -154,6 +154,7 @@
   "topgrade_desc": "A tool for upgrading all installed packages on any Linux system.",
   "mergerfs_desc": "Installs mergerfs and pools several drives into one folder, adding it to /etc/fstab so it is mounted at boot. Each drive keeps its own files, so losing one drive does not affect the others.",
   "adir_desc": "Installs all packages necessary to join Active Directory domains using realmd.",
+  "sambashare_desc": "Shares a folder on your local network with Samba, so it can be opened from Windows, macOS, Linux and phones. Asks for the share name, the folder and who can access it.",
   "select_language": "Select Language",
   "select_language_title": "Language Selection",
   "select_language_message": "Please select your preferred language:",

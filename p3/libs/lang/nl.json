@@ -145,6 +145,7 @@
   "topgrade_desc": "Een tool voor het upgraden van alle geïnstalleerde pakketten op elk Linux systeem.",
   "mergerfs_desc": "Installeert mergerfs en voegt meerdere schijven samen in één map die aan /etc/fstab wordt toegevoegd zodat deze bij het opstarten wordt gekoppeld. Elke schijf bewaart zijn eigen bestanden, dus het verlies van één schijf raakt de andere niet.",
   "adir_desc": "Installeert alle pakketten die nodig zijn om lid te worden van Active Directory domeinen met realmd.",
+  "sambashare_desc": "Deelt een map op je lokale netwerk via Samba, zodat deze geopend kan worden vanuit Windows, macOS, Linux en telefoons. Vraagt naar de naam van de share, de map en wie er toegang toe heeft.",
   "select_language": "Taal Selecteren",
   "select_language_title": "Taalselectie",
   "select_language_message": "Selecteer alsjeblieft je gewenste taal:",

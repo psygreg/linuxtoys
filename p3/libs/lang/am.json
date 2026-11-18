@@ -145,6 +145,7 @@
   "topgrade_desc": "በማንኛውም ሊኑክስ ስርዓት ላይ ሁሉንም የተጫኑ ፓኬጆች ለማሻሻል መሳሪያ።",
   "mergerfs_desc": "mergerfs ይጭናል እና በርካታ ዲስኮችን በአንድ ፎልደር ያዋህዳል፣ በማስነሻ ጊዜ እንዲመዘገብ ወደ /etc/fstab ይጨምራል። እያንዳንዱ ዲስክ የራሱን ፋይሎች ይይዛል፣ ስለዚህ አንድ ዲስክ መጥፋት ሌሎቹን አይነካም።",
   "adir_desc": "realmd በመጠቀም ወደ Active Directory domains ለመቀላቀል አስፈላጊ ሁሉንም ፓኬጆች ይጫናል።",
+  "sambashare_desc": "በሳምባ በአካባቢ ኔትወርክዎ ላይ አቃፊ ያጋራል፣ ስለዚህ ከWindows፣ macOS፣ Linux እና ስልክ ማየት ይቻላል። የማጋሪያውን ስም፣ አቃፊውን እና ማን መዳረሻ እንዳለው ይጠይቃል።",
   "select_language": "ቋንቋ ይምረጡ",
   "select_language_title": "የቋንቋ ምርጫ",
   "select_language_message": "እባክዎ የሚመርጡትን ቋንቋ ይምረጡ፦",
