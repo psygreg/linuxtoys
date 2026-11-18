@@ -11,10 +11,23 @@ FROM scratch
 
 ADD ArchLinuxARM-aarch64-latest.tar.gz /
 
-# The rootfs ships ALARM's trusted key lists but no initialized pacman
-# keyring; without this the packaging jobs' `pacman -Syu` fails signature
-# verification (ALARM's pacman.conf sets SigLevel = Required).
-RUN pacman-key --init && pacman-key --populate archlinuxarm
+# pacman 7.x downloads run inside a sandbox: a Landlock filesystem
+# restriction, a syscall filter and a privilege drop to the `alpm` user.
+# All three fail in restricted container environments - on GitHub's arm64
+# runners as "the Landlock ruleset could not be applied: Operation not
+# permitted" followed by "switching to sandbox user 'alpm' failed!". Arch's
+# own official Docker images ship the same mitigation (their pacman.conf
+# enables DisableSandboxFilesystem). Disable every sandbox component here
+# and comment DownloadUser so no setuid is attempted either: downloads run
+# as root and package signature verification (SigLevel = Required, against
+# the keyring initialized below) is unaffected.
+RUN sed -i -E \
+      -e 's/^[[:space:]]*#?[[:space:]]*DisableSandbox[[:space:]]*$/DisableSandbox/' \
+      -e 's/^[[:space:]]*#?[[:space:]]*DisableSandboxFilesystem[[:space:]]*$/DisableSandboxFilesystem/' \
+      -e 's/^[[:space:]]*#?[[:space:]]*DisableSandboxSyscalls[[:space:]]*$/DisableSandboxSyscalls/' \
+      -e 's/^[[:space:]]*DownloadUser[[:space:]]*=.*$/#&/' \
+      /etc/pacman.conf && \
+    pacman-key --init && pacman-key --populate archlinuxarm
 
 LABEL org.opencontainers.image.title="linuxtoys-ci-archlinux-aarch64" \
       org.opencontainers.image.description="Arch Linux ARM aarch64 rootfs for the LinuxToys release packaging jobs" \
