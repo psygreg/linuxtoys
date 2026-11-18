@@ -205,6 +205,7 @@
   "unsupported_os_message": "Nepalaikoma operacinė sistema.",
   "dnsmasq_desc": "Nustatykite vietinį DNS talpyklą, kad pagreitintumėte domenų pavadinimų sprendimą, pagerintumėte naršymo našumą ir išspręstumėte problemas su parsisiuntimo greičio praradimu Steam.",
   "intelxe_desc": "Perjungia Intel tvarkykles į naujesnę Xe tvarkyklę palaikomuose diskretiniuose GPU (Battlemage/Alchemist), kad pagerintų našumą ir suderinamumą.",
+  "ipu6_desc": "Nustato nešiojamųjų kompiuterių įmontuotas kameras, naudojančias Intel IPU6 (nuo Tiger Lake iki Meteor Lake), su atvirojo kodo tvarkykle branduolyje, libcamera ir PipeWire. Jokie tvarkyklės moduliai už branduolio ribų neįdiegiami. Reikalauja Linux 6.10 arba naujesnės.",
   "term_view_execute": " Vykdyti ",
   "term_view_running_label": " Vykdoma ",
   "term_view_done": " Baigta ",

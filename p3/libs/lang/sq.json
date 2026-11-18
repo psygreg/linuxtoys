@@ -205,6 +205,7 @@
   "unsupported_os_message": "Sistem operativ i pambështetur.",
   "dnsmasq_desc": "Konfiguro ruajtjen në cache DNS lokal për të shpejtuar zgjidhjen e emrave të domenit, për të përmirësuar performancën e shfletimit dhe për të zgjidhur problemet me humbjen e shpejtësisë së shkarkimit në Steam.",
   "intelxe_desc": "Kalon drejtuesit Intel në drejtuesin më të ri Xe në GPU-të diskrete të mbështetura (Battlemage/Alchemist) për të përmirësuar performancën dhe përputhshmërinë.",
+  "ipu6_desc": "Konfiguron kamerat e integruara të laptopëve që përdorin Intel IPU6 (nga Tiger Lake deri në Meteor Lake) me driver-in open-source brenda kernelit, libcamera dhe PipeWire. Nuk instalohen module driver-i jashtë kernelit. Kërkon Linux 6.10 ose më të ri.",
   "term_view_execute": " Ekzekuto ",
   "term_view_running_label": " Duke ekzekutuar ",
   "term_view_done": " Përfunduar ",

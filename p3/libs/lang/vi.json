@@ -205,6 +205,7 @@
   "unsupported_os_message": "Hệ điều hành không được hỗ trợ.",
   "dnsmasq_desc": "Thiết lập bộ nhớ đệm DNS cục bộ để tăng tốc độ phân giải tên miền, cải thiện hiệu suất duyệt web và khắc phục sự cố mất tốc độ tải xuống trên Steam.",
   "intelxe_desc": "Chuyển driver Intel sang driver Xe mới hơn trên các GPU rời được hỗ trợ (Battlemage/Alchemist) để cải thiện hiệu suất và khả năng tương thích.",
+  "ipu6_desc": "Thiết lập các camera tích hợp sẵn của laptop sử dụng Intel IPU6 (từ Tiger Lake đến Meteor Lake) với trình điều khiển trong nhân mã nguồn mở, libcamera và PipeWire. Không cài đặt mô-đun trình điều khiển ngoài nhân. Yêu cầu Linux 6.10 hoặc mới hơn.",
   "term_view_execute": " Thực thi ",
   "term_view_running_label": " Đang chạy ",
   "term_view_done": " Hoàn thành ",

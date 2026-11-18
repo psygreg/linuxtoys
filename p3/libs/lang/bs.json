@@ -205,6 +205,7 @@
   "unsupported_os_message": "Nepodržani operativni sistem.",
   "dnsmasq_desc": "Postavite lokalno DNS keširanje da ubrzate razrješavanje imena domena, poboljšate performanse pregledavanja i riješite probleme s gubitkom brzine preuzimanja na Steamu.",
   "intelxe_desc": "Prebacuje Intel upravljačke programe na noviji Xe upravljački program na podržanim diskretnim GPU-ovima (Battlemage/Alchemist) za poboljšane performanse i kompatibilnost.",
+  "ipu6_desc": "Podešava ugrađene kamere laptopova koje koriste Intel IPU6 (od Tiger Lake do Meteor Lake) s otvorenim drajverom u kernelu, libcamera i PipeWire. Nijedan modul drajvera izvan kernela se ne instalira. Zahtijeva Linux 6.10 ili noviji.",
   "term_view_execute": " Izvrši ",
   "term_view_running_label": " Izvršava se ",
   "term_view_done": " Završeno ",

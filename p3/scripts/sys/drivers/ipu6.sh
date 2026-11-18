@@ -121,5 +121,5 @@ ipu6_install
 sudo_ modprobe intel_ipu6_isys &>/dev/null || true
 systemctl --user restart wireplumber &>/dev/null || true
 
-cams=$(cam --list 2>/dev/null | sed -n 's/^[0-9]*: //p' | paste -sd ', ')
+cams=$(cam --list 2>/dev/null | sed -n 's/^[0-9]*: //p' | paste -sd ',')
 zeninf "$ipu6_done ${cams:-$ipu6_nocam}"

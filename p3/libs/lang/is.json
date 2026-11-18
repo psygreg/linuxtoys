@@ -205,6 +205,7 @@
   "unsupported_os_message": "Óstutt stýrikerfi.",
   "dnsmasq_desc": "Settu upp staðbundið DNS-skyndiminni til að flýta fyrir nafnalausn léna, bæta vafragetu og laga vandamál með tap á niðurhalsshraða á Steam.",
   "intelxe_desc": "Skiptir Intel reklunum yfir í nýrri Xe rekil á studdum aðgreindum GPU (Battlemage/Alchemist) til að bæta afköst og samhæfni.",
+  "ipu6_desc": "Setur upp innbyggðar fartækjamyndavélar sem nota Intel IPU6 (frá Tiger Lake til Meteor Lake) með opna rekjanum í kjarnanum, libcamera og PipeWire. Engir rekjamódúlar utan kjarnans eru settir upp. Krefst Linux 6.10 eða nýrri.",
   "term_view_execute": " Framkvæma ",
   "term_view_running_label": " Keyrir ",
   "term_view_done": " Lokið ",

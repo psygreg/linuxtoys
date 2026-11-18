@@ -205,6 +205,7 @@
   "unsupported_os_message": "Sistem pengendalian tidak disokong.",
   "dnsmasq_desc": "Sediakan caching DNS tempatan untuk mempercepatkan penyelesaian nama domain, meningkatkan prestasi pelayaran dan menyelesaikan masalah kehilangan kelajuan muat turun di Steam.",
   "intelxe_desc": "Menukar pemacu Intel kepada pemacu Xe yang lebih baharu pada GPU diskret yang disokong (Battlemage/Alchemist) untuk meningkatkan prestasi dan keserasian.",
+  "ipu6_desc": "Menyediakan kamera terbina dalam komputer riba yang menggunakan Intel IPU6 (dari Tiger Lake hingga Meteor Lake) dengan pemacu dalam kernel sumber terbuka, libcamera dan PipeWire. Tiada modul pemacu luar pokok dipasang. Memerlukan Linux 6.10 atau lebih baharu.",
   "term_view_execute": " Laksanakan ",
   "term_view_running_label": " Sedang berjalan ",
   "term_view_done": " Selesai ",

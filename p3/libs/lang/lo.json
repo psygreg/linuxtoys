@@ -205,6 +205,7 @@
   "unsupported_os_message": "ລະບົບປະຕິບັດການທີ່ບໍ່ຮອງຮັບ.",
   "dnsmasq_desc": "ຕັ້ງການເກັບຂໍ້ມູນ DNS ໃນທ້ອງຖິ່ນເພື່ອເລັ່ງການແກ້ໄຂຊື່ໂດເມນ, ປັບປຸງປະສິດທິພາບການທ່ອງເວັບ ແລະແກ້ໄຂບັນຫາການສູນເສຍຄວາມໄວດາວໂຫລດໃນ Steam.",
   "intelxe_desc": "ສະຫຼັບໄດຣເວີ Intel ໄປຫາໄດຣເວີ Xe ໃໝ່ກວ່າໃນ GPU ແຍກທີ່ຮອງຮັບ (Battlemage/Alchemist) ເພື່ອປັບປຸງປະສິດທິພາບ ແລະຄວາມເຂົ້າກັນໄດ້.",
+  "ipu6_desc": "ຕັ້ງຄ່າກ້ອງຖ່າຍໃນຕົວຂອງແລັບທັອບທີ່ໃຊ້ Intel IPU6 (ຈາກ Tiger Lake ຫາ Meteor Lake) ດ້ວຍ driver ໃນ kernel ແບບ open-source, libcamera ແລະ PipeWire. ບໍ່ຕິດຕັ້ງມູດູນ driver ນອກ kernel. ຕ້ອງການ Linux 6.10 ຫຼືໃໝ່ກວ່າ.",
   "term_view_execute": " ປະຕິບັດ ",
   "term_view_running_label": " ກຳລັງດຳເນີນການ ",
   "term_view_done": " ສຳເລັດ ",

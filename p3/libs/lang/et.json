@@ -205,6 +205,7 @@
   "unsupported_os_message": "Toetamata operatsioonisüsteem.",
   "dnsmasq_desc": "Seadistage kohalik DNS-i vahemällu salvestamine, et kiirendada domeenide nimede lahendamist, parandada sirvimise jõudlust ja lahendada probleeme allalaadimise kiiruse kaotamisega Steamis.",
   "intelxe_desc": "Lülitab Intel draiverid uuemale Xe draiverile toetatud eraldiseisevatel GPU-del (Battlemage/Alchemist) parema jõudluse ja ühilduvuse tagamiseks.",
+  "ipu6_desc": "Seadistab sisseehitatud sülearvuti kaameraid, mis kasutavad Intel IPU6-d (Tiger Lake kuni Meteor Lake), tuuma avatud lähtekoodiga draiveri, libcamera ja PipeWire abil. Tuuma välist draiverimooduleid ei paigaldata. Nõuab Linux 6.10 või uuemat.",
   "term_view_execute": " Käivita ",
   "term_view_running_label": " Töötab ",
   "term_view_done": " Valmis ",

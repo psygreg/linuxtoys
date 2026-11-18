@@ -205,6 +205,7 @@
   "unsupported_os_message": "不支持的操作系统。",
   "dnsmasq_desc": "设置本地DNS缓存以加快域名解析速度，提高浏览性能并修复Steam上下载速度丢失的问题。",
   "intelxe_desc": "将Intel驱动程序切换到受支持的独立GPU（Battlemage/Alchemist）上的较新Xe驱动程序，以提高性能和兼容性。",
+  "ipu6_desc": "使用内核内开源驱动、libcamera 和 PipeWire 设置使用 Intel IPU6（从 Tiger Lake 到 Meteor Lake）的笔记本电脑内置摄像头。不会安装任何内核外驱动模块。需要 Linux 6.10 或更新版本。",
   "term_view_execute": " 执行 ",
   "term_view_running_label": " 运行中 ",
   "term_view_done": " 完成 ",

@@ -205,6 +205,7 @@
   "unsupported_os_message": "Nepodporovaný operační systém.",
   "dnsmasq_desc": "Nastavte místní ukládání DNS do mezipaměti pro zrychlení překladu doménových jmen, zlepšení výkonu prohlížení a opravu problémů se ztrátou rychlosti stahování na Steamu.",
   "intelxe_desc": "Přepne ovladače Intel na novější ovladač Xe na podporovaných diskrétních GPU (Battlemage/Alchemist) pro lepší výkon a kompatibilitu.",
+  "ipu6_desc": "Nastavuje vestavěné kamery notebooků používající Intel IPU6 (od Tiger Lake po Meteor Lake) pomocí open-source ovladače v jádře, libcamera a PipeWire. Nejsou instalovány žádné moduly ovladačů mimo jádro. Vyžaduje Linux 6.10 nebo novější.",
   "term_view_execute": " Spustit ",
   "term_view_running_label": " Probíhá ",
   "term_view_done": " Hotovo ",

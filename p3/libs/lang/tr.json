@@ -205,6 +205,7 @@
   "unsupported_os_message": "Desteklenmeyen işletim sistemi.",
   "dnsmasq_desc": "Alan adı çözümlemesini hızlandırmak, tarayıcı performansını artırmak ve Steam'de indirme hızı kaybı sorunlarını çözmek için yerel DNS önbelleğe alma özelliğini ayarlayın.",
   "intelxe_desc": "Performansı ve uyumluluğu artırmak için desteklenen ayrık GPU'larda (Battlemage/Alchemist) Intel sürücülerini daha yeni Xe sürücüsüne değiştirir.",
+  "ipu6_desc": "Intel IPU6 (Tiger Lake'den Meteor Lake'e) kullanan dizüstü bilgisayarların dahili kameralarını açık kaynak çekirdek içi sürücü, libcamera ve PipeWire ile kurar. Çekirdek dışı sürücü modülü kurulmaz. Linux 6.10 veya daha yenisini gerektirir.",
   "term_view_execute": " Çalıştır ",
   "term_view_running_label": " Çalışıyor ",
   "term_view_done": " Tamamlandı ",

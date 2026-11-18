@@ -205,6 +205,7 @@
   "unsupported_os_message": "Sistem de operare neacceptat.",
   "dnsmasq_desc": "Configurați cache-ul DNS local pentru a accelera rezolvarea numelor de domeniu, a îmbunătăți performanța navigării și a rezolva problemele cu pierderea vitezei de descărcare pe Steam.",
   "intelxe_desc": "Comută driverele Intel la driverul Xe mai nou pe GPU-uri discrete suportate (Battlemage/Alchemist) pentru a îmbunătăți performanța și compatibilitatea.",
+  "ipu6_desc": "Configurează camerele încorporate ale laptopurilor care folosesc Intel IPU6 (de la Tiger Lake la Meteor Lake) cu driverul open-source din kernel, libcamera și PipeWire. Nu sunt instalate module de driver în afara kernel-ului. Necesită Linux 6.10 sau mai nou.",
   "term_view_execute": " Execută ",
   "term_view_running_label": " Rulează ",
   "term_view_done": " Terminat ",

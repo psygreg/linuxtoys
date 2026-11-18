@@ -205,6 +205,7 @@
   "unsupported_os_message": "Nicht unterstütztes Betriebssystem.",
   "dnsmasq_desc": "Richten Sie lokales DNS-Caching ein, um die Auflösung von Domainnamen zu beschleunigen, die Browser-Leistung zu verbessern und Probleme mit dem Verlust der Download-Geschwindigkeit bei Steam zu beheben.",
   "intelxe_desc": "Wechselt Intel-Treiber zum neueren Xe-Treiber auf unterstützten dedizierten GPUs (Battlemage/Alchemist), um Leistung und Kompatibilität zu verbessern.",
+  "ipu6_desc": "Richtet eingebaute Laptop-Kameras ein, die den Intel IPU6 (von Tiger Lake bis Meteor Lake) verwenden, mit dem Open-Source-Treiber im Kernel, libcamera und PipeWire. Es werden keine Treibermodule außerhalb des Kernels installiert. Erfordert Linux 6.10 oder neuer.",
   "term_view_execute": " Ausführen ",
   "term_view_running_label": " Läuft ",
   "term_view_done": " Fertig ",

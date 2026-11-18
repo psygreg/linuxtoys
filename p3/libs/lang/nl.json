@@ -205,6 +205,7 @@
   "unsupported_os_message": "Niet-ondersteund besturingssysteem.",
   "dnsmasq_desc": "Stel lokale DNS-caching in om domeinnaamresolutie te versnellen, browserprestaties te verbeteren en problemen met het verliezen van downloadsnelheid op Steam op te lossen.",
   "intelxe_desc": "Schakelt Intel-stuurprogramma's over naar het nieuwere Xe-stuurprogramma op ondersteunde discrete GPU's (Battlemage/Alchemist) om prestaties en compatibiliteit te verbeteren.",
+  "ipu6_desc": "Configureert de ingebouwde camera's van laptops die Intel IPU6 (van Tiger Lake tot Meteor Lake) gebruiken met de open-source driver in de kernel, libcamera en PipeWire. Er worden geen drivermodules buiten de kernel geïnstalleerd. Vereist Linux 6.10 of nieuwer.",
   "term_view_execute": " Uitvoeren ",
   "term_view_running_label": " Bezig ",
   "term_view_done": " Klaar ",

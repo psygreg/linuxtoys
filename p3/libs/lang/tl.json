@@ -205,6 +205,7 @@
   "unsupported_os_message": "Hindi suportadong operating system.",
   "dnsmasq_desc": "Mag-set up ng lokal na DNS caching upang pabilisin ang resolusyon ng domain name, pahusayin ang pagganap ng pag-browse at ayusin ang mga problema sa pagkawala ng bilis ng pag-download sa Steam.",
   "intelxe_desc": "Lilipat ang mga Intel driver sa mas bagong Xe driver sa mga suportadong discrete GPU (Battlemage/Alchemist) upang mapabuti ang pagganap at compatibility.",
+  "ipu6_desc": "Nire-setup ang mga built-in na kamera ng laptop na gumagamit ng Intel IPU6 (mula Tiger Lake hanggang Meteor Lake) gamit ang open-source in-kernel na driver, libcamera at PipeWire. Walang out-of-tree na driver module na ini-install. Nangangailangan ng Linux 6.10 o mas bago.",
   "term_view_execute": " Isagawa ",
   "term_view_running_label": " Tumatakbo ",
   "term_view_done": " Tapos na ",

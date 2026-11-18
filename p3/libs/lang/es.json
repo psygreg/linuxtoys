@@ -205,6 +205,7 @@
   "unsupported_os_message": "Sistema operativo no compatible.",
   "dnsmasq_desc": "Configure el almacenamiento en caché de DNS local para acelerar la resolución de nombres de dominio, mejorar el rendimiento de navegación y solucionar problemas con la pérdida de velocidad de descarga en Steam.",
   "intelxe_desc": "Cambia los controladores de Intel al controlador Xe más nuevo en GPU discretas compatibles (Battlemage/Alchemist) para mejorar el rendimiento y la compatibilidad.",
+  "ipu6_desc": "Configura las cámaras integradas de portátiles que usan el Intel IPU6 (de Tiger Lake a Meteor Lake) con el controlador de código abierto en el núcleo, libcamera y PipeWire. No se instalan módulos de controlador fuera del núcleo. Requiere Linux 6.10 o más reciente.",
   "term_view_execute": " Ejecutar ",
   "term_view_running_label": " Ejecutando ",
   "term_view_done": " Listo ",

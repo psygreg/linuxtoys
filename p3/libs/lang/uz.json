@@ -205,6 +205,7 @@
   "unsupported_os_message": "Qo'llab-quvvatlanmaydigan operatsion tizim.",
   "dnsmasq_desc": "Domen nomlarini hal qilishni tezlashtirish, brauzer samaradorligini yaxshilash va Steam-da yuklab olish tezligini yo'qotish muammolarini hal qilish uchun mahalliy DNS keshingni sozlang.",
   "intelxe_desc": "Ishlash va moslikni yaxshilash uchun qo'llab-quvvatlanadigan diskret GPU-larda (Battlemage/Alchemist) Intel drayverlari yangi Xe drayveriga o'tkaziladi.",
+  "ipu6_desc": "Intel IPU6 (Tiger Lake'dan Meteor Lake'gacha) ishlatadigan noutbuklarning ichki kameralarini ochiq kodli yadrodagi drayver, libcamera va PipeWire bilan sozlaydi. Yadro tashqaridagi drayver modullari o'rnatilmaydi. Linux 6.10 yoki yangiroq talab qilinadi.",
   "term_view_execute": " Bajarish ",
   "term_view_running_label": " Ishlayapti ",
   "term_view_done": " Tugallandi ",

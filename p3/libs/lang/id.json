@@ -205,6 +205,7 @@
   "unsupported_os_message": "Sistem operasi tidak didukung.",
   "dnsmasq_desc": "Atur cache DNS lokal untuk mempercepat resolusi nama domain, meningkatkan kinerja penjelajahan, dan memperbaiki masalah kehilangan kecepatan unduh di Steam.",
   "intelxe_desc": "Mengalihkan driver Intel ke driver Xe yang lebih baru pada GPU diskrit yang didukung (Battlemage/Alchemist) untuk meningkatkan kinerja dan kompatibilitas.",
+  "ipu6_desc": "Menyiapkan kamera bawaan laptop yang menggunakan Intel IPU6 (dari Tiger Lake hingga Meteor Lake) dengan driver dalam kernel sumber terbuka, libcamera, dan PipeWire. Tidak ada modul driver di luar tree yang diinstal. Membutuhkan Linux 6.10 atau lebih baru.",
   "term_view_execute": " Jalankan ",
   "term_view_running_label": " Berjalan ",
   "term_view_done": " Selesai ",
