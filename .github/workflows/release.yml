@@ -45,6 +45,18 @@
 #   * The worker containers stand in for the distrobox containers: Fedora and
 #     Arch jobs run inside their official container images, the DEB job runs
 #     on the Ubuntu runner (noble, matching the debian/changelog target).
+#   * Arch's official images (Docker Hub / ghcr.io / quay.io) publish
+#     linux/amd64 only, so the aarch64 Arch legs cannot pull them on the
+#     ubuntu-24.04-arm runners ("no matching manifest for linux/arm64/v8").
+#     The ci-image job instead builds a LinuxToys image from the
+#     signature-verified Arch Linux ARM aarch64 rootfs
+#     (.github/ci-images/archlinux-aarch64/Dockerfile), pushes it to GHCR and
+#     hands the aarch64 arch-pkg/appimage legs a digest-pinned reference; the
+#     x86_64 legs keep the official archlinux:base-devel. ALARM signs the
+#     rootfs with a detached signature, so the ci-image job pins ALARM's
+#     published signing-key fingerprints (fetched by fingerprint from
+#     keyserver.ubuntu.com over TLS) and refuses the build when the signature
+#     does not verify against one of them.
 #   * Before every packaging job, the Rust bits are built and deployed into
 #     p3/app exactly like the "develop" pass that ./build-rust.sh release
 #     performs before staging (sharun and distro builds rely on the shared
@@ -236,6 +248,108 @@ jobs:
           name: release-notes
           path: release-notes.txt
           if-no-files-found: error
+
+  ci-image:
+    name: Build the aarch64 Arch CI image (ALARM rootfs)
+    # The official Arch images are linux/amd64-only, so the aarch64 Arch legs
+    # need an Arch Linux ARM (ALARM) based image. This job builds it fresh on
+    # every run and pins it by digest: the packaging legs then run exactly the
+    # bits this job built and verified, with no third-party container trust.
+    runs-on: ubuntu-24.04-arm
+    needs: prepare
+    if: needs.prepare.outputs.proceed == 'true'
+    timeout-minutes: 45
+    outputs:
+      image: ${{ steps.image.outputs.image }}
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Fetch and verify the Arch Linux ARM rootfs
+        # ALARM publishes the rootfs over plain http (its os.* TLS endpoint
+        # serves a mismatched certificate), so authenticity comes from the
+        # detached signature: fetch it alongside the tarball and require it to
+        # verify against a key matching one of ALARM's published signing-key
+        # fingerprints. The keys themselves are fetched by fingerprint from
+        # keyserver.ubuntu.com over TLS (https://archlinuxarm.org/about/
+        # package-signing), so only the pinned fingerprints can satisfy the
+        # check even though the tarball download channel is unauthenticated.
+        env:
+          ALARM_KEY_FPS: >-
+            02922214DE8981D14DC2ACABBC704E86B823CD25
+            9D22B7BB678DC056B1F7723CB55C5315DCD9EE1A
+            69DD6C8FD314223E14362848BF7EEF7A9C6B5765
+            68B3537F39A313B3E574D06777193F152BDBE6A6
+        run: |
+          set -euo pipefail
+          rootfs_dir="$RUNNER_TEMP/alarm-rootfs"
+          mkdir -p "$rootfs_dir"
+          cd "$rootfs_dir"
+          curl -fSL --retry 5 --retry-delay 5 \
+              -o ArchLinuxARM-aarch64-latest.tar.gz \
+              'http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz'
+          curl -fSL --retry 5 --retry-delay 5 \
+              -o ArchLinuxARM-aarch64-latest.tar.gz.sig \
+              'http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz.sig'
+          export GNUPGHOME="$RUNNER_TEMP/lt-gpg"
+          mkdir -p "$GNUPGHOME"
+          chmod 700 "$GNUPGHOME"
+          for fp in $ALARM_KEY_FPS; do
+              curl -fsSL --retry 5 --retry-delay 5 \
+                  "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x${fp}" \
+                  | gpg --import
+          done
+          gpg --status-fd 1 --verify ArchLinuxARM-aarch64-latest.tar.gz.sig \
+              ArchLinuxARM-aarch64-latest.tar.gz 2>/dev/null \
+              | grep '^\[GNUPG:\] VALIDSIG' > validsig.txt || true
+          if [ ! -s validsig.txt ]; then
+              echo "::error::The Arch Linux ARM rootfs signature did not verify." >&2
+              exit 1
+          fi
+          # VALIDSIG carries the primary-key fingerprint and, for subkey
+          # signatures, the signing-key fingerprint as the last field; accept
+          # the rootfs only when one of ALARM's published fingerprints matches.
+          fps_seen="$(awk '{ print $3 "\n" $NF }' validsig.txt | tr 'A-F' 'a-f' | sort -u)"
+          ok=0
+          for fp in $ALARM_KEY_FPS; do
+              if grep -qx "$(tr 'A-F' 'a-f' <<<"$fp")" <<<"$fps_seen"; then
+                  ok=1
+              fi
+          done
+          [ "$ok" = 1 ] || {
+              echo "::error::The rootfs signature key is not one of ALARM's published signing keys." >&2
+              exit 1
+          }
+
+      - name: Build and push the image to GHCR
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          image_repo="ghcr.io/${GITHUB_REPOSITORY,,}"
+          echo "$GITHUB_TOKEN" | docker login ghcr.io -u "${GITHUB_ACTOR}" --password-stdin
+          docker build \
+              --platform linux/arm64 \
+              --label "org.opencontainers.image.source=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}" \
+              -t "${image_repo}:archlinux-aarch64" \
+              -f .github/ci-images/archlinux-aarch64/Dockerfile \
+              "$RUNNER_TEMP/alarm-rootfs"
+
+      - name: Push and record the digest-pinned image reference
+        id: image
+        run: |
+          set -euo pipefail
+          image_repo="ghcr.io/${GITHUB_REPOSITORY,,}"
+          docker push "${image_repo}:archlinux-aarch64" >/dev/null
+          # RepoDigests is populated by the push; strip the name, keep the
+          # content-addressed digest, so name@digest is a stable pull
+          # reference for the packaging legs.
+          ref="$(docker image inspect --format '{{index .RepoDigests 0}}' "${image_repo}:archlinux-aarch64")"
+          digest="${ref#*@}"
+          echo "image=${image_repo}:archlinux-aarch64@${digest}" >> "$GITHUB_OUTPUT"
 
   deb-ppa:
     name: DEB (${{ matrix.arch }}, ubuntu / noble) and Launchpad PPA upload
@@ -447,18 +561,28 @@ jobs:
         include:
           - arch: x86_64
             runner: ubuntu-24.04
+            image: archlinux:base-devel
             aur_source: true
           - arch: aarch64
             runner: ubuntu-24.04-arm
+            # Official Arch images are linux/amd64-only, so the arm runner
+            # cannot pull them: run inside the ALARM-based image the ci-image
+            # job built and pushed for this run, pinned by digest.
+            image: ${{ needs.ci-image.outputs.image }}
             aur_source: false
     runs-on: ${{ matrix.runner }}
-    needs: prepare
+    needs: [prepare, ci-image]
     if: needs.prepare.outputs.proceed == 'true'
     timeout-minutes: 90
     env:
       LT_VERSION: ${{ needs.prepare.outputs.version }}
+    permissions:
+      # The aarch64 leg pulls the private GHCR package ci-image pushed; the
+      # runner authenticates ghcr.io pulls with the job token automatically.
+      contents: read
+      packages: read
     container:
-      image: archlinux:base-devel
+      image: ${{ matrix.image }}
     steps:
       # git must exist before the checkout step can run. fakeroot is required
       # by makepkg, which refuses to run as root, so the build runs as a
@@ -522,16 +646,26 @@ jobs:
         include:
           - arch: x86_64
             runner: ubuntu-24.04
+            image: archlinux:base-devel
           - arch: aarch64
             runner: ubuntu-24.04-arm
+            # Official Arch images are linux/amd64-only, so the arm runner
+            # cannot pull them: run inside the ALARM-based image the ci-image
+            # job built and pushed for this run, pinned by digest.
+            image: ${{ needs.ci-image.outputs.image }}
     runs-on: ${{ matrix.runner }}
-    needs: prepare
+    needs: [prepare, ci-image]
     if: needs.prepare.outputs.proceed == 'true'
     timeout-minutes: 120
     env:
       LT_VERSION: ${{ needs.prepare.outputs.version }}
+    permissions:
+      # The aarch64 leg pulls the private GHCR package ci-image pushed; the
+      # runner authenticates ghcr.io pulls with the job token automatically.
+      contents: read
+      packages: read
     container:
-      image: archlinux:base-devel
+      image: ${{ matrix.image }}
     steps:
       # git must exist before the checkout step can run. xorg-server-xvfb
       # provides xvfb-run, which quick-sharun needs to trace the dlopened
