@@ -152,6 +152,7 @@
   "webmin_desc": "Uma interface baseada na web para administração de sistemas Unix.",
   "topgrade_desc": "Uma ferramenta para atualizar todos os pacotes instalados em qualquer sistema Linux.",
   "adir_desc": "Instala todos os pacotes necessários para ingressar em domínios do Active Directory usando o realmd.",
+  "sambashare_desc": "Compartilha uma pasta na sua rede local com o Samba, para que ela possa ser aberta no Windows, macOS, Linux e celulares. Pergunta o nome do compartilhamento, a pasta e quem pode acessá-la.",
   "select_language": "Selecionar Idioma",
   "select_language_title": "Seleção de Idioma",
   "select_language_message": "Por favor, selecione seu idioma preferido:",
