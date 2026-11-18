@@ -143,6 +143,7 @@
   "cockpit_desc": "Web-based interface para sa monitoring at managing ng Linux servers (server).",
   "webmin_desc": "Web-based interface para sa system administration para sa Unix.",
   "topgrade_desc": "Tool para sa pag-upgrade ng lahat ng installed packages sa kahit anong Linux system.",
+  "mergerfs_desc": "Nag-i-install ng mergerfs at pinagsasama ang ilang drive sa iisang folder, idinadagdag sa /etc/fstab upang i-mount sa boot. Bawat drive ay may sariling mga file, kaya ang pagkawala ng isang drive ay hindi nakakaapekto sa iba.",
   "adir_desc": "Nag-i-install ng lahat ng packages na kailangan para makasali sa Active Directory domains gamit ang realmd.",
   "select_language": "Pumili ng Wika",
   "select_language_title": "Pagpili ng Wika",

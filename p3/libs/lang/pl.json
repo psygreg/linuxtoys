@@ -143,6 +143,7 @@
   "cockpit_desc": "Interfejs webowy do monitorowania i zarządzania serwerami Linux (serwer).",
   "webmin_desc": "Interfejs webowy do administracji systemem dla Unix.",
   "topgrade_desc": "Narzędzie do aktualizacji wszystkich zainstalowanych pakietów w dowolnym systemie Linux.",
+  "mergerfs_desc": "Instaluje mergerfs i łączy kilka dysków w jeden folder, dodając go do /etc/fstab, aby był montowany przy uruchamianiu. Każdy dysk zachowuje własne pliki, więc utrata jednego nie wpływa na pozostałe.",
   "adir_desc": "Instaluje wszystkie pakiety niezbędne do dołączania do domen Active Directory przy użyciu realmd.",
   "select_language": "Wybierz język",
   "select_language_title": "Wybór języka",

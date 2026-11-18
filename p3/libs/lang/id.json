@@ -143,6 +143,7 @@
   "cockpit_desc": "Antarmuka berbasis web untuk monitoring dan mengelola server Linux (server).",
   "webmin_desc": "Antarmuka berbasis web untuk administrasi sistem untuk Unix.",
   "topgrade_desc": "Alat untuk meng-upgrade semua paket yang diinstal di sistem Linux mana pun.",
+  "mergerfs_desc": "Menginstal mergerfs dan menggabungkan beberapa drive menjadi satu folder, ditambahkan ke /etc/fstab agar dimount saat boot. Setiap drive menyimpan filenya sendiri, jadi hilangnya satu drive tidak memengaruhi yang lain.",
   "adir_desc": "Menginstal semua paket yang diperlukan untuk bergabung dengan domain Active Directory menggunakan realmd.",
   "select_language": "Pilih Bahasa",
   "select_language_title": "Pemilihan Bahasa",

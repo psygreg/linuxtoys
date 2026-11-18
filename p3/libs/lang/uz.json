@@ -142,6 +142,7 @@
   "cockpit_desc": "Linux serverlarini monitoring qilish va boshqarish uchun veb-asosli interfeys (server).",
   "webmin_desc": "Unix uchun tizim administratsiyasi uchun veb-asosli interfeys.",
   "topgrade_desc": "Har qanday Linux tizimida barcha o'rnatilgan paketlarni yangilash vositasi.",
+  "mergerfs_desc": "mergerfs o'rnatadi va bir nechta diskni bitta papkada birlashtiradi, ishga tushirishda ulanishi uchun /etc/fstab ga qo'shadi. Har bir disk o'z fayllarini saqlaydi, shuning uchun bitta diskning yo'qolishi boshqalarga ta'sir qilmaydi.",
   "adir_desc": "Realmd yordamida Active Directory domenlariga qo'shilish uchun kerakli barcha paketlarni o'rnatadi.",
   "select_language": "Tilni tanlash",
   "select_language_title": "Til tanlovi",

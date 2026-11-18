@@ -142,6 +142,7 @@
   "cockpit_desc": "Žiniatinklio pagrindu sukurtas sąsaja Linux serverių stebėjimui ir valdymui (serveris).",
   "webmin_desc": "Žiniatinklio pagrindu sukurtas sąsaja sistemos administravimui Unix.",
   "topgrade_desc": "Įrankis atnaujinti visus įdiegtus paketus bet kurioje Linux sistemoje.",
+  "mergerfs_desc": "Įdiegia mergerfs ir sujungia kelis diskus į vieną aplanką, įtraukiamą į /etc/fstab, kad būtų prijungiamas paleidžiant. Kiekvienas diskas laiko savo failus, todėl vieno diskneto praradimas neturi įtakos kitiems.",
   "adir_desc": "Įdiegia visus reikalingus paketus prisijungti prie Active Directory domenų naudojant realmd.",
   "select_language": "Pasirinkti kalbą",
   "select_language_title": "Kalbos pasirinkimas",

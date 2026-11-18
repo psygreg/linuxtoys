@@ -142,6 +142,7 @@
   "cockpit_desc": "Web-alapú interfész Linux szerverek monitorozásához és kezeléséhez (szerver).",
   "webmin_desc": "Web-alapú interfész rendszeradminisztrációhoz Unix-ra.",
   "topgrade_desc": "Eszköz minden telepített csomag frissítéséhez bármely Linux rendszeren.",
+  "mergerfs_desc": "Telepíti a mergerfs-t, és több meghajtót egyetlen mappába von össze, hozzáadva a /etc/fstab-hoz, hogy induláskor csatlakozzon. Minden meghajtó megtartja saját fájljait, így egy meghajtó elvesztése nem érinti a többit.",
   "adir_desc": "Telepíti az összes szükséges csomagot Active Directory domain-ek csatlakozásához realmd használatával.",
   "select_language": "Nyelv kiválasztása",
   "select_language_title": "Nyelvválasztás",
