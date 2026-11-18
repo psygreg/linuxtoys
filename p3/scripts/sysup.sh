@@ -63,6 +63,44 @@ offer_release_upgrade() {
     question "Release Upgrade" "$sysup_available" || return 1
 }
 
+# Upgrade with dnf, relaxing the transaction when repository sync lag breaks it.
+# '--best' restricts every package to its newest build: when a repository has
+# published a build whose dependency has not reached any enabled repository yet
+# (RPM Fusion ffmpeg builds needing a just-bumped library are a recurring
+# example), the strict transaction fails wholesale with "nothing provides ..."
+# and nothing updates at all. dnf itself recommends --nobest for this case, and
+# it works on both generations: dnf4 documents --nobest, dnf5 renamed the pair
+# to --best/--no-best and kept --nobest as a compatibility alias (while
+# --skip-broken was dropped for 'upgrade'). The affected packages stay at their
+# current version and everything else still upgrades; a later run picks them up
+# once the missing dependency reaches the repositories. Only a plain resolution
+# failure relaxes the transaction: lock standbys (124) and signals (>=128) are
+# returned untouched, like any bare transaction. The release-upgrade download
+# below deliberately stays strict — a held-back package across a release
+# boundary is a mixed-release system.
+dnf_upgrade () {
+    local status=0
+    dnf_transaction "$@" || status=$?
+    if (( status == 0 || status == 124 || status >= 128 )); then
+        return "$status"
+    fi
+    local -a relaxed=()
+    local arg best=0
+    for arg in "$@"; do
+        if [ "$arg" = "--best" ]; then
+            relaxed+=(--nobest)
+            best=1
+        else
+            relaxed+=("$arg")
+        fi
+    done
+    if (( best == 0 )); then
+        return "$status"
+    fi
+    warn "Best-candidate upgrade failed: a new package version needs dependencies that have not reached any enabled repository yet. Retrying with --nobest; the affected packages are held back and everything else still updates."
+    dnf_transaction "${relaxed[@]}"
+}
+
 # Update Flatpak packages for one installation ($1: --user or --system, $2: "sudo" to elevate).
 # Package refs are updated explicitly instead of a bare 'flatpak update': without REFs,
 # flatpak also refreshes appstream metadata for every configured remote in one pass and
@@ -172,9 +210,9 @@ elif is_fedora || is_rhel; then
         dnf_transaction sudo_ dnf -y makecache --refresh || die "Failed to remove orphaned packages"
     fi
     if [ "$UPD_SERVICE" = "1" ]; then
-        dnf_transaction dnf --refresh upgrade --best --allowerasing -y --setopt=throttle=2M || fatal "Failed to upgrade packages"
+        dnf_upgrade dnf --refresh upgrade --best --allowerasing -y --setopt=throttle=2M || fatal "Failed to upgrade packages"
     else
-        dnf_transaction sudo_ dnf --refresh upgrade --best --allowerasing -y || fatal "Failed to upgrade packages"
+        dnf_upgrade sudo_ dnf --refresh upgrade --best --allowerasing -y || fatal "Failed to upgrade packages"
     fi
     is_fedora && { release_upgrade &&
             if offer_release_upgrade; then
