@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
-"""Offline MCP skill installation using only the Python standard library.
+"""MCP agent skill installation using only the Python standard library.
 
-Existing different contents are never replaced. Descriptor-relative, no-follow
-operations anchor writes beneath a private user-owned home tree. Publication is
-an atomic, create-only hard link; cooperating installers serialize with flock.
+The reviewed skill text is installed from the upstream repository when it is
+reachable (HTTPS fetch, GitHub first and the Gitea mirror as fallback); the
+pinned bundled copy is the offline fallback. Existing different contents are
+never replaced — an older copy of this same skill (same frontmatter identity)
+is the one exception, so newer text can actually land. Descriptor-relative,
+no-follow operations anchor writes beneath a private user-owned home tree.
+Publication is an atomic create-only hard link, or an atomic rename when it
+replaces our own older copy; cooperating installers serialize with flock.
 """
 
 import contextlib
@@ -15,14 +20,21 @@ import secrets
 import stat
 import sys
 import time
+import urllib.error
+import urllib.request
 
 SKILL_NAME = "linuxtoys-mcp"
-# Retained public constants; automatic installation no longer executes remote CLIs.
+# Public repository pages; the raw fetch endpoints are derived from them and
+# the canonical fetchable copy lives at skills/linuxtoys-mcp/SKILL.md.
 SKILL_REPO_URLS = (
     "https://github.com/psygreg/linuxtoys",
     "https://git.linux.toys/psygreg/linuxtoys",
 )
+SKILL_DEFAULT_BRANCH = "master"
+# Compatibility export from the retired remote-CLI flow; the bounded HTTPS
+# text fetch uses SKILL_FETCH_TIMEOUT per source instead.
 SKILL_INSTALL_TIMEOUT = 180
+SKILL_FETCH_TIMEOUT = 10
 BUNDLED_SHA256 = "18d21fe6833301324da95a8360b4234050aa0703f5bdef416d638be068af775d"
 MAX_SKILL_BYTES = 128 * 1024
 LOCK_TIMEOUT = 5.0
@@ -73,6 +85,73 @@ def _bundled_bytes():
     return data
 
 
+def skill_fetch_urls():
+    """Raw content URLs for the canonical skill copy on each known mirror."""
+    suffix = f"/{SKILL_DEFAULT_BRANCH}/skills/{SKILL_NAME}/SKILL.md"
+    urls = []
+    for base in SKILL_REPO_URLS:
+        if base.startswith("https://github.com/"):
+            urls.append(
+                base.replace(
+                    "https://github.com/", "https://raw.githubusercontent.com/", 1
+                )
+                + suffix
+            )
+        elif base.startswith("https://git.linux.toys/"):
+            urls.append(f"{base}/raw/branch{suffix}")
+    return tuple(urls)
+
+
+def _validate_skill_bytes(data):
+    """Refuse any text that is not a LinuxToys MCP skill document.
+
+    Remote bytes are data to publish verbatim, never instructions for this
+    installer; the shape check only keeps error pages or foreign documents
+    from being treated as the reviewed skill.
+    """
+    text = data.decode("utf-8")  # UnicodeDecodeError is a ValueError
+    lines = text.splitlines()
+    if not lines or lines[0].strip() != "---":
+        raise ValueError("Remote skill text has no frontmatter")
+    for line in lines[1:]:
+        stripped = line.strip()
+        if stripped == "name: linuxtoys-mcp":
+            return
+        if stripped == "---":
+            break
+    raise ValueError("Remote skill text is not the LinuxToys MCP skill")
+
+
+def _fetch_upstream_skill():
+    """Latest reviewed skill bytes from upstream, or None when unavailable.
+
+    Every source is HTTPS, timeout-bound, size-bounded and shape-validated;
+    one reachable source with valid text wins. This bounded text fetch is
+    the helper's only network use.
+    """
+    for url in skill_fetch_urls():
+        try:
+            request = urllib.request.Request(
+                url, headers={"User-Agent": "LinuxToys-MCP-Skill/1.0"}
+            )
+            with urllib.request.urlopen(
+                request, timeout=SKILL_FETCH_TIMEOUT
+            ) as response:
+                if getattr(response, "status", 200) != 200:
+                    continue
+                data = response.read(MAX_SKILL_BYTES + 1)
+        except (urllib.error.URLError, OSError):
+            continue
+        if len(data) > MAX_SKILL_BYTES:
+            continue
+        try:
+            _validate_skill_bytes(data)
+        except ValueError:
+            continue
+        return data
+    return None
+
+
 def _private_directory(fd):
     info = os.fstat(fd)
     if info.st_uid != os.geteuid() or info.st_mode & 0o022:
@@ -116,22 +195,40 @@ def _descend(parent, parts, *, create):
         raise
 
 
-def _same_skill(directory, data):
+def _skill_state(directory, data):
+    """Classify the existing SKILL.md beneath ``directory``.
+
+    Returns "absent", "same" (byte-identical install) or "replaceable" (an
+    older copy of this same skill, safe to update). Unsafe or foreign
+    existing content raises; callers preserve it for manual resolution.
+    """
     try:
         fd = os.open("SKILL.md", _FILE_FLAGS, dir_fd=directory)
     except FileNotFoundError:
-        return False
+        return "absent"
     try:
-        if _read_regular(fd, owned=True) != data:
-            raise OSError(
-                "Existing customized or older skill preserved; resolve manually"
-            )
-        return True
+        existing = _read_regular(fd, owned=True)
     finally:
         os.close(fd)
+    if existing == data:
+        return "same"
+    try:
+        _validate_skill_bytes(existing)
+    except ValueError:
+        raise OSError(
+            "Existing customized or foreign skill preserved; resolve manually"
+        )
+    return "replaceable"
 
 
 def _publish(directory, data):
+    """Publish ``data`` atomically without replacing foreign content.
+
+    A fresh install hard-links a staged 0600 file create-only. An existing
+    byte-identical file ends the job unchanged; an older copy of this same
+    skill is atomically replaced by rename. Customized, foreign or unsafe
+    existing files are refused before anything is written.
+    """
     flags = os.O_RDWR | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC
     try:
         lock = os.open(
@@ -164,7 +261,8 @@ def _publish(directory, data):
                 if time.monotonic() >= deadline:
                     raise OSError("Another MCP skill installation holds the lock")
                 time.sleep(0.01)
-        if _same_skill(directory, data):
+        state = _skill_state(directory, data)
+        if state == "same":
             return
         candidate = ".skill-" + secrets.token_hex(16) + ".tmp"
         fd = os.open(
@@ -185,16 +283,24 @@ def _publish(directory, data):
             handle.flush()
             os.fsync(handle.fileno())
         try:
-            os.link(
-                temporary,
-                "SKILL.md",
-                src_dir_fd=directory,
-                dst_dir_fd=directory,
-                follow_symlinks=False,
-            )
+            if state == "absent":
+                os.link(
+                    temporary,
+                    "SKILL.md",
+                    src_dir_fd=directory,
+                    dst_dir_fd=directory,
+                    follow_symlinks=False,
+                )
+            else:
+                # Atomic rename over our own older copy. rename never
+                # dereferences the destination entry, so it can never write
+                # through a swapped-in link.
+                os.replace(
+                    temporary, "SKILL.md", src_dir_fd=directory, dst_dir_fd=directory
+                )
         except FileExistsError:
             # A noncooperating creator won the race. Never replace its file/link.
-            if not _same_skill(directory, data):
+            if _skill_state(directory, data) != "same":
                 raise OSError("Skill destination changed during installation")
         # The complete file is already visible. A directory-sync failure must not
         # roll it back or destroy an otherwise working installation.
@@ -219,11 +325,19 @@ def install_agent_skill():
 
     Detect agent roots without following links. Create the universal root only
     for a fresh profile with no detected agent root, never to hide a failed or
-    unsafe existing target. Validate the bundled bytes before any home writes.
+    unsafe existing target. The upstream text is fetched and validated before
+    any home writes; the pinned bundled copy is the offline fallback.
     """
     installed = []
     try:
-        data = _bundled_bytes()
+        data = _fetch_upstream_skill()
+        if data is None:
+            data = _bundled_bytes()
+            print(
+                "MCP skill: upstream repository unavailable;"
+                " installing the bundled copy",
+                file=sys.stderr,
+            )
         home = os.path.expanduser("~")
         with contextlib.ExitStack() as stack:
             root = _open_home(home)
@@ -268,18 +382,21 @@ def install_agent_skill():
 def skill_install_script():
     """Reviewed data-only operation; M1 validates this header at dispatch.
 
-    No network, external installer, native payload or package manager is used.
-    The direct helper deliberately loads no optional application dependencies.
+    The helper fetches the reviewed skill text from the upstream repository
+    over HTTPS and falls back to the pinned bundled copy when no source is
+    reachable. No external installer, native payload or package manager is
+    used; the direct helper deliberately loads no optional application
+    dependencies beyond the standard library.
     """
     return """#!/usr/bin/env bash
 # architectures: x86_64, aarch64
-# Install only the reviewed bundled MCP skill as user-owned text.
+# Install the upstream LinuxToys MCP skill; the bundled copy is the offline fallback.
 exec python3 "$SCRIPT_DIR/app/mcp_skill.py"
 """
 
 
 def request_skill_install(runner=None):
-    """Queue the guarded operation, or copy offline when enqueue is unavailable."""
+    """Queue the guarded operation, or run the helper directly on enqueue failure."""
     if runner is not None:
         try:
             job = runner.enqueue_skill_install(skill_install_script())
