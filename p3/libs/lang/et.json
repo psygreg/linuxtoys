@@ -188,6 +188,7 @@
   "ides_desc": "Integreeritud arenduskeskkonnad erinevateks programmeerimiskeelteks ja raamistikuks.",
   "remapper_desc": "Lihtne tööriist Linuxile sisendseadmete käitumise muutmiseks. Kaardistab mis tahes sisendi mis tahes muusse sisendisse.",
   "portainer_desc": "Veebipõhine haldusliides Dockerile, mis võimaldab hõlpsasti hallata teie konteinereid, pilte, võrke ja volumesid.",
+  "dockhand_desc": "Veebipõhine Dockeri haldur, mis saab Teie konteinereid uuendada automaatselt siis, kui uued tõmmised ilmuvad. Tasuta isiklikuks, mittetulunduslikuks ja hariduslikuks kasutuseks; ettevõtete tootmiskasutus vajab kommertslicentsi.",
   "edu": "Haridus",
   "edu_desc": "Ressursid õppimiseks ja õpetamiseks kõigile vanustele.",
   "yay_desc": "Populaarne AUR abiline, kirjutatud Go-s. Sarnane paru-ga.",

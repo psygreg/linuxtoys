@@ -188,6 +188,7 @@
   "ides_desc": "Integruotos kūrimo aplinkos įvairioms programavimo kalboms ir sistemoms.",
   "remapper_desc": "Lengvai naudojamas įrankis Linux pakeisti jūsų įvesties įrenginių elgesį. Susieja bet kokį įvestį su bet kokiu kitu įvestimi.",
   "portainer_desc": "Žiniatinklio pagrindu sukurtas valdymo UI Docker, leidžiantis lengvai valdyti jūsų konteinerius, vaizdus, tinklus ir tomus.",
+  "dockhand_desc": "Žiniatinklio pagrindo Docker tvarkytuvė, kuri gali automatiškai atnaujinti jūsų konteinerius, kai išleidžiami nauji atvaizdai. Nemokama asmeniniam, ne pelno siekiančiam ir švietimo naudojimui; gamybinis naudojimas įmonėse reikalauja komercinės licencijos.",
   "edu": "Švietimas",
   "edu_desc": "Ištekliai mokymuisi ir mokymui visiems amžiams.",
   "yay_desc": "Populiarus AUR pagalbininkas, parašytas Go. Panašus į paru.",

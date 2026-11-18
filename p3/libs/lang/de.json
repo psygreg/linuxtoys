@@ -188,6 +188,7 @@
   "ides_desc": "Integrierte Entwicklungsumgebungen für verschiedene Programmiersprachen und Frameworks.",
   "remapper_desc": "Ein einfach zu bedienendes Tool für Linux, um das Verhalten Ihrer Eingabegeräte zu ändern. Ordnet jede Eingabe einer anderen Eingabe zu.",
   "portainer_desc": "Eine webbasierte Verwaltungsoberfläche für Docker, mit der Sie Ihre Container, Images, Netzwerke und Volumes einfach verwalten können.",
+  "dockhand_desc": "Ein webbasierter Docker-Manager, der Ihre Container automatisch aktualisieren kann, wenn neue Images veröffentlicht werden. Kostenlos für private, gemeinnützige und Bildungsnutzung; der produktive Einsatz durch Unternehmen erfordert eine kommerzielle Lizenz.",
   "edu": "Bildung",
   "edu_desc": "Ressourcen für Lernen und Lehren für alle Altersgruppen.",
   "yay_desc": "Ein beliebter AUR-Helfer, geschrieben in Go. Ähnlich wie paru.",

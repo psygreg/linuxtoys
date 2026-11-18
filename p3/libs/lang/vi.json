@@ -188,6 +188,7 @@
   "ides_desc": "Môi trường phát triển tích hợp cho các ngôn ngữ lập trình và framework khác nhau.",
   "remapper_desc": "Một công cụ dễ sử dụng cho Linux để thay đổi hành vi của các thiết bị đầu vào của bạn. Ánh xạ bất kỳ đầu vào nào sang bất kỳ đầu vào nào khác.",
   "portainer_desc": "Giao diện quản lý dựa trên web cho Docker, cho phép bạn dễ dàng quản lý các container, hình ảnh, mạng và volume của mình.",
+  "dockhand_desc": "Trình quản lý Docker dựa trên web có thể tự động cập nhật các container của bạn khi có ảnh mới được phát hành. Miễn phí cho mục đích cá nhân, phi lợi nhuận và giáo dục; việc sử dụng sản xuất bởi doanh nghiệp yêu cầu giấy phép thương mại.",
   "edu": "Giáo dục",
   "edu_desc": "Tài nguyên cho việc học và dạy cho mọi lứa tuổi.",
   "yay_desc": "Một trợ lý AUR phổ biến được viết bằng Go. Tương tự như paru.",

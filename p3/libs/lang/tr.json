@@ -188,6 +188,7 @@
   "ides_desc": "Çeşitli programlama dilleri ve çerçeveler için Entegre Geliştirme Ortamları.",
   "remapper_desc": "Linux için giriş cihazlarınızın davranışını değiştirmek için kullanımı kolay bir araç. Herhangi bir girişi başka herhangi bir girişe eşler.",
   "portainer_desc": "Docker için web tabanlı bir yönetim UI'si, kapsayıcılarınızı, görüntülerinizi, ağlarınızı ve birimlerinizi kolayca yönetmenizi sağlar.",
+  "dockhand_desc": "Yeni imajlar yayınlandığında kapsayıcılarınızı otomatik güncelleyebilen web tabanlı bir Docker yöneticisi. Kişisel, kâr amacı gütmeyen ve eğitim amaçlı kullanım için ücretsizdir; şirketlerce üretim kullanımı ticari lisans gerektirir.",
   "edu": "Eğitim",
   "edu_desc": "Tüm yaş grupları için öğrenme ve öğretim kaynakları.",
   "yay_desc": "Go ile yazılmış popüler bir AUR yardımcısı. Paru'ya benzer.",
