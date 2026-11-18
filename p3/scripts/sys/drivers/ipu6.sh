@@ -7,10 +7,6 @@
 # compat: fedora, debian, ubuntu, arch, cachy
 # nocontainer
 
-# --- Start of the script code ---
-source "$SCRIPT_DIR/libs/linuxtoys.lib"
-_lang_
-
 # Uses the open-source stack that ships with the distributions:
 # in-kernel intel-ipu6 driver (Linux 6.10+) + libcamera software ISP (0.3+)
 # + PipeWire libcamera plugin. No DKMS/akmod modules are installed.
