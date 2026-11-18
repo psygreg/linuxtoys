@@ -206,6 +206,7 @@
   "unsupported_os_message": "不支持的操作系统。",
   "dnsmasq_desc": "设置本地DNS缓存以加快域名解析速度，提高浏览性能并修复Steam上下载速度丢失的问题。",
   "intelxe_desc": "将Intel驱动程序切换到受支持的独立GPU（Battlemage/Alchemist）上的较新Xe驱动程序，以提高性能和兼容性。",
+  "ipu6_desc": "使用内核内开源驱动、libcamera 和 PipeWire 设置使用 Intel IPU6（从 Tiger Lake 到 Meteor Lake）的笔记本电脑内置摄像头。不会安装任何内核外驱动模块。需要 Linux 6.10 或更新版本。",
   "term_view_execute": " 执行 ",
   "term_view_running_label": " 运行中 ",
   "term_view_done": " 完成 ",
@@ -633,5 +634,18 @@
   "bug_report_cancelled_title": "没有可报告的内容",
   "bug_report_cancelled_message": "上次运行已被取消或跳过，因此没有可报告的内容。\n\n最后一条消息：{reason}",
   "bug_report_rejected_title": "没有可报告的内容",
-  "bug_report_rejected_message": "终端输出中没有可以发送的文本，因此未提交报告。"
+  "bug_report_rejected_message": "终端输出中没有可以发送的文本，因此未提交报告。",
+  "pkg_flat_invalid_scope": "无效的 Flatpak 作用域（scope）",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope 需要一个值",
+  "pkg_flat_setup_required": "安装应用程序之前，请先配置 Flatpak 及其原生软件源",
+  "pkg_flat_preflight_failed": "Flatpak 架构/可用性预检失败",
+  "pkg_flat_no_refs": "未能解析出任何原生 Flatpak ref",
+  "pkg_ext_usage": "用法：pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "已安装应用程序的运行时没有可用的原生扩展",
+  "pkg_ext_no_refs": "未能解析出任何原生扩展 ref",
+  "pkg_ext_invalid_plan": "原生扩展计划无效",
+  "pkg_appimage_no_fuse_candidate": "没有可用的原生 FUSE 2 候选；安装此 AppImage 之前，请先配置一个受支持的软件源",
+  "aur_arch_unreadable": "PKGBUILD：无法静态读取 arch 数组，因此无法验证 aarch64 兼容性",
+  "aur_arch_empty": "PKGBUILD：arch 数组为空，因此无法验证 aarch64 兼容性",
+  "aur_arch_no_port": "PKGBUILD：arch 数组声明了 (${archs})，缺少 aarch64 移植；该软件包不支持 aarch64"
 }

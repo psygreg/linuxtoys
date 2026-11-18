@@ -206,6 +206,7 @@
   "unsupported_os_message": "מערכת הפעלה לא נתמכת.",
   "dnsmasq_desc": "הגדר מטמון DNS מקומי כדי להאיץ את פתרון שמות הדומיין, לשפר את ביצועי הגלישה ולתקן בעיות עם איבוד מהירות ההורדה ב-Steam.",
   "intelxe_desc": "מעביר מנהלי התקן של Intel למנהל ההתקן החדש יותר Xe במעבדי גרפיקה נפרדים נתמכים (Battlemage/Alchemist) לשיפור ביצועים ותאימות.",
+  "ipu6_desc": "מגדיר מצלמות מובנות של מחשבים ניידים המשתמשות ב-Intel IPU6 (מ-Tiger Lake ועד Meteor Lake) עם דרייבר הקוד הפתוח בליבה, libcamera ו-PipeWire. לא מותקנים מודולי דרייבר מחוץ לעץ. דורש Linux 6.10 ומעלה.",
   "term_view_execute": " הפעל ",
   "term_view_running_label": " מריץ ",
   "term_view_done": " הושלם ",
@@ -633,5 +634,18 @@
   "bug_report_cancelled_title": "אין מה לדווח",
   "bug_report_cancelled_message": "ההרצה האחרונה בוטלה או דולגה, ולכן אין מה לדווח.\n\nהודעה אחרונה: {reason}",
   "bug_report_rejected_title": "אין מה לדווח",
-  "bug_report_rejected_message": "פלט הטרמינל לא הכיל טקסט שניתן היה לשלוח, ולכן הדוח לא נשלח."
+  "bug_report_rejected_message": "פלט הטרמינל לא הכיל טקסט שניתן היה לשלוח, ולכן הדוח לא נשלח.",
+  "pkg_flat_invalid_scope": "טווח (scope) Flatpak לא תקין",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope דורש ערך",
+  "pkg_flat_setup_required": "הגדירו את Flatpak ואת המאגר המקורי שלו לפני התקנת יישומים",
+  "pkg_flat_preflight_failed": "בדיקה מקדימה של ארכיטקטורה/זמינות עבור Flatpak נכשלה",
+  "pkg_flat_no_refs": "לא אותרה הפניה (ref) מקורית של Flatpak",
+  "pkg_ext_usage": "שימוש: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "הרחבה מקורית אינה זמינה עבור סביבת ההרצה של היישום המותקן",
+  "pkg_ext_no_refs": "לא אותרה הפניה (ref) מקורית של הרחבה",
+  "pkg_ext_invalid_plan": "תוכנית הרחבה מקורית לא תקינה",
+  "pkg_appimage_no_fuse_candidate": "אין מועמד מקורי עבור FUSE 2; הגדירו מאגר נתמך לפני התקנת AppImage זה",
+  "aur_arch_unreadable": "PKGBUILD: לא ניתן היה לקרוא את מערך ה-arch באופן סטטי, ולכן לא ניתן היה לאמת תאימות ל-aarch64",
+  "aur_arch_empty": "PKGBUILD: מערך ה-arch ריק, ולכן לא ניתן היה לאמת תאימות ל-aarch64",
+  "aur_arch_no_port": "PKGBUILD: מערך ה-arch מצהיר על (${archs}) ללא פורט aarch64; חבילה זו אינה תומכת ב-aarch64"
 }

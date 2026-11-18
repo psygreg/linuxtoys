@@ -206,6 +206,7 @@
   "unsupported_os_message": "Nepalaikoma operacinė sistema.",
   "dnsmasq_desc": "Nustatykite vietinį DNS talpyklą, kad pagreitintumėte domenų pavadinimų sprendimą, pagerintumėte naršymo našumą ir išspręstumėte problemas su parsisiuntimo greičio praradimu Steam.",
   "intelxe_desc": "Perjungia Intel tvarkykles į naujesnę Xe tvarkyklę palaikomuose diskretiniuose GPU (Battlemage/Alchemist), kad pagerintų našumą ir suderinamumą.",
+  "ipu6_desc": "Nustato nešiojamųjų kompiuterių įmontuotas kameras, naudojančias Intel IPU6 (nuo Tiger Lake iki Meteor Lake), su atvirojo kodo tvarkykle branduolyje, libcamera ir PipeWire. Jokie tvarkyklės moduliai už branduolio ribų neįdiegiami. Reikalauja Linux 6.10 arba naujesnės.",
   "term_view_execute": " Vykdyti ",
   "term_view_running_label": " Vykdoma ",
   "term_view_done": " Baigta ",
@@ -633,5 +634,18 @@
   "bug_report_cancelled_title": "Nėra ką pranešti",
   "bug_report_cancelled_message": "Paskutinis paleidimas buvo atšauktas arba praleistas, todėl nėra ką pranešti.\n\nPaskutinis pranešimas: {reason}",
   "bug_report_rejected_title": "Nėra ką pranešti",
-  "bug_report_rejected_message": "Terminalo išvestyje nebuvo teksto, kurį būtų galima išsiųsti, todėl ataskaita nepateikta."
+  "bug_report_rejected_message": "Terminalo išvestyje nebuvo teksto, kurį būtų galima išsiųsti, todėl ataskaita nepateikta.",
+  "pkg_flat_invalid_scope": "Netinkama Flatpak sritis (scope)",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope reikalauja reikšmės",
+  "pkg_flat_setup_required": "Prieš diegdami programas, sukonfigūruokite Flatpak ir jo vietinę saugyklą",
+  "pkg_flat_preflight_failed": "Flatpak architektūros/prieinamumo išankstinė patikra nepavyko",
+  "pkg_flat_no_refs": "Nepavyko išspręsti jokios vietinės Flatpak nuorodos (ref)",
+  "pkg_ext_usage": "Naudojimas: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Vietinis plėtinys neprieinamas įdiegtos programos vykdymo aplinkai",
+  "pkg_ext_no_refs": "Nepavyko išspręsti jokios vietinės plėtinio nuorodos (ref)",
+  "pkg_ext_invalid_plan": "Netinkamas vietinio plėtinio planas",
+  "pkg_appimage_no_fuse_candidate": "Nėra vietinio FUSE 2 kandidato; prieš diegdami šį AppImage, sukonfigūruokite palaikomą saugyklą",
+  "aur_arch_unreadable": "PKGBUILD: arch masyvo nepavyko perskaityti statiškai, todėl nepavyko patvirtinti aarch64 suderinamumo",
+  "aur_arch_empty": "PKGBUILD: arch masyvas tuščias, todėl nepavyko patvirtinti aarch64 suderinamumo",
+  "aur_arch_no_port": "PKGBUILD: arch masyvas deklaruoja (${archs}) be aarch64 prievado; šis paketas nepalaiko aarch64"
 }

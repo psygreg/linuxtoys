@@ -206,6 +206,7 @@
   "unsupported_os_message": "Córas oibriúcháin gan tacaíocht.",
   "dnsmasq_desc": "Socraigh taisce áitiúil DNS chun réiteach ainmneacha fearainn a luathú, feidhmíocht brabhsála a fheabhsú agus fadhbanna le cailliúint luais íoslódála ar Steam a réiteach.",
   "intelxe_desc": "Aistríonn tiománaithe Intel chuig an tiománaí Xe níos nuaí ar GPUanna discrétacha tacaithe (Battlemage/Alchemist) chun feidhmíocht agus comhoiriúnacht a fheabhsú.",
+  "ipu6_desc": "Socraíonn sé ceamaraí ionsuite ghlúine a úsáideann Intel IPU6 (ó Tiger Lake go Meteor Lake) leis an tiománaí foinse-oscailte san eithne, libcamera agus PipeWire. Ní suiteáiltear aon mhodúil tiománaithe lasmuigh den eithne. Teastlaíonn Linux 6.10 nó níos nuaí.",
   "term_view_execute": " Forghníomhaigh ",
   "term_view_running_label": " Ag rith ",
   "term_view_done": " Déanta ",
@@ -633,5 +634,18 @@
   "bug_report_cancelled_title": "Níl aon rud le tuairisciú",
   "bug_report_cancelled_message": "Cuireadh an rith deiridh ar ceal nó fágadh ar lár é, mar sin níl aon rud le tuairisciú.\n\nAn teachtaireacht dheireanach: {reason}",
   "bug_report_rejected_title": "Níl aon rud le tuairisciú",
-  "bug_report_rejected_message": "Ní raibh aon téacs in aschur na teirminéile ar féidir é a sheoladh, mar sin níor seoladh an tuarascáil."
+  "bug_report_rejected_message": "Ní raibh aon téacs in aschur na teirminéile ar féidir é a sheoladh, mar sin níor seoladh an tuarascáil.",
+  "pkg_flat_invalid_scope": "Scóip (scope) Flatpak neamhbhailí",
+  "pkg_flat_arg_requires_value": "Éilíonn pkg_flat --remote/--scope luach",
+  "pkg_flat_setup_required": "Cumraigh Flatpak agus a stór dúchasach roimh fheidhmchláir a shuiteáil",
+  "pkg_flat_preflight_failed": "Theip ar réamhchuardach ailtireachta/inrochtaineachta Flatpak",
+  "pkg_flat_no_refs": "Níor réitíodh aon ref dúchasach Flatpak",
+  "pkg_ext_usage": "Úsáid: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Níl an eisínt dúchasach ar fáil d'fhonn rith (runtime) an fheidhmchláir suiteáilte",
+  "pkg_ext_no_refs": "Níor réitíodh aon ref dúchasach eisínt",
+  "pkg_ext_invalid_plan": "Plean dúchasach eisínte neamhbhailí",
+  "pkg_appimage_no_fuse_candidate": "Níl aon iarrthóir dúchasach FUSE 2 ar fáil; cumraigh stór tacaíochta roimh an AppImage seo a shuiteáil",
+  "aur_arch_unreadable": "PKGBUILD: níorbh fhéidir an t-eagar (array) arch a léamh go statach, mar sin níorbh fhéidir comhoiriúnacht aarch64 a fhíorú",
+  "aur_arch_empty": "PKGBUILD: tá an t-eagar arch folamh, mar sin níorbh fhéidir comhoiriúnacht aarch64 a fhíorú",
+  "aur_arch_no_port": "PKGBUILD: fógraíonn an t-eagar arch (${archs}) gan port aarch64; ní thacaíonn an pacáiste seo le aarch64"
 }

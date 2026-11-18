@@ -206,6 +206,7 @@
   "unsupported_os_message": "Nepodprt operacijski sistem.",
   "dnsmasq_desc": "Nastavite lokalno predpomnjenje DNS za pospešitev razreševanja imen domen, izboljšanje zmogljivosti brskanja in odpravo težav z izgubo hitrosti prenosa v Steamu.",
   "intelxe_desc": "Preklopi gonilnike Intel na novejši gonilnik Xe na podprtih diskretnih GPU (Battlemage/Alchemist) za izboljšano zmogljivost in združljivost.",
+  "ipu6_desc": "Nastavi vgrajene kamere prenosnikov, ki uporabljajo Intel IPU6 (od Tiger Lake do Meteor Lake), z odprtim gonilnikom v jedru, libcamera in PipeWire. Noben modul gonilnika zunaj jedra ni nameščen. Zahteva Linux 6.10 ali novejši.",
   "term_view_execute": " Izvedi ",
   "term_view_running_label": " Izvajanje ",
   "term_view_done": " Končano ",
@@ -633,5 +634,18 @@
   "bug_report_cancelled_title": "Ničesar ni za prijavo",
   "bug_report_cancelled_message": "Zadnji zagon je bil preklican ali preskočen, zato ničesar ni za prijavo.\n\nZadnje sporočilo: {reason}",
   "bug_report_rejected_title": "Ničesar ni za prijavo",
-  "bug_report_rejected_message": "Izhod terminala ni vseboval besedila, ki bi ga bilo mogoče poslati, zato poročilo ni bilo poslano."
+  "bug_report_rejected_message": "Izhod terminala ni vseboval besedila, ki bi ga bilo mogoče poslati, zato poročilo ni bilo poslano.",
+  "pkg_flat_invalid_scope": "Neveljaven obseg (scope) Flatpak",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope zahteva vrednost",
+  "pkg_flat_setup_required": "Pred namestitvijo programov nastavite Flatpak in njegovo izvorno shrambo",
+  "pkg_flat_preflight_failed": "Predhodno preverjanje arhitekture/razpoložljivosti za Flatpak ni uspelo",
+  "pkg_flat_no_refs": "Nobena izvorna referenca (ref) Flatpak ni bila razrešena",
+  "pkg_ext_usage": "Uporaba: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Izvorna razširitev ni na voljo za izvajalno okolje nameščenega programa",
+  "pkg_ext_no_refs": "Nobena izvorna referenca (ref) razširitve ni bila razrešena",
+  "pkg_ext_invalid_plan": "Neveljaven načrt izvorne razširitve",
+  "pkg_appimage_no_fuse_candidate": "Ni na voljo izvornega kandidata za FUSE 2; pred namestitvijo tega AppImage nastavite podprto shrambo",
+  "aur_arch_unreadable": "PKGBUILD: polja arch ni bilo mogoče statično prebrati, zato združljivosti z aarch64 ni bilo mogoče preveriti",
+  "aur_arch_empty": "PKGBUILD: polje arch je prazno, zato združljivosti z aarch64 ni bilo mogoče preveriti",
+  "aur_arch_no_port": "PKGBUILD: polje arch deklarira (${archs}) brez vrata aarch64; ta paket ne podpira aarch64"
 }

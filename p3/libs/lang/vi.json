@@ -206,6 +206,7 @@
   "unsupported_os_message": "Hệ điều hành không được hỗ trợ.",
   "dnsmasq_desc": "Thiết lập bộ nhớ đệm DNS cục bộ để tăng tốc độ phân giải tên miền, cải thiện hiệu suất duyệt web và khắc phục sự cố mất tốc độ tải xuống trên Steam.",
   "intelxe_desc": "Chuyển driver Intel sang driver Xe mới hơn trên các GPU rời được hỗ trợ (Battlemage/Alchemist) để cải thiện hiệu suất và khả năng tương thích.",
+  "ipu6_desc": "Thiết lập các camera tích hợp sẵn của laptop sử dụng Intel IPU6 (từ Tiger Lake đến Meteor Lake) với trình điều khiển trong nhân mã nguồn mở, libcamera và PipeWire. Không cài đặt mô-đun trình điều khiển ngoài nhân. Yêu cầu Linux 6.10 hoặc mới hơn.",
   "term_view_execute": " Thực thi ",
   "term_view_running_label": " Đang chạy ",
   "term_view_done": " Hoàn thành ",
@@ -633,5 +634,18 @@
   "bug_report_cancelled_title": "Không có gì để báo cáo",
   "bug_report_cancelled_message": "Lần chạy cuối đã bị hủy hoặc bỏ qua, do đó không có gì để báo cáo.\n\nTin nhắn cuối: {reason}",
   "bug_report_rejected_title": "Không có gì để báo cáo",
-  "bug_report_rejected_message": "Đầu ra của terminal không có văn bản nào có thể gửi được, do đó báo cáo không được gửi đi."
+  "bug_report_rejected_message": "Đầu ra của terminal không có văn bản nào có thể gửi được, do đó báo cáo không được gửi đi.",
+  "pkg_flat_invalid_scope": "Phạm vi (scope) Flatpak không hợp lệ",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope cần một giá trị",
+  "pkg_flat_setup_required": "Hãy cấu hình Flatpak và kho lưu trữ gốc của nó trước khi cài đặt ứng dụng",
+  "pkg_flat_preflight_failed": "Kiểm tra trước kiến trúc/tính sẵn có của Flatpak thất bại",
+  "pkg_flat_no_refs": "Không phân giải được ref Flatpak gốc nào",
+  "pkg_ext_usage": "Cách dùng: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Không có phần mở rộng gốc cho môi trường chạy của ứng dụng đã cài",
+  "pkg_ext_no_refs": "Không phân giải được ref phần mở rộng gốc nào",
+  "pkg_ext_invalid_plan": "Kế hoạch phần mở rộng gốc không hợp lệ",
+  "pkg_appimage_no_fuse_candidate": "Không có ứng viên FUSE 2 gốc nào; hãy cấu hình kho lưu trữ được hỗ trợ trước khi cài AppImage này",
+  "aur_arch_unreadable": "PKGBUILD: không thể đọc tĩnh mảng arch, nên không thể xác minh khả năng tương thích aarch64",
+  "aur_arch_empty": "PKGBUILD: mảng arch rỗng, nên không thể xác minh khả năng tương thích aarch64",
+  "aur_arch_no_port": "PKGBUILD: mảng arch khai báo (${archs}) mà không có cổng aarch64; gói này không hỗ trợ aarch64"
 }

@@ -206,6 +206,7 @@
   "unsupported_os_message": "Nem támogatott operációs rendszer.",
   "dnsmasq_desc": "Állítson be helyi DNS-gyorsítótárazást a tartománynevek feloldásának felgyorsításához, a böngészési teljesítmény javításához és a letöltési sebesség elvesztésével kapcsolatos problémák megoldásához a Steamen.",
   "intelxe_desc": "Az Intel illesztőprogramokat az újabb Xe illesztőprogramra váltja a támogatott dedikált GPU-kon (Battlemage/Alchemist) a teljesítmény és kompatibilitás javítása érdekében.",
+  "ipu6_desc": "Beállítja az Intel IPU6-ot (Tiger Lake-től Meteor Lake-ig) használó laptopok beépített kameráit a nyílt forráskódú kernelbe épített illesztőprogrammal, a libcamerával és a PipeWire-rel. Nem kerül telepítésre kernelen kívüli illesztőprogrammodul. Linux 6.10 vagy újabb szükséges.",
   "term_view_execute": " Végrehajtás ",
   "term_view_running_label": " Futtatás ",
   "term_view_done": " Kész ",
@@ -633,5 +634,18 @@
   "bug_report_cancelled_title": "Nincs mit jelenteni",
   "bug_report_cancelled_message": "Az utolsó futtatás megszakadt vagy kihagyásra került, ezért nincs mit jelenteni.\n\nUtolsó üzenet: {reason}",
   "bug_report_rejected_title": "Nincs mit jelenteni",
-  "bug_report_rejected_message": "A terminál kimenetében nem volt elküldhető szöveg, ezért a jelentés nem került elküldésre."
+  "bug_report_rejected_message": "A terminál kimenetében nem volt elküldhető szöveg, ezért a jelentés nem került elküldésre.",
+  "pkg_flat_invalid_scope": "Érvénytelen Flatpak hatókör (scope)",
+  "pkg_flat_arg_requires_value": "A pkg_flat --remote/--scope értéket igényel",
+  "pkg_flat_setup_required": "Alkalmazások telepítése előtt állítsa be a Flatpakot és natív tárolóját",
+  "pkg_flat_preflight_failed": "A Flatpak architektúra/elérhetőség előzetes ellenőrzése sikertelen",
+  "pkg_flat_no_refs": "Nem sikerült egyetlen natív Flatpak ref-et sem feloldani",
+  "pkg_ext_usage": "Használat: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "A natív bővítmény nem érhető el a telepített alkalmazás futási környezetéhez",
+  "pkg_ext_no_refs": "Nem sikerült egyetlen natív bővítmény ref-et sem feloldani",
+  "pkg_ext_invalid_plan": "Érvénytelen natív bővítményterv",
+  "pkg_appimage_no_fuse_candidate": "Nincs elérhető natív FUSE 2 jelölt; ezen AppImage telepítése előtt állítson be egy támogatott tárolót",
+  "aur_arch_unreadable": "PKGBUILD: az arch tömböt nem lehetett statikusan beolvasni, ezért az aarch64-kompatibilitás nem ellenőrizhető",
+  "aur_arch_empty": "PKGBUILD: az arch tömb üres, ezért az aarch64-kompatibilitás nem ellenőrizhető",
+  "aur_arch_no_port": "PKGBUILD: az arch tömb aarch64 port nélkül deklarálja (${archs}); ez a csomag nem támogatja az aarch64-et"
 }

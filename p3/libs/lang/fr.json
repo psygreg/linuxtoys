@@ -206,6 +206,7 @@
   "unsupported_os_message": "Système d'exploitation non pris en charge.",
   "dnsmasq_desc": "Configurez la mise en cache DNS locale pour accélérer la résolution des noms de domaine, améliorer les performances de navigation et résoudre les problèmes de perte de vitesse de téléchargement sur Steam.",
   "intelxe_desc": "Change les pilotes Intel vers le pilote Xe plus récent sur les GPU discrets pris en charge (Battlemage/Alchemist) pour améliorer les performances et la compatibilité.",
+  "ipu6_desc": "Configure les caméras intégrées des ordinateurs portables utilisant l'Intel IPU6 (de Tiger Lake à Meteor Lake) avec le pilote open source dans le noyau, libcamera et PipeWire. Aucun module de pilote hors noyau n'est installé. Requiert Linux 6.10 ou plus récent.",
   "term_view_execute": " Exécuter ",
   "term_view_running_label": " En cours ",
   "term_view_done": " Terminé ",
@@ -633,5 +634,18 @@
   "bug_report_cancelled_title": "Rien à signaler",
   "bug_report_cancelled_message": "La dernière exécution a été annulée ou ignorée, il n'y a donc rien à signaler.\n\nDernier message : {reason}",
   "bug_report_rejected_title": "Rien à signaler",
-  "bug_report_rejected_message": "La sortie du terminal ne contenait aucun texte pouvant être envoyé, le rapport n'a donc pas été soumis."
+  "bug_report_rejected_message": "La sortie du terminal ne contenait aucun texte pouvant être envoyé, le rapport n'a donc pas été soumis.",
+  "pkg_flat_invalid_scope": "Portée Flatpak invalide",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope exige une valeur",
+  "pkg_flat_setup_required": "Configurez Flatpak et son dépôt natif avant d'installer des applications",
+  "pkg_flat_preflight_failed": "La vérification préalable d'architecture/disponibilité de Flatpak a échoué",
+  "pkg_flat_no_refs": "Aucune ref native de Flatpak n'a été résolue",
+  "pkg_ext_usage": "Utilisation : pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Extension native indisponible pour le runtime de l'application installée",
+  "pkg_ext_no_refs": "Aucune ref native d'extension n'a été résolue",
+  "pkg_ext_invalid_plan": "Plan d'extension native invalide",
+  "pkg_appimage_no_fuse_candidate": "Aucun candidat natif pour FUSE 2 n'est disponible ; configurez un dépôt compatible avant d'installer cet AppImage",
+  "aur_arch_unreadable": "PKGBUILD : le tableau arch n'a pas pu être lu statiquement, la compatibilité aarch64 n'a donc pas pu être vérifiée",
+  "aur_arch_empty": "PKGBUILD : le tableau arch est vide, la compatibilité aarch64 n'a donc pas pu être vérifiée",
+  "aur_arch_no_port": "PKGBUILD : le tableau arch déclare (${archs}) sans port aarch64 ; ce paquet ne prend pas en charge aarch64"
 }

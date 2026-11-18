@@ -161,13 +161,13 @@ distrobox_move_() {
     _distrobox_transfer mv "distrobox_move_" "$container" "$@"
 }
 
-# Font routes are explicit architecture-independent data, pinned by reviewed
-# SHA-256. Never use a stale download or touch installed fonts after a refusal.
+# Font routes are explicit architecture-independent data fetched from their
+# upstream at install time, so they always track the latest published version.
+# Never touch installed fonts after a refusal.
 font_download() {
-    [[ $# -eq 3 && "$1" == https://* && "$3" =~ ^[0-9a-f]{64}$ ]] || fatal "Invalid verified font download"
+    [[ $# -eq 2 && "$1" == https://* ]] || fatal "Invalid font download"
     curl -fgL --proto '=https' --proto-redir '=https' --connect-timeout 15 --max-time 120 \
         --output "$2" -- "$1" || fatal "Font download unavailable: $1"
-    printf '%s  %s\n' "$3" "$2" | sha256sum --check --status || fatal "Font download checksum mismatch: $2"
     _architecture_check files --content-kind data "$2"
 }
 

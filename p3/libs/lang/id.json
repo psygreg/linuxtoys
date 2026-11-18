@@ -206,6 +206,7 @@
   "unsupported_os_message": "Sistem operasi tidak didukung.",
   "dnsmasq_desc": "Atur cache DNS lokal untuk mempercepat resolusi nama domain, meningkatkan kinerja penjelajahan, dan memperbaiki masalah kehilangan kecepatan unduh di Steam.",
   "intelxe_desc": "Mengalihkan driver Intel ke driver Xe yang lebih baru pada GPU diskrit yang didukung (Battlemage/Alchemist) untuk meningkatkan kinerja dan kompatibilitas.",
+  "ipu6_desc": "Menyiapkan kamera bawaan laptop yang menggunakan Intel IPU6 (dari Tiger Lake hingga Meteor Lake) dengan driver dalam kernel sumber terbuka, libcamera, dan PipeWire. Tidak ada modul driver di luar tree yang diinstal. Membutuhkan Linux 6.10 atau lebih baru.",
   "term_view_execute": " Jalankan ",
   "term_view_running_label": " Berjalan ",
   "term_view_done": " Selesai ",
@@ -633,5 +634,18 @@
   "bug_report_cancelled_title": "Tidak Ada yang Perlu Dilaporkan",
   "bug_report_cancelled_message": "Eksekusi terakhir dibatalkan atau dilewati, sehingga tidak ada yang perlu dilaporkan.\n\nPesan terakhir: {reason}",
   "bug_report_rejected_title": "Tidak Ada yang Perlu Dilaporkan",
-  "bug_report_rejected_message": "Keluaran terminal tidak memiliki teks yang dapat dikirim, sehingga laporan tidak dikirimkan."
+  "bug_report_rejected_message": "Keluaran terminal tidak memiliki teks yang dapat dikirim, sehingga laporan tidak dikirimkan.",
+  "pkg_flat_invalid_scope": "Lingkup (scope) Flatpak tidak valid",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope membutuhkan sebuah nilai",
+  "pkg_flat_setup_required": "Konfigurasikan Flatpak dan repositori natifnya sebelum memasang aplikasi",
+  "pkg_flat_preflight_failed": "Pra-pemeriksaan arsitektur/ketersediaan Flatpak gagal",
+  "pkg_flat_no_refs": "Tidak ada ref Flatpak natif yang terurai",
+  "pkg_ext_usage": "Penggunaan: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Ekstensi natif tidak tersedia untuk runtime aplikasi yang terpasang",
+  "pkg_ext_no_refs": "Tidak ada ref ekstensi natif yang terurai",
+  "pkg_ext_invalid_plan": "Rencana ekstensi natif tidak valid",
+  "pkg_appimage_no_fuse_candidate": "Tidak ada kandidat FUSE 2 natif yang tersedia; konfigurasikan repositori yang didukung sebelum memasang AppImage ini",
+  "aur_arch_unreadable": "PKGBUILD: larik (array) arch tidak dapat dibaca secara statis, sehingga kompatibilitas aarch64 tidak dapat diverifikasi",
+  "aur_arch_empty": "PKGBUILD: larik arch kosong, sehingga kompatibilitas aarch64 tidak dapat diverifikasi",
+  "aur_arch_no_port": "PKGBUILD: larik arch menyatakan (${archs}) tanpa port aarch64; paket ini tidak mendukung aarch64"
 }

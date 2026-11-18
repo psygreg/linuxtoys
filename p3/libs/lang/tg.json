@@ -206,6 +206,7 @@
   "unsupported_os_message": "Системаи амалкунандаи дастгирӣнашуда.",
   "dnsmasq_desc": "Кеширунии DNS-и маҳаллиро танзим кунед, то ҳалли номи домен тезтар шавад, самаранокии тамошои браузер беҳтар шавад ва мушкилоти гум кардани суръати боргирӣ дар Steam ҳал шавад.",
   "intelxe_desc": "Драйверҳои Intel-ро ба драйвери навтари Xe дар GPU-ҳои дискретии дастгиришаванда (Battlemage/Alchemist) табдил медиҳад, то иҷроиш ва мувофиқатро беҳтар кунад.",
+  "ipu6_desc": "Камераҳои дарунсохти ноутбукҳое, ки Intel IPU6-ро (аз Tiger Lake то Meteor Lake) истифода мебаранд, бо драйвери кушоди дар ядро, libcamera ва PipeWire танзим мекунад. Модулҳои драйвер аз берун аз ядро насб намешаванд. Linux 6.10 ё навтар лозим аст.",
   "term_view_execute": " Иҷро кунед ",
   "term_view_running_label": " Иҷро шуда истодааст ",
   "term_view_done": " Анҷом ёфт ",
@@ -633,5 +634,18 @@
   "bug_report_cancelled_title": "Ҳеҷ чиз барои гузориш нест",
   "bug_report_cancelled_message": "Охирин иҷро бекор ё гузарида шудааст, бинобар ин ҳеҷ чиз барои гузориш нест.\n\nПаёми охирин: {reason}",
   "bug_report_rejected_title": "Ҳеҷ чиз барои гузориш нест",
-  "bug_report_rejected_message": "Дар натиҷаи терминал матне, ки фиристан мумкин буд, набуд, бинобар ин гузориш фиристода нашуд."
+  "bug_report_rejected_message": "Дар натиҷаи терминал матне, ки фиристан мумкин буд, набуд, бинобар ин гузориш фиристода нашуд.",
+  "pkg_flat_invalid_scope": "Ҳудуди (scope) нодурусти Flatpak",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope арзишро талаб мекунад",
+  "pkg_flat_setup_required": "Пеш аз насби барномаҳо, Flatpak ва анбори решаии онро танзим кунед",
+  "pkg_flat_preflight_failed": "Санҷиши пешакии меъморӣ/дастёрии Flatpak ноком шуд",
+  "pkg_flat_no_refs": "Ягон ref-и решаии Flatpak ҳал нашуд",
+  "pkg_ext_usage": "Истифода: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Васеъкунӣи решаӣ барои муҳити иҷрои барномаи насбшуда дастрас нест",
+  "pkg_ext_no_refs": "Ягон ref-и решаии васеъкунӣ ҳал нашуд",
+  "pkg_ext_invalid_plan": "Нақшаи нодурусти васеъкунӣи решаӣ",
+  "pkg_appimage_no_fuse_candidate": "Номзади решаии FUSE 2 вуҷуд надорад; пеш аз насби ин AppImage, анбори дастгиришавандаро танзим кунед",
+  "aur_arch_unreadable": "PKGBUILD: массиви arch-ро статикӣ хондан нашуд, бинобар ин мувофиқат бо aarch64 тасдиқ нашуд",
+  "aur_arch_empty": "PKGBUILD: массиви arch холӣ аст, бинобар ин мувофиқат бо aarch64 тасдиқ нашуд",
+  "aur_arch_no_port": "PKGBUILD: массиви arch (${archs})-ро бе порти aarch64 эълон мекунад; ин баста aarch64-ро дастгирӣ намекунад"
 }

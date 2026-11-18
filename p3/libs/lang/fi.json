@@ -206,6 +206,7 @@
   "unsupported_os_message": "Ei-tuettu käyttöjärjestelmä.",
   "dnsmasq_desc": "Määritä paikallinen DNS-välimuistitallennus nopeuttaaksesi verkkotunnusten nimenratkaisua, parantaaksesi selaimen suorituskykyä ja korjataksesi ongelmat latausnopeuden menettämisestä Steamissa.",
   "intelxe_desc": "Vaihtaa Intel-ajurit uudempaan Xe-ajuriin tuetuissa erillisessä GPU:issa (Battlemage/Alchemist) parantaakseen suorituskykyä ja yhteensopivuutta.",
+  "ipu6_desc": "Asettaa Intel IPU6 -kameraa (Tiger Lakesta Meteor Lakeen) käyttävät kannettavien sisäiset kamerat käyttöön ytimen avoimella lähdekoodilla olevalla ajurilla, libcameralla ja PipeWirella. Ytimen ulkopuolisia ajurimoduuleja ei asenneta. Vaatii Linux 6.10:n tai uudemman.",
   "term_view_execute": " Suorita ",
   "term_view_running_label": " Suoritetaan ",
   "term_view_done": " Valmis ",
@@ -633,5 +634,18 @@
   "bug_report_cancelled_title": "Ei raportoitavaa",
   "bug_report_cancelled_message": "Viimeisin suoritus peruutettiin tai ohitettiin, joten ei ole raportoitavaa.\n\nViimeisin viesti: {reason}",
   "bug_report_rejected_title": "Ei raportoitavaa",
-  "bug_report_rejected_message": "Päätteen tulosteessa ei ollut tekstiä, joka olisi voitu lähettää, joten raporttia ei lähetetty."
+  "bug_report_rejected_message": "Päätteen tulosteessa ei ollut tekstiä, joka olisi voitu lähettää, joten raporttia ei lähetetty.",
+  "pkg_flat_invalid_scope": "Virheellinen Flatpak soveltamisala (scope)",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope vaatii arvon",
+  "pkg_flat_setup_required": "Määritä Flatpak ja sen natiivi ohjelmavarasto ennen sovellusten asentamista",
+  "pkg_flat_preflight_failed": "Flatpakin arkkitehtuuri/käytettävyys-esitarkistus epäonnistui",
+  "pkg_flat_no_refs": "Yhtään natiivia Flatpak-viitettä (ref) ei voitu ratkaista",
+  "pkg_ext_usage": "Käyttö: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "Natiivilaajennus ei ole saatavilla asennetun sovelluksen ajoympäristölle",
+  "pkg_ext_no_refs": "Yhtään natiivia laajennusviitettä (ref) ei voitu ratkaista",
+  "pkg_ext_invalid_plan": "Virheellinen natiivilaajennussuunnitelma",
+  "pkg_appimage_no_fuse_candidate": "Natiivia FUSE 2 -ehdokasta ei ole saatavilla; määritä tuettu ohjelmavarasto ennen tämän AppImagen asentamista",
+  "aur_arch_unreadable": "PKGBUILD: arch-taulukkoa ei voitu lukea staattisesti, joten aarch64-yhteensopivuutta ei voitu vahvistaa",
+  "aur_arch_empty": "PKGBUILD: arch-taulukko on tyhjä, joten aarch64-yhteensopivuutta ei voitu vahvistaa",
+  "aur_arch_no_port": "PKGBUILD: arch-taulukko julistaa (${archs}) ilman aarch64-porttia; tämä paketti ei tue aarch64:ää"
 }

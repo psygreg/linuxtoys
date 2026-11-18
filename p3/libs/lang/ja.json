@@ -206,6 +206,7 @@
   "unsupported_os_message": "サポートされていないオペレーティングシステム。",
   "dnsmasq_desc": "ローカルDNSキャッシュを設定して、ドメイン名解決を高速化し、ブラウジングパフォーマンスを向上させ、Steamでのダウンロード速度低下の問題を修正します。",
   "intelxe_desc": "サポートされている独立GPU（Battlemage/Alchemist）でIntelドライバーを新しいXeドライバーに切り替えて、パフォーマンスと互換性を向上させます。",
+  "ipu6_desc": "Intel IPU6（Tiger Lake から Meteor Lake）を搭載したノートパソコンの内蔵カメラを、オープンソースのカーネル内ドライバー、libcamera、PipeWire でセットアップします。カーネル外のドライバーモジュールはインストールしません。Linux 6.10 以降が必要です。",
   "term_view_execute": " 実行 ",
   "term_view_running_label": " 実行中 ",
   "term_view_done": " 完了 ",
@@ -633,5 +634,18 @@
   "bug_report_cancelled_title": "報告するものはありません",
   "bug_report_cancelled_message": "最後の実行はキャンセルまたはスキップされたため、報告するものはありません。\n\n最後のメッセージ: {reason}",
   "bug_report_rejected_title": "報告するものはありません",
-  "bug_report_rejected_message": "ターミナルの出力に送信できるテキストがなかったため、レポートは送信されませんでした。"
+  "bug_report_rejected_message": "ターミナルの出力に送信できるテキストがなかったため、レポートは送信されませんでした。",
+  "pkg_flat_invalid_scope": "無効な Flatpak スコープです",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope には値が必要です",
+  "pkg_flat_setup_required": "アプリケーションをインストールする前に、Flatpak とそのネイティブリポジトリを設定してください",
+  "pkg_flat_preflight_failed": "Flatpak のアーキテクチャ/可用性の事前チェックに失敗しました",
+  "pkg_flat_no_refs": "ネイティブな Flatpak ref を解決できませんでした",
+  "pkg_ext_usage": "使い方：pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "インストール済みアプリケーションのランタイムにネイティブ拡張がありません",
+  "pkg_ext_no_refs": "ネイティブな拡張 ref を解決できませんでした",
+  "pkg_ext_invalid_plan": "ネイティブ拡張のプランが無効です",
+  "pkg_appimage_no_fuse_candidate": "ネイティブな FUSE 2 の候補がありません。この AppImage をインストールする前に、対応するリポジトリを設定してください",
+  "aur_arch_unreadable": "PKGBUILD：arch 配列を静的に読み取れないため、aarch64 との互換性を検証できませんでした",
+  "aur_arch_empty": "PKGBUILD：arch 配列が空のため、aarch64 との互換性を検証できませんでした",
+  "aur_arch_no_port": "PKGBUILD：arch 配列は (${archs}) を宣言していますが、aarch64 ポートがないため、このパッケージは aarch64 に対応していません"
 }

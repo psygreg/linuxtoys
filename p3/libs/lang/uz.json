@@ -206,6 +206,7 @@
   "unsupported_os_message": "Qo'llab-quvvatlanmaydigan operatsion tizim.",
   "dnsmasq_desc": "Domen nomlarini hal qilishni tezlashtirish, brauzer samaradorligini yaxshilash va Steam-da yuklab olish tezligini yo'qotish muammolarini hal qilish uchun mahalliy DNS keshingni sozlang.",
   "intelxe_desc": "Ishlash va moslikni yaxshilash uchun qo'llab-quvvatlanadigan diskret GPU-larda (Battlemage/Alchemist) Intel drayverlari yangi Xe drayveriga o'tkaziladi.",
+  "ipu6_desc": "Intel IPU6 (Tiger Lake'dan Meteor Lake'gacha) ishlatadigan noutbuklarning ichki kameralarini ochiq kodli yadrodagi drayver, libcamera va PipeWire bilan sozlaydi. Yadro tashqaridagi drayver modullari o'rnatilmaydi. Linux 6.10 yoki yangiroq talab qilinadi.",
   "term_view_execute": " Bajarish ",
   "term_view_running_label": " Ishlayapti ",
   "term_view_done": " Tugallandi ",
@@ -633,5 +634,18 @@
   "bug_report_cancelled_title": "Hisobot qiladigan hech narsa yo'q",
   "bug_report_cancelled_message": "Oxirgi ishga tushirish bekor qilindi yoki tashlab ketildi, shu sababli hisobot qiladigan hech narsa yo'q.\n\nOxirgi xabar: {reason}",
   "bug_report_rejected_title": "Hisobot qiladigan hech narsa yo'q",
-  "bug_report_rejected_message": "Terminal chiqishida yuborish mumkin bo'lgan matn bo'lmagan, shu sababli hisobot yuborilmadi."
+  "bug_report_rejected_message": "Terminal chiqishida yuborish mumkin bo'lgan matn bo'lmagan, shu sababli hisobot yuborilmadi.",
+  "pkg_flat_invalid_scope": "Noto'g'ri Flatpak qamrovi (scope)",
+  "pkg_flat_arg_requires_value": "pkg_flat --remote/--scope qiymat talab qiladi",
+  "pkg_flat_setup_required": "Ilovalarni o'rnatishdan oldin Flatpak va uning mahalliy omborini sozlang",
+  "pkg_flat_preflight_failed": "Flatpak arxitektura/mavjudlik oldindan tekshiruvi muvaffaqiyatsiz bo'ldi",
+  "pkg_flat_no_refs": "Birorta ham mahalliy Flatpak ref hal qilinmadi",
+  "pkg_ext_usage": "Foydalanish: pkg_flat_extension APP_ID EXTENSION_ID",
+  "pkg_ext_unavailable": "O'rnatilgan ilova runtime uchun mahalliy kengaytma mavjud emas",
+  "pkg_ext_no_refs": "Birorta ham mahalliy kengaytma ref hal qilinmadi",
+  "pkg_ext_invalid_plan": "Noto'g'ri mahalliy kengaytma rejasi",
+  "pkg_appimage_no_fuse_candidate": "FUSE 2 uchun mahalliy nomzod mavjud emas; bu AppImage'ni o'rnatishdan oldin qo'llab-quvvatlanadigan omborni sozlang",
+  "aur_arch_unreadable": "PKGBUILD: arch massivini statik o'qib bo'lmadi, shuning uchun aarch64 mosligi tasdiqlanmadi",
+  "aur_arch_empty": "PKGBUILD: arch massivi bo'sh, shuning uchun aarch64 mosligi tasdiqlanmadi",
+  "aur_arch_no_port": "PKGBUILD: arch massivi aarch64 portsiz (${archs}) deb e'lon qiladi; bu paket aarch64'ni qo'llab-quvvatlamaydi"
 }
