@@ -29,6 +29,12 @@ RUN sed -i -E \
       /etc/pacman.conf && \
     pacman-key --init && pacman-key --populate archlinuxarm
 
+# ALARM's makepkg.conf keeps the pre-zstd PKGEXT='.pkg.tar.xz', so makepkg
+# would emit linuxtoys-<v>-1-aarch64.pkg.tar.xz while the release pipeline
+# (and Arch's own x86_64 package naming) expects .pkg.tar.zst; the
+# zstd binary is already in the rootfs. Normalize to Arch's standard.
+RUN sed -i "s|^PKGEXT=.*|PKGEXT='.pkg.tar.zst'|" /etc/makepkg.conf
+
 LABEL org.opencontainers.image.title="linuxtoys-ci-archlinux-aarch64" \
       org.opencontainers.image.description="Arch Linux ARM aarch64 rootfs for the LinuxToys release packaging jobs" \
       org.opencontainers.image.source="https://github.com/psygreg/linuxtoys"
