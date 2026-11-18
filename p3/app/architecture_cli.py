@@ -44,7 +44,9 @@ def apt_plan(packages: list[str]) -> None:
         package = line.split()[1]
         if ":" in package:
             require_native([package.rsplit(":", 1)[1]])
-        match = re.search(r"\[([^] ]+)\]\)\s*$", line)
+        # Newer APT (e.g. Debian 13) appends an optional trailing reason group
+        # after the closing paren: "... Debian:13.7/stable [amd64]) []".
+        match = re.search(r"\[([^] ]+)\]\)(?:\s*\[[^]]*\])?\s*$", line)
         if not match:
             raise ArchitectureError(
                 f"APT did not identify the planned architecture for {package}"

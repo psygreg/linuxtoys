@@ -20,6 +20,11 @@ LINUXTOYS_PACKAGE_GUARD_API=2
 # survive — those are also what every fallback degrades to (jq missing, JSON
 # unreadable, no lang tree), because a guard must never print an empty line.
 #
+# The same store carries the native-route refusal lines (pkg_flat,
+# pkg_flat_extension, pkg_appimage) that the ARM64 ISA gates and the Flatpak
+# preflights emit through die(); they are loaded here so the refusals speak
+# the user's language too.
+#
 # '@{key}' references are resolved by the Python side only; the guard strings
 # carry none. The '${manager}' splice follows the file's own '${version}'
 # placeholder convention and is filled by _pkg_guard_fmt at print time.
@@ -58,7 +63,17 @@ _pkg_guard_l10n () {
             ["PKG_GUARD_BROKEN", "pkg_guard_broken"],
             ["PKG_GUARD_AUDIT_FAIL", "pkg_guard_audit_fail"],
             ["PKG_GUARD_BROKEN_FAIL", "pkg_guard_broken_fail"],
-            ["PKG_GUARD_BROKEN_PENDING", "pkg_guard_broken_pending"]
+            ["PKG_GUARD_BROKEN_PENDING", "pkg_guard_broken_pending"],
+            ["PKG_FLAT_INVALID_SCOPE", "pkg_flat_invalid_scope"],
+            ["PKG_FLAT_ARG_REQUIRES_VALUE", "pkg_flat_arg_requires_value"],
+            ["PKG_FLAT_SETUP_REQUIRED", "pkg_flat_setup_required"],
+            ["PKG_FLAT_PREFLIGHT_FAILED", "pkg_flat_preflight_failed"],
+            ["PKG_FLAT_NO_REFS", "pkg_flat_no_refs"],
+            ["PKG_EXT_USAGE", "pkg_ext_usage"],
+            ["PKG_EXT_UNAVAILABLE", "pkg_ext_unavailable"],
+            ["PKG_EXT_NO_REFS", "pkg_ext_no_refs"],
+            ["PKG_EXT_INVALID_PLAN", "pkg_ext_invalid_plan"],
+            ["PKG_APPIMAGE_NO_FUSE_CANDIDATE", "pkg_appimage_no_fuse_candidate"]
         ] as $m |
         $m[]
         | (.[0] as $var | ($t[.[1]]) as $v
@@ -83,6 +98,18 @@ PKG_GUARD_BROKEN='Broken package dependencies were detected. Attempting recovery
 PKG_GUARD_AUDIT_FAIL='Failed to recover interrupted dpkg operation. Manual user intervention required.'
 PKG_GUARD_BROKEN_FAIL='Failed to fix broken packages. Manual user intervention required.'
 PKG_GUARD_BROKEN_PENDING='Package dependencies remain broken. Manual user intervention required.'
+
+# Native-route refusal lines (ARM64 ISA gates and Flatpak preflights).
+PKG_FLAT_INVALID_SCOPE='Invalid Flatpak scope'
+PKG_FLAT_ARG_REQUIRES_VALUE='pkg_flat --remote/--scope requires a value'
+PKG_FLAT_SETUP_REQUIRED='Configure Flatpak and its native remote before installing applications'
+PKG_FLAT_PREFLIGHT_FAILED='Flatpak architecture/availability preflight failed'
+PKG_FLAT_NO_REFS='No native Flatpak refs resolved'
+PKG_EXT_USAGE='Usage: pkg_flat_extension APP_ID EXTENSION_ID'
+PKG_EXT_UNAVAILABLE='Native extension unavailable for the installed application runtime'
+PKG_EXT_NO_REFS='No native extension refs resolved'
+PKG_EXT_INVALID_PLAN='Invalid native extension plan'
+PKG_APPIMAGE_NO_FUSE_CANDIDATE='No native FUSE 2 candidate is available; configure a supported repository before installing this AppImage'
 
 # Strings load once at library source time; every return path of the loader is
 # guarded, so a broken environment cannot abort the run under set -e.
@@ -861,7 +888,7 @@ pkg_flat() {
     local -a _flatpak_args=()
     for arg in "$@"; do
         if [[ $_next_scope -eq 1 ]]; then
-            [[ "$arg" == user || "$arg" == system ]] || die "Invalid Flatpak scope"
+            [[ "$arg" == user || "$arg" == system ]] || die "$PKG_FLAT_INVALID_SCOPE"
             _explicit_scope="--$arg"
             _next_scope=0
             continue
@@ -883,13 +910,13 @@ pkg_flat() {
             _flatpak_args+=("$arg")
         fi
     done
-    [[ $_next_remote -eq 0 && $_next_scope -eq 0 ]] || die "pkg_flat --remote/--scope requires a value"
+    [[ $_next_remote -eq 0 && $_next_scope -eq 0 ]] || die "$PKG_FLAT_ARG_REQUIRES_VALUE"
     if [[ "$_remote" != "flathub" ]]; then
         [[ "$_remote" =~ ^[a-z0-9][a-z0-9._-]*$ ]] \
             || die "pkg_flat: unsupported Flatpak remote: $_remote"
     fi
 
-    command -v flatpak >/dev/null 2>&1 || die "Configure Flatpak and its native remote before installing applications"
+    command -v flatpak >/dev/null 2>&1 || die "$PKG_FLAT_SETUP_REQUIRED"
     local flatpak_scope="--user"
     if [[ $_skip_user -eq 1 ]]; then
         flatpak_scope="--system"
@@ -905,8 +932,8 @@ pkg_flat() {
 
     [[ -z "$_explicit_scope" ]] || flatpak_scope="$_explicit_scope"
     local resolved_refs
-    resolved_refs=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" flatpak "$_remote" "${flatpak_scope#--}" "${_flatpak_args[@]}") || die "Flatpak architecture/availability preflight failed"
-    [[ -n "$resolved_refs" ]] || die "No native Flatpak refs resolved"
+    resolved_refs=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" flatpak "$_remote" "${flatpak_scope#--}" "${_flatpak_args[@]}") || die "$PKG_FLAT_PREFLIGHT_FAILED"
+    [[ -n "$resolved_refs" ]] || die "$PKG_FLAT_NO_REFS"
     mapfile -t _flatpak_args <<< "$resolved_refs"
 
     local -a _flatpak_normal=()
@@ -973,13 +1000,13 @@ pkg_flat() {
 }
 
 pkg_flat_extension() {
-    [[ $# -eq 2 ]] || die "Usage: pkg_flat_extension APP_ID EXTENSION_ID"
+    [[ $# -eq 2 ]] || die "$PKG_EXT_USAGE"
     local refs
-    refs=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" extension "$1" "$2") || die "Native extension unavailable for the installed application runtime"
-    [[ -n "$refs" ]] || die "No native extension refs resolved"
+    refs=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" extension "$1" "$2") || die "$PKG_EXT_UNAVAILABLE"
+    [[ -n "$refs" ]] || die "$PKG_EXT_NO_REFS"
     local -a plan=()
     mapfile -t plan <<< "$refs"
-    [[ ${#plan[@]} -ge 3 ]] || die "Invalid native extension plan"
+    [[ ${#plan[@]} -ge 3 ]] || die "$PKG_EXT_INVALID_PLAN"
     pkg_flat --scope "${plan[0]}" --remote "${plan[1]}" "${plan[@]:2}"
 }
 
@@ -2523,7 +2550,7 @@ pkg_appimage () {
         elif LC_ALL=C apt-cache policy libfuse2 | grep -Eq '^[[:space:]]*Candidate: [^ (]'; then
             pkg_install libfuse2
         else
-            die "No native FUSE 2 candidate is available; configure a supported repository before installing this AppImage"
+            die "$PKG_APPIMAGE_NO_FUSE_CANDIDATE"
         fi
     }
     { is_fedora || is_ostree || is_rhel; } && {

@@ -5220,7 +5220,7 @@ def run_service():
 
 
 if __name__ == "__main__":
-    # The offline skill fallback (`--install-skill`) moved to app/mcp_skill.py:
+    # The skill installer (`--install-skill`) moved to app/mcp_skill.py:
     # it must load nothing beyond the standard library, so it no longer routes
     # through this module's import stack.
     sys.exit(run_service())
