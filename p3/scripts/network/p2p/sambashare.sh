@@ -27,40 +27,15 @@ _lang_
 : "${smb_conf_invalid:=The new Samba configuration is invalid. The previous configuration was restored.}"
 : "${smb_done:=Share created. Access it from other devices at:}"
 
-SMB_CONF="/etc/samba/smb.conf"
+# overridable so the flow can be exercised against a scratch config in tests
+SMB_CONF="${SMB_CONF:-/etc/samba/smb.conf}"
+
+: "${USER:=$(id -un 2>/dev/null)}"
 
 sudo_rq
 
-# install samba (ships smbpasswd, pdbedit and testparm on every supported distro)
-smb_install () {
-    pkg_install samba
-}
-
-# Arch ships no default smb.conf; give it a minimal one
-smb_conf_ensure () {
-    [ -f "$SMB_CONF" ] && return 0
-    prep_create "$SMB_CONF"
-    sudo_ tee "$SMB_CONF" >/dev/null <<'EOF'
-[global]
-   workgroup = WORKGROUP
-   server string = %h
-   server role = standalone server
-   map to guest = Bad User
-   log file = /var/log/samba/%m.log
-   max log size = 1000
-EOF
-}
-
-# guest shares need unknown users mapped to the guest account
-smb_guest_ensure () {
-    testparm -s --parameter-name="map to guest" 2>/dev/null | grep -qi "bad user" && return 0
-    if grep -qiE '^[[:space:]]*map to guest' "$SMB_CONF"; then
-        sudo_ sed -i -E 's/^([[:space:]]*)map to guest.*/\1map to guest = Bad User/I' "$SMB_CONF"
-    else
-        sudo_ sed -i -E '0,/^[[:space:]]*\[global\]/I s//[global]\n   map to guest = Bad User/' "$SMB_CONF"
-    fi
-}
-
+# Ask everything before touching the system, so a cancelled run leaves
+# no Samba package or configuration behind.
 smb_ask_name () {
     local name
     name=$(userinput --title "$smb_title" --text "$smb_name_text" --default "Share") || exit 100
@@ -77,24 +52,40 @@ smb_ask_name () {
 smb_ask_path () {
     local path
     path=$(userinput --title "$smb_title" --text "$smb_path_text" --default "$HOME/Public") || exit 100
-    # trim surrounding whitespace and a trailing slash
+    # trim surrounding whitespace and trailing slashes
     path="${path#"${path%%[![:space:]]*}"}"
     path="${path%"${path##*[![:space:]]}"}"
-    [ "$path" != "/" ] && path="${path%/}"
+    while [[ "$path" != "/" && "$path" == */ ]]; do
+        path="${path%/}"
+    done
     if [[ "$path" != /* ]] || [[ "$path" == *$'\n'* ]] || [[ "$path" =~ (^|/)\.\.?(/|$) ]]; then
         fatal "$smb_path_invalid"
     fi
+    # resolve symlinks so a folder link cannot smuggle a system directory in
+    path=$(realpath -m -- "$path" 2>/dev/null) || fatal "$smb_path_invalid"
+    # home locations differ per distro layout (/home is a symlink to /var/home
+    # on immutable systems, systemd-homed lives under /var/home): accept the
+    # user's own home under either form and keep other users' homes off limits
+    local home_resolved
+    home_resolved=$(realpath -m -- "$HOME" 2>/dev/null) || home_resolved="$HOME"
     case "$path" in
-        /|/bin|/bin/*|/boot|/boot/*|/dev|/dev/*|/etc|/etc/*|/lib|/lib/*|/lib64|/lib64/*|/proc|/proc/*|/root|/root/*|/run|/run/*|/sbin|/sbin/*|/sys|/sys/*|/usr|/usr/*|/var|/var/*|/home|"$HOME")
+        /|/bin|/bin/*|/boot|/boot/*|/dev|/dev/*|/etc|/etc/*|/efi|/efi/*|/lib|/lib/*|/lib32|/lib32/*|/lib64|/lib64/*|/libx32|/libx32/*|/proc|/proc/*|/root|/root/*|/run|/run/*|/sbin|/sbin/*|/sys|/sys/*|/tmp|/tmp/*|/usr|/usr/*|/var|/var/tmp|/var/tmp/*|/var/log|/var/log/*|/var/lib|/var/lib/*|/var/cache|/var/cache/*|/var/spool|/var/spool/*|/var/backups|/var/backups/*|/var/roothome|/var/roothome/*)
             fatal "$smb_path_invalid" ;;
     esac
+    case "$path" in
+        # other users' homes are off limits; the user's own home is fine,
+        # either as typed or through the distro layout that resolves to it
+        "$HOME"/*|"$home_resolved"/*) ;;
+        "$HOME"|"$home_resolved") fatal "$smb_path_invalid" ;;
+        /home|/home/*|/var/home|/var/home/*) fatal "$smb_path_invalid" ;;
+    esac
     if [ ! -d "$path" ]; then
-        if [[ "$path" == "$HOME"/* ]]; then
+        if [[ "$path" == "$HOME"/* || "$path" == "$home_resolved"/* ]]; then
             mkdir -p "$path" || fatal "Failed to create $path"
             _append_transmap "created $path"
         else
             prep_dir "$path"
-            sudo_ chown "$USER": "$path"
+            sudo_ chown "$USER": "$path" || fatal "Failed to set ownership of $path"
         fi
     fi
     SHARE_PATH="$path"
@@ -114,6 +105,21 @@ smb_ask_mode () {
     esac
 }
 
+smb_conf_ensure () {
+    [ -f "$SMB_CONF" ] && return 0
+    # Arch ships no default smb.conf; give it a minimal one
+    prep_create "$SMB_CONF"
+    sudo_ tee "$SMB_CONF" >/dev/null <<'EOF'
+[global]
+   workgroup = WORKGROUP
+   server string = %h
+   server role = standalone server
+   map to guest = Bad User
+   log file = /var/log/samba/%m.log
+   max log size = 1000
+EOF
+}
+
 # add the user to the Samba password database if not there yet
 smb_user_ensure () {
     sudo_ pdbedit -L 2>/dev/null | cut -d: -f1 | grep -qx "$USER" && return 0
@@ -122,13 +128,25 @@ smb_user_ensure () {
         pass=$(_zenity_run --password --title "$smb_title" --text "$smb_pass_text") || exit 100
     else
         printf '%s\n' "$smb_pass_text" >&2
-        IFS= read -r -s -p "Password: " pass || exit 100
-        echo >&2
+        pass=$(askpass password "$smb_title") || exit 100
     fi
     [ -n "$pass" ] || fatal "$smb_pass_empty"
     printf '%s\n%s\n' "$pass" "$pass" | sudo_ smbpasswd -s -a "$USER" >/dev/null || fatal "Failed to set the Samba password"
     unset pass
     _append_transmap "smbpasswd added $USER"
+}
+
+# guest shares need unknown users mapped to the guest account
+smb_guest_ensure () {
+    sudo_ testparm -s "$SMB_CONF" --parameter-name="map to guest" 2>/dev/null | grep -qi "bad user" && return 0
+    if grep -qiE '^[[:space:]]*map to guest' "$SMB_CONF"; then
+        sudo_ sed -i -E 's/^([[:space:]]*)map to guest.*/\1map to guest = Bad User/I' "$SMB_CONF"
+    else
+        # a [global] section may also appear after shares; Samba merges them
+        printf '[global]\n   map to guest = Bad User\n' | sudo_ tee -a "$SMB_CONF" >/dev/null
+    fi
+    sudo_ testparm -s "$SMB_CONF" --parameter-name="map to guest" 2>/dev/null | grep -qi "bad user" \
+        || nonfatal "Failed to enable guest access in $SMB_CONF"
 }
 
 smb_write_share () {
@@ -156,7 +174,7 @@ smb_write_share () {
    force user = $USER" ;;
     esac
     printf '%s\n' "$section" | sudo_ tee -a "$SMB_CONF" >/dev/null || fatal "Failed to write $SMB_CONF"
-    if ! testparm -s "$SMB_CONF" >/dev/null 2>&1; then
+    if ! sudo_ testparm -s "$SMB_CONF" >/dev/null 2>&1; then
         sudo_ cp -f "$SMB_CONF.bak" "$SMB_CONF"
         fatal "$smb_conf_invalid"
     fi
@@ -166,12 +184,12 @@ smb_write_share () {
 smb_selinux () {
     command -v getenforce &>/dev/null || return 0
     [ "$(getenforce 2>/dev/null)" = "Disabled" ] && return 0
-    if [[ "$SHARE_PATH" == /home/* ]]; then
+    if [[ "$SHARE_PATH" == /home/* || "$SHARE_PATH" == /var/home/* ]]; then
         sudo_ setsebool -P samba_enable_home_dirs on || nonfatal "Failed to enable the samba_enable_home_dirs SELinux boolean"
     elif command -v semanage &>/dev/null; then
         sudo_ semanage fcontext -a -t samba_share_t "${SHARE_PATH}(/.*)?" 2>/dev/null \
-            || sudo_ semanage fcontext -m -t samba_share_t "${SHARE_PATH}(/.*)?"
-        sudo_ restorecon -R "$SHARE_PATH"
+            || sudo_ semanage fcontext -m -t samba_share_t "${SHARE_PATH}(/.*)?" 2>/dev/null
+        sudo_ restorecon -R "$SHARE_PATH" || nonfatal "Failed to set the SELinux label on $SHARE_PATH"
     else
         sudo_ chcon -R -t samba_share_t "$SHARE_PATH" || nonfatal "Failed to set the SELinux label on $SHARE_PATH"
     fi
@@ -179,9 +197,11 @@ smb_selinux () {
 
 smb_firewall () {
     if command -v firewall-cmd &>/dev/null && sudo_ firewall-cmd --state &>/dev/null; then
-        sudo_ firewall-cmd --permanent --add-service=samba && sudo_ firewall-cmd --reload
+        { sudo_ firewall-cmd --permanent --add-service=samba && sudo_ firewall-cmd --reload; } \
+            || nonfatal "Failed to allow Samba through firewalld"
     elif command -v ufw &>/dev/null && sudo_ ufw status 2>/dev/null | grep -q "Status: active"; then
-        sudo_ ufw allow samba >/dev/null 2>&1 || sudo_ ufw allow Samba
+        sudo_ ufw allow samba >/dev/null 2>&1 || sudo_ ufw allow Samba >/dev/null 2>&1 \
+            || nonfatal "Failed to allow Samba through ufw"
     fi
 }
 
@@ -199,11 +219,12 @@ smb_services () {
     fi
 }
 
-smb_install
-smb_conf_ensure
 smb_ask_name
 smb_ask_path
 smb_ask_mode
+# install samba (ships smbpasswd, pdbedit and testparm on every supported distro)
+pkg_install samba
+smb_conf_ensure
 [ "$SHARE_MODE" = "private" ] && smb_user_ensure
 prep_edit "$SMB_CONF"
 [[ "$SHARE_MODE" == guest_* ]] && smb_guest_ensure

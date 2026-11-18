@@ -171,9 +171,10 @@ class AppStreamRunner:
     def enqueue_skill_install(self, script_text, label="Install LinuxToys MCP skill"):
         """Queue the agent-skill installer through the hidden PTY.
 
-        Only the canonical bundled text-copy operation is accepted. It still
-        passes through script_environment/script_command and M1 at dispatch.
-        No transmap or package-manager transaction is needed for user skill data.
+        Only the canonical reviewed skill-install operation is accepted. It
+        still passes through script_environment/script_command and M1 at
+        dispatch. No transmap or package-manager transaction is needed for
+        user skill data.
         """
         from .mcp_skill import skill_install_script
 
@@ -954,7 +955,7 @@ class AppStreamRunner:
                 pass
 
     def _run_skill_install_job(self, record):
-        """Run the reviewed text-copy operation through the guarded hidden PTY.
+        """Run the reviewed skill-install operation through the guarded hidden PTY.
 
         Required architecture/import failures stay closed; never retry a refused
         operation through an unguarded execution path.
@@ -977,7 +978,7 @@ class AppStreamRunner:
                 self._append_transcript(record.get("name", "skill install"), output or "")
                 if exit_code != 0:
                     reason = self._failure_reason_from_output(
-                        "The bundled LinuxToys skill could not be installed. "
+                        "The LinuxToys MCP skill could not be installed. "
                         "Existing skill contents were preserved; inspect the job log.",
                         output,
                     )

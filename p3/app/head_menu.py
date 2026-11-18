@@ -283,7 +283,7 @@ class MenuButton(Gtk.MenuButton):
 				runner = getattr(self.parent_window, "_appstream_runner", None)
 				mcp_skill.request_skill_install(runner)
 		except ImportError as exc:
-			# The offline helper does not depend on the optional service/UI stack.
+			# The skill helper does not depend on the optional service/UI stack.
 			if is_enabled:
 				mcp_skill.install_agent_skill()
 			error = str(exc)
