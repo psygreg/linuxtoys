@@ -205,6 +205,7 @@
   "unsupported_os_message": "Nepodprt operacijski sistem.",
   "dnsmasq_desc": "Nastavite lokalno predpomnjenje DNS za pospešitev razreševanja imen domen, izboljšanje zmogljivosti brskanja in odpravo težav z izgubo hitrosti prenosa v Steamu.",
   "intelxe_desc": "Preklopi gonilnike Intel na novejši gonilnik Xe na podprtih diskretnih GPU (Battlemage/Alchemist) za izboljšano zmogljivost in združljivost.",
+  "ipu6_desc": "Nastavi vgrajene kamere prenosnikov, ki uporabljajo Intel IPU6 (od Tiger Lake do Meteor Lake), z odprtim gonilnikom v jedru, libcamera in PipeWire. Noben modul gonilnika zunaj jedra ni nameščen. Zahteva Linux 6.10 ali novejši.",
   "term_view_execute": " Izvedi ",
   "term_view_running_label": " Izvajanje ",
   "term_view_done": " Končano ",

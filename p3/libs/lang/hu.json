@@ -205,6 +205,7 @@
   "unsupported_os_message": "Nem támogatott operációs rendszer.",
   "dnsmasq_desc": "Állítson be helyi DNS-gyorsítótárazást a tartománynevek feloldásának felgyorsításához, a böngészési teljesítmény javításához és a letöltési sebesség elvesztésével kapcsolatos problémák megoldásához a Steamen.",
   "intelxe_desc": "Az Intel illesztőprogramokat az újabb Xe illesztőprogramra váltja a támogatott dedikált GPU-kon (Battlemage/Alchemist) a teljesítmény és kompatibilitás javítása érdekében.",
+  "ipu6_desc": "Beállítja az Intel IPU6-ot (Tiger Lake-től Meteor Lake-ig) használó laptopok beépített kameráit a nyílt forráskódú kernelbe épített illesztőprogrammal, a libcamerával és a PipeWire-rel. Nem kerül telepítésre kernelen kívüli illesztőprogrammodul. Linux 6.10 vagy újabb szükséges.",
   "term_view_execute": " Végrehajtás ",
   "term_view_running_label": " Futtatás ",
   "term_view_done": " Kész ",

@@ -205,6 +205,7 @@
   "unsupported_os_message": "Córas oibriúcháin gan tacaíocht.",
   "dnsmasq_desc": "Socraigh taisce áitiúil DNS chun réiteach ainmneacha fearainn a luathú, feidhmíocht brabhsála a fheabhsú agus fadhbanna le cailliúint luais íoslódála ar Steam a réiteach.",
   "intelxe_desc": "Aistríonn tiománaithe Intel chuig an tiománaí Xe níos nuaí ar GPUanna discrétacha tacaithe (Battlemage/Alchemist) chun feidhmíocht agus comhoiriúnacht a fheabhsú.",
+  "ipu6_desc": "Socraíonn sé ceamaraí ionsuite ghlúine a úsáideann Intel IPU6 (ó Tiger Lake go Meteor Lake) leis an tiománaí foinse-oscailte san eithne, libcamera agus PipeWire. Ní suiteáiltear aon mhodúil tiománaithe lasmuigh den eithne. Teastlaíonn Linux 6.10 nó níos nuaí.",
   "term_view_execute": " Forghníomhaigh ",
   "term_view_running_label": " Ag rith ",
   "term_view_done": " Déanta ",

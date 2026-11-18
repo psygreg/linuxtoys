@@ -205,6 +205,7 @@
   "unsupported_os_message": "Ikke-understøttet operativsystem.",
   "dnsmasq_desc": "Opsæt lokal DNS-caching for at fremskynde domænenavnsopløsning, forbedre browserydelsen og løse problemer med tab af downloadhastighed på Steam.",
   "intelxe_desc": "Skifter Intel-drivere til den nyere Xe-driver på understøttede diskrete GPU'er (Battlemage/Alchemist) for at forbedre ydeevne og kompatibilitet.",
+  "ipu6_desc": "Sætter indbyggede laptopkameraer, der bruger Intel IPU6 (fra Tiger Lake til Meteor Lake), op med open source-driveren i kernen, libcamera og PipeWire. Ingen drivemoduler uden for kernen installeres. Kræver Linux 6.10 eller nyere.",
   "term_view_execute": " Udfør ",
   "term_view_running_label": " Kører ",
   "term_view_done": " Færdig ",

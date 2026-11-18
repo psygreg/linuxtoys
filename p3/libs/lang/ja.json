@@ -205,6 +205,7 @@
   "unsupported_os_message": "サポートされていないオペレーティングシステム。",
   "dnsmasq_desc": "ローカルDNSキャッシュを設定して、ドメイン名解決を高速化し、ブラウジングパフォーマンスを向上させ、Steamでのダウンロード速度低下の問題を修正します。",
   "intelxe_desc": "サポートされている独立GPU（Battlemage/Alchemist）でIntelドライバーを新しいXeドライバーに切り替えて、パフォーマンスと互換性を向上させます。",
+  "ipu6_desc": "Intel IPU6（Tiger Lake から Meteor Lake）を搭載したノートパソコンの内蔵カメラを、オープンソースのカーネル内ドライバー、libcamera、PipeWire でセットアップします。カーネル外のドライバーモジュールはインストールしません。Linux 6.10 以降が必要です。",
   "term_view_execute": " 実行 ",
   "term_view_running_label": " 実行中 ",
   "term_view_done": " 完了 ",

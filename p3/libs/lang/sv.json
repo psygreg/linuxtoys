@@ -205,6 +205,7 @@
   "unsupported_os_message": "Ej stöds operativsystem.",
   "dnsmasq_desc": "Ställ in lokal DNS-cachning för att påskynda domännamnupplösning, förbättra webbläsarprestanda och åtgärda problem med förlust av nedladdningshastighet på Steam.",
   "intelxe_desc": "Byter Intel-drivrutiner till den nyare Xe-drivrutinen på stödda diskreta GPU:er (Battlemage/Alchemist) för att förbättra prestanda och kompatibilitet.",
+  "ipu6_desc": "Konfigurerar inbyggda laptopkameror som använder Intel IPU6 (från Tiger Lake till Meteor Lake) med öppen källkod-drivrutinen i kärnan, libcamera och PipeWire. Inga drivrutinsmoduler utanför kärnan installeras. Kräver Linux 6.10 eller nyare.",
   "term_view_execute": " Kör ",
   "term_view_running_label": " Kör ",
   "term_view_done": " Klart ",

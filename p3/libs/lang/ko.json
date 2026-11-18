@@ -205,6 +205,7 @@
   "unsupported_os_message": "지원되지 않는 운영 체제입니다.",
   "dnsmasq_desc": "로컬 DNS 캐싱을 설정하여 도메인 이름 확인 속도를 높이고, 브라우징 성능을 개선하며, Steam에서 다운로드 속도 손실 문제를 해결합니다.",
   "intelxe_desc": "성능과 호환성을 향상시키기 위해 지원되는 별도 GPU(Battlemage/Alchemist)에서 Intel 드라이버를 최신 Xe 드라이버로 전환합니다.",
+  "ipu6_desc": "Intel IPU6(Tiger Lake~Meteor Lake)을 사용하는 노트북 내장 카메라를 오픈소스 커널 내장 드라이버, libcamera, PipeWire로 설정합니다. 커널 외부 드라이버 모듈은 설치하지 않습니다. Linux 6.10 이상이 필요합니다.",
   "term_view_execute": " 실행 ",
   "term_view_running_label": " 실행 중 ",
   "term_view_done": " 완료 ",

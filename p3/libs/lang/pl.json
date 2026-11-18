@@ -205,6 +205,7 @@
   "unsupported_os_message": "Nieobsługiwany system operacyjny.",
   "dnsmasq_desc": "Skonfiguruj lokalne buforowanie DNS, aby przyspieszyć rozwiązywanie nazw domen, poprawić wydajność przeglądania i rozwiązać problemy z utratą prędkości pobierania w Steam.",
   "intelxe_desc": "Przełącza sterowniki Intel na nowszy sterownik Xe na obsługiwanych dyskretnych GPU (Battlemage/Alchemist) w celu poprawy wydajności i kompatybilności.",
+  "ipu6_desc": "Konfiguruje wbudowane kamery laptopów używających Intel IPU6 (od Tiger Lake do Meteor Lake) za pomocą sterownika otwartego kodu wbudowanego w jądro, libcamera i PipeWire. Moduły sterowników poza jądrem nie są instalowane. Wymaga Linux 6.10 lub nowszego.",
   "term_view_execute": " Wykonaj ",
   "term_view_running_label": " Uruchomione ",
   "term_view_done": " Gotowe ",

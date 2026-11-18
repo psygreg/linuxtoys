@@ -205,6 +205,7 @@
   "unsupported_os_message": "Neatbalstīta operētājsistēma.",
   "dnsmasq_desc": "Iestatiet vietējo DNS kešatmiņu, lai paātrinātu domēnu nosaukumu atrisināšanu, uzlabotu pārlūkošanas veiktspēju un novērstu problēmas ar lejupielādes ātruma zaudēšanu Steam.",
   "intelxe_desc": "Pārslēdz Intel draiverus uz jaunāko Xe draiveri uz atbalstītām diskrētām GPU (Battlemage/Alchemist), lai uzlabotu veiktspēju un saderību.",
+  "ipu6_desc": "Iestata klēpjdatoru iebūvētās kameras, kas izmanto Intel IPU6 (no Tiger Lake līdz Meteor Lake), ar atvērtā koda draiveri kodolā, libcamera un PipeWire. Nav instalēti draiveru moduļi ārpus koda bāzes. Nepieciešama Linux 6.10 vai jaunāka.",
   "term_view_execute": " Izpildīt ",
   "term_view_running_label": " Izpildās ",
   "term_view_done": " Pabeigts ",

@@ -205,6 +205,7 @@
   "unsupported_os_message": "Ei-tuettu käyttöjärjestelmä.",
   "dnsmasq_desc": "Määritä paikallinen DNS-välimuistitallennus nopeuttaaksesi verkkotunnusten nimenratkaisua, parantaaksesi selaimen suorituskykyä ja korjataksesi ongelmat latausnopeuden menettämisestä Steamissa.",
   "intelxe_desc": "Vaihtaa Intel-ajurit uudempaan Xe-ajuriin tuetuissa erillisessä GPU:issa (Battlemage/Alchemist) parantaakseen suorituskykyä ja yhteensopivuutta.",
+  "ipu6_desc": "Asettaa Intel IPU6 -kameraa (Tiger Lakesta Meteor Lakeen) käyttävät kannettavien sisäiset kamerat käyttöön ytimen avoimella lähdekoodilla olevalla ajurilla, libcameralla ja PipeWirella. Ytimen ulkopuolisia ajurimoduuleja ei asenneta. Vaatii Linux 6.10:n tai uudemman.",
   "term_view_execute": " Suorita ",
   "term_view_running_label": " Suoritetaan ",
   "term_view_done": " Valmis ",
