@@ -142,6 +142,7 @@
   "cockpit_desc": "Vefbyggður viðmót fyrir eftirlit og stjórnun Linux þjóna (þjónn).",
   "webmin_desc": "Vefbyggður viðmót fyrir kerfisstjórnun fyrir Unix.",
   "topgrade_desc": "Tól fyrir að uppfæra alla uppsetta pakka á hvaða Linux kerfi sem er.",
+  "mergerfs_desc": "Setur upp mergerfs og sameinar mög drif í eina möppu sem bætt er við /etc/fstab svo hún tengist við ræsingu. Hvert drif heldur sínum skrám, svo tap eins drifs hefur ekki áhrif á önnur.",
   "adir_desc": "Setur upp alla nauðsynlega pakka til að ganga í Active Directory lén með realmd.",
   "select_language": "Veldu tungumál",
   "select_language_title": "Tungumálaval",

@@ -143,6 +143,7 @@
   "cockpit_desc": "Kiolesura cha wavuti cha kufuatilia na kusimamia seva za Linux (seva).",
   "webmin_desc": "Kiolesura cha wavuti cha utawala wa mfumo kwa Unix.",
   "topgrade_desc": "Chombo cha kuboresha vifurushi vyote vilivyosakinishwa kwenye mfumo wowote wa Linux.",
+  "mergerfs_desc": "Husakinisha mergerfs na kuchanganya diski kadhaa kuwa folda moja, ikiongezwa kwenye /etc/fstab ili imountiwe wakati wa boot. Kila diski huhifadhi faili zake, hivyo kupoteza diski moja hakugusa nyingine.",
   "adir_desc": "Inasakinisha vifurushi vyote vinavyohitajika kujiunga na maeneo ya Active Directory kwa kutumia realmd.",
   "select_language": "Chagua Lugha",
   "select_language_title": "Uchaguzi wa Lugha",

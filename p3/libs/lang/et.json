@@ -142,6 +142,7 @@
   "cockpit_desc": "Veebipõhine liides Linuxi serverite jälgimiseks ja haldamiseks (server).",
   "webmin_desc": "Veebipõhine liides süsteemi administreerimiseks Unixi jaoks.",
   "topgrade_desc": "Tööriist kõigi installitud pakettide uuendamiseks mis tahes Linuxi süsteemil.",
+  "mergerfs_desc": "Paigaldab mergerfs ja ühendab mitu ketast üheks kaustaks, lisades selle /etc/fstab-i, et see ühendataks käivitamisel. Iga ketas hoiab oma faile, mistõttu ühe ketta kadu ei mõjuta teisi.",
   "adir_desc": "Installib kõik paketid, mis on vajalikud Active Directory domeenidesse liitumiseks realmd'i abil.",
   "select_language": "Vali keel",
   "select_language_title": "Keele valik",

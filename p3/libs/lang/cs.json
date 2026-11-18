@@ -143,6 +143,7 @@
   "cockpit_desc": "Webové rozhraní pro monitorování a správu Linux serverů (server).",
   "webmin_desc": "Webové rozhraní pro správu systému pro Unix.",
   "topgrade_desc": "Nástroj pro upgrade všech nainstalovaných balíčků na jakémkoli Linux systému.",
+  "mergerfs_desc": "Instaluje mergerfs a spojuje několik disků do jedné složky, kterou přidá do /etc/fstab, aby se připojovala při startu. Každý disk si ponechává své soubory, takže ztráta jednoho disku neovlivní ostatní.",
   "adir_desc": "Instaluje všechny balíčky nezbytné pro připojení k Active Directory doménám pomocí realmd.",
   "select_language": "Vybrat jazyk",
   "select_language_title": "Výběr jazyka",

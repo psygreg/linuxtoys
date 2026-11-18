@@ -142,6 +142,7 @@
   "cockpit_desc": "Tīmekļa bāzēts interfeiss Linux serveru uzraudzībai un pārvaldībai (serveris).",
   "webmin_desc": "Tīmekļa bāzēts interfeiss sistēmas administrēšanai Unix.",
   "topgrade_desc": "Rīks visu instalēto pakotņu atjaunināšanai jebkurā Linux sistēmā.",
+  "mergerfs_desc": "Instalē mergerfs un apvieno vairākus diskus vienā mapē, pievienojot to /etc/fstab, lai to pievienotu palaišanas laikā. Katrs disks saglabā savus failus, tāpēc viena diska zaudēšana neietekmē pārējos.",
   "adir_desc": "Instalē visas nepieciešamās pakotnes, lai pievienotos Active Directory domēniem, izmantojot realmd.",
   "select_language": "Atlasīt valodu",
   "select_language_title": "Valodas atlase",

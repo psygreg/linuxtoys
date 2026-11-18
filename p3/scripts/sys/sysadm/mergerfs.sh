@@ -22,6 +22,8 @@ _lang_
 : "${mfs_confirm:=The following line will be added to /etc/fstab and mounted now. Continue?}"
 : "${mfs_mount_failed:=Mounting failed. /etc/fstab was restored to its previous state.}"
 : "${mfs_done:=Your pool is mounted at}"
+: "${mfs_install_failed:=mergerfs was not found after installation.}"
+: "${mfs_fstab_failed:=Failed to write /etc/fstab.}"
 
 MFS_DEFAULT_BRANCHES="/mnt/disk*"
 MFS_DEFAULT_MOUNT="/srv/mergerfs"
@@ -42,7 +44,7 @@ mfs_install () {
         pkg_install fuse3
         pkg_fromrelease https://github.com/trapexit/mergerfs "mergerfs-*.el$(rpm -E %rhel).*.rpm"
     fi
-    command -v mergerfs &>/dev/null || fatal "mergerfs was not found after installation."
+    command -v mergerfs &>/dev/null || fatal "$mfs_install_failed"
 }
 
 mfs_trim () {
@@ -54,6 +56,7 @@ mfs_trim () {
 mfs_ask_branches () {
     local input spec path
     local -a parts=() matches=()
+    local -A seen_dir=()
     input=$(userinput --title "$mfs_title" --text "$mfs_branches_text" --default "$MFS_DEFAULT_BRANCHES") || exit 100
     input=$(mfs_trim "$input")
     [[ -n "$input" && "$input" != *[[:space:]]* && "$input" != *'#'* ]] || fatal "$mfs_branches_invalid"
@@ -67,7 +70,12 @@ mfs_ask_branches () {
             [ -d "$path" ] && matches+=("${path%/}")
         done < <(compgen -G "$spec")
         (( ${#matches[@]} > 0 )) || fatal "$mfs_branches_invalid ($spec)"
-        MFS_DIRS+=("${matches[@]}")
+        for path in "${matches[@]}"; do
+            # a repeated spec would duplicate branches in the fstab line
+            [[ -n "${seen_dir[$path]:-}" ]] && continue
+            seen_dir[$path]=1
+            MFS_DIRS+=("$path")
+        done
     done
     MFS_BRANCHES="$input"
 }
@@ -90,6 +98,10 @@ mfs_ask_mount () {
     if [ -e "$input" ]; then
         [ -d "$input" ] || fatal "$mfs_mount_invalid"
         [ -z "$(ls -A "$input" 2>/dev/null)" ] || fatal "$mfs_mount_invalid"
+    fi
+    # an active mount would be shadowed by the pool on top of it
+    if mountpoint -q "$input"; then
+        fatal "$mfs_mount_invalid"
     fi
     if awk -v m="$input" '$1 !~ /^#/ && $2 == m { found=1 } END { exit !found }' /etc/fstab; then
         fatal "$mfs_mount_used"
@@ -117,10 +129,11 @@ mfs_fstab_line () {
     if [ -z "$ver" ] || (( ${ver%%.*} < 2 )) || { (( ${ver%%.*} == 2 )) && (( 10#${ver#*.} < 41 )); }; then
         fstype="fuse.mergerfs"
     fi
-    # do not block boot if a drive is missing; wait for drives mounted from fstab
+    # do not block boot if a drive is missing; order the pool after every
+    # branch that a fstab entry mounts (a no-op for plain directories)
     [[ ",$opts," == *,nofail,* ]] || opts+=",nofail"
     for dir in "${MFS_DIRS[@]}"; do
-        mountpoint -q "$dir" && opts+=",x-systemd.requires-mounts-for=$dir"
+        opts+=",x-systemd.requires-mounts-for=$dir"
     done
     MFS_LINE="$MFS_BRANCHES $MFS_MOUNT $fstype $opts 0 0"
 }
@@ -134,7 +147,7 @@ question "$mfs_title" "$mfs_confirm\n\n$MFS_LINE" 480 300 || exit 100
 
 prep_dir "$MFS_MOUNT"
 prep_edit /etc/fstab
-printf '%s\n' "$MFS_LINE" | sudo_ tee -a /etc/fstab >/dev/null || fatal "Failed to write /etc/fstab"
+printf '%s\n' "$MFS_LINE" | sudo_ tee -a /etc/fstab >/dev/null || fatal "$mfs_fstab_failed"
 is_systemd && sudo_ systemctl daemon-reload
 if ! sudo_ mount "$MFS_MOUNT"; then
     sudo_ cp -f /etc/fstab.bak /etc/fstab

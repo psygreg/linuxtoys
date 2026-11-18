@@ -142,6 +142,7 @@
   "cockpit_desc": "Et nettbasert grensesnitt for overvåking og administrasjon av Linux-servere (server).",
   "webmin_desc": "Et nettbasert grensesnitt for systemadministrasjon for Unix.",
   "topgrade_desc": "Et verktøy for å oppgradere alle installerte pakker på ethvert Linux-system.",
+  "mergerfs_desc": "Installerer mergerfs og slår sammen flere disker til én mappe som legges til i /etc/fstab slik at den monteres ved oppstart. Hver disk beholder sine egne filer, så tap av én disk påvirker ikke de andre.",
   "adir_desc": "Installerer alle pakker nødvendige for å bli med i Active Directory-domener ved hjelp av realmd.",
   "select_language": "Velg språk",
   "select_language_title": "Språkvalg",

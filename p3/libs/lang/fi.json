@@ -143,6 +143,7 @@
   "cockpit_desc": "Verkkopohjainen käyttöliittymä Linux-palvelimien valvontaan ja hallintaan (palvelin).",
   "webmin_desc": "Verkkopohjainen käyttöliittymä järjestelmän hallintaan Unixille.",
   "topgrade_desc": "Työkalu kaikkien asennettujen pakettien päivittämiseen millä tahansa Linux-järjestelmällä.",
+  "mergerfs_desc": "Asentaa mergerfs:n ja yhdistää useita levyjä yhdeksi kansioksi, joka lisätään tiedostoon /etc/fstab, jotta se liitetään käynnistyksen yhteydessä. Jokainen levy säilyttää omat tiedostonsa, joten yhden levyn menetys ei vaikuta muihin.",
   "adir_desc": "Asentaa kaikki paketit tarpeelliset Active Directory -toimialueisiin liittymiseksi realmdia käyttäen.",
   "select_language": "Valitse kieli",
   "select_language_title": "Kielen valinta",

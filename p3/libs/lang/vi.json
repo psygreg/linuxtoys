@@ -143,6 +143,7 @@
   "cockpit_desc": "Giao diện dựa trên web để giám sát và quản lý máy chủ Linux (server).",
   "webmin_desc": "Giao diện dựa trên web cho quản trị hệ thống Unix.",
   "topgrade_desc": "Công cụ để nâng cấp tất cả các gói đã cài đặt trên bất kỳ hệ thống Linux nào.",
+  "mergerfs_desc": "Cài đặt mergerfs và gộp nhiều ổ đĩa thành một thư mục, thêm vào /etc/fstab để gắn lúc khởi động. Mỗi ổ đĩa giữ tập tin của riêng nó, nên mất một ổ không ảnh hưởng các ổ khác.",
   "adir_desc": "Cài đặt tất cả các gói cần thiết để tham gia domain Active Directory bằng realmd.",
   "select_language": "Chọn ngôn ngữ",
   "select_language_title": "Lựa chọn ngôn ngữ",

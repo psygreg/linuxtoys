@@ -142,6 +142,7 @@
   "cockpit_desc": "Comhéadan gréasán-bhunaithe le haghaidh monatóireachta agus bainistíochta freastalaithe Linux (freastalaí).",
   "webmin_desc": "Comhéadan gréasán-bhunaithe le haghaidh riaracháin chórais le haghaidh Unix.",
   "topgrade_desc": "Uirlis chun gach pacáiste suiteáilte a uasghrádú ar aon chóras Linux.",
+  "mergerfs_desc": "Suiteálann sé mergerfs agus cuireann sé roinnt dhisceacha i mbaisín amháin, ag cur le /etc/fstab é le feistiú ag am tosaithe. Coinníonn gach dísc a chuid comhad féin, mar sin ní mbíonn tionchar ag cailliúint disce amháin ar na cinn eile.",
   "adir_desc": "Suiteálann gach pacáiste riachtanach chun páirt a ghlacadh i bhfearainn Active Directory ag baint úsáide as realmd.",
   "select_language": "Roghnaigh Teanga",
   "select_language_title": "Roghnú Teanga",

@@ -142,6 +142,7 @@
   "cockpit_desc": "Antara muka berasaskan web untuk memantau dan mengurus pelayan Linux (pelayan).",
   "webmin_desc": "Antara muka berasaskan web untuk pentadbiran sistem untuk Unix.",
   "topgrade_desc": "Alat untuk menaik taraf semua pakej yang dipasang pada mana-mana sistem Linux.",
+  "mergerfs_desc": "Memasang mergerfs dan menggabungkan beberapa pemacu menjadi satu folder, ditambah ke /etc/fstab agar dimount semasa but. Setiap pemacu menyimpan failnya sendiri, jadi kehilangan satu pemacu tidak menjejaskan yang lain.",
   "adir_desc": "Memasang semua pakej yang diperlukan untuk menyertai domain Active Directory menggunakan realmd.",
   "select_language": "Pilih Bahasa",
   "select_language_title": "Pemilihan Bahasa",

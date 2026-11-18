@@ -142,6 +142,7 @@
   "cockpit_desc": "Veb-bazirani interfejs za nadgledanje i upravljanje Linux serverima (server).",
   "webmin_desc": "Veb-bazirani interfejs za administraciju sistema za Unix.",
   "topgrade_desc": "Alat za nadogradnju svih instaliranih paketa na bilo kom Linux sistemu.",
+  "mergerfs_desc": "Instalira mergerfs i objedinjuje više diskova u jedan direktorijum, dodajući ga u /etc/fstab kako bi se montirao pri pokretanju. Svaki disk čuva svoje datoteke, pa gubitak jednog diska ne utiče na ostale.",
   "adir_desc": "Instalira sve pakete neophodne za pridruživanje Active Directory domenama koristeći realmd.",
   "select_language": "Izaberi jezik",
   "select_language_title": "Izbor jezika",
