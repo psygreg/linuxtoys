@@ -188,6 +188,7 @@
   "ides_desc": "Integrált fejlesztési környezetek különböző programozási nyelvekhez és keretrendszerekhez.",
   "remapper_desc": "Könnyen használható eszköz Linuxra a bemeneti eszközök viselkedésének megváltoztatására. Leképez bármely bemenetet bármely másik bemenetre.",
   "portainer_desc": "Web-alapú management UI Docker-hez, lehetővé téve könnyű kezelését a konténereknek, képeknek, hálózatoknak és köteteknek.",
+  "dockhand_desc": "Egy webalapú Docker-kezelő, amely automatikusan frissítheti a konténereit, amikor új image-ok jelennek meg. Személyes, nonprofit és oktatási használatra ingyenes; vállalatok általi éles használathoz kereskedelmi licenc szükséges.",
   "edu": "Oktatás",
   "edu_desc": "Erőforrások tanuláshoz és tanításhoz minden korosztálynak.",
   "yay_desc": "Népszerű AUR segítő, Go-ban írva. Hasonló a paru-hoz.",

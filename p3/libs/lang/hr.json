@@ -188,6 +188,7 @@
   "ides_desc": "Integrisana razvojna okruženja za različite programske jezike i framework-e.",
   "remapper_desc": "Lak za upotrebu alat za Linux da promijenite ponašanje vaših ulaznih uređaja. Mapira bilo koji ulaz na bilo koji drugi ulaz.",
   "portainer_desc": "Veb-bazirani menadžment UI za Docker, omogućavajući vam lako upravljanje vašim kontejnerima, slikama, mrežama i volumenima.",
+  "dockhand_desc": "Docker upravitelj baziran na webu koji može automatski ažurirati vaše spremnike kada objave nove slike. Besplatan za osobnu, neprofitnu i obrazovnu namjenu; produkcijska upotreba u poduzećima zahtijeva komercijalnu licencu.",
   "edu": "Obrazovanje",
   "edu_desc": "Resursi za učenje i podučavanje za sve uzraste.",
   "yay_desc": "Popularni AUR pomoćnik napisan u Go-u. Sličan paru.",

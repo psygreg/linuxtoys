@@ -188,6 +188,7 @@
   "ides_desc": "Turli dasturlash tillari va ramkalar uchun integratsiyalashgan ishlab chiqish muhitlari.",
   "remapper_desc": "Linuxda sizning kirish qurilmalarining xatti-harakatini o'zgartirish uchun oson ishlatiladigan vosita. Har qanday kirishni boshqa kirishga xaritlaydi.",
   "portainer_desc": "Docker uchun veb-asosli boshqaruv UI, sizga konteynerlar, tasvirlar, tarmoqlar va hajmlarni oson boshqarishga imkon beradi.",
+  "dockhand_desc": "Yangi tasvirlar chiqarilganda konteynerlaringizni avtomatik yangilay oladigan veb asosidagi Docker menejeri. Shaxsiy, notijorat va ta’lim maqsadlarida bepul; kompaniyalarning ishlab chiqarish maqsadidagi foydalanishi tijorat litsenziyasini talab qiladi.",
   "edu": "Ta'lim",
   "edu_desc": "Barcha yosh uchun o'rganish va o'qitish uchun resurslar.",
   "yay_desc": "Go tilida yozilgan mashhur AUR yordamchisi. Paru ga o'xshash.",

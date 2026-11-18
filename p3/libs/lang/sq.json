@@ -188,6 +188,7 @@
   "ides_desc": "Mjedise Zhvillimi të Integruara për gjuhë dhe korniza të ndryshme programimi.",
   "remapper_desc": "Një mjet i lehtë për përdorim për Linux për të ndryshuar sjelljen e pajisjeve tuaja input. Harton çdo input në çdo input tjetër.",
   "portainer_desc": "Një UI menaxhimi bazuar në web për Docker, duke ju lejuar të menaxhoni kontejnerët, imazhet, rrjetet dhe vëllimet tuaja lehtësisht.",
+  "dockhand_desc": "Menaxher Docker me bazë uebi që mund t'i përditësojë automatikisht kontejnerët tuaj kur publikohen imazhe të reja. Falas për përdorim personal, jofitimprurës dhe edukativ; përdorimi në prodhim nga bizneset kërkon licencë komerciale.",
   "edu": "Edukimi",
   "edu_desc": "Burime për mësim dhe mësimdhënie për të gjitha moshat.",
   "yay_desc": "Një ndihmës AUR popullor i shkruar në Go. Ngjashëm me paru.",

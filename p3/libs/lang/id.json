@@ -188,6 +188,7 @@
   "ides_desc": "Lingkungan Pengembangan Terintegrasi untuk berbagai bahasa pemrograman dan framework.",
   "remapper_desc": "Alat yang mudah digunakan untuk Linux untuk mengubah perilaku perangkat input Anda. Memetakan input apa pun ke input lainnya.",
   "portainer_desc": "Antarmuka manajemen berbasis web untuk Docker, memungkinkan Anda dengan mudah mengelola kontainer, gambar, jaringan, dan volume Anda.",
+  "dockhand_desc": "Manajer Docker berbasis web yang dapat memperbarui container Anda secara otomatis saat image baru dirilis. Gratis untuk penggunaan pribadi, nirlaba, dan pendidikan; penggunaan produksi oleh bisnis memerlukan lisensi komersial.",
   "edu": "Pendidikan",
   "edu_desc": "Sumber daya untuk belajar dan mengajar untuk semua usia.",
   "yay_desc": "Pembantu AUR populer yang ditulis dalam Go. Mirip dengan paru.",

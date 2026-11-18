@@ -188,6 +188,7 @@
   "ides_desc": "Integrerade utvecklingsmiljöer för olika programmeringsspråk och ramverk.",
   "remapper_desc": "Ett lättanvänt verktyg för Linux för att ändra beteendet hos dina inmatningsenheter. Mappar vilken inmatning som helst till vilken annan inmatning som helst.",
   "portainer_desc": "Ett webbaserat hanteringsgränssnitt för Docker, som låter dig enkelt hantera dina containrar, bilder, nätverk och volymer.",
+  "dockhand_desc": "En webbaserad Docker-hanterare som kan uppdatera dina containrar automatiskt när nya images släpps. Gratis för personligt, icke-kommersiellt och utbildningsbruk; produktionsanvändning av företag kräver en kommersiell licens.",
   "edu": "Utbildning",
   "edu_desc": "Resurser för lärande och undervisning för alla åldrar.",
   "yay_desc": "En populär AUR-hjälpare skriven i Go. Liknar paru.",

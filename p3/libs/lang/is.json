@@ -188,6 +188,7 @@
   "ides_desc": "Samþætt þróunarumhverfi fyrir ýmis forritunarmál og ramma.",
   "remapper_desc": "Auðvelt í notkun tól fyrir Linux til að breyta hegðun inntakstækja þinna. Varpar hvaða inntaki sem er í hvaða annað inntak sem er.",
   "portainer_desc": "Vefbyggður stjórnunar viðmót fyrir Docker, leyfir þér að stjórna auðveldlega gámum þínum, myndum, netum og rúmum.",
+  "dockhand_desc": "Vefbundin Docker-stjórnun sem uppfærir gámana þína sjálfkrafa þegar nýjar diskmyndir birtast. Ókeypis fyrir einkanotkun, samtök án hagnaðarmarkmiða og kennslunotkun; framleiðslunotkun fyrirtækja krefst verslunarleyfi.",
   "edu": "Menntun",
   "edu_desc": "Auðlindir fyrir lærdóm og kennslu fyrir alla aldur.",
   "yay_desc": "Vinsæll AUR aðstoðarmaður skrifaður í Go. Svipaður og paru.",

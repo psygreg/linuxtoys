@@ -188,6 +188,7 @@
   "ides_desc": "Zintegrowane środowiska programistyczne dla różnych języków programowania i frameworków.",
   "remapper_desc": "Łatwe w użyciu narzędzie dla Linux do zmiany zachowania urządzeń wejściowych. Mapuje dowolne wejście na dowolne inne wejście.",
   "portainer_desc": "Interfejs zarządzania oparty na sieci Web dla Docker, umożliwiający łatwe zarządzanie kontenerami, obrazami, sieciami i woluminami.",
+  "dockhand_desc": "Oparty na sieci menedżer Dockera, który może automatycznie aktualizować kontenery po wydaniu nowych obrazów. Darmowy do użytku osobistego, niekomercyjnego i edukacyjnego; użytk produkcyjny przez firmy wymaga licencji komercyjnej.",
   "edu": "Edukacja",
   "edu_desc": "Zasoby do nauki i nauczania dla wszystkich grup wiekowych.",
   "yay_desc": "Popularny pomocnik AUR napisany w Go. Podobny do paru.",
