@@ -188,6 +188,7 @@
   "ides_desc": "Integroitu kehitysympäristö erilaisille ohjelmointikielille ja frameworkeille.",
   "remapper_desc": "Helppo käyttää työkalu Linuxille syöttölaitteidesi käyttäytymisen muuttamiseen. Kartoittaa minkä tahansa syötteen mihin tahansa muuhun syötteeseen.",
   "portainer_desc": "Verkkopohjainen hallintakäyttöliittymä Dockerille, jonka avulla voit helposti hallita konttejasi, kuviasi, verkkojasi ja volyymejasi.",
+  "dockhand_desc": "Verkkopohjainen Docker-hallinta, joka voi päivittää säilösi automaattisesti uusien imagejen ilmestyessä. Ilmainen yksityiseen, voittoa tavoittelemattomaan ja opetuskäyttöön; yritysten tuotantokäyttö vaatii kaupallisen lisenssin.",
   "edu": "Koulutus",
   "edu_desc": "Resurssit oppimiseen ja opettamiseen kaikille ikäryhmille.",
   "yay_desc": "Suosittu AUR-avustaja kirjoitettu Go:lla. Samankaltainen kuin paru.",

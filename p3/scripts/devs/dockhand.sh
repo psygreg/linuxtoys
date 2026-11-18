@@ -16,6 +16,8 @@ _lang_
 : "${dockhand_port_invalid:=Invalid or busy port.}"
 : "${dockhand_exists:=Dockhand is already installed. Its dashboard will open in your web browser now.}"
 : "${dockhand_done:=Setup complete. Your Dockhand dashboard will open in your web browser now.}"
+: "${dockhand_volume_failed:=Failed to create the Docker volume.}"
+: "${dockhand_run_failed:=Failed to start the Dockhand container.}"
 
 DOCKHAND_IMAGE="fnsys/dockhand:latest"
 
@@ -39,19 +41,22 @@ fi
 port=3000
 if port_busy "$port"; then
     port=$(userinput --title "Dockhand" --text "$dockhand_port_text" --default "3001") || exit 100
-    if [[ ! "$port" =~ ^[0-9]+$ ]] || (( port < 1024 || port > 65535 )) || port_busy "$port"; then
+    [[ "$port" =~ ^[0-9]+$ ]] || fatal "$dockhand_port_invalid"
+    # normalize before arithmetic: bash would read a leading zero as octal
+    port=$((10#$port))
+    if (( port < 1024 || port > 65535 )) || port_busy "$port"; then
         fatal "$dockhand_port_invalid"
     fi
 fi
 
-docker volume create dockhand_data >/dev/null || fatal "Failed to create the Docker volume."
+docker volume create dockhand_data >/dev/null || fatal "$dockhand_volume_failed"
 docker run -d \
     --name dockhand \
     --restart unless-stopped \
     -p "$port":3000 \
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v dockhand_data:/app/data \
-    "$DOCKHAND_IMAGE" || fatal "Failed to start the Dockhand container."
+    "$DOCKHAND_IMAGE" || fatal "$dockhand_run_failed"
 
 zeninf "$dockhand_done"
 xdg-open "http://localhost:$port" &>/dev/null &

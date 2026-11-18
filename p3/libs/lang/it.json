@@ -188,6 +188,7 @@
   "ides_desc": "Ambienti di Sviluppo Integrati per vari linguaggi di programmazione e framework.",
   "remapper_desc": "Uno strumento facile da usare per Linux per cambiare il comportamento dei tuoi dispositivi di input. Mappa qualsiasi input a qualsiasi altro input.",
   "portainer_desc": "Un'interfaccia utente di gestione basata sul web per Docker, che consente di gestire facilmente i contenitori, le immagini, le reti e i volumi.",
+  "dockhand_desc": "Un gestore Docker basato sul web che può aggiornare automaticamente i tuoi container quando vengono rilasciate nuove immagini. Gratuito per uso personale, non profit ed educativo; l'uso in produzione da parte di aziende richiede una licenza commerciale.",
   "edu": "Educazione",
   "edu_desc": "Risorse per l'apprendimento e l'insegnamento per tutte le età.",
   "yay_desc": "Un popolare assistente AUR scritto in Go. Simile a paru.",

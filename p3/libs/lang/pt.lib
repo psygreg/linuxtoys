@@ -192,3 +192,5 @@ dockhand_port_text="A porta 3000 já está em uso. Escolha outra porta para a in
 dockhand_port_invalid="Porta inválida ou em uso."
 dockhand_exists="O Dockhand já está instalado. O painel será aberto no seu navegador agora."
 dockhand_done="Instalação concluída. O painel do Dockhand será aberto no seu navegador agora."
+dockhand_volume_failed="Falha ao criar o volume do Docker."
+dockhand_run_failed="Falha ao iniciar o contêiner do Dockhand."

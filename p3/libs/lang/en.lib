@@ -193,3 +193,5 @@ dockhand_port_text="Port 3000 is already in use. Choose another port for the Doc
 dockhand_port_invalid="Invalid or busy port."
 dockhand_exists="Dockhand is already installed. Its dashboard will open in your web browser now."
 dockhand_done="Setup complete. Your Dockhand dashboard will open in your web browser now."
+dockhand_volume_failed="Failed to create the Docker volume."
+dockhand_run_failed="Failed to start the Dockhand container."

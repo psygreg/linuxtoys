@@ -188,6 +188,7 @@
   "ides_desc": "Integrované vývojové prostredia pre rôzne programovacie jazyky a rámce.",
   "remapper_desc": "Ľahko použiteľný nástroj pre Linux na zmenu správania vašich vstupných zariadení. Mapuje akýkoľvek vstup na akýkoľvek iný vstup.",
   "portainer_desc": "Webové management UI pre Docker, umožňujúce ľahkú správu vašich kontajnerov, obrázkov, sietí a zväzkov.",
+  "dockhand_desc": "Webový správca Dockeru, ktorý dokáže automaticky aktualizovať vaše kontajnery pri vydaní nových obrazov. Pre osobné, neziskové a vzdelávacie použitie bezplatne; produkčné použitie firmami vyžaduje komerčnú licenciu.",
   "edu": "Vzdelávanie",
   "edu_desc": "Zdroje pre učenie a vyučovanie pre všetky vekové skupiny.",
   "yay_desc": "Populárny pomocník AUR napísaný v Go. Podobný ako paru.",

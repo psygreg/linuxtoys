@@ -188,6 +188,7 @@
   "ides_desc": "Timpeallachtaí Forbartha Comhtháite le haghaidh teangacha agus creataí éagsúla cláir.",
   "remapper_desc": "Uirlis éasca le húsáid do Linux chun iompar d'ionchur-gléasanna a athrú. Mapálann aon ionchur go dtí aon ionchur eile.",
   "portainer_desc": "Comhéadan bainistíochta gréasán-bhunaithe do Docker, a cheadaíonn duit do choimeádáin, íomhánna, líonraí agus toirte a bhainistiú go héasca.",
+  "dockhand_desc": "Bainisteoir Docker bunaithe ar an ngréasán ar féidir leis do choisithe a nuashonrú go huathoibríoch nuair a eisítear íomhánna nua. Saor in aisce le haghaidh úsáide pearsanta, neamhbhrabúsaí agus oideachasúla; éilíonn úsáid táirgthe ag gnólachtaí ceadúnas tráchtála.",
   "edu": "Oideachas",
   "edu_desc": "Acmhainní le haghaidh foghlama agus teagaisc do gach aois.",
   "yay_desc": "Cúntóir AUR móréilimh scríofa i Go. Cosúil le paru.",

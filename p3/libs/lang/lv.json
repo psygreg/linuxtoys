@@ -188,6 +188,7 @@
   "ides_desc": "Integrētas izstrādes vides dažādām programmēšanas valodām un sistēmām.",
   "remapper_desc": "Viegli lietojams rīks Linux, lai mainītu jūsu ievades ierīču uzvedību. Kartē jebkuru ievadi uz jebkuru citu ievadi.",
   "portainer_desc": "Tīmekļa bāzēts pārvaldības UI Docker, ļaujot viegli pārvaldīt jūsu konteinerus, attēlus, tīklus un sējumus.",
+  "dockhand_desc": "Tīmekļa vietnē balstīts Docker pārvaldnieks, kas var automātiski atjaunināt jūsu konteinerus, kad tiek izlaisti jauni attēli. Bezmaksas personīgai, bezpeļņas un izglītības lietošanai; ražošanas lietošana uzņēmumos pieprasa komerclicenci.",
   "edu": "Izglītība",
   "edu_desc": "Resursi mācīšanai un mācīšanai visiem vecumiem.",
   "yay_desc": "Populārs AUR palīgs, rakstīts Go. Līdzīgs paru.",

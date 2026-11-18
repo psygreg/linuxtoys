@@ -188,6 +188,7 @@
   "ides_desc": "Geïntegreerde ontwikkelomgevingen voor verschillende programmeertalen en frameworks.",
   "remapper_desc": "Een eenvoudig te gebruiken tool voor Linux om het gedrag van uw invoerapparaten te veranderen. Map elke invoer naar elke andere invoer.",
   "portainer_desc": "Een webgebaseerde beheerinterface voor Docker, waarmee u eenvoudig uw containers, images, netwerken en volumes kunt beheren.",
+  "dockhand_desc": "Een webgebaseerde Docker-beheerder die je containers automatisch kan bijwerken wanneer nieuwe images worden uitgebracht. Gratis voor persoonlijk, non-commercieel en educatief gebruik; productiegebruik door bedrijven vereist een commerciële licentie.",
   "edu": "Onderwijs",
   "edu_desc": "Bronnen voor leren en lesgeven voor alle leeftijden.",
   "yay_desc": "Een populaire AUR-helper geschreven in Go. Vergelijkbaar met paru.",
