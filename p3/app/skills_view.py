@@ -4,6 +4,7 @@ import threading
 
 from .gtk_common import GdkPixbuf, GLib, Gdk, Gtk, Pango
 from . import get_icon_path
+from . import skills_guard
 from .dev_mode import is_dev_mode_enabled
 
 
@@ -523,7 +524,11 @@ class SkillsSeekerView(Gtk.Box):
 
         name = skill.get("name", "Unknown")
         name_lbl = Gtk.Label()
-        name_lbl.set_markup(f"<big><b>{name}</b></big>")
+        # ``name`` is remote skills.sh data: escape it before it goes into
+        # Pango markup so it cannot inject dialog formatting.
+        name_lbl.set_markup(
+            f"<big><b>{GLib.markup_escape_text(str(name))}</b></big>"
+        )
         name_lbl.set_halign(Gtk.Align.START)
         content.pack_start(name_lbl, False, False, 0)
 
@@ -693,6 +698,18 @@ class SkillsSeekerView(Gtk.Box):
                 self.translations.get(
                     "skills_error_no_npx",
                     "Node.js (npx) is required to install skills.\nPlease install Node.js first."
+                )
+            )
+            return
+        if not all(
+            skills_guard.is_valid_skill_reference(value)
+            for value in (source, slug, agent)
+        ):
+            self._show_error(
+                self.translations.get(
+                    "skills_error_invalid_skill",
+                    "The selected skill contains characters that are not "
+                    "allowed in skill sources or ids.",
                 )
             )
             return

@@ -24,6 +24,7 @@ from textual.widgets.option_list import Option
 from .helper import translations
 from .skills_core import (
     CommandError,
+    InvalidSkillReferenceError,
     MissingSourceError,
     NpxNotFoundError,
     detect_agents,
@@ -480,6 +481,15 @@ class SkillsSeekerView(Vertical):
                 _t(
                     "skills_error_no_source",
                     "Could not determine skill source.",
+                )
+            )
+            return
+        except InvalidSkillReferenceError:
+            self._install_failed(
+                _t(
+                    "skills_error_invalid_skill",
+                    "The selected skill contains characters that are not "
+                    "allowed in skill sources or ids.",
                 )
             )
             return

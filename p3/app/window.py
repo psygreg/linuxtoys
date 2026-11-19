@@ -36,6 +36,7 @@ from . import (
     revealer,
     revert_helper,
     search_helper,
+    skills_guard,
     skills_view,
     repo_parser,
     uri_parser,
@@ -3949,23 +3950,45 @@ class AppWindow(
         self._run_single_script_install(info)
 
     def _install_skill_from_seeker(self, source, slug, agent):
+        # ``source``/``slug`` arrive from the skills.sh catalog: remote,
+        # user-publishable data. They are embedded in a bash script that is
+        # written to disk and executed, so skills_guard validates the safe
+        # charset and shell-quotes every value; a failed check shows a
+        # dialog instead of ever producing a script.
+        try:
+            script_content = skills_guard.build_install_script(
+                source, slug, agent, architecture.host().value
+            )
+        except skills_guard.InvalidSkillReferenceError:
+            gtk_dialogs.run_message_dialog(
+                self,
+                title=self.translations.get("skills_action_title", "Action"),
+                secondary_text=self.translations.get(
+                    "skills_error_invalid_skill",
+                    "The selected skill contains characters that are not "
+                    "allowed in skill sources or ids.",
+                ),
+                message_type=Gtk.MessageType.ERROR,
+                buttons=[
+                    (
+                        self.translations.get("skills_back_label", "OK"),
+                        Gtk.ResponseType.OK,
+                    )
+                ],
+                default_response=Gtk.ResponseType.OK,
+            )
+            return
         tmp_dir = "/tmp/linuxtoys"
         os.makedirs(tmp_dir, exist_ok=True)
-        safe_source = source.replace("/", "_")
-        tmp_script = os.path.join(tmp_dir, f"skill_install_{safe_source}_{slug}.sh")
+        safe_source = skills_guard.sanitize_filename_part(source)
+        safe_slug = skills_guard.sanitize_filename_part(slug)
+        tmp_script = os.path.join(
+            tmp_dir, f"skill_install_{safe_source}_{safe_slug}.sh"
+        )
         # Skills are .md instruction sets for AI agents: architecture-agnostic
         # content, and npm/npx run on every supported ISA. The generated route
         # therefore carries the host header (local/generated scripts are never
         # ISA-pinned).
-        script_content = f"""#!/bin/bash
-# architectures: {architecture.host().value}
-# name: Install Skill {slug}
-# description: Install skill {source} for agent {agent}
-source "$SCRIPT_DIR/libs/linuxtoys.bash"
-_lang_
-pkg_npm npm
-npx skills add "{source}" -a "{agent}" -g -y --skill "{slug}"
-"""
         with open(tmp_script, "w") as f:
             f.write(script_content)
         os.chmod(tmp_script, 0o755)

@@ -366,6 +366,7 @@
   "skills_error_parse": "Failed to parse skills data.",
   "skills_error_install": "Installation failed.",
   "skills_error_no_source": "Could not determine skill source.",
+ "skills_error_invalid_skill": "The selected skill contains characters that are not allowed in skill sources or ids.",
   "skills_no_results": "No skills found for your search.",
   "skills_no_installed": "No skills installed yet.",
   "skills_no_agents": "No supported AI agents detected on this system.",

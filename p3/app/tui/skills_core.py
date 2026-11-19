@@ -8,6 +8,8 @@ from dataclasses import dataclass
 
 from app.skills_fetcher import fetch_popular as _fetch_popular
 from app.skills_fetcher import search_skills as _search_skills
+from app.skills_guard import InvalidSkillReferenceError
+from app.skills_guard import is_valid_skill_reference
 from app.dev_mode import is_dev_mode_enabled
 
 SKILLS_SH_URL = "https://skills.sh"
@@ -264,12 +266,23 @@ def install_skill(skill: dict, agent: str) -> OpResult:
 
     Raises:
         MissingSourceError: If the skill has no source or id.
+        InvalidSkillReferenceError: If the source, id or agent id is
+            not a safe skill reference (the values reach ``npx``).
         NpxNotFoundError: If ``npx`` is not available.
     """
     source = skill.get("source", "")
     slug = skill.get("skillId") or skill.get("id", "")
     if not source or not slug:
         raise MissingSourceError
+    if not (
+        is_valid_skill_reference(source)
+        and is_valid_skill_reference(slug)
+        and is_valid_skill_reference(agent)
+    ):
+        raise InvalidSkillReferenceError(
+            "Skill source, id or agent id contains characters that are "
+            "not allowed."
+        )
     return _run_npx(
         ("skills", "add", source, "--skill", slug, "-a", agent, "-g", "-y"),
         INSTALL_TIMEOUT,

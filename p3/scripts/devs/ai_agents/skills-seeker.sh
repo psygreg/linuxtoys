@@ -23,9 +23,17 @@ _lang_
 : "${_skills_choose_agent_title:=Choose agent}"
 : "${_skills_search_title:=Skills Seeker}"
 : "${_skills_search_text:=Search for skills:}"
+: "${_skills_error_invalid:=The selected skill contains characters that are not allowed in skill sources or ids.}"
 
 FETCHER="$SCRIPT_DIR/../../app/skills_fetcher.py"
 PYTHON=$(command -v python3)
+
+_validate_skill_token() {
+    # Skill references: slash-separated segments of letters, digits, '.', '_'
+    # and '-', each starting alphanumeric (mirrors app.skills_guard).
+    local token="$1" pattern='^[A-Za-z0-9][A-Za-z0-9._-]*(/[A-Za-z0-9][A-Za-z0-9._-]*)*$'
+    [[ -n "$token" && "$token" =~ $pattern ]]
+}
 
 _zen_fallback() {
     "$@" 2>/dev/null
@@ -67,18 +75,32 @@ _show_results() {
     local query="$2"
     local parsed picked selected="" i name installs source_name
     local -a names=() labels=()
-    parsed=$(echo "$json" | "$PYTHON" -c "
-import json,sys
-data=json.load(sys.stdin)
-for s in data.get('skills',[]):
-    name=s.get('name','')
-    inst=s.get('installs',0)
-    src=s.get('source','')
-    if inst>=1_000_000: inst_str=f'{inst/1_000_000:.1f}M'
-    elif inst>=1_000: inst_str=f'{inst/1_000:.1f}K'
-    else: inst_str=str(inst)
-    print(f'{name}\t{inst_str}\t{src}')
-" 2>/dev/null) || {
+    # The Python body is single-quoted: nothing of the remote data is
+    # interpolated into the code. Fields that would break the tab-separated
+    # line format (tabs/newlines from remote names) are flattened first.
+    parsed=$(printf '%s' "$json" | "$PYTHON" -c '
+import json, sys
+
+def _clean(value):
+    """Keep one single-line record per skill."""
+    return str(value).replace("\t", " ").replace("\r", " ").replace("\n", " ")
+
+data = json.load(sys.stdin)
+for s in data.get("skills", []):
+    name = _clean(s.get("name", ""))
+    src = _clean(s.get("source", ""))
+    try:
+        inst = int(s.get("installs", 0))
+    except (TypeError, ValueError):
+        inst = 0
+    if inst >= 1_000_000:
+        inst_str = f"{inst/1_000_000:.1f}M"
+    elif inst >= 1_000:
+        inst_str = f"{inst/1_000:.1f}K"
+    else:
+        inst_str = str(inst)
+    print(f"{name}\t{inst_str}\t{src}")
+' 2>/dev/null) || {
         zeninf "$_skills_error_parse" 2>/dev/null || echo "$_skills_error_parse"
         return 1
     }
@@ -105,7 +127,9 @@ for s in data.get('skills',[]):
 _handle_skill_selection() {
     local selected_name="$1"
     local skill_id source slug
-    skill_id=$(echo "$selected_name" | awk '{print $1}')
+    # ``selected_name`` is remote skills.sh data; take the first word without
+    # echo flag pitfalls and never interpolate it into command text below.
+    skill_id=$(printf '%s\n' "$selected_name" | awk '{print $1}')
     if [[ "$skill_id" == */* ]]; then
         source="${skill_id%/*}"
         slug="${skill_id##*/}"
@@ -119,14 +143,20 @@ _handle_skill_selection() {
         return 1
     }
     local matched_id matched_source matched_name
-    matched_id=$(echo "$detail_json" | "$PYTHON" -c "
-import json,sys
-data=json.load(sys.stdin)
-for s in data.get('skills',[]):
-    if s.get('skillId','').lower()=='$slug' or s.get('name','').lower()=='$slug':
-        print(s['id'])
+    # The slug is passed as an argv value; the Python body stays single-quoted
+    # so no remote data can become code (shell substitution or Python breakout).
+    matched_id=$(printf '%s' "$detail_json" | "$PYTHON" -c '
+import json, sys
+
+data = json.load(sys.stdin)
+slug = sys.argv[1].lower()
+for s in data.get("skills", []):
+    if s.get("skillId", "").lower() == slug or s.get("name", "").lower() == slug:
+        skill_id = s.get("id", "")
+        if skill_id:
+            print(skill_id)
         break
-" 2>/dev/null) || matched_id=""
+' "$slug" 2>/dev/null) || matched_id=""
     if [ -n "$matched_id" ]; then
         source="${matched_id%/*}"
         slug="${matched_id##*/}"
@@ -152,20 +182,40 @@ _show_detail() {
         return 1
     }
     local name desc installs files_str
-    name=$(echo "$detail_json" | "$PYTHON" -c "import json,sys; print(json.load(sys.stdin).get('name',''))" 2>/dev/null) || name=""
-    desc=$(echo "$detail_json" | "$PYTHON" -c "import json,sys; print(json.load(sys.stdin).get('description',''))" 2>/dev/null) || desc=""
-    installs=$(echo "$detail_json" | "$PYTHON" -c "
-import json,sys
-d=json.load(sys.stdin)
-i=d.get('installs',0)
-print(f'{i:,}' if i<1000 else (f'{i/1000:.1f}K' if i<1_000_000 else f'{i/1_000_000:.1f}M'))
-" 2>/dev/null) || installs=""
-    files_str=$(echo "$detail_json" | "$PYTHON" -c "
-import json,sys
-d=json.load(sys.stdin)
-files=d.get('files',[])
-print('\n'.join(files) if files else '$_skills_no_files')
-" 2>/dev/null) || files_str=""
+    # Single-quoted Python bodies; remote values arrive via stdin/argv and are
+    # HTML-escaped, so zenity's Pango markup cannot be injected either.
+    name=$(printf '%s' "$detail_json" | "$PYTHON" -c '
+import html, json, sys
+
+print(html.escape(str(json.load(sys.stdin).get("name", ""))))
+' 2>/dev/null) || name=""
+    desc=$(printf '%s' "$detail_json" | "$PYTHON" -c '
+import html, json, sys
+
+print(html.escape(str(json.load(sys.stdin).get("description", ""))))
+' 2>/dev/null) || desc=""
+    installs=$(printf '%s' "$detail_json" | "$PYTHON" -c '
+import json, sys
+
+d = json.load(sys.stdin)
+try:
+    i = int(d.get("installs", 0))
+except (TypeError, ValueError):
+    i = 0
+print(f"{i:,}" if i < 1000 else (f"{i/1000:.1f}K" if i < 1_000_000 else f"{i/1_000_000:.1f}M"))
+' 2>/dev/null) || installs=""
+    files_str=$(printf '%s' "$detail_json" | "$PYTHON" -c '
+import html, json, sys
+
+d = json.load(sys.stdin)
+files = d.get("files", [])
+fallback = sys.argv[1]
+print(
+    "\n".join(html.escape(str(item)) for item in files)
+    if files
+    else html.escape(fallback)
+)
+' "$_skills_no_files" 2>/dev/null) || files_str=""
     zenity --info --title="$_skills_detail_title" \
         --text="<b>$name</b>\n\n$desc\n\n<b>$_skills_col_installs:</b> $installs\n<b>$_skills_files_label:</b>\n$files_str" \
         --width=500 2>/dev/null || {
@@ -183,6 +233,14 @@ _install_skill() {
         zeninf "$_skills_error_no_source" 2>/dev/null || echo "$_skills_error_no_source"
         return 1
     }
+    # Skill sources and ids come from the skills.sh catalog: remote,
+    # user-publishable data. Only slug-charset values may reach npx, so
+    # option-style arguments (leading '-') and every shell metacharacter
+    # are refused before the values are ever expanded.
+    if ! _validate_skill_token "$source" || ! _validate_skill_token "$slug"; then
+        zeninf "$_skills_error_invalid" 2>/dev/null || echo "$_skills_error_invalid"
+        return 1
+    fi
     local agents=()
     [[ -d "$HOME/.claude" ]] && agents+=("claude-code")
     [[ -d "$HOME/.codex" ]] && agents+=("codex")
