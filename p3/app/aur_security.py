@@ -265,29 +265,12 @@ def _check_github_source_provenance(pkgbuild_text):
 def _pkgbuild_architectures(pkgbuild_text: str) -> list[str] | None:
     """Statically read the PKGBUILD ``arch`` array without evaluating it.
 
-    Returns the declared tokens, or None when the declaration cannot be
-    recognized (makepkg's implicit x86_64-only default is NOT assumed here;
-    callers decide how to treat an unreadable declaration).
+    The parser lives in the architecture policy (architecture_cli's AUR
+    preflight reads the same array); delegates to keep one implementation.
     """
-    match = re.search(
-        r"(?m)^[ \t]*arch=(?:(\()|\[[ \t]*)", pkgbuild_text
-    )
-    if match is None:
-        return None
-    start = match.end()
-    depth = 1
-    index = start
-    while index < len(pkgbuild_text) and depth:
-        char = pkgbuild_text[index]
-        if char == "(":
-            depth += 1
-        elif char == ")":
-            depth -= 1
-        index += 1
-    if depth:
-        return None
-    body = pkgbuild_text[start : index - 1]
-    return re.findall(r"""["']?([A-Za-z0-9_]+)["']?""", body)
+    from .architecture import pkgbuild_architectures
+
+    return pkgbuild_architectures(pkgbuild_text)
 
 
 # Tokens that make a PKGBUILD installable on an aarch64 host: the 64-bit ARM

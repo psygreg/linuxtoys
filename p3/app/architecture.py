@@ -154,6 +154,53 @@ def canonical_package_architecture(value: str) -> str:
     return _PACKAGE_MICROARCH.get(token, token)
 
 
+# makepkg ``arch``-array tokens that build natively on each supported host ISA:
+# the host's own CARCH plus makepkg's architecture-independent "any" (armv8h is
+# the aarch64 port name). Foreign ports (i686, pentium4, armv7h) never qualify.
+_PKGMAKE_NATIVE_TOKENS: dict[Architecture, frozenset[str]] = {
+    Architecture.X86_64: frozenset({"x86_64", "any"}),
+    Architecture.AARCH64: frozenset({"aarch64", "armv8h", "any"}),
+}
+
+
+def pkgbuild_architectures(pkgbuild_text: str) -> list[str] | None:
+    """Statically read a PKGBUILD's ``arch`` array without evaluating it.
+
+    AUR metadata exposes no architecture field, so the PKGBUILD array is the
+    ISA evidence for AUR builds. Returns the declared tokens, or None when the
+    declaration cannot be recognized (makepkg's implicit x86_64-only default is
+    NOT assumed here; callers decide how to treat an unreadable declaration).
+    """
+    match = re.search(r"(?m)^[ \t]*arch=(?:(\()|\[[ \t]*)", pkgbuild_text)
+    if match is None:
+        return None
+    start = match.end()
+    depth = 1
+    index = start
+    while index < len(pkgbuild_text) and depth:
+        char = pkgbuild_text[index]
+        if char == "(":
+            depth += 1
+        elif char == ")":
+            depth -= 1
+        index += 1
+    if depth:
+        return None
+    body = pkgbuild_text[start : index - 1]
+    return re.findall(r"""["']?([A-Za-z0-9_]+)["']?""", body)
+
+
+def pkgbuild_builds_natively(declared: Iterable[str], machine: str | None = None) -> bool:
+    """Whether a PKGBUILD ``arch`` array can build on this host.
+
+    Mirrors makepkg's own gate: the array must name the host CARCH or the
+    architecture-independent "any" for makepkg to attempt the build at all.
+    """
+    arch = host() if machine is None else normalize(machine)
+    tokens = _PKGMAKE_NATIVE_TOKENS[arch]
+    return any(str(token).strip().lower() in tokens for token in declared)
+
+
 def host() -> Architecture:
     """Read the actual host. No environment variable can override installation ISA."""
     return normalize(platform.machine())

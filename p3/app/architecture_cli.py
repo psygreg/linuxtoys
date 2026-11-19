@@ -10,7 +10,10 @@ import re
 from pathlib import Path
 import subprocess
 import sys
-from typing import Iterable
+import urllib.error
+import urllib.parse
+import urllib.request
+from typing import Any, Iterable
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -22,6 +25,8 @@ from app.architecture import (
     host,
     label,
     normalize,
+    pkgbuild_architectures,
+    pkgbuild_builds_natively,
     require_native,
     require_script_path,
     resolve_hook_path,
@@ -29,6 +34,92 @@ from app.architecture import (
 )
 from app.architecture_files import validate_files, validate_tree
 from app.architecture_flatpak import extension_plan, resolve_refs
+
+
+# AUR metadata endpoints. pacman's sync databases never cover the AUR, so the
+# RPC is the authoritative existence source for AUR-only targets; the RPC does
+# not expose an arch field, so the PKGBUILD's static arch array is the ISA
+# evidence (architecture.pkgbuild_architectures reads it without evaluating it).
+_AUR_RPC_URL = "https://aur.archlinux.org/rpc/v5/info"
+_AUR_PKGBUILD_URL = "https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD"
+_AUR_HEADERS = {"User-Agent": "LinuxToys-Architecture-preflight"}
+_AUR_REQUEST_TIMEOUT = 30
+_AUR_NAME = re.compile(r"[A-Za-z0-9@._+:-]+")
+
+
+def _aur_get(url: str) -> bytes:
+    """Fetch one HTTPS AUR resource; every failure raises ArchitectureError."""
+    request = urllib.request.Request(url, headers=_AUR_HEADERS)
+    try:
+        with urllib.request.urlopen(request, timeout=_AUR_REQUEST_TIMEOUT) as response:
+            return response.read()
+    except (urllib.error.URLError, TimeoutError, OSError) as error:
+        raise ArchitectureError(f"Could not fetch {url}: {error}") from error
+
+
+def _aur_rpc_info(package: str) -> list[dict[str, Any]]:
+    """Return the AUR RPC info records for one exact package name."""
+    url = f"{_AUR_RPC_URL}?arg[]={urllib.parse.quote(package, safe='')}"
+    try:
+        payload = json.loads(_aur_get(url).decode("utf-8", "replace"))
+    except ValueError as error:
+        raise ArchitectureError(
+            f"The AUR metadata for {package} is unreadable"
+        ) from error
+    results = payload.get("results") if isinstance(payload, dict) else None
+    if not isinstance(results, list):
+        raise ArchitectureError(f"The AUR metadata for {package} is unreadable")
+    return [item for item in results if isinstance(item, dict)]
+
+
+def _aur_candidate(package: str, machine: str) -> None:
+    """Preflight one AUR-only package before the paru/pamac build route.
+
+    ``pacman -Si`` is authoritative for sync repositories and never covers the
+    AUR, so a missing target is an AUR-only candidate exactly where
+    ``pkg_install`` routes one to a helper build (the pacman-driven arch
+    family; SteamOS-family hosts have no AUR route). Existence is verified
+    against the AUR RPC and the PKGBUILD's static ``arch`` array against the
+    host; anything unreadable, foreign or missing is refused before a helper
+    could attempt the build.
+    """
+    try:
+        from app.compat import native_package_family
+    except ImportError as error:  # staged preflights never take this route
+        raise ArchitectureError(
+            f"The AUR route could not be verified for {package}: {error}"
+        ) from error
+    if native_package_family() != "arch":
+        raise ArchitectureError(f"No available package metadata for {package}")
+    if not _AUR_NAME.fullmatch(package):
+        raise ArchitectureError(f"Unsafe AUR package name: {package!r}")
+    matches = [
+        item for item in _aur_rpc_info(package) if item.get("Name") == package
+    ]
+    if not matches:
+        raise ArchitectureError(
+            f"{package} is not available from the pacman repositories or the AUR"
+        )
+    pkgbase = matches[0].get("PackageBase")
+    if not isinstance(pkgbase, str) or not _AUR_NAME.fullmatch(pkgbase):
+        raise ArchitectureError(f"The AUR package base for {package} is unreadable")
+    pkgbuild = _aur_get(
+        f"{_AUR_PKGBUILD_URL}?h={urllib.parse.quote(pkgbase, safe='')}"
+    ).decode("utf-8", "replace")
+    declared = pkgbuild_architectures(pkgbuild)
+    if declared is None:
+        raise ArchitectureError(
+            f"The AUR PKGBUILD for {package} has no readable arch array"
+        )
+    if not declared:
+        raise ArchitectureError(
+            f"The AUR PKGBUILD for {package} declares no architectures"
+        )
+    if not pkgbuild_builds_natively(declared, machine):
+        raise ArchitectureError(
+            f"No native candidate for {package} in the AUR: PKGBUILD arch="
+            + ", ".join(declared)
+        )
 
 
 def apt_plan(packages: list[str]) -> None:
@@ -68,6 +159,10 @@ def native_packages(packages: list[str], manager: str) -> None:
     multilib/multiarch same-name packages the manager never selects for a
     bare name, so those require one native or arch-independent candidate;
     explicit foreign requests are refused by the suffix check below.
+
+    pacman's sync databases never cover the AUR: a target pacman cannot see is
+    an AUR-only candidate on the pacman-driven arch family (SteamOS-family
+    hosts have no AUR route), verified through _aur_candidate instead.
     """
     arch = host()
     for package in packages:
@@ -110,14 +205,24 @@ def native_packages(packages: list[str], manager: str) -> None:
             "eopkg": ["eopkg", "info"],
         }
         for package in packages:
-            result = subprocess.run(
-                [*commands[manager], package],
-                check=True,
-                capture_output=True,
-                text=True,
-                timeout=30,
-                env={**os.environ, "LC_ALL": "C"},
-            ).stdout
+            try:
+                result = subprocess.run(
+                    [*commands[manager], package],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
+                    env={**os.environ, "LC_ALL": "C"},
+                ).stdout
+            except subprocess.CalledProcessError as error:
+                if manager != "pacman":
+                    raise
+                # pacman's sync databases exclude the AUR: a missing target is
+                # an AUR-only candidate on the pacman-driven hosts whose
+                # pkg_install routes it to a paru/pamac build. Verify its AUR
+                # existence and PKGBUILD ISA before the helper runs.
+                _aur_candidate(package, arch.value)
+                continue
             if not result.strip():
                 raise ArchitectureError(f"No available package metadata for {package}")
             if manager == "dnf":
