@@ -6,6 +6,7 @@ Usado pelo script skills-seeker.sh via linha de comando.
 import sys
 import os
 import json
+import html
 import re
 import time
 import urllib.request
@@ -115,6 +116,99 @@ def search_skills(query, limit=20):
     return result
 
 
+def _page_description(page_text: str) -> str:
+    """Best-effort description from a skill page's description meta tag.
+
+    The server-rendered skill page carries the summary in the standard
+    ``<meta name="description">``/``og:description`` tag (HTML-escaped).
+    Returns an empty string when the tag is missing, so callers degrade
+    to the identity fields instead of failing.
+    """
+    match = re.search(
+        r'<meta[^>]+(?:name="description"|property="og:description")'
+        r'[^>]*\bcontent="([^"]*)"',
+        page_text,
+        re.I,
+    )
+    if match is None:
+        return ""
+    return html.unescape(match.group(1)).strip()
+
+
+def detail_skills(source: str, slug: str) -> dict:
+    """Fetch one skill's record for the Details dialog.
+
+    skills.sh serves the full record (file tree with contents) only on
+    the OIDC-authenticated ``/api/v1`` endpoint, which a desktop client
+    cannot use. The unauthenticated surfaces are the search API and the
+    server-rendered skill page, so this composes both: the search entry
+    carries identity and install count, the page's description meta tag
+    carries the summary. The ``files`` list stays empty until upstream
+    exposes an unauthenticated file tree.
+
+    Args:
+        source: Skill source (the id's part before the last ``/``).
+        slug: Skill slug (the id's last segment).
+
+    Returns:
+        Dict with ``id``, ``skillId``, ``name``, ``source``,
+        ``installs``, ``description`` and ``files``. Cached for the
+        regular TTL.
+
+    Raises:
+        RuntimeError: When the skill cannot be resolved on skills.sh
+            (offline, unknown skill). ``main`` reports that as a failed
+            fetch (exit 1) so callers show their error dialog instead
+            of an empty detail view.
+    """
+    cache_key = f"detail_{source}/{slug}"
+    cached = _cache_get(cache_key)
+    if cached is not None:
+        return cached
+
+    skill_id = f"{source}/{slug}"
+    entry = None
+    ok, text = _fetch(
+        f"{API_BASE}/api/search?q={urllib.parse.quote(slug)}&limit=30"
+    )
+    if ok:
+        try:
+            for s in json.loads(text).get("skills", []):
+                if s.get("id", "") == skill_id:
+                    entry = s
+                    break
+        except Exception:
+            entry = None
+    if entry is None:
+        raise RuntimeError(f"skill not found: {skill_id}")
+
+    description = ""
+    ok, text = _fetch(
+        f"{API_BASE}/{urllib.parse.quote(source, safe='/')}"
+        f"/{urllib.parse.quote(slug, safe='/')}",
+        timeout=15,
+    )
+    if ok:
+        description = _page_description(text)
+
+    result = {
+        "id": entry.get("id", skill_id),
+        "skillId": entry.get("skillId", slug),
+        "name": entry.get("name", ""),
+        "source": entry.get("source", source),
+        "installs": entry.get("installs", 0),
+        "description": description,
+        "files": [],
+    }
+    if description:
+        _cache_set(cache_key, result)
+    else:
+        # The page enrich failed (transient network); cache briefly so the
+        # next view retries the description instead of keeping an empty one.
+        _cache_set(cache_key, result, ttl=60)
+    return result
+
+
 def _search_worker(term, limit=10, timeout=8):
     try:
         data = search_skills(term, limit)
@@ -199,6 +293,10 @@ def main():
             query = sys.argv[2] if len(sys.argv) > 2 else ""
             limit = int(sys.argv[3]) if len(sys.argv) > 3 else 20
             result = search_skills(query, limit)
+        elif cmd == "detail":
+            source = sys.argv[2] if len(sys.argv) > 2 else ""
+            slug = sys.argv[3] if len(sys.argv) > 3 else ""
+            result = detail_skills(source, slug)
         elif cmd == "popular":
             result = fetch_popular(int(sys.argv[2]) if len(sys.argv) > 2 else 50)
         elif cmd == "clear_cache":

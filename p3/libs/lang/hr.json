@@ -359,6 +359,7 @@
   "skills_error_parse": "Nije uspjela obrada podataka o vještinama.",
   "skills_error_install": "Instalacija nije uspjela.",
   "skills_error_no_source": "Nije moguće odrediti izvor vještine.",
+  "skills_error_invalid_skill": "Odabrana vještina sadrži znakove koji nisu dopušteni u izvorima ili identifikatorima vještina.",
   "skills_no_results": "Nisu pronađene vještine za vašu pretragu.",
   "skills_no_installed": "Još nema instaliranih vještina.",
   "skills_no_agents": "Na ovom sustavu nisu pronađeni podržani AI agenti.",

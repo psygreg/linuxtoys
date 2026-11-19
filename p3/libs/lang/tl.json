@@ -359,6 +359,7 @@
   "skills_error_parse": "Nabigong i-parse ang data ng kasanayan.",
   "skills_error_install": "Nabigo ang pag-install.",
   "skills_error_no_source": "Hindi matukoy ang pinagmulan ng kasanayan.",
+  "skills_error_invalid_skill": "Ang piniling kasanayan ay naglalaman ng mga character na hindi pinapayagan sa mga pinagmulan o ID ng kasanayan.",
   "skills_no_results": "Walang nahanap na kasanayan para sa iyong paghahanap.",
   "skills_no_installed": "Wala pang naka-install na kasanayan.",
   "skills_no_agents": "Walang natukoy na suportadong AI agent sa system na ito.",

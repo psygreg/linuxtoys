@@ -359,6 +359,7 @@
   "skills_error_parse": "የችሎታ ውሂብን መተርጎም አልተሳካም።",
   "skills_error_install": "ጭነት አልተሳካም።",
   "skills_error_no_source": "የችሎታ ምንጭን መወሰን አልተቻለም።",
+  "skills_error_invalid_skill": "የተመረጠው ችሎታ በችሎታ ምንጮች ወይም መለያዎች ውስጥ የማይፈቀዱ ቁምፊዎችን ይዟል።",
   "skills_no_results": "ለፍለጋዎ ምንም ችሎታዎች አልተገኙም።",
   "skills_no_installed": "እስካሁን ምንም ችሎታ አልተጫነም።",
   "skills_no_agents": "በዚህ ስርዓት ላይ የተደገፉ AI ወኪሎች አልተገኙም።",

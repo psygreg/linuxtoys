@@ -359,6 +359,7 @@
   "skills_error_parse": "Gagal menghurai data kemahiran.",
   "skills_error_install": "Pemasangan gagal.",
   "skills_error_no_source": "Tidak dapat menentukan sumber kemahiran.",
+  "skills_error_invalid_skill": "Kemahiran yang dipilih mengandung aksara yang tidak dibenarkan dalam sumber atau id kemahiran.",
   "skills_no_results": "Tiada kemahiran ditemui untuk carian anda.",
   "skills_no_installed": "Belum ada kemahiran dipasang.",
   "skills_no_agents": "Tiada ejen AI yang disokong dikesan pada sistem ini.",

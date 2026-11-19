@@ -359,6 +359,7 @@
   "skills_error_parse": "Nepodarilo sa spracovať údaje o zručnostiach.",
   "skills_error_install": "Inštalácia zlyhala.",
   "skills_error_no_source": "Nepodarilo sa určiť zdroj zručnosti.",
+  "skills_error_invalid_skill": "Vybraná zručnosť obsahuje znaky, ktoré nie sú povolené v zdrojoch alebo identifikátoroch zručností.",
   "skills_no_results": "Pre vaše hľadanie neboli nájdené žiadne zručnosti.",
   "skills_no_installed": "Zatiaľ nie sú nainštalované žiadne zručnosti.",
   "skills_no_agents": "V tomto systéme neboli zistení žiadni podporovaní AI agenti.",

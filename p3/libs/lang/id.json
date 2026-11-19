@@ -359,6 +359,7 @@
   "skills_error_parse": "Gagal mengurai data skill.",
   "skills_error_install": "Instalasi gagal.",
   "skills_error_no_source": "Tidak dapat menentukan sumber skill.",
+  "skills_error_invalid_skill": "Skill yang dipilih mengandung karakter yang tidak diizinkan dalam sumber atau id skill.",
   "skills_no_results": "Tidak ditemukan skill untuk pencarian Anda.",
   "skills_no_installed": "Belum ada skill yang terpasang.",
   "skills_no_agents": "Tidak ada agen AI yang didukung terdeteksi pada sistem ini.",

@@ -359,6 +359,7 @@
   "skills_error_parse": "Ekki tókst að greina færnigögn.",
   "skills_error_install": "Uppsetning mistókst.",
   "skills_error_no_source": "Ekki var hægt að ákvarða uppruna færninnar.",
+  "skills_error_invalid_skill": "Valin færni inniheldur stafi sem ekki eru leyfðir í upprunum eða auðkenni færni.",
   "skills_no_results": "Engin færni fannst fyrir leitina þína.",
   "skills_no_installed": "Engin færni hefur verið sett upp ennþá.",
   "skills_no_agents": "Engir studdir AI umboðsmenn fundust á þessu kerfi.",

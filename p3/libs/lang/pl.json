@@ -359,6 +359,7 @@
   "skills_error_parse": "Nie udało się przetworzyć danych umiejętności.",
   "skills_error_install": "Instalacja nie powiodła się.",
   "skills_error_no_source": "Nie udało się określić źródła umiejętności.",
+  "skills_error_invalid_skill": "Wybrana umiejętność zawiera znaki niedozwolone w źródłach lub identyfikatorach umiejętności.",
   "skills_no_results": "Nie znaleziono umiejętności dla Twojego wyszukiwania.",
   "skills_no_installed": "Nie zainstalowano jeszcze żadnych umiejętności.",
   "skills_no_agents": "Na tym systemie nie wykryto obsługiwanych agentów AI.",

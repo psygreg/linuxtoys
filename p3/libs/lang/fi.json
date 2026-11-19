@@ -359,6 +359,7 @@
   "skills_error_parse": "Taitotietojen jäsentäminen epäonnistui.",
   "skills_error_install": "Asennus epäonnistui.",
   "skills_error_no_source": "Taidon lähdettä ei voitu määrittää.",
+  "skills_error_invalid_skill": "Valittu taito sisältää merkkejä, joita ei sallita taitojen lähteissä tai tunnisteissa.",
   "skills_no_results": "Hakuusi ei löytynyt taitoja.",
   "skills_no_installed": "Taitoja ei ole vielä asennettu.",
   "skills_no_agents": "Tässä järjestelmässä ei havaittu tuettuja tekoälyagentteja.",

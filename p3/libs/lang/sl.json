@@ -359,6 +359,7 @@
   "skills_error_parse": "Razčlenjevanje podatkov o spretnostih ni uspelo.",
   "skills_error_install": "Namestitev ni uspela.",
   "skills_error_no_source": "Vira spretnosti ni bilo mogoče določiti.",
+  "skills_error_invalid_skill": "Izbrana spretnost vsebuje znake, ki niso dovoljeni v virih ali identifikatorjih spretnosti.",
   "skills_no_results": "Za vaše iskanje ni bilo najdenih spretnosti.",
   "skills_no_installed": "Trenutno ni nameščenih spretnosti.",
   "skills_no_agents": "Na tem sistemu ni bilo zaznanih podprtih agentov AI.",

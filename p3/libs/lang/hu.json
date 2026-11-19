@@ -359,6 +359,7 @@
   "skills_error_parse": "A képességadatok feldolgozása sikertelen.",
   "skills_error_install": "A telepítés sikertelen volt.",
   "skills_error_no_source": "Nem sikerült meghatározni a képesség forrását.",
+  "skills_error_invalid_skill": "A kiválasztott képesség olyan karaktereket tartalmaz, amelyek a képességforrásokban vagy -azonosítókban nem engedélyezettek.",
   "skills_no_results": "A keresésre nem található képesség.",
   "skills_no_installed": "Még nincs telepített képesség.",
   "skills_no_agents": "Ezen a rendszeren nem található támogatott AI ügynök.",

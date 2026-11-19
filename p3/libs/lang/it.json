@@ -359,6 +359,7 @@
   "skills_error_parse": "Impossibile analizzare i dati delle skill.",
   "skills_error_install": "Installazione non riuscita.",
   "skills_error_no_source": "Impossibile determinare la fonte della skill.",
+  "skills_error_invalid_skill": "La skill selezionata contiene caratteri non consentiti nelle fonti o negli ID delle skill.",
   "skills_no_results": "Nessuna skill trovata per la tua ricerca.",
   "skills_no_installed": "Nessuna skill installata ancora.",
   "skills_no_agents": "Nessun agente AI supportato rilevato su questo sistema.",

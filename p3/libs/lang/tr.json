@@ -359,6 +359,7 @@
   "skills_error_parse": "Beceri verileri ayrıştırılamadı.",
   "skills_error_install": "Kurulum başarısız oldu.",
   "skills_error_no_source": "Beceri kaynağı belirlenemedi.",
+  "skills_error_invalid_skill": "Seçilen beceri, beceri kaynaklarında veya kimliklerinde izin verilmeyen karakterler içeriyor.",
   "skills_no_results": "Aramanız için beceri bulunamadı.",
   "skills_no_installed": "Henüz kurulu beceri yok.",
   "skills_no_agents": "Bu sistemde desteklenen bir AI aracısı algılanmadı.",

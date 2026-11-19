@@ -359,6 +359,7 @@
   "skills_error_parse": "Fertigkeitsdaten konnten nicht analysiert werden.",
   "skills_error_install": "Installation fehlgeschlagen.",
   "skills_error_no_source": "Die Quelle der Fertigkeit konnte nicht ermittelt werden.",
+  "skills_error_invalid_skill": "Die ausgewählte Fertigkeit enthält Zeichen, die in Fertigkeitsquellen oder -IDs nicht zulässig sind.",
   "skills_no_results": "Für Ihre Suche wurden keine Fertigkeiten gefunden.",
   "skills_no_installed": "Es sind noch keine Fertigkeiten installiert.",
   "skills_no_agents": "Auf diesem System wurden keine unterstützten KI-Agenten erkannt.",

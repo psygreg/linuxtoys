@@ -359,6 +359,7 @@
   "skills_error_parse": "Oskuste andmete parsimine ebaõnnestus.",
   "skills_error_install": "Paigaldamine ebaõnnestus.",
   "skills_error_no_source": "Oskuse allikat ei õnnestunud kindlaks teha.",
+  "skills_error_invalid_skill": "Valitud oskus sisaldab märke, mis pole oskuste allikates või identifikaatorites lubatud.",
   "skills_no_results": "Teie otsingule ei leitud oskusi.",
   "skills_no_installed": "Ühtegi oskust pole veel paigaldatud.",
   "skills_no_agents": "Selles süsteemis ei tuvastatud ühtegi toetatud tehisintellekti agenti.",

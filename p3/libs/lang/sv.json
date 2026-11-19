@@ -359,6 +359,7 @@
   "skills_error_parse": "Det gick inte att tolka färdighetsdata.",
   "skills_error_install": "Installationen misslyckades.",
   "skills_error_no_source": "Det gick inte att fastställa färdighetens källa.",
+  "skills_error_invalid_skill": "Den valda färdigheten innehåller tecken som inte tillåts i färdighetskällor eller -id:n.",
   "skills_no_results": "Inga färdigheter hittades för din sökning.",
   "skills_no_installed": "Inga färdigheter installerade ännu.",
   "skills_no_agents": "Inga AI-agenter som stöds hittades på detta system.",

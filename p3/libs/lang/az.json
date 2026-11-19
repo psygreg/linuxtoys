@@ -359,6 +359,7 @@
   "skills_error_parse": "Bacarıq məlumatlarını təhlil etmək alınmadı.",
   "skills_error_install": "Quraşdırma uğursuz oldu.",
   "skills_error_no_source": "Bacarıq mənbəyini müəyyən etmək mümkün olmadı.",
+  "skills_error_invalid_skill": "Seçilmiş bacarıq bacarıq mənbələrində və ya identifikatorlarında icazə verilməyən simvollar ehtiva edir.",
   "skills_no_results": "Axtarışınız üçün heç bir bacarıq tapılmadı.",
   "skills_no_installed": "Hələ heç bir bacarıq quraşdırılmayıb.",
   "skills_no_agents": "Bu sistemdə dəstəklənən AI agentləri aşkarlanmadı.",

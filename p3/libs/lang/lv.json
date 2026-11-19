@@ -359,6 +359,7 @@
   "skills_error_parse": "Neizdevās parsēt prasmju datus.",
   "skills_error_install": "Instalēšana neizdevās.",
   "skills_error_no_source": "Neizdevās noteikt prasmes avotu.",
+  "skills_error_invalid_skill": "Izvēlētā prasme satur rakstzīmes, kas nav atļautas prasmju avotos vai identifikatoros.",
   "skills_no_results": "Jūsu meklējumam prasmes netika atrastas.",
   "skills_no_installed": "Vēl nav instalēta neviena prasme.",
   "skills_no_agents": "Šajā sistēmā netika atrasti atbalstīti MI aģenti.",

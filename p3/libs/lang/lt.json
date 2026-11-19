@@ -359,6 +359,7 @@
   "skills_error_parse": "Nepavyko apdoroti įgūdžių duomenų.",
   "skills_error_install": "Diegimas nepavyko.",
   "skills_error_no_source": "Nepavyko nustatyti įgūdžio šaltinio.",
+  "skills_error_invalid_skill": "Pasirinktame įgūdyje yra simbolių, kurių neleidžiama įgūdžių šaltiniuose ar identifikatoriuose.",
   "skills_no_results": "Pagal jūsų paiešką įgūdžių nerasta.",
   "skills_no_installed": "Kol kas neįdiegtas nė vienas įgūdis.",
   "skills_no_agents": "Šioje sistemoje nerasta palaikomų DI agentų.",

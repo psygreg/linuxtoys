@@ -359,6 +359,7 @@
   "skills_error_parse": "Nu s-au putut analiza datele abilităților.",
   "skills_error_install": "Instalarea a eșuat.",
   "skills_error_no_source": "Nu s-a putut determina sursa abilității.",
+  "skills_error_invalid_skill": "Abilitatea selectată conține caractere care nu sunt permise în sursele sau identificatorii abilităților.",
   "skills_no_results": "Nu s-au găsit abilități pentru căutarea dvs.",
   "skills_no_installed": "Nu sunt încă abilități instalate.",
   "skills_no_agents": "Nu s-au detectat agenți AI compatibili pe acest sistem.",

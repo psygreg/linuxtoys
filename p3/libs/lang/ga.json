@@ -359,6 +359,7 @@
   "skills_error_parse": "Theip ar shonraí scileanna a pharsáil.",
   "skills_error_install": "Theip ar an suiteáil.",
   "skills_error_no_source": "Níorbh fhéidir foinse na scile a chinneadh.",
+  "skills_error_invalid_skill": "Tá carachtair sa scile roghnaithe nach bhfuil ceadaithe i bhfoinsí scileanna ná ina n-aitheantais.",
   "skills_no_results": "Níor aimsíodh aon scileanna do do chuardach.",
   "skills_no_installed": "Níl aon scileanna suiteáilte fós.",
   "skills_no_agents": "Níor aimsíodh aon ghníomhairí AI tacaithe ar an gcóras seo.",

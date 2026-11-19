@@ -359,6 +359,7 @@
   "skills_error_parse": "Kunne ikke analysere færdighedsdata.",
   "skills_error_install": "Installationen mislykkedes.",
   "skills_error_no_source": "Kunne ikke bestemme færdighedens kilde.",
+  "skills_error_invalid_skill": "Den valgte færdighed indeholder tegn, der ikke er tilladt i færdighedskilder eller -id'er.",
   "skills_no_results": "Ingen færdigheder fundet for din søgning.",
   "skills_no_installed": "Ingen færdigheder installeret endnu.",
   "skills_no_agents": "Ingen understøttede AI-agenter fundet på dette system.",

@@ -359,6 +359,7 @@
   "skills_error_parse": "Kan vaardigheidsgegevens niet verwerken.",
   "skills_error_install": "Installatie mislukt.",
   "skills_error_no_source": "Kan de bron van de vaardigheid niet bepalen.",
+  "skills_error_invalid_skill": "De geselecteerde vaardigheid bevat tekens die niet zijn toegestaan in bronnen of id's van vaardigheden.",
   "skills_no_results": "Geen vaardigheden gevonden voor je zoekopdracht.",
   "skills_no_installed": "Er zijn nog geen vaardigheden geïnstalleerd.",
   "skills_no_agents": "Geen ondersteunde AI-agents gedetecteerd op dit systeem.",

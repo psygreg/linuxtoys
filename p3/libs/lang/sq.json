@@ -359,6 +359,7 @@
   "skills_error_parse": "Analizimi i të dhënave të aftësive dështoi.",
   "skills_error_install": "Instalimi dështoi.",
   "skills_error_no_source": "Nuk u përcaktua dot burimi i aftësisë.",
+  "skills_error_invalid_skill": "Aftësia e përzgjedhur përmban karaktere që nuk lejohen në burimet ose identifikuesit e aftësive.",
   "skills_no_results": "Nuk u gjetën aftësi për kërkimin tuaj.",
   "skills_no_installed": "Ende nuk ka aftësi të instaluara.",
   "skills_no_agents": "Nuk u zbuluan agjentë AI të mbështetur në këtë sistem.",

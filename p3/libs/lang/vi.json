@@ -359,6 +359,7 @@
   "skills_error_parse": "Không thể phân tích dữ liệu kỹ năng.",
   "skills_error_install": "Cài đặt thất bại.",
   "skills_error_no_source": "Không thể xác định nguồn kỹ năng.",
+  "skills_error_invalid_skill": "Kỹ năng đã chọn chứa các ký tự không được phép trong nguồn hoặc định danh của kỹ năng.",
   "skills_no_results": "Không tìm thấy kỹ năng nào cho tìm kiếm của bạn.",
   "skills_no_installed": "Chưa có kỹ năng nào được cài đặt.",
   "skills_no_agents": "Không phát hiện tác nhân AI được hỗ trợ trên hệ thống này.",

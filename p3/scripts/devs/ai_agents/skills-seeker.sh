@@ -24,6 +24,10 @@ _lang_
 : "${_skills_search_title:=Skills Seeker}"
 : "${_skills_search_text:=Search for skills:}"
 : "${_skills_error_invalid:=The selected skill contains characters that are not allowed in skill sources or ids.}"
+: "${_skills_detail_title:=Skill details}"
+: "${_skills_col_installs:=Installs}"
+: "${_skills_files_label:=Files}"
+: "${_skills_no_files:=No file list available.}"
 
 FETCHER="$SCRIPT_DIR/../../app/skills_fetcher.py"
 PYTHON=$(command -v python3)

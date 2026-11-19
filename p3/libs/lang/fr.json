@@ -359,6 +359,7 @@
   "skills_error_parse": "Échec de l'analyse des données de compétences.",
   "skills_error_install": "L'installation a échoué.",
   "skills_error_no_source": "Impossible de déterminer la source de la compétence.",
+  "skills_error_invalid_skill": "La compétence sélectionnée contient des caractères non autorisés dans les sources ou identifiants de compétences.",
   "skills_no_results": "Aucune compétence trouvée pour votre recherche.",
   "skills_no_installed": "Aucune compétence installée pour le moment.",
   "skills_no_agents": "Aucun agent IA pris en charge détecté sur ce système.",

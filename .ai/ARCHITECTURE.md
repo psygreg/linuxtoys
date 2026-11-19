@@ -166,7 +166,7 @@ The remaining `p3/app` layers follow: GUI (§4.2), core runtime (§4.3), TUI/upd
 | `atomic_io.py` | Atomic file writes for the persistence sites migrated to it (antenna history, Homebrew cache, `version_gate` state): `atomic_write_bytes/text/json` (mkstemp staging + `os.replace`, optional fsync/mode, best-effort tmp cleanup; without an explicit mode the private 0600 staging mode is kept). |
 | `skills_guard.py` | Safety guards for skills.sh references, shared by the GUI and TUI Skills Seeker: strict reference-charset validation (`is_valid_skill_reference` — slug segments, no leading dash, no shell metacharacters; `InvalidSkillReferenceError`), remote-data → filename-component sanitization (`sanitize_filename_part`), and `build_install_script` — the shlex-quoted generated `npx skills add` script text consumed by `window.py._install_skill_from_seeker`. |
 | `language_selector.py` / `about_helper.py` / `deepin_immutable_helper.py` | Language picker; About dialog (GitHub contributors); Deepin immutable-mode one-shot flow. |
-| `skills_fetcher.py` / `skills_view.py` | skills.sh CLI fetcher (TTL cache) + GTK Skills Seeker view. |
+| `skills_fetcher.py` / `skills_view.py` | skills.sh CLI fetcher (TTL cache; `search`/`popular`/`detail` — `detail` composes the unauthenticated search API with the skill page's description meta tag, since the v1 file-tree endpoint requires Vercel OIDC) + GTK Skills Seeker view. |
 | `file_watcher.py` | DEV_MODE-only 2s poll triggering UI reload on script/lib changes. |
 | `appstream_parser.py`, `appstream_cache.py`, `appstream_runner.py` | Mapped with the catalog/data section. |
 

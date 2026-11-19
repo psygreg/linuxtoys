@@ -359,6 +359,7 @@
   "skills_error_parse": "ניתוח נתוני הכישורים נכשל.",
   "skills_error_install": "ההתקנה נכשלה.",
   "skills_error_no_source": "לא ניתן היה לקבוע את מקור הכישור.",
+  "skills_error_invalid_skill": "הכישור הנבחר מכיל תווים שאינם מותרים במקורות או במזהים של כישורים.",
   "skills_no_results": "לא נמצאו כישורים עבור החיפוש שלך.",
   "skills_no_installed": "עדיין לא הותקנו כישורים.",
   "skills_no_agents": "לא זוהו סוכני AI נתמכים במערכת זו.",

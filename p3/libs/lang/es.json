@@ -359,6 +359,7 @@
   "skills_error_parse": "Error al analizar los datos de las habilidades.",
   "skills_error_install": "La instalación falló.",
   "skills_error_no_source": "No se pudo determinar el origen de la habilidad.",
+  "skills_error_invalid_skill": "La habilidad seleccionada contiene caracteres no permitidos en los orígenes o identificadores de habilidades.",
   "skills_no_results": "No se encontraron habilidades para tu búsqueda.",
   "skills_no_installed": "Aún no hay habilidades instaladas.",
   "skills_no_agents": "No se detectaron agentes de IA compatibles en este sistema.",

@@ -359,6 +359,7 @@
   "skills_error_parse": "Nepodařilo se zpracovat data o dovednostech.",
   "skills_error_install": "Instalace se nezdařila.",
   "skills_error_no_source": "Nepodařilo se určit zdroj dovednosti.",
+  "skills_error_invalid_skill": "Vybraná dovednost obsahuje znaky, které nejsou povoleny ve zdrojích nebo identifikátorech dovedností.",
   "skills_no_results": "Pro vaše hledání nebyly nalezeny žádné dovednosti.",
   "skills_no_installed": "Zatím nejsou nainstalovány žádné dovednosti.",
   "skills_no_agents": "V tomto systému nebyli zjištěni žádní podporovaní AI agenti.",

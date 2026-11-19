@@ -359,6 +359,7 @@
   "skills_error_parse": "スキルデータの解析に失敗しました。",
   "skills_error_install": "インストールに失敗しました。",
   "skills_error_no_source": "スキルのソースを特定できませんでした。",
+  "skills_error_invalid_skill": "選択されたスキルには、スキルのソースやIDに使用できない文字が含まれています。",
   "skills_no_results": "検索に一致するスキルが見つかりませんでした。",
   "skills_no_installed": "まだスキルはインストールされていません。",
   "skills_no_agents": "このシステムでサポートされているAIエージェントは検出されませんでした。",

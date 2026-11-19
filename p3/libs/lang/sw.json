@@ -359,6 +359,7 @@
   "skills_error_parse": "Imeshindwa kuchambua data ya ujuzi.",
   "skills_error_install": "Usakinishaji umeshindwa.",
   "skills_error_no_source": "Imeshindwa kubaini chanzo cha ujuzi.",
+  "skills_error_invalid_skill": "Ujuzi uliouchaguliwa una herufi zisizoruhusiwa katika vyanzo au vitambulisho vya ujuzi.",
   "skills_no_results": "Hakuna ujuzi uliopatikana kwa utafutaji wako.",
   "skills_no_installed": "Bado hakuna ujuzi uliosakinishwa.",
   "skills_no_agents": "Hakuna wakala wa AI unaotumika uliogunduliwa kwenye mfumo huu.",

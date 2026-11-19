@@ -359,6 +359,7 @@
   "skills_error_parse": "解析技能数据失败。",
   "skills_error_install": "安装失败。",
   "skills_error_no_source": "无法确定技能来源。",
+  "skills_error_invalid_skill": "所选技能包含技能来源或 ID 中不允许使用的字符。",
   "skills_no_results": "未找到与您的搜索匹配的技能。",
   "skills_no_installed": "尚未安装任何技能。",
   "skills_no_agents": "在此系统上未检测到受支持的AI代理。",

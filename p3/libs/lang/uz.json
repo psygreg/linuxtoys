@@ -359,6 +359,7 @@
   "skills_error_parse": "Ko'nikma ma'lumotlarini tahlil qilib bo'lmadi.",
   "skills_error_install": "O'rnatish amalga oshmadi.",
   "skills_error_no_source": "Ko'nikma manbasini aniqlab bo'lmadi.",
+  "skills_error_invalid_skill": "Tanlangan ko'nikma ko'nikma manbalari yoki identifikatorlarida ruxsat etilmagan belgilarni o'z ichiga oladi.",
   "skills_no_results": "Qidiruvingiz bo'yicha ko'nikma topilmadi.",
   "skills_no_installed": "Hozircha hech qanday ko'nikma o'rnatilmagan.",
   "skills_no_agents": "Ushbu tizimda qo'llab-quvvatlanadigan AI agentlari aniqlanmadi.",
