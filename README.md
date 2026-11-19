@@ -2,7 +2,7 @@
 
 [LinuxToys](https://linux.toys) is a software distribution platform for Linux systems. It aims to make powerful Linux functionality simple and accessible to all users through an intuitive interface, and enable developers to ship their apps consistently and reliably by giving them control over the installation process of their apps, all in one solution for dozens of Linux distributions.
 
-LinuxToys runs on both **x86-64** and **AArch64 (ARM64)** computers. The application is architecture-aware: scripts and release payloads are checked against the host ISA before anything privileged runs, so an unsupported payload is refused instead of half-installed.
+LinuxToys is available for **x86-64** and **AArch64 (ARM64)** processor architectures and is architecture-aware.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="src/screenshot-dark.webp">
@@ -25,9 +25,7 @@ LinuxToys is compatible with the following Linux distributions, provided they ar
 *   **Deepin**
 *   **SteamOS**, **Bluefin Dakota**, **Gnome OS** and **KDE Linux**
 
-Support for non-systemd init systems is limited, and some features of the app cannot be offered for them.
-
-**About ARM64:** on AArch64 hosts LinuxToys runs natively and offers the AppStream catalog (native packages, Flatpak, Snap, Homebrew), while curated catalog scripts must declare ARM64 support explicitly. The first qualified ARM64 script routes are the **Atkinson Hyperlegible, OpenDyslexic and Nerd Fonts** installers; more routes are added as each payload is verified for the architecture. A published ARM64 release is still pending, and ARMv6/ARMv7 systems are not supported.
+Support for non-systemd init systems is limited, and some features of the app cannot be offered for them. On ARM, LinuxToys offers native packages, Flatpak, Snap, and Homebrew catalogs, and curated scripts that have declared ARM64 support explicitly.
 
 ## Installation
 
