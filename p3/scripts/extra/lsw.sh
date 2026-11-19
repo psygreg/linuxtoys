@@ -63,7 +63,9 @@ get_winboat () { # gets latest release (native package paths)
             fi
         fi
         wget "https://github.com/winboat-org/winboat/releases/download/$tag/winboat-$ver-amd64.deb"
-        pkg_fromfile "./winboat-$ver-amd64.deb"
+        # The package embeds Windows guest assets (guest_server) and
+        # multi-platform .node prebuilds as inert data; --guest declares them.
+        pkg_fromfile --guest "./winboat-$ver-amd64.deb"
     elif is_fedora || is_suse || is_rhel; then
         if rpm -qi "winboat" &> /dev/null; then
             local hostver="$(rpm -qi winboat | grep -i Version | awk '{print $3}')"
@@ -78,7 +80,9 @@ get_winboat () { # gets latest release (native package paths)
                 pkg_remove winboat
             fi
         fi
-        pkg_fromfile "./winboat-$ver-x86_64.rpm"
+        # The package embeds Windows guest assets (guest_server) and
+        # multi-platform .node prebuilds as inert data; --guest declares them.
+        pkg_fromfile --guest "./winboat-$ver-x86_64.rpm"
     elif is_arch || is_cachy; then
         if pacman -Qi "winboat-bin" &> /dev/null; then
             local hostver="$(pacman -Qi winboat-bin | grep -i Version | awk '{print $3}')"

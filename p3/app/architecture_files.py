@@ -2,6 +2,10 @@
 
 Only installed metadata tools are used. Downloaded executables are never run.
 Archive members are inspected without extracting them to the filesystem.
+Payload-sized metadata-tool output (dpkg-deb --fsys-tarfile, rpm2cpio and
+bsdtar -cf - stream the decompressed payload itself) is consumed
+incrementally from a bounded reader: decompressed payloads are never
+buffered whole in memory and never written to disk.
 """
 
 from __future__ import annotations
@@ -18,7 +22,7 @@ import struct
 import subprocess
 import tarfile
 import zipfile
-from typing import BinaryIO, Iterable
+from typing import BinaryIO, Iterable, Protocol
 
 from .architecture import (
     ArchitectureError,
@@ -33,6 +37,20 @@ from .architecture import (
 MAX_BYTES = 4 * 1024**3
 MAX_MEMBERS = 100_000
 MAX_NESTED_BYTES = 64 * 1024**2
+_MACHO_MAGIC = (
+    b"\xcf\xfa\xed\xfe",
+    b"\xfe\xed\xfa\xcf",
+    b"\xca\xfe\xba\xbe",
+    b"\xbe\xba\xfe\xca",
+    b"\xce\xfa\xed\xfe",
+    b"\xfe\xed\xfa\xce",
+)
+
+_TOOL_TIMEOUT = 60.0
+_TOOL_CHUNK = 1024**2
+_METADATA_LIMIT = 256 * 1024**2
+_METADATA_LIMIT_MESSAGE = "Metadata tool output exceeds 256 MiB inspection limit"
+_PAYLOAD_LIMIT_MESSAGE = "Payload tool output exceeds the archive inspection limit"
 _NATIVE_SUFFIXES = (
     ".so",
     ".dll",
@@ -51,47 +69,148 @@ class Payload:
     architectures: set[str] = field(default_factory=set)
     members: int = 0
     expanded_bytes: int = 0
+    # Set for the `guest` content kind: the package legitimately embeds
+    # foreign-platform binaries (VM guest assets, multi-platform prebuilds)
+    # as declared inert data; only this ISA's ELFs remain payload evidence.
+    guest_isa: str | None = None
+
+
+class _Readable(Protocol):
+    """Blocking full-read stream consumed by the payload inspectors."""
+
+    def read(self, size: int = -1) -> bytes: ...
+
+
+class _ToolStream:
+    """Bounded blocking reader over a metadata tool's stdout.
+
+    Every read enforces the shared deadline and an output bound: the
+    metadata cap for buffered queries (`_run`), or the payload-level
+    archive bound for tools that stream the decompressed payload itself
+    (dpkg-deb --fsys-tarfile, rpm2cpio, bsdtar -cf -). The tool is killed
+    as soon as the stream is abandoned or a bound is exceeded.
+    """
+
+    def __init__(self, args: list[str], *, limit: int, limit_message: str) -> None:
+        self._args = args
+        self._limit = limit
+        self._limit_message = limit_message
+        self._total = 0
+        self._selector: selectors.BaseSelector | None = None
+        try:
+            self._process = subprocess.Popen(
+                args, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL
+            )
+        except (OSError, subprocess.SubprocessError) as error:
+            raise ArchitectureError(
+                f"Cannot inspect payload using {args[0]}; a native metadata tool is required"
+            ) from error
+        self._deadline = time.monotonic() + _TOOL_TIMEOUT
+        try:
+            self._selector = selectors.DefaultSelector()
+            self._selector.register(self._process.stdout, selectors.EVENT_READ)
+        except OSError as error:
+            self._shutdown()
+            raise ArchitectureError(
+                f"Cannot inspect payload using {args[0]}; a native metadata tool is required"
+            ) from error
+
+    def read(self, size: int = -1) -> bytes:
+        """Return exactly `size` bytes unless the tool's output ends first."""
+        chunks: list[bytes] = []
+        pending = None if size is None or size < 0 else size
+        while pending is None or pending > 0:
+            chunk = self._pull(
+                _TOOL_CHUNK if pending is None else min(pending, _TOOL_CHUNK)
+            )
+            if not chunk:
+                break
+            chunks.append(chunk)
+            if pending is not None:
+                pending -= len(chunk)
+        return b"".join(chunks)
+
+    def tell(self) -> int:
+        return self._total
+
+    def finish(self) -> None:
+        """Consume the tool's remaining output and require a clean exit."""
+        try:
+            while self._pull(_TOOL_CHUNK):
+                pass
+            if self._process.wait(
+                timeout=max(0.1, self._deadline - time.monotonic())
+            ):
+                raise ArchitectureError(
+                    f"{self._args[0]} could not inspect the payload"
+                )
+        except subprocess.TimeoutExpired as error:
+            raise ArchitectureError(
+                f"{self._args[0]} could not inspect the payload"
+            ) from error
+        finally:
+            self._shutdown()
+
+    def _pull(self, size: int) -> bytes:
+        while True:
+            remaining = self._deadline - time.monotonic()
+            if remaining <= 0:
+                raise ArchitectureError("Payload inspection timed out")
+            if not self._selector.select(min(remaining, 1)):
+                continue
+            try:
+                chunk = os.read(self._process.stdout.fileno(), size)
+            except OSError as error:
+                raise ArchitectureError(
+                    f"Cannot inspect payload using {self._args[0]}; a native metadata tool is required"
+                ) from error
+            if not chunk:
+                return b""
+            self._total += len(chunk)
+            if self._total > self._limit:
+                raise ArchitectureError(self._limit_message)
+            return chunk
+
+    def _shutdown(self) -> None:
+        if self._selector is not None:
+            self._selector.close()
+            self._selector = None
+        if self._process.poll() is None:
+            self._process.kill()
+        self._process.wait()
+        self._process.stdout.close()
+
+    def __enter__(self) -> _ToolStream:
+        return self
+
+    def __exit__(self, exc_type: object, exc: object, tb: object) -> None:
+        self._shutdown()
 
 
 def _run(args: list[str]) -> bytes:
-    """Bound metadata-tool output and time without executing downloaded code."""
-    limit = 256 * 1024**2
+    """Bound small metadata-tool output and time without executing downloaded code."""
     try:
-        with subprocess.Popen(
-            args, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL
-        ) as process:
-            deadline = time.monotonic() + 60
-            chunks = []
-            total = 0
-            try:
-                with selectors.DefaultSelector() as selector:
-                    selector.register(process.stdout, selectors.EVENT_READ)
-                    while True:
-                        remaining = deadline - time.monotonic()
-                        if remaining <= 0:
-                            raise ArchitectureError("Payload inspection timed out")
-                        if not selector.select(min(remaining, 1)):
-                            continue
-                        chunk = os.read(process.stdout.fileno(), 1024**2)
-                        if not chunk:
-                            break
-                        total += len(chunk)
-                        if total > limit:
-                            raise ArchitectureError(
-                                "Metadata tool output exceeds 256 MiB inspection limit"
-                            )
-                        chunks.append(chunk)
-                if process.wait(timeout=max(0.1, deadline - time.monotonic())):
-                    raise ArchitectureError(f"{args[0]} could not inspect the payload")
-                return b"".join(chunks)
-            finally:
-                if process.poll() is None:
-                    process.kill()
-                    process.wait()
+        with _ToolStream(
+            args, limit=_METADATA_LIMIT, limit_message=_METADATA_LIMIT_MESSAGE
+        ) as stream:
+            data = stream.read(-1)
+            stream.finish()
+        return data
     except (OSError, subprocess.SubprocessError) as error:
         raise ArchitectureError(
             f"Cannot inspect payload using {args[0]}; a native metadata tool is required"
         ) from error
+
+
+def _payload_stream(args: list[str]) -> _ToolStream:
+    """Open a payload-sized metadata tool under the archive-level output bound.
+
+    dpkg-deb --fsys-tarfile, rpm2cpio and bsdtar -cf - emit the decompressed
+    payload itself, which the archive inspectors account under MAX_BYTES;
+    the metadata cap would falsely refuse legitimate large packages
+    (e.g. Electron .debs decompressing well past 256 MiB).
+    """
+    return _ToolStream(args, limit=MAX_BYTES, limit_message=_PAYLOAD_LIMIT_MESSAGE)
 
 
 def _elf(header: bytes) -> str | None:
@@ -107,7 +226,7 @@ def _elf(header: bytes) -> str | None:
 
 
 def _member(
-    name: str, size: int, handle: BinaryIO | None, payload: Payload, depth: int = 0
+    name: str, size: int, handle: _Readable | None, payload: Payload, depth: int = 0
 ) -> None:
     path = PurePosixPath(name)
     if path.is_absolute() or ".." in path.parts or "\\" in name:
@@ -119,17 +238,25 @@ def _member(
     if handle is None:
         return
     header = handle.read(64)
-    arch = _elf(header)
-    if arch:
+    if header.startswith(b"\x7fELF"):
+        try:
+            arch = _elf(header)
+        except ArchitectureError:
+            if payload.guest_isa is None:
+                raise
+            # Unqualified 32-bit class/machine inside a declared guest
+            # payload: an inert foreign-platform prebuild.
+            return
+        if payload.guest_isa is not None and arch != payload.guest_isa:
+            # Other-ISA ELF inside a declared guest payload: inert data.
+            return
         payload.architectures.add(arch)
-    elif header[:2] == b"MZ" or header[:4] in (
-        b"\xcf\xfa\xed\xfe",
-        b"\xfe\xed\xfa\xcf",
-        b"\xca\xfe\xba\xbe",
-        b"\xbe\xba\xfe\xca",
-        b"\xce\xfa\xed\xfe",
-        b"\xfe\xed\xfa\xce",
+    elif payload.guest_isa is not None and (
+        header[:2] == b"MZ" or header[:4] in _MACHO_MAGIC
     ):
+        # Declared Windows/macOS guest asset: inert data on the Linux host.
+        return
+    elif header[:2] == b"MZ" or header[:4] in _MACHO_MAGIC:
         raise ArchitectureError(f"Non-Linux binary in payload: {name}")
     elif header.startswith((b"!<arch>\n", b"\x28\xb5\x2f\xfd")):
         raise ArchitectureError(f"Unqualified native/compressed archive: {name}")
@@ -198,6 +325,35 @@ def _zip_metadata_limit(handle: BinaryIO) -> None:
     handle.seek(0)
 
 
+def _tar_members(archive: tarfile.TarFile, payload: Payload, depth: int = 0) -> None:
+    """Apply the shared member policy to a sequentially iterated tar."""
+    for member in archive:
+        if member.issym() or member.islnk():
+            target = PurePosixPath(member.linkname)
+            if target.is_absolute() or ".." in target.parts:
+                raise ArchitectureError(f"Unsafe archive link: {member.name}")
+        elif not member.isfile() and not member.isdir():
+            raise ArchitectureError(f"Unsupported archive member: {member.name}")
+        stream = archive.extractfile(member) if member.isfile() else None
+        _member(member.name, member.size, stream, payload, depth)
+
+
+def _tar_stream(handle: _Readable, payload: Payload, depth: int = 0) -> None:
+    """Inspect an uncompressed tar streamed by a payload-sized metadata tool.
+
+    Streaming mode consumes the tool's output incrementally: members the
+    policy does not read are drained through the bounded reader, so the
+    decompressed payload is never buffered whole and nothing is extracted.
+    """
+    try:
+        with tarfile.open(fileobj=handle, mode="r|") as archive:
+            _tar_members(archive, payload, depth)
+    except (OSError, EOFError, ValueError, tarfile.TarError) as error:
+        if isinstance(error, ArchitectureError):
+            raise
+        raise ArchitectureError("Cannot inspect archive payload") from error
+
+
 def _archive(handle: BinaryIO, payload: Payload, depth: int = 0) -> None:
     try:
         if zipfile.is_zipfile(handle):
@@ -211,30 +367,68 @@ def _archive(handle: BinaryIO, payload: Payload, depth: int = 0) -> None:
         else:
             handle.seek(0)
             with tarfile.open(fileobj=handle, mode="r:*") as archive:
-                for member in archive:
-                    if member.issym() or member.islnk():
-                        target = PurePosixPath(member.linkname)
-                        if target.is_absolute() or ".." in target.parts:
-                            raise ArchitectureError(
-                                f"Unsafe archive link: {member.name}"
-                            )
-                    elif not member.isfile() and not member.isdir():
-                        raise ArchitectureError(
-                            f"Unsupported archive member: {member.name}"
-                        )
-                    stream = archive.extractfile(member) if member.isfile() else None
-                    _member(member.name, member.size, stream, payload, depth)
-    except (OSError, ValueError, tarfile.TarError, zipfile.BadZipFile) as error:
+                _tar_members(archive, payload, depth)
+    except (
+        OSError,
+        EOFError,
+        ValueError,
+        tarfile.TarError,
+        zipfile.BadZipFile,
+    ) as error:
         if isinstance(error, ArchitectureError):
             raise
         raise ArchitectureError("Cannot inspect archive payload") from error
 
 
-def _cpio(data: bytes, payload: Payload) -> None:
-    """Inspect rpm2cpio's newc format without extracting files or executing hooks."""
-    offset = 0
-    while offset + 110 <= len(data):
-        header = data[offset : offset + 110]
+class _CpioSlice:
+    """Bounded forward reader over one cpio member's data region."""
+
+    def __init__(self, handle: _Readable, size: int) -> None:
+        self._handle = handle
+        self._left = size
+        self._pos = 0
+        self.truncated = False
+
+    def read(self, size: int = -1) -> bytes:
+        want = self._left if size is None or size < 0 else min(size, self._left)
+        chunks: list[bytes] = []
+        while want > 0:
+            chunk = self._handle.read(want)
+            if not chunk:
+                self.truncated = True
+                break
+            chunks.append(chunk)
+            want -= len(chunk)
+        data = b"".join(chunks)
+        self._pos += len(data)
+        self._left -= len(data)
+        return data
+
+    def tell(self) -> int:
+        return self._pos
+
+
+def _discard(handle: _Readable, count: int) -> bool:
+    """Drain `count` bytes from a non-seekable stream; True when it ends early."""
+    while count > 0:
+        chunk = handle.read(min(count, _TOOL_CHUNK))
+        if not chunk:
+            return True
+        count -= len(chunk)
+    return False
+
+
+def _cpio(handle: _Readable, payload: Payload) -> None:
+    """Inspect rpm2cpio's newc format without extracting files or executing hooks.
+
+    The decompressed cpio stream is consumed incrementally from the bounded
+    tool reader: member data is read only as far as the member policy needs
+    and the rest is discarded in place.
+    """
+    while True:
+        header = handle.read(110)
+        if len(header) < 110:
+            raise ArchitectureError("Incomplete RPM archive")
         if header[:6] not in (b"070701", b"070702"):
             raise ArchitectureError("Unsupported RPM payload archive")
         try:
@@ -243,23 +437,26 @@ def _cpio(data: bytes, payload: Payload) -> None:
             mode = int(header[14:22], 16)
         except ValueError as error:
             raise ArchitectureError("Invalid RPM archive metadata") from error
-        offset += 110
-        if namesize < 1 or offset + namesize > len(data):
+        if namesize < 1:
             raise ArchitectureError("Truncated RPM member name")
-        name = data[offset : offset + namesize - 1].decode("utf-8", errors="strict")
-        offset = (offset + namesize + 3) & ~3
+        raw_name = handle.read(namesize)
+        if len(raw_name) < namesize:
+            raise ArchitectureError("Truncated RPM member name")
+        name = raw_name[:-1].decode("utf-8", errors="strict")
+        if _discard(handle, (-(110 + namesize)) % 4):
+            raise ArchitectureError("Incomplete RPM archive")
         if name == "TRAILER!!!":
             return
-        if offset + size > len(data):
+        skip = size
+        if mode & 0o170000 == 0o100000:
+            slice_stream = _CpioSlice(handle, size)
+            _member(name, size, slice_stream, payload)
+            if slice_stream.truncated:
+                raise ArchitectureError("Truncated RPM payload")
+            skip = size - slice_stream.tell()
+        # The data region starts 4-aligned, so its padding is -size % 4.
+        if _discard(handle, skip + (-(size) % 4)):
             raise ArchitectureError("Truncated RPM payload")
-        stream = (
-            io.BytesIO(data[offset : offset + size])
-            if mode & 0o170000 == 0o100000
-            else None
-        )
-        _member(name, size, stream, payload)
-        offset = (offset + size + 3) & ~3
-    raise ArchitectureError("Incomplete RPM archive")
 
 
 def validate_file(
@@ -271,15 +468,19 @@ def validate_file(
     (CachyOS x86_64_v3 .PKGINFO, ALHP x86_64_v2 RPMs, APT amd64v3 variants) are
     native x86_64 evidence, not foreign ISAs.
     `data` and `source` are explicit declarations and cannot contain native code.
+    `guest` is an explicit declaration that the package legitimately embeds
+    foreign-platform binaries (VM guest assets, multi-platform prebuilds) as
+    inert data: they are tolerated, while the package metadata label and any
+    host-ISA ELF must still prove native compatibility.
     An all/noarch package is accepted only when its payload contains no native code.
     """
     arch = host() if machine is None else normalize(machine)
     file = Path(path).resolve(strict=True)
     if not file.is_file() or file.stat().st_size > MAX_BYTES:
         raise ArchitectureError("Payload missing or exceeds inspection limit")
-    if content_kind not in {"native", "data", "source"}:
+    if content_kind not in {"native", "data", "source", "guest"}:
         raise ArchitectureError("Unknown content kind")
-    payload = Payload()
+    payload = Payload(guest_isa=arch.value if content_kind == "guest" else None)
     metadata: str | None = None
     independent = content_kind in {"data", "source"}
     lower = file.name.lower()
@@ -289,7 +490,9 @@ def validate_file(
         )
         if metadata != "all":
             require_native([metadata], arch.value)
-        _archive(io.BytesIO(_run(["dpkg-deb", "--fsys-tarfile", str(file)])), payload)
+        with _payload_stream(["dpkg-deb", "--fsys-tarfile", str(file)]) as stream:
+            _tar_stream(stream, payload)
+            stream.finish()
         independent = metadata == "all"
     elif lower.endswith(".rpm"):
         metadata = canonical_package_architecture(
@@ -297,7 +500,9 @@ def validate_file(
         )
         if metadata != "noarch":
             require_native([metadata], arch.value)
-        _cpio(_run(["rpm2cpio", str(file)]), payload)
+        with _payload_stream(["rpm2cpio", str(file)]) as stream:
+            _cpio(stream, payload)
+            stream.finish()
         independent = metadata == "noarch"
     elif lower.endswith(
         (
@@ -315,7 +520,9 @@ def validate_file(
         # zstd Arch archives require an installed native decoder. bsdtar emits
         # an uncompressed tar, which is inspected with the same member policy.
         if lower.endswith((".pkg.tar.zst", ".pacman")):
-            _archive(io.BytesIO(_run(["bsdtar", "-cf", "-", "@" + str(file)])), payload)
+            with _payload_stream(["bsdtar", "-cf", "-", "@" + str(file)]) as stream:
+                _tar_stream(stream, payload)
+                stream.finish()
         else:
             with file.open("rb") as stream:
                 _archive(stream, payload)
@@ -355,6 +562,8 @@ def validate_file(
             raise ArchitectureError(
                 "Native payload architecture is unknown; missing metadata is not compatibility"
             )
+        if content_kind == "guest" and not payload.architectures:
+            raise ArchitectureError("Guest payload lacks host-ISA code evidence")
         require_native([*hints, *payload.architectures], arch.value)
     return payload
 

@@ -1140,12 +1140,19 @@ pkg_fromfile () {
     # Handle flags that should not be passed to native package managers.
     local _ostreecheck=0
     local _skip_user=0
+    local _guest=0
     local -a _filtered_args=()
     for arg in "$@"; do
         if [[ "$arg" == "--ostreecheck" ]]; then
             _ostreecheck=1
         elif [[ "$arg" == "--skip-user" ]]; then
             _skip_user=1
+        elif [[ "$arg" == "--guest" ]]; then
+            # Declares the package as legitimately embedding foreign-platform
+            # binaries (VM guest assets, multi-platform prebuilds) that are
+            # inert data on the Linux host; the preflight still requires
+            # native package metadata and host-ISA payload evidence.
+            _guest=1
         else
             _filtered_args+=("$arg")
         fi
@@ -1155,7 +1162,11 @@ pkg_fromfile () {
     set -- "${_filtered_args[@]}"
 
     # Validate every input before authenticating or installing any item in a batch.
-    _architecture_check files "$@"
+    if (( _guest )); then
+        _architecture_check files --content-kind guest "$@"
+    else
+        _architecture_check files "$@"
+    fi
 
     # Snap files are handled by snapd rather than the host package manager.
     # Keep this outside the generic lock because installing Snap support may

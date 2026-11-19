@@ -231,7 +231,9 @@ def main(argv: list[str] | None = None) -> int:
     hook.add_argument("relative_path")
     files = sub.add_parser("files")
     files.add_argument(
-        "--content-kind", choices=["native", "data", "source"], default="native"
+        "--content-kind",
+        choices=["native", "data", "source", "guest"],
+        default="native",
     )
     files.add_argument("paths", nargs="+")
     tree = sub.add_parser("tree")
