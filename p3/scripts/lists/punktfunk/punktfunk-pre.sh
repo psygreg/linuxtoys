@@ -3,7 +3,7 @@
 if is_ubuntu || is_debian; then
     # compat check
     is_ubuntu && case "$UBUNTU_CODENAME" in
-        resolute|stonking) ;;
+        resolute|stonking|tenacious) ;;
         *) die "$incompatmsg" ;;
     esac
     is_debian && {
