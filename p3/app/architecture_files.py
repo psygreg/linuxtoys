@@ -24,6 +24,7 @@ from .architecture import (
     ArchitectureError,
     LABELS,
     asset_architectures,
+    canonical_package_architecture,
     host,
     normalize,
     require_native,
@@ -266,6 +267,9 @@ def validate_file(
 ) -> Payload:
     """Require consistent package/filename/ELF evidence before any mutation.
 
+    Package metadata labels are canonicalized first: microarchitecture levels
+    (CachyOS x86_64_v3 .PKGINFO, ALHP x86_64_v2 RPMs, APT amd64v3 variants) are
+    native x86_64 evidence, not foreign ISAs.
     `data` and `source` are explicit declarations and cannot contain native code.
     An all/noarch package is accepted only when its payload contains no native code.
     """
@@ -280,7 +284,7 @@ def validate_file(
     independent = content_kind in {"data", "source"}
     lower = file.name.lower()
     if lower.endswith(".deb"):
-        metadata = (
+        metadata = canonical_package_architecture(
             _run(["dpkg-deb", "--field", str(file), "Architecture"]).decode().strip()
         )
         if metadata != "all":
@@ -288,7 +292,9 @@ def validate_file(
         _archive(io.BytesIO(_run(["dpkg-deb", "--fsys-tarfile", str(file)])), payload)
         independent = metadata == "all"
     elif lower.endswith(".rpm"):
-        metadata = _run(["rpm", "-qp", "--qf", "%{ARCH}", str(file)]).decode().strip()
+        metadata = canonical_package_architecture(
+            _run(["rpm", "-qp", "--qf", "%{ARCH}", str(file)]).decode().strip()
+        )
         if metadata != "noarch":
             require_native([metadata], arch.value)
         _cpio(_run(["rpm2cpio", str(file)]), payload)
@@ -322,7 +328,7 @@ def validate_file(
             ]
             if len(values) != 1:
                 raise ArchitectureError("Missing/conflicting Arch package architecture")
-            metadata = values[0]
+            metadata = canonical_package_architecture(values[0])
             independent = metadata == "any"
     elif lower.endswith(".flatpakref"):
         # Reference files are inspected/resolved through Flatpak before install.

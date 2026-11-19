@@ -105,6 +105,25 @@ _FOREIGN = (
     "loongarch64",
 )
 _ALIASES = {alias: arch for arch, labels in LABELS.items() for alias in labels.aliases}
+# Distro package managers report microarchitecture-tuned builds under their own
+# architecture names: CachyOS's optimized repositories ship sync databases with
+# %ARCH% = x86_64_v3 / x86_64_v4 (plus their Zen4/5 znver4 name), subarch
+# repositories (ALHP, CentOS-style) use x86_64_v2, and APT's architecture
+# variants keep Architecture: amd64 but add an Architecture-Variant field
+# (amd64v3) that metadata dumps print as an own line. A microarchitecture level
+# is a more specific x86_64, never another ISA, and the package manager only
+# ever offers builds its own configuration resolved for this host — so its
+# label is native x86_64 evidence. Release-asset matching (unverified upstream
+# payloads) keeps the strict matcher instead: a v3 binary may not run on a
+# baseline host, and nothing there proves the manager checked it.
+_PACKAGE_MICROARCH = {
+    "x86_64_v2": "x86_64",
+    "x86_64_v3": "x86_64",
+    "x86_64_v4": "x86_64",
+    "znver4": "x86_64",
+    "amd64v2": "x86_64",
+    "amd64v3": "x86_64",
+}
 _TOKEN = re.compile(
     r"(?<![a-z0-9])("
     + "|".join(
@@ -122,6 +141,17 @@ def normalize(value: str) -> Architecture:
             f"Unsupported architecture {value!r}; supported: x86_64, aarch64"
         )
     return _ALIASES[value.strip().lower()]
+
+
+def canonical_package_architecture(value: str) -> str:
+    """Canonicalize one architecture label as a distro package manager reports it.
+
+    Microarchitecture levels collapse onto their x86_64 ISA (see
+    _PACKAGE_MICROARCH); every other label passes through unchanged, so
+    foreign ISAs keep failing require_native explicitly.
+    """
+    token = str(value).strip().lower()
+    return _PACKAGE_MICROARCH.get(token, token)
 
 
 def host() -> Architecture:

@@ -10,6 +10,7 @@ import re
 from pathlib import Path
 import subprocess
 import sys
+from typing import Iterable
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -17,8 +18,10 @@ if __package__ in (None, ""):
 from app.architecture import (
     ArchitectureError,
     asset_architectures,
+    canonical_package_architecture,
     host,
     label,
+    normalize,
     require_native,
     require_script_path,
     resolve_hook_path,
@@ -43,7 +46,7 @@ def apt_plan(packages: list[str]) -> None:
             continue
         package = line.split()[1]
         if ":" in package:
-            require_native([package.rsplit(":", 1)[1]])
+            require_native([canonical_package_architecture(package.rsplit(":", 1)[1])])
         # Newer APT (e.g. Debian 13) appends an optional trailing reason group
         # after the closing paren: "... Debian:13.7/stable [amd64]) []".
         match = re.search(r"\[([^] ]+)\]\)(?:\s*\[[^]]*\])?\s*$", line)
@@ -52,17 +55,28 @@ def apt_plan(packages: list[str]) -> None:
                 f"APT did not identify the planned architecture for {package}"
             )
         if match[1] != "all":
-            require_native([match[1]])
+            require_native([canonical_package_architecture(match[1])])
 
 
 def native_packages(packages: list[str], manager: str) -> None:
-    """Preflight native package metadata before authentication or transaction locks."""
+    """Preflight native package metadata before authentication or transaction locks.
+
+    Manager-reported labels are canonicalized before the ISA gate: optimized
+    repositories report microarchitecture levels (CachyOS x86_64_v3/v4 sync
+    databases, APT's Architecture-Variant field) that are native x86_64, not
+    foreign ISAs. Candidate listings may include foreign-ISA siblings of
+    multilib/multiarch same-name packages the manager never selects for a
+    bare name, so those require one native or arch-independent candidate;
+    explicit foreign requests are refused by the suffix check below.
+    """
     arch = host()
     for package in packages:
         if package.startswith("-"):
             raise ArchitectureError("Package options are not package names")
         if ":" in package:
-            require_native([package.rsplit(":", 1)[1]], arch.value)
+            require_native(
+                [canonical_package_architecture(package.rsplit(":", 1)[1])], arch.value
+            )
         require_native(asset_architectures(package) or [arch.value], arch.value)
     if manager == "apt":
         for package in packages:
@@ -83,13 +97,14 @@ def native_packages(packages: list[str], manager: str) -> None:
                 raise ArchitectureError(
                     f"No available native candidate for {package}; configure a supported repository first"
                 )
-            for value in fields:
-                if value != "all":
-                    require_native([value], arch.value)
+            _require_native_candidate(package, fields, arch.value)
         apt_plan(packages)
     elif manager in {"dnf", "zypper", "pacman", "eopkg"}:
         commands = {
-            "dnf": ["dnf", "--cacheonly", "repoquery", "--qf", "%{arch}"],
+            # dnf5 concatenates the queryformat output of all matching
+            # candidates without a separator; the trailing newline keeps one
+            # label per candidate line on dnf4 and dnf5 alike.
+            "dnf": ["dnf", "--cacheonly", "repoquery", "--qf", "%{arch}\n"],
             "zypper": ["zypper", "--no-refresh", "info"],
             "pacman": ["pacman", "-Si"],
             "eopkg": ["eopkg", "info"],
@@ -117,11 +132,40 @@ def native_packages(packages: list[str], manager: str) -> None:
                 raise ArchitectureError(
                     f"Architecture metadata unavailable for {package}; use an inspected source-build route"
                 )
-            for value in values:
-                if value not in {"all", "any", "noarch"}:
-                    require_native([value], arch.value)
+            _require_native_candidate(package, values, arch.value)
     else:
         raise ArchitectureError("Unsupported package preflight backend")
+
+
+def _require_native_candidate(
+    package: str, values: Iterable[str], host_arch: str
+) -> None:
+    """Require one native or arch-independent candidate in manager metadata.
+
+    Candidate listings (apt-cache show, pacman -Si, dnf repoquery) include
+    foreign-ISA siblings of multilib/multiarch same-name packages that the
+    manager never selects for a bare name; explicit foreign requests are
+    refused by native_packages' suffix check. Labels go through the ISA
+    authority: manager aliases (amd64) and microarchitecture levels
+    (canonical_package_architecture) both count as native x86_64 evidence.
+    """
+    host = normalize(host_arch).value
+    candidates: set[str] = set()
+    for value in values:
+        value = value.strip()
+        if not value or value in {"all", "any", "noarch"}:
+            continue
+        token = canonical_package_architecture(value)
+        try:
+            candidates.add(normalize(token).value)
+        except ArchitectureError:
+            candidates.add(token)
+    if not candidates or host in candidates:
+        return
+    raise ArchitectureError(
+        f"No native candidate for {package}: host={host}, "
+        f"available={', '.join(sorted(candidates))}"
+    )
 
 
 def snap_packages(packages: list[str]) -> None:
