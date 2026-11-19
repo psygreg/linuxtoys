@@ -59,12 +59,45 @@ fi
 sudo_rq
 rusticl_in || exit 1
 
+# Rusticl opens the DRI render nodes directly, which are root:render 0660 on
+# Debian-family systems (card nodes root:video); desktop seat ACLs do not
+# cover every context, such as SSH or remote sessions. Grant the invoking
+# user both groups like the ROCm installer does; harmless if already a
+# member, effective for the post-reboot session (this script requires one).
+if ! sudo_ usermod -aG render,video "$USER"; then
+    warn "Could not add user '$USER' to the render and video groups."
+fi
+
 # Some distros install ICDs under /usr/share rather than /etc.
 icd=$(find /etc/OpenCL/vendors /usr/share/OpenCL/vendors -name '*rusticl*.icd' -print -quit 2>/dev/null)
 if [[ -z "$icd" || ! -r "$icd" ]]; then
     nonfatal "The installed Mesa package does not provide a Rusticl OpenCL ICD."
     exit 1
 fi
+
+# Verify Rusticl lists at least one OpenCL device. The direct attempt runs as
+# the invoking user on a render node the session can already open. When no
+# node is openable in this session, the membership granted above only applies
+# after re-login, so fall back to the render group (sg honors it immediately)
+# and finally to root, which ignores node permissions entirely.
+# $1 = ICD file, $2 = backend list, $3 = render-node glob (test override).
+rusticl_verify () {
+    local icd="$1" backends="$2" glob="${3:-/dev/dri/renderD*}"
+    local node out=""
+    # shellcheck disable=SC2086  # word splitting is the glob expansion
+    for node in $glob; do
+        [[ -e "$node" && -r "$node" && -w "$node" ]] || continue
+        out=$(OCL_ICD_VENDORS="$icd" clinfo -l 2>&1) || out=""
+        grep -q "Device #" <<< "$out" && break
+    done
+    grep -q "Device #" <<< "$out" && { printf '%s\n' "$out"; return 0; }
+    if command -v sg >/dev/null 2>&1; then
+        out=$(OCL_ICD_VENDORS="$icd" sg render -c 'clinfo -l' 2>&1) || out=""
+        grep -q "Device #" <<< "$out" && { printf '%s\n' "$out"; return 0; }
+    fi
+    sudo_ env OCL_ICD_VENDORS="$icd" RUSTICL_ENABLE="$backends" clinfo -l 2>&1 || true
+    return 0
+}
 
 # Replace our setting on repeated runs; preserve unrelated environment settings.
 # Remove the Rusticl-only loader override used by older LinuxToys installers,
@@ -77,7 +110,7 @@ export RUSTICL_ENABLE="$backends"
 if [[ "${OCL_ICD_VENDORS:-}" == /etc/OpenCL/vendors/rusticl.icd ]]; then
     unset OCL_ICD_VENDORS
 fi
-devices=$(OCL_ICD_VENDORS="$icd" clinfo -l) || exit 1
+devices=$(rusticl_verify "$icd" "$backends")
 printf '%s\n' "$devices"
 if ! grep -q "Device #" <<< "$devices"; then
     nonfatal "Rusticl is installed but does not expose an OpenCL device. Check the Mesa version and GPU permissions."
