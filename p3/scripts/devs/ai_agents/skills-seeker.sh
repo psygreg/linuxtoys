@@ -23,7 +23,21 @@ _lang_
 : "${_skills_choose_agent_title:=Choose agent}"
 : "${_skills_search_title:=Skills Seeker}"
 : "${_skills_search_text:=Search for skills:}"
-: "${_skills_error_invalid:=The selected skill contains characters that are not allowed in skill sources or ids.}"
+: "${_skills_error_invalid_skill:=The selected skill contains characters that are not allowed in skill sources or ids.}"
+: "${_skills_error_fetch:=Internet connection is required to search and browse skills.}"
+: "${_skills_error_parse:=Failed to parse skills data.}"
+: "${_skills_no_results:=No skills found for your search.}"
+: "${_skills_error_no_source:=Could not determine skill source.}"
+: "${_skills_no_agents:=No supported AI agents detected on this system.}"
+: "${_skills_confirm_title:=Install skill?}"
+: "${_skills_confirm_msg:=Do you want to install this skill for the selected agent?}"
+: "${_skills_agent_label:=Agent}"
+: "${_skills_success_msg:=Skill installed successfully!}"
+: "${_skills_error_install:=Installation failed.}"
+: "${_skills_error_list:=Could not list installed skills.}"
+: "${_skills_no_installed:=No skills installed yet.}"
+: "${_skills_installed_title:=Installed}"
+: "${_skills_cache_cleared:=Skills cache cleared.}"
 : "${_skills_detail_title:=Skill details}"
 : "${_skills_col_installs:=Installs}"
 : "${_skills_files_label:=Files}"
@@ -242,7 +256,7 @@ _install_skill() {
     # option-style arguments (leading '-') and every shell metacharacter
     # are refused before the values are ever expanded.
     if ! _validate_skill_token "$source" || ! _validate_skill_token "$slug"; then
-        zeninf "$_skills_error_invalid" 2>/dev/null || echo "$_skills_error_invalid"
+        zeninf "$_skills_error_invalid_skill" 2>/dev/null || echo "$_skills_error_invalid_skill"
         return 1
     fi
     local agents=()

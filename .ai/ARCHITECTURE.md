@@ -214,7 +214,7 @@ The catalog is **data, not code**: one `.sh` per app plus JSON/metadata. Headers
 - `category-info.txt` per directory: `ICON:` + `description: <i18n key>`.
 - `repos.json` + `lists/*.json`: repository/app entries (source URLs, screenshots, descriptions.json per list with translated long descriptions, hooks under `scripts/lists/<app>/*-pre.sh`/`-post.sh`); git-type repos are resolved via `git-db.json` (built by `dev/git_db.py`).
 - `scripts/sysup.sh` + `scripts/sys/` — system-update and driver flows; `scripts/lists/` — upstream hooks.
-- i18n: `p3/libs/lang/<code>.json` (app strings, plus the bash-side guard/route refusal strings read by `packages.bash` through jq) + `<code>.lib` (bash message strings), ~58 languages.
+- i18n: `p3/libs/lang/<code>.json` (app strings, plus the bash-side guard/route refusal strings read by `packages.bash` through jq) + `<code>.lib` (bash message strings — generic `msgNNN`/alias stores plus named per-feature dialog blocks, e.g. the Skills Seeker's `_skills_*` set, each backed by inline English floors in the script itself), ~58 languages.
 
 ## 6. Bash core libraries (`p3/libs/*.bash`)
 
