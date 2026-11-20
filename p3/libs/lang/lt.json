@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Nėra vietinio FUSE 2 kandidato; prieš diegdami šį AppImage, sukonfigūruokite palaikomą saugyklą",
   "aur_arch_unreadable": "PKGBUILD: arch masyvo nepavyko perskaityti statiškai, todėl nepavyko patvirtinti aarch64 suderinamumo",
   "aur_arch_empty": "PKGBUILD: arch masyvas tuščias, todėl nepavyko patvirtinti aarch64 suderinamumo",
-  "aur_arch_no_port": "PKGBUILD: arch masyvas deklaruoja (${archs}) be aarch64 prievado; šis paketas nepalaiko aarch64"
+  "aur_arch_no_port": "PKGBUILD: arch masyvas deklaruoja (${archs}) be aarch64 prievado; šis paketas nepalaiko aarch64",
+  "badge_tooltip_official": "Oficialiai platinama LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, patvirtinta kūrėjo",
+  "badge_tooltip_curated": "Atrinkta LinuxToys",
+  "badge_tooltip_native": "Natyvinė paketų saugykla",
+  "badge_tooltip_appimage": "AppImage bendruomenės katalogas",
+  "badge_tooltip_aur": "Arch naudotojų saugykla"
 }

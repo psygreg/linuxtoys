@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "ለFUSE 2 የወጥ አማራጭ የለም፦ ይህን AppImage ከመጫን በፊት የሚደገፍ ማከማቻ ያዘጋጁ።",
   "aur_arch_unreadable": "PKGBUILD፦ የarch ደርደርን (array) በቀጥታ ማንበብ አልተቻለም፣ ስለዚህ ከaarch64 ጋር መስማማት ሊረጋገጥ አልቻለም።",
   "aur_arch_empty": "PKGBUILD፦ የarch ደርደር ባዶ ነው፣ ስለዚህ ከaarch64 ጋር መስማማት ሊረጋገጥ አልቻለም።",
-  "aur_arch_no_port": "PKGBUILD፦ የarch ደርደር የaarch64 በር ሳይኖረው (${archs}) አስታውቋል፦ ይህ ጥቅል aarch64ን አይደግፍም።"
+  "aur_arch_no_port": "PKGBUILD፦ የarch ደርደር የaarch64 በር ሳይኖረው (${archs}) አስታውቋል፦ ይህ ጥቅል aarch64ን አይደግፍም።",
+  "badge_tooltip_official": "በLinuxToys በኦፊሴላዊ ሁኔታ የተሰራጫል",
+  "badge_tooltip_flathub_verified": "Flathub፣ በገንቢው የተረጋገጠ",
+  "badge_tooltip_curated": "በLinuxToys የተመረጠ",
+  "badge_tooltip_native": "የተለመደ የፓኬጅ ማከማቻ",
+  "badge_tooltip_appimage": "የAppImage የማህበረሰብ መዝገብ",
+  "badge_tooltip_aur": "የArch ተጠቃሚ ማከማቻ"
 }

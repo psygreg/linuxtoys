@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "FUSE 2 uchun mahalliy nomzod mavjud emas; bu AppImage'ni o'rnatishdan oldin qo'llab-quvvatlanadigan omborni sozlang",
   "aur_arch_unreadable": "PKGBUILD: arch massivini statik o'qib bo'lmadi, shuning uchun aarch64 mosligi tasdiqlanmadi",
   "aur_arch_empty": "PKGBUILD: arch massivi bo'sh, shuning uchun aarch64 mosligi tasdiqlanmadi",
-  "aur_arch_no_port": "PKGBUILD: arch massivi aarch64 portsiz (${archs}) deb e'lon qiladi; bu paket aarch64'ni qo'llab-quvvatlamaydi"
+  "aur_arch_no_port": "PKGBUILD: arch massivi aarch64 portsiz (${archs}) deb e'lon qiladi; bu paket aarch64'ni qo'llab-quvvatlamaydi",
+  "badge_tooltip_official": "LinuxToys tomonidan rasman tarqatiladi",
+  "badge_tooltip_flathub_verified": "Flathub, dasturchi tomonidan tasdiqlangan",
+  "badge_tooltip_curated": "LinuxToys tomonidan tanlangan",
+  "badge_tooltip_native": "Mahalliy paket repozitoriyasi",
+  "badge_tooltip_appimage": "AppImage hamjamiyat katalogi",
+  "badge_tooltip_aur": "Arch foydalanuvchilari repozitoriyasi"
 }

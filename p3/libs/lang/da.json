@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Ingen native FUSE 2-kandidat er tilgængelig; konfigurer et understøttet arkiv, inden du installerer dette AppImage",
   "aur_arch_unreadable": "PKGBUILD: arch-matrixen kunne ikke læses statisk, så aarch64-kompatibilitet kunne ikke bekræftes",
   "aur_arch_empty": "PKGBUILD: arch-matrixen er tom, så aarch64-kompatibilitet kunne ikke bekræftes",
-  "aur_arch_no_port": "PKGBUILD: arch-matrixen erklærer (${archs}) uden en aarch64-port; denne pakke understøtter ikke aarch64"
+  "aur_arch_no_port": "PKGBUILD: arch-matrixen erklærer (${archs}) uden en aarch64-port; denne pakke understøtter ikke aarch64",
+  "badge_tooltip_official": "Officielt distribueret af LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, verificeret af udvikleren",
+  "badge_tooltip_curated": "Kureret af LinuxToys",
+  "badge_tooltip_native": "Native pakke-repository",
+  "badge_tooltip_appimage": "AppImage-fællesskabskatalog",
+  "badge_tooltip_aur": "Arch-brugerrepository"
 }

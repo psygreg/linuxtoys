@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "ネイティブな FUSE 2 の候補がありません。この AppImage をインストールする前に、対応するリポジトリを設定してください",
   "aur_arch_unreadable": "PKGBUILD：arch 配列を静的に読み取れないため、aarch64 との互換性を検証できませんでした",
   "aur_arch_empty": "PKGBUILD：arch 配列が空のため、aarch64 との互換性を検証できませんでした",
-  "aur_arch_no_port": "PKGBUILD：arch 配列は (${archs}) を宣言していますが、aarch64 ポートがないため、このパッケージは aarch64 に対応していません"
+  "aur_arch_no_port": "PKGBUILD：arch 配列は (${archs}) を宣言していますが、aarch64 ポートがないため、このパッケージは aarch64 に対応していません",
+  "badge_tooltip_official": "LinuxToys による公式配布",
+  "badge_tooltip_flathub_verified": "Flathub、開発者確認済み",
+  "badge_tooltip_curated": "LinuxToys による厳選",
+  "badge_tooltip_native": "ネイティブパッケージリポジトリ",
+  "badge_tooltip_appimage": "AppImage コミュニティカタログ",
+  "badge_tooltip_aur": "Arch ユーザーリポジトリ"
 }

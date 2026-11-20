@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Ingen nativ FUSE 2-kandidat är tillgänglig; konfigurera ett stödt arkiv innan du installerar detta AppImage",
   "aur_arch_unreadable": "PKGBUILD: arch-vektorn kunde inte läsas statiskt, därför kunde aarch64-kompatibilitet inte verifieras",
   "aur_arch_empty": "PKGBUILD: arch-vektorn är tom, därför kunde aarch64-kompatibilitet inte verifieras",
-  "aur_arch_no_port": "PKGBUILD: arch-vektorn deklarerar (${archs}) utan en aarch64-port; detta paket stöder inte aarch64"
+  "aur_arch_no_port": "PKGBUILD: arch-vektorn deklarerar (${archs}) utan en aarch64-port; detta paket stöder inte aarch64",
+  "badge_tooltip_official": "Distribueras officiellt av LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, verifierad av utvecklaren",
+  "badge_tooltip_curated": "Kurerad av LinuxToys",
+  "badge_tooltip_native": "Inbyggt paketarkiv",
+  "badge_tooltip_appimage": "AppImage-gemenskapens katalog",
+  "badge_tooltip_aur": "Arch-användararkiv"
 }

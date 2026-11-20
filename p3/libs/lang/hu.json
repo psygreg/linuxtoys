@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Nincs elérhető natív FUSE 2 jelölt; ezen AppImage telepítése előtt állítson be egy támogatott tárolót",
   "aur_arch_unreadable": "PKGBUILD: az arch tömböt nem lehetett statikusan beolvasni, ezért az aarch64-kompatibilitás nem ellenőrizhető",
   "aur_arch_empty": "PKGBUILD: az arch tömb üres, ezért az aarch64-kompatibilitás nem ellenőrizhető",
-  "aur_arch_no_port": "PKGBUILD: az arch tömb aarch64 port nélkül deklarálja (${archs}); ez a csomag nem támogatja az aarch64-et"
+  "aur_arch_no_port": "PKGBUILD: az arch tömb aarch64 port nélkül deklarálja (${archs}); ez a csomag nem támogatja az aarch64-et",
+  "badge_tooltip_official": "Hivatalosan a LinuxToys terjeszti",
+  "badge_tooltip_flathub_verified": "Flathub, fejlesztő által ellenőrzött",
+  "badge_tooltip_curated": "A LinuxToys válogatta",
+  "badge_tooltip_native": "Natív csomagtároló",
+  "badge_tooltip_appimage": "AppImage közösségi katalógus",
+  "badge_tooltip_aur": "Arch felhasználói tároló"
 }

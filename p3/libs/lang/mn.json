@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "FUSE 2-ийн нутгийн нэр дэвшигч байхгүй; энэ AppImage-ийг суулгахаас өмнө дэмжигдсэн сан тохируулна уу",
   "aur_arch_unreadable": "PKGBUILD: arch массивийг статикаар уншиж чадсангүй, тиймээс aarch64-той нийцлийг баталгаажуулж чадсангүй",
   "aur_arch_empty": "PKGBUILD: arch массив хоосон байна, тиймээс aarch64-той нийцлийг баталгаажуулж чадсангүй",
-  "aur_arch_no_port": "PKGBUILD: arch массив aarch64 портгүйгээр (${archs}) зарлаж байна; энэ багц aarch64-ийг дэмждэггүй"
+  "aur_arch_no_port": "PKGBUILD: arch массив aarch64 портгүйгээр (${archs}) зарлаж байна; энэ багц aarch64-ийг дэмждэггүй",
+  "badge_tooltip_official": "LinuxToys албан ёсоор түгээдэг",
+  "badge_tooltip_flathub_verified": "Flathub, хөгжүүлэгч баталгаажуулсан",
+  "badge_tooltip_curated": "LinuxToys сонгон авсан",
+  "badge_tooltip_native": "Натив багцын репозитор",
+  "badge_tooltip_appimage": "AppImage нийгэмлэгийн каталог",
+  "badge_tooltip_aur": "Arch хэрэглэгчийн репозитор"
 }

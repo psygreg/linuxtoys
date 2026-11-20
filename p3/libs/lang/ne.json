@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "FUSE 2 को कुनै नेटिभ उम्मेदवार उपलब्ध छैन; यो AppImage स्थापना गर्नु अघि समर्थित भण्डार कन्फिगर गर्नुहोस्",
   "aur_arch_unreadable": "PKGBUILD: arch एरे स्थिर रूपमा पढ्न सकिएन, त्यसैले aarch64 अनुकूलता प्रमाणित गर्न सकिएन",
   "aur_arch_empty": "PKGBUILD: arch एरे खाली छ, त्यसैले aarch64 अनुकूलता प्रमाणित गर्न सकिएन",
-  "aur_arch_no_port": "PKGBUILD: arch एरेले aarch64 पोर्ट बिना (${archs}) घोषणा गर्दछ; यो प्याकेजले aarch64 समर्थन गर्दैन"
+  "aur_arch_no_port": "PKGBUILD: arch एरेले aarch64 पोर्ट बिना (${archs}) घोषणा गर्दछ; यो प्याकेजले aarch64 समर्थन गर्दैन",
+  "badge_tooltip_official": "LinuxToys द्वारा आधिकारिक रूपमा वितरित",
+  "badge_tooltip_flathub_verified": "Flathub, विकासकर्ताद्वारा प्रमाणित",
+  "badge_tooltip_curated": "LinuxToys द्वारा छानिएको",
+  "badge_tooltip_native": "स्थानीय प्याकेज भण्डार",
+  "badge_tooltip_appimage": "AppImage समुदाय सूची",
+  "badge_tooltip_aur": "Arch प्रयोगकर्ता भण्डार"
 }

@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "ไม่มีตัวเลือก FUSE 2 แบบเนทีฟ โปรดกำหนดค่าคลังที่รองรับก่อนติดตั้ง AppImage นี้",
   "aur_arch_unreadable": "PKGBUILD: อ่านอาร์เรย์ arch แบบคงที่ไม่ได้ จึงตรวจสอบความเข้ากันได้กับ aarch64 ไม่ได้",
   "aur_arch_empty": "PKGBUILD: อาร์เรย์ arch ว่างเปล่า จึงตรวจสอบความเข้ากันได้กับ aarch64 ไม่ได้",
-  "aur_arch_no_port": "PKGBUILD: อาร์เรย์ arch ระบุ (${archs}) โดยไม่มีพอร์ต aarch64 แพ็กเกจนี้ไม่รองรับ aarch64"
+  "aur_arch_no_port": "PKGBUILD: อาร์เรย์ arch ระบุ (${archs}) โดยไม่มีพอร์ต aarch64 แพ็กเกจนี้ไม่รองรับ aarch64",
+  "badge_tooltip_official": "แจกจ่ายอย่างเป็นทางการโดย LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub ยืนยันโดยนักพัฒนาแล้ว",
+  "badge_tooltip_curated": "คัดสรรโดย LinuxToys",
+  "badge_tooltip_native": "ที่เก็บแพ็กเกจในตัว",
+  "badge_tooltip_appimage": "แคตตาล็อกชุมชน AppImage",
+  "badge_tooltip_aur": "คลังผู้ใช้ Arch"
 }

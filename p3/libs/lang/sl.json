@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Ni na voljo izvornega kandidata za FUSE 2; pred namestitvijo tega AppImage nastavite podprto shrambo",
   "aur_arch_unreadable": "PKGBUILD: polja arch ni bilo mogoče statično prebrati, zato združljivosti z aarch64 ni bilo mogoče preveriti",
   "aur_arch_empty": "PKGBUILD: polje arch je prazno, zato združljivosti z aarch64 ni bilo mogoče preveriti",
-  "aur_arch_no_port": "PKGBUILD: polje arch deklarira (${archs}) brez vrata aarch64; ta paket ne podpira aarch64"
+  "aur_arch_no_port": "PKGBUILD: polje arch deklarira (${archs}) brez vrata aarch64; ta paket ne podpira aarch64",
+  "badge_tooltip_official": "Uradno razširjeno s strani LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, preverjeno s strani razvijalca",
+  "badge_tooltip_curated": "Izbrano s strani LinuxToys",
+  "badge_tooltip_native": "Izvorni repozitorij paketov",
+  "badge_tooltip_appimage": "Katalog skupnosti AppImage",
+  "badge_tooltip_aur": "Uporabniški repozitorij Arch"
 }

@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "FUSE 2-ის მშობლიური კანდიდატი მიუწვდომელია; დააყენეთ მხარდაჭერილი საცავი ამ AppImage-ის დაყენებამდე",
   "aur_arch_unreadable": "PKGBUILD: arch მასივი სტატიურად ვერ წაიკითხა, ამიტომ aarch64 თავსებადობა ვერ დადასტურდა",
   "aur_arch_empty": "PKGBUILD: arch მასივი ცარიელია, ამიტომ aarch64 თავსებადობა ვერ დადასტურდა",
-  "aur_arch_no_port": "PKGBUILD: arch მასივი აცხადებს (${archs}) aarch64 პორტის გარეშე; ეს პაკეტი aarch64-ს არ უჭერს მხარს"
+  "aur_arch_no_port": "PKGBUILD: arch მასივი აცხადებს (${archs}) aarch64 პორტის გარეშე; ეს პაკეტი aarch64-ს არ უჭერს მხარს",
+  "badge_tooltip_official": "ოფიციალურად ვრცელდება LinuxToys-ის მიერ",
+  "badge_tooltip_flathub_verified": "Flathub, დეველოპერის მიერ დადასტურებული",
+  "badge_tooltip_curated": "შერჩეულია LinuxToys-ის მიერ",
+  "badge_tooltip_native": "ნატიური პაკეტების რეპოზიტორია",
+  "badge_tooltip_appimage": "AppImage-ის საზოგადოების კატალოგი",
+  "badge_tooltip_aur": "Arch-ის მომხმარებელთა რეპოზიტორია"
 }

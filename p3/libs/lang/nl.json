@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Er is geen native FUSE 2-kandidaat beschikbaar; configureer een ondersteunde repository voordat u deze AppImage installeert",
   "aur_arch_unreadable": "PKGBUILD: de arch-array kon niet statisch worden gelezen, dus de aarch64-compatibiliteit kon niet worden geverifieerd",
   "aur_arch_empty": "PKGBUILD: de arch-array is leeg, dus de aarch64-compatibiliteit kon niet worden geverifieerd",
-  "aur_arch_no_port": "PKGBUILD: de arch-array verklaart (${archs}) zonder aarch64-poort; dit pakket ondersteunt aarch64 niet"
+  "aur_arch_no_port": "PKGBUILD: de arch-array verklaart (${archs}) zonder aarch64-poort; dit pakket ondersteunt aarch64 niet",
+  "badge_tooltip_official": "Officieel gedistribueerd door LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, door de ontwikkelaar geverifieerd",
+  "badge_tooltip_curated": "Geselecteerd door LinuxToys",
+  "badge_tooltip_native": "Native pakketrepository",
+  "badge_tooltip_appimage": "AppImage-communitycatalogus",
+  "badge_tooltip_aur": "Arch-gebruikersrepository"
 }

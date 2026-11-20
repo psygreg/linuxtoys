@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "FUSE 2 အတွက် မူရင်းကိုယ်စားလှယ် မရနိုင်ပါ; ဤ AppImage ကို ထည့်သွင်းမီ ပံ့ပိုးထားသော စတိုးတစ်ခုကို ပြင်ဆင်ပါ",
   "aur_arch_unreadable": "PKGBUILD- arch array ကို static အားဖြင့် ဖတ်၍မရပါ၊ ထို့ကြောင့် aarch64 နှင့် ကိုက်ညီမှုကို စစ်ဆေး၍မရပါ",
   "aur_arch_empty": "PKGBUILD- arch array သည် ဗလာဖြစ်သည်၊ ထို့ကြောင့် aarch64 နှင့် ကိုက်ညီမှုကို စစ်ဆေး၍မရပါ",
-  "aur_arch_no_port": "PKGBUILD- arch array သည် aarch64 port မရှိဘဲ (${archs}) ကို ကြေညာသည်၊ ဤ package သည် aarch64 ကို ပံ့ပိုးမထားပါ"
+  "aur_arch_no_port": "PKGBUILD- arch array သည် aarch64 port မရှိဘဲ (${archs}) ကို ကြေညာသည်၊ ဤ package သည် aarch64 ကို ပံ့ပိုးမထားပါ",
+  "badge_tooltip_official": "LinuxToys မှ တရားဝင် ဖြန့်ဝေသည်",
+  "badge_tooltip_flathub_verified": "Flathub၊ ရေးဆွဲသူမှ အတည်ပြုထားသည်",
+  "badge_tooltip_curated": "LinuxToys မှ ရွေးချယ်ထားသည်",
+  "badge_tooltip_native": "မူရင်း ပက်ကတ် သိုလှောင်ရာ",
+  "badge_tooltip_appimage": "AppImage အသိုင်းအဝိုင်း စာရင်းညွှန်း",
+  "badge_tooltip_aur": "Arch အသုံးပြုသူ သိုလှောင်ရာ"
 }

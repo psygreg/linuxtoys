@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Δεν υπάρχει διαθέσιμος εγγενής υποψήφιος για το FUSE 2· ρυθμίστε ένα υποστηριζόμενο αποθετήριο πριν από την εγκατάσταση αυτού του AppImage",
   "aur_arch_unreadable": "PKGBUILD: ο πίνακας arch δεν μπόρεσε να διαβαστεί στατικά, επομένως η συμβατότητα με aarch64 δεν μπόρεσε να επαληθευτεί",
   "aur_arch_empty": "PKGBUILD: ο πίνακας arch είναι κενός, επομένως η συμβατότητα με aarch64 δεν μπόρεσε να επαληθευτεί",
-  "aur_arch_no_port": "PKGBUILD: ο πίνακας arch δηλώνει (${archs}) χωρίς θύρα aarch64· αυτό το πακέτο δεν υποστηρίζει aarch64"
+  "aur_arch_no_port": "PKGBUILD: ο πίνακας arch δηλώνει (${archs}) χωρίς θύρα aarch64· αυτό το πακέτο δεν υποστηρίζει aarch64",
+  "badge_tooltip_official": "Διανέμεται επίσημα από το LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, επαληθευμένο από τον προγραμματιστή",
+  "badge_tooltip_curated": "Επιλεγμένο από το LinuxToys",
+  "badge_tooltip_native": "Εγγενές αποθετήριο πακέτων",
+  "badge_tooltip_appimage": "Κατάλογος της κοινότητας AppImage",
+  "badge_tooltip_aur": "Αποθετήριο χρηστών Arch"
 }

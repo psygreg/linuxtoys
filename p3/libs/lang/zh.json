@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "没有可用的原生 FUSE 2 候选；安装此 AppImage 之前，请先配置一个受支持的软件源",
   "aur_arch_unreadable": "PKGBUILD：无法静态读取 arch 数组，因此无法验证 aarch64 兼容性",
   "aur_arch_empty": "PKGBUILD：arch 数组为空，因此无法验证 aarch64 兼容性",
-  "aur_arch_no_port": "PKGBUILD：arch 数组声明了 (${archs})，缺少 aarch64 移植；该软件包不支持 aarch64"
+  "aur_arch_no_port": "PKGBUILD：arch 数组声明了 (${archs})，缺少 aarch64 移植；该软件包不支持 aarch64",
+  "badge_tooltip_official": "由 LinuxToys 官方分发",
+  "badge_tooltip_flathub_verified": "Flathub，已通过开发者验证",
+  "badge_tooltip_curated": "由 LinuxToys 精选",
+  "badge_tooltip_native": "系统软件源",
+  "badge_tooltip_appimage": "AppImage 社区目录",
+  "badge_tooltip_aur": "Arch 用户仓库"
 }

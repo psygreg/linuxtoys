@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "FUSE 2 کا کوئی مقامی امیدوار دستیاب نہیں؛ اس AppImage کو انسٹال کرنے سے پہلے ایک معاون ذخیرہ ترتیب دیں",
   "aur_arch_unreadable": "PKGBUILD: arch ایرے کو جامد طور پر پڑھا نہیں جا سکا، اس لیے aarch64 مطابقت کی تصدیق نہیں ہو سکی",
   "aur_arch_empty": "PKGBUILD: arch ایرے خالی ہے، اس لیے aarch64 مطابقت کی تصدیق نہیں ہو سکی",
-  "aur_arch_no_port": "PKGBUILD: arch ایرے نے aarch64 پورٹ کے بغیر (${archs}) کا اعلان کیا؛ یہ پیکج aarch64 کی معاونت نہیں کرتا"
+  "aur_arch_no_port": "PKGBUILD: arch ایرے نے aarch64 پورٹ کے بغیر (${archs}) کا اعلان کیا؛ یہ پیکج aarch64 کی معاونت نہیں کرتا",
+  "badge_tooltip_official": "LinuxToys کی جانب سے باضابطہ طور پر تقسیم کردہ",
+  "badge_tooltip_flathub_verified": "Flathub، ڈویلپر کی جانب سے تصدیق شدہ",
+  "badge_tooltip_curated": "LinuxToys کی جانب سے منتخب کردہ",
+  "badge_tooltip_native": "مقامی پیکج ریپازٹری",
+  "badge_tooltip_appimage": "AppImage کمیونٹی کیٹلاگ",
+  "badge_tooltip_aur": "Arch یوزر ریپازٹری"
 }

@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Natiivia FUSE 2 -ehdokasta ei ole saatavilla; määritä tuettu ohjelmavarasto ennen tämän AppImagen asentamista",
   "aur_arch_unreadable": "PKGBUILD: arch-taulukkoa ei voitu lukea staattisesti, joten aarch64-yhteensopivuutta ei voitu vahvistaa",
   "aur_arch_empty": "PKGBUILD: arch-taulukko on tyhjä, joten aarch64-yhteensopivuutta ei voitu vahvistaa",
-  "aur_arch_no_port": "PKGBUILD: arch-taulukko julistaa (${archs}) ilman aarch64-porttia; tämä paketti ei tue aarch64:ää"
+  "aur_arch_no_port": "PKGBUILD: arch-taulukko julistaa (${archs}) ilman aarch64-porttia; tämä paketti ei tue aarch64:ää",
+  "badge_tooltip_official": "Jaettu virallisesti LinuxToysin toimesta",
+  "badge_tooltip_flathub_verified": "Flathub, kehittäjän vahvistama",
+  "badge_tooltip_curated": "LinuxToysin kuratoima",
+  "badge_tooltip_native": "Natiivi pakettivarasto",
+  "badge_tooltip_appimage": "AppImage-yhteisön luettelo",
+  "badge_tooltip_aur": "Arch-käyttäjävarasto"
 }

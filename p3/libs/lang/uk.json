@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Немає доступного рідного кандидата для FUSE 2; налаштуйте підтримуваний репозиторій перед встановленням цього AppImage",
   "aur_arch_unreadable": "PKGBUILD: масив arch не вдалося прочитати статично, тому сумісність з aarch64 не вдалося перевірити",
   "aur_arch_empty": "PKGBUILD: масив arch порожній, тому сумісність з aarch64 не вдалося перевірити",
-  "aur_arch_no_port": "PKGBUILD: масив arch оголошує (${archs}) без порту aarch64; цей пакет не підтримує aarch64"
+  "aur_arch_no_port": "PKGBUILD: масив arch оголошує (${archs}) без порту aarch64; цей пакет не підтримує aarch64",
+  "badge_tooltip_official": "Офіційно поширюється LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, підтверджено розробником",
+  "badge_tooltip_curated": "Відібрано LinuxToys",
+  "badge_tooltip_native": "Нативний репозиторій пакетів",
+  "badge_tooltip_appimage": "Каталог спільноти AppImage",
+  "badge_tooltip_aur": "Користувацький репозиторій Arch"
 }

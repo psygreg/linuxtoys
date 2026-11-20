@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "FUSE 2-ի բնիկ թեկնածու չկա. տեղադրելուց առաջ կարգավորեք աջակցվող պահեստ",
   "aur_arch_unreadable": "PKGBUILD. arch զանգվածը հնարավոր չեղավ ստատիկ կարդալ, ուստի aarch64 համատեղելիությունը չհաստատվեց",
   "aur_arch_empty": "PKGBUILD. arch զանգվածը դատարկ է, ուստի aarch64 համատեղելիությունը չհաստատվեց",
-  "aur_arch_no_port": "PKGBUILD. arch զանգվածը հայտարարում է (${archs}) առանց aarch64 պորտի. այս փաթեթը չի աջակցում aarch64"
+  "aur_arch_no_port": "PKGBUILD. arch զանգվածը հայտարարում է (${archs}) առանց aarch64 պորտի. այս փաթեթը չի աջակցում aarch64",
+  "badge_tooltip_official": "Պաշտոնապես տարածվում է LinuxToys-ի կողմից",
+  "badge_tooltip_flathub_verified": "Flathub, ստուգված է ծրագրավորողի կողմից",
+  "badge_tooltip_curated": "Ընտրված է LinuxToys-ի կողմից",
+  "badge_tooltip_native": "Նատիվ փաթեթների պահեստ",
+  "badge_tooltip_appimage": "AppImage համայնքի կատալոգ",
+  "badge_tooltip_aur": "Arch-ի օգտատերերի պահեստ"
 }

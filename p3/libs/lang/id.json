@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Tidak ada kandidat FUSE 2 natif yang tersedia; konfigurasikan repositori yang didukung sebelum memasang AppImage ini",
   "aur_arch_unreadable": "PKGBUILD: larik (array) arch tidak dapat dibaca secara statis, sehingga kompatibilitas aarch64 tidak dapat diverifikasi",
   "aur_arch_empty": "PKGBUILD: larik arch kosong, sehingga kompatibilitas aarch64 tidak dapat diverifikasi",
-  "aur_arch_no_port": "PKGBUILD: larik arch menyatakan (${archs}) tanpa port aarch64; paket ini tidak mendukung aarch64"
+  "aur_arch_no_port": "PKGBUILD: larik arch menyatakan (${archs}) tanpa port aarch64; paket ini tidak mendukung aarch64",
+  "badge_tooltip_official": "Didistribusikan resmi oleh LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, terverifikasi pengembang",
+  "badge_tooltip_curated": "Dikurasi oleh LinuxToys",
+  "badge_tooltip_native": "Repositori paket asli",
+  "badge_tooltip_appimage": "Katalog komunitas AppImage",
+  "badge_tooltip_aur": "Repositori pengguna Arch"
 }

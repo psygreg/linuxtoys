@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "FUSE 2 का कोई नेटिव उम्मीदवार उपलब्ध नहीं है; यह AppImage इंस्टॉल करने से पहले एक समर्थित रिपॉज़िटरी सेट करें",
   "aur_arch_unreadable": "PKGBUILD: arch ऐरे को स्थिर रूप से नहीं पढ़ा जा सका, इसलिए aarch64 अनुकूलता सत्यापित नहीं हो सकी",
   "aur_arch_empty": "PKGBUILD: arch ऐरे खाली है, इसलिए aarch64 अनुकूलता सत्यापित नहीं हो सकी",
-  "aur_arch_no_port": "PKGBUILD: arch ऐरे aarch64 पोर्ट के बिना (${archs}) घोषित करता है; यह पैकेज aarch64 का समर्थन नहीं करता"
+  "aur_arch_no_port": "PKGBUILD: arch ऐरे aarch64 पोर्ट के बिना (${archs}) घोषित करता है; यह पैकेज aarch64 का समर्थन नहीं करता",
+  "badge_tooltip_official": "LinuxToys द्वारा आधिकारिक रूप से वितरित",
+  "badge_tooltip_flathub_verified": "Flathub, डेवलपर द्वारा सत्यापित",
+  "badge_tooltip_curated": "LinuxToys द्वारा चुना गया",
+  "badge_tooltip_native": "नेटिव पैकेज रिपॉजिटरी",
+  "badge_tooltip_appimage": "AppImage समुदाय कैटलॉग",
+  "badge_tooltip_aur": "Arch उपयोगकर्ता रिपॉजिटरी"
 }

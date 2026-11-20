@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Hakuna kigongo cha asili cha FUSE 2; sanidi hazina inayotumika kabla ya kusakinisha AppImage hii",
   "aur_arch_unreadable": "PKGBUILD: safu (array) ya arch haikusomwa kwa statiki, kwa hivo ulinganifu na aarch64 haukuthibitishwa",
   "aur_arch_empty": "PKGBUILD: safu ya arch ni tupu, kwa hivo ulinganifu na aarch64 haukuthibitishwa",
-  "aur_arch_no_port": "PKGBUILD: safu ya arch inatangaza (${archs}) bila bandari ya aarch64; kifurushi hiki hauaungi mkono aarch64"
+  "aur_arch_no_port": "PKGBUILD: safu ya arch inatangaza (${archs}) bila bandari ya aarch64; kifurushi hiki hauaungi mkono aarch64",
+  "badge_tooltip_official": "Husambazwa rasmi na LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, imethibitishwa na msanidi programu",
+  "badge_tooltip_curated": "Ilichaguliwa na LinuxToys",
+  "badge_tooltip_native": "Ghala la asili la vifurushi",
+  "badge_tooltip_appimage": "Katalogi ya jumuiya ya AppImage",
+  "badge_tooltip_aur": "Ghala la watumiaji wa Arch"
 }

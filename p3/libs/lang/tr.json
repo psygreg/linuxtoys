@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Kullanılabilir yerel FUSE 2 adayı yok; bu AppImage'i kurmadan önce desteklenen bir depo yapılandırın",
   "aur_arch_unreadable": "PKGBUILD: arch dizisi statik olarak okunamadı, bu nedenle aarch64 uyumluluğu doğrulanamadı",
   "aur_arch_empty": "PKGBUILD: arch dizisi boş, bu nedenle aarch64 uyumluluğu doğrulanamadı",
-  "aur_arch_no_port": "PKGBUILD: arch dizisi, aarch64 portu olmadan (${archs}) bildiriyor; bu paket aarch64'ü desteklemiyor"
+  "aur_arch_no_port": "PKGBUILD: arch dizisi, aarch64 portu olmadan (${archs}) bildiriyor; bu paket aarch64'ü desteklemiyor",
+  "badge_tooltip_official": "Resmî olarak LinuxToys tarafından dağıtılır",
+  "badge_tooltip_flathub_verified": "Flathub, geliştirici tarafından doğrulanmış",
+  "badge_tooltip_curated": "LinuxToys tarafından seçildi",
+  "badge_tooltip_native": "Yerel paket deposu",
+  "badge_tooltip_appimage": "AppImage Topluluk Kataloğu",
+  "badge_tooltip_aur": "Arch Kullanıcı Deposu"
 }

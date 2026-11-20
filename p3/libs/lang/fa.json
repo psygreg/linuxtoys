@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "هیچ گزینه بومی برای FUSE 2 موجود نیست؛ پیش از نصب این AppImage، یک مخزن پشتیبانی‌شده پیکربندی کنید",
   "aur_arch_unreadable": "PKGBUILD: آرایه arch به‌صورت ایستا خوانده نشد، بنابراین سازگاری با aarch64 تأیید نشد",
   "aur_arch_empty": "PKGBUILD: آرایه arch خالی است، بنابراین سازگاری با aarch64 تأیید نشد",
-  "aur_arch_no_port": "PKGBUILD: آرایه arch مقدار (${archs}) را بدون درگاه aarch64 اعلام می‌کند؛ این بسته از aarch64 پشتیبانی نمی‌کند"
+  "aur_arch_no_port": "PKGBUILD: آرایه arch مقدار (${archs}) را بدون درگاه aarch64 اعلام می‌کند؛ این بسته از aarch64 پشتیبانی نمی‌کند",
+  "badge_tooltip_official": "به‌طور رسمی توسط LinuxToys توزیع شده است",
+  "badge_tooltip_flathub_verified": "Flathub، تأییدشده توسط توسعه‌دهنده",
+  "badge_tooltip_curated": "منتخب LinuxToys",
+  "badge_tooltip_native": "مخزن بسته بومی",
+  "badge_tooltip_appimage": "کاتالوگ جامعه AppImage",
+  "badge_tooltip_aur": "مخزن کاربران Arch"
 }

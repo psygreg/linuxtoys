@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Nuk ka kandidat origjinal për FUSE 2; konfiguroni një depo të mbështetur përpara instalimit të këtij AppImage",
   "aur_arch_unreadable": "PKGBUILD: vargu (array) arch nuk mund të lexohej statikisht, kështu që përputhshmëria me aarch64 nuk mund të verifikohej",
   "aur_arch_empty": "PKGBUILD: vargu arch është bosh, kështu që përputhshmëria me aarch64 nuk mund të verifikohej",
-  "aur_arch_no_port": "PKGBUILD: vargu arch deklaron (${archs}) pa portën aarch64; ky paket nuk mbështet aarch64"
+  "aur_arch_no_port": "PKGBUILD: vargu arch deklaron (${archs}) pa portën aarch64; ky paket nuk mbështet aarch64",
+  "badge_tooltip_official": "Shpërndahet zyrtarisht nga LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, verifikuar nga zhvilluesi",
+  "badge_tooltip_curated": "Përzgjedhur nga LinuxToys",
+  "badge_tooltip_native": "Depo e natyshme e paketave",
+  "badge_tooltip_appimage": "Katalogu i komunitetit AppImage",
+  "badge_tooltip_aur": "Depoja e përdoruesve të Arch"
 }

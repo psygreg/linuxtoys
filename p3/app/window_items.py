@@ -4,6 +4,7 @@ from .gtk_common import Gdk, GLib, Gtk, load_scaled_pixbuf, widget_within
 from gi.repository import Pango
 from . import get_icon_path, compat, revert_helper, official_index, installed_packages
 from .gtk_dialogs import run_message_dialog
+from .source_badges import badge_tooltip_text
 from .updater.update_dialog import scripts_blocked_by_version
 from . import gui_rs
 
@@ -15,6 +16,68 @@ BADGE_EXCLUDED_IDS = {
     "sysup",
     "pdefaults",
 }
+
+# Widget-attribute keys carrying the badge hover-override state on a card.
+_BADGE_HOVER_ATTR = "_lt_badge_hover"
+_BADGE_HOVER_CONNECTED_ATTR = "_lt_badge_hover_connected"
+
+
+def _badge_zone_query(card, x, y, keyboard_mode, tooltip):
+    """query-tooltip handler answering with the badge inside its overlap zone.
+
+    GTK resolves the tooltip through the deepest child under the pointer and
+    then walks up the ancestors; inside the badge/card overlap zone that walk
+    lands on the card content, so the card's own description tooltip would
+    answer before the badge's tooltip is ever consulted. This user handler
+    runs before the widget's tooltip-text class closure: inside the badge
+    allocation it answers with the badge description, anywhere else it falls
+    through to the normal description tooltip.
+    """
+    if keyboard_mode:
+        return False
+    entry = getattr(card, _BADGE_HOVER_ATTR, None)
+    if not entry:
+        return False
+    badge, description = entry
+    try:
+        translated = badge.translate_coordinates(card, 0, 0)
+        allocation = badge.get_allocation()
+        if (
+            translated is not None
+            and allocation.width > 0
+            and allocation.height > 0
+            and translated[0] <= x < translated[0] + allocation.width
+            and translated[1] <= y < translated[1] + allocation.height
+        ):
+            # Returning True stops the emission before the tooltip-text class
+            # closure (GTK's boolean handled accumulator), so the card's own
+            # description cannot overwrite the badge description.
+            tooltip.set_text(description)
+            return True
+    except Exception:
+        return False
+    return False
+
+
+def attach_badge_hover_override(card, badge, description):
+    """Make the badge description win inside the badge/card overlap zone.
+
+    Cards carry their entry description as a tooltip on the EventBox, which is
+    what the GTK tooltip walk answers inside the zone where the corner badge
+    overlaps the card. Attaching this override to the card lets the badge
+    description answer whenever the pointer is inside the badge allocation,
+    while every other point keeps the entry description.
+
+    The handler re-reads the badge and description from ``card`` on every
+    query, so callers re-attach after featured-card rebinds that rebuild the
+    badge and the override stays current. Connecting is idempotent per card.
+    """
+    if card is None or badge is None or not description:
+        return
+    setattr(card, _BADGE_HOVER_ATTR, (badge, str(description)))
+    if not getattr(card, _BADGE_HOVER_CONNECTED_ATTR, False):
+        card.connect("query-tooltip", _badge_zone_query)
+        setattr(card, _BADGE_HOVER_CONNECTED_ATTR, True)
 
 
 class ItemWidgetFactory:
@@ -326,6 +389,7 @@ class ItemWidgetFactory:
             "icon_path": icon_path,
             "icon_name": icon_name,
             "badge_path": badge_path,
+            "badge_tooltip": badge_tooltip_text(badge_path, self.translations),
             "bold": bool(is_category_card),
             "removable": is_removable_script,
             "checklist": bool(checklist),
@@ -354,6 +418,18 @@ class ItemWidgetFactory:
         card_surface = gui_rs.card_child(event_box, "linuxtoys-native-surface")
         if card_surface is not None:
             event_box.card_surface = card_surface
+
+        # The source badge is drawn by Rust; its hover description is a
+        # translated Python concern, attached like the remove-button tooltip.
+        # The card-level override lets it answer inside the badge/card
+        # overlap zone, where the card description tooltip would otherwise
+        # win the GTK tooltip walk.
+        badge_tooltip = str(spec.get("badge_tooltip", "") or "")
+        if badge_tooltip:
+            badge = gui_rs.card_child(event_box, "linuxtoys-native-badge")
+            if isinstance(badge, Gtk.Image):
+                badge.set_tooltip_text(badge_tooltip)
+                attach_badge_hover_override(event_box, badge, badge_tooltip)
 
         if spec.get("checklist"):
             check = gui_rs.card_child(event_box, "linuxtoys-native-check")
@@ -477,6 +553,14 @@ class ItemWidgetFactory:
         if updated:
             widget.info = item_info
             widget.set_tooltip_text(item_info.get("description", "") or None)
+            # Rebuilding the badge in place drops any tooltip it carried and
+            # may place a different badge artwork at the corner.
+            badge_tooltip = str(spec.get("badge_tooltip", "") or "")
+            if badge_tooltip:
+                badge = gui_rs.card_child(widget, "linuxtoys-native-badge")
+                if isinstance(badge, Gtk.Image):
+                    badge.set_tooltip_text(badge_tooltip)
+                    attach_badge_hover_override(widget, badge, badge_tooltip)
         return updated
 
     def create_item_widget(
@@ -613,6 +697,10 @@ class ItemWidgetFactory:
                 badge = Gtk.Image.new_from_pixbuf(badge_pixbuf)
                 badge.set_halign(Gtk.Align.END)
                 badge.set_valign(Gtk.Align.START)
+                badge_tooltip = badge_tooltip_text(badge_path, self.translations)
+                if badge_tooltip:
+                    badge.set_tooltip_text(badge_tooltip)
+                    attach_badge_hover_override(widget, badge, badge_tooltip)
                 overlay.add_overlay(badge)
                 badge.show()
                 widget._featured_badge_widget = badge

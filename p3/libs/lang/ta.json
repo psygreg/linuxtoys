@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "FUSE 2-க்கான சொந்த வேட்பாளர் இல்லை; இந்த AppImage-ஐ நிறுவுவதற்கு முன் ஆதரிக்கப்படும் களஞ்சியத்தை அமைக்கவும்",
   "aur_arch_unreadable": "PKGBUILD: arch அணியை நிலையாக வாசிக்க முடியவில்லை, எனவே aarch64 இசைவுத்தன்மையை உறுதிப்படுத்த முடியவில்லை",
   "aur_arch_empty": "PKGBUILD: arch அணி காலியாக உள்ளது, எனவே aarch64 இசைவுத்தன்மையை உறுதிப்படுத்த முடியவில்லை",
-  "aur_arch_no_port": "PKGBUILD: arch அணி aarch64 துறை இல்லாமல் (${archs}) அறிவிக்கிறது; இந்தத் தொகுப்பு aarch64-ஐ ஆதரிக்கவில்லை"
+  "aur_arch_no_port": "PKGBUILD: arch அணி aarch64 துறை இல்லாமல் (${archs}) அறிவிக்கிறது; இந்தத் தொகுப்பு aarch64-ஐ ஆதரிக்கவில்லை",
+  "badge_tooltip_official": "LinuxToys அதிகாரப்பூர்வமாக விநியோகிக்கிறது",
+  "badge_tooltip_flathub_verified": "Flathub, டெவலப்பரால் சரிபார்க்கப்பட்டது",
+  "badge_tooltip_curated": "LinuxToys தேர்ந்தெடுத்தது",
+  "badge_tooltip_native": "நேட்டிவ் தொகுப்பு ரிபோசிட்டரி",
+  "badge_tooltip_appimage": "AppImage சமூக பட்டியல்",
+  "badge_tooltip_aur": "Arch பயனர் ரிபோசிட்டரி"
 }

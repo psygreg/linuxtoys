@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Enginn innbyggður FUSE 2-kostur er tiltækur; stilltu studda geymslu áður en þetta AppImage er sett upp",
   "aur_arch_unreadable": "PKGBUILD: ekki tókst að lesa arch-fylkið kyrrstætt, því aarch64-samhæfni gat ekki verið staðfest",
   "aur_arch_empty": "PKGBUILD: arch-fylkið er tómt, því aarch64-samhæfni gat ekki verið staðfest",
-  "aur_arch_no_port": "PKGBUILD: arch-fylkið lýsir (${archs}) án aarch64-tengis; þetta pakki styður ekki aarch64"
+  "aur_arch_no_port": "PKGBUILD: arch-fylkið lýsir (${archs}) án aarch64-tengis; þetta pakki styður ekki aarch64",
+  "badge_tooltip_official": "Dreift opinberlega af LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, staðfest af hönnuði",
+  "badge_tooltip_curated": "Valið af LinuxToys",
+  "badge_tooltip_native": "Innbyggð pakka-geymsla",
+  "badge_tooltip_appimage": "Skrá AppImage-samfélagsins",
+  "badge_tooltip_aur": "Geymsla Arch-notenda"
 }

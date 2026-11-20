@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "FUSE 2 jaoks pole natiivset kandidaati saadaval; seadistage enne selle AppImage'i paigaldamist toetatud hoidla",
   "aur_arch_unreadable": "PKGBUILD: arch-massiivi ei saanud staatiliselt lugeda, seetõttu ei saanud aarch64 ühilduvust kinnitada",
   "aur_arch_empty": "PKGBUILD: arch-massiiv on tühi, seetõttu ei saanud aarch64 ühilduvust kinnitada",
-  "aur_arch_no_port": "PKGBUILD: arch-massiiv deklareerib (${archs}) ilma aarch64 pordita; see pakett ei toeta aarch64"
+  "aur_arch_no_port": "PKGBUILD: arch-massiiv deklareerib (${archs}) ilma aarch64 pordita; see pakett ei toeta aarch64",
+  "badge_tooltip_official": "Ametlikult levitatud LinuxToysi poolt",
+  "badge_tooltip_flathub_verified": "Flathub, arendaja kinnitatud",
+  "badge_tooltip_curated": "LinuxToysi poolt valitud",
+  "badge_tooltip_native": "Natiivne paketirepositoorium",
+  "badge_tooltip_appimage": "AppImage'i kogukonna kataloog",
+  "badge_tooltip_aur": "Archi kasutajate repositoorium"
 }

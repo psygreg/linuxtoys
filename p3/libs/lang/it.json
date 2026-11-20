@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Nessun candidato nativo per FUSE 2 disponibile; configura un repository supportato prima di installare questo AppImage",
   "aur_arch_unreadable": "PKGBUILD: l'array arch non ha potuto essere letto staticamente, quindi la compatibilità aarch64 non ha potuto essere verificata",
   "aur_arch_empty": "PKGBUILD: l'array arch è vuoto, quindi la compatibilità aarch64 non ha potuto essere verificata",
-  "aur_arch_no_port": "PKGBUILD: l'array arch dichiara (${archs}) senza una porta aarch64; questo pacchetto non supporta aarch64"
+  "aur_arch_no_port": "PKGBUILD: l'array arch dichiara (${archs}) senza una porta aarch64; questo pacchetto non supporta aarch64",
+  "badge_tooltip_official": "Distribuito ufficialmente da LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, verificato dallo sviluppatore",
+  "badge_tooltip_curated": "Selezionato da LinuxToys",
+  "badge_tooltip_native": "Repository di pacchetti nativo",
+  "badge_tooltip_appimage": "Catalogo della community AppImage",
+  "badge_tooltip_aur": "Repository degli utenti Arch"
 }

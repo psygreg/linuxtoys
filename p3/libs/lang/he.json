@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "אין מועמד מקורי עבור FUSE 2; הגדירו מאגר נתמך לפני התקנת AppImage זה",
   "aur_arch_unreadable": "PKGBUILD: לא ניתן היה לקרוא את מערך ה-arch באופן סטטי, ולכן לא ניתן היה לאמת תאימות ל-aarch64",
   "aur_arch_empty": "PKGBUILD: מערך ה-arch ריק, ולכן לא ניתן היה לאמת תאימות ל-aarch64",
-  "aur_arch_no_port": "PKGBUILD: מערך ה-arch מצהיר על (${archs}) ללא פורט aarch64; חבילה זו אינה תומכת ב-aarch64"
+  "aur_arch_no_port": "PKGBUILD: מערך ה-arch מצהיר על (${archs}) ללא פורט aarch64; חבילה זו אינה תומכת ב-aarch64",
+  "badge_tooltip_official": "מופץ רשמית על ידי LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, אומת על ידי המפתח",
+  "badge_tooltip_curated": "נבחר על ידי LinuxToys",
+  "badge_tooltip_native": "מאגר חבילות מקורי",
+  "badge_tooltip_appimage": "קטלוג הקהילה של AppImage",
+  "badge_tooltip_aur": "מאגר המשתמשים של Arch"
 }

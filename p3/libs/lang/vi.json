@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Không có ứng viên FUSE 2 gốc nào; hãy cấu hình kho lưu trữ được hỗ trợ trước khi cài AppImage này",
   "aur_arch_unreadable": "PKGBUILD: không thể đọc tĩnh mảng arch, nên không thể xác minh khả năng tương thích aarch64",
   "aur_arch_empty": "PKGBUILD: mảng arch rỗng, nên không thể xác minh khả năng tương thích aarch64",
-  "aur_arch_no_port": "PKGBUILD: mảng arch khai báo (${archs}) mà không có cổng aarch64; gói này không hỗ trợ aarch64"
+  "aur_arch_no_port": "PKGBUILD: mảng arch khai báo (${archs}) mà không có cổng aarch64; gói này không hỗ trợ aarch64",
+  "badge_tooltip_official": "Phân phối chính thức bởi LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, đã được nhà phát triển xác minh",
+  "badge_tooltip_curated": "Do LinuxToys tuyển chọn",
+  "badge_tooltip_native": "Kho gói gốc",
+  "badge_tooltip_appimage": "Danh mục cộng đồng AppImage",
+  "badge_tooltip_aur": "Kho người dùng Arch"
 }

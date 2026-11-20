@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Номзади решаии FUSE 2 вуҷуд надорад; пеш аз насби ин AppImage, анбори дастгиришавандаро танзим кунед",
   "aur_arch_unreadable": "PKGBUILD: массиви arch-ро статикӣ хондан нашуд, бинобар ин мувофиқат бо aarch64 тасдиқ нашуд",
   "aur_arch_empty": "PKGBUILD: массиви arch холӣ аст, бинобар ин мувофиқат бо aarch64 тасдиқ нашуд",
-  "aur_arch_no_port": "PKGBUILD: массиви arch (${archs})-ро бе порти aarch64 эълон мекунад; ин баста aarch64-ро дастгирӣ намекунад"
+  "aur_arch_no_port": "PKGBUILD: массиви arch (${archs})-ро бе порти aarch64 эълон мекунад; ин баста aarch64-ро дастгирӣ намекунад",
+  "badge_tooltip_official": "Расмӣ тавассути LinuxToys паҳн карда мешавад",
+  "badge_tooltip_flathub_verified": "Flathub, аз ҷониби таҳиягар тасдиқ шудааст",
+  "badge_tooltip_curated": "Аз ҷониби LinuxToys интихоб шудааст",
+  "badge_tooltip_native": "Репозитории маҳаллии бастаҳо",
+  "badge_tooltip_appimage": "Каталоги ҷомеаи AppImage",
+  "badge_tooltip_aur": "Репозитории корбарони Arch"
 }

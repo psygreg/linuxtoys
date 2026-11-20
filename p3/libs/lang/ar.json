@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "لا يوجد مرشح أصلي لـ FUSE 2؛ قم بإعداد مستودع مدعوم قبل تثبيت هذا AppImage",
   "aur_arch_unreadable": "PKGBUILD: تعذر قراءة مصفوفة arch بشكل ثابت، لذلك تعذر التحقق من التوافق مع aarch64",
   "aur_arch_empty": "PKGBUILD: مصفوفة arch فارغة، لذلك تعذر التحقق من التوافق مع aarch64",
-  "aur_arch_no_port": "PKGBUILD: تعلن مصفوفة arch عن (${archs}) دون منفذ aarch64؛ هذه الحزمة لا تدعم aarch64"
+  "aur_arch_no_port": "PKGBUILD: تعلن مصفوفة arch عن (${archs}) دون منفذ aarch64؛ هذه الحزمة لا تدعم aarch64",
+  "badge_tooltip_official": "توزَّع رسميًا بواسطة LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub، موثَّق من المطوّر",
+  "badge_tooltip_curated": "منسَّق بواسطة LinuxToys",
+  "badge_tooltip_native": "مستودع حزم أصلي",
+  "badge_tooltip_appimage": "كتالوج مجتمع AppImage",
+  "badge_tooltip_aur": "مستودع مستخدمي Arch"
 }

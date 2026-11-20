@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "ບໍ່ມີທາງເລືອກພື້ນເມືອງສຳລັບ FUSE 2; ກະລຸນາກຳນົດຄ່າຄັງສຳຮອງທີ່ຮອງຮັບກ່ອນຕິດຕັ້ງ AppImage ນີ້",
   "aur_arch_unreadable": "PKGBUILD: ບໍ່ສາມາດອ່ານ array arch ແບບຄງັບໄດ້, ດັ່ງນັ້ນຈຶ່ງກວດສອບຄວາມເຂົ້າກັນໄດ້ກັບ aarch64 ບໍ່ໄດ້",
   "aur_arch_empty": "PKGBUILD: array arch ຫວ່າງເປົ່າ, ດັ່ງນັ້ນຈຶ່ງກວດສອບຄວາມເຂົ້າກັນໄດ້ກັບ aarch64 ບໍ່ໄດ້",
-  "aur_arch_no_port": "PKGBUILD: array arch ປະກາດ (${archs}) ໂດຍບໍ່ມີພອດ aarch64; ແພັກເກັດນີ້ບໍ່ຮອງຮັບ aarch64"
+  "aur_arch_no_port": "PKGBUILD: array arch ປະກາດ (${archs}) ໂດຍບໍ່ມີພອດ aarch64; ແພັກເກັດນີ້ບໍ່ຮອງຮັບ aarch64",
+  "badge_tooltip_official": "ແຈກຢາຍຢ່າງເປັນທາງການໂດຍ LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, ຢືນຢັນໂດຍນັກພັດທະນາ",
+  "badge_tooltip_curated": "ຄັດເລືອກໂດຍ LinuxToys",
+  "badge_tooltip_native": "ທີ່ຈັດເກັບແພັກເກັດຕົ້ນກຳເນີດ",
+  "badge_tooltip_appimage": "ບັນຊີຊຸມຊົນ AppImage",
+  "badge_tooltip_aur": "ທີ່ເກັບຜູ້ໃຊ້ Arch"
 }

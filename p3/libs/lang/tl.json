@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Walang available na katutubong kandidato para sa FUSE 2; mag-configure ng suportadong repositoryo bago i-install ang AppImage na ito",
   "aur_arch_unreadable": "PKGBUILD: hindi mabasa nang static ang arch array, kaya hindi ma-verify ang compatibility sa aarch64",
   "aur_arch_empty": "PKGBUILD: walang laman ang arch array, kaya hindi ma-verify ang compatibility sa aarch64",
-  "aur_arch_no_port": "PKGBUILD: nagdedeklara ang arch array ng (${archs}) nang walang aarch64 port; hindi sinusuportahan ng package na ito ang aarch64"
+  "aur_arch_no_port": "PKGBUILD: nagdedeklara ang arch array ng (${archs}) nang walang aarch64 port; hindi sinusuportahan ng package na ito ang aarch64",
+  "badge_tooltip_official": "Opisyal na ipinamamahagi ng LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, beripikado ng developer",
+  "badge_tooltip_curated": "Napili ng LinuxToys",
+  "badge_tooltip_native": "Native na package repository",
+  "badge_tooltip_appimage": "Katalogo ng AppImage community",
+  "badge_tooltip_aur": "Repository ng mga tagagamit ng Arch"
 }

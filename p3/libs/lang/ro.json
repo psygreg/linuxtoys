@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Nu există niciun candidat nativ pentru FUSE 2; configurați un depozit compatibil înainte de a instala acest AppImage",
   "aur_arch_unreadable": "PKGBUILD: vectorul arch nu a putut fi citit static, deci compatibilitatea cu aarch64 nu a putut fi verificată",
   "aur_arch_empty": "PKGBUILD: vectorul arch este gol, deci compatibilitatea cu aarch64 nu a putut fi verificată",
-  "aur_arch_no_port": "PKGBUILD: vectorul arch declară (${archs}) fără un port aarch64; acest pachet nu suportă aarch64"
+  "aur_arch_no_port": "PKGBUILD: vectorul arch declară (${archs}) fără un port aarch64; acest pachet nu suportă aarch64",
+  "badge_tooltip_official": "Distribuit oficial de LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, verificat de dezvoltator",
+  "badge_tooltip_curated": "Selectat de LinuxToys",
+  "badge_tooltip_native": "Depozit nativ de pachete",
+  "badge_tooltip_appimage": "Catalogul comunității AppImage",
+  "badge_tooltip_aur": "Depozitul utilizatorilor Arch"
 }

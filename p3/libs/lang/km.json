@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "គ្មានបេក្ខជនដើមសម្រាប់ FUSE 2 ទេ។ សូមកំណត់រចនាសម្ព័ន្ធឃ្លាំងដែលគាំទ្រមុននឹងដំឡើង AppImage នេះ",
   "aur_arch_unreadable": "PKGBUILD៖ មិនអាចអានអារេ (array) arch ដោយផ្ទាល់បានទេ ដូច្នេះមិនអាចផ្ទៀងផ្ទាត់ភាពឆបគ្នាជាមួយ aarch64 បានទេ",
   "aur_arch_empty": "PKGBUILD៖ អារេ arch គឺទំនេរ ដូច្នេះមិនអាចផ្ទៀងផ្ទាត់ភាពឆបគ្នាជាមួយ aarch64 បានទេ",
-  "aur_arch_no_port": "PKGBUILD៖ អារេ arch ប្រកាស (${archs}) ដោយគ្មានច្រក aarch64 កញ្ចប់នេះមិនគាំទ្រ aarch64 ទេ"
+  "aur_arch_no_port": "PKGBUILD៖ អារេ arch ប្រកាស (${archs}) ដោយគ្មានច្រក aarch64 កញ្ចប់នេះមិនគាំទ្រ aarch64 ទេ",
+  "badge_tooltip_official": "ត្រូវបានផ្សព្វផ្សាយជាផ្លូវការដោយ LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub បានផ្ទៀងផ្ទាត់ដោយអ្នកអភិវឌ្ឍន៍",
+  "badge_tooltip_curated": "ត្រូវបានជ្រើសរើសដោយ LinuxToys",
+  "badge_tooltip_native": "ឃ្លាំងកញ្ចប់ដើម",
+  "badge_tooltip_appimage": "កាតាឡុកសហគមន៍ AppImage",
+  "badge_tooltip_aur": "ឃ្លាំងអ្នកប្រើ Arch"
 }

@@ -23,6 +23,7 @@ from . import (
 from .gtk_dialogs import run_message_dialog
 from .lang_utils import detect_system_language
 from . import translate_helper
+from .source_badges import badge_tooltip_text
 
 
 class _WidthNeutralTextView(Gtk.TextView):
@@ -1483,7 +1484,7 @@ class AppPageView(Gtk.Box):
 
         badge_path = ""
         if self.script_info.get("is_official", False):
-            badge_path = get_icon_path("ltverified.svg") or ""
+            badge_path = get_icon_path("ltverified.webp") or ""
         elif self.script_info.get("is_verified", False):
             badge_path = get_icon_path("verified.svg") or ""
         elif self.script_info.get("is_appstream_entry", False):
@@ -1502,8 +1503,15 @@ class AppPageView(Gtk.Box):
 
         if badge_path and not os.path.exists(badge_path):
             badge_path = ""
+        badge_tooltip = badge_tooltip_text(badge_path, self.translations)
         if not gui_rs.add_app_page_developer_line(self.header.vbox_infos, developer, badge_path):
             raise RuntimeError("Native app-page developer line construction failed")
+        if badge_tooltip:
+            badge = gui_rs.card_child(
+                self.header.vbox_infos, "linuxtoys-app-developer-badge"
+            )
+            if isinstance(badge, Gtk.Image):
+                badge.set_tooltip_text(badge_tooltip)
 
 
     def _format_price(self, option):

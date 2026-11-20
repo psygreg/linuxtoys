@@ -103,7 +103,7 @@ The remaining `p3/app` layers follow: GUI (§4.2), core runtime (§4.3), TUI/upd
 | File | Role |
 |---|---|
 | `window.py` | `AppWindow(SearchCtl, NavCtl, SidebarCtl, FeaturedCtl, LocalScriptsCtl, ItemWidgetFactory, Gtk.ApplicationWindow)`: header bar, main stack (categories/scripts/search), AppStream bootstrap state machine, background workers (scripts sync, registry self-heal, installed-state observation), window-state persistence, language crossfade transactions, startup checks (ostree/Deepin/GregOS/kernel), package-file inspection flow. |
-| `window_items.py` | `ItemWidgetFactory` mixin: native card factory (Rust-built), batch animation, hover/selection/keyboard wiring, removal affordances (`BADGE_EXCLUDED_IDS` = {"sysup","pdefaults"}). |
+| `window_items.py` | `ItemWidgetFactory` mixin: native card factory (Rust-built), batch animation, hover/selection/keyboard wiring, removal affordances (`BADGE_EXCLUDED_IDS` = {"sysup","pdefaults"}); the corner source badge's hover description is resolved from the badge artwork through `source_badges` and attached to the Rust-drawn badge like the remove-button tooltip (re-attached after featured-card rebinds), and a per-card `query-tooltip` override (`attach_badge_hover_override`) makes the badge description win inside the badge/card overlap zone, where the GTK tooltip walk would otherwise answer with the card's own description tooltip. |
 | `window_nav.py` | `NavCtl` mixin: stack navigation, retained parent views (zero-rebuild Back), category browser page construction, app page, terminal view, utility views, resize-settle prewarm. |
 | `window_search.py` | `SearchCtl` mixin: header search entry (140 ms debounce), scope-aware dispatch (AUR/Homebrew/AppImage), smart navigation aliases, grouped native results with lazy population. |
 | `window_sidebar.py` | `SidebarCtl` mixin: retractable native overlay sidebar with cascading disclosure, width/view-driven visibility, frozen-exit margins. |
@@ -168,6 +168,7 @@ The remaining `p3/app` layers follow: GUI (§4.2), core runtime (§4.3), TUI/upd
 | `language_selector.py` / `about_helper.py` / `deepin_immutable_helper.py` | Language picker; About dialog (GitHub contributors); Deepin immutable-mode one-shot flow. |
 | `skills_fetcher.py` / `skills_view.py` | skills.sh CLI fetcher (TTL cache; `search`/`popular`/`detail` — `detail` composes the unauthenticated search API with the skill page's description meta tag, since the v1 file-tree endpoint requires Vercel OIDC) + GTK Skills Seeker view. |
 | `file_watcher.py` | DEV_MODE-only 2s poll triggering UI reload on script/lib changes. |
+| `source_badges.py` | Source-badge hover descriptions (GTK-free): maps each badge artwork (`ltverified`, `verified`, `distros/linuxtoys`, distro logos, `distros/flathub|flatpark`, `appimages`, `aur`, `brew`, `snapbadge`) to its translation key/English floor via `badge_tooltip_text`; pure brand names ("Flathub", "FlatPark", "Homebrew", "Snap Store") stay literal. Consumed by the card factory (`window_items`) and the app page's developer line (`app_page`). |
 | `appstream_parser.py`, `appstream_cache.py`, `appstream_runner.py` | Mapped with the catalog/data section. |
 
 ### 4.4 TUI, updater, antenna (p3/app/tui, p3/app/updater, p3/app/antenna)
@@ -267,6 +268,7 @@ Deps: pyo3 0.24 (abi3-py310), serde/rmp-serde, quick-xml/flate2, prost/tonic/tok
 | `translate_descriptions.py` | Merge a hand-filled short-description table into a list's `descriptions.json` (validates full 57-language coverage). |
 | `translate_json.py` | Legacy inline merge into `p3/libs/lang/<lang>.json` (runs at import top level; `__file__`-anchored paths). |
 | `translate_lib.py` | Append `noresolve` message lines across `p3/libs/lang/*.lib` (`__file__`-anchored `LANG_DIR`). |
+| `translate_badge_tooltips.py` | Merge the source-badge hover descriptions (`badge_tooltip_*` keys) across all 58 `p3/libs/lang/<lang>.json` files (en included; en floors must match `p3/app/source_badges.py`). |
 
 ## 8. Packaging, dev tooling & CI
 

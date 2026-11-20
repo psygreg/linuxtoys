@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Nav pieejams natīvs FUSE 2 kandidāts; pirms šī AppImage instalēšanas iestatiet atbalstītu repozitoriju",
   "aur_arch_unreadable": "PKGBUILD: arch masīvu nevarēja nolasīt statiski, tāpēc nevarēja apstiprināt aarch64 saderību",
   "aur_arch_empty": "PKGBUILD: arch masīvs ir tukšs, tāpēc nevarēja apstiprināt aarch64 saderību",
-  "aur_arch_no_port": "PKGBUILD: arch masīvs deklarē (${archs}) bez aarch64 porta; šī pakotne neatbalsta aarch64"
+  "aur_arch_no_port": "PKGBUILD: arch masīvs deklarē (${archs}) bez aarch64 porta; šī pakotne neatbalsta aarch64",
+  "badge_tooltip_official": "Oficiāli izplata LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, izstrādātāja apstiprināts",
+  "badge_tooltip_curated": "Atlasījis LinuxToys",
+  "badge_tooltip_native": "Natīva pakotņu krātuve",
+  "badge_tooltip_appimage": "AppImage kopienas katalogs",
+  "badge_tooltip_aur": "Arch lietotāju krātuve"
 }

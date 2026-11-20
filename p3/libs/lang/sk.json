@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Nie je dostupný žiadny natívny kandidát na FUSE 2; pred inštaláciou tohto AppImage nastavte podporovaný repozitár",
   "aur_arch_unreadable": "PKGBUILD: pole arch nebolo možné staticky prečítať, preto sa nemohla overiť kompatibilita s aarch64",
   "aur_arch_empty": "PKGBUILD: pole arch je prázdne, preto sa nemohla overiť kompatibilita s aarch64",
-  "aur_arch_no_port": "PKGBUILD: pole arch deklaruje (${archs}) bez portu aarch64; tento balík nepodporuje aarch64"
+  "aur_arch_no_port": "PKGBUILD: pole arch deklaruje (${archs}) bez portu aarch64; tento balík nepodporuje aarch64",
+  "badge_tooltip_official": "Oficiálne šírené projektom LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, overené vývojárom",
+  "badge_tooltip_curated": "Vybrané projektom LinuxToys",
+  "badge_tooltip_native": "Natívny repozitár balíkov",
+  "badge_tooltip_appimage": "Katalóg komunity AppImage",
+  "badge_tooltip_aur": "Používateľský repozitár Archu"
 }

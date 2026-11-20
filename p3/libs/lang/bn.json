@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "FUSE 2-এর কোনো নেটিভ প্রার্থী উপলব্ধ নেই; এই AppImage ইনস্টল করার আগে একটি সমর্থিত রিপোজিটরি কনফিগার করুন",
   "aur_arch_unreadable": "PKGBUILD: arch অ্যারেটি স্থিরভাবে পড়া যায়নি, তাই aarch64 সামঞ্জস্যতা যাচাই করা যায়নি",
   "aur_arch_empty": "PKGBUILD: arch অ্যারেটি খালি, তাই aarch64 সামঞ্জস্যতা যাচাই করা যায়নি",
-  "aur_arch_no_port": "PKGBUILD: arch অ্যারে aarch64 পোর্ট ছাড়াই (${archs}) ঘোষণা করে; এই প্যাকেজটি aarch64 সমর্থন করে না"
+  "aur_arch_no_port": "PKGBUILD: arch অ্যারে aarch64 পোর্ট ছাড়াই (${archs}) ঘোষণা করে; এই প্যাকেজটি aarch64 সমর্থন করে না",
+  "badge_tooltip_official": "LinuxToys দ্বারা আনুষ্ঠানিকভাবে বিতরণ",
+  "badge_tooltip_flathub_verified": "Flathub, ডেভেলপার দ্বারা যাচাইকৃত",
+  "badge_tooltip_curated": "LinuxToys দ্বারা বাছাইকৃত",
+  "badge_tooltip_native": "স্থানীয় প্যাকেজ রিপোজিটরি",
+  "badge_tooltip_appimage": "AppImage কমিউনিটি ক্যাটালগ",
+  "badge_tooltip_aur": "Arch ব্যবহারকারী রিপোজিটরি"
 }

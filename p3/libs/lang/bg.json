@@ -650,5 +650,11 @@
   "pkg_appimage_no_fuse_candidate": "Няма наличен собствен кандидат за FUSE 2; настройте поддържано хранилище преди да инсталирате този AppImage",
   "aur_arch_unreadable": "PKGBUILD: масивът arch не можа да бъде прочетен статично, затова съвместимостта с aarch64 не можа да бъде проверена",
   "aur_arch_empty": "PKGBUILD: масивът arch е празен, затова съвместимостта с aarch64 не можа да бъде проверена",
-  "aur_arch_no_port": "PKGBUILD: масивът arch декларира (${archs}) без aarch64 порт; този пакет не поддържа aarch64"
+  "aur_arch_no_port": "PKGBUILD: масивът arch декларира (${archs}) без aarch64 порт; този пакет не поддържа aarch64",
+  "badge_tooltip_official": "Официално разпространявано от LinuxToys",
+  "badge_tooltip_flathub_verified": "Flathub, потвърдено от разработчика",
+  "badge_tooltip_curated": "Подбрано от LinuxToys",
+  "badge_tooltip_native": "Нативно хранилище на пакети",
+  "badge_tooltip_appimage": "Каталог на общността AppImage",
+  "badge_tooltip_aur": "Потребителско хранилище на Arch"
 }
