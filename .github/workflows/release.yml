@@ -677,13 +677,18 @@ jobs:
       # /usr/lib/python3.x (site-packages included) into the AppDir, so unlike
       # the deb/rpm/arch packages the AppImage has no distro dependency system
       # to provide them (TUI: requests; GUI: gi). build.sh verifies both.
+      # vte3 is required for the same reason: the GUI and TUI import chains
+      # load the Vte GObject namespace at startup (gtk_common.py), but nothing
+      # links against libvte - PyGObject resolves it from the typelib at
+      # runtime - so quick-sharun's scan never pulls it in and the build host
+      # must provide both the typelib and the library (build.sh verifies).
       - name: Install build dependencies
         run: |
           pacman -Syu --noconfirm
           pacman -S --noconfirm --needed \
               git curl wget rust cargo maturin python python-pip \
               python-requests python-gobject \
-              pkgconf patchelf gtk3 appstream gobject-introspection \
+              pkgconf patchelf gtk3 vte3 appstream gobject-introspection \
               zenity util-linux webp-pixbuf-loader xorg-server-xvfb \
               adwaita-icon-theme jq
 

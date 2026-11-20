@@ -9,11 +9,15 @@
 set -euo pipefail
 
 ROOT_DIR="$PWD"
-while [[ "${ROOT_DIR##*/}" != "linuxtoys" && "$ROOT_DIR" != "/" ]]; do
+# Walk up to the repository root (the directory is always named "linuxtoys").
+# Strip one component per iteration and stop on the basename match or on an
+# empty result: "${ROOT_DIR%/*}" on a top-level path like "/tmp" yields "",
+# never "/", so the empty-string case is the loop's real exit condition.
+while [[ -n "$ROOT_DIR" && "${ROOT_DIR##*/}" != "linuxtoys" ]]; do
     ROOT_DIR="${ROOT_DIR%/*}"
 done
 
-if [[ "$ROOT_DIR" == "/" ]]; then
+if [[ -z "$ROOT_DIR" ]]; then
     echo "Error: run this script from inside the LinuxToys source tree." >&2
     exit 1
 fi
@@ -254,6 +258,33 @@ verify_host_python_runtime_deps() {
     _msg info "Host Python runtime dependencies OK (requests, PyGObject)."
 }
 
+# The GUI and the TUI both load the Vte GObject namespace at startup through
+# p3/app/gtk_common.py (gi.require_version("Vte", "2.91")), which every import
+# chain funnels through. Nothing in the bundle links against libvte: PyGObject
+# resolves the library from the typelib at runtime, so quick-sharun's
+# dependency scan cannot see it. The typelib itself is only bundled because
+# quick-sharun copies the build host's whole girepository directory, so VTE
+# (vte3) must be installed here, and the shared library is passed to
+# quick-sharun explicitly below. Without this the released AppImage dies at
+# startup with "ValueError: Namespace Vte not available".
+verify_host_vte() {
+    local vte_lib
+    if [ ! -e /usr/lib/girepository-1.0/Vte-2.91.typelib ]; then
+        _msg error "The build host is missing the Vte-2.91 typelib (the vte3 package)."
+        _msg error "The app loads the Vte GObject namespace at startup; without the"
+        _msg error "typelib the AppImage dies with 'ValueError: Namespace Vte not available'."
+        _msg error "Install it and rebuild (Arch: pacman -S vte3)."
+        exit 1
+    fi
+    vte_lib="$(find /usr/lib -maxdepth 1 -name 'libvte-2.91.so*' -print -quit)"
+    if [ -z "$vte_lib" ]; then
+        _msg error "The build host is missing libvte-2.91 (the vte3 shared library)."
+        _msg error "Install it and rebuild (Arch: pacman -S vte3)."
+        exit 1
+    fi
+    _msg info "Host Vte runtime OK ($vte_lib)."
+}
+
 # Verify the Python tree quick-sharun actually deployed into the AppDir:
 # site-packages must contain the runtime dependencies the app imports. This
 # catches behavior changes in quick-sharun's python deployment before the
@@ -282,6 +313,29 @@ verify_deployed_python_runtime_deps() {
         exit 1
     }
     _msg info "Deployed Python runtime dependencies present in the AppDir."
+}
+
+# The GUI and TUI load the Vte GObject namespace at startup (gtk_common.py).
+# Verify quick-sharun actually deployed both pieces: the typelib (bundled only
+# because quick-sharun copies the build host's whole girepository directory)
+# and the shared library (passed to quick-sharun explicitly, since nothing in
+# the bundle links against it). This turns a behavior change in quick-sharun or
+# a half-installed vte3 into a failed build instead of a released AppImage that
+# dies with "ValueError: Namespace Vte not available".
+verify_deployed_vte() {
+    [[ -f "$APPDIR/lib/girepository-1.0/Vte-2.91.typelib" ]] || {
+        _msg error "Deployed AppDir is missing the Vte-2.91 typelib:"
+        _msg error "$APPDIR/lib/girepository-1.0"
+        _msg error "Install vte3 on the build host and rebuild."
+        exit 1
+    }
+    [[ -e "$APPDIR/lib/libvte-2.91.so.0" ]] || {
+        _msg error "Deployed AppDir is missing libvte-2.91.so.0 (the Vte SONAME):"
+        _msg error "$APPDIR/lib"
+        _msg error "Install vte3 on the build host and rebuild."
+        exit 1
+    }
+    _msg info "Deployed Vte typelib and library present in the AppDir."
 }
 
 replace_upstream_glycin() {
@@ -358,6 +412,7 @@ chmod +x "$QUICK_SHARUN"
 
 verify_python_tui_deps
 verify_host_python_runtime_deps
+verify_host_vte
 
 build_glycin_ng
 
@@ -461,6 +516,22 @@ WEBP_PIXBUF_LOADER="$(
     exit 1
 }
 
+# libvte must be passed explicitly: PyGObject loads it from the typelib at
+# runtime, so no bundled binary links against it and quick-sharun's ldd scan
+# would never pick it up on its own. quick-sharun deploys the library together
+# with its own dependency chain. Pass the SONAME path specifically:
+# quick-sharun copies the resolved file and symlinks the passed basename, so a
+# dev-name match (libvte-2.91.so) would deploy without the libvte-2.91.so.0
+# name the typelib asks for.
+VTE_LIB="/usr/lib/libvte-2.91.so.0"
+if [ ! -e "$VTE_LIB" ]; then
+    VTE_LIB="$(find /usr/lib -maxdepth 1 -name 'libvte-2.91.so.0*' -print -quit)"
+fi
+[ -n "$VTE_LIB" ] || {
+    echo "Error: Vte shared library not found."
+    exit 1
+}
+
 (
     cd "$BUILD_DIR"
     "$QUICK_SHARUN" \
@@ -469,7 +540,8 @@ WEBP_PIXBUF_LOADER="$(
         /usr/bin/jq \
         /usr/bin/script \
         /usr/lib/libappstream.so.5 \
-        "$WEBP_PIXBUF_LOADER"
+        "$WEBP_PIXBUF_LOADER" \
+        "$VTE_LIB"
 )
 
 # The AppStream typelib needs no manual bundling: with DEPLOY_PYTHON and the
@@ -481,6 +553,7 @@ replace_upstream_glycin
 # verify the runtime dependencies survived the copy before generating the
 # AppImage.
 verify_deployed_python_runtime_deps
+verify_deployed_vte
 
 # Runtime env vars for the AppImage, written into the AppDir .env file sharun
 # reads at launch ("env variables can be added to a .env file in the AppDir",
@@ -512,6 +585,35 @@ chmod +x "$FINAL_APPIMAGE"
 
 _msg info "Running AppImage smoke test..."
 "$QUICK_SHARUN" --simple-test "$FINAL_APPIMAGE"
+
+# --simple-test only catches linker-level failures; the app can still die
+# inside Python at startup. That is exactly how the missing Vte typelib shipped:
+# the TUI crashed with "ValueError: Namespace Vte not available" while the
+# smoke test reported OK, because a Python traceback matches neither of the
+# patterns it greps for. Drive the reported crash path instead: launch the TUI
+# (-t) under a pseudo-terminal - easy_cli's _launch_tui refuses to import the
+# TUI stack without a tty - and fail the build on any traceback. A healthy boot
+# keeps running until the timeout kills it (status 124).
+_msg info "Running AppImage TUI smoke test..."
+smoke_log="$(mktemp)"
+smoke_cmd="$(printf '%q -t' "$FINAL_APPIMAGE")"
+smoke_status=0
+APPIMAGE_EXTRACT_AND_RUN=1 TERM="${TERM:-xterm-256color}" \
+    timeout --kill-after=5 20 script -qec "$smoke_cmd" /dev/null \
+    >"$smoke_log" 2>&1 || smoke_status=$?
+if grep -q 'Traceback (most recent call last)' "$smoke_log"; then
+    _msg error "The AppImage crashed at startup (TUI smoke test):"
+    tail -n 20 "$smoke_log" >&2
+    rm -f "$smoke_log"
+    exit 1
+fi
+if [ "$smoke_status" -ne 124 ]; then
+    _msg error "The AppImage TUI exited on its own during the smoke test (status $smoke_status):"
+    tail -n 20 "$smoke_log" >&2
+    rm -f "$smoke_log"
+    exit 1
+fi
+rm -f "$smoke_log"
 
 cleanup_quick_sharun
 rm -rf "$BUILD_DIR"
