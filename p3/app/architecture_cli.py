@@ -46,6 +46,12 @@ _AUR_HEADERS = {"User-Agent": "LinuxToys-Architecture-preflight"}
 _AUR_REQUEST_TIMEOUT = 30
 _AUR_NAME = re.compile(r"[A-Za-z0-9@._+:-]+")
 
+# Deadline for the one metadata-fetching retry of the cache-only package
+# preflights: repo metadata for a freshly added repository can be slow on
+# metered or distant mirrors, so this is deliberately longer than the cache
+# listing's 30 s.
+_METADATA_FETCH_TIMEOUT = 120
+
 
 def _aur_get(url: str) -> bytes:
     """Fetch one HTTPS AUR resource; every failure raises ArchitectureError."""
@@ -163,6 +169,17 @@ def native_packages(packages: list[str], manager: str) -> None:
     pacman's sync databases never cover the AUR: a target pacman cannot see is
     an AUR-only candidate on the pacman-driven arch family (SteamOS-family
     hosts have no AUR route), verified through _aur_candidate instead.
+
+    The cache-only queries cannot see a repository the calling script added
+    moments ago: nothing has downloaded its metadata yet, so dnf reports no
+    candidate and zypper fails outright although the package is available for
+    the host. Those backends get one metadata-fetching retry before any
+    refusal: it stays read-only and unprivileged (dnf repoquery / zypper info
+    under the invoking user, no transaction lock, no authentication), matches
+    the install path's own key-trust policy (--assumeyes mirrors `dnf -y`),
+    and the ISA gate below still judges the labels the refreshed metadata
+    reports — a genuinely missing package or a foreign-ISA one is refused
+    exactly as before, nothing presumes the host ISA.
     """
     arch = host()
     for package in packages:
@@ -204,7 +221,14 @@ def native_packages(packages: list[str], manager: str) -> None:
             "pacman": ["pacman", "-Si"],
             "eopkg": ["eopkg", "info"],
         }
+        # Metadata-fetching retries for the cache-only backends above; the
+        # remaining managers (pacman, eopkg) keep their plain refusal paths.
+        fetches = {
+            "dnf": ["dnf", "--assumeyes", "repoquery", "--qf", "%{arch}\n"],
+            "zypper": ["zypper", "--non-interactive", "info"],
+        }
         for package in packages:
+            result = ""
             try:
                 result = subprocess.run(
                     [*commands[manager], package],
@@ -215,14 +239,18 @@ def native_packages(packages: list[str], manager: str) -> None:
                     env={**os.environ, "LC_ALL": "C"},
                 ).stdout
             except subprocess.CalledProcessError as error:
-                if manager != "pacman":
+                if manager == "pacman":
+                    # pacman's sync databases exclude the AUR: a missing target is
+                    # an AUR-only candidate on the pacman-driven hosts whose
+                    # pkg_install routes it to a paru/pamac build. Verify its AUR
+                    # existence and PKGBUILD ISA before the helper runs.
+                    _aur_candidate(package, arch.value)
+                    continue
+                if manager not in fetches:
                     raise
-                # pacman's sync databases exclude the AUR: a missing target is
-                # an AUR-only candidate on the pacman-driven hosts whose
-                # pkg_install routes it to a paru/pamac build. Verify its AUR
-                # existence and PKGBUILD ISA before the helper runs.
-                _aur_candidate(package, arch.value)
-                continue
+                result = _fetch_metadata(fetches[manager], package)
+            if not result.strip() and manager in fetches:
+                result = _fetch_metadata(fetches[manager], package)
             if not result.strip():
                 raise ArchitectureError(f"No available package metadata for {package}")
             if manager == "dnf":
@@ -240,6 +268,30 @@ def native_packages(packages: list[str], manager: str) -> None:
             _require_native_candidate(package, values, arch.value)
     else:
         raise ArchitectureError("Unsupported package preflight backend")
+
+
+def _fetch_metadata(command: list[str], package: str) -> str:
+    """Run one metadata-fetching retry command for a cold-cache package listing.
+
+    Read-only and unprivileged: dnf repoquery / zypper info under the invoking
+    user only populate the user metadata cache, never install anything and
+    never touch a native transaction lock or credential. Failures are
+    ArchitectureErrors with the package named, so the preflight stays
+    fail-closed and the refusal stays legible.
+    """
+    try:
+        return subprocess.run(
+            [*command, package],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=_METADATA_FETCH_TIMEOUT,
+            env={**os.environ, "LC_ALL": "C"},
+        ).stdout
+    except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
+        raise ArchitectureError(
+            f"Could not fetch package metadata for {package}: {error}"
+        ) from error
 
 
 def _require_native_candidate(
