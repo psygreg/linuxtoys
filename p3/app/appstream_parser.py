@@ -578,6 +578,65 @@ GENERIC_MAIN_CATEGORIES = (
     "Qt", "GNOME", "GTK", "KDE", "Application", "None", "X-Tool", "X-Utilities",
 )
 
+# Website of every catalog repository the app exposes, keyed by the origin
+# token a catalog entry carries in its "repo" field ("flathub", "snapcraft",
+# "homebrew/core", ...). Repository-list entries and AUR packages carry their
+# own URL in "repo" instead, so they never need a registration here. Native
+# distro packages are deliberately absent: they have no website specific to
+# them and their entries stay unlinked.
+#
+# When adding a new repository/catalog source to the app, register its URL
+# here so app pages link it (standardized in .ai/AGENTS.md -> Catalog
+# repository links).
+CATALOG_REPOSITORY_URLS = {
+    "flathub": "https://flathub.org",
+    "flatpark": "https://flatpark.org/",
+    "snapcraft": "https://snapcraft.io/store",
+    "homebrew": "https://brew.sh/",
+    "homebrew/core": "https://brew.sh/",
+    "appimage": "https://appimage.github.io/",
+    "appimage-community": "https://appimage.github.io/",
+    "aur": "https://aur.archlinux.org/",
+}
+
+# Fallback keyed by "appstream_source", for catalog sources whose website does
+# not depend on the origin token. Flatpak is deliberately absent: a Flatpak
+# entry must name its actual remote (flathub/flatpark), never a guessed one.
+CATALOG_SOURCE_URLS = {
+    "snap": "https://snapcraft.io/store",
+    "homebrew": "https://brew.sh/",
+    "appimage": "https://appimage.github.io/",
+    "aur": "https://aur.archlinux.org/",
+}
+
+
+def repository_link(entry: dict) -> str:
+    """URL an app page should link for ``entry``'s repository, "" for none.
+
+    Repository-list entries and AUR packages carry the upstream URL directly
+    in "repo". Catalog entries carry an origin token instead ("flathub",
+    "snapcraft", "homebrew/core", ...), resolved through
+    ``CATALOG_REPOSITORY_URLS``. Native distro packages ("appstream") have no
+    website of their own and stay unlinked.
+
+    Args:
+        entry: One LinuxToys catalog entry (any source).
+
+    Returns:
+        str: The absolute http(s) URL to link, or "" when the repository
+        label must stay plain text.
+    """
+    repo = str(entry.get("repo", "") or "").strip()
+    if repo.startswith(("https://", "http://")):
+        return repo
+    if not entry.get("is_appstream_entry"):
+        return ""
+    link = CATALOG_REPOSITORY_URLS.get(repo.casefold())
+    if link:
+        return link
+    source = str(entry.get("appstream_source", "") or "").strip().casefold()
+    return CATALOG_SOURCE_URLS.get(source, "")
+
 
 def clear_runtime_cache():
     with _CACHE_LOCK:

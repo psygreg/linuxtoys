@@ -1,6 +1,7 @@
 import os
 
 from .gtk_common import Gtk, escape_markup, load_scaled_pixbuf
+from .appstream_parser import repository_link
 from . import get_icon_path, gui_rs
 
 class InfosHead(Gtk.Box):
@@ -28,17 +29,27 @@ class InfosHead(Gtk.Box):
     def _update_header_labels(self, script_info: dict):
         name = escape_markup(script_info.get("name", ""))
         description = str(script_info.get("description", "") or "")
-        repo = str(script_info.get("repo", "") or "")
+        repo = str(script_info.get("repo", "") or "").strip()
 
         self.label_name.set_markup(f"<big><big><b>{name}</b></big></big>")
         self.label_desc.set_text(description)
 
         if repo:
-            repo_markup = escape_markup(repo)
             repo_display = escape_markup(
                 repo.replace("https://", "").replace("http://", "").rstrip("/")
             )
-            self.label_repo.set_markup(f"<a href='{repo_markup}'>{repo_display}</a>")
+            link = repository_link(script_info)
+            if link:
+                # Real upstream URL (repository-list entries, AUR packages) or
+                # the catalog's own website (Flathub, Snapcraft, Brew, ...).
+                # Native distro packages stay plain text: no link exists.
+                self.label_repo.set_markup(
+                    f"<a href='{escape_markup(link)}'>{repo_display}</a>"
+                )
+            else:
+                self.label_repo.set_text(
+                    repo.replace("https://", "").replace("http://", "").rstrip("/")
+                )
             self.label_repo.show()
         else:
             self.label_repo.set_text("")

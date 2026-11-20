@@ -24,6 +24,7 @@ from textual.widgets import (
 )
 
 from app import appstream_cache
+from app.appstream_parser import repository_link
 
 __all__ = ["AppPageWidget", "FeaturedCard", "show_app_page", "hide_app_page"]
 
@@ -501,15 +502,23 @@ class AppPageWidget(Vertical):
     def _meta_text(self) -> Text | None:
         """Build the repository and rating line, or None if empty.
 
-        The rating applies only to AppStream entries. ``review_rating``
-        is on a 0 to 100 scale and is shown as stars out of 5, followed
-        by the review count. Invalid ratings and zero counts are hidden.
+        The repository is a clickable link when an URL resolves for it
+        (repository-list entries, AUR packages and catalog sources such as
+        Flathub); native distro packages have no website of their own and
+        stay dimmed plain text. The rating applies only to AppStream
+        entries. ``review_rating`` is on a 0 to 100 scale and is shown as
+        stars out of 5, followed by the review count. Invalid ratings and
+        zero counts are hidden.
         """
         info = self.script_info
         text = Text()
         repo = str(info.get("repo", "") or "").strip()
         if repo:
-            text.append(repo, style="dim")
+            link = repository_link(info)
+            if link:
+                text.append(repo, style=f"dim link {link}")
+            else:
+                text.append(repo, style="dim")
         if info.get("is_appstream_entry"):
             try:
                 rating = float(info.get("review_rating"))

@@ -8,6 +8,12 @@ Agents must adhere to standard best practices for the languages used:
 - **Rust:** Follow Rust best practices (e.g., idiomatic usage, error handling via `Result`). Ensure memory safety and performance, and that any new code added or dependency introduced is done so in accordance to Rust 1.75, which is the oldest version we support.
 - **Bash:** Scripts must be idempotent where possible, made for Bash 5.2, which is the oldest version we support. Always include shebang (`#!/usr/bin/env bash`). Use robust input validation and handle exit codes correctly. Always use standard LinuxToys Core Libraries functions - the `.bash` files under [p3/libs](p3/libs) - when possible and make new ones if a helper should be made reusable. Custom steps should be employed if needed on top of the core libraries functions to ensure installed features can be later removed cleanly.
 
+## 🔗 Catalog Repository Links
+**Every repository/catalog source the app exposes must be linkable on app pages.**
+- When adding a new repository or catalog source to the app (a new Flatpak remote, AppStream source, store catalog, etc.), its repository URL must be registered in `CATALOG_REPOSITORY_URLS` in [p3/app/appstream_parser.py](../p3/app/appstream_parser.py) so the app-page repository label opens it.
+- Entries that already carry their own URL in `repo` (repository-list entries, AUR packages) need no registration — `repository_link()` links them as-is.
+- Native distro packages are never linked: they have no website specific to them.
+
 ## 🧪 Testing Requirement
 **All changes must be accompanied by temporary test harnesses.**
 1.  Before considering a task complete, the change must pass associated tests.
