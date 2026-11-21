@@ -590,7 +590,8 @@ with path.open("rb") as source:
 if digest.hexdigest() != expected[0]:
     raise SystemExit("Release checksum mismatch")
 PYHASH
-    python3 "$_architecture_cli" files "$1" || error "Incompatible or unverified release payload."
+    _verify_refusal=$(python3 "$_architecture_cli" files "$1" 2>&1) ||
+        error "${_verify_refusal:-Incompatible or unverified release payload.}"
 }
 
 osdeb() {

@@ -130,14 +130,30 @@ def _aur_candidate(package: str, machine: str) -> None:
 
 def apt_plan(packages: list[str]) -> None:
     """Validate APT's complete simulated installation plan, including dependencies."""
-    result = subprocess.run(
-        ["apt-get", "--simulate", "--no-remove", "install", *packages],
-        check=True,
-        capture_output=True,
-        text=True,
-        timeout=60,
-        env={**os.environ, "LC_ALL": "C"},
-    )
+    try:
+        result = subprocess.run(
+            ["apt-get", "--simulate", "--no-remove", "install", *packages],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=60,
+            env={**os.environ, "LC_ALL": "C"},
+        )
+    except subprocess.TimeoutExpired as error:
+        raise ArchitectureError(
+            f"apt did not finish planning the install of {', '.join(packages)} "
+            "within 60s"
+        ) from error
+    except subprocess.CalledProcessError as error:
+        # A bare exit status says nothing: apt reports what it could not
+        # satisfy on stdout (the unmet-dependencies table) and stderr, both
+        # captured here. The refusal must carry the actual reason so an
+        # unavailable dependency is diagnosable instead of reading as a
+        # refused or unverified payload.
+        raise ArchitectureError(
+            f"apt cannot plan the install of {', '.join(packages)}: "
+            + _apt_plan_diagnostics(error)
+        ) from error
     for line in (result.stdout or "").splitlines():
         if not line.startswith("Inst "):
             continue
@@ -153,6 +169,34 @@ def apt_plan(packages: list[str]) -> None:
             )
         if match[1] != "all":
             require_native([canonical_package_architecture(match[1])])
+
+
+def _apt_plan_diagnostics(error: subprocess.CalledProcessError) -> str:
+    """Extract apt's legible problem report from a failed simulation.
+
+    The resolution problem lands on stdout (apt's unmet-dependencies table)
+    and its summary on stderr; stdout otherwise carries planner noise. Keep
+    every E:/W: line plus the "The following ..." report to its end, so the
+    refusal names the packages and constraints apt could not satisfy.
+    """
+    problem: list[str] = []
+    for stream in (error.stderr or "", error.stdout or ""):
+        reporting = False
+        for raw in stream.splitlines():
+            line = raw.strip()
+            if not line:
+                continue
+            if line.startswith(("E:", "W:")):
+                problem.append(line)
+                reporting = False
+                continue
+            if line.startswith("The following "):
+                reporting = True
+            if reporting:
+                problem.append(line)
+    if problem:
+        return " ".join(problem)
+    return f"apt exited with status {error.returncode}"
 
 
 def native_packages(packages: list[str], manager: str) -> None:
