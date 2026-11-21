@@ -199,6 +199,31 @@ def _apt_plan_diagnostics(error: subprocess.CalledProcessError) -> str:
     return f"apt exited with status {error.returncode}"
 
 
+def _tool_diagnostics(
+    error: subprocess.CalledProcessError | subprocess.TimeoutExpired,
+) -> str:
+    """Summarize a failed metadata tool's captured output for a refusal.
+
+    The bare exit status says nothing: managers print their reason ("E: No
+    packages found", "package 'x' not found", repository/network failures)
+    on stdout or stderr. Keep the informative lines so the refusal names the
+    actual problem; fall back to the status when the tool stayed silent.
+    """
+    lines: list[str] = []
+    for stream in (error.stderr, error.stdout):
+        if isinstance(stream, bytes):
+            stream = stream.decode("utf-8", "replace")
+        if stream:
+            lines.extend(line.strip() for line in stream.splitlines() if line.strip())
+    summary = " | ".join(lines[-6:]) if lines else None
+    if isinstance(error, subprocess.TimeoutExpired):
+        return f"timed out after {error.timeout}s" + (f": {summary}" if summary else "")
+    if summary:
+        return summary
+    status = getattr(error, "returncode", None)
+    return f"exit status {status}" if status is not None else "no output captured"
+
+
 def native_packages(packages: list[str], manager: str) -> None:
     """Preflight native package metadata before authentication or transaction locks.
 
@@ -236,14 +261,20 @@ def native_packages(packages: list[str], manager: str) -> None:
         require_native(asset_architectures(package) or [arch.value], arch.value)
     if manager == "apt":
         for package in packages:
-            candidate = subprocess.run(
-                ["apt-cache", "show", "--no-all-versions", package],
-                check=True,
-                capture_output=True,
-                text=True,
-                timeout=30,
-                env={**os.environ, "LC_ALL": "C"},
-            ).stdout
+            try:
+                candidate = subprocess.run(
+                    ["apt-cache", "show", "--no-all-versions", package],
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
+                    env={**os.environ, "LC_ALL": "C"},
+                ).stdout
+            except subprocess.CalledProcessError as error:
+                raise ArchitectureError(
+                    f"Could not fetch package metadata for {package}: "
+                    + _tool_diagnostics(error)
+                ) from error
             fields = [
                 line.split(":", 1)[1].strip()
                 for line in candidate.splitlines()
@@ -291,7 +322,10 @@ def native_packages(packages: list[str], manager: str) -> None:
                     _aur_candidate(package, arch.value)
                     continue
                 if manager not in fetches:
-                    raise
+                    raise ArchitectureError(
+                        f"Could not fetch package metadata for {package}: "
+                        + _tool_diagnostics(error)
+                    ) from error
                 result = _fetch_metadata(fetches[manager], package)
             if not result.strip() and manager in fetches:
                 result = _fetch_metadata(fetches[manager], package)
@@ -334,7 +368,8 @@ def _fetch_metadata(command: list[str], package: str) -> str:
         ).stdout
     except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
         raise ArchitectureError(
-            f"Could not fetch package metadata for {package}: {error}"
+            f"Could not fetch package metadata for {package}: "
+            + _tool_diagnostics(error)
         ) from error
 
 
