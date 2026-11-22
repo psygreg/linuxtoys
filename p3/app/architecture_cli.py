@@ -54,6 +54,17 @@ _AUR_NAME = re.compile(r"[A-Za-z0-9@._+:-]+")
 _METADATA_FETCH_TIMEOUT = 120
 
 
+class _PolicyRefusal(ArchitectureError):
+    """A refusal that fresh repository metadata can never cure.
+
+    Invalid package options, explicit foreign-ISA requests and unsupported
+    backends fail before any metadata is consulted; the install path's
+    metadata-recovery wrappers (packages.bash) use the distinct exit code to
+    refresh only on availability refusals, so a request that can never pass
+    is still refused without authenticating.
+    """
+
+
 def _aur_get(url: str) -> bytes:
     """Fetch one HTTPS AUR resource; every failure raises ArchitectureError."""
     request = urllib.request.Request(url, headers=_AUR_HEADERS)
@@ -336,16 +347,29 @@ def native_packages(packages: list[str], manager: str) -> None:
     words — the same verdict the install command would produce — and the
     refusal gains an actionable cause note (no package lists at all, or a
     repository component such as Debian's contrib that is not enabled).
+
+    Exit-code contract for the install path's metadata-recovery wrappers
+    (packages.bash): policy refusals (package options, explicit foreign-ISA
+    requests, unsupported backends — refusals fresh metadata can never cure)
+    exit 2; availability refusals (not found, unreadable metadata) exit 1,
+    the only code that earns a privileged metadata refresh before the
+    preflight is judged again.
     """
     arch = host()
     for package in packages:
         if package.startswith("-"):
-            raise ArchitectureError("Package options are not package names")
+            raise _PolicyRefusal("Package options are not package names")
         if ":" in package:
-            require_native(
-                [canonical_package_architecture(package.rsplit(":", 1)[1])], arch.value
-            )
-        require_native(asset_architectures(package) or [arch.value], arch.value)
+            try:
+                require_native(
+                    [canonical_package_architecture(package.rsplit(":", 1)[1])], arch.value
+                )
+            except ArchitectureError as error:
+                raise _PolicyRefusal(str(error)) from error
+        try:
+            require_native(asset_architectures(package) or [arch.value], arch.value)
+        except ArchitectureError as error:
+            raise _PolicyRefusal(str(error)) from error
     if manager == "apt":
         unlisted: list[str] = []
         for package in packages:
@@ -431,13 +455,23 @@ def native_packages(packages: list[str], manager: str) -> None:
                 result = _fetch_metadata(fetches[manager], package)
             if not result.strip():
                 raise ArchitectureError(f"No available package metadata for {package}")
+            if manager == "eopkg" and "not found in binary repositories" in result:
+                # eopkg reports absent packages with exit 0; its not-found
+                # line is the availability verdict, not malformed metadata.
+                raise ArchitectureError(
+                    f"{package} is not available from the eopkg repositories"
+                )
             if manager == "dnf":
                 values = result.splitlines()
             else:
+                # zypper prints "Arch : x86_64", eopkg folds extra fields
+                # into "Architecture : x86_64, Installed Size: ..., Package
+                # Size: ..." — the label ends at the first comma, and the
+                # leading word is "arch" for both spellings.
                 values = [
-                    line.split(":", 1)[1].strip()
+                    line.split(":", 1)[1].split(",", 1)[0].strip()
                     for line in result.splitlines()
-                    if line.strip().lower().startswith("architecture") and ":" in line
+                    if line.strip().lower().startswith("arch") and ":" in line
                 ]
             if not values:
                 raise ArchitectureError(
@@ -445,7 +479,7 @@ def native_packages(packages: list[str], manager: str) -> None:
                 )
             _require_native_candidate(package, values, arch.value)
     else:
-        raise ArchitectureError("Unsupported package preflight backend")
+        raise _PolicyRefusal("Unsupported package preflight backend")
 
 
 def _fetch_metadata(command: list[str], package: str) -> str:
@@ -659,7 +693,10 @@ def main(argv: list[str] | None = None) -> int:
         subprocess.SubprocessError,
     ) as error:
         print(f"Architecture preflight refused: {error}", file=sys.stderr)
-        return 1
+        # Policy refusals carry their own exit code so the install path's
+        # metadata-recovery wrappers never authenticate for a request that
+        # fresh metadata cannot cure.
+        return 2 if isinstance(error, _PolicyRefusal) else 1
     return 0
 
 

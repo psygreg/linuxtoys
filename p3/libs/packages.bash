@@ -343,53 +343,69 @@ apt_transaction () {
     _pkg_transaction apt "$APT_BUSY_WAIT_TIMEOUT" "$@"
 }
 
-# Whether APT has NO downloaded package lists at all: every name is invisible
-# to the cache-only preflight until a privileged `apt-get update` runs (fresh
-# systems, wiped lists, or updates that never succeeded). apt-config reports
-# Dir::State::lists relative to Dir::State by default (lists/), so the two
-# are joined the way apt itself resolves them.
-_apt_lists_missing () {
-    local _state_dir="/var/lib/apt" _lists="lists/" _out
-    if command -v apt-config >/dev/null 2>&1; then
-        _out=$(apt-config shell LT_STATE_DIR Dir::State LT_LISTS_DIR Dir::State::lists 2>/dev/null) || _out=""
-        if [[ -n "$_out" ]]; then
-            eval "$_out" || true
-        fi
-    fi
-    local _state="${LT_STATE_DIR:-$_state_dir}"
-    [[ "$_state" == /* ]] || _state="/$_state"
-    local _lists_dir="${LT_LISTS_DIR:-$_lists}"
-    [[ "$_lists_dir" == /* ]] || _lists_dir="$_state/${_lists_dir#/}"
-    ! compgen -G "${_lists_dir%/}/*Packages*" >/dev/null 2>&1
+# One privileged metadata refresh for the managers whose cache the invoking
+# user cannot populate: apt's list cache, pacman's sync databases, zypper's
+# zypp cache and eopkg's repo index are all root-owned, so an unprivileged
+# preflight cannot fetch them and a cold or stale cache reads as "package
+# not found" even when the repository has it. Best-effort: a failed refresh
+# (offline host, dead mirror) leaves the verdict to the re-run preflight,
+# whose refusal carries the guidance. dnf needs no refresh — its
+# unprivileged repoquery retry already fetches fresh metadata.
+_refresh_native_metadata () {
+    local manager="$1"
+    case "$manager" in
+        apt)
+            info "Refreshing APT repository metadata"
+            apt_transaction sudo_ apt-get update
+            ;;
+        pacman)
+            info "Synchronizing pacman package databases"
+            if ! is_manjaro && ! pacman-conf --repo-list 2>/dev/null | grep -qx 'extra'; then
+                # Repair a missing [extra] repository entry (fix #1255 hosts):
+                # the exact -Si lookups cannot pass without it.
+                prep_edit /etc/pacman.conf
+                printf '\n[extra]\nInclude = /etc/pacman.d/mirrorlist\n' |
+                    sudo_ tee -a /etc/pacman.conf >/dev/null
+            fi
+            pacman_lock_guard
+            pacman_transaction sudo_ pacman -Sy --noconfirm
+            ;;
+        zypper)
+            info "Refreshing zypper repositories"
+            zypper_transaction sudo_ zypper --non-interactive refresh
+            ;;
+        eopkg)
+            info "Updating the eopkg repository index"
+            eopkg_transaction sudo_ eopkg update-repo
+            ;;
+    esac
 }
 
-# Apt-route package preflight with the missing-metadata recovery path.
-# The first preflight stays unprivileged (a refusal still exits before any
-# authentication); only when it refuses on a host with no downloaded APT
-# package lists does one privileged metadata refresh run, and the preflight
-# is then judged again normally — a genuinely missing package still refuses
-# exactly as before. Mirrors the dnf/zypper preflight metadata retries for
-# freshly added repositories: APT's list cache is root-owned, so the refresh
-# belongs to the privileged install path instead of the unprivileged
-# preflight. One refresh per run; timefix heals clock-skewed update
-# failures at askpass.
-_apt_package_preflight () {
+# Packages-preflight with the root-owned-cache recovery path, shared by every
+# manager whose cache lives under root (apt, pacman, zypper, eopkg). The
+# first preflight stays unprivileged — a refusal still exits before any
+# authentication. Policy refusals (exit 2: package options, explicit
+# foreign-ISA requests, unsupported backends) never reach the refresh. On an
+# availability refusal (exit 1), one privileged metadata refresh per run
+# runs, and the preflight is judged again normally — a genuinely missing
+# package still refuses exactly as before. timefix heals clock-skewed
+# refresh failures at askpass.
+_metadata_recovered_preflight () {
+    local manager="$1"; shift
     : "${arch_preflight_refused:=Refusing operation: architecture/availability preflight failed}"
-    local _refusal
-    if _refusal=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" packages apt "$@" 2>&1); then
-        return 0
-    fi
-    if ! _apt_lists_missing || [ -n "${LINUXTOYS_APT_METADATA_BOOTSTRAPPED:-}" ]; then
+    local _refusal _status=0
+    # `var=$(cmd) || status=$?` keeps the real exit status without tripping
+    # set -e (the runners generate `set -eo pipefail`).
+    _refusal=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" packages "$manager" "$@" 2>&1) || _status=$?
+    (( _status == 0 )) && return 0
+    if (( _status != 1 )) || [ -n "${LINUXTOYS_METADATA_BOOTSTRAPPED:-}" ]; then
         printf '%s\n' "$_refusal" >&2
         die "$arch_preflight_refused"
     fi
-    LINUXTOYS_APT_METADATA_BOOTSTRAPPED=1
-    info "APT package lists are absent on this host; downloading repository metadata"
+    LINUXTOYS_METADATA_BOOTSTRAPPED=1
     askpass
-    if ! apt_transaction sudo_ apt-get update; then
-        fatal "Failed to refresh APT package metadata; check the repositories and network"
-    fi
-    _architecture_check packages apt "$@"
+    _refresh_native_metadata "$manager" || true
+    _architecture_check packages "$manager" "$@"
 }
 
 interrupted_apt_guard () {
@@ -781,13 +797,16 @@ pkg_install () {
     elif is_suse; then architecture_manager=zypper
     elif is_solus; then architecture_manager=eopkg
     else architecture_manager=dnf; fi
-    # The apt route carries the missing-metadata recovery path; every other
-    # manager keeps the plain shared preflight.
-    if [[ "$architecture_manager" == "apt" ]]; then
-        _apt_package_preflight "${pkg_notfound[@]}"
-    else
-        _architecture_check packages "$architecture_manager" "${pkg_notfound[@]}"
-    fi
+    # The root-owned-cache managers recover from a cold or stale cache before
+    # a verdict is issued; dnf keeps the plain (already-fetching) preflight.
+    case "$architecture_manager" in
+        apt|pacman|zypper|eopkg)
+            _metadata_recovered_preflight "$architecture_manager" "${pkg_notfound[@]}"
+            ;;
+        *)
+            _architecture_check packages "$architecture_manager" "${pkg_notfound[@]}"
+            ;;
+    esac
     askpass
     (( _bypass )) || runner_lock "package-transaction"
     if is_debian || is_ubuntu; then
