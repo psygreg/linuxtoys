@@ -73,6 +73,11 @@ class Payload:
     # foreign-platform binaries (VM guest assets, multi-platform prebuilds)
     # as declared inert data; only this ISA's ELFs remain payload evidence.
     guest_isa: str | None = None
+    # True when a declared guest walk tolerated foreign-platform content
+    # (Windows/macOS binaries, other-ISA or unqualified ELFs). An
+    # all/noarch package must stay free of it: independent metadata
+    # conflicts with any native payload, declared or not.
+    foreign_binaries: bool = False
 
 
 class _Readable(Protocol):
@@ -246,15 +251,18 @@ def _member(
                 raise
             # Unqualified 32-bit class/machine inside a declared guest
             # payload: an inert foreign-platform prebuild.
+            payload.foreign_binaries = True
             return
         if payload.guest_isa is not None and arch != payload.guest_isa:
             # Other-ISA ELF inside a declared guest payload: inert data.
+            payload.foreign_binaries = True
             return
         payload.architectures.add(arch)
     elif payload.guest_isa is not None and (
         header[:2] == b"MZ" or header[:4] in _MACHO_MAGIC
     ):
         # Declared Windows/macOS guest asset: inert data on the Linux host.
+        payload.foreign_binaries = True
         return
     elif header[:2] == b"MZ" or header[:4] in _MACHO_MAGIC:
         raise ArchitectureError(f"Non-Linux binary in payload: {name}")
@@ -325,12 +333,27 @@ def _zip_metadata_limit(handle: BinaryIO) -> None:
     handle.seek(0)
 
 
-def _tar_members(archive: tarfile.TarFile, payload: Payload, depth: int = 0) -> None:
-    """Apply the shared member policy to a sequentially iterated tar."""
+def _tar_members(
+    archive: tarfile.TarFile, payload: Payload, depth: int = 0,
+    package_manager: bool = False,
+) -> None:
+    """Apply the shared member policy to a sequentially iterated tar.
+
+    `package_manager` marks the outer payload of a deb/rpm/Arch package
+    file: its members are unpacked at the filesystem root by the native
+    package manager, which resolves declared link targets itself. Absolute
+    and ..-relative targets are standard packaging there (an /usr/bin
+    launcher symlink, a ../lib relative doc link), and the inspection never
+    extracts anything itself. This application unpacks only the plain
+    tarball route (pkg_tarball), where an escaping link target stays a real
+    extraction hazard and the strict guard applies.
+    """
     for member in archive:
         if member.issym() or member.islnk():
             target = PurePosixPath(member.linkname)
-            if target.is_absolute() or ".." in target.parts:
+            if not package_manager and (
+                target.is_absolute() or ".." in target.parts
+            ):
                 raise ArchitectureError(f"Unsafe archive link: {member.name}")
         elif not member.isfile() and not member.isdir():
             raise ArchitectureError(f"Unsupported archive member: {member.name}")
@@ -338,7 +361,10 @@ def _tar_members(archive: tarfile.TarFile, payload: Payload, depth: int = 0) -> 
         _member(member.name, member.size, stream, payload, depth)
 
 
-def _tar_stream(handle: _Readable, payload: Payload, depth: int = 0) -> None:
+def _tar_stream(
+    handle: _Readable, payload: Payload, depth: int = 0,
+    package_manager: bool = False,
+) -> None:
     """Inspect an uncompressed tar streamed by a payload-sized metadata tool.
 
     Streaming mode consumes the tool's output incrementally: members the
@@ -347,14 +373,17 @@ def _tar_stream(handle: _Readable, payload: Payload, depth: int = 0) -> None:
     """
     try:
         with tarfile.open(fileobj=handle, mode="r|") as archive:
-            _tar_members(archive, payload, depth)
+            _tar_members(archive, payload, depth, package_manager)
     except (OSError, EOFError, ValueError, tarfile.TarError) as error:
         if isinstance(error, ArchitectureError):
             raise
         raise ArchitectureError("Cannot inspect archive payload") from error
 
 
-def _archive(handle: BinaryIO, payload: Payload, depth: int = 0) -> None:
+def _archive(
+    handle: BinaryIO, payload: Payload, depth: int = 0,
+    package_manager: bool = False,
+) -> None:
     try:
         if zipfile.is_zipfile(handle):
             _zip_metadata_limit(handle)
@@ -367,7 +396,7 @@ def _archive(handle: BinaryIO, payload: Payload, depth: int = 0) -> None:
         else:
             handle.seek(0)
             with tarfile.open(fileobj=handle, mode="r:*") as archive:
-                _tar_members(archive, payload, depth)
+                _tar_members(archive, payload, depth, package_manager)
     except (
         OSError,
         EOFError,
@@ -491,7 +520,7 @@ def validate_file(
         if metadata != "all":
             require_native([metadata], arch.value)
         with _payload_stream(["dpkg-deb", "--fsys-tarfile", str(file)]) as stream:
-            _tar_stream(stream, payload)
+            _tar_stream(stream, payload, package_manager=True)
             stream.finish()
         independent = metadata == "all"
     elif lower.endswith(".rpm"):
@@ -519,9 +548,11 @@ def validate_file(
     ):
         # zstd Arch archives require an installed native decoder. bsdtar emits
         # an uncompressed tar, which is inspected with the same member policy.
+        # pacman -U unpacks the payload itself, so declared link targets are
+        # the package manager's own domain (same relaxation as deb/rpm).
         if lower.endswith((".pkg.tar.zst", ".pacman")):
             with _payload_stream(["bsdtar", "-cf", "-", "@" + str(file)]) as stream:
-                _tar_stream(stream, payload)
+                _tar_stream(stream, payload, package_manager=True)
                 stream.finish()
         else:
             with file.open("rb") as stream:
@@ -553,7 +584,7 @@ def validate_file(
     if metadata and not independent:
         hints.append(metadata)
     if independent:
-        if payload.architectures or hints:
+        if payload.architectures or hints or payload.foreign_binaries:
             raise ArchitectureError(
                 "Architecture-independent metadata conflicts with native payload/name"
             )
