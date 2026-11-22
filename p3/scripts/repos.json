@@ -89,7 +89,10 @@
             }
         ],
         "category": "game",
-        "icon": "leshade.png"
+        "icon": "leshade.png",
+        "overrides": {
+            "pre": "{ { is_debian && summon_helpers; } && enable_debian_nonfree; } || true"
+        }
     },
     {
         "appstream-name": "com.dec05eba.gpu_screen_recorder",
