@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import glob
 import json
 import os
 import re
@@ -149,8 +150,10 @@ def apt_plan(packages: list[str]) -> None:
         # satisfy on stdout (the unmet-dependencies table) and stderr, both
         # captured here. The refusal must carry the actual reason so an
         # unavailable dependency is diagnosable instead of reading as a
-        # refused or unverified payload.
-        raise ArchitectureError(
+        # refused or unverified payload. The diagnostic subclass lets the
+        # caller annotate unresolvable names without tagging infrastructure
+        # failures (timeouts) with repository advice.
+        raise _AptPlanDiagnostic(
             f"apt cannot plan the install of {', '.join(packages)}: "
             + _apt_plan_diagnostics(error)
         ) from error
@@ -224,6 +227,82 @@ def _tool_diagnostics(
     return f"exit status {status}" if status is not None else "no output captured"
 
 
+class _AptPlanDiagnostic(ArchitectureError):
+    """apt's own unmet-dependency report, not an infrastructure failure.
+
+    The caller annotates unresolvable package names with repository guidance;
+    a planning timeout is an infrastructure failure and must stay unannotated.
+    """
+
+
+def _apt_lists_state() -> str:
+    """Classify APT's package-list state for unavailable-package reports.
+
+    The cache-only queries read whatever ``apt-get update`` last downloaded;
+    a host whose lists were never synced (fresh system, wiped or repeatedly
+    failing update) hides every package, not just an unavailable one. The
+    list directory is world-readable, so the probe stays unprivileged and
+    honors the configured ``Dir::State::lists`` path — ``apt-config`` reports
+    that option relative to ``Dir::State`` by default (``lists/``), so the
+    two are joined the way apt itself resolves them.
+    """
+    values: dict[str, str] = {}
+    try:
+        result = subprocess.run(
+            [
+                "apt-config", "shell",
+                "LT_STATE_DIR", "Dir::State",
+                "LT_LISTS", "Dir::State::lists",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=10,
+            env={**os.environ, "LC_ALL": "C"},
+        )
+        if result.returncode == 0:
+            for match in re.finditer(
+                r"^(LT_\w+)='?([^'\n]+)'?", result.stdout, re.M
+            ):
+                values[match[1]] = match[2]
+    except (OSError, subprocess.SubprocessError):
+        pass
+    state_dir = values.get("LT_STATE_DIR") or "/var/lib/apt"
+    if not state_dir.startswith("/"):
+        state_dir = "/" + state_dir
+    lists = values.get("LT_LISTS") or "lists/"
+    if not lists.startswith("/"):
+        lists = os.path.join(state_dir, lists)
+    if glob.glob(os.path.join(lists.rstrip("/"), "*Packages*")):
+        return "present"
+    return "absent"
+
+
+def _apt_unavailable_note(error: ArchitectureError, unlisted: list[str]) -> str:
+    """Append the actionable cause to a plan refusal over invisible names.
+
+    The candidate listing cannot see these names at all, so the refusal must
+    not claim a native-candidate verdict that was never made: say why the
+    plan could not resolve them instead — no downloaded metadata at all, or
+    metadata that simply does not carry the package (repository components
+    such as Debian's contrib are not enabled by default).
+    """
+    message = str(error)
+    if not unlisted:
+        return message
+    if _apt_lists_state() == "absent":
+        return (
+            message
+            + " APT package lists are absent on this host: refresh the repository"
+            " metadata (apt-get update) and retry."
+        )
+    return (
+        message
+        + " APT has no candidate for these names in the configured repositories:"
+        " the package may live in a repository component that is not enabled"
+        " (Debian: contrib) or require a third-party repository."
+    )
+
+
 def native_packages(packages: list[str], manager: str) -> None:
     """Preflight native package metadata before authentication or transaction locks.
 
@@ -249,6 +328,14 @@ def native_packages(packages: list[str], manager: str) -> None:
     and the ISA gate below still judges the labels the refreshed metadata
     reports — a genuinely missing package or a foreign-ISA one is refused
     exactly as before, nothing presumes the host ISA.
+
+    APT has no unprivileged metadata fetch, so the candidate listing itself
+    never refuses an invisible name: absence from the listing (apt 2.x exits
+    silently, apt 3.x reports "No packages found") defers to the simulated
+    installation plan, which names the unresolvable target with apt's own
+    words — the same verdict the install command would produce — and the
+    refusal gains an actionable cause note (no package lists at all, or a
+    repository component such as Debian's contrib that is not enabled).
     """
     arch = host()
     for package in packages:
@@ -260,6 +347,7 @@ def native_packages(packages: list[str], manager: str) -> None:
             )
         require_native(asset_architectures(package) or [arch.value], arch.value)
     if manager == "apt":
+        unlisted: list[str] = []
         for package in packages:
             try:
                 candidate = subprocess.run(
@@ -270,22 +358,34 @@ def native_packages(packages: list[str], manager: str) -> None:
                     timeout=30,
                     env={**os.environ, "LC_ALL": "C"},
                 ).stdout
-            except subprocess.CalledProcessError as error:
-                raise ArchitectureError(
-                    f"Could not fetch package metadata for {package}: "
-                    + _tool_diagnostics(error)
-                ) from error
+            except subprocess.CalledProcessError:
+                # The listing stage only classifies what the cache carries:
+                # apt 2.x exits 0 silently and apt 3.x reports "No packages
+                # found" for the same absent name. Defer both to the
+                # simulated plan below, which carries apt's own reason.
+                unlisted.append(package)
+                continue
             fields = [
                 line.split(":", 1)[1].strip()
                 for line in candidate.splitlines()
                 if line.startswith("Architecture:")
             ]
             if not fields:
-                raise ArchitectureError(
-                    f"No available native candidate for {package}; configure a supported repository first"
-                )
+                # Nothing is listed for the bare name: the package is absent
+                # from the enabled repositories or purely provided by another
+                # package. APT's simulated plan is the authority for both —
+                # it either refuses the unresolvable target exactly as the
+                # install command would, or selects the provider, whose
+                # architecture the plan gate judges like any other payload.
+                unlisted.append(package)
+                continue
             _require_native_candidate(package, fields, arch.value)
-        apt_plan(packages)
+        try:
+            apt_plan(packages)
+        except _AptPlanDiagnostic as error:
+            raise ArchitectureError(
+                _apt_unavailable_note(error, unlisted)
+            ) from error
     elif manager in {"dnf", "zypper", "pacman", "eopkg"}:
         commands = {
             # dnf5 concatenates the queryformat output of all matching
