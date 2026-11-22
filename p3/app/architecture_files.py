@@ -488,6 +488,56 @@ def _cpio(handle: _Readable, payload: Payload) -> None:
             raise ArchitectureError("Truncated RPM payload")
 
 
+# A .flatpak single-file bundle is an ostree static delta from the empty
+# tree to the deployed commit; its superblock metadata dictionary names the
+# exact ref (kind/id/arch/branch) the install deploys, and build-bundle
+# writes a readable format header as the first entry ("flatpak": uint32
+# 0xe5890001). GLib (a hard dependency through PyGObject) parses the
+# variant exactly as libflatpak does; the bundle contents are
+# content-addressed ostree objects whose integrity and path safety are
+# flatpak/ostree's own at deployment, so the ref carries the architecture
+# evidence and no ELF walk is due here. Anything unreadable or structurally
+# unsound is refused fail-closed.
+_FLATPAK_SUPERBLOCK_TYPE = (
+    "(a{sv}tayay(a{sv}aya(saytayscanasy))aya(uayttay)a(yaytt))"
+)
+_FLATPAK_BUNDLE_MAGIC = 0xE5890001
+
+
+def flatpak_bundle_ref(file: Path) -> str:
+    """Return the ref string a .flatpak single-file bundle deploys for.
+
+    The ref is "kind/id/arch/branch"; callers take the segment they need.
+    """
+    try:
+        from gi.repository import GLib
+
+        delta = GLib.Variant.new_from_bytes(
+            GLib.VariantType.new(_FLATPAK_SUPERBLOCK_TYPE),
+            GLib.MappedFile.new(str(file), False).get_bytes(),
+            False,
+        )
+        metadata = delta.get_child_value(0)
+        magic = metadata.lookup_value("flatpak", GLib.VariantType.new("u"))
+        ref = metadata.lookup_value("ref", GLib.VariantType.new("s"))
+    except Exception as error:
+        raise ArchitectureError(
+            f"The flatpak bundle {file.name} is unreadable: {error}"
+        ) from error
+    if magic is None or magic.get_uint32() != _FLATPAK_BUNDLE_MAGIC:
+        raise ArchitectureError(f"{file.name} is not a flatpak bundle")
+    if ref is None:
+        raise ArchitectureError(
+            f"The flatpak bundle {file.name} carries no ref in its metadata"
+        )
+    value = ref.get_string()
+    if len(value.split("/")) != 4 or not all(value.split("/")):
+        raise ArchitectureError(
+            f"The flatpak bundle {file.name} carries an unusable ref"
+        )
+    return value
+
+
 def validate_file(
     path: str | Path, *, machine: str | None = None, content_kind: str = "native"
 ) -> Payload:
@@ -573,7 +623,13 @@ def validate_file(
         raise ArchitectureError(
             "Flatpak references require remote architecture/availability preflight"
         )
-    elif lower.endswith((".flatpak", ".snap", ".eopkg")):
+    elif lower.endswith(".flatpak"):
+        # The bundle's own ref metadata is the payload evidence: its arch
+        # segment must normalize to a supported native ISA (foreign refs
+        # refuse here) and is ISA-judged together with the filename hints
+        # below, so a bundle whose ref contradicts its name is refused.
+        metadata = normalize(flatpak_bundle_ref(file).split("/")[2]).value
+    elif lower.endswith((".snap", ".eopkg")):
         raise ArchitectureError(
             f"Native payload inspection is not yet qualified for {file.suffix}; use a verified native repository route"
         )

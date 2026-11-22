@@ -13,6 +13,7 @@ import shlex
 
 from .compat import get_linuxtoys_cache_dir
 from .registry_utils import normalize_registry_content, load_registry_transactions
+from .architecture_files import flatpak_bundle_ref
 
 
 _EXECUTED_NAMES_CACHE = {"key": None, "executed": frozenset()}
@@ -392,7 +393,8 @@ def _reverse_package_fromfile(file_paths):
     Attempts to extract package name from file path and remove it.
     For .deb files, extracts name before first underscore.
     For .pkg.tar.zst files, similar approach.
-    For .flatpak bundles, extracts app ID using flatpak info.
+    For .flatpak bundles, extracts the app ID from the bundle's own ref
+    metadata (architecture_files.flatpak_bundle_ref).
 
     Args:
         file_paths: list of file paths or single file path string
@@ -415,22 +417,13 @@ def _reverse_package_fromfile(file_paths):
 
         # Handle flatpak bundles specially
         if basename.endswith('.flatpak'):
-            # Try to extract app ID from the flatpak bundle using flatpak info
+            # The bundle's own ref metadata names the app ID
+            # ("app/<id>/<arch>/<branch>"); flatpak's CLI cannot report it
+            # for a bundle file, so parse the file directly. A missing or
+            # unreadable file (e.g. a cleaned tmpdir) keeps the silent skip
+            # the old flatpak-info path had.
             try:
-                result = subprocess.run(
-                    ["flatpak", "info", file_path],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.DEVNULL,
-                    text=True,
-                    check=False,
-                )
-                if result.returncode == 0:
-                    # Parse output to find ID= line
-                    for line in result.stdout.split('\n'):
-                        if line.startswith('ID='):
-                            app_id = line.split('=', 1)[1].strip()
-                            flatpak_app_ids.append(app_id)
-                            break
+                flatpak_app_ids.append(flatpak_bundle_ref(file_path).split("/")[1])
             except Exception:
                 pass
             continue
