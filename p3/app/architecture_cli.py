@@ -53,6 +53,34 @@ _AUR_NAME = re.compile(r"[A-Za-z0-9@._+:-]+")
 # listing's 30 s.
 _METADATA_FETCH_TIMEOUT = 120
 
+# rpm arch-qualified package names (name.arch): the suffix is the package's
+# own build label, and on rpm it doubles as the syntax for an explicit
+# multilib request. The suffix must be a known label (python3.12 does not
+# qualify; libstdc++.i686 does), and the x86-32 labels fold into one family:
+# on x86_64 hosts the dnf backend resolves and installs the 32-bit sibling
+# from the same repositories without any configuration, so the request is
+# judged by metadata availability, not by the bare-name native rule.
+_RPM_ARCH_QUALIFIED = re.compile(
+    r"^(?P<name>[A-Za-z0-9][A-Za-z0-9+._-]*?)\."
+    r"(?P<arch>x86_64|i386|i486|i586|i686|aarch64|noarch)$"
+)
+_RPM_X86_32_LABELS = frozenset({"i386", "i486", "i586", "i686"})
+
+
+def _rpm_qualified_arch(package: str) -> str | None:
+    """Return the rpm build label of an arch-qualified name, or None."""
+    match = _RPM_ARCH_QUALIFIED.match(package)
+    return match.group("arch") if match else None
+
+
+def _rpm_arch_installable(qualified: str, host_arch: str) -> bool:
+    """Whether an arch-qualified request can resolve for this host at all."""
+    if qualified == "noarch":
+        return True
+    if qualified in _RPM_X86_32_LABELS:
+        return host_arch == "x86_64"
+    return qualified == host_arch
+
 
 class _PolicyRefusal(ArchitectureError):
     """A refusal that fresh repository metadata can never cure.
@@ -340,6 +368,23 @@ def native_packages(packages: list[str], manager: str) -> None:
     reports — a genuinely missing package or a foreign-ISA one is refused
     exactly as before, nothing presumes the host ISA.
 
+    dnf also resolves virtual Provides the way its install command does: a
+    name the repositories no longer carry as a package (Fedora 45 dropped
+    the wget name; wget1-wget and wget2-wget provide it) still installs, so
+    an empty name listing falls back to one unprivileged
+    `repoquery --whatprovides` and the providers' own architecture labels
+    are judged by the same gate. A name nothing provides is still refused.
+
+    rpm arch-qualified names (name.i686) are rpm's own explicit-multilib
+    syntax, and the dnf backend honors x86-32-qualified names on x86_64
+    hosts: the manager resolves and installs the 32-bit sibling from the
+    same repositories without any configuration (unlike apt's i386, which
+    needs dpkg --add-architecture first), so the gate requires the
+    requested label among the candidates instead of a native one — a name
+    with no 32-bit build is still refused. Qualified requests naming a
+    foreign ISA (foo.aarch64 on x86_64) and the bare-name foreign-sibling
+    rule keep the policy refusal.
+
     APT has no unprivileged metadata fetch, so the candidate listing itself
     never refuses an invisible name: absence from the listing (apt 2.x exits
     silently, apt 3.x reports "No packages found") defers to the simulated
@@ -356,9 +401,16 @@ def native_packages(packages: list[str], manager: str) -> None:
     preflight is judged again.
     """
     arch = host()
+    # rpm arch-qualified requests (dnf backend) skip the bare-name native
+    # rule here and are judged by metadata availability in the listing stage
+    # below; this mapping carries each request's label to its gate call.
+    qualified_reqs: dict[str, str] = {}
     for package in packages:
         if package.startswith("-"):
             raise _PolicyRefusal("Package options are not package names")
+        rpm_arch = _rpm_qualified_arch(package) if manager == "dnf" else None
+        if rpm_arch is not None and _rpm_arch_installable(rpm_arch, arch.value):
+            qualified_reqs[package] = rpm_arch
         if ":" in package:
             try:
                 require_native(
@@ -366,10 +418,11 @@ def native_packages(packages: list[str], manager: str) -> None:
                 )
             except ArchitectureError as error:
                 raise _PolicyRefusal(str(error)) from error
-        try:
-            require_native(asset_architectures(package) or [arch.value], arch.value)
-        except ArchitectureError as error:
-            raise _PolicyRefusal(str(error)) from error
+        if package not in qualified_reqs:
+            try:
+                require_native(asset_architectures(package) or [arch.value], arch.value)
+            except ArchitectureError as error:
+                raise _PolicyRefusal(str(error)) from error
     if manager == "apt":
         unlisted: list[str] = []
         for package in packages:
@@ -426,6 +479,19 @@ def native_packages(packages: list[str], manager: str) -> None:
             "dnf": ["dnf", "--assumeyes", "repoquery", "--qf", "%{arch}\n"],
             "zypper": ["zypper", "--non-interactive", "info"],
         }
+        # Virtual-provides resolution mirroring the install command, which
+        # selects a provider for a bare name (Fedora 45: wget exists only as
+        # wget1-wget/wget2-wget's provide). zypper has no non-interactive
+        # provides query that reports the provider's architecture, so it
+        # keeps the name-only listing. The queried name is appended after
+        # this base command, so --whatprovides stays last: dnf5 reads the
+        # capability from the argument that directly follows it.
+        provides = {
+            "dnf": [
+                "dnf", "--assumeyes", "repoquery",
+                "--qf", "%{arch}\n", "--whatprovides",
+            ],
+        }
         for package in packages:
             result = ""
             try:
@@ -453,6 +519,14 @@ def native_packages(packages: list[str], manager: str) -> None:
                 result = _fetch_metadata(fetches[manager], package)
             if not result.strip() and manager in fetches:
                 result = _fetch_metadata(fetches[manager], package)
+            if not result.strip() and manager in provides:
+                # The install command resolves a virtual provide, so the
+                # preflight must judge the providers' metadata instead of
+                # refusing a name the transaction would resolve. The gate
+                # below still judges the providers' own arch labels: a name
+                # nothing provides, or one provided only for a foreign ISA,
+                # is refused exactly as before.
+                result = _fetch_metadata(provides[manager], package)
             if not result.strip():
                 raise ArchitectureError(f"No available package metadata for {package}")
             if manager == "eopkg" and "not found in binary repositories" in result:
@@ -477,7 +551,9 @@ def native_packages(packages: list[str], manager: str) -> None:
                 raise ArchitectureError(
                     f"Architecture metadata unavailable for {package}; use an inspected source-build route"
                 )
-            _require_native_candidate(package, values, arch.value)
+            _require_native_candidate(
+                package, values, arch.value, qualified_reqs.get(package)
+            )
     else:
         raise _PolicyRefusal("Unsupported package preflight backend")
 
@@ -508,7 +584,10 @@ def _fetch_metadata(command: list[str], package: str) -> str:
 
 
 def _require_native_candidate(
-    package: str, values: Iterable[str], host_arch: str
+    package: str,
+    values: Iterable[str],
+    host_arch: str,
+    explicit_arch: str | None = None,
 ) -> None:
     """Require one native or arch-independent candidate in manager metadata.
 
@@ -518,6 +597,12 @@ def _require_native_candidate(
     refused by native_packages' suffix check. Labels go through the ISA
     authority: manager aliases (amd64) and microarchitecture levels
     (canonical_package_architecture) both count as native x86_64 evidence.
+
+    An rpm arch-qualified request (explicit_arch set) instead requires the
+    requested label itself among the candidates: the manager installs the
+    exact build asked for, so the requested label's availability is the
+    verdict — an arch-independent request (noarch) still follows the native
+    rule.
     """
     host = normalize(host_arch).value
     candidates: set[str] = set()
@@ -530,6 +615,19 @@ def _require_native_candidate(
             candidates.add(normalize(token).value)
         except ArchitectureError:
             candidates.add(token)
+    if (
+        explicit_arch is not None
+        and explicit_arch != host
+        and explicit_arch not in {"noarch"}
+    ):
+        # Non-host rpm multilib request: the manager installs the exact
+        # build asked for, so that label's availability is the verdict.
+        if explicit_arch not in candidates:
+            raise ArchitectureError(
+                f"No {explicit_arch} candidate for {package}: host={host}, "
+                f"available={', '.join(sorted(candidates)) or 'none'}"
+            )
+        return
     if not candidates or host in candidates:
         return
     raise ArchitectureError(
