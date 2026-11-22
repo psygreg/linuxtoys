@@ -15,9 +15,13 @@ if is_debian || is_ubuntu; then
 	_link="https://cdn.posit.co/positron/releases/deb/x86_64/Positron-${_tag}-x64.deb"
     _pkg_name=$(basename ${_link})
     if curl -fsSL "${_link}" -o "/tmp/${_pkg_name}"; then
-        _architecture_check files "/tmp/${_pkg_name}"
+        # The deb bundles VS Code extension VSIXs (e.g. ms-toolsai.jupyter)
+        # that ship multi-platform .node prebuilds (win32/darwin/linux) as
+        # inert data; --guest declares them while native amd64 metadata and
+        # host-ISA payload evidence stay mandatory.
+        _architecture_check files --content-kind guest "/tmp/${_pkg_name}"
         pkg_install r-base r-base-dev
-        if pkg_fromfile "/tmp/${_pkg_name}"; then
+        if pkg_fromfile --guest "/tmp/${_pkg_name}"; then
             zeninf "Positron successfully installed!"
         else
             fatal "Installation failed."
@@ -29,9 +33,11 @@ elif is_fedora || is_rhel; then
 	_link="https://cdn.posit.co/positron/releases/rpm/x86_64/Positron-${_tag}-x64.rpm"
     _pkg_name=$(basename ${_link})
     if curl -fsSL "${_link}" -o "/tmp/${_pkg_name}"; then
-        _architecture_check files "/tmp/${_pkg_name}"
+        # Same multi-platform .node prebuilds inside the bundled extension
+        # VSIXs; --guest declares them as inert data (see the deb branch).
+        _architecture_check files --content-kind guest "/tmp/${_pkg_name}"
         pkg_install R-core R-core-devel
-        if pkg_fromfile "/tmp/${_pkg_name}"; then
+        if pkg_fromfile --guest "/tmp/${_pkg_name}"; then
             zeninf "Positron successfully installed!"
         else
             fatal "Installation failed."
