@@ -1162,10 +1162,12 @@ pkg_fromfile () {
     set -- "${_filtered_args[@]}"
 
     # Validate every input before authenticating or installing any item in a batch.
+    # An explicit --guest declaration validates directly; otherwise the package
+    # preflight may still offer the consent route for foreign-platform binaries.
     if (( _guest )); then
         _architecture_check files --content-kind guest "$@"
     else
-        _architecture_check files "$@"
+        _architecture_check_package_files "$@"
     fi
 
     # Snap files are handled by snapd rather than the host package manager.
@@ -1508,7 +1510,7 @@ pkg_binary () {
 pkg_fromurl () {
     [[ $# -gt 0 ]] || die "No package URLs provided"
 
-    local _tarball=0 _binary=0 _skip_user=0 _no_shortcut=0 arg
+    local _tarball=0 _binary=0 _skip_user=0 _no_shortcut=0 _guest=0 arg
     local -a urls=()
     for arg in "$@"; do
         case "$arg" in
@@ -1524,6 +1526,14 @@ pkg_fromurl () {
             --skip-user)
                 _skip_user=1
                 ;;
+            --guest)
+                # Declares that the downloaded native package legitimately
+                # embeds foreign-platform binaries as inert data (the same
+                # declaration pkg_fromfile --guest carries). The declaration
+                # applies to native package files; tarball and single-binary
+                # installs keep their strict routes.
+                _guest=1
+                ;;
             *)
                 urls+=("$arg")
                 ;;
@@ -1533,6 +1543,8 @@ pkg_fromurl () {
     [[ $_tarball -eq 0 || $_binary -eq 0 ]] || die "--tar and --bin cannot be used together"
     [[ $_binary -eq 0 || ${#urls[@]} -eq 1 ]] || die "pkg_fromurl --bin expects exactly one URL"
     [[ $_no_shortcut -eq 0 || $_binary -eq 1 ]] || die "--no-shortcut only applies to --bin installs"
+    [[ $_guest -eq 0 || ( $_tarball -eq 0 && $_binary -eq 0 ) ]] || \
+        die "--guest cannot be combined with --tar or --bin"
 
     local url filename download_dir package_dir package_file
     local effective_url content_disposition metadata_file temp_file
@@ -1624,7 +1636,15 @@ pkg_fromurl () {
     done
 
     # The whole download batch must be safe before its first install starts.
-    _architecture_check files "${package_files[@]}"
+    # An explicit --guest declaration validates directly; otherwise the batch
+    # preflight may still offer the consent route for foreign-platform
+    # binaries, and the consented files carry --guest into pkg_fromfile so
+    # its own revalidation runs the same declaration instead of asking again.
+    if [[ $_guest -eq 1 ]]; then
+        _architecture_check files --content-kind guest "${package_files[@]}"
+    else
+        _architecture_check_package_files "${package_files[@]}"
+    fi
 
     for package_file in "${package_files[@]}"; do
         if [[ $_binary -eq 1 ]]; then
@@ -1646,11 +1666,14 @@ pkg_fromurl () {
                 pkg_appimage "$package_file"
                 ;;
             *)
+                local -a fromfile_flags=()
                 if [[ $_skip_user -eq 1 ]]; then
-                    pkg_fromfile --skip-user "$package_file"
-                else
-                    pkg_fromfile "$package_file"
+                    fromfile_flags+=("--skip-user")
                 fi
+                if [[ $_guest -eq 1 ]]; then
+                    fromfile_flags+=("--guest")
+                fi
+                pkg_fromfile "${fromfile_flags[@]}" "$package_file"
                 ;;
         esac
     done
@@ -1915,7 +1938,7 @@ PY2
 }
 
 pkg_fromrelease () {
-    local _tarball=0 _binary=0 _make=0 _snap=0 _no_shortcut=0 arg make_command="sudo make install"
+    local _tarball=0 _binary=0 _make=0 _snap=0 _no_shortcut=0 _guest=0 arg make_command="sudo make install"
     local -a release_args=() make_dependencies=()
     while [[ $# -gt 0 ]]; do
         case "$1" in
@@ -1934,6 +1957,14 @@ pkg_fromrelease () {
             --make)
                 _make=1
                 _tarball=1
+                ;;
+            --guest)
+                # Declares the release's native package asset as legitimately
+                # embedding foreign-platform binaries (the same declaration
+                # pkg_fromfile --guest carries). Only the native package
+                # route carries it; tarball/binary/snap/make modes keep
+                # their strict routes.
+                _guest=1
                 ;;
             --make-command)
                 shift
@@ -1961,6 +1992,8 @@ pkg_fromrelease () {
     [[ $_make -eq 0 || $_snap -eq 0 ]] || die "--make and --snap cannot be used together"
     [[ $_binary -eq 0 || $# -eq 2 ]] || die "pkg_fromrelease --bin requires the exact release asset name"
     [[ $_no_shortcut -eq 0 || $_binary -eq 1 ]] || die "--no-shortcut only applies to --bin installs"
+    [[ $_guest -eq 0 || ( $_tarball -eq 0 && $_binary -eq 0 && $_snap -eq 0 && $_make -eq 0 ) ]] || \
+        die "--guest cannot be combined with --tar, --bin, --snap or --make"
 
     local native_type="" package_url snap_release_allowed=0
     local -a release_selection
@@ -2140,7 +2173,11 @@ PY
     elif [[ $_snap -eq 1 ]]; then
         pkg_fromurl "$package_url"
     else
-        pkg_fromurl "$package_url"
+        if [[ $_guest -eq 1 ]]; then
+            pkg_fromurl --guest "$package_url"
+        else
+            pkg_fromurl "$package_url"
+        fi
     fi
 
     # Repository-list release metadata is informational registry state. Record it

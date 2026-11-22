@@ -11,6 +11,48 @@ _architecture_check() {
     python3 "$SCRIPT_DIR/app/architecture_cli.py" "$@" || die "$arch_preflight_refused"
 }
 
+# Package-file preflight with a consent route for foreign-platform binaries.
+# The plain `files` preflight refuses any payload embedding Windows/macOS
+# binaries; those are inert data on Linux (multi-platform .node prebuilds,
+# bundled VM guest assets), so after explicit user consent the same payload
+# is re-validated under the `guest` content kind — which still requires
+# native package metadata and host-ISA code evidence. The guest declaration
+# is probed silently first: the consent prompt is only offered when it
+# actually unlocks the payload. Every other refusal stays fatal, and callers
+# that declare the guest kind themselves (pkg_fromfile --guest) never reach
+# the consent path.
+_architecture_check_package_files() {
+    local _native_output _output _status _detail
+    _native_output=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" files "$@" 2>&1)
+    _status=$?
+    if (( _status == 0 )); then
+        return 0
+    fi
+    if [[ "$_native_output" != *"Non-Linux binary in payload"* ]]; then
+        printf '%s\n' "$_native_output" >&2
+        die "$arch_preflight_refused"
+    fi
+    # A consent prompt must actually unlock the payload: probe the guest
+    # declaration silently first, and keep the plain refusal when even the
+    # declared guest contract cannot accept it.
+    _output=$(
+        python3 "$SCRIPT_DIR/app/architecture_cli.py" files --content-kind guest "$@" 2>&1
+    )
+    _status=$?
+    if (( _status != 0 )); then
+        printf '%s\n' "$_native_output" >&2
+        die "$arch_preflight_refused"
+    fi
+    : "${arch_guest_consent_title:=Foreign binaries found}"
+    : "${arch_guest_consent_text:=This package embeds non-Linux binaries (Windows/macOS components, e.g. multi-platform libraries) that are inert data on Linux. Install it as declared guest content?}"
+    _detail="${_native_output#"Architecture preflight refused: "}"
+    if ! question "$arch_guest_consent_title" \
+        "$arch_guest_consent_text\n\n$_detail" 420 240; then
+        printf '%s\n' "$_native_output" >&2
+        die "$arch_preflight_refused"
+    fi
+}
+
 # --- LinuxToys Shell Library ---
 # core modules automatically sourced
 
