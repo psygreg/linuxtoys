@@ -496,6 +496,53 @@ def shell_appimage_release_exports(registry_data=None):
     return "\n".join(lines)
 
 
+# The Debian-stable FUSE 2 package-file install is tracked the same way:
+# _pkg_debian_stable_fuse2 writes ``fuse2-deb <VERSION> <ARCH>`` after a
+# successful install, so the system updater can recognize and refresh it on
+# hosts whose own repositories no longer publish FUSE 2. At most one record
+# exists per host; the record is a provenance marker — the update decision
+# reads the installed version from dpkg, so a stale record is harmless.
+_FUSE2_DEB_VERSION_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9.+~:-]*$")
+_FUSE2_DEB_ARCH_RE = re.compile(r"^[a-z][a-z0-9]*$")
+
+
+def get_fuse2_deb_record(registry_data=None):
+    """Return the latest registered Debian-stable FUSE 2 record, or None."""
+    if registry_data is None:
+        registry_data = parse_registry_file()
+
+    record = None
+    for _script_name, executions in registry_data.items():
+        for timestamp, operations in executions:
+            for operation in operations:
+                if not operation.startswith("fuse2-deb "):
+                    continue
+                parts = operation.split(None, 2)
+                if len(parts) != 3:
+                    continue
+                _kind, version, arch = parts
+                if not _FUSE2_DEB_VERSION_RE.fullmatch(version) or not _FUSE2_DEB_ARCH_RE.fullmatch(arch):
+                    continue
+                if record is None or str(timestamp or "") >= record["timestamp"]:
+                    record = {
+                        "version": version,
+                        "arch": arch,
+                        "timestamp": str(timestamp or ""),
+                    }
+
+    return record
+
+
+def shell_fuse2_deb_exports(registry_data=None):
+    """Render the safe Bash assignment for the registered FUSE 2 record."""
+    import shlex
+
+    record = get_fuse2_deb_record(registry_data)
+    if record is None:
+        return ""
+    return f"export FUSE2_DEB_VERSION={shlex.quote(record['version'])}"
+
+
 if __name__ == "__main__":
     import sys
 
@@ -504,5 +551,8 @@ if __name__ == "__main__":
         sys.exit(0)
     if len(sys.argv) == 2 and sys.argv[1] == "--export-appimage-releases":
         print(shell_appimage_release_exports())
+        sys.exit(0)
+    if len(sys.argv) == 2 and sys.argv[1] == "--export-fuse2-deb":
+        print(shell_fuse2_deb_exports())
         sys.exit(0)
     sys.exit(2)

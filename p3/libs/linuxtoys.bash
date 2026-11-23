@@ -1050,6 +1050,19 @@ appimage_app_versions() {
     eval "$exports"
 }
 
+# Expose the Debian-stable FUSE 2 package-file install tracked from the Action
+# Registry. Mirrors git_app_versions/appimage_app_versions: at most one record
+# exists per host (the installed build's provenance marker, written by
+# _pkg_debian_stable_fuse2); FUSE2_DEB_VERSION stays unset when none does.
+fuse2_deb_versions() {
+    local exports
+    exports=$(python3 "$SCRIPT_DIR/app/registry_utils.py" --export-fuse2-deb) || {
+        FUSE2_DEB_VERSION=""
+        return 1
+    }
+    eval "$exports"
+}
+
 # Flatpak component IDs are reverse-DNS names: at least three dot-separated
 # labels (e.g. it.mijorus.gearlever, org.gnome.Calculator). Native AppStream
 # IDs usually carry a .desktop suffix, and display names passed to

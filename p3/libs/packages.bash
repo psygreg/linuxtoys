@@ -2631,6 +2631,142 @@ pkg_appimage_update () {
     rm -rf "$out_dir"
 }
 
+# Ensure a FUSE 2 runtime library exists before an AppImage install on
+# Debian-family hosts. Preference order mirrors upstream naming across
+# releases: an installed package short-circuits; then a candidate from the
+# host's own repositories (libfuse2t64, the t64 rename used by current
+# Debian/Ubuntu, then plain libfuse2); then, when the host repositories no
+# longer publish FUSE 2 at all (Kali rolling removed src:fuse in April 2026
+# and Debian testing dropped it likewise), the libfuse2t64 binary from the
+# latest Debian stable suite is installed through the standard package-file
+# route. Only a failure of every route refuses the install.
+_pkg_appimage_ensure_fuse2 () {
+    if dpkg -s libfuse2t64 >/dev/null 2>&1 || dpkg -s libfuse2 >/dev/null 2>&1; then
+        :
+    elif LC_ALL=C apt-cache policy libfuse2t64 | grep -Eq '^[[:space:]]*Candidate: [^ (]'; then
+        pkg_install libfuse2t64
+    elif LC_ALL=C apt-cache policy libfuse2 | grep -Eq '^[[:space:]]*Candidate: [^ (]'; then
+        pkg_install libfuse2
+    elif ! _pkg_debian_stable_fuse2; then
+        die "$PKG_APPIMAGE_NO_FUSE_CANDIDATE"
+    fi
+}
+
+# Install libfuse2t64 resolved from the latest Debian stable suite (the
+# "stable" symlink follows each release) for the host's dpkg architecture.
+# The pool directory accumulates every active suite's build and carries no
+# suite information, so suite-correct resolution reads the stable Packages
+# index first (it names the exact pool file the stable suite references) and
+# only degrades to the newest pool entry when the index is unreachable.
+# Installs through pkg_fromfile so the payload preflight, the apt
+# transaction's dependency resolution against the host's own repositories and
+# the transmap record all apply (reversal removes libfuse2t64 by name).
+# Returns nonzero when nothing could be installed; the caller refuses.
+# LINUXTOYS_DEBIAN_MIRROR overrides the archive base URL (test hook).
+_pkg_debian_stable_fuse2 () {
+    local _mirror="${LINUXTOYS_DEBIAN_MIRROR:-https://deb.debian.org/debian}"
+    local _pkg_pool="pool/main/f/fuse"
+    local _deb_arch _deb_rel="" _deb_file _deb_url _tmpdir _index
+    _deb_arch=$(dpkg --print-architecture 2>/dev/null) || return 1
+
+    if command -v xz >/dev/null 2>&1; then
+        _index=$(mktemp) || return 1
+        if curl -fL --retry 3 --connect-timeout 15 --output "$_index" -- \
+            "$_mirror/dists/stable/main/binary-${_deb_arch}/Packages.xz" 2>/dev/null; then
+            _deb_rel=$(xz -dc "$_index" 2>/dev/null | awk -v RS= \
+                '$1 == "Package:" && $2 == "libfuse2t64" {
+                     for (i = 3; i <= NF; i++) if ($i == "Filename:") { print $(i + 1); exit }
+                 }') || _deb_rel=""
+        fi
+        rm -f "$_index"
+    fi
+
+    if [[ -n "$_deb_rel" ]]; then
+        _deb_file="${_deb_rel##*/}"
+        _deb_url="$_mirror/$_deb_rel"
+    else
+        # Sort the version component, not the whole filename: a version
+        # suffix like "_amd64.deb" perturbs version comparison and would
+        # rank 2.9.9-9 above 2.9.9-9+b2.
+        _deb_file=$(curl -fsSL --retry 3 --connect-timeout 15 -- "$_mirror/$_pkg_pool/" 2>/dev/null |
+            grep -oE 'libfuse2t64_[-A-Za-z0-9.~+:]+_'"${_deb_arch}"'\.deb' |
+            sed -E 's/^libfuse2t64_([-A-Za-z0-9.~+:]+)_.*/\1/' |
+            sort -uV | tail -n 1) || _deb_file=""
+        [[ -n "$_deb_file" ]] || return 1
+        _deb_file="libfuse2t64_${_deb_file}_${_deb_arch}.deb"
+        _deb_url="$_mirror/$_pkg_pool/$_deb_file"
+    fi
+
+    _tmpdir=$(mktemp -d) || return 1
+    if ! curl -fL --retry 3 --connect-timeout 15 --output "$_tmpdir/$_deb_file" -- "$_deb_url" 2>/dev/null; then
+        rm -rf "$_tmpdir"
+        return 1
+    fi
+    if [[ ! -s "$_tmpdir/$_deb_file" ]]; then
+        rm -rf "$_tmpdir"
+        return 1
+    fi
+    if ! pkg_fromfile "$_tmpdir/$_deb_file"; then
+        rm -rf "$_tmpdir"
+        return 1
+    fi
+    rm -rf "$_tmpdir"
+    # Track the installed build for the system updater (informational
+    # registry record, mirrors the git-release/appimage-release records).
+    # dpkg-query is the ground truth: a filename can drop a version epoch.
+    local _installed_version
+    _installed_version=$(dpkg-query -W -f='${Version}' libfuse2t64 2>/dev/null) || _installed_version=""
+    [[ -n "$_installed_version" ]] && _append_transmap "fuse2-deb $_installed_version $_deb_arch"
+    return 0
+}
+
+# Print the current libfuse2t64 Version from the latest Debian stable suite
+# for the host's dpkg architecture; fails when the suite index is unreachable
+# or names no libfuse2t64 build. Reads the same suite index the install
+# fallback resolves its pool file from.
+_pkg_debian_stable_fuse2_version () {
+    local _mirror="${LINUXTOYS_DEBIAN_MIRROR:-https://deb.debian.org/debian}"
+    local _deb_arch _index _version=""
+    _deb_arch=$(dpkg --print-architecture 2>/dev/null) || return 1
+    command -v xz >/dev/null 2>&1 || return 1
+    _index=$(mktemp) || return 1
+    if curl -fL --retry 3 --connect-timeout 15 --output "$_index" -- \
+        "$_mirror/dists/stable/main/binary-${_deb_arch}/Packages.xz" 2>/dev/null; then
+        _version=$(xz -dc "$_index" 2>/dev/null | awk -v RS= \
+            '$1 == "Package:" && $2 == "libfuse2t64" {
+                 for (i = 3; i <= NF; i++) if ($i == "Version:") { print $(i + 1); exit }
+             }') || _version=""
+    fi
+    rm -f "$_index"
+    [[ -n "$_version" ]] || return 1
+    printf '%s\n' "$_version"
+}
+
+# Refresh the Debian-stable FUSE 2 package-file install tracked by the
+# fuse2-deb Action Registry record (written by _pkg_debian_stable_fuse2 at
+# install time). The record is a provenance marker: only a package still
+# installed by this route is considered, and the decision compares the stable
+# suite's current version against the INSTALLED version with dpkg's own
+# version ordering — a stale record never re-triggers an install and a
+# locally newer build is never downgraded. Best-effort: failures are
+# reported, never fatal (the system update continues).
+fuse2_deb_update () {
+    [[ -n "${FUSE2_DEB_VERSION:-}" ]] || return 0
+    dpkg -s libfuse2t64 >/dev/null 2>&1 || return 0
+    local _installed_version _latest_version
+    _installed_version=$(dpkg-query -W -f='${Version}' libfuse2t64 2>/dev/null) || _installed_version=""
+    [[ -n "$_installed_version" ]] || return 0
+    _latest_version=$(_pkg_debian_stable_fuse2_version) || {
+        warn "Failed to check FUSE 2 updates"
+        return 0
+    }
+    if dpkg --compare-versions "$_latest_version" gt "$_installed_version"; then
+        echo "Updating libfuse2t64: $_installed_version -> $_latest_version"
+        ( _pkg_debian_stable_fuse2 ) || warn "Failed to update FUSE 2"
+    fi
+    return 0
+}
+
 pkg_appimage () {
     [[ $# -gt 0 ]] || die "No AppImage files provided"
     _architecture_check files "$@"
@@ -2662,19 +2798,7 @@ pkg_appimage () {
         fi
     fi
 
-    { is_ubuntu || is_debian; } && {
-        # FUSE 2 changed package names across Debian/Ubuntu releases. Prefer the
-        # package exposed by the host repositories instead of keying off a codename.
-        if dpkg -s libfuse2t64 >/dev/null 2>&1 || dpkg -s libfuse2 >/dev/null 2>&1; then
-            :
-        elif LC_ALL=C apt-cache policy libfuse2t64 | grep -Eq '^[[:space:]]*Candidate: [^ (]'; then
-            pkg_install libfuse2t64
-        elif LC_ALL=C apt-cache policy libfuse2 | grep -Eq '^[[:space:]]*Candidate: [^ (]'; then
-            pkg_install libfuse2
-        else
-            die "$PKG_APPIMAGE_NO_FUSE_CANDIDATE"
-        fi
-    }
+    { is_ubuntu || is_debian; } && _pkg_appimage_ensure_fuse2
     { is_fedora || is_ostree || is_rhel; } && {
         pkg_exists fuse
         [[ ! ${#pkg_notfound[@]} -eq 0 ]] && {

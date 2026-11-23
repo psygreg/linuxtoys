@@ -382,6 +382,15 @@ if [[ "$UPD_SERVICE" != "1" ]] && appimage_app_versions; then
     done
 fi
 
+# Update the FUSE 2 runtime library LinuxToys installed as a package file from
+# the latest Debian stable suite (candidate-less Debian-family hosts; see
+# _pkg_debian_stable_fuse2). Mirrors the git-release and AppImage passes
+# above: user-driven runs only, best-effort, tracked by a fuse2-deb registry
+# record written at install time.
+if [[ "$UPD_SERVICE" != "1" ]] && command -v dpkg >/dev/null 2>&1 && fuse2_deb_versions && fuse2_deb_update; then
+    :
+fi
+
 if needs_reboot; then
     if [ "$UPD_SERVICE" = "1" ]; then
         echo "$sysup_rebootreq"
