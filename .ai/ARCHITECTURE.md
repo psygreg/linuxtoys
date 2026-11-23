@@ -232,7 +232,7 @@ Sourced by catalog scripts (via `linuxtoys.lib`/`library_loader.py` static analy
 | `sysd.bash` | Thin systemd enable/start/stop/disable (system + user scope, once-per-run daemon-reload latch). |
 | `timefix.bash` | Once-per-boot silent clock-skew guard (HTTP-Date reference clock, NTP correction ladder, askpass after-auth hook) — fixes apt/sqv "Not live until" failures. |
 | `helpers.bash` | Downloaders (`fetch_from_mirror`), DaVinci Resolve fetch (`getresolve` with the shared `_davinci_parse_release` feed parser), `clinfo_chk`, Debian non-free/backports enablers + legacy shims to catalog scripts. |
-| `optimizers.bash` | Block of legacy shims to optimizer catalog scripts (intentional compat surface for old local scripts). |
+| `optimizers.bash` | Block of legacy shims to optimizer catalog scripts (intentional compat surface for old local scripts), plus `nvidia_ctkpatch` — the NVIDIA Container Toolkit CDI patcher (`summon_optimizers` callers like the synced AutoResolveBox DaVinciBox installer depend on it: it generates `/var/run/cdi/nvidia.yaml` + `/etc/cdi/nvidia.yaml`, enables the toolkit's own `nvidia-cdi-refresh` units when present, and verifies the `nvidia.com/gpu=all` device resolves). |
 | `gregos.bash` | Not a library: self-contained GregOS post-install script run headlessly once per `# gregos-version` (theming, bun/opencode, sloth-bash, swapfile). |
 | `translator.lib` / `packages.json` | Package-name translation key→distro dictionary used by `pkg_install`-related name mapping. |
 
