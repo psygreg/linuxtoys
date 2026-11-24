@@ -16,11 +16,12 @@ import gzip
 import lzma
 import os
 import selectors
+import subprocess
+import tarfile
+import threading
 import time
 from pathlib import Path, PurePosixPath
 import struct
-import subprocess
-import tarfile
 import zipfile
 from typing import BinaryIO, Iterable, Protocol
 
@@ -33,6 +34,11 @@ from .architecture import (
     normalize,
     require_native,
 )
+
+try:  # Python 3.14+ carries a stdlib zstd; 3.12/3.13 fall back to the CLI.
+    from compression import zstd as _stdlib_zstd
+except ImportError:  # pragma: no cover - version-dependent
+    _stdlib_zstd = None
 
 MAX_BYTES = 4 * 1024**3
 MAX_MEMBERS = 100_000
@@ -218,6 +224,97 @@ def _payload_stream(args: list[str]) -> _ToolStream:
     return _ToolStream(args, limit=MAX_BYTES, limit_message=_PAYLOAD_LIMIT_MESSAGE)
 
 
+def _zstd_member_decode(name: str, data: bytes) -> bytes:
+    """Decode one zstd-compressed member, bounded, for content inspection.
+
+    Python 3.14+ carries a stdlib decoder; older runtimes fall back to the
+    installed `zstd` decoder CLI — the same native-decoder dependency the
+    .pkg.tar.zst route relies on through bsdtar. Without either decoder the
+    member stays an unqualified refusal. Decompression is output-bounded
+    and the decoder never executes the payload.
+    """
+    if _stdlib_zstd is not None:
+        # Concatenated frames are legitimate zstd content (Blender writes
+        # .blend documents as a frame per block); every frame must decode
+        # completely and anything undecodable stays a refusal.
+        decoded = bytearray()
+        rest = data
+        while rest:
+            decoder = _stdlib_zstd.ZstdDecompressor()
+            try:
+                decoded += decoder.decompress(rest, max_length=MAX_NESTED_BYTES + 1)
+            except _stdlib_zstd.ZstdError as error:
+                raise ArchitectureError(f"Invalid compressed member: {name}") from error
+            if len(decoded) > MAX_NESTED_BYTES:
+                raise ArchitectureError("Decompressed member inspection limit exceeded")
+            if not decoder.eof:
+                raise ArchitectureError(
+                    f"Truncated or multiple nested zstd streams: {name}"
+                )
+            rest = decoder.unused_data
+        return bytes(decoded)
+    try:
+        process = subprocess.Popen(
+            ["zstd", "-dc"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
+        )
+    except (OSError, subprocess.SubprocessError) as error:
+        raise ArchitectureError(
+            f"Unqualified native/compressed archive: {name}"
+        ) from error
+
+    # The compressed member is at most MAX_NESTED_BYTES (enforced by the
+    # caller), but its decompressed output is not: read it back through a
+    # bounded selector loop while a feeder thread keeps the decoder's stdin
+    # full, so neither pipe can deadlock the other.
+    decoded = bytearray()
+
+    def _feed() -> None:
+        try:
+            process.stdin.write(data)
+            process.stdin.close()
+        except (OSError, ValueError):
+            pass  # the decoder died on a bad frame; the read side reports it
+
+    feeder = threading.Thread(target=_feed, daemon=True)
+    feeder.start()
+    selector: selectors.BaseSelector | None = None
+    deadline = time.monotonic() + _TOOL_TIMEOUT
+    try:
+        selector = selectors.DefaultSelector()
+        selector.register(process.stdout, selectors.EVENT_READ)
+        while True:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise ArchitectureError("Payload inspection timed out")
+            if not selector.select(min(remaining, 1)):
+                continue
+            chunk = os.read(process.stdout.fileno(), _TOOL_CHUNK)
+            if not chunk:
+                break
+            decoded += chunk
+            if len(decoded) > MAX_NESTED_BYTES:
+                raise ArchitectureError(
+                    "Decompressed member inspection limit exceeded"
+                )
+        try:
+            exited = process.wait(timeout=max(0.1, deadline - time.monotonic()))
+        except subprocess.TimeoutExpired as error:
+            raise ArchitectureError("Payload inspection timed out") from error
+        if exited != 0:
+            raise ArchitectureError(f"Invalid compressed member: {name}")
+    finally:
+        if selector is not None:
+            selector.close()
+        if process.poll() is None:
+            process.kill()
+        process.wait()
+        process.stdout.close()
+    return bytes(decoded)
+
+
 def _elf(header: bytes) -> str | None:
     if not header.startswith(b"\x7fELF"):
         return None
@@ -266,12 +363,25 @@ def _member(
         return
     elif header[:2] == b"MZ" or header[:4] in _MACHO_MAGIC:
         raise ArchitectureError(f"Non-Linux binary in payload: {name}")
-    elif header.startswith((b"!<arch>\n", b"\x28\xb5\x2f\xfd")):
-        raise ArchitectureError(f"Unqualified native/compressed archive: {name}")
+    elif header.startswith(b"!<arch>\n"):
+        # A Unix static library is a container of relocatable objects that
+        # carry real machine evidence: walk it with the shared member policy
+        # instead of refusing it (application tarballs legitimately ship
+        # libpython*.a next to their .so files).
+        if depth >= 2:
+            raise ArchitectureError(f"Cannot safely inspect nested archive: {name}")
+        _ar_members(name, handle, payload, depth + 1, header)
+        return
     elif name.lower().endswith(_NATIVE_SUFFIXES) or re_shared_object(name):
         raise ArchitectureError(f"Unknown native binary format: {name}")
     if header.startswith(
-        (b"PK\x03\x04", b"PK\x05\x06", b"\x1f\x8b", b"\xfd7zXZ\x00")
+        (
+            b"PK\x03\x04",
+            b"PK\x05\x06",
+            b"\x1f\x8b",
+            b"\xfd7zXZ\x00",
+            b"\x28\xb5\x2f\xfd",
+        )
     ) or name.lower().endswith(
         (".tar", ".tar.gz", ".tar.xz", ".tgz", ".zip", ".whl", ".jar", ".egg")
     ):
@@ -280,7 +390,13 @@ def _member(
         data = header + handle.read(MAX_NESTED_BYTES + 1)
         if len(data) > MAX_NESTED_BYTES:
             raise ArchitectureError("Nested archive inspection limit exceeded")
-        if header.startswith((b"\x1f\x8b", b"\xfd7zXZ\x00")):
+        decoded: bytes | None = None
+        if header.startswith(b"\x28\xb5\x2f\xfd"):
+            # zstd members (a .blend brush asset, a .tar.zst) decode through
+            # the installed decoder and their decompressed contents are
+            # judged like any other member, exactly like the gzip/xz ones.
+            decoded = _zstd_member_decode(name, data)
+        elif header.startswith((b"\x1f\x8b", b"\xfd7zXZ\x00")):
             # Debian packages routinely contain individually compressed manpages,
             # not tarballs. Inspect their bounded decompressed contents too.
             try:
@@ -298,6 +414,7 @@ def _member(
                 raise ArchitectureError(f"Invalid compressed member: {name}") from error
             if len(decoded) > MAX_NESTED_BYTES:
                 raise ArchitectureError("Decompressed member inspection limit exceeded")
+        if decoded is not None:
             if tarfile.is_tarfile(io.BytesIO(decoded)):
                 _archive(io.BytesIO(decoded), payload, depth + 1)
             else:
@@ -312,6 +429,111 @@ def _member(
 def re_shared_object(name: str) -> bool:
     """Recognize versioned shared objects as well as an exact .so suffix."""
     return ".so." in PurePosixPath(name).name
+
+
+def _ar_text_name(raw: bytes) -> str:
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise ArchitectureError("Malformed ar member name") from error
+    if not text:
+        raise ArchitectureError("Malformed ar member name")
+    return text
+
+
+def _ar_members(
+    name: str, handle: _Readable, payload: Payload, depth: int, header: bytes
+) -> None:
+    """Walk a Unix `ar` archive (static library) with the shared member policy.
+
+    Every regular member is judged by `_member` exactly like a top-level
+    file: ELF members add machine evidence, foreign-platform and malformed
+    ones follow the same guest/refusal rules as anywhere else. The symbol
+    index and long-name table members (`/`, `//`, `/SYM64/`, `__.SYMDEF*`)
+    are archive metadata, and members in formats without machine evidence
+    (LTO bitcode) neither qualify nor refuse — the payload verdict still
+    requires native evidence from the archive elsewhere. Data is consumed
+    sequentially and never buffered whole: `header` is the 64 bytes
+    `_member` already read (the magic plus the first member header's lead),
+    so non-seekable streams stay aligned.
+    """
+    buffer = bytearray(header[8:])
+    long_names = b""
+    while True:
+        while len(buffer) < 60:
+            chunk = handle.read(60 - len(buffer))
+            if not chunk:
+                break
+            buffer += chunk
+        if not buffer:
+            return
+        if len(buffer) < 60 or not buffer.endswith(b"`\n"):
+            raise ArchitectureError(f"Malformed ar archive: {name}")
+        member_header = bytes(buffer[:60])
+        buffer.clear()
+        size_field = member_header[48:58].strip()
+        if not size_field.isdigit():
+            raise ArchitectureError(f"Malformed ar archive: {name}")
+        size = int(size_field)
+        slice_stream = _CpioSlice(handle, size)
+        raw = member_header[:16]
+        member_name: str | None = None
+        is_name_table = False
+        if raw.startswith(b"#1/"):
+            # BSD dialect: the name length follows the marker, and the name
+            # itself is the member data's first bytes.
+            digits = raw[3:].split(b" ", 1)[0]
+            if not digits.isdigit():
+                raise ArchitectureError(f"Malformed ar archive: {name}")
+            embedded = slice_stream.read(int(digits))
+            if len(embedded) < int(digits):
+                raise ArchitectureError(f"Truncated ar member: {name}")
+            member_name = _ar_text_name(embedded.rstrip(b"\x00"))
+            size -= len(embedded)
+        else:
+            field = raw.split(b" ", 1)[0]
+            if field in (b"/", b"/SYM64/", b"__.SYMDEF", b"__.SYMDEF64"):
+                pass
+            elif field == b"//":
+                is_name_table = True
+            elif field == b"__.SYMDEF SORTED":
+                pass
+            elif field.startswith(b"/"):
+                if not field[1:].isdigit():
+                    raise ArchitectureError(f"Malformed ar archive: {name}")
+                entry = long_names[int(field[1:]):]
+                member_name = _ar_text_name(entry.split(b"\n", 1)[0].rstrip(b"/"))
+            else:
+                member_name = _ar_text_name(
+                    field[:-1] if field.endswith(b"/") else field
+                )
+        if member_name is None:
+            # Symbol index / long-name metadata: archive bookkeeping, not
+            # payload. The name table is retained for /offset references.
+            data = bytearray()
+            while True:
+                chunk = slice_stream.read(_TOOL_CHUNK)
+                if not chunk:
+                    break
+                data += chunk
+                if len(data) > MAX_NESTED_BYTES:
+                    raise ArchitectureError(
+                        f"ar long-name table exceeds inspection limit: {name}"
+                    )
+            if is_name_table:
+                long_names = bytes(data)
+            label = name
+        else:
+            label = f"{name}/{member_name}"
+            _member(label, size, slice_stream, payload, depth)
+        # Drain whatever the member policy did not read and require the
+        # declared size to have existed, keeping the stream aligned.
+        while slice_stream.read(_TOOL_CHUNK):
+            pass
+        if slice_stream.truncated:
+            raise ArchitectureError(f"Truncated ar member: {label}")
+        if size % 2 and not handle.read(1):
+            raise ArchitectureError(f"Truncated ar archive: {name}")
 
 
 def _zip_metadata_limit(handle: BinaryIO) -> None:

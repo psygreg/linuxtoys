@@ -1391,6 +1391,24 @@ pkg_fromfile () {
 }
 
 pkg_tarball () {
+    local _guest=0
+    local -a _filtered_args=()
+    local _arg
+    for _arg in "$@"; do
+        if [[ "$_arg" == "--guest" ]]; then
+            # Declares the tarball as legitimately embedding foreign-platform
+            # binaries (e.g. the pip-vendored Windows launchers inside a
+            # bundled CPython) that are inert data on the Linux host; the
+            # preflight still requires host-ISA payload evidence. The same
+            # declaration pkg_fromfile --guest carries, already validated by
+            # pkg_fromurl's batch preflight or given explicitly.
+            _guest=1
+        else
+            _filtered_args+=("$_arg")
+        fi
+    done
+    set -- "${_filtered_args[@]}"
+
     [[ $# -gt 0 ]] || die "No tarball files provided"
 
     # Avoid exposing a stale path if a later tarball operation fails before
@@ -1401,7 +1419,14 @@ pkg_tarball () {
     local member normalized first_component common_root has_nested
     local -a members=()
 
-    _architecture_check files "$@"
+    # An explicit --guest declaration validates directly; otherwise the
+    # tarball preflight may still offer the consent route for
+    # foreign-platform binaries.
+    if (( _guest )); then
+        _architecture_check files --content-kind guest "$@"
+    else
+        _architecture_check_package_files "$@"
+    fi
     apps_dir="$HOME/.local/linuxtoys/apps"
     mkdir -p -- "$apps_dir" || die "Failed to create application directory: $apps_dir"
 
@@ -1601,11 +1626,11 @@ pkg_fromurl () {
                 _skip_user=1
                 ;;
             --guest)
-                # Declares that the downloaded native package legitimately
-                # embeds foreign-platform binaries as inert data (the same
-                # declaration pkg_fromfile --guest carries). The declaration
-                # applies to native package files; tarball and single-binary
-                # installs keep their strict routes.
+                # Declares that the downloaded payload legitimately embeds
+                # foreign-platform binaries as inert data (the same
+                # declaration pkg_fromfile --guest and pkg_tarball --guest
+                # carry). Applies to native package files and tarball
+                # installs; single-binary installs keep their strict route.
                 _guest=1
                 ;;
             *)
@@ -1617,8 +1642,8 @@ pkg_fromurl () {
     [[ $_tarball -eq 0 || $_binary -eq 0 ]] || die "--tar and --bin cannot be used together"
     [[ $_binary -eq 0 || ${#urls[@]} -eq 1 ]] || die "pkg_fromurl --bin expects exactly one URL"
     [[ $_no_shortcut -eq 0 || $_binary -eq 1 ]] || die "--no-shortcut only applies to --bin installs"
-    [[ $_guest -eq 0 || ( $_tarball -eq 0 && $_binary -eq 0 ) ]] || \
-        die "--guest cannot be combined with --tar or --bin"
+    [[ $_guest -eq 0 || $_binary -eq 0 ]] || \
+        die "--guest cannot be combined with --bin"
 
     local url filename download_dir package_dir package_file
     local effective_url content_disposition metadata_file temp_file
@@ -1731,7 +1756,16 @@ pkg_fromurl () {
         fi
 
         if [[ $_tarball -eq 1 ]]; then
-            pkg_tarball "$package_file"
+            # The batch preflight above already judged these files: an
+            # explicit --guest or a taken consent route (ARCH_PREFLIGHT_
+            # GUEST) threads the guest declaration into pkg_tarball's own
+            # revalidation instead of asking again; a clean native pass
+            # re-preflights natively.
+            if [[ $_guest -eq 1 || $ARCH_PREFLIGHT_GUEST -eq 1 ]]; then
+                pkg_tarball --guest "$package_file"
+            else
+                pkg_tarball "$package_file"
+            fi
             continue
         fi
 

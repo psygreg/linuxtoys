@@ -20,9 +20,14 @@ _architecture_check() {
 # is probed silently first: the consent prompt is only offered when it
 # actually unlocks the payload. Every other refusal stays fatal, and callers
 # that declare the guest kind themselves (pkg_fromfile --guest) never reach
-# the consent path.
+# the consent path. When the consent route is taken, ARCH_PREFLIGHT_GUEST is
+# set to 1 so a caller dispatching the same files to a nested preflight
+# (pkg_fromurl handing a consented tarball to pkg_tarball) threads the
+# declaration instead of asking again.
+ARCH_PREFLIGHT_GUEST=0
 _architecture_check_package_files() {
     local _native_output _output _status _detail
+    ARCH_PREFLIGHT_GUEST=0
     _native_output=$(python3 "$SCRIPT_DIR/app/architecture_cli.py" files "$@" 2>&1)
     _status=$?
     if (( _status == 0 )); then
@@ -51,6 +56,7 @@ _architecture_check_package_files() {
         printf '%s\n' "$_native_output" >&2
         die "$arch_preflight_refused"
     fi
+    ARCH_PREFLIGHT_GUEST=1
 }
 
 # --- LinuxToys Shell Library ---
