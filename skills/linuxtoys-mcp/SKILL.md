@@ -89,12 +89,12 @@ After connecting, call `server_info` once to confirm the session works.
 | `update_system` | Run the app's full system update ("Update System" card): distro packages, Flatpaks, Snaps, Homebrew/Bun, orphan and leftover-shortcut cleanup; ask the user first — needs root (password dialog on their screen) and runs very long; the call blocks until it finishes (delegate it to a subagent to stay responsive); may also answer `requires_answers` (release-upgrade choice) before running |
 | `list_categories` | Catalog categories |
 | `search_apps(query, limit?)` | Search every catalog (scripts, repos, Flathub/Snap, AppImages); returns stable `id`s |
-| `get_app_details(app_id)` | App page: description, screenshots URLs, homepage/donate/purchase links, version, install state (and leftover `~/.var/app` data state for Flatpak apps) |
+| `get_app_details(app_id)` | App page: description, screenshots URLs, homepage/donate/purchase links, version, install state (and leftover `~/.var/app` data state for Flatpak apps). When the app is offered by several sources, `sources` lists each one with a stable `key`, label, version, `default`/`recommended` marks and package name |
 | `get_screenshot(app_id, index?)` | Returns an image so you can see the app's screenshots |
-| `install_app(app_id, answers?, wait?, wait_seconds?)` | Install and watch the job to completion: the response is the job's final record (`final: true` — state, exit code, log tail, `warnings`/`live_prompts`/`error_detail`). Curated scripts may first answer `requires_answers`: ask the user the listed questions, then re-call with `answers`. Pass `wait: false` to get a `job_id` at once (multitasking), or `wait_seconds` to cap the block |
+| `install_app(app_id, source?, answers?, wait?, wait_seconds?)` | Install and watch the job to completion: the response is the job's final record (`final: true` — state, exit code, log tail, `warnings`/`live_prompts`/`error_detail`). When `get_app_details` shows more than one entry in `sources`, ask the user which one they want and pass its exact `key` as `source` (omit for the default). Curated scripts may first answer `requires_answers`: ask the user the listed questions, then re-call with `answers`. Pass `wait: false` to get a `job_id` at once (multitasking), or `wait_seconds` to cap the block |
 | `fetch_package_url(url)` | Download a package file (.deb/.rpm/.pkg.tar.*/.pacman/.eopkg/.flatpak/.flatpakref/.snap/.appimage) from an http(s) URL into a private staging directory; returns its local path |
-| `get_package_file_details(path)` | Inspect a local package file like the GUI's package view does: name, version, architecture, maintainer, description, size, format, and whether that package type is supported on this system |
-| `install_package_file(path, wait?, wait_seconds?)` | Install a local package file through the same guarded machinery, watching the job to completion like `install_app` |
+| `get_package_file_details(path)` | Inspect a local package file like the GUI's package view does: name, version, architecture, maintainer, description, size, format, whether that package type is supported on this system, and the external-file warning/risk note to show the user |
+| `install_package_file(path, trusted_provider?, wait?, wait_seconds?)` | Install an external package file through the same guarded machinery. Without `trusted_provider: true` it queues nothing and returns `requires_confirmation` with the package details and warnings: show them, ask whether the user trusts the provider, and only then re-call with `trusted_provider: true`. Watches the job to completion like `install_app` |
 | `list_app_extensions(app_id)` | List a Flathub app's extensions/addons (VLC plugins, Steam compatibility tools, ...), each with its installed state |
 | `install_app_extension(app_id, extension, wait?, wait_seconds?)` | Install one extension of an app by its component id or full flatpak ref, watching the job to completion |
 | `remove_app_extension(app_id, extension, wait?, wait_seconds?)` | Remove one installed extension of an app, watching the job to completion |
@@ -120,14 +120,29 @@ root pop the password dialog on the user's screen while the call runs; tell
 the user to expect it and wait for them to finish — do not ask them to
 paste the password to you.
 
+If `get_app_details` returns a `sources` list, the same app is available from
+more than one source (native package, Flathub, FlatPark, Snap, AppImage,
+...). Show the user the labels and versions, let them choose (or use the one
+marked `recommended` if they have no preference), and pass the chosen
+entry's exact `key` as `install_app`'s `source`. Never silently switch to a
+different source than the one the user picked.
+
 **Install a package file (the user gave you a link or a local file such as
 .deb/.rpm/.appimage):** `fetch_package_url(url)` when the file still needs
 downloading → `get_package_file_details(path)` → tell the user what the file
-is (name, version, format) and stop if it is not supported on this system →
-confirm → `install_package_file(path)` → the response is the job's final
-record. It goes through the same guarded machinery as a package-view
-install, so the usual root password dialog appears on the user's screen
-when needed.
+is (name, version, format, maintainer/publisher, where it came from) and stop
+if it is not supported on this system → **warn them that this is an external,
+unverified package** — relay `external_warning` and `risk_note`, including
+that it installs with the package manager's privileges and that LinuxToys
+cannot verify its publisher or integrity → ask explicitly whether they trust
+the package provider and want to continue. Only if they say yes, call
+`install_package_file(path, trusted_provider: true)`; the response is the
+job's final record. Without `trusted_provider: true` the tool returns
+`requires_confirmation` and installs nothing. Never set it preemptively,
+never infer trust from a successful download or a familiar file name, and
+never install a package the user did not point you at. It goes through the
+same guarded machinery as a package-view install, so the usual root password
+dialog appears on the user's screen when needed.
 
 **Scripts that ask questions, warn or fail with dialogs:** script dialogs
 do not pop on your behalf, and the machine tells you about them:
@@ -284,11 +299,21 @@ for arbitrary strings).
   could.
 - Always tell the user what you are about to install or remove, and do it only
   when they asked for it or confirmed.
+- When `get_app_details` lists `sources`, the choice of source (native
+  package, Flathub, FlatPark, Snap, AppImage, ...) belongs to the user: show
+  the options and pass their chosen `key` to `install_app`. The
+  `recommended` default is fine only when the user has no preference. A bare
+  source name or label is accepted only while unambiguous; if the tool
+  refuses with the available keys, ask rather than guess.
 - Package files (`get_package_file_details` / `install_package_file` /
   `fetch_package_url`) follow the same rule: install only the URL or local
   file the user pointed you at, after showing them what the inspection found.
-  Never install a package type that the host-compatibility guard refuses, and
-  never pick a package URL yourself for an install the user did not ask for.
+  Always relay the external-file warning and risk note and obtain explicit
+  trust in the provider before passing `trusted_provider: true` — the tool
+  refuses to queue anything without it, and that confirmation must be the
+  user's, never inferred. Never install a package type that the
+  host-compatibility guard refuses, and never pick a package URL yourself for
+  an install the user did not ask for.
 - App extensions (`list_app_extensions` / `install_app_extension` /
   `remove_app_extension`) work the same way: only touch the extension the
   user asked about, and never install extensions as a side effect of an app

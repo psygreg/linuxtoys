@@ -234,6 +234,176 @@ def _entry_kind(entry):
     return "script"
 
 
+# ---------------------------------------------------------------------------
+# AppStream source selection (app-page source picker parity)
+# ---------------------------------------------------------------------------
+#
+# An app can be offered by several sources at once (native distribution
+# package, one or more Flatpak remotes/scopes, Snap, AppImage). The GUI and
+# TUI expose that through a source picker; MCP mirrors it by reporting each
+# source with a stable key in get_app_details and accepting that key (or an
+# unambiguous source name/label/remote) in install_app.
+
+def _entry_package_names(entry):
+    raw = entry.get("package-name")
+    if isinstance(raw, str):
+        raw = [raw]
+    if not isinstance(raw, (list, tuple, set)):
+        return []
+    return [str(value).strip() for value in raw if str(value).strip()]
+
+
+def _source_candidates(entry):
+    """(key, source entry) pairs on offer, the catalog entry first.
+
+    ``source_options`` carries the full AppStream group (including the
+    selected entry); the entry itself is seeded defensively for entries built
+    before source options existed.
+    """
+    raw_options = entry.get("source_options")
+    options = raw_options if isinstance(raw_options, (list, tuple)) else ()
+    candidates = []
+    seen = set()
+    for candidate in (entry, *options):
+        if not isinstance(candidate, dict):
+            continue
+        key = appstream_parser.source_option_key(candidate)
+        folded = key.casefold()
+        if not key or folded in seen:
+            continue
+        seen.add(folded)
+        candidates.append((key, candidate))
+    return candidates
+
+
+def _describe_source_candidates(candidates):
+    return "; ".join(
+        "'{}' ({})".format(
+            key, appstream_parser.source_option_label(option)
+        )
+        for key, option in candidates
+    )
+
+
+def _select_install_source(entry, source):
+    """Resolve install_app's optional ``source`` to one source entry.
+
+    Accepts the exact key reported by get_app_details (``sources[].key``), a
+    source name ("flatpak", "native", ...), a source label ("Flathub") or a
+    Flatpak remote ("flathub"). Ambiguous matches are refused with the
+    available keys instead of guessing between scopes/remotes.
+    """
+    if source is None or not str(source).strip():
+        return entry
+    requested = str(source).strip()
+    folded = requested.casefold()
+    candidates = _source_candidates(entry)
+    entry_name = str(entry.get("name") or _stable_id(entry) or "this app")
+    if not candidates:
+        raise ValueError(
+            f"'{entry_name}' does not offer selectable install sources; "
+            "omit source."
+        )
+
+    def _matches(predicate):
+        return [
+            (key, option)
+            for key, option in candidates
+            if predicate(key, option)
+        ]
+
+    def _option_source(option):
+        return str(
+            option.get("appstream_source") or option.get("source") or ""
+        ).strip().casefold()
+
+    stages = (
+        ("source key", lambda key, _option: key.casefold() == folded),
+        ("source name", lambda _key, option: _option_source(option) == folded),
+        (
+            "source label",
+            lambda _key, option: appstream_parser.source_option_label(
+                option
+            ).casefold() == folded,
+        ),
+        (
+            "Flatpak remote",
+            lambda _key, option: _option_source(option) == "flatpak"
+            and str(option.get("flatpak_remote", "") or "").strip().casefold()
+            == folded,
+        ),
+    )
+    for kind, predicate in stages:
+        found = _matches(predicate)
+        if len(found) == 1:
+            return found[0][1]
+        if len(found) > 1:
+            raise ValueError(
+                f"'{requested}' matches multiple {kind} choices for "
+                f"'{entry_name}'. Pass the exact source key: "
+                + _describe_source_candidates(found)
+            )
+    raise ValueError(
+        f"'{requested}' is not an available install source for "
+        f"'{entry_name}'. Available sources: "
+        + _describe_source_candidates(candidates)
+    )
+
+
+def _install_source_payloads(entry):
+    """One payload per selectable source (empty when there is no choice)."""
+    candidates = _source_candidates(entry)
+    if len(candidates) < 2:
+        return []
+    default_key = appstream_parser.source_option_key(entry).casefold()
+    recommended = str(entry.get("recommended_source") or "").strip().casefold()
+    flatpak_scopes = {
+        str(option.get("flatpak_scope", "") or "").strip()
+        for _key, option in candidates
+        if str(
+            option.get("appstream_source") or option.get("source") or ""
+        ).strip() == "flatpak"
+    }
+    flatpak_scopes.discard("")
+    payloads = []
+    for key, option in candidates:
+        payload = {
+            "key": key,
+            "source": str(
+                option.get("appstream_source") or option.get("source") or ""
+            ).strip(),
+            "label": appstream_parser.source_option_label(option, flatpak_scopes),
+            "default": key.casefold() == default_key,
+            "recommended": bool(recommended) and key.casefold() == recommended,
+            "packages": _entry_package_names(option),
+        }
+        version = str(option.get("appstream_version") or "").strip()
+        if version:
+            payload["version"] = version
+        for field, label in (
+            ("flatpak_scope", "scope"),
+            ("flatpak_installation", "installation"),
+            ("flatpak_remote", "remote"),
+            ("appstream_origin", "origin"),
+        ):
+            value = str(option.get(field) or "").strip()
+            if value:
+                payload[label] = value
+        payloads.append(payload)
+    return payloads
+
+
+def _selected_source_fields(entry):
+    """Response fields identifying the source a job was queued for."""
+    key = appstream_parser.source_option_key(entry)
+    if not key:
+        return {}
+    return {
+        "source": key,
+        "source_label": appstream_parser.source_option_label(entry),
+    }
+
+
 def _version_gate_refusal():
     """Refusal message when the outdated-version gate blocks script runs, else None.
 
@@ -1926,6 +2096,13 @@ def _app_details(entry):
         ]
         if source_options:
             details["available_sources"] = sorted(set(source_options))
+        sources = _install_source_payloads(entry)
+        if sources:
+            details["sources"] = sources
+            details["default_source"] = appstream_parser.source_option_key(entry)
+            recommended = str(entry.get("recommended_source") or "").strip()
+            if recommended:
+                details["recommended_source"] = recommended
 
     blocks = entry.get("long_description_blocks")
     if isinstance(blocks, list) and blocks:
@@ -2029,6 +2206,18 @@ PACKAGE_KIND_LABELS = {
 SUPPORTED_PACKAGE_KINDS_TEXT = (
     ".deb, .rpm, .pkg.tar.*/.pacman, .eopkg, .flatpak, .flatpakref, "
     ".snap, .appimage"
+)
+# The package view's own warning (package_view_external_warning) plus the
+# risk explanation an agent must relay before an external file is installed.
+PACKAGE_FILE_TRUST_WARNING = (
+    "This package comes from an external file. Only install packages from "
+    "sources you trust."
+)
+PACKAGE_FILE_RISK_NOTE = (
+    "Package files bypass LinuxToys' curated catalog. The file can install "
+    "any payload its format allows, with root where the package manager "
+    "needs it, and LinuxToys cannot verify its publisher, integrity or age. "
+    "A tampered or malicious package can damage or take over the system."
 )
 
 
@@ -2416,8 +2605,8 @@ class JobManager:
         self._worker = threading.Thread(target=self._work, daemon=True, name="linuxtoys-mcp-jobs")
         self._worker.start()
 
-    def submit(self, kind, app_id, agent_answer_records=None):
-        entry = _resolve_entry(app_id)
+    def submit(self, kind, app_id, agent_answer_records=None, entry=None):
+        entry = entry if entry is not None else _resolve_entry(app_id)
         if entry is None:
             raise ValueError(f"No installable entry found for '{app_id}'. Use search_apps to list valid IDs.")
         # Outdated-version gate: LinuxToys script jobs (plain scripts, repo
@@ -3189,8 +3378,8 @@ class _LazyJobs:
                 self._manager = JobManager()
             return self._manager
 
-    def submit(self, kind, app_id, agent_answer_records=None):
-        return self._get().submit(kind, app_id, agent_answer_records)
+    def submit(self, kind, app_id, agent_answer_records=None, entry=None):
+        return self._get().submit(kind, app_id, agent_answer_records, entry)
 
     def submit_update(self):
         return self._get().submit_update()
@@ -3356,9 +3545,13 @@ def tool_schemas():
             "name": "get_app_details",
             "description": (
                 "Full app page for one stable ID: description, screenshots URLs, "
-                "homepage/donation/purchase links, version, install state. For "
-                "Flatpak apps also reports leftover ~/.var/app user data "
-                "(flatpak_residual_data) when the app is no longer installed."
+                "homepage/donation/purchase links, version, install state. When "
+                "the app is offered by more than one source, `sources` lists "
+                "each one with a stable `key`, label, version, default and "
+                "recommended marker — pass a chosen key to install_app's "
+                "`source`. For Flatpak apps also reports leftover ~/.var/app "
+                "user data (flatpak_residual_data) when the app is no longer "
+                "installed."
             ),
             "inputSchema": {
                 "type": "object",
@@ -3383,19 +3576,31 @@ def tool_schemas():
         {
             "name": "install_app",
             "description": (
-                "Install an app or feature by stable ID. Runs exactly like a user "
-                "install: when root is required the password dialog appears on the "
-                "user's screen. Curated scripts may ask questions first — when the "
-                "tool answers requires_answers, show each question to the user and "
-                "re-call it with answers={question id: choice}. By default the "
-                "call blocks until the job finishes and returns its final outcome "
-                "(state, exit code, log tail, dialog events); pass wait=false to "
-                "queue it and get a job id to watch with get_job."
+                "Install an app or feature by stable ID. When get_app_details "
+                "lists more than one source under `sources`, pass the chosen "
+                "source's exact `key` as `source` (a source name, label or "
+                "Flatpak remote works only while unambiguous); omit it to use "
+                "the default source. Runs exactly like a user install: when "
+                "root is required the password dialog appears on the user's "
+                "screen. Curated scripts may ask questions first — when the "
+                "tool answers requires_answers, show each question to the user "
+                "and re-call it with answers={question id: choice}. By default "
+                "the call blocks until the job finishes and returns its final "
+                "outcome (state, exit code, log tail, dialog events); pass "
+                "wait=false to queue it and get a job id to watch with get_job."
             ),
             "inputSchema": {
                 "type": "object",
                 "properties": {
                     "app_id": {"type": "string", "description": "Stable catalog ID"},
+                    "source": {
+                        "type": "string",
+                        "description": (
+                            "Install source key from get_app_details' `sources` "
+                            "(e.g. 'flatpak:user:default:flathub' or 'native'). "
+                            "Omit for the default/recommended source."
+                        ),
+                    },
                     "answers": {
                         "type": "object",
                         "description": (
@@ -3441,7 +3646,9 @@ def tool_schemas():
                 "Inspect a local package file exactly like the GUI's package view: "
                 "name, version, architecture, maintainer, description, size and "
                 "format, plus whether that package type is supported on this "
-                "system (same compatibility guards as the GUI)."
+                "system (same compatibility guards as the GUI). The response "
+                "carries the external-file warning and risk note that must be "
+                "shown to the user before installing."
             ),
             "inputSchema": {
                 "type": "object",
@@ -3454,18 +3661,33 @@ def tool_schemas():
         {
             "name": "install_package_file",
             "description": (
-                "Queue the install of a local package file (.deb, .rpm, "
+                "Install one external local package file (.deb, .rpm, "
                 ".pkg.tar.*, .pacman, .eopkg, .flatpak, .flatpakref, .snap, "
-                ".appimage) through the same guarded machinery the GUI's package "
-                "view uses. When root is needed the password dialog appears on "
-                "the user's screen. Blocks until the install finishes and "
-                "returns its final outcome by default; pass wait=false to "
-                "queue it and get a job id to watch with get_job."
+                ".appimage) through the same guarded machinery the GUI's "
+                "package view uses. External packages are unverified: without "
+                "`trusted_provider: true` the tool queues nothing and instead "
+                "returns requires_confirmation with the package details and "
+                "risk warnings. Show those to the user, ask whether they "
+                "trust the package provider, and re-call with "
+                "trusted_provider=true only if they explicitly agree. When "
+                "root is needed the password dialog appears on the user's "
+                "screen. Blocks until the install finishes and returns its "
+                "final outcome by default; pass wait=false to queue it and "
+                "get a job id to watch with get_job."
             ),
             "inputSchema": {
                 "type": "object",
                 "properties": {
                     "path": {"type": "string", "description": "Path of the package file (absolute or ~-prefixed)"},
+                    "trusted_provider": {
+                        "type": "boolean",
+                        "description": (
+                            "Set to true only after the user was shown the "
+                            "external-package warnings and explicitly said "
+                            "they trust the package's provider and want to "
+                            "continue. Without it, no job is queued."
+                        ),
+                    },
                     **_job_tracking_schema(),
                 },
                 "required": ["path"],
@@ -3981,7 +4203,7 @@ def _requires_answers_payload(entry, questions, dynamic_count, branch_skipped=0)
     return payload
 
 
-def _tool_install(app_id, answers=None, wait=True, wait_seconds=None):
+def _tool_install(app_id, source=None, answers=None, wait=True, wait_seconds=None):
     entry = _resolve_entry(app_id)
     if entry is None:
         hint = _extension_parent_hint(app_id)
@@ -3990,6 +4212,12 @@ def _tool_install(app_id, answers=None, wait=True, wait_seconds=None):
                 f"No installable entry found for '{app_id}'. {hint}"
             )
         raise ValueError(f"No installable entry found for '{app_id}'. Use search_apps to list valid IDs.")
+    # The source picker decides which source entry runs (native package,
+    # Flathub/FlatPark Flatpak, Snap, ...), so it must be resolved before the
+    # dialog scan: AppStream overlays and hooks differ per source.
+    has_source_choices = len(_source_candidates(entry)) >= 2
+    entry = _select_install_source(entry, source)
+    source_fields = _selected_source_fields(entry)
     # Scripts of every installation shape — curated physical scripts,
     # repository-list entries (pipeline + pre/post hooks) and AppStream
     # overlays (`appstream_overrides` hooks) — ask questions through the
@@ -4000,7 +4228,16 @@ def _tool_install(app_id, answers=None, wait=True, wait_seconds=None):
     except Exception:
         questions, dynamic_count, branch_skipped = [], 0, 0
     if questions and answers is None:
-        return _requires_answers_payload(entry, questions, dynamic_count, branch_skipped)
+        payload = _requires_answers_payload(
+            entry, questions, dynamic_count, branch_skipped
+        )
+        payload.update(source_fields)
+        if has_source_choices and source_fields:
+            payload["source_note"] = (
+                "These questions belong to the selected install source; "
+                "pass the same source when re-calling the tool."
+            )
+        return payload
     if answers is not None and not questions:
         raise ValueError(
             "This app's run carries no pre-answerable script questions; "
@@ -4011,7 +4248,9 @@ def _tool_install(app_id, answers=None, wait=True, wait_seconds=None):
     except ValueError:
         raise
     try:
-        job = JOBS.submit("install", app_id, agent_answer_records=records)
+        job = JOBS.submit(
+            "install", app_id, agent_answer_records=records, entry=entry
+        )
     except ValueError as exc:
         hint = _extension_parent_hint(app_id)
         if hint:
@@ -4025,6 +4264,7 @@ def _tool_install(app_id, answers=None, wait=True, wait_seconds=None):
         "to relay to the user.",
         wait=wait,
         wait_seconds=wait_seconds,
+        **source_fields,
     )
 
 
@@ -4089,14 +4329,22 @@ def _tool_fetch_package_url(url):
     try:
         details = _package_details_payload(target)
     except ValueError:
-        details = {"name": sanitized, "kind": package_file_kind(target)}
+        details = {
+            "name": sanitized,
+            "kind": package_file_kind(target),
+            "external_warning": PACKAGE_FILE_TRUST_WARNING,
+            "risk_note": PACKAGE_FILE_RISK_NOTE,
+            "trust_required": True,
+        }
     details["path"] = target
     details["url"] = url
     # "note" stays the compatibility guard's refusal message when present;
     # the download context goes into its own field.
     details["download_note"] = (
         "Downloaded into LinuxToys' staging directory (cleared with /tmp on "
-        "reboot). Inspect it with get_package_file_details before installing."
+        "reboot). Inspect it with get_package_file_details before installing; "
+        "the agent must warn the user that it is an external package and "
+        "install it only if they trust its provider."
     )
     return details
 
@@ -4123,6 +4371,9 @@ def _package_details_payload(path):
     metadata["path"] = real
     metadata["kind"] = kind
     metadata["format_label"] = PACKAGE_KIND_LABELS.get(kind, kind)
+    metadata["external_warning"] = PACKAGE_FILE_TRUST_WARNING
+    metadata["risk_note"] = PACKAGE_FILE_RISK_NOTE
+    metadata["trust_required"] = True
     supported = package_kind_supported_on_host(kind)
     metadata["supported_on_host"] = supported
     if not supported:
@@ -4139,12 +4390,52 @@ def _tool_get_package_file_details(path):
     return _package_details_payload(path)
 
 
-def _tool_install_package_file(path, wait=True, wait_seconds=None):
+def _package_trust_request(details):
+    """Response that asks the agent to obtain explicit trust confirmation.
+
+    Mirrors the GUI package view's external-file warning, but as a blocking
+    gate: no job is queued until the user has been warned and has explicitly
+    said they trust the package's provider.
+    """
+    package = {
+        key: details[key]
+        for key in (
+            "name", "version", "kind", "format_label", "architecture",
+            "maintainer", "description", "size", "path", "url",
+        )
+        if details.get(key) not in (None, "")
+    }
+    return {
+        "requires_confirmation": True,
+        "confirmation": "trusted_package_provider",
+        "package": package,
+        "warnings": [PACKAGE_FILE_TRUST_WARNING, PACKAGE_FILE_RISK_NOTE],
+        "note": (
+            "No job was queued. Show the user what this file is (name, "
+            "version, format, publisher/maintainer and where it came from) "
+            "and relay both warnings. Ask explicitly whether they trust the "
+            "package provider and want to continue; only if they say yes, "
+            "call install_package_file again with trusted_provider=true. "
+            "Never assume trust from the download, the file name or the "
+            "absence of a signature warning."
+        ),
+        "next": {
+            "tool": "install_package_file",
+            "arguments": {"path": details["path"], "trusted_provider": True},
+        },
+    }
+
+
+def _tool_install_package_file(
+    path, trusted_provider=False, wait=True, wait_seconds=None
+):
     details = _package_details_payload(path)
     if not details.get("supported_on_host"):
         raise ValueError(
             details.get("note") or "This package type is not supported on this system."
         )
+    if not trusted_provider:
+        return _package_trust_request(details)
     real = details["path"]
     spec = {
         "path": real,
@@ -4163,6 +4454,8 @@ def _tool_install_package_file(path, wait=True, wait_seconds=None):
         wait_seconds=wait_seconds,
         path=real,
         kind=details["kind"],
+        trusted_provider=True,
+        external_warning=PACKAGE_FILE_TRUST_WARNING,
     )
 
 
@@ -4565,6 +4858,7 @@ def dispatch_tool(name, arguments):
     if name == "install_app":
         return _tool_install(
             arguments.get("app_id"),
+            arguments.get("source"),
             arguments.get("answers"),
             _arg_bool(arguments.get("wait"), True),
             arguments.get("wait_seconds"),
@@ -4576,6 +4870,7 @@ def dispatch_tool(name, arguments):
     if name == "install_package_file":
         return _tool_install_package_file(
             arguments.get("path"),
+            _arg_bool(arguments.get("trusted_provider"), False),
             _arg_bool(arguments.get("wait"), True),
             arguments.get("wait_seconds"),
         )
@@ -4701,11 +4996,18 @@ def _initialize_result(requested_version):
             "blocks until the job finishes and returns its final outcome (state, "
             "exit code, log tail, dialog events); pass wait=false to queue it "
             "and answer at once with the job id, then watch it with get_job. "
-            "For a user-given batch of jobs, run one job per subagent so each "
-            "submission waits for itself. A local or downloaded package file "
-            "(.deb, .rpm, .appimage, ...) can be installed the same way: "
-            "get_package_file_details -> install_package_file, with "
-            "fetch_package_url for downloads. Flathub apps may offer "
+            "When get_app_details lists multiple install sources (sources[]), "
+            "show them to the user and pass the chosen key to install_app's "
+            "source; omit it for the default. For a user-given batch of jobs, "
+            "run one job per subagent so each submission waits for itself. A "
+            "local or downloaded package file (.deb, .rpm, .appimage, ...) can "
+            "be installed the same way: get_package_file_details -> "
+            "install_package_file, with fetch_package_url for downloads. An "
+            "external package file is unverified: install_package_file answers "
+            "requires_confirmation first with the package details and risk "
+            "warnings — show them to the user, ask whether they trust the "
+            "provider, and only re-call with trusted_provider=true if they "
+            "explicitly agree. Flathub apps may offer "
             "extensions/addons: when get_app_details reports "
             "extensions_available, use list_app_extensions / "
             "install_app_extension / remove_app_extension. Uninstalled "

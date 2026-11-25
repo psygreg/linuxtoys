@@ -638,6 +638,100 @@ def repository_link(entry: dict) -> str:
     return CATALOG_SOURCE_URLS.get(source, "")
 
 
+_FLATPAK_REMOTE_LABELS = {"flathub": "Flathub", "flatpark": "FlatPark"}
+
+
+def _normalized_source_id(value) -> str:
+    value = str(value or "").strip()
+    if value.lower().endswith(".desktop"):
+        value = value[:-8]
+    return value.strip().lower()
+
+
+def _normalized_source_name(value) -> str:
+    return "".join(
+        character for character in str(value or "").lower() if character.isalnum()
+    )
+
+
+def source_option_key(entry: dict) -> str:
+    """Stable key identifying one install source of an AppStream entry.
+
+    Matches the key the Rust catalog stores in ``recommended_source``, so a
+    selected option can be compared with the recommended one. Flatpak
+    sources are told apart by scope, installation and remote (the same app
+    can be offered by several remotes); AppImage sources by component
+    identity; every other source by its source name alone ("native",
+    "snap", "homebrew", "aur", ...).
+
+    Args:
+        entry: One AppStream catalog entry or ``source_options`` member.
+
+    Returns:
+        str: The stable source key ("" when the entry has no source).
+    """
+    source = str(
+        entry.get("appstream_source") or entry.get("source") or ""
+    ).strip()
+    if source == "appimage":
+        identity = _normalized_source_id(
+            entry.get("appstream_id") or entry.get("id")
+        )
+        name = _normalized_source_name(
+            entry.get("appstream_canonical_name") or entry.get("name")
+        )
+        if identity:
+            return f"appimage:{identity}:{name}" if name else f"appimage:{identity}"
+        return f"appimage:{name}" if name else source
+    if source != "flatpak":
+        return source
+    return "flatpak:{}:{}:{}".format(
+        str(entry.get("flatpak_scope", "") or "").strip(),
+        str(entry.get("flatpak_installation", "") or "").strip(),
+        str(entry.get("flatpak_remote", "") or "").strip(),
+    )
+
+
+def source_option_label(entry: dict, flatpak_scopes=None) -> str:
+    """Human-facing label for one install source (app-page source picker).
+
+    Args:
+        entry: One AppStream catalog entry or ``source_options`` member.
+        flatpak_scopes: Every Flatpak scope on offer; a system-scope option
+            is marked when user-scope and system-scope alternatives coexist.
+
+    Returns:
+        str: Display label such as "Flathub", "Native" or "AppImage (foo)".
+    """
+    source = str(
+        entry.get("appstream_source") or entry.get("source") or ""
+    ).strip()
+    if source == "flatpak":
+        remote = str(entry.get("flatpak_remote", "") or "").strip()
+        label = (
+            _FLATPAK_REMOTE_LABELS.get(remote.casefold())
+            or remote.capitalize()
+            or "Flatpak"
+        )
+        scope = str(entry.get("flatpak_scope", "") or "").strip()
+        if scope == "system" and flatpak_scopes is not None and len(flatpak_scopes) > 1:
+            label += " (system)"
+        return label
+    if source == "native":
+        return "Native"
+    if source == "snap":
+        return "Snap"
+    if source == "aur":
+        return "AUR"
+    if source == "homebrew":
+        return "Homebrew"
+    if source == "appimage":
+        package_names = _flatten_package_names(entry.get("package-name"))
+        package = package_names[0] if package_names else ""
+        return f"AppImage ({package})" if package else "AppImage"
+    return source.capitalize() or "Native"
+
+
 def clear_runtime_cache():
     with _CACHE_LOCK:
         _RUNTIME_CACHE.clear()
