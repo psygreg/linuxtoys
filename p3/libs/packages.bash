@@ -2421,9 +2421,31 @@ _pkg_appimage_gearlever_installed () {
 # accessibility bus being absent) plus "Gtk-Message:" module notes. None of it
 # is actionable and it looks alarming to users; Gear Lever's own lines
 # ("<path> was integrated successfully", "<path> was removed sucessfully",
-# errors) are kept verbatim.
+# actionable errors) are kept verbatim.
+#
+# AppImages that carry no desktop entry at the archive root (Briar Desktop's
+# pinpit build, for example) make Gear Lever's own _get_app_version() crash
+# with an AttributeError on a None desktop entry. Gear Lever raises before
+# copying anything, so the file is still installable through LinuxToys'
+# fallback; its Python traceback is internal noise, not an installer failure.
+# Drop the traceback frames and, for Gear Lever's "not integrated" reply to a
+# LinuxToys-managed removal, the expected error line (the caller removes the
+# file directly in that case).
 _gearlever_filter_output () {
-    grep -vE '^\*\* \([^)]+\): |^Gtk-Message: ' || true
+    awk '
+    /^\*\* \([^)]+\): / { next }
+    /^Gtk-Message: / { next }
+    /^Error: AppImage not integrated$/ { next }
+    /^Traceback \(most recent call last\):$/ { traceback = 1; next }
+    traceback {
+        # Native frames and copied source lines are indented; the exception
+        # line itself is the first non-indented line and ends the block.
+        if ($0 ~ /^[[:space:]]/ || $0 == "") { next }
+        traceback = 0
+        next
+    }
+    { print }
+    ' || true
 }
 
 # Install the Gear Lever Flatpak. Prefer the AppStream-driven call_script path
@@ -2958,8 +2980,11 @@ pkg_appimage () {
                 # registry pointing at files that were never installed, so
                 # hand the still-present inputs to LinuxToys' own
                 # integration below instead.
-                echo "$output"
-                warn "Gear Lever integration failed. Falling back to LinuxToys AppImage integration."
+                [[ -n "${output//[[:space:]]/}" ]] && echo "$output"
+                # The fallback is a normal integration path, not an error:
+                # print a plain note instead of a warning dialog, which would
+                # block a background AppStream job and alarm the user.
+                echo "Gear Lever could not integrate this AppImage; using LinuxToys integration."
             fi
         elif [[ ${#_integrated_names[@]} -eq 0 ]]; then
             # Every input was reported as already integrated; its entries
@@ -3145,7 +3170,7 @@ pkg_appimage_rm () {
     # result and fall back to LinuxToys' own removal so the operation
     # converges instead of failing identically on every retry.
     local _gearlever_status=0 _remove_output
-    if is_systemd && [[ ${#_targets[@]} -gt 0 ]]; then
+    if is_systemd && [[ ${#_targets[@]} -gt 0 ]] && _pkg_appimage_gearlever_installed; then
         (
             for appimage_file in "${_targets[@]}"; do
                 # Capture and filter per file: Gear Lever's sandbox prints
@@ -3166,7 +3191,10 @@ pkg_appimage_rm () {
         done
 
         if [[ $_still_present -eq 1 ]]; then
-            warn "Gear Lever could not remove the AppImage (not integrated or unavailable). Removing it directly."
+            # Gear Lever only removes AppImages it integrated itself. A
+            # LinuxToys-managed AppImage (the fallback path) is expected to
+            # survive its --remove, so remove it directly without a warning:
+            # this is the normal path, not a failure.
             for appimage_file in "${_targets[@]}"; do
                 if [[ -e "$appimage_file" || -L "$appimage_file" ]]; then
                     rm -f -- "$appimage_file" || return $?
