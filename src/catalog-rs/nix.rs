@@ -3,7 +3,8 @@
 //! The package snapshot is a single `nix eval` of the top-level package set,
 //! carrying pname/version/description plus nixpkgs' broken/deprecated flags.
 //! This module normalizes that snapshot once into a compact MessagePack cache,
-//! filters packages that are not meaningful standalone offers, maps Nix
+//! filters packages that are not meaningful standalone offers (including
+//! dependency-oriented ``-unwrapped`` variants), maps Nix
 //! Software API categories onto LinuxToys categories on NixOS, and exposes both
 //! the standalone Nix category and the components merged into the shared
 //! AppStream catalog.
@@ -14,7 +15,7 @@ use serde_json::Value;
 use std::fs;
 use std::io::Write;
 
-const NIX_CACHE_SCHEMA: u32 = 2;
+const NIX_CACHE_SCHEMA: u32 = 3;
 
 /// Nix Software API category tokens mapped onto LinuxToys category roots.
 fn linux_toys_category(api_category: &str) -> Option<&'static str> {
@@ -186,6 +187,13 @@ fn is_desktop_setup(name: &str) -> bool {
         || lower.starts_with("budgie-")
 }
 
+/// Raw application builds used by a wrapper for desktop integration. Offering
+/// them directly installs an incomplete variant that the wrapper normally owns.
+fn is_unwrapped(name: &str) -> bool {
+    let lower = name.to_lowercase();
+    lower.ends_with("-unwrapped") || lower.ends_with("_unwrapped")
+}
+
 fn is_offerable(package: &NixPackage) -> bool {
     if package.attr.is_empty() || package.attr.contains('.') {
         return false;
@@ -205,6 +213,8 @@ fn is_offerable(package: &NixPackage) -> bool {
     }
     !package.broken
         && !package.deprecated
+        && !is_unwrapped(&package.attr)
+        && !is_unwrapped(&package.pname)
         && !is_nix_internal(&package.attr)
         && !is_hardware_support(&package.attr, &package.description)
         && !is_desktop_setup(&package.attr)
@@ -770,6 +780,24 @@ mod tests {
         assert!(!is_offerable(&broken));
         assert!(!is_offerable(&deprecated));
         assert!(is_offerable(&package("current-app", "application")));
+    }
+
+    #[test]
+    fn filters_unwrapped_packages() {
+        for name in [
+            "chromium-unwrapped",
+            "sway-unwrapped",
+            "foo_unwrapped",
+            "bar-Unwrapped",
+        ] {
+            assert!(!is_offerable(&package(name, "raw application")), "{name}");
+        }
+        let mut pname_only = package("browser-alias", "raw application");
+        pname_only.pname = "chromium-unwrapped".into();
+        assert!(!is_offerable(&pname_only));
+        for name in ["unwrapped-app", "firefox", "gimp"] {
+            assert!(is_offerable(&package(name, "application")), "{name}");
+        }
     }
 
     #[test]
