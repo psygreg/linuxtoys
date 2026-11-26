@@ -1015,12 +1015,18 @@ class AppWindow(
         installed = self.translations.get("nix_setup_installed", "Installed")
         missing = self.translations.get("nix_setup_missing", "Not installed")
         unavailable = self.translations.get("nix_setup_unavailable", "Not available")
-        return "\n".join((
+        lines = [
             f"• Flakes: {yes if status['flakes'] else no}",
             f"• Unfree packages: {yes if status['unfree'] else no}",
             f"• Home Manager: {installed if status['home_manager'] else missing}",
             f"• NixOS system config: {yes if status['system'] else unavailable}",
-        ))
+        ]
+        if status.get("gpu_required"):
+            gpu_label = self.translations.get(
+                "nix_setup_gpu", "GPU acceleration"
+            )
+            lines.append(f"• {gpu_label}: {yes if status.get('gpu') else no}")
+        return "\n".join(lines)
 
     def _activate_nix_category(self, widget=None, event=None):
         if not nix_catalog.enabled():

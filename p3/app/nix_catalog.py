@@ -97,6 +97,15 @@ _ATTR_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_'-]*$")
 _MODULE_PACKAGE_RE = re.compile(
     r"^\s*pkgs\.([A-Za-z_][A-Za-z0-9_'-]*)\s*(?:#.*)?$", re.MULTILINE
 )
+_GPU_ENABLE_RE = re.compile(
+    r"\b(?:targets\.genericLinux\.)?gpu\.enable\s*=\s*"
+    r"(?:lib\.)?(?:mkDefault\s+|mkForce\s+)?true\b"
+)
+_GPU_BLOCK_ENABLE_RE = re.compile(
+    r"\bgpu\s*=\s*\{[^{}]*\benable\s*=\s*"
+    r"(?:lib\.)?(?:mkDefault\s+|mkForce\s+)?true\b",
+    re.DOTALL,
+)
 _LOCK = threading.RLock()
 _VALIDATED_SNAPSHOT = None
 logger = logging.getLogger(__name__)
@@ -518,18 +527,85 @@ def _unfree_enabled():
     return False
 
 
+def gpu_setup_required():
+    """Whether this host needs Home Manager's non-NixOS GPU integration.
+
+    NixOS already exposes /run/opengl-driver, and gregOS installs its own
+    kernel-matched driver stack there. Every other host uses the genericLinux
+    GPU target when Home Manager manages Nix packages.
+    """
+    if not enabled() or is_nixos():
+        return False
+    try:
+        from .compat import is_gregos
+
+        if is_gregos():
+            return False
+    except Exception:
+        pass
+    return True
+
+
+def _gpu_config_paths():
+    paths = [
+        HOME_MODULE_PATH,
+        HOME_CONFIG_DIR / "home.nix",
+        HOME_CONFIG_DIR / "default.nix",
+        HOME_CONFIG_DIR / "flake.nix",
+    ]
+    if _HM_CONFIG_OVERRIDE:
+        paths.append(Path(_HM_CONFIG_OVERRIDE).expanduser())
+    seen = set()
+    for path in paths:
+        key = os.fspath(path)
+        if key in seen:
+            continue
+        seen.add(key)
+        yield path
+
+
+def gpu_configured():
+    """Whether the Home Manager configuration enables genericLinux GPU support."""
+    if not gpu_setup_required():
+        return True
+    for path in _gpu_config_paths():
+        try:
+            content = path.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        for line in content.splitlines():
+            if line.lstrip().startswith("#"):
+                continue
+            if _GPU_ENABLE_RE.search(line):
+                return True
+        if _GPU_BLOCK_ENABLE_RE.search(content):
+            return True
+    return False
+
+
+def gpu_setup_ready():
+    """Whether the non-NixOS GPU option and its host setup are both present."""
+    if not gpu_setup_required():
+        return True
+    return gpu_configured() and os.path.exists("/run/opengl-driver")
+
+
 def setup_status():
     """Return the first-click readiness report used by the setup dialog."""
     flakes = _flakes_enabled()
     unfree = _unfree_enabled()
     home_manager = home_manager_available()
     system = is_nixos()
+    gpu_required = gpu_setup_required()
+    gpu = gpu_setup_ready() if gpu_required else True
     return {
         "nix": enabled(),
         "flakes": flakes,
         "unfree": unfree,
         "home_manager": home_manager,
         "system": system,
+        "gpu_required": gpu_required,
+        "gpu": gpu,
         "backend": home_manager or system,
         "ready": bool(enabled() and flakes and (home_manager or system)),
     }
@@ -544,6 +620,8 @@ def setup_missing(status=None):
         missing.append("unfree")
     if not status["home_manager"] and not status["system"]:
         missing.append("home-manager")
+    if status.get("gpu_required") and not status.get("gpu"):
+        missing.append("gpu")
     return missing
 
 
@@ -615,11 +693,11 @@ def _materialize_script(function, name, description):
 
 
 def materialize_setup():
-    """Script that checks/offers flakes, unfree and home-manager setup."""
+    """Script that checks/offers flakes, unfree, home-manager and GPU setup."""
     return _materialize_script(
         "nix_setup",
         "Nix package management setup",
-        "Check and configure flakes, unfree packages and home-manager.",
+        "Check and configure flakes, unfree packages, home-manager and GPU acceleration.",
     )
 
 

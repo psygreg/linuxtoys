@@ -507,7 +507,8 @@ class ScriptRunnerMixin:
             )
             return
         status = nix_catalog.setup_status()
-        if not status.get("ready"):
+        missing = nix_catalog.setup_missing(status)
+        if not status.get("ready") or "gpu" in missing:
             self.notify(
                 translations.get(
                     "nix_setup_message",
