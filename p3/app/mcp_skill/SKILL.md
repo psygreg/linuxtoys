@@ -1,6 +1,6 @@
 ---
 name: linuxtoys-mcp
-description: Enable and drive the LinuxToys MCP server to manage Linux apps on the user's machine like a user would - search the catalog, read app pages (descriptions, screenshots, donation links), install and remove apps, install local package files (.deb, .rpm, .appimage and more, optionally downloaded from a URL), install and remove Flathub app extensions/addons, install and remove Nix packages and external Nix flakes, clean up the leftover data of uninstalled Flatpak apps, run the app's full system update, handle questions/warnings raised by scripts (ask the user before the run; relay warnings), watch every job to completion in the submission call itself (submissions block until the run finishes and return its outcome; batches of jobs can run through subagents), check for and apply LinuxToys app updates, change LinuxToys settings, and translate descriptions. Use when the user asks to install or remove software through LinuxToys, asks to install a package file or app extension, asks to clean up leftovers of an uninstalled Flatpak app, asks to run a full system update, asks to update or check the version of LinuxToys itself, change its settings, or when configuring AI agent access to LinuxToys.
+description: Enable and drive the LinuxToys MCP server to manage Linux apps on the user's machine like a user would - search the catalog, read app pages (descriptions, screenshots, donation links), install and remove apps, install local package files (.deb, .rpm, .appimage and more, optionally downloaded from a URL), install and remove Flathub app extensions/addons, enable the Nix subsystem, install and remove Nix packages and external Nix flakes, clean up the leftover data of uninstalled Flatpak apps, run the app's full system update, handle questions/warnings raised by scripts (ask the user before the run; relay warnings), watch every job to completion in the submission call itself (submissions block until the run finishes and return its outcome; batches of jobs can run through subagents), check for and apply LinuxToys app updates, change LinuxToys settings, and translate descriptions. Use when the user asks to install or remove software through LinuxToys, asks to install a package file or app extension, asks to clean up leftovers of an uninstalled Flatpak app, asks to run a full system update, asks to update or check the version of LinuxToys itself, change its settings, or when configuring AI agent access to LinuxToys.
 ---
 
 # LinuxToys MCP
@@ -100,6 +100,7 @@ After connecting, call `server_info` once to confirm the session works.
 | `remove_app_extension(app_id, extension, wait?, wait_seconds?)` | Remove one installed extension of an app, watching the job to completion |
 | `remove_app(app_id, wait?, wait_seconds?)` | Remove an app installed through LinuxToys, watching the removal to completion |
 | `remove_flatpak_data(app_id, wait?, wait_seconds?)` | Remove the leftover user data (`~/.var/app/<AppID>`) of a Flatpak app that is no longer installed — the GUI's "Remove data" button on that app's page; refuses apps still installed; watches the removal to completion |
+| `nix_enable_subsystem(wait?, wait_seconds?)` | Enable LinuxToys' Nix subsystem: installs Nix through the catalog installer when missing, prepares flakes/unfree/Home Manager or NixOS system integration, and non-NixOS GPU support. NixOS and its derivatives are enabled automatically; on those hosts it only prepares missing configuration. Ask the user first. Watches the job to completion |
 | `nix_install_package(name, scope?, wait?, wait_seconds?)` | Install one nixpkgs attribute through LinuxToys' declarative Nix module (never `nix-env`); `name` is the attribute (e.g. `ripgrep`) or a `nix:<attr>` catalog id. `scope` is `home-manager` (default when available) or `system` (NixOS only; password dialog appears on the user's screen). Watches the rebuild to completion |
 | `nix_remove_package(name, scope?, wait?, wait_seconds?)` | Remove one nixpkgs attribute from the managed module. Without `scope`, every scope recorded for the package is removed in one rebuild; other Nix packages and imported flakes stay applied |
 | `nix_list_packages()` | List Nix packages installed through LinuxToys with their attributes and scopes, for `nix_remove_package` |
@@ -149,6 +150,14 @@ never infer trust from a successful download or a familiar file name, and
 never install a package the user did not point you at. It goes through the
 same guarded machinery as a package-view install, so the usual root password
 dialog appears on the user's screen when needed.
+
+**Enable the Nix subsystem:** on a host where Nix is missing or the LinuxToys
+module is not configured, call `nix_enable_subsystem` after the user agrees.
+It installs Nix through the catalog installer when needed and prepares the
+declarative configuration (and GPU integration on non-NixOS systems). NixOS
+and its derivatives use their native Nix and are enabled automatically; there
+the tool only prepares any missing configuration. `server_info` reports the
+current `nix_subsystem` state.
 
 **Install or remove Nix software:** LinuxToys manages Nix declaratively
 through its own `linuxtoys.nix` module — never use `nix-env` yourself through

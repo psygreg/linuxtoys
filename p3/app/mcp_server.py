@@ -3,8 +3,8 @@
 
 Lets AI agents interact with LinuxToys the way a user would: browse and
 search the catalog, read app pages (descriptions, screenshots, donation and
-purchase links), install and remove apps, install and remove Nix packages
-and external flakes, clean up the leftover user data of uninstalled Flatpak
+purchase links), install and remove apps, enable the Nix subsystem, install
+and remove Nix packages and external flakes, clean up the leftover user data of uninstalled Flatpak
 apps (the app page's "Remove data" action), run the app's full system update
 (the menu card's "Update System"), change settings (automatic updates,
 automatic bug reports, language), translate descriptions, and read or export
@@ -2888,6 +2888,8 @@ class JobManager:
                 code, reason = self._remove_flatpak_data(job, entry)
             elif job.kind in ("nix_flake_install", "nix_flake_remove"):
                 code, reason = self._run_generated_script(job, entry)
+            elif job.kind == "nix_subsystem_enable":
+                code, reason = self._run_nix_subsystem_enable(job)
             else:
                 code, reason = self._remove(job, entry)
             job.exit_code = code
@@ -3250,6 +3252,56 @@ class JobManager:
             return code, f"Removal of '{job.name}' failed with exit code {code}. See the job log for details."
         return 0, ""
 
+    def _run_nix_subsystem_enable(self, job):
+        """Install Nix when needed, then prepare the declarative subsystem."""
+        from . import manifest_helper, nix_catalog
+
+        if not nix_catalog.linux_arch():
+            return 1, (
+                "The Nix subsystem is only available on x86_64 and aarch64 hosts."
+            )
+        if not nix_catalog.enabled():
+            _needed, installer, error = manifest_helper.prepare_nix_installer(
+                _translations()
+            )
+            if error:
+                return 1, error
+            if installer is None:
+                return 1, (
+                    "Nix is not installed and the catalog Nix installer is "
+                    "unavailable."
+                )
+            cleanup_path = None
+            if installer.get("is_repo_entry"):
+                try:
+                    installer = materialize_repo_script(installer)
+                    cleanup_path = installer.get("path")
+                except Exception as exc:
+                    return 1, f"Could not prepare the Nix installer: {exc}"
+            self._log(
+                job,
+                f"Installing Nix through {installer.get('name') or 'the catalog installer'}...",
+            )
+            try:
+                code, reason = self._execute_script(job, installer)
+            finally:
+                if cleanup_path and os.path.exists(cleanup_path):
+                    try:
+                        os.remove(cleanup_path)
+                    except OSError:
+                        pass
+            if code != 0:
+                return code, reason or "The Nix installation did not complete."
+            if not nix_catalog.enabled():
+                return 1, (
+                    "The Nix installer finished, but Nix is still not available "
+                    "on this host."
+                )
+
+        script = nix_catalog.materialize_subsystem_enable()
+        self._log(job, "Preparing the Nix subsystem...")
+        return self._run_generated_script(job, script)
+
     def _run_generated_script(self, job, script_info):
         """Run a materialized flake apply/removal script and delete it after."""
         try:
@@ -3540,7 +3592,8 @@ def tool_schemas():
             "name": "server_info",
             "description": (
                 "LinuxToys server status: version, connection info, active jobs, "
-                "and whether the systemd service is enabled/active."
+                "whether the systemd service is enabled/active, and the Nix "
+                "subsystem state (available, auto-enabled on NixOS, setup gaps)."
             ),
             "inputSchema": {"type": "object", "properties": {}},
         },
@@ -3847,6 +3900,26 @@ def tool_schemas():
                     **_job_tracking_schema(),
                 },
                 "required": ["app_id"],
+            },
+        },
+        {
+            "name": "nix_enable_subsystem",
+            "description": (
+                "Enable LinuxToys' Nix subsystem. Installs Nix through the "
+                "catalog installer when it is missing, then prepares flake "
+                "support, unfree packages, Home Manager or the NixOS system "
+                "configuration, and non-NixOS GPU integration. NixOS and its "
+                "derivatives use their native Nix and are enabled "
+                "automatically; on those hosts this only prepares any missing "
+                "configuration. Ask the user before installing Nix or changing "
+                "their Nix configuration. Blocks until the job finishes by "
+                "default; pass wait=false to queue it and watch with get_job."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    **_job_tracking_schema(),
+                },
             },
         },
         {
@@ -4174,12 +4247,18 @@ def _tool_server_info():
             }
     except Exception:
         pass
+    nix_status = None
+    try:
+        nix_status = _nix_subsystem_status()
+    except Exception:
+        pass
     return {
         "server": SERVER_NAME,
         "version": __version__,
         "protocol_version": PROTOCOL_VERSION,
         "endpoint": _endpoint_url(),
         "service": status,
+        "nix_subsystem": nix_status,
         "uptime_seconds": round(time.time() - _TRANSIENT_SERVER["started"], 1),
         "scripts_source": str(parser.SCRIPTS_DIR),
         "appstream_cache_ready": appstream_cache.CATALOG_PATH.is_file(),
@@ -4750,7 +4829,8 @@ def _nix_available_scopes():
     if not nix_catalog.enabled():
         raise ValueError(
             "Nix is not available on this host (requires an x86_64/aarch64 "
-            "host and a working nix executable)."
+            "host and a working nix executable). Use nix_enable_subsystem to "
+            "install and prepare it."
         )
     scopes = []
     if nix_catalog.home_manager_available():
@@ -4835,6 +4915,65 @@ def _nix_package_payload(attr, scopes):
     }
 
 
+def _nix_subsystem_status():
+    from . import nix_catalog
+
+    status = nix_catalog.setup_status()
+    missing = nix_catalog.setup_missing(status)
+    return {
+        "available": nix_catalog.enabled(),
+        "enabled": bool(nix_catalog.enabled() and status.get("ready")),
+        "auto_enabled": nix_catalog.is_nixos(),
+        "setup_ready": bool(status.get("ready") and not missing),
+        "missing": missing,
+        "scopes": nix_catalog.scopes(),
+        "gpu_required": bool(status.get("gpu_required")),
+        "gpu": bool(status.get("gpu")),
+    }
+
+
+def _tool_nix_enable_subsystem(wait=True, wait_seconds=None):
+    from . import nix_catalog
+
+    if not nix_catalog.linux_arch():
+        raise ValueError(
+            "The Nix subsystem is only available on x86_64 and aarch64 hosts."
+        )
+    current = _nix_subsystem_status()
+    if current["available"] and current["setup_ready"]:
+        return {
+            **current,
+            "enabled": True,
+            "already_enabled": True,
+            "final": True,
+            "note": (
+                "The Nix subsystem is already enabled."
+                + (
+                    " NixOS/derivative hosts are enabled automatically."
+                    if current["auto_enabled"]
+                    else ""
+                )
+            ),
+        }
+
+    job = JOBS.submit(
+        "nix_subsystem_enable",
+        "nix-subsystem",
+        entry={"name": "Nix subsystem"},
+    )
+    payload = _job_submission_result(
+        job,
+        "Nix is installed through the catalog installer when missing, then "
+        "the LinuxToys Nix module, Home Manager/NixOS scope and GPU support "
+        "are prepared. Password dialogs appear on the user's screen.",
+        wait=wait,
+        wait_seconds=wait_seconds,
+    )
+    payload.update(_nix_subsystem_status())
+    payload["already_enabled"] = False
+    return payload
+
+
 def _tool_nix_install_package(name, scope=None, wait=True, wait_seconds=None):
     from . import nix_catalog
 
@@ -4895,7 +5034,8 @@ def _tool_nix_list_packages():
     if not nix_catalog.enabled():
         raise ValueError(
             "Nix is not available on this host (requires an x86_64/aarch64 "
-            "host and a working nix executable)."
+            "host and a working nix executable). Use nix_enable_subsystem to "
+            "install and prepare it."
         )
     packages = []
     for item in nix_registry.installed_packages():
@@ -4933,7 +5073,8 @@ def _tool_nix_list_flakes():
     if not nix_catalog.enabled():
         raise ValueError(
             "Nix is not available on this host (requires an x86_64/aarch64 "
-            "host and a working nix executable)."
+            "host and a working nix executable). Use nix_enable_subsystem to "
+            "install and prepare it."
         )
     try:
         nix_registry.sync_from_flakes()
@@ -4990,7 +5131,8 @@ def _tool_nix_install_flake(
     if not nix_catalog.enabled():
         raise ValueError(
             "Nix is not available on this host (requires an x86_64/aarch64 "
-            "host and a working nix executable)."
+            "host and a working nix executable). Use nix_enable_subsystem to "
+            "install and prepare it."
         )
     value = str(reference or "").strip()
     if not value:
@@ -5088,7 +5230,8 @@ def _tool_nix_remove_flake(reference, wait=True, wait_seconds=None):
     if not nix_catalog.enabled():
         raise ValueError(
             "Nix is not available on this host (requires an x86_64/aarch64 "
-            "host and a working nix executable)."
+            "host and a working nix executable). Use nix_enable_subsystem to "
+            "install and prepare it."
         )
     value = str(reference or "").strip()
     if not value:
@@ -5550,6 +5693,11 @@ def dispatch_tool(name, arguments):
             _arg_bool(arguments.get("wait"), True),
             arguments.get("wait_seconds"),
         )
+    if name == "nix_enable_subsystem":
+        return _tool_nix_enable_subsystem(
+            _arg_bool(arguments.get("wait"), True),
+            arguments.get("wait_seconds"),
+        )
     if name == "nix_install_package":
         return _tool_nix_install_package(
             arguments.get("name"),
@@ -5697,8 +5845,10 @@ def _initialize_result(requested_version):
             "requires_confirmation first with the package details and risk "
             "warnings — show them to the user, ask whether they trust the "
             "provider, and only re-call with trusted_provider=true if they "
-            "explicitly agree. Nix is managed declaratively: "
-            "nix_install_package / nix_remove_package take nixpkgs attributes "
+            "explicitly agree. Nix is managed declaratively: call "
+            "nix_enable_subsystem first when Nix is missing or its LinuxToys "
+            "module is not configured (NixOS and its derivatives are enabled "
+            "automatically), then nix_install_package / nix_remove_package take nixpkgs attributes "
             "(search_apps/get_app_details expose nix_name), while "
             "nix_install_flake / nix_remove_flake handle external flakes; the "
             "first nix_install_flake call returns requires_selection — present "

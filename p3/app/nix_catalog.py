@@ -119,6 +119,7 @@ def nix_executable():
         os.path.expanduser("~/.nix-profile/bin/nix"),
         os.path.expanduser("~/.local/state/nix/profile/bin/nix"),
         "/nix/var/nix/profiles/default/bin/nix",
+        "/run/current-system/sw/bin/nix",
         "/usr/bin/nix",
     ]
     for candidate in candidates:
@@ -129,7 +130,9 @@ def nix_executable():
 
 def enabled():
     # Presence is authoritative, exactly like Homebrew; the shared ISA policy
-    # must also support the host before the Nix subsystem is offered.
+    # must also support the host before the Nix subsystem is offered. NixOS and
+    # its derivatives need no opt-in: Nix is their native package source and
+    # nix_executable() also checks the system profile path.
     return bool(linux_arch()) and nix_executable() is not None
 
 
@@ -699,6 +702,18 @@ def materialize_setup():
         "Nix package management setup",
         "Check and configure flakes, unfree packages, home-manager and GPU acceleration.",
     )
+
+
+def materialize_subsystem_enable():
+    """Script that prepares the Nix subsystem without interactive questions."""
+    script = _materialize_script(
+        "nix_subsystem_ensure",
+        "Enable Nix subsystem",
+        "Prepare flake support, unfree packages, Home Manager and GPU integration.",
+    )
+    script["registry"] = "no"
+    script["cleanup_path"] = script["path"]
+    return script
 
 
 def materialize_apply():
