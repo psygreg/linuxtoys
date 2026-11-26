@@ -1,6 +1,6 @@
 ---
 name: linuxtoys-mcp
-description: Enable and drive the LinuxToys MCP server to manage Linux apps on the user's machine like a user would - search the catalog, read app pages (descriptions, screenshots, donation links), install and remove apps, install local package files (.deb, .rpm, .appimage and more, optionally downloaded from a URL), install and remove Flathub app extensions/addons, clean up the leftover data of uninstalled Flatpak apps, run the app's full system update, handle questions/warnings raised by scripts (ask the user before the run; relay warnings), watch every job to completion in the submission call itself (submissions block until the run finishes and return its outcome; batches of jobs can run through subagents), check for and apply LinuxToys app updates, change LinuxToys settings, and translate descriptions. Use when the user asks to install or remove software through LinuxToys, asks to install a package file or app extension, asks to clean up leftovers of an uninstalled Flatpak app, asks to run a full system update, asks to update or check the version of LinuxToys itself, change its settings, or when configuring AI agent access to LinuxToys.
+description: Enable and drive the LinuxToys MCP server to manage Linux apps on the user's machine like a user would - search the catalog, read app pages (descriptions, screenshots, donation links), install and remove apps, install local package files (.deb, .rpm, .appimage and more, optionally downloaded from a URL), install and remove Flathub app extensions/addons, install and remove Nix packages and external Nix flakes, clean up the leftover data of uninstalled Flatpak apps, run the app's full system update, handle questions/warnings raised by scripts (ask the user before the run; relay warnings), watch every job to completion in the submission call itself (submissions block until the run finishes and return its outcome; batches of jobs can run through subagents), check for and apply LinuxToys app updates, change LinuxToys settings, and translate descriptions. Use when the user asks to install or remove software through LinuxToys, asks to install a package file or app extension, asks to clean up leftovers of an uninstalled Flatpak app, asks to run a full system update, asks to update or check the version of LinuxToys itself, change its settings, or when configuring AI agent access to LinuxToys.
 ---
 
 # LinuxToys MCP
@@ -100,6 +100,12 @@ After connecting, call `server_info` once to confirm the session works.
 | `remove_app_extension(app_id, extension, wait?, wait_seconds?)` | Remove one installed extension of an app, watching the job to completion |
 | `remove_app(app_id, wait?, wait_seconds?)` | Remove an app installed through LinuxToys, watching the removal to completion |
 | `remove_flatpak_data(app_id, wait?, wait_seconds?)` | Remove the leftover user data (`~/.var/app/<AppID>`) of a Flatpak app that is no longer installed — the GUI's "Remove data" button on that app's page; refuses apps still installed; watches the removal to completion |
+| `nix_install_package(name, scope?, wait?, wait_seconds?)` | Install one nixpkgs attribute through LinuxToys' declarative Nix module (never `nix-env`); `name` is the attribute (e.g. `ripgrep`) or a `nix:<attr>` catalog id. `scope` is `home-manager` (default when available) or `system` (NixOS only; password dialog appears on the user's screen). Watches the rebuild to completion |
+| `nix_remove_package(name, scope?, wait?, wait_seconds?)` | Remove one nixpkgs attribute from the managed module. Without `scope`, every scope recorded for the package is removed in one rebuild; other Nix packages and imported flakes stay applied |
+| `nix_list_packages()` | List Nix packages installed through LinuxToys with their attributes and scopes, for `nix_remove_package` |
+| `nix_install_flake(reference, scope?, outputs?, wait?, wait_seconds?)` | Import an external Nix flake. Call first with only `reference`; the response is `requires_selection` with every discovered output (packages, Home Manager/NixOS modules, overlays; apps/configurations are informational). Present them to the user, then re-call with the chosen output keys in `outputs`. The flake is pinned in a locked wrapper and only the selected outputs are merged; other imported flakes stay applied. Watches the rebuild to completion |
+| `nix_remove_flake(reference, wait?, wait_seconds?)` | Remove every imported scope of one flake reference through its Action Registry transaction; only that flake's generated module code and state are removed. Get references from `nix_list_flakes`; watches the rebuild to completion |
+| `nix_list_flakes()` | List imported flakes with reference, description, scopes and selected outputs |
 | `get_job(job_id, tail_lines?, wait_seconds?)` | Re-attach to a queued job: state (`queued`/`running`/`success`/`error`), exit code, log tail (filled in while the script runs); `wait_seconds` (max 20) blocks until the job finishes; plus the script's dialog events: `warnings` (attention to relay), `live_prompts` (dialogs the user answered live), `error_detail` (fatal message on failure). Submissions already watch to completion — use this after a `wait: false` submission or a cut-off call |
 | `list_jobs()` | Recent jobs (find a job id here if a submission was cut off) |
 | `get_settings()` / `set_settings(...)` | Automatic updates, automatic bug reports, language |
@@ -143,6 +149,24 @@ never infer trust from a successful download or a familiar file name, and
 never install a package the user did not point you at. It goes through the
 same guarded machinery as a package-view install, so the usual root password
 dialog appears on the user's screen when needed.
+
+**Install or remove Nix software:** LinuxToys manages Nix declaratively
+through its own `linuxtoys.nix` module — never use `nix-env` yourself through
+this server. For a nixpkgs package, find the entry with `search_apps` /
+`get_app_details` (Nix entries expose `nix_name` and `nix_scopes`) or call
+`nix_install_package` directly with the attribute. Removal is
+`nix_remove_package`; omit `scope` to remove every recorded scope at once.
+
+For an external flake, call `nix_install_flake` with only the reference first
+(`github:owner/repo`, a git URL or a local directory). The response is
+`requires_selection`: show the discovered outputs to the user and ask which
+they want, then re-call with `outputs=[...]`. Explain that a flake is
+third-party configuration code — its modules, packages and overlays become
+part of their configuration — and only proceed if they trust its source.
+`nix_list_flakes` shows imported references and `nix_remove_flake` removes
+one, rebuilding the affected scope(s). Home Manager is used by default when
+available; the system scope needs NixOS and a root password dialog on the
+user's screen.
 
 **Scripts that ask questions, warn or fail with dialogs:** script dialogs
 do not pop on your behalf, and the machine tells you about them:

@@ -263,6 +263,10 @@ def _parse_operation(op_line):
                 return "pkg install", parts[1:]
         elif op_type == "nix":
             # Nix package transaction: "nix install <attr> <scope>".
+            # Imported flake transaction:
+            # "nix flake install <scope> <encoded-state-id>".
+            if len(parts) >= 5 and parts[1] == "flake" and parts[2] == "install":
+                return "nix flake install", parts[3:5]
             if len(parts) >= 4 and parts[1] == "install":
                 return "nix install", parts[2:4]
             return op_type, parts[1:]
@@ -965,6 +969,15 @@ def _reverse_operation(op_line, package_manager):
             'source "$SCRIPT_DIR/libs/nixsys.bash"',
             "nix_remove_packages "
             + " ".join(shlex.quote(operand) for operand in operands[:1]),
+        ]
+
+    elif op_type == "nix flake install" and operands:
+        # Imported flakes are declarative too. The encoded state id names
+        # exactly one import, so only that flake's generated module code is
+        # removed while other imports stay applied.
+        return [
+            'source "$SCRIPT_DIR/libs/nixsys.bash"',
+            "nix_remove_flakes " + shlex.quote(operands[-1]),
         ]
 
     elif op_type == "pkg rm" and operands:

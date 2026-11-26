@@ -1,18 +1,22 @@
-"""Action Registry integration for LinuxToys-managed Nix packages.
+"""Action Registry integration for LinuxToys-managed Nix packages and flakes.
 
 Nix installs are declarative and applied by ``nixsys.bash`` rather than by a
 materialized script, so they cannot rely on the usual transmap/terminal
 registry writer. This module is the single place that turns the applied
-module state into stable ``Nix: <attr>`` registry transactions and back.
+module state into stable registry transactions and back.
 
-Registry operation format:
+Package operation format:
 
     nix install <attr> <scope>
 
-The scope is ``home-manager`` or ``system``. A package present in both scopes
-keeps both operations in one transaction; the registry name stays
-``Nix: <attr>`` so removal and manifest export can match it without parsing
-display names.
+Flake operation format:
+
+    nix flake install <scope> <encoded-state-id>
+
+The scope is ``home-manager`` or ``system``. A package or flake present in
+both scopes keeps both operations in one transaction. Package identities are
+``Nix: <attr>``; flake identities are ``Nix flake: <reference>``. Removals
+and manifest filtering match those names without parsing display labels.
 """
 
 from __future__ import annotations
@@ -21,6 +25,7 @@ import os
 import re
 import sys
 import tempfile
+from urllib.parse import quote, unquote
 
 if __package__:
     from .registry_utils import parse_registry_file, remove_script_entries
@@ -31,9 +36,12 @@ else:  # Executed as ``python3 app/nix_registry.py`` from the Bash libraries.
     from term_registry import ExecutionRegistry
 
 PREFIX = "Nix: "
+FLAKE_PREFIX = "Nix flake: "
 _OPERATION = "nix install "
+_FLAKE_OPERATION = "nix flake install "
 _VALID_SCOPES = ("home-manager", "system")
 _ATTR_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_'-]*$")
+_CONTROL_RE = re.compile(r"[\x00-\x1f\x7f]+")
 
 
 def registry_name(attr):
@@ -149,6 +157,316 @@ def is_nix_registry_entry(name, executions=None):
     if executions is None:
         executions = parse_registry_file().get(name, ())
     return _is_nix_entry(name, executions)
+
+
+# ---------------------------------------------------------------------------
+# Imported flakes
+# ---------------------------------------------------------------------------
+
+def flake_registry_name(reference):
+    """Stable Action Registry identity for one imported flake."""
+    value = _CONTROL_RE.sub(" ", str(reference or "")).strip()
+    return FLAKE_PREFIX + value
+
+
+def encode_flake_id(record_id):
+    """URL-encode a state record id for a whitespace-delimited operation."""
+    return quote(str(record_id or ""), safe="")
+
+
+def decode_flake_id(value):
+    return unquote(str(value or ""))
+
+
+def parse_flake_operation(operation):
+    """Return ``(scope, record_id)`` for a flake install operation, else None."""
+    text = str(operation or "").strip()
+    if not text.startswith(_FLAKE_OPERATION):
+        return None
+    parts = text.split()
+    if (
+        len(parts) != 5
+        or parts[0] != "nix"
+        or parts[1] != "flake"
+        or parts[2] != "install"
+    ):
+        return None
+    scope, encoded = parts[3], parts[4]
+    if scope not in _VALID_SCOPES:
+        return None
+    record_id = decode_flake_id(encoded)
+    if not record_id:
+        return None
+    return scope, record_id
+
+
+def _is_flake_entry(name, executions=None):
+    if str(name or "").startswith(FLAKE_PREFIX):
+        return True
+    if executions is None:
+        executions = parse_registry_file().get(name, ())
+    return any(
+        parse_flake_operation(operation) is not None
+        for _timestamp, operations in executions or ()
+        for operation in operations
+    )
+
+
+def is_flake_registry_entry(name, executions=None):
+    """Whether one registry identity is (or records) an imported flake."""
+    return _is_flake_entry(name, executions)
+
+
+def _write_flake_entry(name, operations):
+    """Replace the registry transaction for one imported flake."""
+    clean = sorted(
+        {
+            str(operation).strip()
+            for operation in operations or ()
+            if parse_flake_operation(operation) is not None
+        }
+    )
+    if not clean:
+        return False
+    fd, path = tempfile.mkstemp(prefix="linuxtoys-nix-flake-registry-", text=True)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            handle.write("\n".join(clean) + "\n")
+        ExecutionRegistry._save_to_registry(str(name), path)
+        return True
+    finally:
+        try:
+            os.unlink(path)
+        except OSError:
+            pass
+
+
+def _flake_operations_by_name(registry_data):
+    entries = {}
+    for name, executions in (registry_data or {}).items():
+        operations = []
+        for _timestamp, transaction_operations in executions or ():
+            for operation in transaction_operations or ():
+                parsed = parse_flake_operation(operation)
+                if parsed is not None:
+                    operations.append(str(operation).strip())
+        if operations:
+            entries[str(name)] = sorted(set(operations))
+    return entries
+
+
+def _remove_flake_operations(record_ids, registry_data=None):
+    """Remove operations for the given state ids from flake transactions."""
+    wanted = {str(record_id or "").strip() for record_id in record_ids or ()}
+    wanted.discard("")
+    if not wanted:
+        return 0
+    if registry_data is None:
+        registry_data = parse_registry_file()
+    changed = 0
+    for name, operations in _flake_operations_by_name(registry_data).items():
+        kept = []
+        for operation in operations:
+            parsed = parse_flake_operation(operation)
+            if parsed is not None and parsed[1] in wanted:
+                continue
+            kept.append(operation)
+        if kept == operations:
+            continue
+        changed += 1
+        if kept:
+            _write_flake_entry(name, kept)
+        else:
+            remove_script_entries(name)
+    return changed
+
+
+def _flake_state():
+    try:
+        if __package__:
+            from . import nix_flakes
+        else:
+            import nix_flakes
+        return nix_flakes
+    except Exception:
+        return None
+
+
+def _flake_records():
+    module = _flake_state()
+    if module is None:
+        return []
+    try:
+        return list(module.imports())
+    except Exception:
+        return []
+
+
+def sync_flakes(records=None, prune=False, removed_ids=None):
+    """Make registry flake transactions match the imported flake state.
+
+    ``records`` is an optional list of ``nix_flakes`` state records. When
+    omitted the durable state is read. ``removed_ids`` first drops operations
+    for records that were just removed; ``prune`` then removes transactions
+    whose record ids no longer exist in the state. Pruning is skipped when
+    the state is empty, so a temporarily unreadable/lost state file cannot
+    silently erase every actionable registry entry.
+    """
+    if records is None:
+        module = _flake_state()
+        if module is None:
+            raise RuntimeError("The imported flake state is unavailable")
+        # Deliberately propagate an unreadable/corrupt state file: pruning
+        # must never interpret "could not read" as "nothing is imported".
+        records = list(module.imports())
+    if removed_ids:
+        _remove_flake_operations(removed_ids)
+
+    desired = {}
+    desired_ids = set()
+    for record in records or ():
+        if not isinstance(record, dict):
+            continue
+        scope = str(record.get("scope") or "").strip()
+        record_id = str(record.get("id") or "").strip()
+        if scope not in _VALID_SCOPES or not record_id:
+            continue
+        reference = str(
+            record.get("reference")
+            or record.get("original_url")
+            or record.get("url")
+            or ""
+        ).strip()
+        name = flake_registry_name(reference or record_id)
+        operation = (
+            f"nix flake install {scope} {encode_flake_id(record_id)}"
+        )
+        desired.setdefault(name, set()).add(operation)
+        desired_ids.add(record_id)
+
+    registry_data = parse_registry_file()
+    existing = _flake_operations_by_name(registry_data)
+
+    for name, operations in desired.items():
+        if existing.get(name) != sorted(operations):
+            _write_flake_entry(name, operations)
+
+    state_exists = False
+    module = _flake_state()
+    if module is not None:
+        try:
+            state_exists = bool(module.state_available())
+        except Exception:
+            state_exists = False
+
+    desired_name_by_id = {}
+    for name, operations in desired.items():
+        for operation in operations:
+            parsed = parse_flake_operation(operation)
+            if parsed is not None:
+                desired_name_by_id[parsed[1]] = name
+
+    if prune and (desired or state_exists):
+        for name, operations in existing.items():
+            if name in desired:
+                continue
+            existing_ids = {
+                parsed[1]
+                for operation in operations
+                if (parsed := parse_flake_operation(operation)) is not None
+            }
+            if not existing_ids:
+                continue
+            # Drop transactions whose records vanished, and duplicate
+            # transactions left behind when a re-import changed the
+            # reference spelling for the same state record ids.
+            if not (existing_ids & desired_ids) or any(
+                desired_name_by_id.get(record_id) not in (None, name)
+                for record_id in existing_ids
+            ):
+                remove_script_entries(name)
+
+    return len(desired)
+
+
+def sync_from_flakes():
+    """Add/update flake transactions for the current durable import state."""
+    try:
+        return sync_flakes()
+    except Exception:
+        return 0
+
+
+def installed_flakes(registry_data=None):
+    """Return imported flakes recorded in the Action Registry.
+
+    Registry entries remain listable even if their state record vanished, so
+    a stale-but-rebuildable module can still be removed through the standard
+    flow. State records enrich them with the flake description and selected
+    output labels.
+    """
+    if registry_data is None:
+        registry_data = parse_registry_file()
+    records = {
+        str(record.get("id") or "").strip(): record
+        for record in _flake_records()
+    }
+    result = []
+    for name, operations in _flake_operations_by_name(registry_data).items():
+        reference = name
+        if reference.startswith(FLAKE_PREFIX):
+            reference = reference[len(FLAKE_PREFIX):].strip()
+        ids = []
+        scopes = set()
+        for operation in operations:
+            parsed = parse_flake_operation(operation)
+            if parsed is None:
+                continue
+            scope, record_id = parsed
+            scopes.add(scope)
+            if record_id not in ids:
+                ids.append(record_id)
+        if not ids:
+            continue
+        matched = [
+            records[record_id]
+            for record_id in ids
+            if record_id in records
+        ]
+        description = next(
+            (
+                str(record.get("description") or "").strip()
+                for record in matched
+                if str(record.get("description") or "").strip()
+            ),
+            "",
+        )
+        labels = []
+        for record in matched:
+            for option in record.get("options") or ():
+                label = str(option.get("label") or "").strip()
+                if label and label not in labels:
+                    labels.append(label)
+        result.append(
+            {
+                "name": description or reference or "Nix flake",
+                "appstream_source": "nix-flake",
+                "appstream_id": f"nix-flake:{reference}",
+                "nix_flake_reference": reference,
+                "nix_flake_ids": sorted(ids),
+                "nix_flake_scopes": sorted(scopes),
+                "nix_flake_outputs": labels,
+                "registry_name": name,
+                "icon": "nix.svg",
+                "repo": "flake",
+                "description": "",
+                "path": "",
+                "is_script": True,
+                "is_appstream_entry": False,
+            }
+        )
+    result.sort(key=lambda item: str(item.get("name", "")).casefold())
+    return result
 
 
 def _write_entry(attr, scopes):

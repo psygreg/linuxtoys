@@ -2111,6 +2111,35 @@ class AppWindow(
 
     def _on_item_remove_clicked(self, button, info):
         """Use observed package state when AppStream was installed outside LinuxToys."""
+        if info.get("appstream_source") == "nix-flake":
+            # Imported flakes are declarative transactions like Nix packages,
+            # but their reverse operation removes only the state record for
+            # that flake and rebuilds the generated module.
+            if not str(info.get("registry_name") or "").strip():
+                logger.warning("Imported flake has no registry transaction: %s", info.get("name"))
+                return
+            if scripts_blocked_by_version(
+                self, self.translations, removable_script_info=info
+            ):
+                return
+            remove_entry = revert_helper.build_uninstall_script_entry(
+                info, self.translations
+            )
+            if remove_entry is None:
+                logger.warning(
+                    "Could not build a removal transaction for imported flake: %s",
+                    info.get("name"),
+                )
+                return
+            record_id = info.get("_appstream_queue_record_id")
+            self._appstream_runner.enqueue_removal(
+                info, remove_entry, record_id=record_id
+            )
+            app_page = self.main_stack.get_child_by_name("app_page")
+            if app_page is not None and hasattr(app_page, "refresh_install_state"):
+                app_page.refresh_install_state()
+            return
+
         if info.get("appstream_source") == "nix":
             # Prefer the standard registry-driven uninstall transaction: it
             # records the removal and keeps Action Registry/Installed Features

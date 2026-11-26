@@ -3,11 +3,12 @@
 
 Lets AI agents interact with LinuxToys the way a user would: browse and
 search the catalog, read app pages (descriptions, screenshots, donation and
-purchase links), install and remove apps, clean up the leftover user data of
-uninstalled Flatpak apps (the app page's "Remove data" action), run the
-app's full system update (the menu card's "Update System"), change settings
-(automatic updates, automatic bug reports, language), translate
-descriptions, and read or export the Action Registry.
+purchase links), install and remove apps, install and remove Nix packages
+and external flakes, clean up the leftover user data of uninstalled Flatpak
+apps (the app page's "Remove data" action), run the app's full system update
+(the menu card's "Update System"), change settings (automatic updates,
+automatic bug reports, language), translate descriptions, and read or export
+the Action Registry.
 
 Design:
 
@@ -389,6 +390,16 @@ def _install_source_payloads(entry):
             value = str(option.get(field) or "").strip()
             if value:
                 payload[label] = value
+        nix_name = str(option.get("nix_name") or "").strip()
+        if nix_name:
+            payload["nix_name"] = nix_name
+        nix_scopes = [
+            str(scope).strip()
+            for scope in (option.get("nix_scopes") or ())
+            if str(scope).strip() in ("home-manager", "system")
+        ]
+        if nix_scopes:
+            payload["nix_scopes"] = nix_scopes
         payloads.append(payload)
     return payloads
 
@@ -2100,6 +2111,21 @@ def _app_details(entry):
         if sources:
             details["sources"] = sources
             details["default_source"] = appstream_parser.source_option_key(entry)
+        if str(entry.get("appstream_source") or "") == "nix":
+            nix_name = str(entry.get("nix_name") or "").strip()
+            if nix_name:
+                details["nix_name"] = nix_name
+            nix_scopes = [
+                str(scope).strip()
+                for scope in (entry.get("nix_scopes") or ())
+                if str(scope).strip() in ("home-manager", "system")
+            ]
+            if not nix_scopes:
+                scope = str(entry.get("nix_scope") or "").strip()
+                if scope in ("home-manager", "system"):
+                    nix_scopes = [scope]
+            if nix_scopes:
+                details["nix_scopes"] = nix_scopes
             recommended = str(entry.get("recommended_source") or "").strip()
             if recommended:
                 details["recommended_source"] = recommended
@@ -2777,7 +2803,12 @@ class JobManager:
         package pipelines and stay ungated — the same split every other
         runner surface uses.
         """
-        if kind in ("remove", "system_update"):
+        if kind in (
+            "remove",
+            "system_update",
+            "nix_flake_install",
+            "nix_flake_remove",
+        ):
             return True
         if kind != "install":
             return False
@@ -2821,7 +2852,13 @@ class JobManager:
 
             # The gate can tighten while a job waits in the queue: re-check it
             # right before the script starts, mirroring the GUI's run gate.
-            if job.kind in ("install", "remove", "system_update") and self._gate_applies(job.kind, entry):
+            if job.kind in (
+                "install",
+                "remove",
+                "system_update",
+                "nix_flake_install",
+                "nix_flake_remove",
+            ) and self._gate_applies(job.kind, entry):
                 refusal = _version_gate_refusal()
                 if refusal:
                     self._log(job, refusal)
@@ -2849,6 +2886,8 @@ class JobManager:
                 code, reason = self._install(job, entry)
             elif job.kind == "flatpak_data_remove":
                 code, reason = self._remove_flatpak_data(job, entry)
+            elif job.kind in ("nix_flake_install", "nix_flake_remove"):
+                code, reason = self._run_generated_script(job, entry)
             else:
                 code, reason = self._remove(job, entry)
             job.exit_code = code
@@ -3161,8 +3200,15 @@ class JobManager:
     def _remove(self, job, entry):
         if entry.get("appstream_source") == "nix":
             from . import nix_catalog, nix_queue
+            scopes = entry.get("nix_scopes") or [
+                entry.get("nix_scope") or "home-manager"
+            ]
             try:
-                nix_queue.add(entry, action="remove")
+                for scope in dict.fromkeys(
+                    str(value or "").strip() for value in scopes
+                ):
+                    if scope:
+                        nix_queue.add(entry, action="remove", scope=scope)
             except Exception as exc:
                 return 1, f"Could not queue Nix removal of '{job.name}': {exc}"
             apply_info = nix_catalog.materialize_apply()
@@ -3203,6 +3249,22 @@ class JobManager:
         if code != 0:
             return code, f"Removal of '{job.name}' failed with exit code {code}. See the job log for details."
         return 0, ""
+
+    def _run_generated_script(self, job, script_info):
+        """Run a materialized flake apply/removal script and delete it after."""
+        try:
+            return self._execute_script(job, script_info)
+        finally:
+            cleanup = str(
+                script_info.get("cleanup_path")
+                or script_info.get("path")
+                or ""
+            ).strip()
+            if cleanup and os.path.exists(cleanup):
+                try:
+                    os.remove(cleanup)
+                except OSError:
+                    pass
 
     def _execute_script(self, job, script_info, transmap_mark=None):
         """Run one prepared script with transmap + registry handling."""
@@ -3292,8 +3354,10 @@ class JobManager:
                     self._log(job, "Automatic reversion completed successfully.")
                     self._finish_transmap(transmap_path)
                     return code, "Script failed, but its changes were automatically reverted."
-                # Keep the transaction revertable through the Action Registry.
-                ExecutionRegistry._save_to_registry(registry_name, transmap_path)
+                # Keep the transaction revertable through the Action Registry,
+                # unless the generated script opted out.
+                if not registry_disabled:
+                    ExecutionRegistry._save_to_registry(registry_name, transmap_path)
                 return code, self._failure_reason(output) or (
                     f"Script failed with exit code {code}."
                 )
@@ -3783,6 +3847,140 @@ def tool_schemas():
                     **_job_tracking_schema(),
                 },
                 "required": ["app_id"],
+            },
+        },
+        {
+            "name": "nix_install_package",
+            "description": (
+                "Install one package from Nixpkgs through LinuxToys' "
+                "declarative Nix module (never nix-env). `name` is the "
+                "nixpkgs top-level attribute (for example 'ripgrep'); "
+                "get_app_details exposes `nix_name` for Nix entries, and "
+                "'nix:<attr>' catalog IDs are also accepted. Scope defaults "
+                "to Home Manager when available, otherwise the NixOS system "
+                "configuration. The profile is rebuilt immediately; a system "
+                "rebuild asks for the password on the user's screen. Blocks "
+                "until the job finishes by default; pass wait=false to queue "
+                "it and watch with get_job."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "nixpkgs attribute name, e.g. ripgrep (or a nix:<attr> catalog id)",
+                    },
+                    "scope": {
+                        "type": "string",
+                        "enum": ["home-manager", "system"],
+                        "description": "Install scope; omit to use Home Manager when available, else the NixOS system configuration.",
+                    },
+                    **_job_tracking_schema(),
+                },
+                "required": ["name"],
+            },
+        },
+        {
+            "name": "nix_remove_package",
+            "description": (
+                "Remove one package from the LinuxToys-managed Nix module. "
+                "`name` is the nixpkgs attribute. Without `scope`, every "
+                "scope recorded for the package (or the default available "
+                "scope) is removed in one rebuild. Other Nix packages and "
+                "imported flakes stay applied. Blocks until the removal "
+                "finishes by default; pass wait=false to watch with get_job."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "nixpkgs attribute name, e.g. ripgrep (or a nix:<attr> catalog id)",
+                    },
+                    "scope": {
+                        "type": "string",
+                        "enum": ["home-manager", "system"],
+                        "description": "Remove only this scope; omit to remove every recorded scope.",
+                    },
+                    **_job_tracking_schema(),
+                },
+                "required": ["name"],
+            },
+        },
+        {
+            "name": "nix_list_packages",
+            "description": (
+                "List Nix packages installed through LinuxToys with their "
+                "nixpkgs attributes and scopes, so they can be passed to "
+                "nix_remove_package."
+            ),
+            "inputSchema": {"type": "object", "properties": {}},
+        },
+        {
+            "name": "nix_list_flakes",
+            "description": (
+                "List external flakes imported through LinuxToys with their "
+                "reference, description, scopes and selected outputs. Use the "
+                "reference with nix_remove_flake."
+            ),
+            "inputSchema": {"type": "object", "properties": {}},
+        },
+        {
+            "name": "nix_install_flake",
+            "description": (
+                "Inspect and import an external Nix flake into Home Manager or "
+                "the NixOS system configuration. Call first with only "
+                "`reference`: the tool returns requires_selection listing "
+                "every discovered output (packages, Home Manager/NixOS "
+                "modules, overlays; apps/configurations are informational). "
+                "Present them to the user, then re-call with the chosen output "
+                "keys in `outputs`. The flake is pinned in a locked wrapper and "
+                "only the selected outputs are merged; other imported flakes "
+                "stay applied. Blocks until the rebuild finishes by default; "
+                "pass wait=false to watch with get_job."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "reference": {
+                        "type": "string",
+                        "description": "Flake reference: github:owner/repo, git+https://..., https://... or a local directory",
+                    },
+                    "scope": {
+                        "type": "string",
+                        "enum": ["home-manager", "system"],
+                        "description": "Merge scope; omit to use Home Manager when available, else the NixOS system configuration.",
+                    },
+                    "outputs": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Output keys returned by the requires_selection response. Omit the first time to inspect the flake.",
+                    },
+                    **_job_tracking_schema(),
+                },
+                "required": ["reference"],
+            },
+        },
+        {
+            "name": "nix_remove_flake",
+            "description": (
+                "Remove all imports of one flake reference (every imported "
+                "scope) through its registered Action Registry transaction. "
+                "Only that flake's generated module code and state are "
+                "removed; other imported flakes stay applied. Get the "
+                "reference from nix_list_flakes. Blocks until the rebuild "
+                "finishes by default; pass wait=false to watch with get_job."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "reference": {
+                        "type": "string",
+                        "description": "Imported flake reference as shown by nix_list_flakes",
+                    },
+                    **_job_tracking_schema(),
+                },
+                "required": ["reference"],
             },
         },
         {
@@ -4527,6 +4725,431 @@ def _tool_remove_app_extension(app_id, extension, wait=True, wait_seconds=None):
     )
 
 
+# ---------------------------------------------------------------------------
+# Nix packages and imported flakes
+# ---------------------------------------------------------------------------
+
+_NIX_ATTR_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_'-]*$")
+
+
+def _nix_attr(value):
+    attr = str(value or "").strip()
+    if attr.startswith("nix:"):
+        attr = attr[4:]
+    if not _NIX_ATTR_RE.fullmatch(attr):
+        raise ValueError(
+            "A nixpkgs attribute name is required (for example 'ripgrep'); "
+            "catalog IDs such as 'nix:ripgrep' are also accepted."
+        )
+    return attr
+
+
+def _nix_available_scopes():
+    from . import nix_catalog
+
+    if not nix_catalog.enabled():
+        raise ValueError(
+            "Nix is not available on this host (requires an x86_64/aarch64 "
+            "host and a working nix executable)."
+        )
+    scopes = []
+    if nix_catalog.home_manager_available():
+        scopes.append("home-manager")
+    if nix_catalog.is_nixos():
+        scopes.append("system")
+    if not scopes:
+        raise ValueError(
+            "Neither Home Manager nor a NixOS system configuration is available."
+        )
+    return scopes
+
+
+def _nix_scope(value, available=None):
+    available = list(available or _nix_available_scopes())
+    requested = str(value or "").strip().casefold()
+    if requested:
+        if requested not in available:
+            raise ValueError(
+                f"Invalid or unavailable Nix scope '{value}'. Available: "
+                + ", ".join(available)
+            )
+        return requested
+    return "home-manager" if "home-manager" in available else available[0]
+
+
+def _nix_package_entry(attr, scopes):
+    from . import nix_registry
+
+    clean = []
+    for scope in scopes or ():
+        scope = str(scope or "").strip()
+        if scope in ("home-manager", "system") and scope not in clean:
+            clean.append(scope)
+    if not clean:
+        clean = ["home-manager"]
+    return {
+        "name": attr,
+        "appstream_source": "nix",
+        "appstream_id": f"nix:{attr}",
+        "nix_name": attr,
+        "nix_scope": clean[0],
+        "nix_scopes": clean,
+        "icon": "nix.svg",
+        "repo": "nixpkgs",
+        "description": "",
+        "path": "",
+        "is_script": True,
+        "is_appstream_entry": True,
+        "registry_name": nix_registry.registry_name(attr),
+    }
+
+
+def _nix_installed_scopes(attr, available):
+    from . import nix_catalog, nix_registry
+
+    scopes = set()
+    try:
+        for item in nix_registry.installed_packages():
+            if str(item.get("nix_name") or "") == attr:
+                scopes.update(item.get("nix_scopes") or ())
+    except Exception:
+        pass
+    try:
+        modules = nix_catalog.installed_packages()
+        for scope in available:
+            if attr in (modules.get(scope) or ()):
+                scopes.add(scope)
+    except Exception:
+        pass
+    return sorted(scopes & set(available))
+
+
+def _nix_package_payload(attr, scopes):
+    values = list(scopes)
+    return {
+        "app_id": f"nix:{attr}",
+        "nix_name": attr,
+        "name": attr,
+        "scope": values[0] if len(values) == 1 else "all",
+        "nix_scopes": values,
+    }
+
+
+def _tool_nix_install_package(name, scope=None, wait=True, wait_seconds=None):
+    from . import nix_catalog
+
+    attr = _nix_attr(name)
+    available = _nix_available_scopes()
+    scope = _nix_scope(scope, available)
+    try:
+        if (
+            nix_catalog.cached_path() is not None
+            and not nix_catalog.attr_available(attr)
+        ):
+            raise ValueError(
+                f"'{attr}' is not available in the nixpkgs snapshot for this host."
+            )
+    except ValueError:
+        raise
+    except Exception:
+        pass
+    entry = _nix_package_entry(attr, [scope])
+    job = JOBS.submit("install", f"nix:{attr}", entry=entry)
+    return _job_submission_result(
+        job,
+        "The package is queued through the persistent Nix queue and the "
+        "LinuxToys-managed module is rebuilt declaratively — never through "
+        "nix-env. Other Nix packages and imported flakes stay applied. "
+        "System-scope rebuilds ask for the password on the user's screen.",
+        wait=wait,
+        wait_seconds=wait_seconds,
+        **_nix_package_payload(attr, [scope]),
+    )
+
+
+def _tool_nix_remove_package(name, scope=None, wait=True, wait_seconds=None):
+    attr = _nix_attr(name)
+    available = _nix_available_scopes()
+    if scope:
+        scopes = [_nix_scope(scope, available)]
+    else:
+        scopes = _nix_installed_scopes(attr, available)
+        if not scopes:
+            scopes = [_nix_scope(None, available)]
+    entry = _nix_package_entry(attr, scopes)
+    job = JOBS.submit("remove", f"nix:{attr}", entry=entry)
+    return _job_submission_result(
+        job,
+        "Removal drops the attribute from the LinuxToys-managed module in "
+        "every selected scope and rebuilds once; other packages and imported "
+        "flakes are preserved.",
+        wait=wait,
+        wait_seconds=wait_seconds,
+        **_nix_package_payload(attr, scopes),
+    )
+
+
+def _tool_nix_list_packages():
+    from . import nix_catalog, nix_registry
+
+    if not nix_catalog.enabled():
+        raise ValueError(
+            "Nix is not available on this host (requires an x86_64/aarch64 "
+            "host and a working nix executable)."
+        )
+    packages = []
+    for item in nix_registry.installed_packages():
+        attr = str(item.get("nix_name") or "").strip()
+        if not attr:
+            continue
+        packages.append(
+            {
+                "app_id": f"nix:{attr}",
+                "nix_name": attr,
+                "name": str(item.get("name") or attr),
+                "nix_scopes": list(item.get("nix_scopes") or ()),
+            }
+        )
+    return {"packages": packages}
+
+
+def _flake_state_payload(record):
+    labels = []
+    for option in record.get("options") or ():
+        label = str(option.get("label") or "").strip()
+        if label and label not in labels:
+            labels.append(label)
+    return {
+        "reference": str(record.get("reference") or record.get("original_url") or ""),
+        "description": str(record.get("description") or ""),
+        "scopes": [str(record.get("scope") or "")],
+        "outputs": labels,
+    }
+
+
+def _tool_nix_list_flakes():
+    from . import nix_catalog, nix_flakes, nix_registry
+
+    if not nix_catalog.enabled():
+        raise ValueError(
+            "Nix is not available on this host (requires an x86_64/aarch64 "
+            "host and a working nix executable)."
+        )
+    try:
+        nix_registry.sync_from_flakes()
+    except Exception:
+        pass
+    entries = nix_registry.installed_flakes()
+    if entries:
+        return {
+            "flakes": [
+                {
+                    "reference": str(item.get("nix_flake_reference") or ""),
+                    "description": str(item.get("name") or ""),
+                    "scopes": list(item.get("nix_flake_scopes") or ()),
+                    "outputs": list(item.get("nix_flake_outputs") or ()),
+                }
+                for item in entries
+            ]
+        }
+    grouped = {}
+    for record in nix_flakes.imports():
+        reference = str(
+            record.get("reference")
+            or record.get("original_url")
+            or record.get("url")
+            or ""
+        )
+        item = grouped.setdefault(
+            reference,
+            {
+                "reference": reference,
+                "description": str(record.get("description") or ""),
+                "scopes": [],
+                "outputs": [],
+            },
+        )
+        scope = str(record.get("scope") or "")
+        if scope and scope not in item["scopes"]:
+            item["scopes"].append(scope)
+        for label in _flake_state_payload(record)["outputs"]:
+            if label not in item["outputs"]:
+                item["outputs"].append(label)
+    return {"flakes": list(grouped.values())}
+
+
+def _tool_nix_install_flake(
+    reference,
+    scope=None,
+    outputs=None,
+    wait=True,
+    wait_seconds=None,
+):
+    from . import nix_catalog, nix_flakes
+
+    if not nix_catalog.enabled():
+        raise ValueError(
+            "Nix is not available on this host (requires an x86_64/aarch64 "
+            "host and a working nix executable)."
+        )
+    value = str(reference or "").strip()
+    if not value:
+        raise ValueError("A flake reference is required.")
+    try:
+        info = nix_flakes.inspect(value)
+    except Exception as exc:
+        raise ValueError(f"Could not inspect the flake: {exc}") from exc
+    available = _nix_available_scopes()
+    scope = _nix_scope(scope, available)
+    options = []
+    for option in info.get("options") or ():
+        options.append(
+            {
+                "key": str(option.get("key") or ""),
+                "group": str(option.get("group") or ""),
+                "label": str(option.get("label") or ""),
+                "scope": str(option.get("scope") or ""),
+                "kind": str(option.get("kind") or ""),
+                "selectable": bool(option.get("selectable")),
+                "default": bool(nix_flakes.default_selected(option)),
+            }
+        )
+    selectable = {
+        option["key"]
+        for option in info.get("options") or ()
+        if option.get("selectable")
+        and option.get("scope") in ("both", scope)
+    }
+    if not selectable:
+        raise ValueError(
+            f"This flake has no outputs LinuxToys can merge into the "
+            f"{scope} scope."
+        )
+    if outputs is None:
+        return {
+            "requires_selection": True,
+            "reference": info["reference"],
+            "description": str(info.get("description") or ""),
+            "scope": scope,
+            "available_scopes": available,
+            "available_outputs": options,
+            "note": (
+                "No job was queued yet. Present the discovered outputs to the "
+                "user, choose at least one selectable output that applies to "
+                "the chosen scope (packages, Home Manager/NixOS modules or "
+                "overlays; apps and configurations are informational), then "
+                "re-call this tool with outputs=[their keys]."
+            ),
+        }
+    if isinstance(outputs, str):
+        outputs = [outputs]
+    if not isinstance(outputs, (list, tuple)):
+        raise ValueError("outputs must be an array of output keys.")
+    selected = [str(value).strip() for value in outputs if str(value).strip()]
+    if not selected:
+        raise ValueError(
+            "Select at least one output to import (re-call with outputs)."
+        )
+    invalid = [key for key in selected if key not in selectable]
+    if invalid:
+        raise ValueError(
+            "Unknown or unavailable output key(s): "
+            + ", ".join(invalid)
+            + ". Available for this scope: "
+            + ", ".join(sorted(selectable))
+        )
+    try:
+        nix_flakes.add_import(info, scope, selected)
+        script = nix_flakes.materialize_apply(scope)
+    except Exception as exc:
+        raise ValueError(f"Could not prepare the flake import: {exc}") from exc
+    script["registry"] = "no"
+    job = JOBS.submit(
+        "nix_flake_install",
+        f"nix-flake:{info['reference']}",
+        entry=script,
+    )
+    return _job_submission_result(
+        job,
+        "The flake is pinned in a locked wrapper and only the selected "
+        "outputs are merged into the generated module; other imported flakes "
+        "stay applied. The rebuild runs like a normal LinuxToys task.",
+        wait=wait,
+        wait_seconds=wait_seconds,
+        reference=info["reference"],
+        scope=scope,
+        outputs=selected,
+    )
+
+
+def _tool_nix_remove_flake(reference, wait=True, wait_seconds=None):
+    from . import nix_catalog, nix_flakes, nix_registry, revert_helper
+
+    if not nix_catalog.enabled():
+        raise ValueError(
+            "Nix is not available on this host (requires an x86_64/aarch64 "
+            "host and a working nix executable)."
+        )
+    value = str(reference or "").strip()
+    if not value:
+        raise ValueError("A flake reference is required.")
+    try:
+        nix_registry.sync_flakes()
+    except Exception:
+        pass
+    entries = nix_registry.installed_flakes()
+    match = None
+    for entry in entries:
+        if value in (
+            str(entry.get("nix_flake_reference") or ""),
+            str(entry.get("registry_name") or ""),
+        ):
+            match = entry
+            break
+    if match is None:
+        ids = set(nix_flakes.record_ids_for_reference(value))
+        if ids:
+            try:
+                nix_registry.sync_flakes()
+            except Exception:
+                pass
+            for entry in nix_registry.installed_flakes():
+                if ids & set(entry.get("nix_flake_ids") or ()):
+                    match = entry
+                    break
+    if match is None:
+        raise ValueError(
+            f"No imported flake matches '{reference}'. Use nix_list_flakes "
+            "to see the imported references."
+        )
+    try:
+        remove_entry = revert_helper.build_uninstall_script_entry(
+            match, _translations()
+        )
+    except Exception as exc:
+        raise ValueError(f"Could not prepare the flake removal: {exc}") from exc
+    if remove_entry is None:
+        raise ValueError(
+            "No registry removal transaction could be built for that flake."
+        )
+    remove_entry["registry"] = "no"
+    job = JOBS.submit(
+        "nix_flake_remove",
+        f"nix-flake:{match.get('nix_flake_reference')}",
+        entry=remove_entry,
+    )
+    return _job_submission_result(
+        job,
+        "Removal uses the registered Action Registry transaction: it deletes "
+        "only that flake's generated module code and state (every imported "
+        "scope for the reference) and keeps other imported flakes applied.",
+        wait=wait,
+        wait_seconds=wait_seconds,
+        reference=str(match.get("nix_flake_reference") or reference),
+        scopes=list(match.get("nix_flake_scopes") or ()),
+    )
+
+
 def _tool_remove(app_id, wait=True, wait_seconds=None):
     job = JOBS.submit("remove", app_id)
     return _job_submission_result(
@@ -4927,6 +5550,38 @@ def dispatch_tool(name, arguments):
             _arg_bool(arguments.get("wait"), True),
             arguments.get("wait_seconds"),
         )
+    if name == "nix_install_package":
+        return _tool_nix_install_package(
+            arguments.get("name"),
+            arguments.get("scope"),
+            _arg_bool(arguments.get("wait"), True),
+            arguments.get("wait_seconds"),
+        )
+    if name == "nix_remove_package":
+        return _tool_nix_remove_package(
+            arguments.get("name"),
+            arguments.get("scope"),
+            _arg_bool(arguments.get("wait"), True),
+            arguments.get("wait_seconds"),
+        )
+    if name == "nix_list_packages":
+        return _tool_nix_list_packages()
+    if name == "nix_list_flakes":
+        return _tool_nix_list_flakes()
+    if name == "nix_install_flake":
+        return _tool_nix_install_flake(
+            arguments.get("reference"),
+            arguments.get("scope"),
+            arguments.get("outputs"),
+            _arg_bool(arguments.get("wait"), True),
+            arguments.get("wait_seconds"),
+        )
+    if name == "nix_remove_flake":
+        return _tool_nix_remove_flake(
+            arguments.get("reference"),
+            _arg_bool(arguments.get("wait"), True),
+            arguments.get("wait_seconds"),
+        )
     if name == "remove_flatpak_data":
         return _tool_remove_flatpak_data(
             arguments.get("app_id"),
@@ -5042,7 +5697,14 @@ def _initialize_result(requested_version):
             "requires_confirmation first with the package details and risk "
             "warnings — show them to the user, ask whether they trust the "
             "provider, and only re-call with trusted_provider=true if they "
-            "explicitly agree. Flathub apps may offer "
+            "explicitly agree. Nix is managed declaratively: "
+            "nix_install_package / nix_remove_package take nixpkgs attributes "
+            "(search_apps/get_app_details expose nix_name), while "
+            "nix_install_flake / nix_remove_flake handle external flakes; the "
+            "first nix_install_flake call returns requires_selection — present "
+            "the outputs to the user and re-call with the chosen keys. "
+            "nix_list_packages and nix_list_flakes show what is installed. "
+            "Flathub apps may offer "
             "extensions/addons: when get_app_details reports "
             "extensions_available, use list_app_extensions / "
             "install_app_extension / remove_app_extension. Uninstalled "

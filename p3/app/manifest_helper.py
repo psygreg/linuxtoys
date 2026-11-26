@@ -681,6 +681,11 @@ def build_registered_manifest_entries(registry_data=None, translations=None, inc
         if nix_registry.is_nix_registry_entry(name, registry_data.get(raw_name, [])):
             has_nix_packages = True
             continue
+        if nix_registry.is_flake_registry_entry(name, registry_data.get(raw_name, [])):
+            # Imported flakes are configuration modules, not replayable
+            # catalog scripts. Their own state is not part of the exported
+            # Nix package bundle yet; never emit a bogus manifest entry.
+            continue
         if _is_removal_registry_entry(name, translations):
             continue
         if _registry_entry_blocks_manifest_export(registry_data.get(raw_name, [])):

@@ -595,9 +595,54 @@ _nix_link_flakes_module() {
     _nix_write_module "$scope" "${current[@]}"
 }
 
+_nix_flake_cli() {
+    python3 "$SCRIPT_DIR/app/nix_flake_cli.py" "$@"
+}
+
+_nix_sync_flake_registry() {
+    command -v python3 >/dev/null 2>&1 || return 1
+    _nix_flake_cli sync-registry "$@" >/dev/null
+}
+
+_nix_cleanup_flake_wrappers() {
+    command -v python3 >/dev/null 2>&1 || return 1
+    _nix_flake_cli cleanup-wrappers >/dev/null
+}
+
+# Publish one generated flakes module, link it from the LinuxToys module and
+# rebuild that scope. The caller has already ensured the flake/config exists.
+_nix_apply_flake_module() {
+    local scope="$1" module_source="$2" target
+    case "$scope" in
+        system|home-manager) ;;
+        *)
+            printf 'Invalid flake install scope: %s\n' "$scope" >&2
+            return 1
+            ;;
+    esac
+    [ -s "$module_source" ] || {
+        printf 'The flake module is empty or missing.\n' >&2
+        return 1
+    }
+    if ! _nix_ensure_import "$scope"; then
+        printf 'Could not integrate the LinuxToys Nix module for %s.\n' "$scope" >&2
+        return 1
+    fi
+    target=$(_nix_flakes_module_path "$scope")
+    if ! _nix_publish_file "$module_source" "$target"; then
+        printf 'Could not write the imported flake module.\n' >&2
+        return 1
+    fi
+    if ! _nix_link_flakes_module "$scope"; then
+        printf 'Could not link the flake module into the LinuxToys Nix module.\n' >&2
+        return 1
+    fi
+    _nix_rebuild "$scope"
+}
+
 nix_import_flake_module() {
     local scope="$1" module_source="$2" flake_source="$3"
-    local directory flake target
+    local directory flake
     case "$scope" in
         system|home-manager) ;;
         *)
@@ -639,17 +684,10 @@ nix_import_flake_module() {
         else
             rm -f -- "$flake_source" 2>/dev/null || true
         fi
-        target=$(_nix_flakes_module_path system)
-        if ! _nix_publish_file "$module_source" "$target"; then
-            printf 'Could not write the imported flake module.\n' >&2
-            return 1
-        fi
-        if ! _nix_link_flakes_module system; then
-            printf 'Could not link the flake module into the LinuxToys Nix module.\n' >&2
-            return 1
-        fi
-        _nix_rebuild system
-        return $?
+        _nix_apply_flake_module system "$module_source" || return $?
+        _nix_sync_flake_registry || printf 'Warning: could not update the Nix flake Action Registry entries.\n' >&2
+        _nix_cleanup_flake_wrappers || printf 'Warning: could not clean up unused Nix flake wrappers.\n' >&2
+        return 0
     fi
 
     nix_home_manager_available || {
@@ -670,17 +708,69 @@ nix_import_flake_module() {
     else
         rm -f -- "$flake_source" 2>/dev/null || true
     fi
-    target=$(_nix_flakes_module_path home-manager)
-    if ! _nix_publish_file "$module_source" "$target"; then
-        printf 'Could not write the imported flake module.\n' >&2
+    _nix_apply_flake_module home-manager "$module_source" || return $?
+    _nix_sync_flake_registry || printf 'Warning: could not update the Nix flake Action Registry entries.\n' >&2
+    _nix_cleanup_flake_wrappers || printf 'Warning: could not clean up unused Nix flake wrappers.\n' >&2
+    return 0
+}
+
+# Remove imported flakes by encoded state id. The Python bridge removes only
+# those state records, renders the remaining module per affected scope and
+# cleans wrapper trees that are no longer referenced. Registry operations for
+# the removed ids are retired only after every affected scope rebuilds.
+nix_remove_flakes() {
+    local line scope module_source failed=0 output
+    local -a ids=("$@") outputs
+    (($#)) || {
+        printf 'No imported Nix flake was selected.\n' >&2
+        return 1
+    }
+    nix_available || {
+        printf 'Nix is not installed.\n' >&2
+        return 1
+    }
+    if ! nix_flakes_enabled; then
+        _nix_enable_flakes || {
+            printf 'Could not enable Nix flakes.\n' >&2
+            return 1
+        }
+    fi
+    output=$(_nix_flake_cli remove "${ids[@]}") || {
+        printf 'Could not remove the imported Nix flake.\n' >&2
+        return 1
+    }
+    if [ -z "$output" ]; then
+        printf 'Could not determine which Nix module to rebuild for the removed flake.\n' >&2
         return 1
     fi
-    if ! _nix_link_flakes_module home-manager; then
-        printf 'Could not link the flake module into the LinuxToys Nix module.\n' >&2
-        return 1
+    mapfile -t outputs <<<"$output"
+    for line in "${outputs[@]}"; do
+        [ -n "$line" ] || continue
+        IFS=$'\t' read -r scope module_source <<<"$line"
+        case "$scope" in
+            system|home-manager) ;;
+            *)
+                printf 'Invalid flake install scope: %s\n' "$scope" >&2
+                [ -n "$module_source" ] && rm -f -- "$module_source"
+                failed=1
+                continue
+                ;;
+        esac
+        if ! _nix_apply_flake_module "$scope" "$module_source"; then
+            printf 'The %s Nix rebuild failed. The imported flake was not fully removed.\n' "$scope" >&2
+            rm -f -- "$module_source" 2>/dev/null || true
+            failed=1
+            continue
+        fi
+        rm -f -- "$module_source" 2>/dev/null || true
+    done
+    if [ "$failed" -eq 0 ]; then
+        _nix_sync_flake_registry --removed "${ids[@]}" \
+            || printf 'Warning: could not update the Nix flake Action Registry entries.\n' >&2
+        _nix_cleanup_flake_wrappers \
+            || printf 'Warning: could not clean up unused Nix flake wrappers.\n' >&2
     fi
-    _nix_rebuild home-manager
-    return $?
+    return "$failed"
 }
 
 nix_subsystem_ensure() {

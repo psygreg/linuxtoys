@@ -20,6 +20,7 @@ import json
 import os
 import re
 import shlex
+import shutil
 import socket
 import subprocess
 import tempfile
@@ -606,6 +607,14 @@ def _load_state():
     return {"schema": SCHEMA, "flakes": flakes}
 
 
+def state_available():
+    """Whether the durable imported-flake state file currently exists."""
+    try:
+        return STATE_PATH.is_file()
+    except OSError:
+        return False
+
+
 def _save_state(payload):
     STATE_DIR.mkdir(parents=True, exist_ok=True)
     atomic_write_json(
@@ -691,15 +700,116 @@ def add_import(info, scope, selected_keys):
     return record
 
 
-def remove_import(record_id):
+_WRAPPER_NAME = re.compile(r"^[0-9a-f]{24}$")
+
+
+def cleanup_wrappers():
+    """Delete wrapper trees no longer referenced by an imported flake.
+
+    Only direct children with our digest-style names are considered, and a
+    wrapper is kept when any durable state record still references it. This
+    is called after a successful rebuild, never while the old generated
+    module may still need the wrapper.
+    """
+    try:
+        records = imports()
+    except FlakeError:
+        raise
+    referenced = {
+        str(Path(str(record.get("wrapper") or "").strip()).resolve())
+        for record in records
+        if str(record.get("wrapper") or "").strip()
+    }
+    try:
+        root = WRAPPER_DIR.resolve()
+    except OSError:
+        return 0
+    removed = 0
+    try:
+        children = list(WRAPPER_DIR.iterdir())
+    except OSError:
+        return 0
+    for child in children:
+        if not _WRAPPER_NAME.fullmatch(child.name):
+            continue
+        if child.is_symlink() or not child.is_dir():
+            continue
+        try:
+            target = child.resolve()
+            target.relative_to(root)
+        except (OSError, ValueError):
+            continue
+        if str(target) in referenced:
+            continue
+        shutil.rmtree(target, ignore_errors=True)
+        removed += 1
+    return removed
+
+
+def remove_imports(record_ids):
+    """Remove imported flakes by id and return the affected scopes.
+
+    Missing ids are tolerated: a failed rebuild leaves the generated module
+    and registry transaction in place while the state record is already
+    gone, and the same removal must be retryable. The id starts with the
+    scope (``home-manager:...`` or ``system:...``), so the affected scope is
+    recoverable even then.
+    """
+    wanted = {
+        str(record_id or "").strip()
+        for record_id in record_ids or ()
+        if str(record_id or "").strip()
+    }
+    if not wanted:
+        raise FlakeError("No imported flake id was provided")
+    scopes = set()
+    removed = 0
     with LOCK:
         payload = _load_state()
-        kept = [record for record in payload["flakes"] if record["id"] != record_id]
-        if len(kept) == len(payload["flakes"]):
-            return False
-        payload["flakes"] = kept
-        _save_state(payload)
+        kept = []
+        for record in payload["flakes"]:
+            if record["id"] in wanted:
+                scopes.add(record["scope"])
+                wanted.discard(record["id"])
+                removed += 1
+            else:
+                kept.append(record)
+        if removed:
+            payload["flakes"] = kept
+            _save_state(payload)
+    for record_id in wanted:
+        scope = record_id.split(":", 1)[0]
+        if scope in ("home-manager", "system"):
+            scopes.add(scope)
+    if not scopes:
+        raise FlakeError("No imported flake matched the requested id")
+    return sorted(scopes)
+
+
+def remove_import(record_id):
+    record_id = str(record_id or "").strip()
+    if not record_id:
+        return False
+    if not any(record["id"] == record_id for record in imports()):
+        return False
+    remove_imports([record_id])
     return True
+
+
+def record_ids_for_reference(reference, scope=None):
+    """Return the state ids matching a reference, original URL or wrapper URL."""
+    value = str(reference or "").strip()
+    if not value:
+        return []
+    return [
+        record["id"]
+        for record in imports(scope)
+        if value in (
+            record.get("reference"),
+            record.get("original_url"),
+            record.get("url"),
+        )
+    ]
 
 
 def _nix_string(value):
@@ -868,6 +978,62 @@ def render_system_flake(system, hostname):
     }};
 }}
 """
+
+
+def materialize_removal(record):
+    """Create a terminal script that removes one imported flake and rebuilds.
+
+    State is mutated only when the script actually runs, so cancelling the
+    terminal leaves the import and its registry transaction untouched.
+    """
+    if not isinstance(record, dict):
+        raise FlakeError("No imported flake was selected")
+    record_id = str(record.get("id") or "").strip()
+    scope = str(record.get("scope") or "").strip()
+    if not record_id or scope not in ("home-manager", "system"):
+        raise FlakeError("Invalid imported flake record")
+    from urllib.parse import quote
+
+    encoded = quote(record_id, safe="")
+    label = str(
+        record.get("description")
+        or record.get("reference")
+        or record.get("original_url")
+        or "Nix flake"
+    ).strip()
+    # The label lands in a shell comment; never let flake metadata inject a
+    # newline that would turn the rest into executable lines.
+    label = _CONTROL.sub(" ", label).strip() or "Nix flake"
+    name = f"Remove Nix flake: {label}"
+    script_fd, script_path = tempfile.mkstemp(
+        prefix="linuxtoys-flake-remove-", suffix=".sh"
+    )
+    with os.fdopen(script_fd, "w", encoding="utf-8") as handle:
+        handle.write(
+            "#!/usr/bin/env bash\n"
+            f"# name: {name}\n"
+            "# description: Remove this imported flake and rebuild the Nix configuration.\n"
+            "# icon: nix.svg\n"
+            "# architectures: x86_64, aarch64\n"
+            "set -eo pipefail\n"
+            'source "$SCRIPT_DIR/libs/linuxtoys.bash"\n'
+            'source "$SCRIPT_DIR/libs/nixsys.bash"\n'
+            f"nix_remove_flakes {shlex.quote(encoded)}\n"
+        )
+    os.chmod(script_path, 0o700)
+    return {
+        "name": name,
+        "description": "Remove this imported flake and rebuild the Nix configuration.",
+        "icon": "nix.svg",
+        "path": script_path,
+        "version": "",
+        "is_script": True,
+        "is_subcategory": False,
+        "revert": "no",
+        "reboot": "no",
+        "repo": "",
+        "cleanup_path": script_path,
+    }
 
 
 def materialize_apply(scope):

@@ -2178,9 +2178,7 @@ class ManifestRunnerMixin:
         try:
             if action == "remove":
                 record = selection.get("record") or {}
-                scope = str(record.get("scope") or "")
-                nix_flakes.remove_import(str(record.get("id") or ""))
-                script = nix_flakes.materialize_apply(scope)
+                script = nix_flakes.materialize_removal(record)
             else:
                 info = selection.get("info") or {}
                 scope = str(selection.get("scope") or "")

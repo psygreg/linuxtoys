@@ -25,6 +25,10 @@ class InstalledFeaturesView(Gtk.ScrolledWindow):
             nix_registry.sync_from_modules()
         except Exception:
             pass
+        try:
+            nix_registry.sync_from_flakes()
+        except Exception:
+            pass
         cache = self.parent_window.script_cache
         if not cache.is_populated:
             gui_rs.reconcile_list_rows(self.content, state="loading")
@@ -87,6 +91,12 @@ class InstalledFeaturesView(Gtk.ScrolledWindow):
         # here so the standard removal flow applies to them too.
         if nix_catalog.linux_arch():
             for info in nix_registry.installed_packages():
+                key = self._stable_key(info)
+                if key in seen:
+                    continue
+                seen.add(key)
+                installed.append(info)
+            for info in nix_registry.installed_flakes():
                 key = self._stable_key(info)
                 if key in seen:
                     continue

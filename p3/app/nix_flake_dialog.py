@@ -378,10 +378,8 @@ class NixFlakeDialog(Gtk.Dialog):
             row.show_all()
 
     def _on_remove_clicked(self, _button, record):
-        scope = str(record.get("scope") or "")
         try:
-            nix_flakes.remove_import(str(record.get("id") or ""))
-            script = nix_flakes.materialize_apply(scope)
+            script = nix_flakes.materialize_removal(record)
         except Exception as error:
             run_message_dialog(
                 self,
