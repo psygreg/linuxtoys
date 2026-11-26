@@ -170,6 +170,40 @@ nix_gpu_setup_ready() {
         || [ -e /etc/systemd/system/non-nixos-gpu.service ]
 }
 
+# Nix packages' bubblewrap wrappers bind /etc/zoneinfo. Distributions that keep
+# tzdata only under /usr/share/zoneinfo leave that source path missing, so
+# non-NixOS hosts get the compatibility link. NixOS provides it itself, and
+# gregOS ships it in the image.
+nix_zoneinfo_required() {
+    nix_is_nixos && return 1
+    if declare -F is_gregos >/dev/null 2>&1 && is_gregos; then
+        return 1
+    fi
+    [ -d /usr/share/zoneinfo ]
+}
+
+nix_zoneinfo_ready() {
+    nix_zoneinfo_required || return 0
+    [ -e /etc/zoneinfo ] || [ -L /etc/zoneinfo ]
+}
+
+_nix_ensure_zoneinfo() {
+    nix_zoneinfo_ready && return 0
+    if [ "${LINUXTOYS_NIX_DRY_RUN:-0}" = "1" ]; then
+        printf 'Skipping /etc/zoneinfo compatibility link (dry run).\n'
+        return 0
+    fi
+    if ! sudo_ ln -s -- /usr/share/zoneinfo /etc/zoneinfo; then
+        # A concurrent setup may have created the link after the readiness
+        # check; accept that instead of failing the caller.
+        nix_zoneinfo_ready && return 0
+        return 1
+    fi
+    declare -F _append_transmap >/dev/null 2>&1 \
+        && _append_transmap "created /etc/zoneinfo"
+    return 0
+}
+
 _nix_gpu_setup_bin() {
     local candidate resolved
     for candidate in \
@@ -811,6 +845,11 @@ nix_setup() {
         return 1
     fi
 
+    _nix_ensure_zoneinfo || {
+        printf 'Could not create the /etc/zoneinfo compatibility link.\n' >&2
+        rc=1
+    }
+
     if ! nix_flakes_enabled; then
         if command -v question >/dev/null 2>&1; then
             question "Enable Nix flakes" \
@@ -1319,6 +1358,8 @@ nix_subsystem_ensure() {
     if ! nix_flakes_enabled; then
         _nix_enable_flakes || return 1
     fi
+    _nix_ensure_zoneinfo \
+        || printf 'Warning: could not create the /etc/zoneinfo compatibility link.\n' >&2
     mkdir -p -- "$(_nix_state_dir)" 2>/dev/null || true
     printf '1\n' >"$(_nix_state_dir)/allow-unfree" 2>/dev/null || true
     if ! nix_home_manager_available; then

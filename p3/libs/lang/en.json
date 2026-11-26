@@ -622,6 +622,7 @@
   "nix_setup_missing": "Not installed",
   "nix_setup_unavailable": "Not available",
   "nix_setup_gpu": "GPU acceleration",
+  "nix_setup_zoneinfo": "Time zone support",
   "nix_setup_maintenance": "Weekly Nix cleanup",
   "nix_flake_import_title": "Import Nix flake",
   "nix_flake_import_intro": "Import a flake from a URL or a local directory. LinuxToys will inspect its outputs and merge the selected packages, modules or overlays into the chosen Nix configuration.",

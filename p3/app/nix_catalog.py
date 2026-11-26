@@ -93,6 +93,8 @@ HOME_MODULE_PATH = Path(
 SYSTEM_MODULE_PATH = Path(
     os.environ.get("LINUXTOYS_NIX_SYSTEM_MODULE", "/etc/nixos/linuxtoys.nix")
 )
+_ZONEINFO_LINK = Path("/etc/zoneinfo")
+_ZONEINFO_SOURCE = Path("/usr/share/zoneinfo")
 _ATTR_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_'-]*$")
 _MODULE_PACKAGE_RE = re.compile(
     r"^\s*pkgs\.([A-Za-z_][A-Za-z0-9_'-]*)\s*(?:#.*)?$", re.MULTILINE
@@ -594,6 +596,32 @@ def gpu_setup_ready():
     return gpu_configured() and os.path.exists("/run/opengl-driver")
 
 
+def zoneinfo_setup_required():
+    """Whether this host needs the /etc/zoneinfo compatibility link.
+
+    Nix packages' bubblewrap wrappers bind /etc/zoneinfo, but some
+    distributions keep tzdata only under /usr/share/zoneinfo. NixOS provides
+    the path itself, and gregOS ships it in the image.
+    """
+    if not enabled() or is_nixos():
+        return False
+    try:
+        from .compat import is_gregos
+
+        if is_gregos():
+            return False
+    except Exception:
+        pass
+    return _ZONEINFO_SOURCE.is_dir()
+
+
+def zoneinfo_configured():
+    """Whether /etc/zoneinfo exists (as a file, directory or symlink)."""
+    if not zoneinfo_setup_required():
+        return True
+    return os.path.lexists(_ZONEINFO_LINK)
+
+
 _NIX_GC_MARKER = "systemd.user.services.nix-gc.Service.ExecStart"
 
 
@@ -626,6 +654,8 @@ def setup_status():
     system = is_nixos()
     gpu_required = gpu_setup_required()
     gpu = gpu_setup_ready() if gpu_required else True
+    zoneinfo_required = zoneinfo_setup_required()
+    zoneinfo = zoneinfo_configured() if zoneinfo_required else True
     maintenance_required = maintenance_setup_required()
     maintenance = maintenance_configured() if maintenance_required else True
     return {
@@ -636,6 +666,8 @@ def setup_status():
         "system": system,
         "gpu_required": gpu_required,
         "gpu": gpu,
+        "zoneinfo_required": zoneinfo_required,
+        "zoneinfo": zoneinfo,
         "maintenance_required": maintenance_required,
         "maintenance": maintenance,
         "backend": home_manager or system,
@@ -654,6 +686,8 @@ def setup_missing(status=None):
         missing.append("home-manager")
     if status.get("gpu_required") and not status.get("gpu"):
         missing.append("gpu")
+    if status.get("zoneinfo_required") and not status.get("zoneinfo"):
+        missing.append("zoneinfo")
     if status.get("maintenance_required") and not status.get("maintenance"):
         missing.append("maintenance")
     return missing
@@ -731,7 +765,8 @@ def materialize_setup():
     return _materialize_script(
         "nix_setup",
         "Nix package management setup",
-        "Check and configure flakes, unfree packages, home-manager and GPU acceleration.",
+        "Check and configure flakes, unfree packages, home-manager, GPU "
+        "acceleration and time zone compatibility.",
     )
 
 
@@ -740,7 +775,8 @@ def materialize_subsystem_enable():
     script = _materialize_script(
         "nix_subsystem_ensure",
         "Enable Nix subsystem",
-        "Prepare flake support, unfree packages, Home Manager, GPU integration and weekly cleanup.",
+        "Prepare flake support, unfree packages, Home Manager, GPU integration, "
+        "time zone compatibility and weekly cleanup.",
     )
     script["registry"] = "no"
     script["cleanup_path"] = script["path"]

@@ -1,6 +1,6 @@
 #!/bin/bash
 # name: Nix Packages
-# version: 1.1
+# version: 1.2
 # description: nixpkgs_desc
 # icon: nix.svg
 # compat: arch, cachy, fedora, debian, ubuntu, suse
@@ -41,3 +41,10 @@ else
 		}
 	}
 fi
+
+# Nix packages' bubblewrap wrappers bind /etc/zoneinfo. Some distributions
+# keep tzdata only under /usr/share/zoneinfo, so link it for Nix applications.
+# NixOS and gregOS provide the path themselves and are skipped by the helper.
+nix_available && {
+	_nix_ensure_zoneinfo || zenwrn "Could not create the /etc/zoneinfo compatibility link."
+}

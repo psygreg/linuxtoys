@@ -3910,13 +3910,14 @@ def tool_schemas():
                 "Enable LinuxToys' Nix subsystem. Installs Nix through the "
                 "catalog installer when it is missing, then prepares flake "
                 "support, unfree packages, Home Manager or the NixOS system "
-                "configuration, non-NixOS GPU integration, and weekly Nix "
-                "generation cleanup/store optimisation. NixOS and its "
-                "derivatives use their native Nix and are enabled "
-                "automatically; on those hosts this only prepares any missing "
-                "configuration. Ask the user before installing Nix or changing "
-                "their Nix configuration. Blocks until the job finishes by "
-                "default; pass wait=false to queue it and watch with get_job."
+                "configuration, non-NixOS GPU integration, time zone "
+                "compatibility, and weekly Nix generation cleanup/store "
+                "optimisation. NixOS and its derivatives use their native Nix "
+                "and are enabled automatically; on those hosts this only "
+                "prepares any missing configuration. Ask the user before "
+                "installing Nix or changing their Nix configuration. Blocks "
+                "until the job finishes by default; pass wait=false to queue "
+                "it and watch with get_job."
             ),
             "inputSchema": {
                 "type": "object",
@@ -4933,6 +4934,8 @@ def _nix_subsystem_status():
         "scopes": nix_catalog.scopes(),
         "gpu_required": bool(status.get("gpu_required")),
         "gpu": bool(status.get("gpu")),
+        "zoneinfo_required": bool(status.get("zoneinfo_required")),
+        "zoneinfo": bool(status.get("zoneinfo")),
         "maintenance_required": bool(status.get("maintenance_required")),
         "maintenance": bool(status.get("maintenance")),
     }

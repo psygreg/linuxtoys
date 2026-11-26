@@ -1037,6 +1037,14 @@ class AppWindow(
                 "nix_setup_gpu", "GPU acceleration"
             )
             lines.append(f"• {gpu_label}: {yes if status.get('gpu') else no}")
+        if status.get("zoneinfo_required"):
+            zoneinfo_label = self.translations.get(
+                "nix_setup_zoneinfo", "Time zone support"
+            )
+            lines.append(
+                f"• {zoneinfo_label}: "
+                f"{yes if status.get('zoneinfo') else no}"
+            )
         if status.get("maintenance_required"):
             maintenance_label = self.translations.get(
                 "nix_setup_maintenance", "Weekly Nix cleanup"
