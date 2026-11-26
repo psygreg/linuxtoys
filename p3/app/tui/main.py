@@ -97,11 +97,24 @@ SCROLL_LOAD_MARGIN = 5
 
 def _menu_items(translations) -> list:
     """The home menu entries — single source for compose() and language refreshes."""
-    return [
+    items = [
         ListItem(
             Label(f"{translations.get('load_manifest', 'Load manifest')}"),
             id="manifest",
         ),
+    ]
+    if nix_catalog.enabled():
+        items.append(
+            ListItem(
+                Label(
+                    translations.get(
+                        "import_nix_flake", "Import Nix flake"
+                    )
+                ),
+                id="nix_flake",
+            )
+        )
+    items.extend([
         ListItem(
             Label(
                 f"{translations.get('select_language', 'Select language')}"
@@ -123,7 +136,8 @@ def _menu_items(translations) -> list:
             ),
             id="scripts_resync",
         ),
-    ]
+    ])
+    return items
 
 
 def _link_bar_items(translations) -> list:

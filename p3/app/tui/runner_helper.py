@@ -13,7 +13,7 @@ from typing import Any
 from textual.css.query import NoMatches
 from textual.widgets import Input
 
-from app import aur_cache, homebrew_catalog, nix_catalog, nix_metadata, nix_queue, installed_packages
+from app import aur_cache, homebrew_catalog, nix_catalog, nix_flakes, nix_metadata, nix_queue, installed_packages
 from app.compat import get_revert_capability, get_system_compat_keys, TRANSMAP_PATH
 from app.easy_cli import (
     _cleanup_tmp_noram_dirs,
@@ -2169,6 +2169,31 @@ class ManifestRunnerMixin:
             return
         self.notify("loading manifest...", timeout=3)
         self._start_manifest_classify(manifest_path)
+
+    def on_nix_flake_chosen(self, selection: dict | None) -> None:
+        """Apply a flake selection returned by the TUI flake dialog."""
+        if not selection:
+            return
+        action = str(selection.get("action") or "import")
+        try:
+            if action == "remove":
+                record = selection.get("record") or {}
+                scope = str(record.get("scope") or "")
+                nix_flakes.remove_import(str(record.get("id") or ""))
+                script = nix_flakes.materialize_apply(scope)
+            else:
+                info = selection.get("info") or {}
+                scope = str(selection.get("scope") or "")
+                keys = list(selection.get("keys") or ())
+                nix_flakes.add_import(info, scope, keys)
+                script = nix_flakes.materialize_apply(scope)
+        except Exception as exc:  # noqa: BLE001
+            self.notify(
+                f"✗ Could not update the Nix flake configuration: {exc}",
+                severity="error",
+            )
+            return
+        self._execute_script_info(script)
 
     def _start_manifest_classify(
         self,
