@@ -504,6 +504,8 @@ class NavCtl:
             return
         if self.main_stack.get_child_by_name("app_page") is not page:
             return
+        if not nix_metadata.has_api_metadata(info):
+            return
         if not nix_metadata.detail_needs_refresh(info):
             return
         attr = nix_metadata.nix_attr(info)
@@ -546,15 +548,17 @@ class NavCtl:
         if nix_metadata.nix_attr(current.script_info) != nix_metadata.nix_attr(original):
             return False
 
+        enriched_current = nix_metadata.enrich(current.script_info)
+        if enriched_current == current.script_info:
+            return False
+
         selected = getattr(current, "_selected_install_info", {}) or {}
         selected_key = (
             current._source_key(selected)
             if isinstance(selected, dict) and hasattr(current, "_source_key")
             else ""
         )
-        self.open_app_page(
-            nix_metadata.enrich(current.script_info), preserve_previous=True
-        )
+        self.open_app_page(enriched_current, preserve_previous=True)
         new_page = self.main_stack.get_child_by_name("app_page")
         if new_page is not None and selected_key:
             for option in new_page.script_info.get("source_options") or ():

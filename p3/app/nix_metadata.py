@@ -294,6 +294,21 @@ def index_record(attr):
     return _load_index().get(str(attr or "").strip())
 
 
+def has_api_metadata(info):
+    """True when the API index can enrich this Nix entry.
+
+    Only GUI applications present in the metadata index (or entries carrying a
+    slug from an earlier index) have curated API metadata. Raw CLI/library
+    attributes can still resolve to generic detail records, but fetching those
+    on app-page open produces a redundant second page build without adding any
+    card metadata. Prefetch and the app-page fallback share this gate.
+    """
+    attr = nix_attr(info)
+    if not attr:
+        return False
+    return bool(index_record(attr) or info.get("nix_api_slug"))
+
+
 def index_needs_refresh():
     payload = _read_index()
     if payload is None:
@@ -1054,10 +1069,7 @@ def prefetch(info, language=None):
         return False
     if str(info.get("appstream_source") or "").strip() != "nix":
         return False
-    attr = nix_attr(info)
-    if not attr:
-        return False
-    if not index_record(attr) and not info.get("nix_api_slug"):
+    if not has_api_metadata(info):
         return False
     slug = _detail_slug(info)
     if not slug:
