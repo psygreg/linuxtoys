@@ -7,7 +7,10 @@ affected profile when the user applies queued operations.
 
 This module owns discovery, the package snapshot cache and the generated
 helper scripts. The heavy normalization/filtering lives in Rust
-(``_catalog_rs.NixCatalog``), mirroring the other catalogs.
+(``_catalog_rs.NixCatalog``), mirroring the other catalogs. The snapshot is
+host-specific: its ``legacyPackages.<system>`` prefix must match the shared
+architecture policy (x86_64-linux or aarch64-linux), and unsupported hosts
+hide the subsystem instead of falling back to a foreign package set.
 """
 
 from __future__ import annotations
@@ -15,7 +18,6 @@ from __future__ import annotations
 import json
 import logging
 import os
-import platform
 import re
 import shutil
 import subprocess
@@ -77,8 +79,9 @@ def nix_executable():
 
 
 def enabled():
-    # Presence is authoritative, exactly like Homebrew.
-    return nix_executable() is not None
+    # Presence is authoritative, exactly like Homebrew; the shared ISA policy
+    # must also support the host before the Nix subsystem is offered.
+    return bool(linux_arch()) and nix_executable() is not None
 
 
 def home_manager_available():
@@ -98,10 +101,19 @@ def is_nixos():
 
 
 def linux_arch():
-    machine = platform.machine().lower()
-    if machine in ("aarch64", "arm64"):
-        return "aarch64-linux"
-    return "x86_64-linux"
+    """Return the nixpkgs system of this host; empty on unsupported hosts.
+
+    Nix itself understands many systems, but LinuxToys' architecture policy
+    deliberately supports only x86_64 and aarch64. Returning an empty value
+    (rather than silently claiming x86_64) keeps unsupported hosts from
+    resolving or exporting a foreign package set.
+    """
+    try:
+        from .architecture import label
+
+        return f"{label('host')}-linux"
+    except Exception:
+        return ""
 
 
 def scopes():
@@ -142,15 +154,45 @@ def fingerprint():
     )
 
 
+def _snapshot_system(path=None):
+    """Read the nixpkgs system prefix from the start of a search snapshot.
+
+    ``nix search`` emits keys such as ``legacyPackages.aarch64-linux.firefox``.
+    All rows in one snapshot share the evaluated system, so the first key is
+    enough. An empty result means the format was not recognized; callers keep
+    the Rust snapshot validation as the authority in that case.
+    """
+    target = Path(path) if path is not None else RAW_PATH
+    try:
+        with target.open("rb") as handle:
+            head = handle.read(8192)
+    except OSError:
+        return ""
+    match = re.search(rb"legacyPackages\.([A-Za-z0-9_-]+)\.", head)
+    return match.group(1).decode("ascii", "replace") if match else ""
+
+
 def valid_snapshot():
     """Validate the cached nixpkgs snapshot on a worker."""
     global _VALIDATED_SNAPSHOT
+    expected_system = linux_arch()
+    if not expected_system:
+        return False
     try:
         stat = RAW_PATH.stat()
-        token = (os.fspath(RAW_PATH), stat.st_size, stat.st_mtime_ns, stat.st_ctime_ns)
+        token = (
+            os.fspath(RAW_PATH),
+            stat.st_size,
+            stat.st_mtime_ns,
+            stat.st_ctime_ns,
+            expected_system,
+        )
         if _VALIDATED_SNAPSHOT == token:
             return True
         if not 0 < stat.st_size <= MAX_BYTES:
+            return False
+        snapshot_system = _snapshot_system()
+        if snapshot_system and snapshot_system != expected_system:
             return False
         if _catalog_rs.nix_snapshot_valid(os.fspath(RAW_PATH), MAX_BYTES):
             _VALIDATED_SNAPSHOT = token
@@ -167,7 +209,11 @@ def cached_path():
 
 def binary_snapshot_available():
     """Cheap UI readiness check; the Rust loader rebuilds stale binaries."""
-    if not enabled():
+    expected_system = linux_arch()
+    if not expected_system or not enabled():
+        return False
+    snapshot_system = _snapshot_system()
+    if snapshot_system and snapshot_system != expected_system:
         return False
     try:
         source = RAW_PATH.stat()
@@ -252,6 +298,14 @@ def load_or_refresh(force=False):
                     raise ValueError("Nix package metadata is empty or too large")
                 if not _catalog_rs.nix_snapshot_valid(temporary, MAX_BYTES):
                     raise ValueError("Invalid Nix package metadata")
+                expected_system = linux_arch()
+                snapshot_system = _snapshot_system(temporary)
+                if not expected_system or (
+                    snapshot_system and snapshot_system != expected_system
+                ):
+                    raise ValueError(
+                        "Nix package metadata was generated for a different architecture"
+                    )
                 if not enabled():
                     return None
                 os.replace(temporary, RAW_PATH)
@@ -475,7 +529,13 @@ def _catalog():
         return None
     try:
         stat = path.stat()
-        key = (os.fspath(path), stat.st_size, stat.st_mtime_ns, tuple(scopes()))
+        key = (
+            os.fspath(path),
+            stat.st_size,
+            stat.st_mtime_ns,
+            tuple(scopes()),
+            linux_arch(),
+        )
     except OSError:
         return None
     with _LOCK:
@@ -511,6 +571,20 @@ def package_attr(name):
         return ""
     attr = str(entry.get("nix_name") or "").strip()
     return attr if _ATTR_RE.fullmatch(attr) else ""
+
+
+def attr_available(attr):
+    """Whether an exact top-level nixpkgs attribute exists on this host."""
+    value = str(attr or "").strip()
+    if not _ATTR_RE.fullmatch(value):
+        return False
+    catalog = _catalog()
+    if catalog is None:
+        return False
+    try:
+        return isinstance(catalog.find_by_attr(value), dict)
+    except Exception:
+        return False
 
 
 def installed_packages():
@@ -562,13 +636,15 @@ def render_system_module(packages):
     )
 
 
-def render_flake():
+def render_flake(system=None):
     """Render a self-contained home-manager flake for the exported module."""
     import getpass
 
+    system = system or linux_arch()
+    if not system:
+        raise ValueError("Nix export requires a supported x86_64 or aarch64 host")
     user = getpass.getuser()
     home = os.path.expanduser("~")
-    system = linux_arch()
     user_literal = json.dumps(user, ensure_ascii=False)
     home_literal = json.dumps(home, ensure_ascii=False)
     return (
@@ -611,6 +687,9 @@ def export_manifest_bundle(manifest_path, home_packages, system_packages, names=
     """
     home = sorted({validate_attr(attr) for attr in home_packages if attr})
     system = sorted({validate_attr(attr) for attr in system_packages if attr})
+    target_system = linux_arch()
+    if not target_system:
+        raise ValueError("Nix export requires a supported x86_64 or aarch64 host")
     directory = manifest_bundle_dir(manifest_path)
     directory.mkdir(parents=True, exist_ok=True)
     atomic_write_text(
@@ -627,13 +706,14 @@ def export_manifest_bundle(manifest_path, home_packages, system_packages, names=
     )
     atomic_write_text(
         os.fspath(directory / "flake.nix"),
-        render_flake(),
+        render_flake(target_system),
         mode=0o644,
         fsync=True,
     )
     metadata = {
         "schema": 1,
         "source_nixos": bool(is_nixos()),
+        "source_system": target_system,
         "home": home,
         "system": system,
         "names": {
@@ -708,6 +788,7 @@ def read_manifest_bundle(manifest_path):
     system = []
     names = {}
     source_nixos = False
+    source_system = ""
     metadata_path = directory / "meta.json"
     try:
         metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
@@ -730,6 +811,7 @@ def read_manifest_bundle(manifest_path):
                 if _ATTR_RE.fullmatch(str(attr)) and str(name).strip()
             }
         source_nixos = bool(metadata.get("source_nixos"))
+        source_system = str(metadata.get("source_system") or "").strip()
     else:
         home = sorted(_module_packages(directory / "linuxtoys.nix"))
         system = sorted(_module_packages(directory / "linuxtoys-system.nix"))
@@ -740,6 +822,7 @@ def read_manifest_bundle(manifest_path):
         "system": sorted(set(system)),
         "names": names,
         "source_nixos": source_nixos,
+        "source_system": source_system,
     }
 
 

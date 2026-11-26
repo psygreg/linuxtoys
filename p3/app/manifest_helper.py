@@ -799,14 +799,11 @@ def export_registered_manifest(output_path=None, registry_data=None, translation
     if requirements.get("nix"):
         requirement_lines.append("require:nix")
         requirement_lines.append("require:nix-subsystem")
-        requirement_lines.append(
-            f"# Nix files: {nix_catalog.manifest_bundle_dir(destination)}"
-        )
 
     nix_state = requirements.get("nix_state") or {}
     if requirements.get("nix"):
         try:
-            nix_catalog.export_manifest_bundle(
+            bundle = nix_catalog.export_manifest_bundle(
                 destination,
                 nix_state.get("home") or (),
                 nix_state.get("system") or (),
@@ -814,6 +811,8 @@ def export_registered_manifest(output_path=None, registry_data=None, translation
             )
         except (OSError, ValueError) as error:
             print(f"Warning: could not export the Nix manifest files: {error}")
+        else:
+            requirement_lines.append(f"# Nix files: {bundle}")
 
     lines = [
         "# LinuxToys Manifest File",
@@ -865,6 +864,23 @@ def prepare_nix_manifest_import(manifest_path, native_packages=(), translations=
     """
     warnings = []
     errors = []
+    if not nix_catalog.linux_arch():
+        errors.append(
+            "The Nix subsystem is only available on x86_64 and aarch64 hosts."
+        )
+        bundle = nix_catalog.find_manifest_bundle(manifest_path)
+        return {
+            "installer": None,
+            "import_script": None,
+            "packages": list(native_packages or ()),
+            "converted": {},
+            "warnings": warnings,
+            "errors": errors,
+            "bundle": os.fspath(bundle) if bundle else None,
+            "home": [],
+            "system": [],
+            "names": {},
+        }
     bundle = nix_catalog.find_manifest_bundle(manifest_path)
     state = nix_catalog.read_manifest_bundle(manifest_path) if bundle else None
     nix_ready = nix_catalog.enabled()
@@ -873,6 +889,47 @@ def prepare_nix_manifest_import(manifest_path, native_packages=(), translations=
     home = list(state.get("home") or ()) if state else []
     system = list(state.get("system") or ()) if state else []
     names = dict(state.get("names") or {}) if state else {}
+    source_system = str(state.get("source_system") or "") if state else ""
+    target_system = nix_catalog.linux_arch()
+    if source_system and target_system and source_system != target_system:
+        warnings.append(
+            f"This Nix bundle was exported for {source_system}; its packages "
+            f"will be evaluated for {target_system}."
+        )
+        if nix_ready and (home or system):
+            # A cross-ISA bundle may name attributes the target nixpkgs does
+            # not provide. Validate against the target's host-specific
+            # snapshot instead of failing the entire rebuild on one entry.
+            try:
+                if nix_catalog.cached_path() is None:
+                    nix_catalog.load_or_refresh()
+                available = nix_catalog.cached_path() is not None
+            except Exception:
+                available = False
+            if available:
+                kept_home = []
+                for attr in home:
+                    if nix_catalog.attr_available(attr):
+                        kept_home.append(attr)
+                    else:
+                        warnings.append(
+                            f"Nix package '{attr}' is not available for {target_system}; skipped."
+                        )
+                home = kept_home
+                kept_system = []
+                for attr in system:
+                    if nix_catalog.attr_available(attr):
+                        kept_system.append(attr)
+                    else:
+                        warnings.append(
+                            f"Nix package '{attr}' is not available for {target_system}; skipped."
+                        )
+                system = kept_system
+            else:
+                warnings.append(
+                    "The target nixpkgs package list is unavailable; "
+                    "cross-architecture bundle packages were not verified."
+                )
 
     # System-scope packages from a NixOS export have no system backend outside
     # NixOS: install them through home-manager instead.
@@ -952,11 +1009,17 @@ def prepare_nix_manifest_import(manifest_path, native_packages=(), translations=
         "home": sorted(set(home)),
         "system": sorted(set(system)),
         "names": names,
+        "source_system": source_system,
+        "target_system": target_system,
     }
 
 
 def prepare_nix_installer(translations=None):
     """Return ``(needed, installer_script, error)`` for manifest imports."""
+    if not nix_catalog.linux_arch():
+        return True, None, (
+            "The Nix subsystem is only available on x86_64 and aarch64 hosts."
+        )
     if nix_catalog.enabled():
         return False, None, ""
     try:

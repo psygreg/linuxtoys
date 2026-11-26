@@ -687,6 +687,20 @@ def _apply_detail(entry, payload, language):
     app_type = _clean_text(meta.get("app_type"), 40)
     if app_type:
         entry["nix_api_app_type"] = app_type
+    platforms = data.get("platforms")
+    if isinstance(platforms, list):
+        names = []
+        for platform in platforms:
+            if isinstance(platform, dict):
+                name = _clean_text(platform.get("name"), 64)
+            elif isinstance(platform, str):
+                name = _clean_text(platform, 64)
+            else:
+                name = ""
+            if name:
+                names.append(name)
+        if names:
+            entry["nix_platforms"] = names
     updated = _clean_text(data.get("updated_at"), 80)
     if updated:
         entry["nix_api_updated"] = updated
@@ -761,7 +775,9 @@ def _enrich_entry(info, *, include_detail, language=None):
                 and str(option.get("appstream_source") or "").strip() == "nix"
             ):
                 option = _enrich_entry(
-                    option, include_detail=False, language=language
+                    option,
+                    include_detail=include_detail,
+                    language=language,
                 )
                 attr = nix_attr(option)
                 if attr and not option.get("registry_name"):
@@ -780,6 +796,31 @@ def enrich_index(info):
 def enrich(info, language=None):
     """Decorate an app-page entry with index and cached detail metadata."""
     return _enrich_entry(info, include_detail=True, language=language)
+
+
+def package_supported_on_host(info):
+    """Whether known Nix Software platform metadata includes this host.
+
+    Platform data comes from the optional detail cache, so absence is not
+    evidence of incompatibility. When it is present it is authoritative for
+    the host ISA (``nixpkgs`` system names map directly onto the shared
+    architecture labels). A host outside the shared x86_64/aarch64 policy is
+    always refused.
+    """
+    if not isinstance(info, dict):
+        return True
+    try:
+        from .architecture import host
+
+        expected = f"{host().value}-linux"
+    except Exception:
+        return False
+    platforms = info.get("nix_platforms")
+    if not isinstance(platforms, list) or not platforms:
+        return True
+    return expected in {
+        str(platform).strip().lower() for platform in platforms
+    }
 
 
 def _detail_lock(key):

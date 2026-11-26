@@ -2,7 +2,7 @@
 
 import os
 
-from . import get_icon_path, gui_rs, installed_packages, nix_registry, parser, registry_utils
+from . import get_icon_path, gui_rs, installed_packages, nix_catalog, nix_registry, parser, registry_utils
 from .gtk_common import Gtk
 from .revert_helper import _get_executed_script_names
 
@@ -85,12 +85,13 @@ class InstalledFeaturesView(Gtk.ScrolledWindow):
 
         # Nix packages carry their own declarative transactions; surface them
         # here so the standard removal flow applies to them too.
-        for info in nix_registry.installed_packages():
-            key = self._stable_key(info)
-            if key in seen:
-                continue
-            seen.add(key)
-            installed.append(info)
+        if nix_catalog.linux_arch():
+            for info in nix_registry.installed_packages():
+                key = self._stable_key(info)
+                if key in seen:
+                    continue
+                seen.add(key)
+                installed.append(info)
 
         installed.sort(key=lambda info: str(info.get("name", "")).casefold())
         keyed = [(self._stable_key(info), info) for info in installed]

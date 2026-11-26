@@ -122,6 +122,28 @@ def add(info, action="install", scope=None):
     action = str(action or "install").strip()
     if action not in ("install", "remove"):
         raise ValueError("Invalid Nix operation")
+    if action == "install":
+        try:
+            from . import nix_metadata
+
+            if not nix_metadata.package_supported_on_host(info):
+                raise ValueError(
+                    "This Nix package is not available for this architecture"
+                )
+        except ImportError:
+            pass
+        try:
+            from . import nix_catalog
+
+            if (
+                nix_catalog.cached_path() is not None
+                and not nix_catalog.attr_available(attr)
+            ):
+                raise ValueError(
+                    "This Nix package is not available on this architecture"
+                )
+        except ImportError:
+            pass
     name = str(info.get("name") or attr).strip() or attr
     record_id = f"nix:{attr}:{scope}"
     with _LOCK:

@@ -10,6 +10,8 @@ Scripts and repository listings follow sane defaults with explicit handling:
 content is x86_64-only by presumption, and aarch64 eligibility is declared in
 the tree itself — a script's ``# architectures:`` header, a listing record's
 ``architectures`` marker, or git-db.json release-asset evidence for its repo.
+Self-managed sources (native distro packages, Flatpak, Snap, Homebrew and
+Nixpkgs) declare the host because their own resolvers select the native build.
 """
 
 from __future__ import annotations
@@ -550,15 +552,29 @@ def require_entry(entry: Mapping[str, Any], machine: str | None = None) -> None:
     for aarch64 through an explicit ``architectures`` marker in its own
     listing record or through git-db.json release-asset evidence for its repo
     (an asset without architecture evidence, a single-binary asset or a
-    tarball asset never grants ARM). AppStream native/Flatpak/Snap/Homebrew
-    sources declare the host: the package managers and Flatpak resolve
-    architecture at their own discretion.
+    tarball asset never grants ARM). AppStream native/Flatpak/Snap/Homebrew and
+    Nix sources declare the host: the package managers, Flatpak and nixpkgs
+    resolve architecture at their own discretion.
     """
     arch = host() if machine is None else normalize(machine)
     if entry.get("name") == "Volt":
         raise ArchitectureError(
             "Volt's external Flatpak extension build requires native preflight qualification"
         )
+    if entry.get("appstream_source") == "nix" or (
+        entry.get("is_appstream_entry") and entry.get("type") == "nix"
+    ):
+        # Nixpkgs evaluates and builds for the host system. The supported-ISA
+        # gate above is the authority; individual packages the evaluator keeps
+        # for this system resolve their own platform constraints at build time.
+        for dependency in entry.get("dependencies") or []:
+            if "architectures" in dependency and not _declaration_allowed(
+                dependency["architectures"], arch
+            ):
+                raise ArchitectureError(
+                    "A required dependency does not support this architecture"
+                )
+        return
     if entry.get("is_appstream_entry") and entry.get("type") in {
         "native", "flathub", "snap", "homebrew",
     }:
