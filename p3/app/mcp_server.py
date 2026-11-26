@@ -4934,6 +4934,8 @@ def _nix_subsystem_status():
         "scopes": nix_catalog.scopes(),
         "gpu_required": bool(status.get("gpu_required")),
         "gpu": bool(status.get("gpu")),
+        "gpu32_required": bool(status.get("gpu32_required")),
+        "gpu32": bool(status.get("gpu32")),
         "zoneinfo_required": bool(status.get("zoneinfo_required")),
         "zoneinfo": bool(status.get("zoneinfo")),
         "maintenance_required": bool(status.get("maintenance_required")),

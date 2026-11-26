@@ -163,11 +163,40 @@ nix_gpu_configured() {
     return 1
 }
 
-nix_gpu_setup_ready() {
+nix_gpu64_setup_ready() {
     nix_gpu_configured || return 1
     [ -e /run/opengl-driver ] || return 1
     [ -e /etc/tmpfiles.d/non-nixos-gpu.conf ] \
         || [ -e /etc/systemd/system/non-nixos-gpu.service ]
+}
+
+_nix_gpu32_script() {
+    local base="${SCRIPT_DIR:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)}"
+    printf '%s\n' "${base}/scripts/sys/nix-gpu32.sh"
+}
+
+# 32-bit Nix GPU support is an x86_64-only complement to the Home Manager
+# 64-bit target. NixOS and gregOS already provide the complete layout.
+nix_gpu32_supported() {
+    nix_gpu_supported || return 1
+    [ "$(uname -m)" = "x86_64" ] || return 1
+    local script
+    script=$(_nix_gpu32_script)
+    [ -r "$script" ] || return 1
+    bash "$script" supported >/dev/null 2>&1
+}
+
+nix_gpu32_ready() {
+    nix_gpu32_supported || return 0
+    local script
+    script=$(_nix_gpu32_script)
+    [ -r "$script" ] || return 1
+    bash "$script" status >/dev/null 2>&1
+}
+
+nix_gpu_setup_ready() {
+    nix_gpu64_setup_ready || return 1
+    nix_gpu32_ready
 }
 
 # Nix packages' bubblewrap wrappers bind /etc/zoneinfo. Distributions that keep
@@ -267,11 +296,10 @@ _nix_write_gpu_module() {
     _nix_rewrite_module home-manager
 }
 
-_nix_ensure_gpu_setup() {
-    nix_gpu_supported || return 0
+_nix_ensure_gpu64_setup() {
     nix_home_manager_available || return 0
     if [ "${LINUXTOYS_NIX_DRY_RUN:-0}" = "1" ]; then
-        printf 'Skipping GPU setup (dry run).\n'
+        printf 'Skipping 64-bit GPU setup (dry run).\n'
         return 0
     fi
 
@@ -287,18 +315,73 @@ _nix_ensure_gpu_setup() {
         _nix_rebuild home-manager || return 1
         bin=$(_nix_gpu_setup_bin) || bin=""
         if [ "$_NIX_GPU_SETUP_ATTEMPTED" -eq 1 ]; then
-            nix_gpu_setup_ready && return 0
+            nix_gpu64_setup_ready && return 0
             printf 'GPU driver setup did not complete; run the reported non-nixos-gpu-setup command again.\n' >&2
             return 1
         fi
     fi
 
-    nix_gpu_setup_ready && return 0
+    nix_gpu64_setup_ready && return 0
     [ -n "$bin" ] || {
         printf 'Could not locate non-nixos-gpu-setup after the Home Manager rebuild.\n' >&2
         return 1
     }
     sudo_ "$bin"
+}
+
+_nix_ensure_gpu32_tools() {
+    local -a packages=() tools=()
+    if ! command -v patchelf >/dev/null 2>&1; then
+        packages+=(patchelf)
+        tools+=(patchelf)
+    fi
+    if ! command -v readelf >/dev/null 2>&1; then
+        packages+=(binutils)
+        tools+=(readelf)
+    fi
+    if ! command -v jq >/dev/null 2>&1; then
+        packages+=(jq)
+        tools+=(jq)
+    fi
+    ((${#packages[@]})) || return 0
+    if declare -F pkg_install >/dev/null 2>&1; then
+        pkg_install "${packages[@]}"
+        return $?
+    fi
+    printf 'Missing 32-bit GPU bundle tools: %s\n' "${tools[*]}" >&2
+    printf 'Install patchelf, binutils and jq, then retry.\n' >&2
+    return 1
+}
+
+_nix_ensure_gpu32_setup() {
+    local mode="${1:-setup}" script
+    nix_gpu32_supported || return 0
+    if [ "${LINUXTOYS_NIX_DRY_RUN:-0}" = "1" ]; then
+        printf 'Skipping 32-bit GPU setup (dry run).\n'
+        return 0
+    fi
+    script=$(_nix_gpu32_script)
+    [ -r "$script" ] || return 1
+    _nix_ensure_gpu32_tools || return 1
+    sudo_ bash "$script" "$mode" || return 1
+    if [ "$mode" = "setup" ]; then
+        declare -F _append_transmap >/dev/null 2>&1 \
+            && _append_transmap "installed 32-bit Nix GPU bundle"
+    fi
+    return 0
+}
+
+_nix_ensure_gpu_setup() {
+    nix_gpu_supported || return 0
+    if [ "${LINUXTOYS_NIX_DRY_RUN:-0}" = "1" ]; then
+        printf 'Skipping GPU setup (dry run).\n'
+        return 0
+    fi
+
+    local rc=0
+    _nix_ensure_gpu64_setup || rc=1
+    _nix_ensure_gpu32_setup setup || rc=1
+    return "$rc"
 }
 
 nix_unfree_enabled() {
@@ -1146,6 +1229,9 @@ nix_update() {
             && [ "${_NIX_GPU_SETUP_ATTEMPTED:-0}" -eq 0 ] \
             && ! nix_gpu_setup_ready; then
             _nix_ensure_gpu_setup || rc=1
+        fi
+        if nix_gpu32_supported; then
+            _nix_ensure_gpu32_setup refresh || rc=1
         fi
     fi
     return "$rc"

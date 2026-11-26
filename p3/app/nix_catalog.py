@@ -589,11 +589,62 @@ def gpu_configured():
     return False
 
 
+def _elf32(path: Path) -> bool:
+    try:
+        with path.open("rb") as handle:
+            return handle.read(5) == b"\x7fELF\x01"
+    except OSError:
+        return False
+
+
+def _host_has_32bit_graphics() -> bool:
+    """Whether the host has usable 32-bit graphics drivers for the bundle."""
+    icd_dir = Path("/usr/share/vulkan/icd.d")
+    try:
+        if any(icd_dir.glob("*.i686.json")) or any(icd_dir.glob("*.x86.json")):
+            return True
+    except OSError:
+        pass
+    for root in (
+        "/usr/lib/i386-linux-gnu",
+        "/usr/lib32",
+        "/usr/lib",
+        "/lib",
+    ):
+        directory = Path(root)
+        if not directory.is_dir():
+            continue
+        for pattern in ("libvulkan_*.so*", "libGLX_*.so*", "libEGL_*.so*"):
+            if any(_elf32(candidate) for candidate in directory.glob(pattern)):
+                return True
+    return False
+
+
+def gpu32_setup_required():
+    """Whether the non-NixOS host needs the 32-bit Nix GPU complement."""
+    if not gpu_setup_required():
+        return False
+    if os.uname().machine != "x86_64":
+        return False
+    return _host_has_32bit_graphics()
+
+
+def gpu32_setup_ready():
+    """Whether the 32-bit bundle, service and runtime mount are installed."""
+    return (
+        Path("/run/opengl-driver-32").exists()
+        and Path("/etc/systemd/system/linuxtoys-nix-graphics.service").is_file()
+        and Path("/usr/local/lib/linuxtoys/nix-gpu32").is_file()
+    )
+
+
 def gpu_setup_ready():
-    """Whether the non-NixOS GPU option and its host setup are both present."""
+    """Whether the 64-bit and 32-bit non-NixOS GPU integrations are present."""
     if not gpu_setup_required():
         return True
-    return gpu_configured() and os.path.exists("/run/opengl-driver")
+    if not (gpu_configured() and os.path.exists("/run/opengl-driver")):
+        return False
+    return not gpu32_setup_required() or gpu32_setup_ready()
 
 
 def zoneinfo_setup_required():
@@ -653,6 +704,8 @@ def setup_status():
     home_manager = home_manager_available()
     system = is_nixos()
     gpu_required = gpu_setup_required()
+    gpu32_required = gpu32_setup_required()
+    gpu32 = gpu32_setup_ready() if gpu32_required else True
     gpu = gpu_setup_ready() if gpu_required else True
     zoneinfo_required = zoneinfo_setup_required()
     zoneinfo = zoneinfo_configured() if zoneinfo_required else True
@@ -666,6 +719,8 @@ def setup_status():
         "system": system,
         "gpu_required": gpu_required,
         "gpu": gpu,
+        "gpu32_required": gpu32_required,
+        "gpu32": gpu32,
         "zoneinfo_required": zoneinfo_required,
         "zoneinfo": zoneinfo,
         "maintenance_required": maintenance_required,

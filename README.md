@@ -126,6 +126,8 @@ or use the bundled module:
 
 `nix run github:psygreg/linuxtoys` runs it without installing. On Nix, LinuxToys is updated by `nix profile upgrade` or your NixOS rebuild; its self-updater and outdated-version gate stay inactive for Nix installs.
 
+On non-NixOS x86_64 hosts the Nix subsystem also builds a 32-bit host GPU bundle and bind-mounts it at `/run/opengl-driver-32`, so 32-bit Wine/Proton applications get the same kernel-matched drivers as 64-bit ones. The bundle includes NVIDIA userspace libraries when present and is refreshed when the host driver files change.
+
 The profile install is per-user. On NixOS, use the module or `environment.systemPackages` for desktop-menu integration; if you prefer the profile route, make sure `~/.nix-profile/share` is part of your session's `XDG_DATA_DIRS` (the automatic installer also mirrors the entry and icon into `~/.local/share`).
 
 ## SteamOS and usage without installation
