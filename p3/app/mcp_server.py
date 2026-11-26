@@ -3910,7 +3910,8 @@ def tool_schemas():
                 "Enable LinuxToys' Nix subsystem. Installs Nix through the "
                 "catalog installer when it is missing, then prepares flake "
                 "support, unfree packages, Home Manager or the NixOS system "
-                "configuration, and non-NixOS GPU integration. NixOS and its "
+                "configuration, non-NixOS GPU integration, and weekly Nix "
+                "generation cleanup/store optimisation. NixOS and its "
                 "derivatives use their native Nix and are enabled "
                 "automatically; on those hosts this only prepares any missing "
                 "configuration. Ask the user before installing Nix or changing "
@@ -4932,6 +4933,8 @@ def _nix_subsystem_status():
         "scopes": nix_catalog.scopes(),
         "gpu_required": bool(status.get("gpu_required")),
         "gpu": bool(status.get("gpu")),
+        "maintenance_required": bool(status.get("maintenance_required")),
+        "maintenance": bool(status.get("maintenance")),
     }
 
 

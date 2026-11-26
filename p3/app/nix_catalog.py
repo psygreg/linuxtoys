@@ -593,6 +593,30 @@ def gpu_setup_ready():
     return gpu_configured() and os.path.exists("/run/opengl-driver")
 
 
+_NIX_GC_MARKER = "systemd.user.services.nix-gc.Service.ExecStart"
+
+
+def maintenance_setup_required():
+    """Whether LinuxToys should manage non-NixOS Nix generation cleanup."""
+    return bool(enabled() and not is_nixos())
+
+
+def maintenance_configured():
+    """Whether the generated Home Manager module has the cleanup service."""
+    if not maintenance_setup_required():
+        return True
+    script = Path(os.path.expanduser("~/.local/share/linuxtoys/nix-gc.sh"))
+    if not script.is_file():
+        return False
+    try:
+        content = HOME_MODULE_PATH.read_text(
+            encoding="utf-8", errors="replace"
+        )
+    except OSError:
+        return False
+    return _NIX_GC_MARKER in content
+
+
 def setup_status():
     """Return the first-click readiness report used by the setup dialog."""
     flakes = _flakes_enabled()
@@ -601,6 +625,8 @@ def setup_status():
     system = is_nixos()
     gpu_required = gpu_setup_required()
     gpu = gpu_setup_ready() if gpu_required else True
+    maintenance_required = maintenance_setup_required()
+    maintenance = maintenance_configured() if maintenance_required else True
     return {
         "nix": enabled(),
         "flakes": flakes,
@@ -609,6 +635,8 @@ def setup_status():
         "system": system,
         "gpu_required": gpu_required,
         "gpu": gpu,
+        "maintenance_required": maintenance_required,
+        "maintenance": maintenance,
         "backend": home_manager or system,
         "ready": bool(enabled() and flakes and (home_manager or system)),
     }
@@ -625,6 +653,8 @@ def setup_missing(status=None):
         missing.append("home-manager")
     if status.get("gpu_required") and not status.get("gpu"):
         missing.append("gpu")
+    if status.get("maintenance_required") and not status.get("maintenance"):
+        missing.append("maintenance")
     return missing
 
 
@@ -709,7 +739,7 @@ def materialize_subsystem_enable():
     script = _materialize_script(
         "nix_subsystem_ensure",
         "Enable Nix subsystem",
-        "Prepare flake support, unfree packages, Home Manager and GPU integration.",
+        "Prepare flake support, unfree packages, Home Manager, GPU integration and weekly cleanup.",
     )
     script["registry"] = "no"
     script["cleanup_path"] = script["path"]

@@ -100,7 +100,7 @@ After connecting, call `server_info` once to confirm the session works.
 | `remove_app_extension(app_id, extension, wait?, wait_seconds?)` | Remove one installed extension of an app, watching the job to completion |
 | `remove_app(app_id, wait?, wait_seconds?)` | Remove an app installed through LinuxToys, watching the removal to completion |
 | `remove_flatpak_data(app_id, wait?, wait_seconds?)` | Remove the leftover user data (`~/.var/app/<AppID>`) of a Flatpak app that is no longer installed — the GUI's "Remove data" button on that app's page; refuses apps still installed; watches the removal to completion |
-| `nix_enable_subsystem(wait?, wait_seconds?)` | Enable LinuxToys' Nix subsystem: installs Nix through the catalog installer when missing, prepares flakes/unfree/Home Manager or NixOS system integration, and non-NixOS GPU support. NixOS and its derivatives are enabled automatically; on those hosts it only prepares missing configuration. Ask the user first. Watches the job to completion |
+| `nix_enable_subsystem(wait?, wait_seconds?)` | Enable LinuxToys' Nix subsystem: installs Nix through the catalog installer when missing, prepares flakes/unfree/Home Manager or NixOS system integration, non-NixOS GPU support, and weekly generation cleanup/store optimisation. NixOS and its derivatives are enabled automatically; on those hosts it only prepares missing configuration. Ask the user first. Watches the job to completion |
 | `nix_install_package(name, scope?, wait?, wait_seconds?)` | Install one nixpkgs attribute through LinuxToys' declarative Nix module (never `nix-env`); `name` is the attribute (e.g. `ripgrep`) or a `nix:<attr>` catalog id. `scope` is `home-manager` (default when available) or `system` (NixOS only; password dialog appears on the user's screen). Watches the rebuild to completion |
 | `nix_remove_package(name, scope?, wait?, wait_seconds?)` | Remove one nixpkgs attribute from the managed module. Without `scope`, every scope recorded for the package is removed in one rebuild; other Nix packages and imported flakes stay applied |
 | `nix_list_packages()` | List Nix packages installed through LinuxToys with their attributes and scopes, for `nix_remove_package` |
@@ -154,7 +154,8 @@ dialog appears on the user's screen when needed.
 **Enable the Nix subsystem:** on a host where Nix is missing or the LinuxToys
 module is not configured, call `nix_enable_subsystem` after the user agrees.
 It installs Nix through the catalog installer when needed and prepares the
-declarative configuration (and GPU integration on non-NixOS systems). NixOS
+declarative configuration (plus GPU integration and weekly generation
+cleanup/store optimisation on non-NixOS systems). NixOS
 and its derivatives use their native Nix and are enabled automatically; there
 the tool only prepares any missing configuration. `server_info` reports the
 current `nix_subsystem` state.

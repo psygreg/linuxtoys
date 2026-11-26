@@ -1026,6 +1026,14 @@ class AppWindow(
                 "nix_setup_gpu", "GPU acceleration"
             )
             lines.append(f"• {gpu_label}: {yes if status.get('gpu') else no}")
+        if status.get("maintenance_required"):
+            maintenance_label = self.translations.get(
+                "nix_setup_maintenance", "Weekly Nix cleanup"
+            )
+            lines.append(
+                f"• {maintenance_label}: "
+                f"{yes if status.get('maintenance') else no}"
+            )
         return "\n".join(lines)
 
     def _activate_nix_category(self, widget=None, event=None):
