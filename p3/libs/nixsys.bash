@@ -7,6 +7,7 @@
 
 NIX_TOYS_BEGIN="# BEGIN LinuxToys managed packages"
 NIX_TOYS_END="# END LinuxToys managed packages"
+_NIX_GPU_SETUP_ATTEMPTED=0
 
 _nix_bin() {
     command -v nix 2>/dev/null || {
@@ -169,6 +170,41 @@ _nix_gpu_setup_bin() {
     printf '%s\n' "$resolved"
 }
 
+_nix_gpu_setup_from_output() {
+    local log="$1"
+    [ -f "$log" ] || return 1
+    grep -oE '/nix/store/[[:alnum:]]+-non-nixos-gpu/bin/non-nixos-gpu-setup' "$log" \
+        | head -n1
+}
+
+# Home Manager compares the active /run/opengl-driver link with the driver
+# environment it just built and prints the exact setup command when they
+# differ. Keep the switch output visible while capturing that command.
+_nix_run_home_manager_switch() {
+    local log rc setup
+    if ! nix_gpu_supported; then
+        "$@"
+        return $?
+    fi
+    log=$(mktemp "${TMPDIR:-/tmp}/linuxtoys-nix-hm.XXXXXX") || {
+        "$@"
+        return $?
+    }
+    "$@" 2>&1 | tee "$log"
+    rc=${PIPESTATUS[0]}
+    if [ "$rc" -eq 0 ]; then
+        setup=$(_nix_gpu_setup_from_output "$log") || setup=""
+        if [ -n "$setup" ]; then
+            _NIX_GPU_SETUP_ATTEMPTED=1
+            printf 'GPU drivers changed; refreshing non-NixOS GPU setup...\n'
+            sudo_ "$setup" \
+                || printf 'GPU driver setup did not complete; run %s manually.\n' "$setup" >&2
+        fi
+    fi
+    rm -f -- "$log"
+    return "$rc"
+}
+
 _nix_write_gpu_module() {
     local -a current
     mapfile -t current < <(_nix_module_read_packages home-manager)
@@ -184,6 +220,7 @@ _nix_ensure_gpu_setup() {
     fi
 
     local changed=0 bin
+    _NIX_GPU_SETUP_ATTEMPTED=0
     if ! nix_gpu_configured; then
         _nix_write_gpu_module || return 1
         changed=1
@@ -193,6 +230,11 @@ _nix_ensure_gpu_setup() {
     if [ "$changed" -eq 1 ] || [ -z "$bin" ]; then
         _nix_rebuild home-manager || return 1
         bin=$(_nix_gpu_setup_bin) || bin=""
+        if [ "$_NIX_GPU_SETUP_ATTEMPTED" -eq 1 ]; then
+            nix_gpu_setup_ready && return 0
+            printf 'GPU driver setup did not complete; run the reported non-nixos-gpu-setup command again.\n' >&2
+            return 1
+        fi
     fi
 
     nix_gpu_setup_ready && return 0
@@ -636,6 +678,8 @@ nix_setup() {
 
 _nix_rebuild() {
     local scope="$1" directory
+    local -a hm_command
+    _NIX_GPU_SETUP_ATTEMPTED=0
     if [ "${LINUXTOYS_NIX_DRY_RUN:-0}" = "1" ]; then
         printf 'Skipping %s rebuild (dry run).\n' "$scope"
         return 0
@@ -659,23 +703,18 @@ _nix_rebuild() {
     directory=$(_nix_hm_dir)
     export NIX_CONFIG="${NIX_CONFIG:+$NIX_CONFIG$'\n'}extra-experimental-features = nix-command flakes"
     if [ -f "$directory/flake.nix" ]; then
-        "$(_nix_hm_bin)" switch --flake "$directory"
-        return $?
+        hm_command=("$(_nix_hm_bin)" switch --flake "$directory")
+    elif [ -n "${HOME_MANAGER_CONFIG:-}" ] && [ -f "$HOME_MANAGER_CONFIG" ]; then
+        hm_command=("$(_nix_hm_bin)" switch -f "$HOME_MANAGER_CONFIG")
+    elif [ -f "$directory/home.nix" ]; then
+        hm_command=("$(_nix_hm_bin)" switch -f "$directory/home.nix")
+    elif [ -f "$directory/default.nix" ]; then
+        hm_command=("$(_nix_hm_bin)" switch -f "$directory/default.nix")
+    else
+        printf 'No Home Manager configuration found in %s.\n' "$directory" >&2
+        return 1
     fi
-    if [ -n "${HOME_MANAGER_CONFIG:-}" ] && [ -f "$HOME_MANAGER_CONFIG" ]; then
-        "$(_nix_hm_bin)" switch -f "$HOME_MANAGER_CONFIG"
-        return $?
-    fi
-    if [ -f "$directory/home.nix" ]; then
-        "$(_nix_hm_bin)" switch -f "$directory/home.nix"
-        return $?
-    fi
-    if [ -f "$directory/default.nix" ]; then
-        "$(_nix_hm_bin)" switch -f "$directory/default.nix"
-        return $?
-    fi
-    printf 'No Home Manager configuration found in %s.\n' "$directory" >&2
-    return 1
+    _nix_run_home_manager_switch "${hm_command[@]}"
 }
 
 _nix_sync_registry() {
