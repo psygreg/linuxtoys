@@ -12,7 +12,7 @@ from .gtk_dialogs import run_message_dialog
 class NixFlakeDialog(Gtk.Dialog):
     """Inspect one flake, select its outputs and queue the configuration merge."""
 
-    def __init__(self, parent_window):
+    def __init__(self, parent_window, initial_reference=""):
         self.translations = getattr(parent_window, "translations", {})
         super().__init__(
             title=self._t("nix_flake_import_title", "Import Nix flake"),
@@ -27,8 +27,17 @@ class NixFlakeDialog(Gtk.Dialog):
         self._scope_values = []
         self._read_running = False
         self._destroyed = False
+        self._initial_reference = str(initial_reference or "").strip()
         self.connect("destroy", self._on_destroy)
         self._build()
+        if self._initial_reference:
+            self.reference_entry.set_text(self._initial_reference)
+            GLib.idle_add(self._auto_read)
+
+    def _auto_read(self):
+        if not self._destroyed:
+            self._on_read_clicked()
+        return False
 
     def _on_destroy(self, _widget):
         self._destroyed = True
@@ -156,7 +165,7 @@ class NixFlakeDialog(Gtk.Dialog):
         self.import_button.set_sensitive(bool(ready))
 
     def _on_read_clicked(self, _widget=None):
-        if self._read_running:
+        if self._destroyed or self._read_running:
             return
         reference = self.reference_entry.get_text().strip()
         if not reference:
@@ -394,7 +403,7 @@ class NixFlakeDialog(Gtk.Dialog):
         self.response(Gtk.ResponseType.OK)
 
 
-def show_import_dialog(parent_window):
+def show_import_dialog(parent_window, initial_reference=""):
     """Run the dialog and open the generated merge script in the terminal."""
     if not nix_catalog.enabled():
         run_message_dialog(
@@ -406,7 +415,7 @@ def show_import_dialog(parent_window):
             default_response=Gtk.ResponseType.OK,
         )
         return
-    dialog = NixFlakeDialog(parent_window)
+    dialog = NixFlakeDialog(parent_window, initial_reference=initial_reference)
     response = dialog.run()
     script = dialog.result_script
     dialog.destroy()

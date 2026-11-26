@@ -11,7 +11,8 @@ from .updater.update_dialog import scripts_blocked_by_version
 
 class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
     def __init__(
-        self, scripts_infos: list, parent, translations=None, removable_script_info=None, auto_run=False
+        self, scripts_infos: list, parent, translations=None, removable_script_info=None, auto_run=False,
+        on_finished=None,
     ):
         super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         self.parent = parent
@@ -24,6 +25,9 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
         self.executed_scripts = []  # Track scripts that actually ran for cache updates
         self._destroyed = False
         self._last_exit_code = None
+        self._on_finished = on_finished
+        self._on_finished_called = False
+        self._run_had_error = False
 
         # Track revert capability of the removable script (if available)
         self.removable_script_revert_capability = None
@@ -116,6 +120,27 @@ class TermRunScripts(Gtk.Box, TerminalRunner, BugReporting):
         """Release the runner hold if the view dies before or during a session."""
         self._destroyed = True
         self._release_exclusive_hold()
+        return False
+
+    def _notify_finished(self):
+        """Report the final queue outcome once, after the last script exits."""
+        callback = getattr(self, "_on_finished", None)
+        if callback is None or self._on_finished_called:
+            return
+        self._on_finished_called = True
+        GLib.idle_add(self._invoke_finished_callback, not self._run_had_error)
+
+    def _invoke_finished_callback(self, success):
+        """Run the completion callback after the terminal's own teardown path."""
+        if self._destroyed:
+            return False
+        callback = getattr(self, "_on_finished", None)
+        if callback is None:
+            return False
+        try:
+            callback(bool(success))
+        except Exception:
+            self._report_completion_crash()
         return False
 
     def _set_remove_button_visibility(self):        # Button shown if ALL conditions are met:

@@ -116,6 +116,7 @@ class TerminalRunner:
                 self.parent, "auto_error_reports_enabled", False
             )
             self.vbox_main.button_copy.set_sensitive(not auto_reports_enabled)
+            self._notify_finished()
 
             return
 
@@ -386,6 +387,8 @@ class TerminalRunner:
 
     def on_child_exit(self, term, status):
         self._last_exit_code = os.WEXITSTATUS(status) if os.WIFEXITED(status) else None
+        if not os.WIFEXITED(status) or os.WEXITSTATUS(status) != 0:
+            self._run_had_error = True
         # A dying child must never leave navigation locked, including fatal/exit 100 paths.
         self._clear_runner_lock()
 

@@ -582,7 +582,7 @@ class NavCtl:
             gui_rs.stack_remove_child(self.main_stack, child, destroy=True)
         self._app_page_prev = None
 
-    def open_term_view(self, infos, removable_script_info=None, auto_run=True):
+    def open_term_view(self, infos, removable_script_info=None, auto_run=True, on_finished=None):
         # Check if any script has auto_run flag set in its info dict
         if not auto_run and infos:
             auto_run = any(script.get("auto_run", False) for script in infos)
@@ -623,7 +623,8 @@ class NavCtl:
             return
 
         run_box = term_view.TermRunScripts(
-            infos, self, self.translations, removable_script_info=removable_script_info, auto_run=auto_run
+            infos, self, self.translations, removable_script_info=removable_script_info, auto_run=auto_run,
+            on_finished=on_finished,
         )
 
         # Header-menu actions can mutate global UI/application state in ways that

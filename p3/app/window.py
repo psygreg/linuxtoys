@@ -4254,6 +4254,10 @@ class AppWindow(
             )
             return
 
+        if script_info.get("appstream_source") in ("nix", "nix-flake"):
+            self._handle_external_nix_request(script_info)
+            return
+
         # URI activation represents an individual app activation, so repository
         # entries with app-page metadata must show that page first. The page's
         # Install button then continues through the normal app-page install flow.
@@ -4278,6 +4282,209 @@ class AppWindow(
             removable_script_info=removable,
             auto_run=True,
         )
+
+    def _nix_uri_setup_scripts(self, status):
+        """Return the install/setup scripts a URI request needs, and an error."""
+        scripts = []
+        if not status.get("nix"):
+            _needed, installer, error = manifest_helper.prepare_nix_installer(
+                self.translations
+            )
+            if error:
+                return [], error
+            if installer is None:
+                return [], self.translations.get(
+                    "uri_nix_installer_unavailable",
+                    "Nix is not installed and the LinuxToys Nix installer is "
+                    "unavailable on this system.",
+                )
+            scripts.append(installer)
+        if not status.get("ready"):
+            scripts.append(nix_catalog.materialize_subsystem_enable())
+        return scripts, ""
+
+    def _nix_uri_confirmation_text(self, info, status, needs_setup):
+        source = str(info.get("appstream_source") or "")
+        intro = self.translations.get(
+            "uri_install_request_message",
+            "A website requested that LinuxToys install this feature. Review it before continuing.",
+        )
+        if source == "nix":
+            action = self.translations.get(
+                "uri_nix_package_request",
+                "The link asks LinuxToys to install '{name}' from nixpkgs.",
+            ).format(name=info.get("name") or info.get("nix_name") or "Nix package")
+        else:
+            reference = (
+                info.get("nix_flake_reference") or info.get("name") or "Nix flake"
+            )
+            action = self.translations.get(
+                "uri_nix_flake_request",
+                "The link asks LinuxToys to import the Nix flake '{reference}'.",
+            ).format(reference=reference)
+            action += "\n\n" + self.translations.get(
+                "nix_flake_import_warning",
+                "Only import flakes you trust: their modules, packages and "
+                "overlays become part of your configuration.",
+            )
+        message = f"{intro}\n\n{action}"
+        if needs_setup:
+            message += "\n\n" + self.translations.get(
+                "uri_nix_setup_needed",
+                "The Nix subsystem is not enabled yet. LinuxToys will install and prepare it first.",
+            )
+            message += "\n\n" + self._nix_setup_summary(status)
+        return message
+
+    def _handle_external_nix_request(self, info):
+        """Install a URI-requested Nix package or import a requested flake."""
+        if not nix_catalog.linux_arch():
+            self.show_external_install_error(
+                self.translations.get(
+                    "uri_nix_arch_unavailable",
+                    "Nix packages are only available on x86_64 and aarch64 hosts.",
+                )
+            )
+            return
+
+        status = nix_catalog.setup_status()
+        needs_setup = bool(not status.get("nix") or not status.get("ready"))
+
+        buttons = [
+            (
+                self.translations.get("cancel_btn_label", "Cancel"),
+                Gtk.ResponseType.CANCEL,
+            ),
+            (
+                self.translations.get("install_btn_label", "Install"),
+                Gtk.ResponseType.YES,
+                "suggested-action",
+            ),
+        ]
+        response = gtk_dialogs.run_message_dialog(
+            self,
+            title=self.translations.get(
+                "uri_install_title", "Install from LinuxToys link"
+            ),
+            secondary_text=self._nix_uri_confirmation_text(
+                info, status, needs_setup
+            ),
+            message_type=Gtk.MessageType.INFO,
+            buttons=buttons,
+            default_response=Gtk.ResponseType.YES,
+        )
+        if response != Gtk.ResponseType.YES:
+            return
+
+        setup_scripts, error = self._nix_uri_setup_scripts(status)
+        if error:
+            self.show_external_install_error(error)
+            return
+        self._continue_nix_uri_setup(info, setup_scripts, True)
+
+    def _continue_nix_uri_setup(self, info, scripts, ok, from_terminal=False):
+        """Run setup scripts one at a time, then complete the URI action."""
+        if not ok:
+            self.show_external_install_error(
+                self.translations.get(
+                    "uri_nix_setup_failed",
+                    "The Nix subsystem could not be enabled, so the requested "
+                    "install was not started.",
+                )
+            )
+            return
+
+        if scripts:
+            if from_terminal:
+                # Replace the completed setup terminal without making it the
+                # Back target (it is destroyed by the next open_term_view).
+                self._term_prev_override = getattr(self, "_term_prev", None)
+            opened = self.open_term_view(
+                [scripts[0]],
+                auto_run=True,
+                on_finished=lambda success: self._continue_nix_uri_setup(
+                    info, scripts[1:], success, True
+                ),
+            )
+            if opened is None:
+                self._term_prev_override = None
+            return
+
+        status = nix_catalog.setup_status()
+        if not nix_catalog.enabled() or not status.get("ready"):
+            self.show_external_install_error(
+                self.translations.get(
+                    "uri_nix_setup_failed",
+                    "The Nix subsystem could not be enabled, so the requested "
+                    "install was not started.",
+                )
+            )
+            return
+
+        if info.get("appstream_source") == "nix":
+            self._install_nix_uri_package(info, from_terminal=from_terminal)
+        else:
+            self._open_nix_uri_flake(info, from_terminal=from_terminal)
+
+    def _install_nix_uri_package(self, info, from_terminal=False):
+        try:
+            scopes = nix_catalog.scopes()
+            if not scopes:
+                raise ValueError(
+                    self.translations.get(
+                        "nix_flake_no_scope",
+                        "Neither Home Manager nor a NixOS system configuration is available.",
+                    )
+                )
+            requested = str(info.get("nix_scope") or "").strip()
+            if nix_catalog.is_nixos() and "system" in scopes:
+                # NixOS native installs belong in the system profile; a merged
+                # AppStream entry may still carry the user-scope default.
+                requested = "system"
+            elif requested not in scopes:
+                if "home-manager" in scopes:
+                    requested = "home-manager"
+                else:
+                    requested = scopes[0]
+            nix_queue.add(info, action="install", scope=requested)
+            apply_info = nix_catalog.materialize_apply()
+        except Exception as error:
+            gtk_dialogs.run_message_dialog(
+                self,
+                title="Nix",
+                secondary_text=str(error),
+                message_type=Gtk.MessageType.ERROR,
+                buttons=[("OK", Gtk.ResponseType.OK)],
+                default_response=Gtk.ResponseType.OK,
+            )
+            return
+
+        if from_terminal:
+            self._term_prev_override = getattr(self, "_term_prev", None)
+        opened = self.open_term_view([apply_info], auto_run=True)
+        if opened is None:
+            self._term_prev_override = None
+
+    def _open_nix_uri_flake(self, info, from_terminal=False):
+        reference = str(info.get("nix_flake_reference") or "").strip()
+        if not reference:
+            self.show_external_install_error(
+                self.translations.get(
+                    "uri_install_not_found",
+                    "The requested feature was not found or is not compatible with this system.",
+                )
+            )
+            return
+        if from_terminal:
+            self._term_prev_override = getattr(self, "_term_prev", None)
+        from . import nix_flake_dialog
+
+        try:
+            nix_flake_dialog.show_import_dialog(self, initial_reference=reference)
+        finally:
+            # The dialog consumes the override only when it opens its apply
+            # terminal; clear it when the user cancels.
+            self._term_prev_override = None
 
     def _run_single_script_install(self, info, close_app_page=False):
         """Run the normal single-entry confirmation and terminal-view flow."""
