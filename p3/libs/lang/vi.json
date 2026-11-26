@@ -462,6 +462,8 @@
   "queue_close_message": "Đóng LinuxToys sẽ dừng tất cả các thao tác đang chờ trong hàng đợi và đang chạy. Việc gián đoạn một thao tác khi nó đang được thực hiện có thể gây ra sự cố cho hệ thống của bạn. Bạn có chắc không?",
   "queue_close_continue_btn": "Quay lại LinuxToys",
   "queue_close_close_btn": "Vẫn đóng",
+  "nix_queue_close_title": "Thao tác Nix đang chờ!",
+  "nix_queue_close_message": "Các thao tác cài đặt hoặc gỡ bỏ gói Nix trong hàng đợi chưa được áp dụng. Chúng sẽ vẫn nằm trong hàng đợi cho đến khi bạn chạy @{nix_apply_operations}, ngay cả sau khi đóng LinuxToys.",
   "installation_queue": "Hàng đợi cài đặt",
   "installed_features": "Tính năng đã cài đặt",
   "network": "Mạng & Internet",

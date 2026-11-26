@@ -462,6 +462,8 @@
   "queue_close_message": "LinuxToys बन्द गर्दा लाममा रहेका र चलिरहेका सबै कार्यहरू रोकिनेछन्। कुनै कार्य चलिरहेको बेला त्यसलाई अवरोध गर्दा तपाईंको प्रणालीमा समस्या आउन सक्छ। के तपाईं निश्चित हुनुहुन्छ?",
   "queue_close_continue_btn": "LinuxToys मा फर्कनुहोस्",
   "queue_close_close_btn": "तैपनि बन्द गर्नुहोस्",
+  "nix_queue_close_title": "Nix कार्यहरू पर्खाइमा छन्!",
+  "nix_queue_close_message": "कतारमा राखिएका Nix प्याकेज स्थापना वा हटाउने कार्यहरू अझै लागू भएका छैनन्। LinuxToys बन्द गरेपछि पनि, तपाईंले @{nix_apply_operations} नचलाएसम्म ती कतारमा रहनेछन्।",
   "installation_queue": "स्थापना लाम",
   "installed_features": "स्थापित सुविधाहरू",
   "network": "नेटवर्क र इन्टरनेट",

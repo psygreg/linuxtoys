@@ -462,6 +462,8 @@
   "queue_close_message": "سيؤدي إغلاق LinuxToys إلى إيقاف جميع العمليات الموجودة في قائمة الانتظار والجارية حاليًا. قد تؤدي مقاطعة عملية أثناء تنفيذها إلى حدوث مشكلات في نظامك. هل أنت متأكد؟",
   "queue_close_continue_btn": "العودة إلى LinuxToys",
   "queue_close_close_btn": "إغلاق على أي حال",
+  "nix_queue_close_title": "عمليات Nix معلّقة!",
+  "nix_queue_close_message": "لم يتم تطبيق عمليات تثبيت أو إزالة حزم Nix الموجودة في قائمة الانتظار بعد. ستبقى في قائمة الانتظار حتى تشغّل @{nix_apply_operations}، حتى بعد إغلاق LinuxToys.",
   "installation_queue": "قائمة انتظار التثبيت",
   "installed_features": "الميزات المثبتة",
   "network": "الشبكة والإنترنت",

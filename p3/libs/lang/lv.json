@@ -462,6 +462,8 @@
   "queue_close_message": "Aizverot LinuxToys, tiks apturētas visas rindā esošās un pašlaik notiekošās darbības. Notiekošas darbības pārtraukšana var radīt problēmas jūsu sistēmā. Vai esat pārliecināts?",
   "queue_close_continue_btn": "Atgriezties LinuxToys",
   "queue_close_close_btn": "Tomēr aizvērt",
+  "nix_queue_close_title": "Nix darbības gaida!",
+  "nix_queue_close_message": "Rindā ievietotās Nix pakotņu instalēšanas vai noņemšanas vēl nav piemērotas. Tās paliks rindā, līdz palaidīsiet @{nix_apply_operations}, pat pēc LinuxToys aizvēršanas.",
   "installation_queue": "Instalēšanas rinda",
   "installed_features": "Instalētās funkcijas",
   "network": "Tīkls un internets",

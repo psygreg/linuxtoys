@@ -462,6 +462,8 @@
   "queue_close_message": "Má dhúnann tú LinuxToys, stopfar gach oibríocht atá sa scuaine agus gach oibríocht atá ar siúl. D'fhéadfadh fadhbanna a bheith ann le do chóras má chuirtear isteach ar oibríocht agus í ar siúl. An bhfuil tú cinnte?",
   "queue_close_continue_btn": "Fill ar LinuxToys",
   "queue_close_close_btn": "Dún mar sin féin",
+  "nix_queue_close_title": "Tá oibríochtaí Nix ar feitheamh!",
+  "nix_queue_close_message": "Níor cuireadh suiteálacha nó baint pacáistí Nix atá sa scuaine i bhfeidhm fós. Fanfaidh siad sa scuaine go dtí go rithfidh tú @{nix_apply_operations}, fiú tar éis LinuxToys a dhúnadh.",
   "installation_queue": "Scuaine suiteála",
   "installed_features": "Gnéithe suiteáilte",
   "network": "Líonra & Idirlíon",

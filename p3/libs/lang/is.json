@@ -462,6 +462,8 @@
   "queue_close_message": "Ef LinuxToys er lokað stöðvast allar aðgerðir í biðröð og þær sem eru í gangi. Ef aðgerð er stöðvuð á meðan hún er í gangi getur það valdið vandamálum í kerfinu þínu. Ertu viss?",
   "queue_close_continue_btn": "Fara aftur í LinuxToys",
   "queue_close_close_btn": "Loka samt",
+  "nix_queue_close_title": "Nix-aðgerðir bíða!",
+  "nix_queue_close_message": "Nix-pakkauppsetningar eða -fjarlægingar í biðröð hafa ekki verið virkjaðar enn. Þær verða áfram í biðröðinni þar til þú keyrir @{nix_apply_operations}, jafnvel eftir að LinuxToys er lokað.",
   "installation_queue": "Uppsetningarröð",
   "installed_features": "Uppsettir eiginleikar",
   "network": "Netkerfi og internet",

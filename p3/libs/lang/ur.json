@@ -462,6 +462,8 @@
   "queue_close_message": "LinuxToys کو بند کرنے سے قطار میں موجود اور جاری تمام کارروائیاں رک جائیں گی۔ کسی کارروائی کو جاری حالت میں روکنے سے آپ کے سسٹم میں مسائل پیدا ہو سکتے ہیں۔ کیا آپ کو یقین ہے؟",
   "queue_close_continue_btn": "LinuxToys پر واپس جائیں",
   "queue_close_close_btn": "پھر بھی بند کریں",
+  "nix_queue_close_title": "Nix کارروائیاں زیرِ التوا ہیں!",
+  "nix_queue_close_message": "قطار میں موجود Nix پیکیج کی تنصیب یا ہٹانے کے کام ابھی لاگو نہیں ہوئے۔ LinuxToys بند کرنے کے بعد بھی، جب تک آپ @{nix_apply_operations} نہیں چلاتے، وہ قطار میں رہیں گے۔",
   "installation_queue": "انسٹالیشن کی قطار",
   "installed_features": "انسٹال شدہ خصوصیات",
   "network": "نیٹ ورک اور انٹرنیٹ",

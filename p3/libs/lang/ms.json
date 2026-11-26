@@ -462,6 +462,8 @@
   "queue_close_message": "Menutup LinuxToys akan menghentikan semua operasi dalam baris gilir dan yang sedang berjalan. Mengganggu operasi semasa ia sedang berjalan boleh menyebabkan masalah pada sistem anda. Adakah anda pasti?",
   "queue_close_continue_btn": "Kembali ke LinuxToys",
   "queue_close_close_btn": "Tutup Juga",
+  "nix_queue_close_title": "Operasi Nix belum selesai!",
+  "nix_queue_close_message": "Pemasangan atau pembuangan pakej Nix yang beratur belum digunakan. Ia akan kekal dalam baris gilir sehingga anda menjalankan @{nix_apply_operations}, walaupun selepas LinuxToys ditutup.",
   "installation_queue": "Baris gilir pemasangan",
   "installed_features": "Ciri yang dipasang",
   "network": "Rangkaian & Internet",

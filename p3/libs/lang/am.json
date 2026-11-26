@@ -462,6 +462,8 @@
   "queue_close_message": "LinuxToysን መዝጋት በወረፋ ላይ ያሉ እና እየተከናወኑ ያሉ ሁሉንም ክወናዎች ያቆማል። አንድን ክወና በሂደት ላይ እያለ ማቋረጥ በስርዓትዎ ላይ ችግሮችን ሊያስከትል ይችላል። እርግጠኛ ነዎት?",
   "queue_close_continue_btn": "ወደ LinuxToys ተመለስ",
   "queue_close_close_btn": "ለማንኛውም ዝጋ",
+  "nix_queue_close_title": "የNix ስራዎች በመጠባበቅ ላይ ናቸው!",
+  "nix_queue_close_message": "በወረፋ ላይ ያሉ የNix ጥቅል ጭነቶች ወይም ማስወገዶች እስካሁን አልተተገበሩም። LinuxToys ከተዘጋ በኋላም እንኳ @{nix_apply_operations} እስኪያሄዱ ድረስ በወረፋ ይቆያሉ።",
   "installation_queue": "የመጫኛ ወረፋ",
   "installed_features": "የተጫኑ ባህሪያት",
   "network": "አውታረ መረብ እና በይነመረብ",

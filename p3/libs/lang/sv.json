@@ -462,6 +462,8 @@
   "queue_close_message": "Om du stänger LinuxToys stoppas alla åtgärder i kön och alla pågående åtgärder. Om en åtgärd avbryts medan den pågår kan det orsaka problem med systemet. Är du säker?",
   "queue_close_continue_btn": "Tillbaka till LinuxToys",
   "queue_close_close_btn": "Stäng ändå",
+  "nix_queue_close_title": "Nix-åtgärder väntar!",
+  "nix_queue_close_message": "Köade Nix-paketinstallationer eller -borttagningar har inte tillämpats ännu. De stannar i kön tills du kör @{nix_apply_operations}, även efter att LinuxToys stängs.",
   "installation_queue": "Installationskö",
   "installed_features": "Installerade funktioner",
   "network": "Nätverk och internet",

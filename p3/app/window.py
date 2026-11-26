@@ -4821,30 +4821,56 @@ class AppWindow(
         ) == Gtk.ResponseType.YES
 
     def _on_close_requested(self, _widget, _event):
-        """Guard application shutdown while AppStream work is still active."""
+        """Guard application shutdown while queued work is still pending."""
         runner = getattr(self, "_appstream_runner", None)
-        if runner is not None and runner.has_pending_operations():
-            if not self._show_queue_close_warning_dialog():
+        runner_pending = runner is not None and runner.has_pending_operations()
+        # Nix operations are declarative and stay queued until the rebuild
+        # runs, so closing here must warn just like active AppStream work.
+        nix_pending = nix_queue.pending()
+        if runner_pending or nix_pending:
+            if not self._show_queue_close_warning_dialog(
+                runner_pending, nix_pending
+            ):
                 return True
 
         self._close_application()
         return True
 
-    def _show_queue_close_warning_dialog(self):
+    def _show_queue_close_warning_dialog(
+        self, runner_pending=True, nix_pending=False
+    ):
         """Warn before closing while queued or running operations remain."""
-        # Return True if user clicked "Close Anyway" (YES), False otherwise
-        return gtk_dialogs.run_message_dialog(
-            self,
-            title=self.translations.get(
+        nix_message = self.translations.get(
+            "nix_queue_close_message",
+            "Queued Nix package installations or removals have not been applied "
+            "yet. They will stay queued until you run Apply Nix package "
+            "operations, even after LinuxToys closes.",
+        )
+        if runner_pending:
+            title = self.translations.get(
                 "queue_close_title",
                 "Operations Are Still Running",
-            ),
-            secondary_text=self.translations.get(
+            )
+            message = self.translations.get(
                 "queue_close_message",
                 "Closing LinuxToys will stop all queued and running operations. "
                 "Interrupting an operation while it is in progress may cause "
                 "problems with your system. Are you sure you want to close?",
-            ),
+            )
+            if nix_pending:
+                message = f"{nix_message}\n\n{message}"
+        else:
+            title = self.translations.get(
+                "nix_queue_close_title",
+                "Nix operations are pending!",
+            )
+            message = nix_message
+
+        # Return True if user clicked "Close Anyway" (YES), False otherwise
+        return gtk_dialogs.run_message_dialog(
+            self,
+            title=title,
+            secondary_text=message,
             message_type=Gtk.MessageType.WARNING,
             buttons=[
                 (self.translations.get(

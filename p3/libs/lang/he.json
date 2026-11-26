@@ -462,6 +462,8 @@
   "queue_close_message": "סגירת LinuxToys תעצור את כל הפעולות שבתור ואת כל הפעולות שפועלות כעת. הפסקת פעולה בזמן שהיא מתבצעת עלולה לגרום לבעיות במערכת שלך. האם אתה בטוח?",
   "queue_close_continue_btn": "חזרה ל-LinuxToys",
   "queue_close_close_btn": "סגירה בכל זאת",
+  "nix_queue_close_title": "פעולות Nix ממתינות!",
+  "nix_queue_close_message": "התקנות או הסרות של חבילות Nix בתור טרם הוחלו. הן יישארו בתור עד שתפעיל את @{nix_apply_operations}, גם לאחר סגירת LinuxToys.",
   "installation_queue": "תור התקנות",
   "installed_features": "תכונות מותקנות",
   "network": "רשת ואינטרנט",

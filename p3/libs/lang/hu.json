@@ -462,6 +462,8 @@
   "queue_close_message": "A LinuxToys bezárása leállítja az összes várakozó és folyamatban lévő műveletet. Egy folyamatban lévő művelet megszakítása problémákat okozhat a rendszerben. Biztos benne?",
   "queue_close_continue_btn": "Vissza a LinuxToyshoz",
   "queue_close_close_btn": "Bezárás mindenképpen",
+  "nix_queue_close_title": "Nix-műveletek függőben!",
+  "nix_queue_close_message": "A sorban lévő Nix-csomagtelepítések vagy -eltávolítások még nem kerültek alkalmazásra. A sorban maradnak, amíg nem futtatja a(z) @{nix_apply_operations} műveletet, még a LinuxToys bezárása után is.",
   "installation_queue": "Telepítési sor",
   "installed_features": "Telepített funkciók",
   "network": "Hálózat és internet",

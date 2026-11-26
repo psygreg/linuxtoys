@@ -462,6 +462,8 @@
   "queue_close_message": "Закрытие LinuxToys остановит все операции в очереди и все выполняющиеся операции. Прерывание выполняющейся операции может вызвать проблемы в вашей системе. Вы уверены?",
   "queue_close_continue_btn": "Вернуться в LinuxToys",
   "queue_close_close_btn": "Всё равно закрыть",
+  "nix_queue_close_title": "Операции Nix ожидают выполнения!",
+  "nix_queue_close_message": "Установки или удаления пакетов Nix в очереди ещё не применены. Они останутся в очереди, пока вы не запустите @{nix_apply_operations}, даже после закрытия LinuxToys.",
   "installation_queue": "Очередь установки",
   "installed_features": "Установленные функции",
   "network": "Сеть и Интернет",

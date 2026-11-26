@@ -462,6 +462,8 @@
   "queue_close_message": "LinuxToys を閉じると、キューに追加されている処理と実行中の処理がすべて停止します。実行中の処理を中断すると、システムに問題が発生する可能性があります。本当に閉じますか？",
   "queue_close_continue_btn": "LinuxToys に戻る",
   "queue_close_close_btn": "それでも閉じる",
+  "nix_queue_close_title": "Nix 操作が保留中です！",
+  "nix_queue_close_message": "キューに入れた Nix パッケージのインストールまたは削除はまだ適用されていません。LinuxToys を閉じた後も、@{nix_apply_operations} を実行するまでキューに残ります。",
   "installation_queue": "インストールキュー",
   "installed_features": "インストール済みの機能",
   "network": "ネットワークとインターネット",

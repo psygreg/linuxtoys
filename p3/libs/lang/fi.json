@@ -462,6 +462,8 @@
   "queue_close_message": "LinuxToysin sulkeminen pysäyttää kaikki jonossa olevat ja käynnissä olevat toiminnot. Käynnissä olevan toiminnon keskeyttäminen voi aiheuttaa ongelmia järjestelmässäsi. Oletko varma?",
   "queue_close_continue_btn": "Palaa LinuxToysiin",
   "queue_close_close_btn": "Sulje silti",
+  "nix_queue_close_title": "Nix-toiminnot odottavat!",
+  "nix_queue_close_message": "Jonossa olevia Nix-pakettien asennuksia tai poistoja ei ole vielä otettu käyttöön. Ne pysyvät jonossa, kunnes suoritat @{nix_apply_operations}, vaikka LinuxToys suljettaisiin.",
   "installation_queue": "Asennusjono",
   "installed_features": "Asennetut ominaisuudet",
   "network": "Verkko ja internet",

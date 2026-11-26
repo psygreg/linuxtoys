@@ -462,6 +462,8 @@
   "queue_close_message": "Hvis du lukker LinuxToys, stoppes alle handlinger i køen og alle igangværende handlinger. Hvis en handling afbrydes, mens den er i gang, kan det medføre problemer med dit system. Er du sikker?",
   "queue_close_continue_btn": "Tilbage til LinuxToys",
   "queue_close_close_btn": "Luk alligevel",
+  "nix_queue_close_title": "Nix-handlinger afventer!",
+  "nix_queue_close_message": "Nix-pakkeinstallationer eller -fjernelser i køen er endnu ikke anvendt. De forbliver i køen, indtil du kører @{nix_apply_operations}, selv efter LinuxToys lukkes.",
   "installation_queue": "Installationskø",
   "installed_features": "Installerede funktioner",
   "network": "Netværk og internet",

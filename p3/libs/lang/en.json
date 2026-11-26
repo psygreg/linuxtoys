@@ -469,6 +469,8 @@
   "queue_close_message": "Closing LinuxToys will stop all queued and running operations. Interrupting an operation while it is in progress may cause problems with your system. Are you sure?",
   "queue_close_continue_btn": "Return to LinuxToys",
   "queue_close_close_btn": "Close Anyway",
+  "nix_queue_close_title": "Nix operations are pending!",
+  "nix_queue_close_message": "Queued Nix package installations or removals have not been applied yet. They will stay queued until you run @{nix_apply_operations}, even after LinuxToys closes.",
   "installation_queue": "Installation Queue",
   "installed_features": "Installed Features",
   "network": "Network & Internet",

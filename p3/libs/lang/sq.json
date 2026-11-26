@@ -462,6 +462,8 @@
   "queue_close_message": "Mbyllja e LinuxToys do të ndalojë të gjitha veprimet në radhë dhe ato që janë duke u ekzekutuar. Ndërprerja e një veprimi ndërsa është në vazhdim mund të shkaktojë probleme në sistemin tuaj. Jeni të sigurt?",
   "queue_close_continue_btn": "Kthehu te LinuxToys",
   "queue_close_close_btn": "Mbylle gjithsesi",
+  "nix_queue_close_title": "Operacionet Nix janë në pritje!",
+  "nix_queue_close_message": "Instalimet ose heqjet e paketave Nix në radhë nuk janë aplikuar ende. Ato do të mbeten në radhë derisa të ekzekutoni @{nix_apply_operations}, edhe pas mbylljes së LinuxToys.",
   "installation_queue": "Radha e instalimit",
   "installed_features": "Veçoritë e instaluara",
   "network": "Rrjeti dhe interneti",

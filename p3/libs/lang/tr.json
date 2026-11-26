@@ -462,6 +462,8 @@
   "queue_close_message": "LinuxToys'u kapatmak sıradaki ve çalışmakta olan tüm işlemleri durduracaktır. Devam eden bir işlemi yarıda kesmek sisteminizde sorunlara neden olabilir. Emin misiniz?",
   "queue_close_continue_btn": "LinuxToys'a Dön",
   "queue_close_close_btn": "Yine de Kapat",
+  "nix_queue_close_title": "Nix işlemleri beklemede!",
+  "nix_queue_close_message": "Sıraya alınan Nix paket kurulumları veya kaldırmaları henüz uygulanmadı. LinuxToys kapandıktan sonra bile @{nix_apply_operations} komutunu çalıştırana kadar sırada kalacaklar.",
   "installation_queue": "Kurulum Sırası",
   "installed_features": "Yüklü Özellikler",
   "network": "Ağ ve İnternet",

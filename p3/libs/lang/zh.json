@@ -462,6 +462,8 @@
   "queue_close_message": "关闭 LinuxToys 将停止所有排队中和正在运行的操作。在操作进行过程中将其中断可能会导致系统出现问题。确定要关闭吗？",
   "queue_close_continue_btn": "返回 LinuxToys",
   "queue_close_close_btn": "仍然关闭",
+  "nix_queue_close_title": "Nix 操作待处理！",
+  "nix_queue_close_message": "排队的 Nix 软件包安装或移除尚未应用。即使关闭 LinuxToys，它们也会保留在队列中，直到你运行 @{nix_apply_operations}。",
   "installation_queue": "安装队列",
   "installed_features": "已安装的功能",
   "network": "网络与互联网",

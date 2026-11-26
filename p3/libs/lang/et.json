@@ -462,6 +462,8 @@
   "queue_close_message": "LinuxToysi sulgemine peatab kõik järjekorras olevad ja käimasolevad toimingud. Poolelioleva toimingu katkestamine võib põhjustada teie süsteemis probleeme. Kas olete kindel?",
   "queue_close_continue_btn": "Tagasi LinuxToysi",
   "queue_close_close_btn": "Sulge ikkagi",
+  "nix_queue_close_title": "Nixi toimingud ootavad!",
+  "nix_queue_close_message": "Järjekorda pandud Nixi pakettide paigaldusi või eemaldusi ei ole veel rakendatud. Need jäävad järjekorda, kuni käivitad @{nix_apply_operations}, isegi pärast LinuxToysi sulgemist.",
   "installation_queue": "Installimisjärjekord",
   "installed_features": "Installitud funktsioonid",
   "network": "Võrk ja internet",

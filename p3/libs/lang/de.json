@@ -462,6 +462,8 @@
   "queue_close_message": "Beim Schließen von LinuxToys werden alle Vorgänge in der Warteschlange sowie alle laufenden Vorgänge gestoppt. Das Unterbrechen eines laufenden Vorgangs kann Probleme mit Ihrem System verursachen. Sind Sie sicher?",
   "queue_close_continue_btn": "Zurück zu LinuxToys",
   "queue_close_close_btn": "Trotzdem schließen",
+  "nix_queue_close_title": "Nix-Vorgänge stehen aus!",
+  "nix_queue_close_message": "In der Warteschlange befindliche Nix-Paketinstallationen oder -entfernungen wurden noch nicht angewendet. Sie bleiben in der Warteschlange, bis du @{nix_apply_operations} ausführst – auch nach dem Schließen von LinuxToys.",
   "installation_queue": "Installationswarteschlange",
   "installed_features": "Installierte Funktionen",
   "network": "Netzwerk & Internet",

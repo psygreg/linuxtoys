@@ -462,6 +462,8 @@
   "queue_close_message": "Zatvaranje LinuxToysa zaustavit će sve operacije na čekanju i one koje su trenutno u tijeku. Prekidanje operacije dok je u tijeku može uzrokovati probleme sa sustavom. Jeste li sigurni?",
   "queue_close_continue_btn": "Vrati se na LinuxToys",
   "queue_close_close_btn": "Ipak zatvori",
+  "nix_queue_close_title": "Nix operacije čekaju!",
+  "nix_queue_close_message": "Instalacije ili uklanjanja Nix paketa u redu čekanja još nisu primijenjene. Ostat će u redu čekanja dok ne pokrenete @{nix_apply_operations}, čak i nakon zatvaranja LinuxToysa.",
   "installation_queue": "Red za instalaciju",
   "installed_features": "Instalirane značajke",
   "network": "Mreža i internet",

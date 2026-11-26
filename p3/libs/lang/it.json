@@ -462,6 +462,8 @@
   "queue_close_message": "La chiusura di LinuxToys interromperà tutte le operazioni in coda e in esecuzione. Interrompere un'operazione mentre è in corso può causare problemi al sistema. Sei sicuro?",
   "queue_close_continue_btn": "Torna a LinuxToys",
   "queue_close_close_btn": "Chiudi comunque",
+  "nix_queue_close_title": "Operazioni Nix in sospeso!",
+  "nix_queue_close_message": "Le installazioni o rimozioni di pacchetti Nix in coda non sono ancora state applicate. Resteranno in coda finché non esegui @{nix_apply_operations}, anche dopo aver chiuso LinuxToys.",
   "installation_queue": "Coda di installazione",
   "installed_features": "Funzionalità installate",
   "network": "Rete e Internet",

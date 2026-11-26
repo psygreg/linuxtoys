@@ -462,6 +462,8 @@
   "queue_close_message": "Ang pagsara sa LinuxToys ay magpapatigil sa lahat ng operasyong nasa pila at kasalukuyang tumatakbo. Ang pagputol sa isang operasyon habang isinasagawa ito ay maaaring magdulot ng problema sa iyong system. Sigurado ka ba?",
   "queue_close_continue_btn": "Bumalik sa LinuxToys",
   "queue_close_close_btn": "Isara Pa Rin",
+  "nix_queue_close_title": "May nakabinbing operasyon ng Nix!",
+  "nix_queue_close_message": "Hindi pa naiaaplay ang mga naka-queue na pag-install o pag-alis ng Nix package. Mananatili sila sa pila hanggang patakbuhin mo ang @{nix_apply_operations}, kahit pagkatapos isara ang LinuxToys.",
   "installation_queue": "Pila ng pag-install",
   "installed_features": "Mga naka-install na feature",
   "network": "Network at Internet",

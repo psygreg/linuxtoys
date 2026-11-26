@@ -462,6 +462,8 @@
   "queue_close_message": "Uždarius LinuxToys bus sustabdytos visos eilėje laukiančios ir vykdomos operacijos. Vykdomos operacijos nutraukimas gali sukelti problemų jūsų sistemoje. Ar tikrai norite tęsti?",
   "queue_close_continue_btn": "Grįžti į LinuxToys",
   "queue_close_close_btn": "Vis tiek uždaryti",
+  "nix_queue_close_title": "Nix operacijos laukia!",
+  "nix_queue_close_message": "Eilėje esantys Nix paketų diegimai ar šalinimai dar nepritaikyti. Jie liks eilėje, kol paleisite @{nix_apply_operations}, net ir uždarius LinuxToys.",
   "installation_queue": "Diegimo eilė",
   "installed_features": "Įdiegtos funkcijos",
   "network": "Tinklas ir internetas",

@@ -462,6 +462,8 @@
   "queue_close_message": "LinuxToys বন্ধ করলে সারিতে থাকা এবং বর্তমানে চলমান সব অপারেশন বন্ধ হয়ে যাবে। কোনো অপারেশন চলাকালীন বাধা দিলে আপনার সিস্টেমে সমস্যা হতে পারে। আপনি কি নিশ্চিত?",
   "queue_close_continue_btn": "LinuxToys-এ ফিরে যান",
   "queue_close_close_btn": "তবুও বন্ধ করুন",
+  "nix_queue_close_title": "Nix কার্যক্রম অপেক্ষমাণ!",
+  "nix_queue_close_message": "সারিতে থাকা Nix প্যাকেজ ইনস্টল বা অপসারণ এখনও প্রয়োগ করা হয়নি। LinuxToys বন্ধ করার পরেও, আপনি @{nix_apply_operations} চালানোর আগ পর্যন্ত সেগুলো সারিতে থাকবে।",
   "installation_queue": "ইনস্টলেশন সারি",
   "installed_features": "ইনস্টল করা বৈশিষ্ট্য",
   "network": "নেটওয়ার্ক ও ইন্টারনেট",

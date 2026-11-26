@@ -462,6 +462,8 @@
   "queue_close_message": "Menutup LinuxToys akan menghentikan semua operasi yang berada dalam antrean dan yang sedang berjalan. Menghentikan operasi saat sedang berlangsung dapat menyebabkan masalah pada sistem Anda. Apakah Anda yakin?",
   "queue_close_continue_btn": "Kembali ke LinuxToys",
   "queue_close_close_btn": "Tetap Tutup",
+  "nix_queue_close_title": "Operasi Nix tertunda!",
+  "nix_queue_close_message": "Pemasangan atau penghapusan paket Nix yang antre belum diterapkan. Paket tersebut akan tetap dalam antrean hingga Anda menjalankan @{nix_apply_operations}, bahkan setelah LinuxToys ditutup.",
   "installation_queue": "Antrean instalasi",
   "installed_features": "Fitur terinstal",
   "network": "Jaringan & Internet",

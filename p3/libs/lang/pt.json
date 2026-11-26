@@ -462,6 +462,8 @@
   "queue_close_message": "Fechar o LinuxToys interromperá todas as operações na fila e em andamento. Interromper uma operação enquanto ela está em andamento pode causar problemas no seu sistema. Tem certeza?",
   "queue_close_continue_btn": "Voltar ao LinuxToys",
   "queue_close_close_btn": "Fechar Mesmo Assim",
+  "nix_queue_close_title": "Operações do Nix pendentes!",
+  "nix_queue_close_message": "Instalações ou remoções de pacotes Nix na fila ainda não foram aplicadas. Elas permanecerão na fila até você executar @{nix_apply_operations}, mesmo depois de fechar o LinuxToys.",
   "installation_queue": "Fila de Instalação",
   "installed_features": "Recursos Instalados",
   "network": "Rede e Internet",

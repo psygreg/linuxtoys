@@ -462,6 +462,8 @@
   "queue_close_message": "Cerrar LinuxToys detendrá todas las operaciones en cola y en ejecución. Interrumpir una operación mientras está en curso puede causar problemas en el sistema. ¿Estás seguro?",
   "queue_close_continue_btn": "Volver a LinuxToys",
   "queue_close_close_btn": "Cerrar de todos modos",
+  "nix_queue_close_title": "¡Operaciones de Nix pendientes!",
+  "nix_queue_close_message": "Las instalaciones o desinstalaciones de paquetes Nix en cola aún no se han aplicado. Permanecerán en cola hasta que ejecutes @{nix_apply_operations}, incluso después de cerrar LinuxToys.",
   "installation_queue": "Cola de instalación",
   "installed_features": "Funciones instaladas",
   "network": "Red e Internet",

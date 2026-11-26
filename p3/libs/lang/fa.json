@@ -462,6 +462,8 @@
   "queue_close_message": "بستن LinuxToys همه عملیات‌های در صف و در حال اجرا را متوقف می‌کند. قطع کردن یک عملیات در حین اجرا ممکن است باعث بروز مشکل در سیستم شما شود. آیا مطمئن هستید؟",
   "queue_close_continue_btn": "بازگشت به LinuxToys",
   "queue_close_close_btn": "در هر صورت ببند",
+  "nix_queue_close_title": "عملیات Nix در انتظار است!",
+  "nix_queue_close_message": "نصب یا حذف بسته‌های Nix در صف هنوز اعمال نشده است. آن‌ها تا زمانی که @{nix_apply_operations} را اجرا نکنید، حتی پس از بستن LinuxToys، در صف باقی می‌مانند.",
   "installation_queue": "صف نصب",
   "installed_features": "ویژگی‌های نصب‌شده",
   "network": "شبکه و اینترنت",

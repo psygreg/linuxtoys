@@ -462,6 +462,8 @@
   "queue_close_message": "LinuxToys-u bağlamaq növbədə olan və hazırda davam edən bütün əməliyyatları dayandıracaq. Əməliyyatı davam etdiyi zaman yarımçıq kəsmək sisteminizdə problemlərə səbəb ola bilər. Əminsiniz?",
   "queue_close_continue_btn": "LinuxToys-a qayıt",
   "queue_close_close_btn": "Yenə də bağla",
+  "nix_queue_close_title": "Nix əməliyyatları gözləyir!",
+  "nix_queue_close_message": "Növbədə olan Nix paket quraşdırmaları və ya silinmələri hələ tətbiq olunmayıb. LinuxToys bağlandıqdan sonra belə, @{nix_apply_operations} işə salınana qədər növbədə qalacaqlar.",
   "installation_queue": "Quraşdırma növbəsi",
   "installed_features": "Quraşdırılmış funksiyalar",
   "network": "Şəbəkə və İnternet",

@@ -462,6 +462,8 @@
   "queue_close_message": "Als je LinuxToys sluit, worden alle bewerkingen in de wachtrij en alle actieve bewerkingen gestopt. Het onderbreken van een actieve bewerking kan problemen met je systeem veroorzaken. Weet je het zeker?",
   "queue_close_continue_btn": "Terug naar LinuxToys",
   "queue_close_close_btn": "Toch sluiten",
+  "nix_queue_close_title": "Nix-bewerkingen in behandeling!",
+  "nix_queue_close_message": "In de wachtrij geplaatste Nix-pakketinstallaties of -verwijderingen zijn nog niet toegepast. Ze blijven in de wachtrij tot je @{nix_apply_operations} uitvoert, zelfs nadat LinuxToys is gesloten.",
   "installation_queue": "Installatiewachtrij",
   "installed_features": "Geïnstalleerde functies",
   "network": "Netwerk en internet",

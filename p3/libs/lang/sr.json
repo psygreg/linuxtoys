@@ -462,6 +462,8 @@
   "queue_close_message": "Затварање LinuxToys-а ће зауставити све операције на чекању и оне које су тренутно у току. Прекидање операције док је у току може изазвати проблеме са системом. Да ли сте сигурни?",
   "queue_close_continue_btn": "Врати се у LinuxToys",
   "queue_close_close_btn": "Ипак затвори",
+  "nix_queue_close_title": "Nix операције чекају!",
+  "nix_queue_close_message": "Инсталације или уклањања Nix пакета у реду чекања још нису примењене. Остаће у реду чекања док не покренете @{nix_apply_operations}, чак и након затварања LinuxToys-а.",
   "installation_queue": "Ред за инсталацију",
   "installed_features": "Инсталиране функције",
   "network": "Мрежа и интернет",

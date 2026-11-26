@@ -462,6 +462,8 @@
   "queue_close_message": "Kufunga LinuxToys kutasimamisha operesheni zote zilizo kwenye foleni na zinazoendelea. Kukatiza operesheni wakati inaendelea kunaweza kusababisha matatizo kwenye mfumo wako. Una uhakika?",
   "queue_close_continue_btn": "Rudi kwenye LinuxToys",
   "queue_close_close_btn": "Funga Hata Hivyo",
+  "nix_queue_close_title": "Operesheni za Nix zinasubiri!",
+  "nix_queue_close_message": "Usakinishaji au uondoaji wa vifurushi vya Nix vilivyo kwenye foleni bado havijatekelezwa. Vitabaki kwenye foleni hadi utakapoendesha @{nix_apply_operations}, hata baada ya LinuxToys kufungwa.",
   "installation_queue": "Foleni ya usakinishaji",
   "installed_features": "Vipengele vilivyosakinishwa",
   "network": "Mtandao na Intaneti",

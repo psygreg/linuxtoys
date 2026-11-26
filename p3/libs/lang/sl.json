@@ -462,6 +462,8 @@
   "queue_close_message": "Če zaprete LinuxToys, se bodo ustavili vsi postopki v čakalni vrsti in vsi postopki, ki se trenutno izvajajo. Prekinitev postopka med izvajanjem lahko povzroči težave v sistemu. Ali ste prepričani?",
   "queue_close_continue_btn": "Nazaj v LinuxToys",
   "queue_close_close_btn": "Vseeno zapri",
+  "nix_queue_close_title": "Operacije Nix čakajo!",
+  "nix_queue_close_message": "Namestitve ali odstranitve paketov Nix v čakalni vrsti še niso bile uporabljene. Ostale bodo v čakalni vrsti, dokler ne zaženete @{nix_apply_operations}, tudi po zaprtju LinuxToys.",
   "installation_queue": "Čakalna vrsta za namestitev",
   "installed_features": "Nameščene funkcije",
   "network": "Omrežje in internet",

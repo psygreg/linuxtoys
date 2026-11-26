@@ -462,6 +462,8 @@
   "queue_close_message": "LinuxToys-ni yopish navbatdagi va bajarilayotgan barcha amallarni to‘xtatadi. Bajarilayotgan amalni to‘xtatib qo‘yish tizimingizda muammolarga olib kelishi mumkin. Ishonchingiz komilmi?",
   "queue_close_continue_btn": "LinuxToys-ga qaytish",
   "queue_close_close_btn": "Baribir yopish",
+  "nix_queue_close_title": "Nix amallari kutilmoqda!",
+  "nix_queue_close_message": "Navbatdagi Nix paketlarini o‘rnatish yoki olib tashlash hali qo‘llanmagan. LinuxToys yopilgandan keyin ham, @{nix_apply_operations} ni ishga tushirmaguningizcha ular navbatda qoladi.",
   "installation_queue": "O‘rnatish navbati",
   "installed_features": "O‘rnatilgan funksiyalar",
   "network": "Tarmoq va internet",

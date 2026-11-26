@@ -462,6 +462,8 @@
   "queue_close_message": "Zatvorením LinuxToys sa zastavia všetky operácie vo fronte aj práve prebiehajúce operácie. Prerušenie prebiehajúcej operácie môže spôsobiť problémy so systémom. Naozaj chcete pokračovať?",
   "queue_close_continue_btn": "Vrátiť sa do LinuxToys",
   "queue_close_close_btn": "Napriek tomu zavrieť",
+  "nix_queue_close_title": "Operácie Nix čakajú!",
+  "nix_queue_close_message": "Inštalácie alebo odstránenia balíkov Nix vo fronte ešte neboli použité. Zostanú vo fronte, kým nespustíte @{nix_apply_operations}, aj po zatvorení LinuxToys.",
   "installation_queue": "Front inštalácií",
   "installed_features": "Nainštalované funkcie",
   "network": "Sieť a internet",

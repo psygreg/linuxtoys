@@ -462,6 +462,8 @@
   "queue_close_message": "Închiderea LinuxToys va opri toate operațiunile aflate în așteptare și în desfășurare. Întreruperea unei operațiuni în timp ce aceasta este în desfășurare poate cauza probleme sistemului. Sunteți sigur?",
   "queue_close_continue_btn": "Înapoi la LinuxToys",
   "queue_close_close_btn": "Închide oricum",
+  "nix_queue_close_title": "Operațiuni Nix în așteptare!",
+  "nix_queue_close_message": "Instalările sau eliminările de pachete Nix din coadă nu au fost încă aplicate. Vor rămâne în coadă până când veți rula @{nix_apply_operations}, chiar și după închiderea LinuxToys.",
   "installation_queue": "Coadă de instalare",
   "installed_features": "Funcționalități instalate",
   "network": "Rețea și internet",
