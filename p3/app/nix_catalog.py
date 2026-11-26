@@ -97,6 +97,7 @@ _ATTR_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_'-]*$")
 _MODULE_PACKAGE_RE = re.compile(
     r"^\s*pkgs\.([A-Za-z_][A-Za-z0-9_'-]*)\s*(?:#.*)?$", re.MULTILINE
 )
+_NIX_PACKAGE_RE = re.compile(r"^\s*nix\.package\s*=", re.MULTILINE)
 _GPU_ENABLE_RE = re.compile(
     r"\b(?:targets\.genericLinux\.)?gpu\.enable\s*=\s*"
     r"(?:lib\.)?(?:mkDefault\s+|mkForce\s+)?true\b"
@@ -602,7 +603,7 @@ def maintenance_setup_required():
 
 
 def maintenance_configured():
-    """Whether the generated Home Manager module has the cleanup service."""
+    """Whether the module has the cleanup service and its nix.package."""
     if not maintenance_setup_required():
         return True
     script = Path(os.path.expanduser("~/.local/share/linuxtoys/nix-gc.sh"))
@@ -614,7 +615,7 @@ def maintenance_configured():
         )
     except OSError:
         return False
-    return _NIX_GC_MARKER in content
+    return _NIX_GC_MARKER in content and bool(_NIX_PACKAGE_RE.search(content))
 
 
 def setup_status():

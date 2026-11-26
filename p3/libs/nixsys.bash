@@ -8,6 +8,7 @@
 NIX_TOYS_BEGIN="# BEGIN LinuxToys managed packages"
 NIX_TOYS_END="# END LinuxToys managed packages"
 _NIX_GPU_SETUP_ATTEMPTED=0
+_NIX_HM_NIX_CONF_BACKUP=""
 
 _nix_bin() {
     command -v nix 2>/dev/null || {
@@ -340,6 +341,11 @@ EOF
     fi
     if [ "$scope" != "system" ] && ! nix_is_nixos; then
         maintenance=$(cat <<'EOF'
+  # Home Manager only generates nix.conf when it knows which Nix package to
+  # use. NixOS supplies one through the system module; standalone installs
+  # must name it, or nix.settings below aborts the rebuild.
+  nix.package = lib.mkDefault pkgs.nix;
+  nix.settings.extra-experimental-features = [ "nix-command" "flakes" ];
   nix.gc = {
     automatic = true;
     dates = "weekly";
@@ -535,9 +541,14 @@ EOF
     _nix_write_script "$target" "$content"
 }
 
+# Older generated modules carry the cleanup service without nix.package, which
+# makes Home Manager abort on non-NixOS; treat them as outdated so setup
+# rewrites them before the next rebuild.
 nix_maintenance_configured() {
     [ -f "$HOME/.local/share/linuxtoys/nix-gc.sh" ] \
         && grep -qF 'systemd.user.services.nix-gc.Service.ExecStart' \
+            "$(_nix_hm_module)" 2>/dev/null \
+        && grep -qE '^[[:space:]]*nix\.package[[:space:]]*=' \
             "$(_nix_hm_module)" 2>/dev/null
 }
 
@@ -727,6 +738,10 @@ _nix_ensure_import() {
 # Setup
 # ---------------------------------------------------------------------------
 
+_nix_user_nix_conf() {
+    printf '%s\n' "${XDG_CONFIG_HOME:-$HOME/.config}/nix/nix.conf"
+}
+
 _nix_enable_flakes() {
     local directory config
     directory="${XDG_CONFIG_HOME:-$HOME/.config}/nix"
@@ -739,6 +754,44 @@ _nix_enable_flakes() {
         } >>"$config" || return 1
     fi
     nix_flakes_enabled
+}
+
+# _nix_enable_flakes creates a regular user nix.conf when flakes are disabled.
+# The generated module now manages that path through nix.settings, so a file
+# carrying only LinuxToys' flake line is moved aside before the Home Manager
+# switch; the generated nix.conf contains the same extra features.
+_nix_stash_linux_toys_nix_conf() {
+    local config line backup index=1 active=0
+    config=$(_nix_user_nix_conf)
+    [ -f "$config" ] && [ ! -L "$config" ] || return 0
+    while IFS= read -r line || [ -n "$line" ]; do
+        line=${line#"${line%%[![:space:]]*}"}
+        line=${line%"${line##*[![:space:]]}"}
+        [ -z "$line" ] && continue
+        case "$line" in
+            \#*) continue ;;
+            "extra-experimental-features = nix-command flakes") active=1 ;;
+            *) return 0 ;;
+        esac
+    done <"$config"
+    ((active)) || return 0
+    backup="${config}.linuxtoys.bak"
+    while [ -e "$backup" ]; do
+        backup="${config}.linuxtoys.bak.$index"
+        index=$((index + 1))
+    done
+    mv -f -- "$config" "$backup" || return 1
+    _NIX_HM_NIX_CONF_BACKUP="$backup"
+}
+
+_nix_restore_user_nix_conf() {
+    local config
+    [ -n "${_NIX_HM_NIX_CONF_BACKUP:-}" ] || return 0
+    config=$(_nix_user_nix_conf)
+    if [ ! -e "$config" ]; then
+        mv -f -- "$_NIX_HM_NIX_CONF_BACKUP" "$config" 2>/dev/null || true
+    fi
+    _NIX_HM_NIX_CONF_BACKUP=""
 }
 
 _nix_install_home_manager() {
@@ -926,8 +979,8 @@ nix_install_repo_flake() {
 # ---------------------------------------------------------------------------
 
 _nix_rebuild() {
-    local scope="$1" directory
-    local -a hm_command
+    local scope="$1" directory rc
+    local -a hm_command current
     _NIX_GPU_SETUP_ATTEMPTED=0
     if [ "${LINUXTOYS_NIX_DRY_RUN:-0}" = "1" ]; then
         printf 'Skipping %s rebuild (dry run).\n' "$scope"
@@ -963,7 +1016,24 @@ _nix_rebuild() {
         printf 'No Home Manager configuration found in %s.\n' "$directory" >&2
         return 1
     fi
+    _NIX_HM_NIX_CONF_BACKUP=""
+    if ! nix_is_nixos; then
+        if [ -f "$(_nix_hm_module)" ]; then
+            # A module generated before nix.package was added would abort the
+            # switch; refresh it here so update-only/rebuild-only paths recover.
+            if ! nix_maintenance_configured; then
+                mapfile -t current < <(_nix_module_read_packages home-manager)
+                _nix_write_module home-manager "${current[@]}" || return 1
+            fi
+            _nix_stash_linux_toys_nix_conf || true
+        fi
+    fi
     _nix_run_home_manager_switch "${hm_command[@]}"
+    rc=$?
+    if [ "$rc" -ne 0 ]; then
+        _nix_restore_user_nix_conf
+    fi
+    return "$rc"
 }
 
 _nix_channel_bin() {
