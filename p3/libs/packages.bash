@@ -990,6 +990,9 @@ pkg_flat() {
             || die "pkg_flat: unsupported Flatpak remote: $_remote"
     fi
 
+    if is_nixos && declare -F nix_ensure_flatpak >/dev/null 2>&1; then
+        nix_ensure_flatpak || die "$PKG_FLAT_SETUP_REQUIRED"
+    fi
     command -v flatpak >/dev/null 2>&1 || die "$PKG_FLAT_SETUP_REQUIRED"
     local flatpak_scope="--user"
     if [[ $_skip_user -eq 1 ]]; then
@@ -2826,6 +2829,14 @@ fuse2_deb_update () {
 pkg_appimage () {
     [[ $# -gt 0 ]] || die "No AppImage files provided"
     _architecture_check files "$@"
+    if is_nixos; then
+        # NixOS runs AppImages through appimage-run via a binfmt registration.
+        # Enable it once in the managed system module before integrating the
+        # AppImage, so direct execution from the desktop entry and PATH link
+        # behaves like every other host.
+        declare -F nix_ensure_appimage >/dev/null || die "NixOS AppImage support is unavailable"
+        nix_ensure_appimage || die "AppImage support could not be enabled on this NixOS system"
+    fi
     # update handling
     local appimage_input previous_appimage
     local -a appimage_inputs=()
@@ -2854,7 +2865,7 @@ pkg_appimage () {
         fi
     fi
 
-    { is_ubuntu || is_debian; } && _pkg_appimage_ensure_fuse2
+    { { is_ubuntu || is_debian; } && ! is_nixos; } && _pkg_appimage_ensure_fuse2
     { is_fedora || is_ostree || is_rhel; } && {
         pkg_exists fuse
         [[ ! ${#pkg_notfound[@]} -eq 0 ]] && {

@@ -31,7 +31,7 @@ from . import _catalog_rs as _catalog_rs
 from .compat import get_linuxtoys_cache_dir
 
 
-CACHE_SCHEMA = 26
+CACHE_SCHEMA = 27
 CACHE_MAX_AGE = 14 * 24 * 60 * 60
 CHECKPOINT_EVERY = 100
 
@@ -705,7 +705,9 @@ def debian_appstream_metadata_missing() -> bool:
 
 # Match the system catalog layouts used by GNOME Software. Modern locations
 # take precedence over legacy ones; resolve symlinks to avoid reading twice.
-_NATIVE_CATALOG_ROOTS = ("/usr/share", "/var/cache", "/var/lib")
+# NixOS keeps the system profile under /run/current-system/sw, where installed
+# nixpkgs packages publish their AppStream catalogs instead of /usr/share.
+_NATIVE_CATALOG_ROOTS = ("/usr/share", "/var/cache", "/var/lib", "/run/current-system/sw/share")
 _NATIVE_CATALOG_LAYOUTS = (
     ("app-info", "xml"), ("app-info", "xmls"), ("app-info", "yaml"),
     ("swcatalog", "xml"), ("swcatalog", "yaml"),

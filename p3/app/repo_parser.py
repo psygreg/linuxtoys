@@ -62,6 +62,7 @@ OS_KEYS = {
     "pika",
     "deepin",
     "manjaro",
+    "nixos",
 }
 
 VALID_TYPES = {"git", "tar", "bin", "make", "flathub", "snap", "native", "repository", "url", "external"}
@@ -85,6 +86,7 @@ NATIVE_PACKAGE_KEY_PRIORITY = (
     "suse",
     "solus",
     "arch",
+    "nixos",
 )
 
 # Use the same specificity ordering for per-OS install-type mappings.
@@ -727,6 +729,15 @@ def _build_repo_entries(scripts_dir, translations=None, list_paths=None, compat_
         if not isinstance(entry, dict):
             continue
 
+        install_type = entry.get("_rust_resolved_type")
+        if "nixos" in compat_keys and install_type == "git":
+            # Repository listings are available on NixOS only through a flake in
+            # their repository. The Rust catalog has already verified the
+            # git-db flake marker; carry the reference for the install path.
+            repo_url = str(entry.get("repo") or "").strip()
+            if repo_url:
+                entry["nix_flake"] = repo_url
+
         try:
             architecture.require_entry(entry)
             architecture.require_overrides(
@@ -742,8 +753,12 @@ def _build_repo_entries(scripts_dir, translations=None, list_paths=None, compat_
             continue
 
         item = dict(entry)
-        install_type = item.pop("_rust_resolved_type", None)
+        item.pop("_rust_resolved_type", None)
         item["_architecture_source"] = item.pop("_list_source", None)
+        if item.get("nix_flake"):
+            # The flake import registers its own Nix transaction; the wrapper
+            # script must not leave a second, unremovable repo transaction.
+            item["registry"] = "no"
         if "license" in item and isinstance(item["license"], str):
             item["license"] = item["license"].strip()
 
@@ -1071,29 +1086,44 @@ def compose_install_script(entry) -> str:
     ):
         raise ValueError("Make repository installations are unsupported on this immutable host")
 
-    if not _validate_tarball_post_requirement(entry, compat_keys):
-        raise ValueError(
-            "Tarball repository entries require an overrides.post hook"
-        )
-
-    dependency_commands = _create_dependency_commands(
-        entry,
-        compat_keys,
-    )
-    steamos_user_make = _steamos_user_make(entry, compat_keys)
+    nix_flake = str(entry.get("nix_flake") or "").strip()
+    steamos_user_make = False
     make_build_dependencies = []
-    if steamos_user_make:
-        make_build_dependencies = [
-            cmd[len("pkg_install "):]
-            for cmd in dependency_commands
-            if cmd.startswith("pkg_install ")
-        ]
-        dependency_commands = [
-            cmd for cmd in dependency_commands if not cmd.startswith("pkg_install ")
-        ]
+    if nix_flake:
+        # NixOS repository listings are installed as flakes. Their flake output
+        # decides its own dependencies; distro package dependencies do not apply.
+        dependency_commands = []
+    else:
+        if not _validate_tarball_post_requirement(entry, compat_keys):
+            raise ValueError(
+                "Tarball repository entries require an overrides.post hook"
+            )
+
+        dependency_commands = _create_dependency_commands(
+            entry,
+            compat_keys,
+        )
+        steamos_user_make = _steamos_user_make(entry, compat_keys)
+        if steamos_user_make:
+            make_build_dependencies = [
+                cmd[len("pkg_install "):]
+                for cmd in dependency_commands
+                if cmd.startswith("pkg_install ")
+            ]
+            dependency_commands = [
+                cmd for cmd in dependency_commands if not cmd.startswith("pkg_install ")
+            ]
     command = None
 
-    if install_type == "git":
+    if nix_flake:
+        # The flake install registers its own 'Nix flake' Action Registry
+        # transaction, so the wrapper script must not add a second one.
+        command = (
+            f"nix_install_repo_flake {shlex.quote(nix_flake)} "
+            f"{shlex.quote(name)} || exit $?"
+        )
+
+    elif install_type == "git":
         asset_selectors = _resolve_package_names(entry, compat_keys)
         command = f"pkg_fromrelease {shlex.quote(repo)}"
         if asset_selectors:
@@ -1250,8 +1280,14 @@ python3 "$SCRIPT_DIR/app/library_loader.py" "$_external_script" || exit $?
     pre_override = _create_hook_command(entry, "pre")
     post_override = _create_hook_command(entry, "post")
 
-    override_commands = _create_override_commands(entry)
-    service_commands = _create_service_commands(entry)
+    if nix_flake:
+        override_commands = []
+        service_commands = []
+        registry_header = "# registry: no\n"
+    else:
+        override_commands = _create_override_commands(entry)
+        service_commands = _create_service_commands(entry)
+        registry_header = ""
 
     # Each helper preflights before authenticating. Services request their own
     # authorization after the package transaction succeeds.
@@ -1267,7 +1303,7 @@ python3 "$SCRIPT_DIR/app/library_loader.py" "$_external_script" || exit $?
 # icon: {icon}
 # repo: {repo_metadata}
 # revert: yes
-
+{registry_header}
 {pre_override}
 
 {command_block}

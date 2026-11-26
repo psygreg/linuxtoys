@@ -4,6 +4,9 @@
 # icon: topgrade.svg
 # revert: no
 # registry: no
+# nixos: yes
+# architectures: x86_64, aarch64
+# requires-script-api: 1
 
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
@@ -21,6 +24,15 @@ needs_reboot() {
         fi
         printf '%s' "$status_json" | grep -q '"staged"[[:space:]]*:[[:space:]]*true'
         return $?
+    elif is_nixos; then
+        # A NixOS switch updates the running system immediately, but a changed
+        # kernel only takes effect after reboot. Compare the current generation
+        # with the one that booted.
+        [ -e /run/current-system/kernel ] && [ -e /run/booted-system/kernel ] || return 1
+        local current_kernel booted_kernel
+        current_kernel=$(readlink -f /run/current-system/kernel 2>/dev/null) || current_kernel=""
+        booted_kernel=$(readlink -f /run/booted-system/kernel 2>/dev/null) || booted_kernel=""
+        [ -n "$current_kernel" ] && [ "$current_kernel" != "$booted_kernel" ]
     elif is_fedora || is_rhel; then
         # 'dnf needs-restarting -r' exits 0 when NO reboot is required and 1 when
         # a reboot IS required. Treat "reboot required" as a recommendation to
@@ -188,7 +200,13 @@ echo "$sysup_starting"
 # Outside the runner (LINUXTOYS_RUNNER_STATE unset) the lock is a no-op, so
 # plain CLI launches are unaffected.
 [ "$UPD_SERVICE" != "1" ] && runner_lock "package-transaction" ""
-if is_steamos; then
+nix_native_update_done=0
+if is_nixos; then
+    # NixOS has no imperative distro package transaction: the system profile
+    # and Home Manager are updated and rebuilt by the Nix subsystem.
+    nix_update || fatal "Failed to update the NixOS system"
+    nix_native_update_done=1
+elif is_steamos; then
     # SteamOS-style immutables manage their packages through the OS image, so
     # there is nothing to do here. Flatpaks, Homebrew and git apps still update.
     :
@@ -293,7 +311,9 @@ fi
 # Update Nix-managed packages when Nix is present: the NixOS system profile
 # and/or Home Manager on any distro that has it. Home Manager's GPU-driver
 # warning is captured by the rebuild helper and re-runs non-NixOS GPU setup.
-nix_update || warn "Failed to update Nix packages"
+if [ "$nix_native_update_done" -eq 0 ]; then
+    nix_update || warn "Failed to update Nix packages"
+fi
 
 if command -v flatpak >/dev/null 2>&1; then
     if [ "$UPD_SERVICE" = "1" ]; then

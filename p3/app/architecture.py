@@ -575,6 +575,11 @@ def require_entry(entry: Mapping[str, Any], machine: str | None = None) -> None:
                     "A required dependency does not support this architecture"
                 )
         return
+    if entry.get("nix_flake"):
+        # A NixOS repository listing is installed from its flake. Like nixpkgs,
+        # the flake evaluates for the host ISA, so release-asset evidence from
+        # git-db.json does not apply.
+        return
     if entry.get("is_appstream_entry") and entry.get("type") in {
         "native", "flathub", "snap", "homebrew",
     }:

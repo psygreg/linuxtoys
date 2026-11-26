@@ -27,6 +27,22 @@ _nix_queue_file() {
     printf '%s\n' "${LINUXTOYS_NIX_QUEUE:-$(_nix_state_dir)/queue.json}"
 }
 
+# System features LinuxToys may add to the NixOS module on demand. The marker
+# lives in the user cache (like the unfree choice), while the resulting option
+# is rendered into the root-owned module on the next rewrite/rebuild.
+_nix_feature_marker() {
+    printf '%s\n' "$(_nix_state_dir)/feature-$1"
+}
+
+_nix_feature_enabled() {
+    [ "$(cat "$(_nix_feature_marker "$1")" 2>/dev/null)" = "1" ]
+}
+
+_nix_mark_feature() {
+    mkdir -p -- "$(_nix_state_dir)" 2>/dev/null || true
+    printf '1\n' >"$(_nix_feature_marker "$1")" 2>/dev/null
+}
+
 _nix_hm_dir() {
     if [ -n "${LINUXTOYS_NIX_HM_DIR:-}" ]; then
         printf '%s\n' "$LINUXTOYS_NIX_HM_DIR"
@@ -205,10 +221,15 @@ _nix_run_home_manager_switch() {
     return "$rc"
 }
 
-_nix_write_gpu_module() {
+_nix_rewrite_module() {
+    local scope="$1"
     local -a current
-    mapfile -t current < <(_nix_module_read_packages home-manager)
-    _nix_write_module home-manager "${current[@]}"
+    mapfile -t current < <(_nix_module_read_packages "$scope")
+    _nix_write_module "$scope" "${current[@]}"
+}
+
+_nix_write_gpu_module() {
+    _nix_rewrite_module home-manager
 }
 
 _nix_ensure_gpu_setup() {
@@ -301,8 +322,19 @@ _nix_render_module() {
     local scope="$1"
     shift
     local allow_unfree="" flakes_import="" gpu_enable="" maintenance=""
+    local flatpak_enable="" appimage_enable=""
     _nix_should_allow_unfree && allow_unfree="  nixpkgs.config.allowUnfree = true;"
     flakes_import="  imports = [ ./$(_nix_flakes_import_name "$scope") ];"
+    if [ "$scope" = "system" ]; then
+        _nix_feature_enabled flatpak && flatpak_enable="  services.flatpak.enable = true;"
+        if _nix_feature_enabled appimage; then
+            appimage_enable=$(cat <<'EOF'
+  programs.appimage.enable = true;
+  programs.appimage.binfmt = lib.mkDefault true;
+EOF
+)
+        fi
+    fi
     if [ "$scope" != "system" ] && nix_gpu_supported; then
         gpu_enable="  targets.genericLinux.gpu.enable = true;"
     fi
@@ -330,6 +362,8 @@ EOF
 {
 $allow_unfree
 $flakes_import
+$flatpak_enable
+$appimage_enable
   environment.systemPackages = [
 $NIX_TOYS_BEGIN
 $(_nix_render_packages "$@")
@@ -792,6 +826,98 @@ nix_setup() {
         printf 'Neither Home Manager nor a NixOS system configuration is available.\n' >&2
         rc=1
     fi
+    return "$rc"
+}
+
+# ---------------------------------------------------------------------------
+# Host features that are NixOS options rather than packages
+# ---------------------------------------------------------------------------
+
+nix_flatpak_ready() {
+    command -v flatpak >/dev/null 2>&1 || return 1
+    if nix_is_nixos; then
+        # The NixOS option also provides the system helper used by system-scope
+        # remotes; a user-profile Flatpak alone is not the full host feature.
+        systemctl cat flatpak-system-helper.service >/dev/null 2>&1 || return 1
+    fi
+}
+
+# NixOS does not install Flatpak through a distro package manager. Enable the
+# system option in the LinuxToys module and rebuild once, so both the CLI and
+# the system helper/portals work as they do on other distributions.
+nix_ensure_flatpak() {
+    nix_flatpak_ready && return 0
+    nix_is_nixos || return 1
+    nix_available || return 1
+    if [ "${LINUXTOYS_NIX_DRY_RUN:-0}" = "1" ]; then
+        printf 'Skipping NixOS Flatpak enablement (dry run).\n'
+        return 0
+    fi
+    _nix_mark_feature flatpak || return 1
+    _nix_ensure_system_config || return 1
+    _nix_rewrite_module system || return 1
+    _nix_rebuild system || return 1
+    hash -r 2>/dev/null || true
+    nix_flatpak_ready
+}
+
+nix_appimage_ready() {
+    command -v appimage-run >/dev/null 2>&1 || return 1
+    # NixOS registers the binfmt handler under the option name 'appimage'.
+    [ -e /proc/sys/fs/binfmt_misc/appimage ]
+}
+
+# AppImages run through appimage-run via binfmt on NixOS. The registration is a
+# system option, so enable it in the LinuxToys module once and rebuild.
+nix_ensure_appimage() {
+    nix_appimage_ready && return 0
+    nix_is_nixos || return 1
+    nix_available || return 1
+    if [ "${LINUXTOYS_NIX_DRY_RUN:-0}" = "1" ]; then
+        printf 'Skipping NixOS AppImage enablement (dry run).\n'
+        return 0
+    fi
+    _nix_mark_feature appimage || return 1
+    _nix_ensure_system_config || return 1
+    _nix_rewrite_module system || return 1
+    _nix_rebuild system || return 1
+    hash -r 2>/dev/null || true
+    nix_appimage_ready
+}
+
+# Install a repository listing that ships a flake as its NixOS source. The
+# default package is selected (a single unambiguous package output), imported
+# through the declarative flake state and applied in one rebuild.
+nix_install_repo_flake() {
+    local reference="$1" name="${2:-}" scope="" apply_script rc
+    [ -n "$reference" ] || {
+        printf 'No flake reference was provided.\n' >&2
+        return 1
+    }
+    nix_available || {
+        printf 'Nix is not installed.\n' >&2
+        return 1
+    }
+    if ! nix_flakes_enabled; then
+        _nix_enable_flakes || {
+            printf 'Could not enable Nix flakes.\n' >&2
+            return 1
+        }
+    fi
+    if nix_is_nixos; then
+        scope="system"
+    fi
+    printf 'Inspecting the flake and preparing its default package...\n'
+    apply_script=$(python3 "$SCRIPT_DIR/app/nix_flake_cli.py" \
+        install-default "$reference" "$scope" "$name") || return 1
+    [ -n "$apply_script" ] || {
+        printf 'Could not prepare the flake installation.\n' >&2
+        return 1
+    }
+    printf 'Applying the Nix configuration...\n'
+    SCRIPT_DIR="$SCRIPT_DIR" bash "$apply_script"
+    rc=$?
+    rm -f -- "$apply_script"
     return "$rc"
 }
 

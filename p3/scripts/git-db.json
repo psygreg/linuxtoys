@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-17T21:11:28Z",
+  "generated_at": "2026-11-26T07:30:15Z",
   "repositories": {
     "https://github.com/AprilNEA/OpenLogi": {
       "assets": [
@@ -178,6 +178,7 @@
         }
       ],
       "checked_at": "2026-09-11T02:29:38Z",
+      "flake": true,
       "names": [
         "OpenLogi"
       ]
@@ -205,6 +206,7 @@
         }
       ],
       "checked_at": "2026-09-11T02:29:38Z",
+      "flake": true,
       "names": [
         "Amethyst Mod Manager"
       ]
@@ -279,6 +281,7 @@
         }
       ],
       "checked_at": "2026-10-10T05:20:25Z",
+      "flake": false,
       "names": [
         "CutWire Drift"
       ]
@@ -320,6 +323,7 @@
         }
       ],
       "checked_at": "2026-10-10T05:20:25Z",
+      "flake": false,
       "names": [
         "CutWire Prism"
       ]
@@ -481,6 +485,7 @@
         }
       ],
       "checked_at": "2026-09-11T02:29:39Z",
+      "flake": false,
       "names": [
         "Heroic Games Launcher"
       ]
@@ -503,6 +508,7 @@
         }
       ],
       "checked_at": "2026-09-11T02:29:39Z",
+      "flake": false,
       "names": [
         "LeShade"
       ]
@@ -540,6 +546,7 @@
         }
       ],
       "checked_at": "2026-09-11T02:29:39Z",
+      "flake": false,
       "names": [
         "OpenBoardView"
       ]
@@ -597,6 +604,7 @@
         }
       ],
       "checked_at": "2026-10-08T20:07:57Z",
+      "flake": true,
       "names": [
         "Optiscaler Client"
       ]
@@ -655,6 +663,7 @@
         }
       ],
       "checked_at": "2026-09-11T02:29:40Z",
+      "flake": true,
       "names": [
         "BedrockOnLinux"
       ]
@@ -832,6 +841,7 @@
         }
       ],
       "checked_at": "2026-09-11T02:29:40Z",
+      "flake": true,
       "names": [
         "ZenNotes"
       ]
@@ -915,6 +925,7 @@
         }
       ],
       "checked_at": "2026-09-11T02:29:40Z",
+      "flake": true,
       "names": [
         "Figma"
       ]
@@ -980,6 +991,7 @@
         }
       ],
       "checked_at": "2026-09-11T02:29:41Z",
+      "flake": false,
       "names": [
         "Audacity"
       ]
@@ -1023,6 +1035,7 @@
         }
       ],
       "checked_at": "2026-09-11T21:42:43Z",
+      "flake": false,
       "names": [
         "QtScrcpy"
       ]
@@ -1066,6 +1079,7 @@
         }
       ],
       "checked_at": "2026-09-11T02:29:41Z",
+      "flake": false,
       "names": [
         "QDiskInfo"
       ]
@@ -1189,6 +1203,7 @@
         }
       ],
       "checked_at": "2026-09-11T22:50:04Z",
+      "flake": false,
       "names": [
         "HTTPie"
       ]
@@ -1267,6 +1282,7 @@
         }
       ],
       "checked_at": "2026-09-11T02:29:41Z",
+      "flake": false,
       "names": [
         "Helium Browser"
       ]
@@ -1455,6 +1471,7 @@
         }
       ],
       "checked_at": "2026-09-11T21:17:43Z",
+      "flake": false,
       "names": [
         "Rclone UI"
       ]
@@ -1814,6 +1831,7 @@
         }
       ],
       "checked_at": "2026-10-13T02:53:42Z",
+      "flake": true,
       "names": [
         "ArtCraft Launcher"
       ]
@@ -3694,6 +3712,7 @@
         }
       ],
       "checked_at": "2026-10-08T20:07:57Z",
+      "flake": false,
       "names": [
         "G-Helper"
       ]
@@ -3799,6 +3818,7 @@
         }
       ],
       "checked_at": "2026-09-11T02:29:42Z",
+      "flake": false,
       "names": [
         "Recordly"
       ]

@@ -1036,7 +1036,61 @@ def materialize_removal(record):
     }
 
 
-def materialize_apply(scope):
+def default_package_keys(info):
+    """Pick the single default package an automated flake import should use.
+
+    Repository listings have one install action, so the flake must expose one
+    unambiguous application package. A missing or multi-package selection is
+    refused with a pointer to the manual flake dialog.
+    """
+    options = [
+        option
+        for option in (info or {}).get("options") or ()
+        if isinstance(option, dict)
+        and str(option.get("key") or "").strip()
+        and bool(option.get("selectable", True))
+    ]
+    preferred = ("package:defaultPackage:default", "package:packages:default")
+    for key in preferred:
+        for option in options:
+            if option.get("key") == key and option.get("kind") in (
+                "package",
+                "default_package",
+            ):
+                return [key]
+    packages = [
+        option for option in options if option.get("kind") == "package"
+    ]
+    if len(packages) == 1:
+        return [str(packages[0]["key"])]
+    raise FlakeError(
+        "The flake does not expose a single default package; "
+        "import it from the Nix flake dialog instead."
+    )
+
+
+def materialize_default_install(reference, scope=None, name=None):
+    """Import a flake's default package and return its apply script.
+
+    Used by NixOS repository listings whose upstream project ships a flake.
+    The flake is inspected here so a repository without a usable default
+    package fails before any state is written.
+    """
+    info = inspect(reference)
+    if not scope:
+        scope = "system" if nix_catalog.is_nixos() else "home-manager"
+    if scope not in ("home-manager", "system"):
+        raise FlakeError("Invalid flake install scope")
+    if scope == "home-manager" and not nix_catalog.home_manager_available():
+        raise FlakeError("Home Manager is not available")
+    if scope == "system" and not nix_catalog.is_nixos():
+        raise FlakeError("The system scope is only available on NixOS")
+    keys = default_package_keys(info)
+    add_import(info, scope, keys)
+    return materialize_apply(scope, name=name)
+
+
+def materialize_apply(scope, name=None):
     """Create a terminal script that publishes and rebuilds the flake module."""
     if scope not in ("home-manager", "system"):
         raise FlakeError("Invalid flake install scope")
@@ -1049,6 +1103,7 @@ def materialize_apply(scope):
         raise FlakeError(
             "Nix flakes are only available on x86_64 and aarch64 hosts"
         )
+    display_name = _CONTROL.sub(" ", str(name or "")).strip() or "Import Nix flake"
     username, home, hostname = _account()
     module_text = render_module(scope)
     flake_text = (
@@ -1072,7 +1127,7 @@ def materialize_apply(scope):
     with os.fdopen(script_fd, "w", encoding="utf-8") as handle:
         handle.write(
             "#!/usr/bin/env bash\n"
-            "# name: Import Nix flake\n"
+            f"# name: {display_name}\n"
             "# description: Merge the imported flake outputs into the Nix configuration.\n"
             "# icon: nix.svg\n"
             "# architectures: x86_64, aarch64\n"
@@ -1087,7 +1142,7 @@ def materialize_apply(scope):
         )
     os.chmod(script_path, 0o700)
     return {
-        "name": "Import Nix flake",
+        "name": display_name,
         "description": "Merge the imported flake outputs into the Nix configuration.",
         "icon": "nix.svg",
         "path": script_path,

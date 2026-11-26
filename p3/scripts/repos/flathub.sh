@@ -6,6 +6,7 @@
 # reboot: yes
 # repo: https://flathub.org
 # compat: !solus, !ostree
+# nixos: yes
 # systemd: yes
 # cachyos-mirrors-required: 0
 # architectures: x86_64, aarch64
@@ -58,8 +59,13 @@ askpass
 if [ -f /etc/apt/preferences.d/noflatpak-nosnap.pref ]; then
     prep_rm /etc/apt/preferences.d/noflatpak-nosnap.pref
 fi
-if ! command -v flatpak &>/dev/null; then
+if is_nixos; then
+    nix_ensure_flatpak || die "Failed to enable Flatpak on NixOS"
+elif ! command -v flatpak &>/dev/null; then
     pkg_install flatpak
+fi
+command -v flatpak &>/dev/null || die "Flatpak is unavailable after installation"
+if systemctl cat flatpak-system-helper.service &>/dev/null; then
     sysd_start flatpak-system-helper.service
 fi
 

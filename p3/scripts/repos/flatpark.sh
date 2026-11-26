@@ -5,6 +5,7 @@
 # icon: flatpark.svg
 # repo: https://flatpark.org
 # compat: !gregos
+# nixos: yes
 # systemd: yes
 # architectures: x86_64, aarch64
 # requires-script-api: 1
@@ -55,8 +56,13 @@ fi
 # remotes are configured below and Flatpak itself resolves runtimes from any
 # reachable configured remote -- but a real network failure surfaces on it.
 call_script flathub
-if ! command -v flatpak &>/dev/null; then
+if is_nixos; then
+    nix_ensure_flatpak || die "Failed to enable Flatpak on NixOS"
+elif ! command -v flatpak &>/dev/null; then
     pkg_install flatpak
+fi
+command -v flatpak &>/dev/null || die "Flatpak is unavailable after installation"
+if systemctl cat flatpak-system-helper.service &>/dev/null; then
     sysd_start flatpak-system-helper.service
 fi
 

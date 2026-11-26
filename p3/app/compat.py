@@ -1466,6 +1466,8 @@ def script_is_compatible(script_path, compat_keys):
     hybridgpu_compatible = True  # Default for unset hybridgpu header
     device_compatible = True  # Default for an unset deviceids header
     has_explicit_systemd_header = False  # Track if systemd header was explicitly set
+    nixos_explicitly_compatible = False
+    nixos_explicitly_excluded = False
 
     try:
         for line in get_script_file_data(script_path)["header_lines"]:
@@ -1482,6 +1484,14 @@ def script_is_compatible(script_path, compat_keys):
                         else:
                             include_keys.add(key_str)
 
+                    # A positive nixos key is the alternate opt-in spelling for
+                    # NixOS-only scripts. It is also the marker the explicit
+                    # NixOS gate below looks for when no '# nixos:' header exists.
+                    if "nixos" in include_keys:
+                        nixos_explicitly_compatible = True
+                    if "nixos" in exclude_keys:
+                        nixos_explicitly_excluded = True
+
                     # Check whitelist (include keys) - if specified, script must match at least one
                     if include_keys:
                         os_compatible = bool(compat_keys & include_keys)
@@ -1494,6 +1504,17 @@ def script_is_compatible(script_path, compat_keys):
                         os_compatible = os_compatible and not bool(
                             compat_keys & exclude_keys
                         )
+                elif line.startswith("# nixos:"):
+                    # NixOS is opt-in: a script without an explicit marker stays
+                    # hidden even when its generic compat header would otherwise
+                    # allow it. Invalid values fail closed.
+                    nixos_value = line[len("# nixos:") :].strip().lower()
+                    if nixos_value in ("yes", "true"):
+                        nixos_explicitly_compatible = True
+                    elif nixos_value in ("no", "false"):
+                        nixos_explicitly_excluded = True
+                    else:
+                        nixos_explicitly_excluded = True
                 elif line.startswith("# gpu:"):
                     gpu_value = line[len("# gpu:") :].strip()
                     gpu_values = [v.strip() for v in gpu_value.split(",") if v.strip()]
@@ -1640,6 +1661,13 @@ def script_is_compatible(script_path, compat_keys):
     if not _dependencies_compatible(script_path, compat_keys):
         # A statically declared prerequisite cannot be offered on this host:
         # the dependent entry is hidden with it.
+        return False
+
+    if "nixos" in compat_keys and (
+        not nixos_explicitly_compatible or nixos_explicitly_excluded
+    ):
+        # Scripts are presumed unavailable on NixOS unless their tree marks them
+        # with '# nixos: yes' (or a positive nixos compat key).
         return False
 
     return os_compatible and gpu_compatible and desktop_compatible and systemd_compatible and wsl_compatible and wayland_compatible and cpu_compatible and hybridgpu_compatible and device_compatible

@@ -29,6 +29,11 @@ Commands (stdout is machine-readable; diagnostics go to stderr):
 ``list``
     Print the imported flake state as JSON.
 
+``install-default <reference> [scope] [name]``
+    Inspect a flake, import its single default package and print the path of
+    the generated apply script. Used by NixOS repository listings, where the
+    app page has one install action instead of the flake output picker.
+
 ``render <scope>``
     Print the generated module for one scope (diagnostics for tooling).
 """
@@ -127,6 +132,22 @@ def command_list(_arguments):
     return 0
 
 
+def command_install_default(arguments):
+    if not arguments:
+        print("install-default requires a flake reference.", file=sys.stderr)
+        return 2
+    reference = arguments[0]
+    scope = arguments[1] if len(arguments) > 1 else ""
+    name = arguments[2] if len(arguments) > 2 else ""
+    script = nix_flakes.materialize_default_install(
+        reference,
+        scope=scope or None,
+        name=name or None,
+    )
+    print(script["path"])
+    return 0
+
+
 def command_render(arguments):
     if len(arguments) != 1:
         print("render requires exactly one scope.", file=sys.stderr)
@@ -152,6 +173,8 @@ def main(argv):
             return command_cleanup_wrappers(arguments)
         if command == "list":
             return command_list(arguments)
+        if command == "install-default":
+            return command_install_default(arguments)
         if command == "render":
             return command_render(arguments)
         print(f"Unknown command: {command}", file=sys.stderr)

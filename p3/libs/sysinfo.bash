@@ -91,6 +91,15 @@ is_zorin() { sysdetect_once && [[ "$ID" == "zorin" ]]; }
 is_rhel() { sysdetect_once && [[ ("$ID" == "rhel" || "$ID" == "centos" || "$ID" == "almalinux" || "$ID_LIKE" =~ "rhel") ]] && [ ! -f /run/ostree-booted ] && [[ "$ID" != "nobara" ]]; }
 is_deepin() { sysdetect_once && [[ "$ID" == "deepin" ]]; }
 is_manjaro() { sysdetect_once && [[ "$ID" == "manjaro" || "$ID_LIKE" =~ "manjaro" ]]; }
+# NixOS and derivatives. Mirrors compat.is_nixos(): /etc/NIXOS or a system
+# configuration is authoritative, with os-release identity as the fallback for
+# derivatives that do not keep those files.
+is_nixos() {
+    [ -e /etc/NIXOS ] || [ -f /etc/nixos/configuration.nix ] && return 0
+    sysdetect_once
+    [[ "$ID" == "nixos" || "$ID" == nixos-* ]] && return 0
+    [[ " $ID_LIKE " == *" nixos "* ]]
+}
 
 is_systemd() { [[ $(ps -p 1 -o comm= || readlink /sbin/init) =~ "systemd" ]]; }
 

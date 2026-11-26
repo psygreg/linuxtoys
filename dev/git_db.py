@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Build p3/scripts/git-db.json from git-type LinuxToys repository entries."""
+"""Build p3/scripts/git-db.json from git-type LinuxToys repository entries.
+
+Each record carries the latest-release asset index and a ``flake`` marker that
+tells the NixOS catalog whether the project exposes a repository-root flake.nix.
+"""
 
 from __future__ import annotations
 
@@ -45,6 +49,11 @@ def _parse_args():
         "--all",
         action="store_true",
         help="refresh every git-type repository instead of only missing database entries",
+    )
+    parser.add_argument(
+        "--flakes",
+        action="store_true",
+        help="only refresh flake availability for every tracked repository",
     )
     return parser.parse_args()
 
@@ -97,6 +106,61 @@ def _repository_api(repository):
 
     project = quote("/".join(parts), safe="")
     return host, f"https://gitlab.com/api/v4/projects/{project}/releases/permalink/latest"
+
+
+def _flake_api(repository):
+    """Return (host, contents API URL) for a repository-root flake.nix."""
+    canonical = _normalize_git_repo_url(repository)
+    if not canonical:
+        raise ValueError("repository is not a supported GitHub, Codeberg, or GitLab project URL")
+
+    parsed = urlsplit(canonical)
+    host = (parsed.hostname or "").lower()
+    parts = parsed.path.strip("/").split("/")
+
+    if host in ("github.com", "codeberg.org"):
+        owner, repo = parts
+        base = "https://api.github.com" if host == "github.com" else "https://codeberg.org/api/v1"
+        return host, f"{base}/repos/{quote(owner, safe='')}/{quote(repo, safe='')}/contents/flake.nix"
+
+    project = quote("/".join(parts), safe="")
+    return (
+        host,
+        f"https://gitlab.com/api/v4/projects/{project}/repository/files/flake.nix?ref=HEAD",
+    )
+
+
+def _detect_flake(repository):
+    """Whether the repository's default branch has a flake.nix at its root.
+
+    Returns True/False, or None when the answer could not be determined (for
+    example a transient API failure). None lets the caller retain a previous
+    value instead of turning a known flake into a false negative.
+    """
+    try:
+        host, api = _flake_api(repository)
+        data = _request_json(api, host)
+    except HTTPError as error:
+        if error.code == 404:
+            return False
+        return None
+    except (ValueError, URLError, OSError, json.JSONDecodeError):
+        return None
+
+    if host == "gitlab.com":
+        return isinstance(data, dict) and bool(
+            data.get("file_name")
+            or data.get("blob_id")
+            or data.get("content")
+        )
+    if isinstance(data, dict):
+        # GitHub and Gitea return a file object; directories are arrays.
+        return (
+            str(data.get("type") or "").lower() == "file"
+            or data.get("name") == "flake.nix"
+            or bool(data.get("sha"))
+        )
+    return False
 
 
 def _request_json(url, host):
@@ -168,7 +232,13 @@ def _asset_architectures(name):
 
 def _build_record(repository, names):
     checked_at = datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
-    record = {"names": names, "checked_at": checked_at, "assets": []}
+    record = {"names": names, "checked_at": checked_at, "assets": [], "flake": False}
+
+    flake = _detect_flake(repository)
+    if flake is None:
+        record.pop("flake")
+    else:
+        record["flake"] = flake
 
     try:
         host, api = _repository_api(repository)
@@ -214,14 +284,49 @@ def main():
     database = _load_database()
     repositories = database["repositories"]
 
-    targets = tracked if args.all else {repo: names for repo, names in tracked.items() if repo not in repositories}
-    mode = "all" if args.all else "diff"
+    if args.flakes:
+        targets = tracked
+        mode = "flakes"
+    else:
+        targets = {
+            repo: names
+            for repo, names in tracked.items()
+            if args.all
+            or repo not in repositories
+            or not isinstance(repositories[repo].get("flake"), bool)
+        }
+        mode = "all" if args.all else "diff"
     print(f"git-db: mode={mode}, tracked={len(tracked)}, checking={len(targets)}")
 
     for repository, names in targets.items():
         print(f"  {repository}")
-        repositories[repository] = _build_record(repository, names)
-        error = repositories[repository].get("error")
+        if args.flakes:
+            record = repositories.get(repository)
+            if not isinstance(record, dict):
+                record = {
+                    "names": names,
+                    "checked_at": datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z"),
+                    "assets": [],
+                }
+            flake = _detect_flake(repository)
+            if flake is None:
+                print("    flake: unknown; kept the previous value", file=sys.stderr)
+            else:
+                record["flake"] = flake
+            repositories[repository] = record
+            print(f"    flake={record.get('flake', 'unknown')}")
+            continue
+
+        previous = repositories.get(repository)
+        record = _build_record(repository, names)
+        if record.get("flake") is None:
+            if isinstance(previous, dict) and isinstance(previous.get("flake"), bool):
+                record["flake"] = previous["flake"]
+            else:
+                record.pop("flake", None)
+            print("    flake: unknown; kept the previous value", file=sys.stderr)
+        repositories[repository] = record
+        error = record.get("error")
         if error:
             print(f"    error: {error}", file=sys.stderr)
 

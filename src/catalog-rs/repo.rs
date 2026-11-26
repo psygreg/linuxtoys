@@ -196,6 +196,7 @@ const OS_KEYS_RS: &[&str] = &[
     "pika",
     "deepin",
     "manjaro",
+    "nixos",
 ];
 const TYPE_PRIORITY_RS: &[&str] = &[
     "dakota",
@@ -216,6 +217,7 @@ const TYPE_PRIORITY_RS: &[&str] = &[
     "suse",
     "solus",
     "arch",
+    "nixos",
 ];
 const VALID_TYPES_RS: &[&str] = &[
     "git",
@@ -1155,6 +1157,12 @@ fn git_db_requirement_matches_rs(
     db: &serde_json::Map<String, Value>,
     machine: &str,
 ) -> bool {
+    let nixos = compat_has(keys, "nixos");
+    if nixos && ty != "git" {
+        // NixOS offers repository listings only through a flake in a git
+        // project; every other install route is a distro package path.
+        return false;
+    }
     if ty != "git" {
         return true;
     }
@@ -1164,6 +1172,11 @@ fn git_db_requirement_matches_rs(
     let Some(rec) = db.get(&repo).and_then(Value::as_object) else {
         return false;
     };
+    if nixos {
+        // The flake marker is independent of release assets: a project without
+        // a recent release can still ship a usable flake.
+        return rec.get("flake").and_then(Value::as_bool).unwrap_or(false);
+    }
     if rec
         .get("error")
         .is_some_and(|v| !v.is_null() && v.as_bool() != Some(false))
@@ -2099,6 +2112,86 @@ mod runtime_compat_tests {
             false,
             false,
             false
+        ));
+    }
+
+    fn git_listing_entry(ty: &str) -> serde_json::Map<String, Value> {
+        entry(serde_json::json!({
+            "name": "Flake App",
+            "repo": "https://github.com/example/flake-app",
+            "category": "utils",
+            "description": "Test",
+            "type": ty
+        }))
+    }
+
+    fn git_db_with_flake(flake: Value) -> serde_json::Map<String, Value> {
+        serde_json::json!({
+            "https://github.com/example/flake-app": {
+                "assets": [],
+                "flake": flake,
+                "names": ["Flake App"]
+            }
+        })
+        .as_object()
+        .unwrap()
+        .clone()
+    }
+
+    #[test]
+    fn nixos_lists_only_git_repositories_with_flakes() {
+        let keys = keys(&["nixos", "systemd"]);
+        let db = git_db_with_flake(Value::Bool(true));
+
+        assert!(git_db_requirement_matches_rs(
+            &git_listing_entry("git"),
+            &keys,
+            "git",
+            &db,
+            "x86_64"
+        ));
+        // A flake marker is meaningful only for git entries.
+        assert!(!git_db_requirement_matches_rs(
+            &git_listing_entry("flathub"),
+            &keys,
+            "flathub",
+            &db,
+            "x86_64"
+        ));
+        assert!(!git_db_requirement_matches_rs(
+            &git_listing_entry("git"),
+            &keys,
+            "git",
+            &git_db_with_flake(Value::Bool(false)),
+            "x86_64"
+        ));
+        // Release errors do not hide a project that clearly ships a flake.
+        let mut errored = git_db_with_flake(Value::Bool(true));
+        errored
+            .get_mut("https://github.com/example/flake-app")
+            .and_then(Value::as_object_mut)
+            .unwrap()
+            .insert("error".into(), Value::String("rate limited".into()));
+        assert!(git_db_requirement_matches_rs(
+            &git_listing_entry("git"),
+            &keys,
+            "git",
+            &errored,
+            "x86_64"
+        ));
+    }
+
+    #[test]
+    fn non_nixos_hosts_keep_release_asset_gating() {
+        let keys = keys(&["fedora", "systemd", "x86_64"]);
+        let db = git_db_with_flake(Value::Bool(true));
+        // No release assets, so the usual git entry stays hidden.
+        assert!(!git_db_requirement_matches_rs(
+            &git_listing_entry("git"),
+            &keys,
+            "git",
+            &db,
+            "x86_64"
         ));
     }
 }

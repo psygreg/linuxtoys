@@ -94,6 +94,7 @@ def get_simulated_compat_keys():
         'deepin': {'deepin', 'debian'},
         'manjaro': {'manjaro', 'arch'},
         'solus': {'solus'},
+        'nixos': {'nixos'},
     }
     
     key = compat_override.lower()
