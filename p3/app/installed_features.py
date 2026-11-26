@@ -2,7 +2,7 @@
 
 import os
 
-from . import get_icon_path, gui_rs, installed_packages, nix_catalog, nix_registry, parser, registry_utils
+from . import get_icon_path, gui_rs, installed_packages, nix_catalog, parser, registry_utils
 from .gtk_common import Gtk
 from .revert_helper import _get_executed_script_names
 
@@ -21,14 +21,6 @@ class InstalledFeaturesView(Gtk.ScrolledWindow):
         self.refresh()
 
     def refresh(self):
-        try:
-            nix_registry.sync_from_modules()
-        except Exception:
-            pass
-        try:
-            nix_registry.sync_from_flakes()
-        except Exception:
-            pass
         cache = self.parent_window.script_cache
         if not cache.is_populated:
             gui_rs.reconcile_list_rows(self.content, state="loading")
@@ -87,16 +79,11 @@ class InstalledFeaturesView(Gtk.ScrolledWindow):
             seen.add(key)
             installed.append(info)
 
-        # Nix packages carry their own declarative transactions; surface them
-        # here so the standard removal flow applies to them too.
+        # Nix packages and imported flakes carry their own declarative
+        # transactions; surface them here so the standard removal flow
+        # applies to them too.
         if nix_catalog.linux_arch():
-            for info in nix_registry.installed_packages():
-                key = self._stable_key(info)
-                if key in seen:
-                    continue
-                seen.add(key)
-                installed.append(info)
-            for info in nix_registry.installed_flakes():
+            for info in installed_packages.installed_nix_entries():
                 key = self._stable_key(info)
                 if key in seen:
                     continue

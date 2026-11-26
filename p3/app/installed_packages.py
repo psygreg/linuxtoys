@@ -1,4 +1,4 @@
-"""RAM + disk cache of user-installed packages relevant to AppStream management."""
+"""RAM + disk cache of user-installed packages for AppStream and Nix views."""
 
 from __future__ import annotations
 
@@ -229,6 +229,110 @@ def snapshot():
         }
 
 
+def installed_nix_entries():
+    """Installed Nix packages and imported flakes for the Installed tab.
+
+    The registry is the actionable source for both kinds. Syncing first makes
+    entries for modules applied before registry integration and for flakes
+    imported through any surface (GUI, TUI or MCP). Each entry is marked as an
+    installed-view item so the category card shows its removal control even
+    when the fast package-name cache has not caught up yet.
+    """
+    entries = []
+    try:
+        from . import nix_registry
+
+        try:
+            nix_registry.sync_from_modules()
+        except Exception:
+            pass
+        try:
+            nix_registry.sync_from_flakes()
+        except Exception:
+            pass
+        packages_by_attr = {}
+        for info in nix_registry.installed_packages():
+            item = dict(info)
+            item["installed_nix_entry"] = True
+            item["is_nix_package"] = True
+            attr = str(item.get("nix_name") or "").strip()
+            if attr and attr not in packages_by_attr:
+                packages_by_attr[attr] = item
+                entries.append(item)
+        # Modules are authoritative for packages. Keep a display fallback for
+        # hosts where the registry sync could not write (permissions, legacy
+        # installs or a transient failure), and merge module scopes into an
+        # existing registry item instead of creating a duplicate card.
+        try:
+            module_packages = nix_catalog.installed_packages()
+        except Exception:
+            module_packages = {}
+        for scope, attrs in (module_packages or {}).items():
+            scope = str(scope or "").strip()
+            if not scope:
+                continue
+            for attr in attrs or ():
+                attr = str(attr or "").strip()
+                if not attr:
+                    continue
+                item = packages_by_attr.get(attr)
+                if item is not None:
+                    scopes = {
+                        str(value).strip()
+                        for value in (
+                            item.get("nix_scopes")
+                            or (item.get("nix_scope"),)
+                        )
+                        if str(value or "").strip()
+                    }
+                    scopes.add(scope)
+                    item["nix_scopes"] = sorted(scopes)
+                    continue
+                item = {
+                    "name": attr,
+                    "appstream_source": "nix",
+                    "appstream_id": f"nix:{attr}",
+                    "nix_name": attr,
+                    "nix_scope": scope,
+                    "nix_scopes": [scope],
+                    "icon": "nix.svg",
+                    "repo": "nixpkgs",
+                    "description": "",
+                    "path": "",
+                    "is_script": True,
+                    "is_appstream_entry": True,
+                    "registry_name": nix_registry.registry_name(attr),
+                    "installed_nix_entry": True,
+                    "is_nix_package": True,
+                }
+                packages_by_attr[attr] = item
+                entries.append(item)
+        for info in nix_registry.installed_flakes():
+            item = dict(info)
+            item["installed_nix_entry"] = True
+            item["is_nix_flake"] = True
+            entries.append(item)
+    except Exception:
+        pass
+
+    result = []
+    seen = set()
+    for item in entries:
+        key = str(
+            item.get("appstream_id")
+            or item.get("registry_name")
+            or item.get("name")
+            or ""
+        )
+        if key and key in seen:
+            continue
+        if key:
+            seen.add(key)
+        result.append(item)
+    result.sort(key=lambda item: str(item.get("name", "")).casefold())
+    return result
+
+
 def match(info):
     """Return observed installation metadata for one AppStream entry, or None."""
     source = str(info.get("appstream_source", "") or "").strip()
@@ -444,6 +548,11 @@ def dependency_blockers(script_info):
     installs made through LinuxToys and observed ones.
     """
     blockers = []
+    source = str((script_info or {}).get("appstream_source") or "").strip()
+    if source in ("nix", "nix-flake"):
+        # Declarative Nix entries carry their own package dependencies; the
+        # catalog script/provider dependency graph does not apply to them.
+        return blockers
 
     provider = _provider_kind(script_info or {})
     if provider is not None:

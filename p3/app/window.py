@@ -2160,8 +2160,17 @@ class AppWindow(
                     info, remove_entry, record_id=record_id
                 )
             else:
+                scopes = info.get("nix_scopes") or [
+                    info.get("nix_scope") or "home-manager"
+                ]
                 try:
-                    nix_queue.add(info, action="remove")
+                    for scope in dict.fromkeys(
+                        str(value or "").strip() for value in scopes
+                    ):
+                        if scope:
+                            nix_queue.add(
+                                info, action="remove", scope=scope
+                            )
                 except ValueError as error:
                     logger.warning("Could not queue Nix removal: %s", error)
                     return
@@ -3479,8 +3488,13 @@ class AppWindow(
         # Available/Installed split would enumerate the complete repository and
         # defeat paged browsing. Individual AUR cards still refresh their normal
         # installed/removable state after transactions.
-        if category_info.get("is_aur_category") or category_info.get("is_homebrew_category") or category_info.get("is_nix_category") or category_info.get("is_appimage_category"):
+        if category_info.get("is_aur_category") or category_info.get("is_homebrew_category") or category_info.get("is_appimage_category"):
             return False
+        if category_info.get("is_nix_category"):
+            try:
+                return bool(installed_packages.installed_nix_entries())
+            except Exception:
+                return False
         if (
             category_info.get("is_linuxtoys_specials")
             and not self.category_cache.is_populated
@@ -3578,7 +3592,7 @@ class AppWindow(
         if category_info.get("is_homebrew_category") and category_tab == "installed":
             scripts = []
         elif category_info.get("is_nix_category") and category_tab == "installed":
-            scripts = []
+            scripts = installed_packages.installed_nix_entries()
         elif category_tab in ("available", "installed") and not (
             category_info.get("is_homebrew_category")
             or category_info.get("is_nix_category")

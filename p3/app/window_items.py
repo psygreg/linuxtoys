@@ -380,6 +380,7 @@ class ItemWidgetFactory:
             elif (
                 item_info.get("is_script", False)
                 and not item_info.get("is_subcategory", False)
+                and not item_info.get("is_nix_flake", False)
                 and ".local/linuxtoys/scripts" not in str(item_info.get("path", ""))
             ):
                 badge_path = get_icon_path("distros/linuxtoys.webp") or ""
@@ -693,6 +694,7 @@ class ItemWidgetFactory:
             elif (
                 item_info.get("is_script", False)
                 and not item_info.get("is_subcategory", False)
+                and not item_info.get("is_nix_flake", False)
                 and ".local/linuxtoys/scripts" not in str(item_info.get("path", ""))
             ):
                 badge_path = get_icon_path("distros/linuxtoys.webp")
@@ -732,6 +734,10 @@ class ItemWidgetFactory:
 
     def _is_script_removable(self, item_info):
         """Check if a script item is installed and can be removed."""
+        # Entries built by installed_packages.installed_nix_entries() come
+        # straight from the Nix registry, so they are installed by definition.
+        if item_info.get("installed_nix_entry"):
+            return True
         if item_info.get("appstream_source") == "homebrew":
             return installed_packages.match(item_info) is not None
         # Use the search cache's pre-computed removable state whenever possible
@@ -1011,6 +1017,11 @@ class ItemWidgetFactory:
             self._activate_nix_category(widget, event)
         elif info.get("is_aur_category"):
             self._activate_aur_category(info)
+        elif info.get("installed_nix_entry"):
+            # The Nix category's Installed tab is a management view: both
+            # packages and imported flakes open the standard removal flow
+            # (the card also carries the same remove button).
+            self._on_item_remove_clicked(None, info)
         elif info.get("is_script", False):
             self.on_script_clicked(widget, event)
         else:
