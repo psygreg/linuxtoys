@@ -260,7 +260,13 @@ fn resolve_component_category_rs(component:&serde_json::Map<String,Value>, paths
         }
     }
     if component.get("source").and_then(Value::as_str) == Some("homebrew") { return Some("homebrew".into()); }
-    if component.get("source").and_then(Value::as_str) == Some("nix") { return Some("nix".into()); }
+    if component.get("source").and_then(Value::as_str) == Some("nix") {
+        if let Some(category)=component.get("nix_category").and_then(Value::as_str).filter(|value|!value.is_empty()) {
+            let (exact, by) = category_index_maps(paths);
+            if let Some(category) = first_category(&serde_json::json!([category]), &exact, &by) { return Some(category) }
+        }
+        return Some("nix".into());
+    }
     resolve_category_rs(component.get("categories").unwrap_or(&Value::Null),paths,cfg)
 }
 fn flatten_blocks(v:&Value)->String{let Some(a)=v.as_array()else{return String::new()};let mut blocks=Vec::new();for b in a{let Some(m)=b.as_object()else{continue};if m.get("type").and_then(Value::as_str)==Some("paragraph"){if let Some(sp)=m.get("spans").and_then(Value::as_array){blocks.push(sp.iter().filter_map(|s|s.get("text").and_then(Value::as_str)).collect::<Vec<_>>().join(" ").trim().to_string())}}else if let Some(items)=m.get("items").and_then(Value::as_array){blocks.push(items.iter().filter_map(|i|i.as_array()).map(|sp|sp.iter().filter_map(|s|s.get("text").and_then(Value::as_str)).collect::<Vec<_>>().join(" ").trim().to_string()).collect::<Vec<_>>().join("\n"))}}blocks.into_iter().filter(|s|!s.is_empty()).collect::<Vec<_>>().join("\n\n")}
@@ -1809,6 +1815,8 @@ pub(crate) fn build_appstream_catalog_index(
     nix_catalog_path: &str,
     nix_scopes: Vec<String>,
     nix_api_names_json: &str,
+    nix_categories_json: &str,
+    nixos: bool,
     cache_path: &str,
     cache_key: &str,
     force_rebuild: bool,
@@ -1860,7 +1868,15 @@ pub(crate) fn build_appstream_catalog_index(
     // source grouping so matching AppStream entries gain a Nix source option.
     let nix_identities: std::collections::HashMap<String, (String, bool)> =
         serde_json::from_str(nix_api_names_json).unwrap_or_default();
-    vals.extend(crate::nix::nix_components(nix_catalog_path, &nix_scopes, &nix_identities));
+    let nix_categories: std::collections::HashMap<String, String> =
+        serde_json::from_str(nix_categories_json).unwrap_or_default();
+    vals.extend(crate::nix::nix_components(
+        nix_catalog_path,
+        &nix_scopes,
+        &nix_identities,
+        &nix_categories,
+        nixos,
+    ));
     vals.retain(|m| (m.get("source").and_then(Value::as_str)!=Some("homebrew") || cfg.get("homebrew_enabled").and_then(Value::as_bool).unwrap_or(false)) && !omission_keys_rs(m).iter().any(|k|omit.contains(k)));
     let prefs:Value=serde_json::from_str(source_preferences_json).unwrap_or_else(|_|serde_json::json!({"default":"flatpak","apps":{}}));
     let locks=system_flatpak_locks.into_iter().map(|s|normalize_id(&s)).collect();
@@ -2014,6 +2030,32 @@ mod category_resolution_tests {
     fn console_only_is_a_generic_utility_category_not_a_game() {
         assert_eq!(resolve(&["ConsoleOnly"]), Some("utils".into()));
         assert_eq!(resolve(&["Game", "ConsoleOnly"]), Some("game".into()));
+    }
+
+    #[test]
+    fn nix_components_use_the_mapped_category_hint() {
+        let mut component = serde_json::json!({
+            "id": "nix:firefox", "name": "firefox", "summary": "Web browser",
+            "packages": ["firefox"], "categories": [], "source": "nix",
+            "nix_category": "devs"
+        })
+        .as_object()
+        .unwrap()
+        .clone();
+        assert_eq!(
+            resolve_component_category_rs(&component, &paths(), &config()),
+            Some("devs".into())
+        );
+        component.insert("nix_category".into(), Value::String("missing".into()));
+        assert_eq!(
+            resolve_component_category_rs(&component, &paths(), &config()),
+            Some("nix".into())
+        );
+        component.remove("nix_category");
+        assert_eq!(
+            resolve_component_category_rs(&component, &paths(), &config()),
+            Some("nix".into())
+        );
     }
 }
 

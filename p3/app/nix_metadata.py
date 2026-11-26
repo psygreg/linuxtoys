@@ -1,14 +1,15 @@
 """On-demand metadata enrichment for the Nix subsystem.
 
-The nixpkgs snapshot built by ``nix search`` carries only names, versions and
-short descriptions. The Nix Software API (api.nixsoftware.org) adds logos,
+The nixpkgs snapshot carries only names, versions, descriptions and
+broken/deprecated flags. The Nix Software API (api.nixsoftware.org) adds logos,
 translated names, long descriptions, screenshots, categories, maintainers and
 licenses.
 
 Two cache layers keep this cheap:
 
-* a small GUI-package index fetched once every 14 days (one paginated API
-  sweep) and used to decorate browse/search cards;
+* a small GUI-package index plus an `attr -> category` map fetched once every
+  14 days (paginated API sweeps; categories use one sweep per API category)
+  and used to decorate browse/search cards and classify Nix entries on NixOS;
 * a per-package detail cache fetched when a metadata-bearing card becomes
   visible (prefetched off GTK) or, as a fallback, when its app page opens.
 
@@ -242,11 +243,22 @@ def _http_json(url, *, max_bytes, language="en"):
 
 
 def _valid_index(payload):
+    categories = payload.get("categories") if isinstance(payload, dict) else None
     return (
         isinstance(payload, dict)
         and payload.get("schema") == 1
         and isinstance(payload.get("packages"), dict)
         and isinstance(payload.get("updated"), (int, float))
+        and (
+            categories is None
+            or (
+                isinstance(categories, dict)
+                and all(
+                    isinstance(attr, str) and isinstance(category, str)
+                    for attr, category in categories.items()
+                )
+            )
+        )
     )
 
 
@@ -258,7 +270,7 @@ def _read_index():
     return payload if _valid_index(payload) else None
 
 
-def _load_index():
+def _load_index_payload():
     with _INDEX_LOCK:
         try:
             stat = INDEX_PATH.stat()
@@ -267,11 +279,15 @@ def _load_index():
             return {}
         if _INDEX_MEMORY["token"] == token and _INDEX_MEMORY["payload"] is not None:
             return _INDEX_MEMORY["payload"]
-        payload = _read_index()
-        packages = payload["packages"] if payload else {}
+        payload = _read_index() or {}
         _INDEX_MEMORY["token"] = token
-        _INDEX_MEMORY["payload"] = packages
-        return packages
+        _INDEX_MEMORY["payload"] = payload
+        return payload
+
+
+def _load_index():
+    packages = _load_index_payload().get("packages")
+    return packages if isinstance(packages, dict) else {}
 
 
 def index_record(attr):
@@ -282,11 +298,27 @@ def index_needs_refresh():
     payload = _read_index()
     if payload is None:
         return True
+    if not payload.get("categories"):
+        # An older index has no API categories yet; refresh once so NixOS
+        # classification becomes available.
+        return True
     return time.time() - float(payload.get("updated") or 0) >= INDEX_TTL
 
 
 def index_available():
     return bool(_load_index())
+
+
+def index_category_map():
+    """Return ``attr -> Nix Software API category`` for categorized packages."""
+    categories = _load_index_payload().get("categories")
+    if not isinstance(categories, dict):
+        return {}
+    return {
+        str(attr): str(category)
+        for attr, category in categories.items()
+        if str(attr).strip() and str(category).strip()
+    }
 
 
 def index_identity_map():
@@ -346,6 +378,21 @@ def index_identity_fingerprint(identities=None):
     ).hexdigest()
 
 
+def index_category_fingerprint(categories=None):
+    """Stable digest of the API category map, used in catalog cache keys."""
+    if categories is None:
+        categories = index_category_map()
+    payload = json.dumps(
+        categories,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(
+        payload.encode("utf-8", "surrogatepass")
+    ).hexdigest()
+
+
 def _normalize_index_row(row):
     if not isinstance(row, dict):
         return None
@@ -385,11 +432,72 @@ def _has_next_page(payload):
     return parts.scheme == "https" and (parts.hostname or "").lower() == API_HOST
 
 
+def _fetch_category_map():
+    """Fetch ``attr -> category`` without one detail request per package.
+
+    The list endpoint does not return a category field, but it accepts a
+    ``category_id`` filter. One paginated sweep per API category is therefore
+    the smallest request set that covers every categorized package.
+    """
+    filters = _http_json(
+        API_BASE + "/filters/categories",
+        max_bytes=MAX_INDEX_BYTES,
+        language="en",
+    )
+    category_rows = filters.get("data") if isinstance(filters, dict) else None
+    if not isinstance(category_rows, list):
+        raise ValueError("Invalid Nix Software category list")
+
+    categories = {}
+    for category_row in category_rows:
+        if not isinstance(category_row, dict):
+            continue
+        try:
+            category_id = int(category_row.get("id"))
+        except (TypeError, ValueError):
+            continue
+        category_name = str(category_row.get("name") or "").strip()
+        if category_id <= 0 or not category_name:
+            continue
+        for page in range(1, MAX_INDEX_PAGES + 1):
+            url = API_BASE + "/packages?" + urlencode(
+                [
+                    ("per_page", str(INDEX_PER_PAGE)),
+                    ("category_id", str(category_id)),
+                    ("page", str(page)),
+                ]
+            )
+            payload = _http_json(
+                url,
+                max_bytes=MAX_INDEX_BYTES,
+                language="en",
+            )
+            rows = payload.get("data") if isinstance(payload, dict) else None
+            if not isinstance(rows, list):
+                raise ValueError("Invalid Nix Software category package list")
+            for row in rows:
+                if not isinstance(row, dict):
+                    continue
+                attr = str(row.get("attr_path") or "").strip()
+                if attr and "." not in attr:
+                    categories.setdefault(attr, category_name)
+            if not rows or not _has_next_page(payload):
+                break
+
+    if not categories:
+        raise ValueError("Empty Nix Software category map")
+    return categories
+
+
 def refresh_index(force=False):
-    """Fetch the GUI package index when stale. Returns True if refreshed."""
+    """Fetch the GUI index and API category map when stale.
+
+    Returns True if the cache was refreshed.
+    """
     with _INDEX_REFRESH_LOCK:
         if not force and not index_needs_refresh():
             return False
+        previous = _read_index()
         packages = {}
         for page in range(1, MAX_INDEX_PAGES + 1):
             url = API_BASE + "/packages?" + urlencode(
@@ -415,16 +523,26 @@ def refresh_index(force=False):
                 break
         if not packages:
             raise ValueError("Empty Nix Software package index")
-        previous = _read_index()
         previous_count = len(previous.get("packages", {})) if previous else 0
         if len(packages) < 50 or (
             previous_count and len(packages) < previous_count // 2
         ):
             raise ValueError("Suspiciously small Nix Software package index")
+        try:
+            categories = _fetch_category_map()
+        except Exception as error:
+            categories = previous.get("categories") if previous else {}
+            if not isinstance(categories, dict):
+                categories = {}
+            _LOGGER.warning(
+                "Nix Software category refresh failed; retaining cached categories: %s",
+                error,
+            )
         value = {
             "schema": 1,
             "updated": int(time.time()),
             "packages": packages,
+            "categories": categories,
         }
         atomic_write_json(
             INDEX_PATH,

@@ -1,9 +1,10 @@
 //! Nix package catalog.
 //!
-//! The package snapshot comes from `nix search nixpkgs '^' --json`, which
-//! already carries pname/version/description for every top-level attribute.
+//! The package snapshot is a single `nix eval` of the top-level package set,
+//! carrying pname/version/description plus nixpkgs' broken/deprecated flags.
 //! This module normalizes that snapshot once into a compact MessagePack cache,
-//! filters packages that are not meaningful standalone offers, and exposes both
+//! filters packages that are not meaningful standalone offers, maps Nix
+//! Software API categories onto LinuxToys categories on NixOS, and exposes both
 //! the standalone Nix category and the components merged into the shared
 //! AppStream catalog.
 
@@ -13,7 +14,26 @@ use serde_json::Value;
 use std::fs;
 use std::io::Write;
 
-const NIX_CACHE_SCHEMA: u32 = 1;
+const NIX_CACHE_SCHEMA: u32 = 2;
+
+/// Nix Software API category tokens mapped onto LinuxToys category roots.
+fn linux_toys_category(api_category: &str) -> Option<&'static str> {
+    let normalized = api_category.trim().to_lowercase().replace([' ', '-'], "_");
+    match normalized.as_str() {
+        "media" => Some("media"),
+        "games" | "game" => Some("game"),
+        "developer_tools" | "development" => Some("devs"),
+        "education" | "edu" => Some("edu"),
+        "graphics_photography" | "graphics_and_photography" | "graphics" | "photography" => {
+            Some("creative")
+        }
+        "productivity" | "office" => Some("office"),
+        "system" | "sys" => Some("sys"),
+        "utilities" | "utility" | "utils" => Some("utils"),
+        "networking" | "network" => Some("network"),
+        _ => None,
+    }
+}
 
 fn json_to_py(py: Python<'_>, value: &Value) -> PyResult<Py<PyAny>> {
     crate::shared::json_to_py(py, value)
@@ -25,6 +45,10 @@ struct NixPackage {
     pname: String,
     version: String,
     description: String,
+    #[serde(default)]
+    broken: bool,
+    #[serde(default)]
+    deprecated: bool,
 }
 
 /// Exact package names that are part of the Nix toolchain itself. Nix owns and
@@ -179,7 +203,9 @@ fn is_offerable(package: &NixPackage) -> bool {
     }) {
         return false;
     }
-    !is_nix_internal(&package.attr)
+    !package.broken
+        && !package.deprecated
+        && !is_nix_internal(&package.attr)
         && !is_hardware_support(&package.attr, &package.description)
         && !is_desktop_setup(&package.attr)
 }
@@ -211,11 +237,23 @@ fn normalize_nix_package(key: &str, value: &Value) -> Option<NixPackage> {
         .and_then(Value::as_str)
         .unwrap_or("")
         .trim();
+    let broken = item
+        .get("broken")
+        .or_else(|| item.get("is_broken"))
+        .and_then(Value::as_bool)
+        .unwrap_or(false);
+    let deprecated = item
+        .get("deprecated")
+        .or_else(|| item.get("is_deprecated"))
+        .and_then(Value::as_bool)
+        .unwrap_or(false);
     let package = NixPackage {
         attr: attr.to_string(),
         pname: pname.to_string(),
         version: version.to_string(),
         description: description.to_string(),
+        broken,
+        deprecated,
     };
     is_offerable(&package).then_some(package)
 }
@@ -347,10 +385,24 @@ fn nix_homepage(package: &NixPackage) -> String {
     )
 }
 
-fn nix_entry_value(package: &NixPackage, scopes: &[String], active_scope: &str) -> Value {
+fn nix_entry_value(
+    package: &NixPackage,
+    scopes: &[String],
+    active_scope: &str,
+    categories: &std::collections::HashMap<String, String>,
+    nixos: bool,
+) -> Value {
     let attr = &package.attr;
     let id = format!("nix:{attr}");
     let description = &package.description;
+    let category = if nixos {
+        categories
+            .get(attr)
+            .and_then(|value| linux_toys_category(value))
+            .unwrap_or("nix")
+    } else {
+        "nix"
+    };
     let blocks = if description.is_empty() {
         Value::Array(Vec::new())
     } else {
@@ -378,7 +430,7 @@ fn nix_entry_value(package: &NixPackage, scopes: &[String], active_scope: &str) 
         "license": "",
         "developer": "Nixpkgs",
         "icon": "nix.svg",
-        "category": "nix",
+        "category": category,
         "type": "nix",
         "package-name": attr,
         "repo": "nixpkgs",
@@ -453,6 +505,8 @@ pub(crate) fn nix_components(
     path: &str,
     scopes: &[String],
     api_identities: &std::collections::HashMap<String, (String, bool)>,
+    categories: &std::collections::HashMap<String, String>,
+    nixos: bool,
 ) -> Vec<serde_json::Map<String, Value>> {
     if path.is_empty() || scopes.is_empty() {
         return Vec::new();
@@ -474,6 +528,14 @@ pub(crate) fn nix_components(
             .map(|(name, merge)| (name.as_str(), *merge))
             .unwrap_or(("", false));
         let display_name = if api_name.is_empty() { &package.attr } else { api_name };
+        let linux_category = if nixos {
+            categories
+                .get(&package.attr)
+                .and_then(|value| linux_toys_category(value))
+                .unwrap_or("")
+        } else {
+            ""
+        };
         for scope in scopes {
             let description_blocks = if package.description.is_empty() {
                 Value::Array(Vec::new())
@@ -501,6 +563,7 @@ pub(crate) fn nix_components(
                 "nix_name": package.attr,
                 "nix_pname": package.pname,
                 "nix_api_name": if mergeable { api_name } else { "" },
+                "nix_category": linux_category,
                 "nix_version": package.version,
                 "nix_scope": scope,
             });
@@ -516,24 +579,46 @@ pub(crate) fn nix_components(
 pub(crate) struct NixCatalog {
     packages: Vec<NixPackage>,
     scopes: Vec<String>,
+    categories: std::collections::HashMap<String, String>,
+    nixos: bool,
 }
 
 impl NixCatalog {
     fn entry(&self, package: &NixPackage) -> Value {
         let active = self.scopes.first().map(String::as_str).unwrap_or("");
-        nix_entry_value(package, &self.scopes, active)
+        nix_entry_value(
+            package,
+            &self.scopes,
+            active,
+            &self.categories,
+            self.nixos,
+        )
     }
 }
 
 #[pymethods]
 impl NixCatalog {
     #[new]
-    fn new(py: Python<'_>, path: &str, scopes: Vec<String>) -> PyResult<Self> {
+    #[pyo3(signature = (path, scopes, categories_json="", nixos=false))]
+    fn new(
+        py: Python<'_>,
+        path: &str,
+        scopes: Vec<String>,
+        categories_json: &str,
+        nixos: bool,
+    ) -> PyResult<Self> {
         let path = path.to_string();
         let packages = py
             .allow_threads(move || load_nix_packages(&path))
             .map_err(pyo3::exceptions::PyValueError::new_err)?;
-        Ok(Self { packages, scopes })
+        let categories: std::collections::HashMap<String, String> =
+            serde_json::from_str(categories_json).unwrap_or_default();
+        Ok(Self {
+            packages,
+            scopes,
+            categories,
+            nixos,
+        })
     }
 
     fn __len__(&self) -> usize {
@@ -651,6 +736,8 @@ mod tests {
             pname: attr.into(),
             version: "1.0".into(),
             description: description.into(),
+            broken: false,
+            deprecated: false,
         }
     }
 
@@ -672,6 +759,44 @@ mod tests {
         for name in ["firefox", "gimp", "ripgrep", "linuxqq", "mkvtoolnix-cli"] {
             assert!(is_offerable(&package(name, "application")), "{name}");
         }
+    }
+
+    #[test]
+    fn filters_broken_and_deprecated_packages() {
+        let mut broken = package("broken-app", "application");
+        broken.broken = true;
+        let mut deprecated = package("old-app", "application");
+        deprecated.deprecated = true;
+        assert!(!is_offerable(&broken));
+        assert!(!is_offerable(&deprecated));
+        assert!(is_offerable(&package("current-app", "application")));
+    }
+
+    #[test]
+    fn normalizes_broken_and_deprecated_flags() {
+        let value = serde_json::json!({
+            "legacyPackages.x86_64-linux.broken-app": {
+                "pname": "broken-app", "version": "1.0",
+                "description": "Broken application", "broken": true
+            },
+            "legacyPackages.x86_64-linux.old-app": {
+                "pname": "old-app", "version": "1.0",
+                "description": "Old application", "deprecated": true
+            },
+            "legacyPackages.x86_64-linux.current-app": {
+                "pname": "current-app", "version": "1.0",
+                "description": "Current application"
+            }
+        });
+        let rows = value.as_object().unwrap();
+        let packages: Vec<_> = rows
+            .iter()
+            .filter_map(|(key, value)| normalize_nix_package(key, value))
+            .collect();
+        assert_eq!(packages.len(), 1);
+        assert_eq!(packages[0].attr, "current-app");
+        assert!(!packages[0].broken);
+        assert!(!packages[0].deprecated);
     }
 
     #[test]
@@ -699,7 +824,13 @@ mod tests {
     #[test]
     fn entries_expose_both_scopes_when_available() {
         let scopes = vec!["home-manager".to_string(), "system".to_string()];
-        let entry = nix_entry_value(&package("firefox", "Web browser"), &scopes, "home-manager");
+        let entry = nix_entry_value(
+            &package("firefox", "Web browser"),
+            &scopes,
+            "home-manager",
+            &std::collections::HashMap::new(),
+            false,
+        );
         assert_eq!(entry.get("appstream_source").and_then(Value::as_str), Some("nix"));
         assert_eq!(entry.get("category").and_then(Value::as_str), Some("nix"));
         let options = entry.get("source_options").and_then(Value::as_array).unwrap();
@@ -710,6 +841,39 @@ mod tests {
             .collect();
         assert_eq!(scopes, vec!["home-manager", "system"]);
         assert_eq!(entry.get("recommended_source").and_then(Value::as_str), Some("nix:home-manager"));
+    }
+
+    #[test]
+    fn nixos_entries_use_the_api_category() {
+        let scopes = vec!["system".to_string()];
+        let categories = std::collections::HashMap::from([
+            ("firefox".to_string(), "networking".to_string()),
+            ("mystery".to_string(), "unmapped".to_string()),
+        ]);
+        let firefox = nix_entry_value(
+            &package("firefox", "Web browser"),
+            &scopes,
+            "system",
+            &categories,
+            true,
+        );
+        assert_eq!(firefox.get("category").and_then(Value::as_str), Some("network"));
+        let mystery = nix_entry_value(
+            &package("mystery", "Unknown category"),
+            &scopes,
+            "system",
+            &categories,
+            true,
+        );
+        assert_eq!(mystery.get("category").and_then(Value::as_str), Some("nix"));
+        let elsewhere = nix_entry_value(
+            &package("firefox", "Web browser"),
+            &scopes,
+            "system",
+            &categories,
+            false,
+        );
+        assert_eq!(elsewhere.get("category").and_then(Value::as_str), Some("nix"));
     }
 
     #[test]

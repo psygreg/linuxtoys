@@ -272,6 +272,42 @@ def is_wsl():
     return bool(_cached_host_value("wsl", _detect_wsl))
 
 
+def _detect_nixos():
+    """Return True when the host is NixOS or a NixOS derivative.
+
+    NixOS itself ships ``/etc/NIXOS`` and a configuration at
+    ``/etc/nixos/configuration.nix``. Derivatives do not always keep those
+    files, so the os-release identity is checked as well. A plain Nix install
+    on another distribution must not be treated as NixOS.
+    """
+    for marker in ("/etc/NIXOS", "/etc/nixos/configuration.nix"):
+        if os.path.exists(marker):
+            return True
+
+    os_release = {}
+    try:
+        with open("/etc/os-release", "r", encoding="utf-8", errors="replace") as handle:
+            for raw_line in handle:
+                key, separator, value = raw_line.rstrip().partition("=")
+                if separator:
+                    os_release[key] = value.strip().strip('"').strip("'").lower()
+    except OSError:
+        return False
+
+    id_val = os_release.get("ID", "")
+    id_like = os_release.get("ID_LIKE", "").split()
+    return (
+        id_val == "nixos"
+        or id_val.startswith("nixos-")
+        or "nixos" in id_like
+    )
+
+
+def is_nixos():
+    """Return True when the host is NixOS or a NixOS derivative."""
+    return bool(_cached_host_value("nixos", _detect_nixos))
+
+
 # OCI image reference for the custom GregOS image. A booted host matches when
 # its rpm-ostree container image reference resolves to this exact image name.
 GREGOS_IMAGE_REF = "ghcr.io/psygreg/gregos"
@@ -394,7 +430,7 @@ def is_supported_system():
     Check if the current system is supported by LinuxToys.
 
     A system is considered supported if it matches at least one of the
-    supported OS compatibility keys (debian, ubuntu, cachy, arch, fedora, rhel, suse, ostree, ublue, gregos).
+    supported OS compatibility keys (debian, ubuntu, cachy, arch, fedora, rhel, suse, ostree, ublue, gregos, nixos).
 
     In developer mode:
     - If COMPAT is set to simulate a specific system, that system's compatibility is checked
@@ -471,7 +507,8 @@ def is_supported_system():
         "solus",
         "pika",
         "deepin",
-        "manjaro"
+        "manjaro",
+        "nixos"
     }
 
     # Check if any OS compatibility key matches
@@ -525,7 +562,7 @@ def get_system_compat_keys():
 
     Returns:
         set: Set of compatibility keys for the current system
-               (OS keys: debian, ubuntu, cachy, arch, fedora, rhel, suse, ostree, ublue, gregos;
+               (OS keys: debian, ubuntu, cachy, arch, fedora, rhel, suse, ostree, ublue, gregos, nixos;
               GPU keys: gpu, gpu-amd, gpu-intel, gpu-nvidia;
               Desktop keys: desktop, desktop-gnome, desktop-plasma, desktop-hyprland, desktop-sway, desktop-other;
               Init keys: systemd;
@@ -641,6 +678,9 @@ def get_system_compat_keys():
         # Do not inherit Arch/Fedora/etc. install privileges via ID_LIKE or
         # accidentally classify bootc hosts as rpm-ostree package-layering hosts.
         keys = {"steamos", restricted_host}
+
+    if is_nixos():
+        keys.add("nixos")
 
     # Add GPU compatibility keys
     gpu_keys = get_gpu_compat_keys()

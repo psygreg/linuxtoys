@@ -10,7 +10,9 @@ helper scripts. The heavy normalization/filtering lives in Rust
 (``_catalog_rs.NixCatalog``), mirroring the other catalogs. The snapshot is
 host-specific: its ``legacyPackages.<system>`` prefix must match the shared
 architecture policy (x86_64-linux or aarch64-linux), and unsupported hosts
-hide the subsystem instead of falling back to a foreign package set.
+hide the subsystem instead of falling back to a foreign package set. The
+evaluated snapshot also carries nixpkgs' broken/deprecated metadata so those
+non-installable entries never reach the catalog.
 """
 
 from __future__ import annotations
@@ -37,6 +39,44 @@ RAW_PATH = CACHE_DIR / "packages.json"
 MAX_AGE = 14 * 24 * 60 * 60
 MAX_BYTES = 128 * 1024 * 1024
 SEARCH_TIMEOUT = 15 * 60
+SNAPSHOT_SCHEMA = 2
+_SNAPSHOT_MARKER = "_linuxtoys_snapshot"
+
+# ``nix search`` only exposes pname/version/description. The snapshot therefore
+# evaluates the top-level package set directly so broken and deprecated
+# packages can be filtered by the Rust catalog instead of being offered for
+# installation. Every package is isolated with tryEval, matching nix search's
+# behaviour for attributes that fail evaluation.
+_NIX_SNAPSHOT_EXPRESSION = r"""
+pkgs:
+let
+  names = builtins.attrNames pkgs;
+  prefix = "legacyPackages.__SYSTEM__.";
+  row = name:
+    let
+      result = builtins.tryEval (
+        let
+          package = pkgs.${name};
+          meta = package.meta or { };
+          problems = meta.problems or { };
+        in
+        if (package.type or "") != "derivation" then null
+        else {
+          pname = package.pname or name;
+          version = package.version or "";
+          description = meta.description or "";
+          broken = (meta.broken or false) || ((problems.broken or false) != false);
+          deprecated = (meta.deprecated or false) || ((problems.deprecated or false) != false);
+        }
+      );
+    in
+    if result.success && result.value != null
+    then [{ name = prefix + name; value = result.value; }]
+    else [ ];
+in
+{ "__SNAPSHOT_MARKER__" = { schema = __SNAPSHOT_SCHEMA__; pname = ""; description = ""; }; } //
+builtins.listToAttrs (builtins.concatMap row names)
+"""
 
 _HM_CONFIG_OVERRIDE = os.environ.get("HOME_MANAGER_CONFIG")
 HOME_CONFIG_DIR = (
@@ -97,7 +137,13 @@ def home_manager_available():
 
 
 def is_nixos():
-    return os.path.exists("/etc/NIXOS") or os.path.exists("/etc/nixos/configuration.nix")
+    """Return True on NixOS and NixOS derivatives (cached host probe)."""
+    try:
+        from .compat import is_nixos as host_is_nixos
+
+        return host_is_nixos()
+    except Exception:
+        return os.path.exists("/etc/NIXOS") or os.path.exists("/etc/nixos/configuration.nix")
 
 
 def linux_arch():
@@ -132,6 +178,24 @@ def availability_fingerprint():
     return (nix_executable(), home_manager_available(), is_nixos())
 
 
+def catalog_metadata():
+    """Return the API category map and whether NixOS classification applies.
+
+    Only NixOS hosts fold Nix packages into the normal LinuxToys categories.
+    Elsewhere unmatched Nix packages stay in their own catalog category.
+    """
+    nixos = is_nixos()
+    if not nixos:
+        return {}, False
+    try:
+        from . import nix_metadata
+
+        categories = nix_metadata.index_category_map()
+    except Exception:
+        categories = {}
+    return categories, nixos
+
+
 def _path_state(path):
     try:
         stat = path.stat()
@@ -157,7 +221,7 @@ def fingerprint():
 def _snapshot_system(path=None):
     """Read the nixpkgs system prefix from the start of a search snapshot.
 
-    ``nix search`` emits keys such as ``legacyPackages.aarch64-linux.firefox``.
+    The snapshot emits keys such as ``legacyPackages.aarch64-linux.firefox``.
     All rows in one snapshot share the evaluated system, so the first key is
     enough. An empty result means the format was not recognized; callers keep
     the Rust snapshot validation as the authority in that case.
@@ -170,6 +234,22 @@ def _snapshot_system(path=None):
         return ""
     match = re.search(rb"legacyPackages\.([A-Za-z0-9_-]+)\.", head)
     return match.group(1).decode("ascii", "replace") if match else ""
+
+
+def _snapshot_schema(path=None):
+    """Read the LinuxToys snapshot schema marker written by the evaluator."""
+    target = Path(path) if path is not None else RAW_PATH
+    try:
+        with target.open("rb") as handle:
+            head = handle.read(16384)
+    except OSError:
+        return 0
+    marker = re.escape(_SNAPSHOT_MARKER.encode("ascii"))
+    match = re.search(
+        rb'"' + marker + rb'"\s*:\s*\{[^{}]*?"schema"\s*:\s*(\d+)',
+        head,
+    )
+    return int(match.group(1)) if match else 0
 
 
 def valid_snapshot():
@@ -228,21 +308,34 @@ def needs_refresh():
         return False
     if not valid_snapshot():
         return True
+    # Refresh once when an older snapshot lacks broken/deprecated metadata.
+    if _snapshot_schema() < SNAPSHOT_SCHEMA:
+        return True
     try:
         return time.time() - RAW_PATH.stat().st_mtime >= MAX_AGE
     except OSError:
         return True
 
 
-def _nix_search_command(executable):
+def _snapshot_expression(system):
+    return (
+        _NIX_SNAPSHOT_EXPRESSION
+        .replace("__SYSTEM__", system)
+        .replace("__SNAPSHOT_MARKER__", _SNAPSHOT_MARKER)
+        .replace("__SNAPSHOT_SCHEMA__", str(SNAPSHOT_SCHEMA))
+    )
+
+
+def _nix_snapshot_command(executable, system):
     return [
         executable,
         "--extra-experimental-features",
         "nix-command flakes",
-        "search",
-        "nixpkgs",
-        "^",
+        "eval",
         "--json",
+        f"nixpkgs#legacyPackages.{system}",
+        "--apply",
+        _snapshot_expression(system),
     ]
 
 
@@ -269,6 +362,9 @@ def load_or_refresh(force=False):
                 executable = nix_executable()
                 if not executable:
                     return None
+                expected_system = linux_arch()
+                if not expected_system:
+                    return None
                 environment = {
                     **os.environ,
                     "NIX_CONFIG": (
@@ -281,7 +377,7 @@ def load_or_refresh(force=False):
                 }
                 with os.fdopen(fd, "wb") as handle:
                     result = subprocess.run(
-                        _nix_search_command(executable),
+                        _nix_snapshot_command(executable, expected_system),
                         stdout=handle,
                         stderr=subprocess.PIPE,
                         timeout=SEARCH_TIMEOUT,
@@ -291,14 +387,13 @@ def load_or_refresh(force=False):
                 if result.returncode:
                     detail = result.stderr.decode("utf-8", "replace").strip().splitlines()
                     raise RuntimeError(
-                        detail[-1] if detail else "nix search failed"
+                        detail[-1] if detail else "nix package evaluation failed"
                     )
                 size = os.path.getsize(temporary)
                 if not 0 < size <= MAX_BYTES:
                     raise ValueError("Nix package metadata is empty or too large")
                 if not _catalog_rs.nix_snapshot_valid(temporary, MAX_BYTES):
                     raise ValueError("Invalid Nix package metadata")
-                expected_system = linux_arch()
                 snapshot_system = _snapshot_system(temporary)
                 if not expected_system or (
                     snapshot_system and snapshot_system != expected_system
@@ -319,7 +414,18 @@ def load_or_refresh(force=False):
                 # Warm the compact Rust cache on this worker so opening the
                 # category never pays the normalization cost on the GTK thread.
                 try:
-                    _catalog_rs.NixCatalog(os.fspath(RAW_PATH), scopes())
+                    categories, nixos = catalog_metadata()
+                    _catalog_rs.NixCatalog(
+                        os.fspath(RAW_PATH),
+                        scopes(),
+                        json.dumps(
+                            categories,
+                            ensure_ascii=False,
+                            sort_keys=True,
+                            separators=(",", ":"),
+                        ),
+                        nixos,
+                    )
                 except Exception:
                     pass
             except Exception as error:
@@ -337,7 +443,18 @@ def load_or_refresh(force=False):
             # The raw snapshot may already be fresh while the compact Rust cache
             # is missing (first run after an upgrade, for example).
             try:
-                _catalog_rs.NixCatalog(os.fspath(path), scopes())
+                categories, nixos = catalog_metadata()
+                _catalog_rs.NixCatalog(
+                    os.fspath(path),
+                    scopes(),
+                    json.dumps(
+                        categories,
+                        ensure_ascii=False,
+                        sort_keys=True,
+                        separators=(",", ":"),
+                    ),
+                    nixos,
+                )
             except Exception:
                 pass
         return path
@@ -527,14 +644,22 @@ def _catalog():
     path = cached_path()
     if path is None:
         return None
+    categories, nixos = catalog_metadata()
     try:
         stat = path.stat()
+        category_signature = "unavailable"
+        if nixos:
+            from . import nix_metadata
+
+            category_signature = nix_metadata.index_category_fingerprint(categories)
         key = (
             os.fspath(path),
             stat.st_size,
             stat.st_mtime_ns,
             tuple(scopes()),
             linux_arch(),
+            category_signature,
+            nixos,
         )
     except OSError:
         return None
@@ -542,7 +667,17 @@ def _catalog():
         if _CATALOG_CACHE["key"] == key:
             return _CATALOG_CACHE["catalog"]
         try:
-            catalog = _catalog_rs.NixCatalog(os.fspath(path), scopes())
+            catalog = _catalog_rs.NixCatalog(
+                os.fspath(path),
+                scopes(),
+                json.dumps(
+                    categories,
+                    ensure_ascii=False,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                ),
+                nixos,
+            )
         except Exception:
             return None
         _CATALOG_CACHE["key"] = key
