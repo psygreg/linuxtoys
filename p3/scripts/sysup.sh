@@ -166,6 +166,7 @@ if [ "$UPD_SERVICE" = "1" ] && [ "$(id -u)" -ne 0 ]; then
     flatpak_update_installation --user ""
     brew_update
     bun_update
+    nix_update || warn "Failed to update Nix packages"
     cleanup_orphan_desktops
     echo "$sysup_completed"
     exit 0
@@ -288,6 +289,11 @@ fi
 # depth zero is a no-op, so this also covers the Ubuntu release-upgrade path
 # that already released the lock inside the branch above.
 [ "$UPD_SERVICE" != "1" ] && runner_unlock
+
+# Update Nix-managed packages when Nix is present: the NixOS system profile
+# and/or Home Manager on any distro that has it. Home Manager's GPU-driver
+# warning is captured by the rebuild helper and re-runs non-NixOS GPU setup.
+nix_update || warn "Failed to update Nix packages"
 
 if command -v flatpak >/dev/null 2>&1; then
     if [ "$UPD_SERVICE" = "1" ]; then

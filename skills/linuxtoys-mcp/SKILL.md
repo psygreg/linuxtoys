@@ -86,7 +86,7 @@ After connecting, call `server_info` once to confirm the session works.
 | `server_info` | Version, endpoint, service state, busy jobs, cached script-gate state |
 | `get_update_status` | Fresh networked check of LinuxToys itself: running vs newest published release, releases behind, whether the app can update itself on this host, script-gate state |
 | `update_linuxtoys` | Run the official LinuxToys self-update as a tracked job (ask the user first — it changes the whole app); the call blocks until it finishes and returns the outcome; then restart the service |
-| `update_system` | Run the app's full system update ("Update System" card): distro packages, Flatpaks, Snaps, Homebrew/Bun, orphan and leftover-shortcut cleanup; ask the user first — needs root (password dialog on their screen) and runs very long; the call blocks until it finishes (delegate it to a subagent to stay responsive); may also answer `requires_answers` (release-upgrade choice) before running |
+| `update_system` | Run the app's full system update ("Update System" card): distro packages, Nix-managed packages (NixOS system and/or Home Manager, including the non-NixOS GPU setup refresh), Flatpaks, Snaps, Homebrew/Bun, orphan and leftover-shortcut cleanup; ask the user first — needs root (password dialog on their screen) and runs very long; the call blocks until it finishes (delegate it to a subagent to stay responsive); may also answer `requires_answers` (release-upgrade choice) before running |
 | `list_categories` | Catalog categories |
 | `search_apps(query, limit?)` | Search every catalog (scripts, repos, Flathub/Snap, AppImages); returns stable `id`s |
 | `get_app_details(app_id)` | App page: description, screenshots URLs, homepage/donate/purchase links, version, install state (and leftover `~/.var/app` data state for Flatpak apps). When the app is offered by several sources, `sources` lists each one with a stable `key`, label, version, `default`/`recommended` marks and package name |
@@ -259,9 +259,11 @@ the user closed the password dialog — tell them and let them decide.
 
 **Run the full system update:** `update_system` runs the app's own
 "Update System" operation — the same sysup run the GUI's menu card and the
-automatic-update service use. It is separate from `update_linuxtoys`: the
-app keeps updating itself, the system updates within its current release
-(no release upgrade unless the user accepts a prompt). Ask the user first
+automatic-update service use. It refreshes Nix-managed packages when Nix is
+available (NixOS system and/or Home Manager, including the non-NixOS GPU
+setup refresh), and is separate from `update_linuxtoys`: the app keeps
+updating itself, the system updates within its current release (no release
+upgrade unless the user accepts a prompt). Ask the user first
 (it changes the whole system) → `update_system` → the call runs the whole
 update and its response is the job's final record; it can outlast any
 client timeout, so delegate it to a subagent to stay responsive. The run

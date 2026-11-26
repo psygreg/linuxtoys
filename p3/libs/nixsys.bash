@@ -717,6 +717,82 @@ _nix_rebuild() {
     _nix_run_home_manager_switch "${hm_command[@]}"
 }
 
+_nix_channel_bin() {
+    command -v nix-channel 2>/dev/null || {
+        local nix candidate
+        nix=$(_nix_bin) || return 1
+        candidate="$(dirname -- "$nix")/nix-channel"
+        [ -x "$candidate" ] && printf '%s\n' "$candidate"
+    }
+}
+
+_nix_update_flake() {
+    local directory="$1" elevated="$2" bin nix_config
+    bin=$(_nix_bin) || return 1
+    nix_config="${NIX_CONFIG:+$NIX_CONFIG$'\n'}extra-experimental-features = nix-command flakes"
+    if [ "$elevated" = "sudo" ]; then
+        ( cd "$directory" \
+            && sudo_ env NIX_CONFIG="$nix_config" \
+                "$bin" --extra-experimental-features "nix-command flakes" flake update )
+    else
+        ( cd "$directory" \
+            && env NIX_CONFIG="$nix_config" \
+                "$bin" --extra-experimental-features "nix-command flakes" flake update )
+    fi
+}
+
+_nix_update_channels() {
+    local elevated="$1" channel
+    channel=$(_nix_channel_bin) || return 1
+    if [ "$elevated" = "sudo" ]; then
+        sudo_ "$channel" --update
+    else
+        "$channel" --update
+    fi
+}
+
+# Update the Nix package sources used by the generated LinuxToys modules.
+# Flake configurations refresh their locked inputs; classic configurations use
+# channels. The subsequent rebuild goes through _nix_rebuild so Home Manager's
+# GPU-driver warning is captured and the non-NixOS setup is refreshed.
+nix_update() {
+    nix_available || return 0
+    local rc=0 directory elevated hm_config
+    if nix_system_available \
+        && { [ "$(id -u)" -eq 0 ] || [ "${UPD_SERVICE:-0}" != "1" ]; }; then
+        directory=$(_nix_system_dir)
+        elevated=""
+        [ "$(id -u)" -ne 0 ] && elevated="sudo"
+        if [ -f "$directory/flake.nix" ]; then
+            _nix_update_flake "$directory" "$elevated" || rc=1
+        else
+            _nix_update_channels "$elevated" || rc=1
+        fi
+        _nix_rebuild system || rc=1
+    fi
+
+    hm_config=$(_nix_hm_config_file)
+    directory=$(_nix_hm_dir)
+    if nix_home_manager_available \
+        && [ "$(id -u)" -ne 0 ] \
+        && { [ -f "$directory/flake.nix" ] || [ -n "$hm_config" ] \
+            || [ -f "$directory/home.nix" ] || [ -f "$directory/default.nix" ]; }; then
+        if [ -f "$directory/flake.nix" ]; then
+            _nix_update_flake "$directory" "" || rc=1
+        else
+            _nix_update_channels "" || rc=1
+        fi
+        _nix_rebuild home-manager || rc=1
+        if nix_gpu_supported \
+            && nix_gpu_configured \
+            && [ "${_NIX_GPU_SETUP_ATTEMPTED:-0}" -eq 0 ] \
+            && ! nix_gpu_setup_ready; then
+            _nix_ensure_gpu_setup || rc=1
+        fi
+    fi
+    return "$rc"
+}
+
 _nix_sync_registry() {
     local temporary scope attr
     temporary=$(mktemp "${TMPDIR:-/tmp}/linuxtoys-nix-registry.XXXXXX") || return 1

@@ -2682,8 +2682,9 @@ class JobManager:
 
         Not the app's own self-update (submit_update); this is the same
         plain script the GUI's main-window card and the automatic-update
-        service run: distro packages, Flatpaks, Snaps, Homebrew/Bun,
-        orphan and leftover-desktop-shortcut cleanup. It is a LinuxToys
+        service run: distro packages, Nix-managed packages (NixOS system
+        and/or Home Manager), Flatpaks, Snaps, Homebrew/Bun, orphan and
+        leftover-desktop-shortcut cleanup. It is a LinuxToys
         script run, so the outdated-version gate governs it like any other
         script job, and it is serialized against the LinuxToys self-update
         so it never races the app being replaced. Needs root: the password
@@ -3634,8 +3635,9 @@ def tool_schemas():
             "name": "update_system",
             "description": (
                 "Run the app's full system update ('Update System') as a "
-                "tracked job: distribution packages, Flatpaks, Snaps, "
-                "Homebrew/Bun, orphan cleanup — the same run the GUI's menu "
+                "tracked job: distribution packages, Nix-managed packages "
+                "(NixOS system and/or Home Manager, including non-NixOS GPU "
+                "setup refresh), Flatpaks, Snaps, Homebrew/Bun, orphan cleanup — the same run the GUI's menu "
                 "card and the automatic-update service use. Not the app's "
                 "own self-update (update_linuxtoys does that). Always get "
                 "the user's approval first: it changes the whole system, "
@@ -4410,8 +4412,9 @@ def _tool_update_system(answers=None, wait=True, wait_seconds=None):
     return _job_submission_result(
         job,
         "This runs the app's full system update: distribution packages, "
-        "Flatpaks, Snaps, Homebrew/Bun updates, orphan cleanup and "
-        "leftover desktop-shortcut removal. It needs root, so the password "
+        "Nix-managed packages (NixOS system and/or Home Manager, including "
+        "the non-NixOS GPU setup refresh), Flatpaks, Snaps, Homebrew/Bun "
+        "updates, orphan cleanup and leftover desktop-shortcut removal. It needs root, so the password "
         "dialog appears on the user's screen — wait for them to type it, "
         "never ask for the password. Ubuntu/Fedora release upgrade choices "
         "come from the answer you validated; warnings and prompts raised "
