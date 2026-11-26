@@ -738,8 +738,15 @@ def _enrich_entry(info, *, include_detail, language=None):
             if payload and not payload.get("missing"):
                 detail = payload
         if not record and not detail and not has_nix_options:
-            return info
+            result = dict(info)
+            attr = nix_attr(result)
+            if attr and not result.get("registry_name"):
+                result["registry_name"] = f"Nix: {attr}"
+            return result
         result = dict(info)
+        attr = nix_attr(result)
+        if attr and not result.get("registry_name"):
+            result["registry_name"] = f"Nix: {attr}"
         _apply_index(result, record)
         if detail is not None:
             _apply_detail(result, detail, language)
@@ -747,13 +754,21 @@ def _enrich_entry(info, *, include_detail, language=None):
     if has_nix_options:
         if result is info:
             result = dict(info)
-        result["source_options"] = [
-            _enrich_entry(option, include_detail=False, language=language)
-            if isinstance(option, dict)
-            and str(option.get("appstream_source") or "").strip() == "nix"
-            else option
-            for option in options
-        ]
+        enriched_options = []
+        for option in options:
+            if (
+                isinstance(option, dict)
+                and str(option.get("appstream_source") or "").strip() == "nix"
+            ):
+                option = _enrich_entry(
+                    option, include_detail=False, language=language
+                )
+                attr = nix_attr(option)
+                if attr and not option.get("registry_name"):
+                    option = dict(option)
+                    option["registry_name"] = f"Nix: {attr}"
+            enriched_options.append(option)
+        result["source_options"] = enriched_options
     return result
 
 

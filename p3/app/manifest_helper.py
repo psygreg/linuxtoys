@@ -24,6 +24,7 @@ from . import package_guard
 from .updater.update_helper import UpdateHelper
 from .updater import version_gate
 from .registry_utils import parse_registry_file
+from . import nix_catalog, nix_registry
 
 
 PACKAGE_NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9+_.:@-]*$")
@@ -613,6 +614,45 @@ def _registry_entry_blocks_manifest_export(executions):
     return False
 
 
+def registered_nix_state(registry_data=None):
+    """Return the applied Nix package state to export alongside a manifest."""
+    if registry_data is None:
+        registry_data = parse_registry_file()
+
+    home = set()
+    system = set()
+    names = {}
+    for item in nix_registry.installed_packages(registry_data):
+        attr = str(item.get("nix_name") or "").strip()
+        if not attr:
+            continue
+        scopes = item.get("nix_scopes") or [item.get("nix_scope") or "home-manager"]
+        for scope in scopes:
+            (system if scope == "system" else home).add(attr)
+        names[attr] = str(item.get("name") or attr)
+
+    try:
+        modules = nix_catalog.installed_packages()
+    except Exception:
+        modules = {}
+    module_home = set(modules.get("home-manager") or ())
+    module_system = set(modules.get("system") or ())
+    # The modules are authoritative when they exist: a stale registry entry
+    # must not reinstall a package the user removed from their configuration.
+    if module_home or module_system:
+        home = module_home
+        system = module_system
+
+    for attr in sorted(home | system):
+        names.setdefault(attr, attr)
+    return {
+        "home": sorted(home),
+        "system": sorted(system),
+        "names": names,
+        "required": bool(home or system),
+    }
+
+
 def build_registered_manifest_entries(registry_data=None, translations=None, include_requirements=False):
     """Build explicit script entries from the current Action Registry.
 
@@ -632,10 +672,14 @@ def build_registered_manifest_entries(registry_data=None, translations=None, inc
 
     candidates = []
     seen = set()
+    has_nix_packages = False
     for raw_name in registry_data.keys():
         name = str(raw_name or "").strip()
         key = name.casefold()
         if not name or key in seen or not valid_manifest_value(name):
+            continue
+        if nix_registry.is_nix_registry_entry(name, registry_data.get(raw_name, [])):
+            has_nix_packages = True
             continue
         if _is_removal_registry_entry(name, translations):
             continue
@@ -716,9 +760,12 @@ def build_registered_manifest_entries(registry_data=None, translations=None, inc
         entries.append(entry)
 
     if include_requirements:
+        nix_state = registered_nix_state(registry_data)
         requirements = {
             "flathub": _registry_export_requires_flathub(registry_data, exported_names),
             "homebrew": requires_homebrew,
+            "nix": bool(has_nix_packages or nix_state["required"]),
+            "nix_state": nix_state,
         }
         return entries, requirements
 
@@ -749,6 +796,24 @@ def export_registered_manifest(output_path=None, registry_data=None, translation
         requirement_lines.append("require:flathub")
     if requirements.get("homebrew"):
         requirement_lines.append("require:homebrew")
+    if requirements.get("nix"):
+        requirement_lines.append("require:nix")
+        requirement_lines.append("require:nix-subsystem")
+        requirement_lines.append(
+            f"# Nix files: {nix_catalog.manifest_bundle_dir(destination)}"
+        )
+
+    nix_state = requirements.get("nix_state") or {}
+    if requirements.get("nix"):
+        try:
+            nix_catalog.export_manifest_bundle(
+                destination,
+                nix_state.get("home") or (),
+                nix_state.get("system") or (),
+                nix_state.get("names") or {},
+            )
+        except (OSError, ValueError) as error:
+            print(f"Warning: could not export the Nix manifest files: {error}")
 
     lines = [
         "# LinuxToys Manifest File",
@@ -761,7 +826,154 @@ def export_registered_manifest(output_path=None, registry_data=None, translation
 
     atomic_write_text(destination, "\n".join(lines), fsync=True)
 
-    return destination, len(entries)
+    nix_count = 0
+    if requirements.get("nix"):
+        nix_count = len(
+            set(nix_state.get("home") or ())
+            | set(nix_state.get("system") or ())
+        )
+    return destination, len(entries) + nix_count
+
+
+def ensure_nix_snapshot():
+    """Make the nixpkgs snapshot available for native-package conversion."""
+    try:
+        if not nix_catalog.enabled():
+            return False
+        if nix_catalog.cached_path() is not None:
+            return True
+        return bool(nix_catalog.load_or_refresh())
+    except Exception:
+        return False
+
+
+def prepare_nix_manifest_import(manifest_path, native_packages=(), translations=None):
+    """Prepare Nix requirements and the bundle import for a manifest.
+
+    The exported Nix files are picked up from the directory next to the
+    manifest. On NixOS, native package entries are converted to system-level
+    Nix packages when the nixpkgs snapshot knows the same name. Every other
+    target gets all exported Nix packages through home-manager.
+
+    Callers must ensure Nix is present (``prepare_nix_installer``) before the
+    returned script runs.
+
+    Returns a dict with ``installer`` (reserved; always None now),
+    ``import_script`` (one-shot bundle application), ``packages`` (native
+    packages left for the distro manager), ``converted`` and user-facing
+    ``warnings``/``errors``.
+    """
+    warnings = []
+    errors = []
+    bundle = nix_catalog.find_manifest_bundle(manifest_path)
+    state = nix_catalog.read_manifest_bundle(manifest_path) if bundle else None
+    nix_ready = nix_catalog.enabled()
+    target_nixos = nix_catalog.is_nixos()
+
+    home = list(state.get("home") or ()) if state else []
+    system = list(state.get("system") or ()) if state else []
+    names = dict(state.get("names") or {}) if state else {}
+
+    # System-scope packages from a NixOS export have no system backend outside
+    # NixOS: install them through home-manager instead.
+    if not target_nixos and system:
+        home = sorted(set(home) | set(system))
+        system = []
+        warnings.append(
+            "System-level Nix packages will be installed through Home Manager "
+            "because this system is not NixOS."
+        )
+    elif target_nixos and state and not state.get("source_nixos") and system:
+        # Non-NixOS exports should never carry system-scope packages, but if a
+        # hand-edited bundle does, keep them in Home Manager on NixOS too.
+        home = sorted(set(home) | set(system))
+        system = []
+
+    converted = {}
+    remaining_packages = list(dict.fromkeys(
+        str(name).strip() for name in native_packages if str(name).strip()
+    ))
+    if target_nixos and remaining_packages:
+        # The nixpkgs snapshot is the only reliable source for attribute
+        # existence. Fetch it once when this host has Nix but no snapshot yet.
+        try:
+            if nix_ready and nix_catalog.cached_path() is None:
+                nix_catalog.load_or_refresh()
+        except Exception as error:
+            warnings.append(f"Could not refresh the nixpkgs package list: {error}")
+
+        kept = []
+        for package in remaining_packages:
+            attr = nix_catalog.package_attr(package)
+            if attr:
+                if attr not in home and attr not in system:
+                    system.append(attr)
+                converted[package] = attr
+            else:
+                kept.append(package)
+        remaining_packages = kept
+        if converted:
+            warnings.append(
+                "Native package(s) switched to system-level Nix packages: "
+                + ", ".join(
+                    f"{package} → {attr}"
+                    for package, attr in sorted(converted.items())
+                )
+            )
+        if kept and nix_ready:
+            warnings.append(
+                "No nixpkgs attribute was found for: " + ", ".join(kept)
+            )
+
+    installer = None
+    import_script = None
+    if state is None:
+        warnings.append(
+            "No exported Nix files were found next to this manifest; "
+            "only the Nix subsystem requirements will be prepared."
+        )
+    try:
+        import_script = nix_catalog.materialize_import(
+            manifest_path,
+            home,
+            system,
+        )
+    except (OSError, ValueError) as error:
+        errors.append(f"Could not prepare the Nix import: {error}")
+
+    return {
+        "installer": installer,
+        "import_script": import_script,
+        "packages": remaining_packages,
+        "converted": converted,
+        "warnings": warnings,
+        "errors": errors,
+        "bundle": os.fspath(bundle) if bundle else None,
+        "home": sorted(set(home)),
+        "system": sorted(set(system)),
+        "names": names,
+    }
+
+
+def prepare_nix_installer(translations=None):
+    """Return ``(needed, installer_script, error)`` for manifest imports."""
+    if nix_catalog.enabled():
+        return False, None, ""
+    try:
+        installer = find_script_by_id("nix", translations)
+    except Exception:
+        installer = None
+    if installer is None:
+        return True, None, (
+            "This manifest requires the Nix subsystem, but Nix is not "
+            "installed and the Nix installer entry is unavailable."
+        )
+    if installer.get("is_repo_entry"):
+        try:
+            installer = materialize_repo_script(installer)
+        except (ValueError, NotImplementedError, OSError) as error:
+            return True, None, f"Could not prepare the Nix installer: {error}"
+    return True, installer, ""
 
 def load_manifest(manifest_path='manifest.txt'):
     """
@@ -885,9 +1097,10 @@ def run_script(script_info):
     try:
         return _run_script_impl(script_info)
     finally:
-        if script_info.get("appstream_source") == "homebrew" and script_info.get("cleanup_path"):
+        cleanup_path = script_info.get("cleanup_path")
+        if cleanup_path:
             try:
-                os.unlink(script_info["cleanup_path"])
+                os.unlink(cleanup_path)
             except OSError:
                 pass
 
@@ -1108,6 +1321,9 @@ def print_cli_usage():
     print("  - script:<id>@native/@flatpak preserves an explicit non-default source choice")
     print("  - require:flathub ensures Flatpak/Flathub is available before resolution")
     print("  - require:homebrew ensures Homebrew is available before resolution")
+    print("  - require:nix installs Nix when it is missing")
+    print("  - require:nix-subsystem prepares Home Manager and applies the exported Nix files")
+    print("  - registry exports with Nix packages write a <manifest>-nix/ flake/module bundle")
     print("  - package:<name>, flatpak:<id>, and homebrew:<formula> request exact source identifiers")
     print("  - Lines starting with # are comments")
     print("  - Empty lines are ignored")
@@ -1223,7 +1439,7 @@ def run_manifest_mode(translations=None):
                 explicit_snaps.append(name)
             elif prefix.lower() == 'require':
                 requirement = name.casefold()
-                if requirement in {"flathub", "homebrew"}:
+                if requirement in {"flathub", "homebrew", "nix", "nix-subsystem"}:
                     manifest_requirements.add(requirement)
                 else:
                     print(f"Error: unknown manifest requirement '{name}'.")
@@ -1274,10 +1490,33 @@ def run_manifest_mode(translations=None):
             print(f"Error: {exc}")
             return 2
 
+    # Nix is a hard prerequisite: install it before resolving/converting any
+    # package entry so the nixpkgs snapshot and Home Manager are available.
+    needs_nix = bool({"nix", "nix-subsystem"} & manifest_requirements)
+    if needs_nix:
+        needed, installer, error = prepare_nix_installer(translations)
+        if error:
+            print(f"Error: {error}")
+            return 2
+        if needed and installer is not None:
+            print("Nix is required by this manifest; installing it...")
+            print("=" * 60)
+            if run_script(installer) != 0:
+                print("Error: Could not install Nix required by this manifest.")
+                return 2
+            print("Nix installed.")
+            print()
+    nix_target = needs_nix and nix_catalog.is_nixos()
+    if nix_target:
+        ensure_nix_snapshot()
+
     for package_name in explicit_packages:
         if not valid_package_name(package_name):
             print(f"Error: invalid package name '{package_name}'.")
             invalid_items.append(package_name)
+        elif nix_target and nix_catalog.package_attr(package_name):
+            print(f"✓ Found Nix package: {package_name}")
+            packages_to_install.append(package_name)
         elif check_package_exists(package_name):
             print(f"✓ Found package: {package_name}")
             packages_to_install.append(package_name)
@@ -1401,6 +1640,14 @@ def run_manifest_mode(translations=None):
                 potential_flatpaks.append(script_name)
                 continue
 
+            # On NixOS, a manifest-exported native package can be fulfilled by
+            # its nixpkgs attribute. Validate it here so the later Nix import
+            # conversion is not rejected by the distro package manager.
+            if nix_target and nix_catalog.package_attr(script_name):
+                print(f"✓ Found Nix package: {script_name}")
+                packages_to_install.append(script_name)
+                continue
+
             # Otherwise validate and check it as a system package.
             if not valid_package_name(script_name):
                 print(f"Error: unsafe or malformed manifest item '{script_name}'.")
@@ -1467,6 +1714,24 @@ def run_manifest_mode(translations=None):
         for item in invalid_items:
             print(f"  - {item}")
         return 2
+
+    if needs_nix:
+        prepared = prepare_nix_manifest_import(
+            manifest_path,
+            packages_to_install,
+            translations,
+        )
+        if prepared["errors"]:
+            for error in prepared["errors"]:
+                print(f"Error: {error}")
+            return 2
+        packages_to_install = prepared["packages"]
+        for warning in prepared["warnings"]:
+            print(f"Warning: {warning}")
+        if prepared["import_script"] is not None:
+            scripts_to_run.insert(0, prepared["import_script"])
+        if prepared["bundle"]:
+            print(f"Nix manifest files: {prepared['bundle']}")
 
     total_items = len(scripts_to_run) + len(packages_to_install) + len(flatpaks_to_install) + len(snaps_to_install)
     

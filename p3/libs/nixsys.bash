@@ -10,8 +10,11 @@ NIX_TOYS_END="# END LinuxToys managed packages"
 
 _nix_bin() {
     command -v nix 2>/dev/null || {
-        [ -x /nix/var/nix/profiles/default/bin/nix ] \
-            && printf '%s\n' /nix/var/nix/profiles/default/bin/nix
+        for candidate in /nix/var/nix/profiles/default/bin/nix \
+            "$HOME/.nix-profile/bin/nix" \
+            "$HOME/.local/state/nix/profile/bin/nix"; do
+            [ -x "$candidate" ] && { printf '%s\n' "$candidate"; return 0; }
+        done
     }
 }
 
@@ -95,8 +98,7 @@ nix_home_manager_available() {
 }
 
 nix_is_nixos() {
-    [ -e /etc/NIXOS ] || [ -f "$(_nix_system_dir)/configuration.nix" ] \
-        || command -v nixos-rebuild >/dev/null 2>&1
+    [ -e /etc/NIXOS ] || [ -f "$(_nix_system_dir)/configuration.nix" ]
 }
 
 nix_system_available() {
@@ -521,6 +523,132 @@ _nix_rebuild() {
     return 1
 }
 
+_nix_sync_registry() {
+    local temporary scope attr
+    temporary=$(mktemp "${TMPDIR:-/tmp}/linuxtoys-nix-registry.XXXXXX") || return 1
+    for scope in home-manager system; do
+        while IFS= read -r attr; do
+            [ -n "$attr" ] && printf '%s\t%s\n' "$attr" "$scope" >>"$temporary"
+        done < <(_nix_module_read_packages "$scope")
+    done
+    if python3 "$SCRIPT_DIR/app/nix_registry.py" sync "$temporary"; then
+        rm -f -- "$temporary"
+        return 0
+    fi
+    rm -f -- "$temporary"
+    return 1
+}
+
+nix_subsystem_ensure() {
+    nix_available || return 1
+    export PATH="$HOME/.nix-profile/bin:$HOME/.local/state/nix/profile/bin:$PATH"
+    if ! nix_flakes_enabled; then
+        _nix_enable_flakes || return 1
+    fi
+    mkdir -p -- "$(_nix_state_dir)" 2>/dev/null || true
+    printf '1\n' >"$(_nix_state_dir)/allow-unfree" 2>/dev/null || true
+    if ! nix_home_manager_available; then
+        _nix_install_home_manager || return 1
+    fi
+    _nix_ensure_hm_config || return 1
+    if nix_system_available; then
+        _nix_ensure_system_config || return 1
+    fi
+    return 0
+}
+
+nix_remove_packages() {
+    local scope attr target current_count changed=0
+    local -a current kept
+    (($#)) || return 1
+    for scope in home-manager system; do
+        mapfile -t current < <(_nix_module_read_packages "$scope")
+        current_count=${#current[@]}
+        (($current_count)) || continue
+        kept=()
+        for attr in "${current[@]}"; do
+            local remove=0
+            for target in "$@"; do
+                [ "$attr" = "$target" ] && { remove=1; break; }
+            done
+            [ "$remove" -eq 1 ] || kept+=("$attr")
+        done
+        ((${#kept[@]} != current_count)) || continue
+        if ! _nix_write_module "$scope" "${kept[@]}"; then
+            printf 'Could not write the LinuxToys Nix module for %s.\n' "$scope" >&2
+            return 1
+        fi
+        _nix_ensure_import "$scope" || return 1
+        if ! _nix_rebuild "$scope"; then
+            printf 'The %s Nix rebuild failed. The package was kept installed.\n' "$scope" >&2
+            return 1
+        fi
+        changed=1
+    done
+    (($changed)) || {
+        printf 'No LinuxToys-managed Nix package matched (already absent): %s\n' "$*" >&2
+        return 0
+    }
+    _nix_sync_registry || printf 'Warning: could not update the Nix Action Registry entries.\n' >&2
+    return 0
+}
+
+nix_import_manifest() {
+    local json="$1" scope attr json_key failed=0
+    local -a current incoming merged
+    [ -s "$json" ] || {
+        printf 'The Nix manifest package file is empty or missing.\n' >&2
+        return 1
+    }
+    command -v jq >/dev/null 2>&1 || {
+        printf 'jq is required to import Nix manifest packages.\n' >&2
+        return 1
+    }
+    nix_subsystem_ensure || {
+        printf 'The Nix subsystem could not be prepared.\n' >&2
+        return 1
+    }
+
+    for scope in home-manager system; do
+        incoming=()
+        json_key="$scope"
+        [ "$scope" = "home-manager" ] && json_key="home"
+        while IFS= read -r attr; do
+            [ -n "$attr" ] || continue
+            if ! _nix_valid_attr "$attr"; then
+                printf 'Refusing invalid Nix package name: %s\n' "$attr" >&2
+                return 1
+            fi
+            incoming+=("$attr")
+        done < <(jq -r --arg scope "$json_key" '.[$scope][]? // empty' "$json")
+        ((${#incoming[@]})) || continue
+
+        mapfile -t current < <(_nix_module_read_packages "$scope")
+        merged=("${current[@]}" "${incoming[@]}")
+        mapfile -t merged < <(printf '%s\n' "${merged[@]}" | sed '/^$/d' | sort -u)
+        if ! _nix_write_module "$scope" "${merged[@]}"; then
+            printf 'Could not write the LinuxToys Nix module for %s.\n' "$scope" >&2
+            failed=1
+            continue
+        fi
+        if ! _nix_ensure_import "$scope"; then
+            printf 'Could not import the LinuxToys Nix module for %s.\n' "$scope" >&2
+            failed=1
+            continue
+        fi
+        if ! _nix_rebuild "$scope"; then
+            printf 'The %s Nix rebuild failed. Manifest packages were not applied.\n' "$scope" >&2
+            failed=1
+            continue
+        fi
+    done
+
+    ((failed == 0)) || return 1
+    _nix_sync_registry || printf 'Warning: could not update the Nix Action Registry entries.\n' >&2
+    printf 'Nix manifest packages applied.\n'
+    return 0
+}
+
 nix_apply_operations() {
     local queue lock scopes scope attr action
     local -a current merged applied_ids
@@ -601,6 +729,8 @@ nix_apply_operations() {
         printf 'Nix package operations did not fully complete.\n' >&2
         return 1
     fi
+
+    _nix_sync_registry || printf 'Warning: could not update the Nix Action Registry entries.\n' >&2
 
     if ((${#applied_ids[@]})); then
         ids_json=$(printf '%s\n' "${applied_ids[@]}" | jq -R . | jq -s .)

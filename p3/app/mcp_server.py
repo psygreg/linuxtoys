@@ -3924,7 +3924,9 @@ def tool_schemas():
             "name": "export_registry_manifest",
             "description": (
                 "Export installed apps as a portable LinuxToys manifest file "
-                "(replayable on another machine via manifest mode)."
+                "(replayable on another machine via manifest mode). Nix packages "
+                "are exported as a flake/module bundle next to the manifest plus "
+                "the Nix subsystem requirements."
             ),
             "inputSchema": {
                 "type": "object",
@@ -4794,11 +4796,21 @@ def _tool_export_registry_manifest(destination=None):
         output_path=destination or None,
         translations=translations,
     )
-    return {
+    from . import nix_catalog
+
+    bundle = nix_catalog.find_manifest_bundle(manifest_path)
+    response = {
         "path": manifest_path,
         "entries": entry_count,
         "note": "Replay on another machine with: linuxtoys --manifest <file>",
     }
+    if bundle is not None:
+        response["nix_bundle"] = os.fspath(bundle)
+        response["note"] += (
+            " The adjacent Nix bundle is picked up automatically when the "
+            "manifest requires the Nix subsystem."
+        )
+    return response
 
 
 def _tool_open_support_link(app_id, kind, index=0):

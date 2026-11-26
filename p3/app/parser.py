@@ -692,6 +692,18 @@ def get_display_name(name, translations=None):
     # prefix so maintenance (expiry pruning) never depends on the UI language.
     # The localized pattern is presentation-only and rendered here.
     text = str(name)
+    if text.startswith("Nix: "):
+        attr = text[len("Nix: "):].strip()
+        try:
+            from . import nix_metadata
+
+            record = nix_metadata.index_record(attr) or {}
+            display = str(record.get("name") or "").strip()
+            if display:
+                return f"Nix: {display}"
+        except Exception:
+            pass
+        return text
     for prefix, template_key, default_template in (
         ("Remove: ", "remove_action_name", "Remove {name}"),
         ("Auto-revert: ", "auto_revert_action_name", "Auto-revert {name}"),

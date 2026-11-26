@@ -13,6 +13,9 @@ Supported entry syntax:
 - ``flatpak:<id>``, ``snap:<name>`` and ``homebrew:<formula>``.
 - ``require:flathub``: declares that Flathub must be ready.
 - ``require:homebrew``: declares that Homebrew must be ready.
+- ``require:nix`` / ``require:nix-subsystem``: declares that Nix and the
+  LinuxToys Nix subsystem must be prepared; the exported flake/module bundle
+  next to the manifest is applied automatically.
 - Any other entry is auto-detected: LinuxToys script by name first, then
   Flatpak ID, then native package.
 
@@ -32,7 +35,7 @@ import re
 import shutil
 from dataclasses import dataclass, field
 
-from app import homebrew_catalog
+from app import homebrew_catalog, nix_catalog
 from .helper import flathub_ready
 from app.manifest_helper import (
     _prepare_homebrew_manifest_entries,
@@ -46,6 +49,8 @@ from app.manifest_helper import (
     get_system_compat_keys,
     is_containerized,
     materialize_repo_script,
+    prepare_nix_installer,
+    prepare_nix_manifest_import,
     script_is_compatible,
     script_is_container_compatible,
     valid_flatpak_id,
@@ -57,7 +62,9 @@ _ENTRY_PREFIXES = frozenset(
     {"script", "package", "pkg", "flatpak", "snap", "homebrew", "require"}
 )
 _SOURCE_OVERRIDES = frozenset({"native", "flatpak", "snap", "homebrew"})
-_SUPPORTED_REQUIREMENTS = frozenset({"flathub", "homebrew"})
+_SUPPORTED_REQUIREMENTS = frozenset(
+    {"flathub", "homebrew", "nix", "nix-subsystem"}
+)
 _FORMULA_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9+_.@-]*")
 
 
@@ -84,10 +91,10 @@ class ManifestPlan:
         flatpaks: Flatpak IDs confirmed in the configured remotes.
         errors: Blocking problems, as user-facing messages.
         warnings: Skipped items, as user-facing messages.
+        notes: Non-blocking informational messages (Nix bundle/conversions).
         bootstrap: Prerequisite to set up first (``"flatpak"`` or
-            ``"homebrew"``), or None.
-        bootstrap_script: Script info that sets Homebrew up. Only set
-            when ``bootstrap`` is ``"homebrew"``.
+            ``"homebrew"`` or ``"nix"``), or None.
+        bootstrap_script: Script info that sets the prerequisite up.
     """
 
     scripts: list[dict] = field(default_factory=list)
@@ -96,6 +103,7 @@ class ManifestPlan:
     flatpaks: list[str] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
+    notes: list[str] = field(default_factory=list)
     bootstrap: str | None = None
     bootstrap_script: dict | None = None
 
@@ -137,7 +145,7 @@ class _Entries:
     requirements: set[str] = field(default_factory=set)
 
 
-def resolve_manifest(names: list[str], translations=None) -> ManifestPlan:
+def resolve_manifest(names: list[str], translations=None, manifest_path: str = "") -> ManifestPlan:
     """Classify and validate manifest entries without executing anything.
 
     BLOCKING: call from a worker thread (subprocesses and
@@ -155,11 +163,13 @@ def resolve_manifest(names: list[str], translations=None) -> ManifestPlan:
             ``"flatpak:org.mozilla.firefox"`` or an unprefixed name.
         translations: Optional translations mapping, forwarded to the
             script lookups.
+        manifest_path: Manifest file path. Used to find the Nix flake and
+            module files exported alongside it.
 
     Returns:
         The resolved plan.
     """
-    return _ManifestResolver(translations).resolve(names)
+    return _ManifestResolver(translations, manifest_path).resolve(names)
 
 
 def refresh_appstream_after_flathub() -> None:
@@ -244,9 +254,12 @@ class _ManifestResolver:
             script lookups.
     """
 
-    def __init__(self, translations=None) -> None:
+    def __init__(self, translations=None, manifest_path: str = "") -> None:
         self._translations = translations
+        self._manifest_path = str(manifest_path or "")
         self._plan = ManifestPlan()
+        self._requirements: set[str] = set()
+        self._nix_snapshot_checked = False
         self._compat_keys = get_system_compat_keys()
         self._containerized = is_containerized()
         self._steamos = "steamos" in self._compat_keys
@@ -272,10 +285,13 @@ class _ManifestResolver:
             The resolved, possibly incomplete, plan.
         """
         entries = self._parse(names)
+        self._requirements = set(entries.requirements)
 
         if not self._flatpak_available(entries):
             return self._plan
         if not self._homebrew_available(entries):
+            return self._plan
+        if not self._nix_available(entries):
             return self._plan
         if not self._add_homebrew(entries.homebrew):
             return self._plan
@@ -295,6 +311,7 @@ class _ManifestResolver:
 
         self._plan.packages = list(dict.fromkeys(self._plan.packages))
         self._plan.snaps = list(dict.fromkeys(self._plan.snaps))
+        self._add_nix_import(entries)
         unique_scripts: dict[tuple, dict] = {}
         for script in self._plan.scripts:
             key = (script.get("name"), script.get("path"))
@@ -376,6 +393,61 @@ class _ManifestResolver:
             self._plan.bootstrap = "flatpak"
             return False
         return True
+
+    def _nix_available(self, entries: _Entries) -> bool:
+        """Check that Nix is installed when the manifest declares it.
+
+        ``require:nix`` and ``require:nix-subsystem`` both need the Nix
+        binary. When it is missing, ``plan.bootstrap`` is set to ``"nix"``
+        and the installer entry is stored in ``plan.bootstrap_script``.
+        """
+        if not ({"nix", "nix-subsystem"} & entries.requirements):
+            return True
+        try:
+            needed, installer, error = prepare_nix_installer(
+                self._translations
+            )
+        except Exception as exc:  # resolver boundary: report, never raise
+            self._plan.errors.append(f"Could not prepare Nix: {exc}")
+            return False
+        if error:
+            self._plan.errors.append(error)
+            return False
+        if not needed:
+            return True
+        if installer is None:
+            self._plan.errors.append(
+                "Nix is required by this manifest but could not be installed."
+            )
+            return False
+        self._plan.bootstrap = "nix"
+        self._plan.bootstrap_script = installer
+        return False
+
+    def _add_nix_import(self, entries: _Entries) -> None:
+        """Apply the exported Nix files and convert native packages on NixOS."""
+        if not ({"nix", "nix-subsystem"} & entries.requirements):
+            return
+        try:
+            prepared = prepare_nix_manifest_import(
+                self._manifest_path,
+                self._plan.packages,
+                self._translations,
+            )
+        except Exception as exc:  # resolver boundary: report, never raise
+            self._plan.errors.append(f"Could not prepare the Nix import: {exc}")
+            return
+        errors = prepared.get("errors") or ()
+        if errors:
+            self._plan.errors.extend(errors)
+            return
+        self._plan.packages = list(prepared.get("packages") or ())
+        self._plan.notes.extend(prepared.get("warnings") or ())
+        if prepared.get("bundle"):
+            self._plan.notes.append(f"Nix files: {prepared['bundle']}")
+        import_script = prepared.get("import_script")
+        if import_script is not None:
+            self._plan.scripts.insert(0, import_script)
 
     def _homebrew_available(self, entries: _Entries) -> bool:
         """Check that Brew is ready when the manifest declares it.
@@ -470,6 +542,27 @@ class _ManifestResolver:
             return False
         return True
 
+    def _nix_native_target(self) -> bool:
+        return (
+            bool({"nix", "nix-subsystem"} & self._requirements)
+            and nix_catalog.is_nixos()
+        )
+
+    def _nix_has_attr(self, name: str) -> bool:
+        if not self._nix_native_target():
+            return False
+        if not self._nix_snapshot_checked:
+            self._nix_snapshot_checked = True
+            try:
+                if nix_catalog.cached_path() is None:
+                    nix_catalog.load_or_refresh()
+            except Exception:
+                pass
+        try:
+            return bool(nix_catalog.package_attr(name))
+        except Exception:
+            return False
+
     def _add_package(self, name: str, *, auto: bool = False) -> None:
         """Validate a native package and record it in the plan.
 
@@ -494,6 +587,10 @@ class _ManifestResolver:
                 f"Pacote '{name}' ignorado: pacotes nativos não são "
                 "suportados no SteamOS."
             )
+        elif self._nix_has_attr(name):
+            # On NixOS the import step converts this to a system-level Nix
+            # package; the distro package manager is not consulted.
+            self._plan.packages.append(name)
         elif check_package_exists(name):
             self._plan.packages.append(name)
         elif auto:

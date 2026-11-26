@@ -16,6 +16,7 @@ from . import (
     nix_catalog,
     nix_metadata,
     nix_queue,
+    nix_registry,
     appstream_logs,
     appstream_parser,
     aur_cache,
@@ -1072,6 +1073,12 @@ class AppWindow(
             self._nix_setup_prompted = True
 
         category_info = self._nix_category_info()
+        try:
+            # Register packages installed before registry integration and drop
+            # entries for packages removed outside the queue.
+            nix_registry.sync_from_modules()
+        except Exception:
+            pass
         if nix_catalog.binary_snapshot_available():
             self._open_aur_category_view(category_info, loading=False)
             if nix_catalog.needs_refresh():
@@ -2105,11 +2112,30 @@ class AppWindow(
     def _on_item_remove_clicked(self, button, info):
         """Use observed package state when AppStream was installed outside LinuxToys."""
         if info.get("appstream_source") == "nix":
-            try:
-                nix_queue.add(info, action="remove")
-            except ValueError as error:
-                logger.warning("Could not queue Nix removal: %s", error)
-                return
+            # Prefer the standard registry-driven uninstall transaction: it
+            # records the removal and keeps Action Registry/Installed Features
+            # consistent. Packages installed before registry integration fall
+            # back to the queue-only path.
+            remove_entry = None
+            if str(info.get("registry_name") or "").strip():
+                if scripts_blocked_by_version(
+                    self, self.translations, removable_script_info=info
+                ):
+                    return
+                remove_entry = revert_helper.build_uninstall_script_entry(
+                    info, self.translations
+                )
+            if remove_entry is not None:
+                record_id = info.get("_appstream_queue_record_id")
+                self._appstream_runner.enqueue_removal(
+                    info, remove_entry, record_id=record_id
+                )
+            else:
+                try:
+                    nix_queue.add(info, action="remove")
+                except ValueError as error:
+                    logger.warning("Could not queue Nix removal: %s", error)
+                    return
             app_page = self.main_stack.get_child_by_name("app_page")
             if app_page is not None and hasattr(app_page, "refresh_install_state"):
                 app_page.refresh_install_state()

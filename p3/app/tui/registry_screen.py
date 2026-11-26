@@ -17,6 +17,7 @@ from app.action_registry import (
     _remove_backup_files,
     _remove_script_from_registry,
 )
+from app import nix_catalog
 from app.manifest_helper import export_registered_manifest
 from app.registry_utils import parse_registry_file, search_registry_entries
 
@@ -275,12 +276,17 @@ class RegistryScreen(Screen):
 
     def _registry_export_succeeded(self, manifest_path: str, entry_count: int) -> None:
         self._export_in_progress = False
-        self.notify(
-            translations.get(
-                "registry_export_success_message",
-                "Exported {count} registered operation(s) to:\n{path}",
-            ).format(count=entry_count, path=manifest_path)
-        )
+        message = translations.get(
+            "registry_export_success_message",
+            "Exported {count} registered operation(s) to:\n{path}",
+        ).format(count=entry_count, path=manifest_path)
+        try:
+            bundle = nix_catalog.find_manifest_bundle(manifest_path)
+        except Exception:
+            bundle = None
+        if bundle is not None:
+            message += f"\nNix files: {bundle}"
+        self.notify(message)
 
     def _registry_export_failed(self) -> None:
         self._export_in_progress = False

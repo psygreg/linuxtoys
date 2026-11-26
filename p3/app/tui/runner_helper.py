@@ -521,6 +521,12 @@ class ScriptRunnerMixin:
             return
         self._nav_stack.append((button.path, str(button.label)))
         self._update_breadcrumb()
+        try:
+            from app import nix_registry
+
+            nix_registry.sync_from_modules()
+        except Exception:
+            pass
         await self._render_items([])
         if self._nix_view_active():
             self._set_items_loading(True)
@@ -934,31 +940,33 @@ class ScriptRunnerMixin:
         cleanup_path: str | None = None
         started = False
         try:
-            if script_info.get("appstream_source") == "nix":
-                try:
-                    nix_queue.add(script_info, action="remove")
-                except ValueError as exc:
-                    self.notify(
-                        f"✗ Could not queue removal of '{button.label}': {exc}",
-                        severity="error",
-                    )
-                    return
-                apply_info = nix_catalog.materialize_apply()
-                apply_info["cleanup_path"] = apply_info["path"]
-                cleanup_path = apply_info.get("path")
-                command = await asyncio.to_thread(
-                    lambda: script_command(
-                        apply_info["path"], resolve_script_dir()
-                    )
-                )
-                started = self._start_uninstall(
-                    button, script_info, apply_info, command
-                )
-                return
             uninstall_entry = await asyncio.to_thread(
                 build_uninstall_script_entry, script_info, translations
             )
             if not uninstall_entry:
+                if script_info.get("appstream_source") == "nix":
+                    # Packages predating registry integration still remove
+                    # through the declarative queue.
+                    try:
+                        nix_queue.add(script_info, action="remove")
+                    except ValueError as exc:
+                        self.notify(
+                            f"✗ Could not queue removal of '{button.label}': {exc}",
+                            severity="error",
+                        )
+                        return
+                    apply_info = nix_catalog.materialize_apply()
+                    apply_info["cleanup_path"] = apply_info["path"]
+                    cleanup_path = apply_info.get("path")
+                    command = await asyncio.to_thread(
+                        lambda: script_command(
+                            apply_info["path"], resolve_script_dir()
+                        )
+                    )
+                    started = self._start_uninstall(
+                        button, script_info, apply_info, command
+                    )
+                    return
                 self._notify_removal_not_available()
                 return
             cleanup_path = uninstall_entry.get("cleanup_path")
@@ -2146,6 +2154,7 @@ class ManifestRunnerMixin:
     _MANIFEST_BOOTSTRAP_LABELS = {
         "flatpak": "Flatpak/Flathub",
         "homebrew": "Homebrew",
+        "nix": "Nix",
     }
 
     def on_manifest_chosen(self, manifest_path: str | None) -> None:
@@ -2234,7 +2243,7 @@ class ManifestRunnerMixin:
             return
 
         try:
-            plan = resolve_manifest(names, translations)
+            plan = resolve_manifest(names, translations, manifest_path)
         except Exception as exc:  # worker boundary: never let it kill the TUI
             self.app.call_from_thread(
                 self.notify,
@@ -2311,8 +2320,15 @@ class ManifestRunnerMixin:
 
         # Both run in the terminal: they may need sudo.
         self._manifest_temp_files = []
-        if plan.bootstrap == "homebrew":
+        if plan.bootstrap in ("homebrew", "nix"):
             item = plan.bootstrap_script
+            if item is None:
+                self.notify(
+                    f"The {self._MANIFEST_BOOTSTRAP_LABELS[plan.bootstrap]} "
+                    "installer is unavailable.",
+                    severity="error",
+                )
+                return
         else:
             try:
                 item = self._batch_item("Flatpak/Flathub", ["pkg_flat"])
@@ -2418,6 +2434,9 @@ class ManifestRunnerMixin:
         if plan.warnings:
             lines += ["", "Ignorados:"]
             lines += [f"  - {warning}" for warning in plan.warnings]
+        if plan.notes:
+            lines += ["", "Nix:"]
+            lines += [f"  - {note}" for note in plan.notes]
         return lines
 
     def _on_manifest_plan_answer(
@@ -2477,6 +2496,12 @@ class ManifestRunnerMixin:
 
     def _prepare_queue_script(self, script: dict) -> dict:
         """Homebrew entries have a virtual path: materialize like run_script."""
+        cleanup_path = str(script.get("cleanup_path") or "").strip()
+        if cleanup_path:
+            self._manifest_temp_files = [
+                *self._manifest_temp_files,
+                cleanup_path,
+            ]
         if script.get("appstream_source") != "homebrew":
             return script
         from app import homebrew_catalog

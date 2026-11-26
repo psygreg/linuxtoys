@@ -1,6 +1,7 @@
 from .gtk_common import Gdk, Gtk, GLib, resolve_symbolic_icon
 from .gtk_dialogs import run_message_dialog
 from . import manifest_helper
+from . import nix_catalog
 from . import language_selector
 from . import about_helper
 from . import action_registry
@@ -364,7 +365,7 @@ class MenuButton(Gtk.MenuButton):
 
 		threading.Thread(
 			target=self.__wrapper_t,
-			args=(scripts_name,)
+			args=(scripts_name, getattr(self, "_manifest_path", ""))
 		).start()
 
 	def __on_language_select(self, widget):
@@ -395,19 +396,69 @@ class MenuButton(Gtk.MenuButton):
 		if response == Gtk.ResponseType.OK:
 			self.dlg = WaitDialog(self.get_toplevel(), _("loading_manifest_message"))
 			self.dlg.start()
-			scripts_name = manifest_helper.load_manifest(dialog.get_filename())
+			self._manifest_path = dialog.get_filename()
+			scripts_name = manifest_helper.load_manifest(self._manifest_path)
 		dialog.destroy()
 
 		return scripts_name
 
-	def __wrapper_t(self, scripts_name):
+	def __wrapper_t(self, scripts_name, manifest_path=""):
 		_ = create_translator()
+		self.results = []
 		packages_to_install = []
 		flatpaks_to_install = []
 		potential_flatpaks = []
 		items_to_check = []
+		requirements = set()
 
 		for script_name in scripts_name:
+			prefix, separator, value = script_name.partition(":")
+			kind = prefix.casefold() if separator else ""
+			if kind == "require":
+				if value.strip().casefold() in {"nix", "nix-subsystem"}:
+					requirements.add("nix")
+				continue
+			if kind == "script":
+				script_id = value.strip()
+				source_override = ""
+				if "@" in script_id:
+					candidate_id, candidate_source = script_id.rsplit("@", 1)
+					if candidate_source.casefold() in {"native", "flatpak", "snap", "homebrew"}:
+						script_id = candidate_id
+						source_override = candidate_source.casefold()
+				script_info = manifest_helper.find_script_by_id(
+					script_id, self.parent_window.translations
+				)
+				if script_info is None:
+					script_info = manifest_helper.find_script_by_name(
+						script_id, self.parent_window.translations
+					)
+				if script_info is not None and source_override:
+					script_info = manifest_helper._select_manifest_source(
+						script_info, source_override
+					) or script_info
+				if script_info is not None:
+					self.results.append(script_info)
+				else:
+					items_to_check.append(script_id)
+				continue
+			if kind in {"package", "pkg"}:
+				items_to_check.append(value.strip())
+				continue
+			if kind == "flatpak":
+				potential_flatpaks.append(value.strip())
+				continue
+			if kind == "homebrew":
+				try:
+					self.results.extend(
+						manifest_helper._prepare_homebrew_manifest_entries(
+							[value.strip()],
+							self.parent_window.translations,
+						)
+					)
+				except ValueError:
+					pass
+				continue
 			script_info = manifest_helper.find_script_by_name(script_name)
 			if script_info is not None:
 				self.results.append(script_info)
@@ -419,6 +470,14 @@ class MenuButton(Gtk.MenuButton):
 					items_to_check.append(script_name)
 
 		# Check flatpaks asynchronously
+		nix_target = False
+		if requirements:
+			try:
+				nix_target = nix_catalog.is_nixos()
+				if nix_target:
+					manifest_helper.ensure_nix_snapshot()
+			except Exception:
+				nix_target = False
 		if potential_flatpaks:
 			exists_results = asyncio.run(manifest_helper.check_flatpaks_async(potential_flatpaks))
 			for name, exists in zip(potential_flatpaks, exists_results):
@@ -426,13 +485,44 @@ class MenuButton(Gtk.MenuButton):
 					flatpaks_to_install.append(name)
 				else:
 					# If not a flatpak, check if it's a package
-					if manifest_helper.check_package_exists(name):
+					if nix_target and nix_catalog.package_attr(name):
+						packages_to_install.append(name)
+					elif manifest_helper.check_package_exists(name):
 						packages_to_install.append(name)
 
 		# Check other items for packages
 		for name in items_to_check:
-			if manifest_helper.check_package_exists(name):
+			if nix_target and nix_catalog.package_attr(name):
 				packages_to_install.append(name)
+			elif manifest_helper.check_package_exists(name):
+				packages_to_install.append(name)
+
+		if requirements:
+			translations = self.parent_window.translations
+			_needed, installer, error = manifest_helper.prepare_nix_installer(
+				translations
+			)
+			if error:
+				GLib.idle_add(self.__show_manifest_error, error)
+				return
+			nix_items = []
+			if installer is not None:
+				nix_items.append(installer)
+			prepared = manifest_helper.prepare_nix_manifest_import(
+				manifest_path,
+				packages_to_install,
+				translations,
+			)
+			if prepared["errors"]:
+				GLib.idle_add(
+					self.__show_manifest_error,
+					"\n".join(prepared["errors"]),
+				)
+				return
+			packages_to_install = prepared["packages"]
+			if prepared["import_script"] is not None:
+				nix_items.append(prepared["import_script"])
+			self.results[0:0] = nix_items
 
 		if packages_to_install or flatpaks_to_install:
 			self.results.append({'name': _("packages_flatpaks"),'path': self._temp_sh, 'is_script': True})
@@ -440,16 +530,41 @@ class MenuButton(Gtk.MenuButton):
 
 		GLib.idle_add(self.__update_results)
 
+	def __show_manifest_error(self, message):
+		if self.dlg is not None:
+			self.dlg.stop()
+			self.dlg = None
+		run_message_dialog(
+			self.get_toplevel(),
+			title=_("load_manifest"),
+			secondary_text=str(message),
+			message_type=Gtk.MessageType.ERROR,
+			buttons=[("OK", Gtk.ResponseType.OK)],
+			default_response=Gtk.ResponseType.OK,
+		)
+		return False
+
 	def __update_results(self):
 		self.dlg is not None and self.dlg.stop()
 
-		def completion_handler():
-			if os.path.exists(self._temp_sh):
-				os.remove(self._temp_sh)
-
 		if self.results:
 			deps = asyncio.run(self.parent_window._process_needed_scripts(self.results))
-			self.parent_window.open_term_view(deps)
+			cleanup_paths = [
+				str(item.get("cleanup_path"))
+				for item in deps
+				if isinstance(item, dict) and item.get("cleanup_path")
+			]
+			if os.path.exists(self._temp_sh):
+				cleanup_paths.append(self._temp_sh)
+			run_box = self.parent_window.open_term_view(deps)
+			if run_box is not None and cleanup_paths:
+				def cleanup_temp_files(*_args):
+					for path in cleanup_paths:
+						try:
+							os.remove(path)
+						except OSError:
+							pass
+				run_box.connect("destroy", cleanup_temp_files)
 
 	def __temp_script(self, packages, flatpaks):
 		lib_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'libs', 'linuxtoys.bash')

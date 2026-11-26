@@ -261,6 +261,11 @@ def _parse_operation(op_line):
             else:
                 # Installation: "pkg curl git vim"
                 return "pkg install", parts[1:]
+        elif op_type == "nix":
+            # Nix package transaction: "nix install <attr> <scope>".
+            if len(parts) >= 4 and parts[1] == "install":
+                return "nix install", parts[2:4]
+            return op_type, parts[1:]
         elif op_type == "flatpak":
             # flatpak can have multiple operands (e.g., "flatpak app1 app2")
             return op_type, parts[1:]
@@ -953,6 +958,15 @@ def _reverse_operation(op_line, package_manager):
         # Reverse package installation by removing
         return _reverse_package_install(operands, package_manager)
 
+    elif op_type == "nix install" and operands:
+        # Nix packages are declarative: remove the attribute from every
+        # LinuxToys-managed module and rebuild the affected profile.
+        return [
+            'source "$SCRIPT_DIR/libs/nixsys.bash"',
+            "nix_remove_packages "
+            + " ".join(shlex.quote(operand) for operand in operands[:1]),
+        ]
+
     elif op_type == "pkg rm" and operands:
         # Reverse package removal by reinstalling
         return _reverse_package_removal(operands, package_manager)
@@ -1109,7 +1123,7 @@ def _revert_script_preamble(reverse_commands):
     # Pre-authorize privileged package operations before the terminal can be locked.
     # Keep the existing direct-sudo detection for other unconditional reversals.
     needs_sudo = any(
-        cmd.strip().startswith(("sudo ", "pkg_remove ", "pkg_install "))
+        cmd.strip().startswith(("sudo ", "pkg_remove ", "pkg_install ", "nix_remove_packages "))
         for cmd in reverse_commands
     )
 

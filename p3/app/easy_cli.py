@@ -1098,7 +1098,7 @@ def easy_cli_help_message():
     print("  -l, --list         List all available scripts")
     print("  -m, --manifest     Enable manifest mode features")
     print("  --mcp              Run the MCP server for AI agents (systemd service mode)")
-    print("  export-manifest    Export registered operations to ~/linuxtoys-manifest.txt")
+    print("  export-manifest    Export registered operations (and any Nix flake/module bundle) to ~/linuxtoys-manifest.txt")
     print("  -v, --version      Show version information")
     print("  -y, --yes          Skip confirmation prompts (recommended as the last argument)")
     print("  --devmode          Enable developer mode, that will only check scripts for errors without executing them")
@@ -1329,6 +1329,11 @@ def easy_cli_handler(translations=None):
             print(f"✗ Could not export manifest: {exc}")
             return 1
         print(f"✓ Exported {entry_count} registered operation(s) to: {manifest_path}")
+        from . import nix_catalog
+
+        bundle = nix_catalog.find_manifest_bundle(manifest_path)
+        if bundle is not None:
+            print(f"  Nix files: {bundle}")
         return 0
     
     elif args[0] in ("-v", "--version"):
