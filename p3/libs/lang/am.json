@@ -614,6 +614,7 @@
   "nix_setup_installed": "ተጭኗል",
   "nix_setup_missing": "አልተጫነም",
   "nix_setup_unavailable": "አይገኝም",
+  "nix_setup_maintenance": "ሳምንታዊ የNix ጽዳት",
   "nix_flake_import_title": "Nix flake አስገባ",
   "nix_flake_import_intro": "flake ከURL ወይም ከአካባቢ ማህደረ ተቀብለው ያስገቡ። LinuxToys ውጤቶቹን ይመረምራል እና የተመረጡትን ጥቅሎች፣ ሞጁሎች ወይም overlays ወደ ተመረጠው Nix ውቅር ያዋህዳል።",
   "nix_flake_import_warning": "የሚያምኑባቸውን flake ብቻ ያስገቡ፡ ሞጁሎቻቸው፣ ጥቅሎቻቸው እና overlays የእርስዎ ውቅር አካል ይሆናሉ።",

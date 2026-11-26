@@ -614,6 +614,7 @@
   "nix_setup_installed": "ထည့်သွင်းပြီး",
   "nix_setup_missing": "မတပ်ဆင်ထားပါ",
   "nix_setup_unavailable": "မရရှိနိုင်ပါ",
+  "nix_setup_maintenance": "အပတ်စဉ် Nix ရှင်းလင်းရေး",
   "nix_flake_import_title": "Nix flake ကို တင်သွင်းရန်",
   "nix_flake_import_intro": "URL သို့မဟုတ် ဒေသတွင်းဖိုလ်ဒါမှ flake ကို တင်သွင်းပါ။ LinuxToys သည် ၎င်း၏ ထွက်ရှိမှုများကို စစ်ဆေးပြီး ရွေးချယ်ထားသော package၊ module သို့မဟုတ် overlay များကို ရွေးချယ်ထားသော Nix configuration ထဲသို့ ပေါင်းစပ်ပါမည်။",
   "nix_flake_import_warning": "ယုံကြည်ရသော flake များကိုသာ တင်သွင်းပါ- ၎င်းတို့၏ module၊ package နှင့် overlay များသည် သင့် configuration ၏ တစ်စိတ်တစ်ပိုင်း ဖြစ်လာမည်။",

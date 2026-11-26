@@ -614,6 +614,7 @@
   "nix_setup_installed": "Installiert",
   "nix_setup_missing": "Nicht installiert",
   "nix_setup_unavailable": "Nicht verfügbar",
+  "nix_setup_maintenance": "Wöchentliche Nix-Bereinigung",
   "nix_flake_import_title": "Nix-Flake importieren",
   "nix_flake_import_intro": "Importiere einen Flake von einer URL oder aus einem lokalen Verzeichnis. LinuxToys prüft seine Ausgaben und führt die ausgewählten Pakete, Module oder Overlays in die gewählte Nix-Konfiguration ein.",
   "nix_flake_import_warning": "Importiere nur Flakes, denen du vertraust: ihre Module, Pakete und Overlays werden Teil deiner Konfiguration.",

@@ -614,6 +614,7 @@
   "nix_setup_installed": "நிறுவப்பட்டது",
   "nix_setup_missing": "நிறுவப்படவில்லை",
   "nix_setup_unavailable": "கிடைக்கவில்லை",
+  "nix_setup_maintenance": "வாராந்திர Nix சுத்தம்",
   "nix_flake_import_title": "Nix flake ஐ இறக்குமதி செய்",
   "nix_flake_import_intro": "URL அல்லது உள்ளூர் கோப்பகத்திலிருந்து flake ஐ இறக்குமதி செய்யவும். LinuxToys அதன் வெளியீடுகளை ஆய்வு செய்து, தேர்ந்தெடுத்த தொகுப்புகள், தொகுதிகள் அல்லது overlays ஐ தேர்ந்தெடுத்த Nix உள்ளமைவில் இணைக்கும்.",
   "nix_flake_import_warning": "நீங்கள் நம்பும் flake களை மட்டும் இறக்குமதி செய்யவும்: அவற்றின் தொகுதிகள், தொகுப்புகள் மற்றும் overlays உங்கள் உள்ளமைவின் பகுதியாகும்.",

@@ -614,6 +614,7 @@
   "nix_setup_installed": "Nainštalované",
   "nix_setup_missing": "Nie je nainštalované",
   "nix_setup_unavailable": "Nie je k dispozícii",
+  "nix_setup_maintenance": "Týždenné čistenie Nix",
   "nix_flake_import_title": "Importovať Nix flake",
   "nix_flake_import_intro": "Importujte flake z URL alebo miestneho adresára. LinuxToys preskúma jeho výstupy a zlúči vybrané balíčky, moduly alebo overlaye do zvolenej konfigurácie Nix.",
   "nix_flake_import_warning": "Importujte iba flake, ktorým dôverujete: ich moduly, balíčky a overlaye sa stanú súčasťou vašej konfigurácie.",

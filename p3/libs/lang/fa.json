@@ -614,6 +614,7 @@
   "nix_setup_installed": "نصب‌شده",
   "nix_setup_missing": "نصب نشده است",
   "nix_setup_unavailable": "در دسترس نیست",
+  "nix_setup_maintenance": "پاک‌سازی هفتگی Nix",
   "nix_flake_import_title": "درون‌ریزی Nix flake",
   "nix_flake_import_intro": "یک flake را از یک URL یا پوشه محلی درون‌ریزی کنید. LinuxToys خروجی‌های آن را بررسی می‌کند و بسته‌ها، ماژول‌ها یا overlayهای انتخاب‌شده را در پیکربندی Nix انتخابی ادغام می‌کند.",
   "nix_flake_import_warning": "فقط flakeهایی را درون‌ریزی کنید که به آن‌ها اعتماد دارید: ماژول‌ها، بسته‌ها و overlayهای آن‌ها بخشی از پیکربندی شما می‌شوند.",

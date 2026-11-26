@@ -614,6 +614,7 @@
   "nix_setup_installed": "Εγκατεστημένο",
   "nix_setup_missing": "Δεν έχει εγκατασταθεί",
   "nix_setup_unavailable": "Μη διαθέσιμο",
+  "nix_setup_maintenance": "Εβδομαδιαίος καθαρισμός Nix",
   "nix_flake_import_title": "Εισαγωγή flake Nix",
   "nix_flake_import_intro": "Εισαγάγετε ένα flake από URL ή τοπικό κατάλογο. Το LinuxToys θα επιθεωρήσει τις εξόδους του και θα συγχωνεύσει τα επιλεγμένα πακέτα, τις μονάδες ή τα overlays στην επιλεγμένη διαμόρφωση Nix.",
   "nix_flake_import_warning": "Εισαγάγετε μόνο flake που εμπιστεύεστε: οι μονάδες, τα πακέτα και τα overlays τους γίνονται μέρος της διαμόρφωσής σας.",

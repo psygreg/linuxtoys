@@ -614,6 +614,7 @@
   "nix_setup_installed": "Instalat",
   "nix_setup_missing": "Neinstalat",
   "nix_setup_unavailable": "Indisponibil",
+  "nix_setup_maintenance": "Curățarea săptămânală a Nix",
   "nix_flake_import_title": "Importă flake Nix",
   "nix_flake_import_intro": "Importă un flake dintr-un URL sau dintr-un director local. LinuxToys îi va inspecta ieșirile și va fuziona pachetele, modulele sau overlay-urile selectate în configurația Nix aleasă.",
   "nix_flake_import_warning": "Importă doar flake-uri în care ai încredere: modulele, pachetele și overlay-urile lor devin parte din configurația ta.",

@@ -614,6 +614,7 @@
   "nix_setup_installed": "Yüklendi",
   "nix_setup_missing": "Yüklü değil",
   "nix_setup_unavailable": "Kullanılamıyor",
+  "nix_setup_maintenance": "Haftalık Nix temizliği",
   "nix_flake_import_title": "Nix flake'ini içe aktar",
   "nix_flake_import_intro": "Bir flake'i URL'den veya yerel bir dizinden içe aktarın. LinuxToys çıktılarını inceleyecek ve seçilen paketleri, modülleri veya overlay'leri seçilen Nix yapılandırmasına birleştirecektir.",
   "nix_flake_import_warning": "Yalnızca güvendiğiniz flake'leri içe aktarın: modülleri, paketleri ve overlay'leri yapılandırmanızın bir parçası olur.",

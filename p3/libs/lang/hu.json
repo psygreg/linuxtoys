@@ -614,6 +614,7 @@
   "nix_setup_installed": "Telepítve",
   "nix_setup_missing": "Nincs telepítve",
   "nix_setup_unavailable": "Nem elérhető",
+  "nix_setup_maintenance": "Heti Nix-tisztítás",
   "nix_flake_import_title": "Nix-flake importálása",
   "nix_flake_import_intro": "Importáljon flake-et URL-ről vagy helyi könyvtárból. A LinuxToys megvizsgálja a kimeneteit, és egyesíti a kiválasztott csomagokat, modulokat vagy overlay-eket a kiválasztott Nix-konfigurációba.",
   "nix_flake_import_warning": "Csak olyan flake-eket importáljon, amelyekben megbízik: moduljaik, csomagjaik és overlay-jeik a konfigurációja részévé válnak.",

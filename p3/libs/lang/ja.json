@@ -614,6 +614,7 @@
   "nix_setup_installed": "インストール済み",
   "nix_setup_missing": "インストールされていません",
   "nix_setup_unavailable": "利用できません",
+  "nix_setup_maintenance": "毎週のNixクリーンアップ",
   "nix_flake_import_title": "Nix flakeをインポート",
   "nix_flake_import_intro": "URLまたはローカルディレクトリからflakeをインポートします。LinuxToysはその出力を検査し、選択したパッケージ、モジュール、overlayを選択したNix設定にマージします。",
   "nix_flake_import_warning": "信頼できるflakeのみをインポートしてください。そのモジュール、パッケージ、overlayは設定の一部になります。",

@@ -42,6 +42,7 @@ from . import (
     search_helper,
     skills_guard,
     skills_view,
+    source_setup,
     repo_parser,
     uri_parser,
     git_scripts_manager,
@@ -4258,6 +4259,16 @@ class AppWindow(
             self._handle_external_nix_request(script_info)
             return
 
+        plan = source_setup.setup_plan(script_info, self.translations)
+        if plan.get("error"):
+            self.show_external_install_error(plan["error"])
+            return
+        if plan.get("setup_ids"):
+            if not self._confirm_external_source_setup(script_info, plan):
+                return
+            self._run_external_source_setup(script_info, plan)
+            return
+
         # URI activation represents an individual app activation, so repository
         # entries with app-page metadata must show that page first. The page's
         # Install button then continues through the normal app-page install flow.
@@ -4276,7 +4287,136 @@ class AppWindow(
         ):
             return
 
-        removable = script_info if len(deps) == 1 else None
+        self._dispatch_external_install(script_info, deps)
+
+    def _confirm_external_source_setup(self, info, plan):
+        """Confirm enabling one package source before a URI install."""
+        label = plan.get("label") or "package source"
+        name = info.get("name") or info.get("appstream_id") or "package"
+        intro = self.translations.get(
+            "uri_install_request_message",
+            "A website requested that LinuxToys install this feature. Review it before continuing.",
+        )
+        action = self.translations.get(
+            "uri_source_request",
+            "The link asks LinuxToys to install '{name}' from {source}.",
+        )
+        try:
+            action = str(action).format(name=name, source=label)
+        except Exception:
+            action = f"The link asks LinuxToys to install '{name}' from {label}."
+        if plan.get("setup_ids"):
+            setup_note = self.translations.get(
+                "uri_source_setup_needed",
+                "{source} support is not configured yet. LinuxToys will set it up first.",
+            )
+            try:
+                setup_note = str(setup_note).format(source=label)
+            except Exception:
+                setup_note = (
+                    f"{label} support is not configured yet. "
+                    "LinuxToys will set it up first."
+                )
+            action += "\n\n" + setup_note
+
+        buttons = [
+            (
+                self.translations.get("cancel_btn_label", "Cancel"),
+                Gtk.ResponseType.CANCEL,
+            ),
+            (
+                self.translations.get("next_label", "Next")
+                if info.get("is_repo_entry") and info.get("has_app_page")
+                else self.translations.get("install_btn_label", "Install"),
+                Gtk.ResponseType.YES,
+                "suggested-action",
+            ),
+        ]
+        return gtk_dialogs.run_message_dialog(
+            self,
+            title=self.translations.get(
+                "uri_install_title", "Install from LinuxToys link"
+            ),
+            secondary_text=f"{intro}\n\n{action}",
+            message_type=Gtk.MessageType.INFO,
+            buttons=buttons,
+            default_response=Gtk.ResponseType.YES,
+        ) == Gtk.ResponseType.YES
+
+    def _run_external_source_setup(
+        self, info, plan, scripts=None, ok=True, from_terminal=False
+    ):
+        """Run source setup scripts one at a time, then finish the URI install."""
+        if not ok:
+            self.show_external_install_error(
+                self.translations.get(
+                    "uri_source_setup_failed",
+                    "The package source could not be set up, so the requested "
+                    "install was not started.",
+                )
+            )
+            return
+
+        if scripts is None:
+            try:
+                scripts = source_setup.setup_scripts(plan, self.translations)
+            except Exception as error:
+                self.show_external_install_error(str(error))
+                return
+
+        if scripts:
+            if from_terminal:
+                self._term_prev_override = getattr(self, "_term_prev", None)
+            opened = self.open_term_view(
+                [scripts[0]],
+                auto_run=True,
+                on_finished=lambda success: self._run_external_source_setup(
+                    info, plan, scripts[1:], success, True
+                ),
+            )
+            if opened is None:
+                self._term_prev_override = None
+            return
+
+        refreshed = source_setup.setup_plan(info, self.translations)
+        if refreshed.get("error"):
+            self.show_external_install_error(refreshed["error"])
+            return
+        if refreshed.get("setup_ids"):
+            self.show_external_install_error(
+                self.translations.get(
+                    "uri_source_setup_failed",
+                    "The package source could not be set up, so the requested "
+                    "install was not started.",
+                )
+            )
+            return
+
+        if info.get("is_repo_entry") and info.get("has_app_page"):
+            self.open_app_page(info)
+            return
+        self._execute_external_install(info)
+
+    def _execute_external_install(self, info):
+        """Prepare and dispatch a URI install after its source is ready."""
+        if info.get("appstream_source") == "homebrew":
+            deps = [info]
+        else:
+            deps = asyncio.run(self._process_needed_scripts([info]))
+        if not deps:
+            return
+        self._dispatch_external_install(info, deps)
+
+    def _dispatch_external_install(self, info, deps):
+        """Route a confirmed external install to the queue or terminal runner."""
+        if info.get("is_appstream_entry"):
+            self._appstream_runner.enqueue(deps)
+            app_page = self.main_stack.get_child_by_name("app_page")
+            if app_page is not None and hasattr(app_page, "refresh_install_state"):
+                app_page.refresh_install_state()
+            return
+
+        removable = info if len(deps) == 1 else None
         self.open_term_view(
             deps,
             removable_script_info=removable,

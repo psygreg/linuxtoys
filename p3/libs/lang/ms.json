@@ -614,6 +614,7 @@
   "nix_setup_installed": "Dipasang",
   "nix_setup_missing": "Tidak dipasang",
   "nix_setup_unavailable": "Tidak tersedia",
+  "nix_setup_maintenance": "Pembersihan Nix mingguan",
   "nix_flake_import_title": "Import Nix flake",
   "nix_flake_import_intro": "Import flake daripada URL atau direktori tempatan. LinuxToys akan memeriksa outputnya dan menggabungkan pakej, modul atau overlay yang dipilih ke dalam konfigurasi Nix yang dipilih.",
   "nix_flake_import_warning": "Import hanya flake yang anda percayai: modul, pakej dan overlaynya menjadi sebahagian daripada konfigurasi anda.",

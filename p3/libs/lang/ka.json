@@ -614,6 +614,7 @@
   "nix_setup_installed": "დაინსტალირებულია",
   "nix_setup_missing": "არ არის დაყენებული",
   "nix_setup_unavailable": "მიუწვდომელია",
+  "nix_setup_maintenance": "Nix-ის ყოველკვირეული გასუფთავება",
   "nix_flake_import_title": "Nix flake-ის იმპორტი",
   "nix_flake_import_intro": "შემოიტანეთ flake URL-იდან ან ლოკალური საქაღალდიდან. LinuxToys შეამოწმებს მის გამოსავლებს და შეაერთებს არჩეულ პაკეტებს, მოდულებს ან overlay-ებს არჩეულ Nix კონფიგურაციაში.",
   "nix_flake_import_warning": "შემოიტანეთ მხოლოდ ის flake-ები, რომლებსაც ენდობით: მათი მოდულები, პაკეტები და overlay-ები თქვენი კონფიგურაციის ნაწილი ხდება.",

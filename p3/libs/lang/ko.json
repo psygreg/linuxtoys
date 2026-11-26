@@ -614,6 +614,7 @@
   "nix_setup_installed": "설치됨",
   "nix_setup_missing": "설치되지 않음",
   "nix_setup_unavailable": "사용 불가",
+  "nix_setup_maintenance": "주간 Nix 정리",
   "nix_flake_import_title": "Nix flake 가져오기",
   "nix_flake_import_intro": "URL 또는 로컬 디렉터리에서 flake를 가져옵니다. LinuxToys가 해당 출력을 검사하고 선택한 패키지, 모듈 또는 overlay를 선택한 Nix 구성에 병합합니다.",
   "nix_flake_import_warning": "신뢰하는 flake만 가져오세요. 해당 모듈, 패키지 및 overlay가 구성의 일부가 됩니다.",

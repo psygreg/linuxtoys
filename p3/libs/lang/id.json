@@ -614,6 +614,7 @@
   "nix_setup_installed": "Terinstal",
   "nix_setup_missing": "Tidak terinstal",
   "nix_setup_unavailable": "Tidak tersedia",
+  "nix_setup_maintenance": "Pembersihan Nix mingguan",
   "nix_flake_import_title": "Impor Nix flake",
   "nix_flake_import_intro": "Impor flake dari URL atau direktori lokal. LinuxToys akan memeriksa outputnya dan menggabungkan paket, modul, atau overlay yang dipilih ke konfigurasi Nix yang dipilih.",
   "nix_flake_import_warning": "Impor hanya flake yang Anda percaya: modul, paket, dan overlay-nya menjadi bagian dari konfigurasi Anda.",

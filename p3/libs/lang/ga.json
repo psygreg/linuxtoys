@@ -614,6 +614,7 @@
   "nix_setup_installed": "Suiteáilte",
   "nix_setup_missing": "Níl sé suiteáilte",
   "nix_setup_unavailable": "Níl sé ar fáil",
+  "nix_setup_maintenance": "Glanadh seachtainiúil Nix",
   "nix_flake_import_title": "Iompórtáil Nix flake",
   "nix_flake_import_intro": "Iompórtáil flake ó URL nó ó chomhadlann áitiúil. Scrúdóidh LinuxToys a aschuir agus cumascfaidh sé na pacáistí, na modúil nó na overlays roghnaithe isteach sa chumraíocht Nix roghnaithe.",
   "nix_flake_import_warning": "Ná hiompórtáil ach flake a bhfuil muinín agat astu: déantar a modúil, a bpacáistí agus a n-overlays mar chuid de do chumraíocht.",

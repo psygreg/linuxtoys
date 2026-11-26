@@ -614,6 +614,7 @@
   "nix_setup_installed": "Instalēts",
   "nix_setup_missing": "Nav instalēts",
   "nix_setup_unavailable": "Nav pieejams",
+  "nix_setup_maintenance": "Iknedēļas Nix tīrīšana",
   "nix_flake_import_title": "Importēt Nix flake",
   "nix_flake_import_intro": "Importējiet flake no URL vai vietējās mapes. LinuxToys pārbaudīs tā izvades un apvienos atlasītos pakotnes, moduļus vai overlays izvēlētajā Nix konfigurācijā.",
   "nix_flake_import_warning": "Importējiet tikai tos flake, kuriem uzticaties: to moduļi, pakotnes un overlays kļūst par jūsu konfigurācijas daļu.",

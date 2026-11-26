@@ -614,6 +614,7 @@
   "nix_setup_installed": "O‘rnatilgan",
   "nix_setup_missing": "O'rnatilmagan",
   "nix_setup_unavailable": "Mavjud emas",
+  "nix_setup_maintenance": "Haftalik Nix tozalash",
   "nix_flake_import_title": "Nix flake'ni import qilish",
   "nix_flake_import_intro": "Flake'ni URL yoki mahalliy katalogdan import qiling. LinuxToys uning chiqishlarini tekshiradi va tanlangan paketlar, modullar yoki overlay'larni tanlangan Nix konfiguratsiyasiga birlashtiradi.",
   "nix_flake_import_warning": "Faqat ishonadigan flake'laringizni import qiling: ularning modullari, paketlari va overlay'lari konfiguratsiyangizning bir qismiga aylanadi.",

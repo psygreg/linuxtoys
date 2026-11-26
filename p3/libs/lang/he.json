@@ -614,6 +614,7 @@
   "nix_setup_installed": "מותקן",
   "nix_setup_missing": "לא מותקן",
   "nix_setup_unavailable": "לא זמין",
+  "nix_setup_maintenance": "ניקוי Nix שבועי",
   "nix_flake_import_title": "ייבוא Nix flake",
   "nix_flake_import_intro": "ייבא flake מכתובת URL או מתיקייה מקומית. LinuxToys יבדוק את הפלטים שלו וימזג את החבילות, המודולים או ה-overlays שנבחרו לתצורת Nix שנבחרה.",
   "nix_flake_import_warning": "ייבא רק flakes שאתה סומך עליהם: המודולים, החבילות וה-overlays שלהם הופכים לחלק מהתצורה שלך.",

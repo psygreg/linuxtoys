@@ -614,6 +614,7 @@
   "nix_setup_installed": "Imesakinishwa",
   "nix_setup_missing": "Haijasakinishwa",
   "nix_setup_unavailable": "Haipatikani",
+  "nix_setup_maintenance": "Usafishaji wa Nix wa kila wiki",
   "nix_flake_import_title": "Ingiza Nix flake",
   "nix_flake_import_intro": "Ingiza flake kutoka URL au saraka ya ndani. LinuxToys itakagua matokeo yake na kuunganisha vifurushi, moduli au overlay zilizochaguliwa kwenye usanidi wa Nix uliochaguliwa.",
   "nix_flake_import_warning": "Ingiza flake tu unazoamini: moduli, vifurushi na overlay zake huwa sehemu ya usanidi wako.",

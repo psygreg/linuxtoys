@@ -614,6 +614,7 @@
   "nix_setup_installed": "इंस्टॉल किया गया",
   "nix_setup_missing": "इंस्टॉल नहीं किया गया",
   "nix_setup_unavailable": "उपलब्ध नहीं है",
+  "nix_setup_maintenance": "साप्ताहिक Nix सफ़ाई",
   "nix_flake_import_title": "Nix flake आयात करें",
   "nix_flake_import_intro": "URL या स्थानीय निर्देशिका से flake आयात करें। LinuxToys इसके आउटपुट की जाँच करेगा और चयनित पैकेज, मॉड्यूल या overlays को चुनी गई Nix कॉन्फ़िगरेशन में मिलाएगा।",
   "nix_flake_import_warning": "केवल उन flake को आयात करें जिन पर आप भरोसा करते हैं: उनके मॉड्यूल, पैकेज और overlays आपकी कॉन्फ़िगरेशन का हिस्सा बन जाते हैं।",

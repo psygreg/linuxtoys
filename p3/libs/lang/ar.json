@@ -614,6 +614,7 @@
   "nix_setup_installed": "مثبّت",
   "nix_setup_missing": "غير مثبت",
   "nix_setup_unavailable": "غير متاح",
+  "nix_setup_maintenance": "تنظيف Nix الأسبوعي",
   "nix_flake_import_title": "استيراد Nix flake",
   "nix_flake_import_intro": "استورد flake من عنوان URL أو دليل محلي. سيقوم LinuxToys بفحص مخرجاته ودمج الحزم أو الوحدات أو overlays المحددة في تكوين Nix المختار.",
   "nix_flake_import_warning": "استورد فقط flake التي تثق بها: تصبح وحداتها وحزمها وoverlays جزءًا من تكوينك.",

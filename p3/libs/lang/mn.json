@@ -614,6 +614,7 @@
   "nix_setup_installed": "Суулгасан",
   "nix_setup_missing": "Суугаагүй",
   "nix_setup_unavailable": "Боломжгүй",
+  "nix_setup_maintenance": "Долоо хоногийн Nix цэвэрлэгээ",
   "nix_flake_import_title": "Nix flake импортлох",
   "nix_flake_import_intro": "URL эсвэл локал хавтаснаас flake импортлоно уу. LinuxToys түүний гаралтыг шалгаж, сонгосон багц, модуль эсвэл overlay-г сонгосон Nix тохиргоонд нэгтгэнэ.",
   "nix_flake_import_warning": "Зөвхөн итгэдэг flake-ээ импортлоорой: тэдгээрийн модуль, багц, overlay таны тохиргооны нэг хэсэг болно.",

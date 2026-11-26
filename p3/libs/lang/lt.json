@@ -614,6 +614,7 @@
   "nix_setup_installed": "Įdiegta",
   "nix_setup_missing": "Neįdiegta",
   "nix_setup_unavailable": "Nėra",
+  "nix_setup_maintenance": "Savaitinis Nix valymas",
   "nix_flake_import_title": "Importuoti Nix flake",
   "nix_flake_import_intro": "Importuokite flake iš URL arba vietinio katalogo. LinuxToys patikrins jo išvestis ir sujungs pasirinktus paketus, modulius ar perdangas į pasirinktą Nix konfigūraciją.",
   "nix_flake_import_warning": "Importuokite tik tuos flake, kuriais pasitikite: jų moduliai, paketai ir perdangos taps jūsų konfigūracijos dalimi.",

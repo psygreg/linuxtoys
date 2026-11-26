@@ -614,6 +614,7 @@
   "nix_setup_installed": "Installitud",
   "nix_setup_missing": "Pole installitud",
   "nix_setup_unavailable": "Pole saadaval",
+  "nix_setup_maintenance": "Iganädalane Nixi puhastus",
   "nix_flake_import_title": "Impordi Nix flake",
   "nix_flake_import_intro": "Impordi flake URL-ilt või kohalikust kaustast. LinuxToys kontrollib selle väljundeid ja ühendab valitud paketid, moodulid või overlayd valitud Nix-konfiguratsiooniga.",
   "nix_flake_import_warning": "Impordi ainult flake, mida usaldad: nende moodulid, paketid ja overlayd saavad sinu konfiguratsiooni osaks.",

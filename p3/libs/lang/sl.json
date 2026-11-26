@@ -614,6 +614,7 @@
   "nix_setup_installed": "Nameščeno",
   "nix_setup_missing": "Ni nameščeno",
   "nix_setup_unavailable": "Ni na voljo",
+  "nix_setup_maintenance": "Tedensko čiščenje Nix",
   "nix_flake_import_title": "Uvozi Nix flake",
   "nix_flake_import_intro": "Uvozite flake iz URL-ja ali lokalne mape. LinuxToys bo pregledal njegove izhode in združil izbrane pakete, module ali prekrivanja v izbrano konfiguracijo Nix.",
   "nix_flake_import_warning": "Uvozite samo flake, ki jim zaupate: njihovi moduli, paketi in prekrivanja postanejo del vaše konfiguracije.",

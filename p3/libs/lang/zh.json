@@ -614,6 +614,7 @@
   "nix_setup_installed": "已安装",
   "nix_setup_missing": "未安装",
   "nix_setup_unavailable": "不可用",
+  "nix_setup_maintenance": "每周 Nix 清理",
   "nix_flake_import_title": "导入 Nix flake",
   "nix_flake_import_intro": "从 URL 或本地目录导入 flake。LinuxToys 将检查其输出，并将选定的软件包、模块或 overlay 合并到所选的 Nix 配置中。",
   "nix_flake_import_warning": "仅导入你信任的 flake：它们的模块、软件包和 overlay 会成为你配置的一部分。",

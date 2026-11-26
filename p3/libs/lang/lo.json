@@ -614,6 +614,7 @@
   "nix_setup_installed": "ຕິດຕັ້ງແລ້ວ",
   "nix_setup_missing": "ບໍ່ໄດ້ຕິດຕັ້ງ",
   "nix_setup_unavailable": "ບໍ່ມີ",
+  "nix_setup_maintenance": "ການທຳຄວາມສະອາດ Nix ປະຈຳອາທິດ",
   "nix_flake_import_title": "ນຳເຂົ້າ Nix flake",
   "nix_flake_import_intro": "ນຳເຂົ້າ flake ຈາກ URL ຫຼືໂຟນເດີທ້ອງຖິ່ນ. LinuxToys ຈະກວດສອບຜົນລັບຂອງມັນ ແລະລວມເອົາແພັກເກດ, ໂມດູນ ຫຼື overlay ທີ່ເລືອກເຂົ້າໃນການຕັ້ງຄ່າ Nix ທີ່ເລືອກ.",
   "nix_flake_import_warning": "ນຳເຂົ້າສະເພາະ flake ທີ່ທ່ານໄວ້ໃຈ: ໂມດູນ, ແພັກເກດ ແລະ overlay ຂອງພວກມັນຈະກາຍເປັນສ່ວນໜຶ່ງຂອງການຕັ້ງຄ່າຂອງທ່ານ.",

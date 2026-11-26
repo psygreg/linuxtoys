@@ -614,6 +614,7 @@
   "nix_setup_installed": "Uppsett",
   "nix_setup_missing": "Ekki uppsett",
   "nix_setup_unavailable": "Ekki í boði",
+  "nix_setup_maintenance": "Vikuleg Nix-hreinsun",
   "nix_flake_import_title": "Flytja inn Nix-flake",
   "nix_flake_import_intro": "Flyttu inn flake frá slóð eða staðbundinni möppu. LinuxToys skoðar úttakið og sameinar valdar pakkana, einingar eða yfirlög í valda Nix-stillingu.",
   "nix_flake_import_warning": "Flyttu aðeins inn flake sem þú treystir: einingar, pakkar og yfirlög þeirra verða hluti af stillingunni þinni.",

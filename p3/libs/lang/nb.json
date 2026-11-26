@@ -614,6 +614,7 @@
   "nix_setup_installed": "Installert",
   "nix_setup_missing": "Ikke installert",
   "nix_setup_unavailable": "Ikke tilgjengelig",
+  "nix_setup_maintenance": "Ukentlig Nix-opprydding",
   "nix_flake_import_title": "Importer Nix-flake",
   "nix_flake_import_intro": "Importer en flake fra en URL eller en lokal mappe. LinuxToys undersøker utdataene og fletter de valgte pakkene, modulene eller overlaysene inn i den valgte Nix-konfigurasjonen.",
   "nix_flake_import_warning": "Importer bare flakes du stoler på: modulene, pakkene og overlaysene deres blir en del av konfigurasjonen din.",

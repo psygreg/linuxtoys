@@ -614,6 +614,7 @@
   "nix_setup_installed": "Installerad",
   "nix_setup_missing": "Inte installerat",
   "nix_setup_unavailable": "Inte tillgängligt",
+  "nix_setup_maintenance": "Veckovis Nix-städning",
   "nix_flake_import_title": "Importera Nix-flake",
   "nix_flake_import_intro": "Importera en flake från en URL eller en lokal katalog. LinuxToys granskar dess utdata och sammanfogar de valda paketen, modulerna eller overlaysen i den valda Nix-konfigurationen.",
   "nix_flake_import_warning": "Importera bara flakes som du litar på: deras moduler, paket och overlays blir en del av din konfiguration.",

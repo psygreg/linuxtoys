@@ -614,6 +614,7 @@
   "nix_setup_installed": "Đã cài đặt",
   "nix_setup_missing": "Chưa cài đặt",
   "nix_setup_unavailable": "Không khả dụng",
+  "nix_setup_maintenance": "Dọn dẹp Nix hàng tuần",
   "nix_flake_import_title": "Nhập Nix flake",
   "nix_flake_import_intro": "Nhập một flake từ URL hoặc thư mục cục bộ. LinuxToys sẽ kiểm tra các đầu ra của nó và hợp nhất các gói, mô-đun hoặc overlay đã chọn vào cấu hình Nix đã chọn.",
   "nix_flake_import_warning": "Chỉ nhập những flake mà bạn tin tưởng: các mô-đun, gói và overlay của chúng sẽ trở thành một phần trong cấu hình của bạn.",

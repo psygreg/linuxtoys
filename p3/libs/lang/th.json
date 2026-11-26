@@ -614,6 +614,7 @@
   "nix_setup_installed": "ติดตั้งแล้ว",
   "nix_setup_missing": "ยังไม่ได้ติดตั้ง",
   "nix_setup_unavailable": "ไม่พร้อมใช้งาน",
+  "nix_setup_maintenance": "การล้างข้อมูล Nix รายสัปดาห์",
   "nix_flake_import_title": "นำเข้า Nix flake",
   "nix_flake_import_intro": "นำเข้า flake จาก URL หรือไดเรกทอรีในเครื่อง LinuxToys จะตรวจสอบเอาต์พุตและรวมแพ็กเกจ โมดูล หรือ overlay ที่เลือกเข้ากับการกำหนดค่า Nix ที่เลือก",
   "nix_flake_import_warning": "นำเข้าเฉพาะ flake ที่คุณไว้วางใจ: โมดูล แพ็กเกจ และ overlay ของ flake จะกลายเป็นส่วนหนึ่งของการกำหนดค่าของคุณ",

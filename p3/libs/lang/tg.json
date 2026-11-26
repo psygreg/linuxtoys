@@ -614,6 +614,7 @@
   "nix_setup_installed": "Насб шудааст",
   "nix_setup_missing": "Насб нашудааст",
   "nix_setup_unavailable": "Дастрас нест",
+  "nix_setup_maintenance": "Тозакунии ҳафтаинаи Nix",
   "nix_flake_import_title": "Ворид кардани Nix flake",
   "nix_flake_import_intro": "Flake-ро аз URL ё папкаи маҳаллӣ ворид кунед. LinuxToys баромадҳои онро тафтиш мекунад ва бастаҳо, модулҳо ё overlay-ҳои интихобшударо ба конфигуратсияи интихобшудаи Nix муттаҳид мекунад.",
   "nix_flake_import_warning": "Танҳо flake-ҳоеро ворид кунед, ки ба онҳо боварӣ доред: модулҳо, бастаҳо ва overlay-ҳои онҳо қисми конфигуратсияи шумо мешаванд.",

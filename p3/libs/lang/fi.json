@@ -614,6 +614,7 @@
   "nix_setup_installed": "Asennettu",
   "nix_setup_missing": "Ei asennettu",
   "nix_setup_unavailable": "Ei saatavilla",
+  "nix_setup_maintenance": "Viikoittainen Nixin siivous",
   "nix_flake_import_title": "Tuo Nix-flake",
   "nix_flake_import_intro": "Tuo flake URL-osoitteesta tai paikallisesta hakemistosta. LinuxToys tarkistaa sen tulosteet ja yhdistää valitut paketit, moduulit tai overlayt valittuun Nix-määritykseen.",
   "nix_flake_import_warning": "Tuo vain flakeja, joihin luotat: niiden moduulit, paketit ja overlayt tulevat osaksi määritystäsi.",

@@ -614,6 +614,7 @@
   "nix_setup_installed": "Zainstalowano",
   "nix_setup_missing": "Nie zainstalowano",
   "nix_setup_unavailable": "Niedostępne",
+  "nix_setup_maintenance": "Cotygodniowe czyszczenie Nix",
   "nix_flake_import_title": "Importuj flake Nix",
   "nix_flake_import_intro": "Zaimportuj flake z adresu URL lub katalogu lokalnego. LinuxToys sprawdzi jego wyjścia i połączy wybrane pakiety, moduły lub nakładki z wybraną konfiguracją Nix.",
   "nix_flake_import_warning": "Importuj tylko flake'i, którym ufasz: ich moduły, pakiety i nakładki staną się częścią Twojej konfiguracji.",

@@ -614,6 +614,7 @@
   "nix_setup_installed": "Տեղադրված",
   "nix_setup_missing": "Տեղադրված չէ",
   "nix_setup_unavailable": "Առկա չէ",
+  "nix_setup_maintenance": "Nix-ի շաբաթական մաքրում",
   "nix_flake_import_title": "Ներմուծել Nix flake",
   "nix_flake_import_intro": "Ներմուծեք flake URL-ից կամ տեղական պանակից։ LinuxToys-ը կստուգի դրա ելքերը և կմիավորի ընտրված փաթեթները, մոդուլները կամ overlay-ները ընտրված Nix կազմաձևման մեջ։",
   "nix_flake_import_warning": "Ներմուծեք միայն ձեր վստահած flake-ները. դրանց մոդուլները, փաթեթները և overlay-ները դառնում են ձեր կազմաձևման մասը։",
