@@ -43,6 +43,7 @@ _BADGE_TOOLTIPS = {
     "appimages": ("badge_tooltip_appimage", "AppImage Community Catalog"),
     "aur": ("badge_tooltip_aur", "Arch User Repository"),
     "brew": (None, "Homebrew"),
+    "nix": ("badge_tooltip_nix", "Nixpkgs"),
     "snapbadge": (None, "Snap Store"),
 }
 

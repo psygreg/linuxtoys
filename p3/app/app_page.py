@@ -1299,7 +1299,7 @@ class AppPageView(Gtk.Box):
     def _refresh_rating_state(self):
         if not self._rating_buttons:
             return
-        if self._selected_install_info.get("appstream_source") == "homebrew":
+        if self._selected_install_info.get("appstream_source") in ("homebrew", "nix"):
             if self._rating_box is not None:
                 self._rating_box.set_no_show_all(True)
                 self._rating_box.hide()
@@ -1662,6 +1662,15 @@ class AppPageView(Gtk.Box):
             return "AUR"
         if source == "homebrew":
             return "Homebrew"
+        if source == "nix":
+            scope = str(entry.get("nix_scope", "") or "").strip()
+            if scope == "system":
+                return self.translations.get(
+                    "app_page_source_nix_system", "Nix (system)"
+                )
+            return self.translations.get(
+                "app_page_source_nix_home_manager", "Nix (home-manager)"
+            )
         if source == "appimage":
             package_name = entry.get("package-name")
             if isinstance(package_name, (list, tuple)):
@@ -1673,6 +1682,9 @@ class AppPageView(Gtk.Box):
     @staticmethod
     def _source_key(entry):
         source = str(entry.get("appstream_source", "") or "").strip()
+        if source == "nix":
+            scope = str(entry.get("nix_scope", "") or "").strip()
+            return f"nix:{scope}"
         if source == "appimage":
             identity = str(entry.get("appstream_id") or entry.get("id") or "").strip().lower()
             if identity.endswith(".desktop"):
@@ -1788,6 +1800,10 @@ class AppPageView(Gtk.Box):
         self._selected_install_info = entry
         if self._source_button is not None:
             self._set_source_button_content(self._source_button, entry)
+
+        requester = getattr(self.parent, "_request_nix_app_metadata", None)
+        if requester is not None:
+            requester(self, entry)
 
         # A source change may reparent _content_scroller between the bare body and
         # a Details/Extensions Gtk.Stack. Do not let Featured keep geometry measured
@@ -1924,6 +1940,10 @@ class AppPageView(Gtk.Box):
             label = self.translations.get("app_page_queued", "Queued")
             icon = resolve_symbolic_icon("folder-download-symbolic")
             sensitive = False
+        elif state == "nix_queued":
+            label = self.translations.get("nix_added_to_queue", "Added to queue")
+            icon = resolve_symbolic_icon("appointment-soon-symbolic")
+            sensitive = True
         else:
             label = self.translations.get("skills_install_label", "Install")
             icon = resolve_symbolic_icon("emblem-system-symbolic")
@@ -2245,6 +2265,33 @@ class AppPageView(Gtk.Box):
         variants.sort(key=lambda item: (item["width"], item["height"]))
         return variants
 
+    def _remote_screenshot_format_supported(self, url):
+        """Skip remote formats this host's GdkPixbuf loaders cannot decode."""
+        value = str(url or "").strip()
+        if not value.startswith(("https://", "http://")):
+            return True
+        suffix = value.split("?", 1)[0].rsplit(".", 1)[-1].lower()
+        format_name = {
+            "jpg": "jpeg",
+            "jpeg": "jpeg",
+            "png": "png",
+            "webp": "webp",
+            "avif": "avif",
+            "jxl": "jxl",
+            "svg": "svg",
+        }.get(suffix)
+        if format_name is None:
+            # Unknown extension: let the loader sniff the payload.
+            return True
+        supported = getattr(self, "_pixbuf_format_names", None)
+        if supported is None:
+            supported = {
+                str(f.get_name()).lower()
+                for f in GdkPixbuf.Pixbuf.get_formats()
+            }
+            self._pixbuf_format_names = supported
+        return format_name in supported
+
     @staticmethod
     def _choose_screenshot_variant(variants, target_width):
         """Choose the smallest known variant meeting target_width, else the largest."""
@@ -2350,6 +2397,11 @@ class AppPageView(Gtk.Box):
             if not variants:
                 continue
 
+            variant = self._choose_screenshot_variant(variants, 1120)
+            if not variant:
+                continue
+            if not self._remote_screenshot_format_supported(variant.get("url", "")):
+                continue
             frame = _WidthNeutralScreenshotFrame()
             frame.set_shadow_type(Gtk.ShadowType.IN)
             frame.set_hexpand(True)
@@ -2362,9 +2414,6 @@ class AppPageView(Gtk.Box):
             frame._linuxtoys_screenshot_request_id = 0
             frame.connect("size-allocate", self._on_screenshot_size_allocate)
 
-            variant = self._choose_screenshot_variant(variants, 1120)
-            if not variant:
-                continue
             if not self._request_screenshot_variant(frame, variant, initial=True):
                 continue
 
@@ -2891,6 +2940,11 @@ class AppPageView(Gtk.Box):
             launcher(self._selected_install_info)
 
     def _on_install_clicked(self, _button):
+        if self._install_state == "nix_queued":
+            opener = getattr(self.parent, "_open_appstream_queue", None)
+            if opener is not None:
+                opener()
+            return
         if self._install_state == "installed":
             remover = getattr(self.parent, "_on_item_remove_clicked", None)
             if remover is not None:

@@ -425,6 +425,9 @@ class AppPageWidget(Vertical):
     @staticmethod
     def _source_key(entry: Mapping[str, Any]) -> str:
         source = str(entry.get("appstream_source", "") or "").strip()
+        if source == "nix":
+            scope = str(entry.get("nix_scope", "") or "").strip()
+            return f"nix:{scope}"
         if source != "flatpak":
             return source
         return "flatpak:{}:{}:{}".format(
@@ -459,6 +462,13 @@ class AppPageWidget(Vertical):
             return "Snap"
         if source == "aur":
             return "AUR"
+        if source == "nix":
+            scope = str(entry.get("nix_scope", "") or "").strip()
+            if scope == "system":
+                return self._t("app_page_source_nix_system", "Nix (system)")
+            return self._t(
+                "app_page_source_nix_home_manager", "Nix (home-manager)"
+            )
         return source.capitalize() or self._t(
             "app_page_source_native", "Native"
         )
@@ -1131,7 +1141,7 @@ class AppPageWidget(Vertical):
         """
         return bool(
             self.script_info.get("is_appstream_entry")
-            and self._selected.get("appstream_source") != "homebrew"
+            and self._selected.get("appstream_source") not in ("homebrew", "nix")
         )
 
     def _refresh_rating(self) -> None:

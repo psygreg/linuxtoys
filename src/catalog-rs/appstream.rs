@@ -260,6 +260,7 @@ fn resolve_component_category_rs(component:&serde_json::Map<String,Value>, paths
         }
     }
     if component.get("source").and_then(Value::as_str) == Some("homebrew") { return Some("homebrew".into()); }
+    if component.get("source").and_then(Value::as_str) == Some("nix") { return Some("nix".into()); }
     resolve_category_rs(component.get("categories").unwrap_or(&Value::Null),paths,cfg)
 }
 fn flatten_blocks(v:&Value)->String{let Some(a)=v.as_array()else{return String::new()};let mut blocks=Vec::new();for b in a{let Some(m)=b.as_object()else{continue};if m.get("type").and_then(Value::as_str)==Some("paragraph"){if let Some(sp)=m.get("spans").and_then(Value::as_array){blocks.push(sp.iter().filter_map(|s|s.get("text").and_then(Value::as_str)).collect::<Vec<_>>().join(" ").trim().to_string())}}else if let Some(items)=m.get("items").and_then(Value::as_array){blocks.push(items.iter().filter_map(|i|i.as_array()).map(|sp|sp.iter().filter_map(|s|s.get("text").and_then(Value::as_str)).collect::<Vec<_>>().join(" ").trim().to_string()).collect::<Vec<_>>().join("\n"))}}blocks.into_iter().filter(|s|!s.is_empty()).collect::<Vec<_>>().join("\n\n")}
@@ -267,17 +268,18 @@ fn clean_screens(v:Option<&Value>)->Value{let mut out=Vec::new();if let Some(a)=
 
 fn adapt_appstream_maps_values(components:Vec<serde_json::Map<String,Value>>, category_paths:Vec<String>, category_config_json:&str, lang:&str, curated_ids:Vec<String>, curated_packages:Vec<String>, curated_names:Vec<String>, overlays_json:&str, native_badge:&str)->Vec<Value>{
     let cfg:Value=serde_json::from_str(category_config_json).unwrap_or(Value::Null);let overlays:Value=serde_json::from_str(overlays_json).unwrap_or_else(|_|serde_json::json!({}));let ov=overlays.as_object();let ids:std::collections::HashSet<String>=curated_ids.into_iter().map(|s|s.to_lowercase()).collect();let pkgs:std::collections::HashSet<String>=curated_packages.into_iter().map(|s|s.to_lowercase()).collect();let names:std::collections::HashSet<String>=curated_names.into_iter().map(|s|s.to_lowercase()).collect();let mut out=Vec::new();
-    for m in components {let brew=m.get("source").and_then(Value::as_str)==Some("homebrew");let id=m.get("id").and_then(Value::as_str).unwrap_or("");if id.is_empty()||(!brew&&ids.contains(&id.to_lowercase())){continue}if !brew&&m.get("name").and_then(Value::as_str).is_some_and(|n|names.contains(&n.to_lowercase())){continue}if !brew&&m.get("packages").and_then(Value::as_array).is_some_and(|a|a.iter().filter_map(Value::as_str).any(|p|pkgs.contains(&p.to_lowercase()))){continue}
+    for m in components {let brew=m.get("source").and_then(Value::as_str)==Some("homebrew");let nix=m.get("source").and_then(Value::as_str)==Some("nix");let id=m.get("id").and_then(Value::as_str).unwrap_or("");if id.is_empty()||(!brew&&ids.contains(&id.to_lowercase())){continue}if !brew&&m.get("name").and_then(Value::as_str).is_some_and(|n|names.contains(&n.to_lowercase())){continue}if !brew&&m.get("packages").and_then(Value::as_array).is_some_and(|a|a.iter().filter_map(Value::as_str).any(|p|pkgs.contains(&p.to_lowercase()))){continue}
         let Some(category)=resolve_component_category_rs(&m,&category_paths,&cfg) else{continue};let packages:Vec<String>=m.get("packages").and_then(Value::as_array).into_iter().flatten().filter_map(Value::as_str).map(str::to_string).collect();if packages.is_empty(){continue}
         let (name,_)=localized(&m,"localized_names",lang,m.get("name").cloned().unwrap_or(Value::String(String::new())));let(summary,_)=localized(&m,"localized_summaries",lang,m.get("summary").cloned().unwrap_or(Value::String(String::new())));let(dev,_)=localized(&m,"localized_developers",lang,m.get("developer").cloned().unwrap_or(Value::String(String::new())));let(blocks,bloc)=localized(&m,"localized_descriptions",lang,m.get("description_blocks").cloned().unwrap_or_else(||Value::Array(vec![])));let shots=clean_screens(m.get("screenshots"));let source=m.get("source").and_then(Value::as_str).unwrap_or("native");let flat=source=="flatpak";let snap=source=="snap";let origin=m.get("origin").and_then(Value::as_str).unwrap_or("");let scope=m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("");let long=flatten_blocks(&blocks);
         let mut e=serde_json::Map::new();macro_rules! s { ($k:expr, $v:expr) => {{ let _ = e.insert($k.into(), Value::String($v.to_string())); }} }
         s!("id",id);e.insert("name".into(),name);s!("appstream_canonical_name",m.get("name").and_then(Value::as_str).unwrap_or(id));e.insert("description".into(),summary);s!("description_tag","");e.insert("description_localized".into(),Value::Bool(has_localized(&m,"localized_summaries",lang)));s!("long_description",long);e.insert("long_description_blocks".into(),blocks);s!("long_description_locale",bloc);s!("long_description_tag","");s!("long_description_format",if snap{"markdown"}else{"appstream"});e.insert("screenshots".into(),shots.clone());
-        for(k,src)in [("homepage_url","homepage"),("donate","donation"),("donate_url","donation"),("license","license")]{s!(k,m.get(src).and_then(Value::as_str).unwrap_or(""));}e.insert("developer".into(),dev);s!("icon",if brew{"brewpkg.webp"}else{m.get("icon").and_then(Value::as_str).unwrap_or("application-x-executable")});s!("category",category);s!("type",if flat{"flathub"}else if snap{"snap"}else if brew{"homebrew"}else if source=="appimage"{"appimage"}else{"native"});e.insert("package-name".into(),if flat||snap||brew||source=="appimage"{Value::String(packages.first().cloned().unwrap_or_else(||id.into()))}else{Value::Array(packages.iter().cloned().map(Value::String).collect())});s!("repo",if origin.is_empty(){"appstream"}else{origin});for(k,v)in [("revert","yes"),("reboot","no")]{s!(k,v)}for k in ["is_script","is_repo_entry","is_appstream_entry"]{e.insert(k.into(),Value::Bool(true));}e.insert("is_subcategory".into(),Value::Bool(false));s!("appstream_id",id);s!("appstream_launchable",m.get("launchable").and_then(Value::as_str).unwrap_or(""));s!("appstream_source",source);s!("appstream_origin",origin);for k in ["flatpak_remote","flatpak_scope","flatpak_installation","flatpak_ref","flatpak_arch","flatpak_branch"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}for k in ["snap_name","snap_id","snap_channel","snap_confinement"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}e.insert("overrides".into(),if flat&&scope=="system"{serde_json::json!({"skip-user":true})}else{serde_json::json!({})});for k in ["review_rating","review_count"]{e.insert(k.into(),m.get(k).cloned().unwrap_or(Value::Null));}s!("appstream_version",m.get("version").and_then(Value::as_str).unwrap_or(""));s!("repo_app_id",id);e.insert("is_new".into(),Value::Bool(false));e.insert("is_verified".into(),Value::Bool(flat&&m.get("verified").and_then(Value::as_bool).unwrap_or(false)));s!("native_distro_badge",if flat||snap||brew||source=="appimage"{""}else{native_badge});s!("appstream_badge",if flat{if origin=="flatpark"{"distros/flatpark.webp"}else{"distros/flathub.webp"}}else if snap{"snapbadge.webp"}else if brew{"brew.png"}else if source=="appimage"{"appimages.webp"}else{""});e.insert("has_app_page".into(),Value::Bool(brew||source=="appimage"||!long.is_empty()||shots.as_array().is_some_and(|a|!a.is_empty())));s!("path",format!("appstream://{source}/{id}"));
+        for(k,src)in [("homepage_url","homepage"),("donate","donation"),("donate_url","donation"),("license","license")]{s!(k,m.get(src).and_then(Value::as_str).unwrap_or(""));}e.insert("developer".into(),dev);s!("icon",if brew{"brewpkg.webp"}else if nix{"nix.svg"}else{m.get("icon").and_then(Value::as_str).unwrap_or("application-x-executable")});s!("category",category);s!("type",if flat{"flathub"}else if snap{"snap"}else if brew{"homebrew"}else if nix{"nix"}else if source=="appimage"{"appimage"}else{"native"});e.insert("package-name".into(),if flat||snap||brew||nix||source=="appimage"{Value::String(packages.first().cloned().unwrap_or_else(||id.into()))}else{Value::Array(packages.iter().cloned().map(Value::String).collect())});s!("repo",if origin.is_empty(){"appstream"}else{origin});for(k,v)in [("revert","yes"),("reboot","no")]{s!(k,v)}for k in ["is_script","is_repo_entry","is_appstream_entry"]{e.insert(k.into(),Value::Bool(true));}e.insert("is_subcategory".into(),Value::Bool(false));s!("appstream_id",id);s!("appstream_launchable",m.get("launchable").and_then(Value::as_str).unwrap_or(""));s!("appstream_source",source);s!("appstream_origin",origin);for k in ["flatpak_remote","flatpak_scope","flatpak_installation","flatpak_ref","flatpak_arch","flatpak_branch"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}for k in ["snap_name","snap_id","snap_channel","snap_confinement"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}e.insert("overrides".into(),if flat&&scope=="system"{serde_json::json!({"skip-user":true})}else{serde_json::json!({})});for k in ["review_rating","review_count"]{e.insert(k.into(),m.get(k).cloned().unwrap_or(Value::Null));}s!("appstream_version",m.get("version").and_then(Value::as_str).unwrap_or(""));s!("repo_app_id",id);e.insert("is_new".into(),Value::Bool(false));e.insert("is_verified".into(),Value::Bool(flat&&m.get("verified").and_then(Value::as_bool).unwrap_or(false)));s!("native_distro_badge",if flat||snap||brew||nix||source=="appimage"{""}else{native_badge});s!("appstream_badge",if flat{if origin=="flatpark"{"distros/flatpark.webp"}else{"distros/flathub.webp"}}else if snap{"snapbadge.webp"}else if brew{"brew.png"}else if nix{"nix.svg"}else if source=="appimage"{"appimages.webp"}else{""});e.insert("has_app_page".into(),Value::Bool(brew||nix||source=="appimage"||!long.is_empty()||shots.as_array().is_some_and(|a|!a.is_empty())));s!("path",format!("appstream://{source}/{id}"));
         if source=="appimage" {
             e.insert("appimage_links".into(),m.get("appimage_links").cloned().unwrap_or(Value::Array(vec![])));
             e.insert("appimage_needs_resolution".into(),Value::Bool(true));
         }
         if brew { e.insert("homebrew_install_count".into(), m.get("homebrew_install_count").cloned().unwrap_or(Value::Number(0.into()))); s!("homebrew_name",packages.first().map(String::as_str).unwrap_or("")); s!("registry_name",id); }
+        if nix { s!("nix_name",m.get("nix_name").and_then(Value::as_str).unwrap_or(packages.first().map(String::as_str).unwrap_or(""))); s!("nix_pname",m.get("nix_pname").and_then(Value::as_str).unwrap_or("")); s!("nix_version",m.get("nix_version").and_then(Value::as_str).unwrap_or("")); s!("nix_scope",m.get("nix_scope").and_then(Value::as_str).unwrap_or("home-manager")); s!("registry_name",id); }
         if let Some(overlay)=ov.and_then(|o|o.get(&normalize_id(id))).and_then(Value::as_object){for(k,v)in overlay{e.insert(k.clone(),v.clone());}if overlay.get("purchase_options").is_some()||overlay.get("subscription_options").is_some(){e.insert("has_app_page".into(),Value::Bool(true));}}
         if let Some(alts)=m.get("_source_alternatives").and_then(Value::as_array){let mut opts=vec![Value::Object(e.clone())];for a in alts{if let Value::Object(am)=a{let nested=adapt_appstream_maps_values(vec![am.clone()],category_paths.clone(),category_config_json,lang,vec![],vec![],vec![],overlays_json,native_badge);if let Some(n)=nested.into_iter().next(){opts.push(n);}}}if opts.len()>1{e.insert("source_options".into(),Value::Array(opts));s!("recommended_source",m.get("_source_recommended").and_then(Value::as_str).unwrap_or(source));}}
         out.push(Value::Object(e));
@@ -287,6 +289,10 @@ fn adapt_appstream_maps_values(components:Vec<serde_json::Map<String,Value>>, ca
 
 fn source_option_key_rs(item: &serde_json::Map<String, Value>) -> String {
     let source = item.get("source").and_then(Value::as_str).unwrap_or("native");
+    if source == "nix" {
+        let scope = item.get("nix_scope").and_then(Value::as_str).unwrap_or("");
+        return format!("nix:{scope}");
+    }
     if source == "appimage" {
         let id = normalize_id(item.get("id").and_then(Value::as_str).unwrap_or(""));
         let name = item.get("name").and_then(Value::as_str).unwrap_or("");
@@ -366,10 +372,11 @@ fn with_source_options_rs(selected:&serde_json::Map<String,Value>,group:&[serde_
     let native:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").collect();
     let snap:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("snap")).collect();
     let appimage:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("appimage")).collect();
+    let nix:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("nix")).collect();
     // Verification affects which source may be chosen by the default policy, not
     // which valid sources the app page is allowed to expose. Keep every source in
     // the selector even when the currently selected Flatpak is verified.
-    let mut candidates:Vec<&serde_json::Map<String,Value>>=native.into_iter().chain(flat).chain(snap).chain(appimage).collect();
+    let mut candidates:Vec<&serde_json::Map<String,Value>>=native.into_iter().chain(flat).chain(snap).chain(appimage).chain(nix).collect();
     let mut seen=std::collections::HashSet::new();candidates.retain(|m|seen.insert(source_option_key_rs(m)));if candidates.len()<2{return selected.clone()}
     let sk=source_option_key_rs(selected);let alts:Vec<Value>=candidates.into_iter().filter(|m|source_option_key_rs(m)!=sk).map(|m|Value::Object(m.clone())).collect();let mut r=selected.clone();if !alts.is_empty(){r.insert("_source_alternatives".into(),Value::Array(alts));r.insert("_source_recommended".into(),Value::String(sk));}r
 }
@@ -439,13 +446,16 @@ fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths
     }
     let mut out=pass;
     for (_,raw) in groups {let mut group=if by_name_pass{expand_source_group_rs(&raw)}else{raw};if let Some(l)=locked_system_flatpak_rs(&group,locks){out.push(l);continue}
-        let mut flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).cloned().collect();let natives:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").cloned().collect();let snaps:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("snap")).cloned().collect();let appimages:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("appimage")).cloned().collect();
+        let mut flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).cloned().collect();let natives:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").cloned().collect();let snaps:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("snap")).cloned().collect();let appimages:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("appimage")).cloned().collect();let mut nixes:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("nix")).cloned().collect();
+        // User-scope Nix (home-manager) is the least invasive default, then the
+        // system-wide NixOS module.
+        nixes.sort_by_key(|m|(m.get("nix_scope").and_then(Value::as_str).unwrap_or("home-manager")!="home-manager",m.get("nix_scope").and_then(Value::as_str).unwrap_or("").to_string()));
         // User scope first, then the primary installation, and out of equal
         // scopes prefer the established default remote (flathub) over newly
         // added sources so the default selection stays stable when a hub like
         // FlatPark serves the same app.
-        flat.sort_by_key(|m|(m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("")!="user",m.get("flatpak_installation").and_then(Value::as_str).unwrap_or("").to_string(),m.get("flatpak_remote").and_then(Value::as_str).unwrap_or("flathub")!="flathub",m.get("flatpak_remote").and_then(Value::as_str).unwrap_or("").to_string()));group=natives.iter().cloned().chain(flat.iter().cloned()).chain(snaps.iter().cloned()).chain(appimages.iter().cloned()).collect();
-        if natives.is_empty()&&flat.len()>1{out.push(with_source_options_rs(&flat[0],&group));continue}let sources:std::collections::HashSet<_>=group.iter().map(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")).collect();if sources.len()<2{if !appimages.is_empty(){out.extend(appimages)}else{out.extend(group)}continue}
+        flat.sort_by_key(|m|(m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("")!="user",m.get("flatpak_installation").and_then(Value::as_str).unwrap_or("").to_string(),m.get("flatpak_remote").and_then(Value::as_str).unwrap_or("flathub")!="flathub",m.get("flatpak_remote").and_then(Value::as_str).unwrap_or("").to_string()));group=natives.iter().cloned().chain(flat.iter().cloned()).chain(snaps.iter().cloned()).chain(appimages.iter().cloned()).chain(nixes.iter().cloned()).collect();
+        if natives.is_empty()&&snaps.is_empty()&&appimages.is_empty()&&nixes.is_empty()&&flat.len()>1{out.push(with_source_options_rs(&flat[0],&group));continue}let sources:std::collections::HashSet<_>=group.iter().map(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")).collect();if sources.len()<2{if !nixes.is_empty(){out.push(with_source_options_rs(&nixes[0],&group))}else if !appimages.is_empty(){out.extend(appimages)}else{out.extend(group)}continue}
         if let Some(pref)=explicit_group_preference_rs(&group,prefs,host_os){let mut selected:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")==pref).cloned().collect();if !selected.is_empty(){if matches!(pref.as_str(),"flatpak"|"appimage"){selected.truncate(1)}out.extend(selected.iter().map(|m|with_source_options_rs(m,&group)));continue}}
         // Whole-category native policy is a default-source decision and outranks
         // Flatpak verification. Explicit per-app preferences above still win, and
@@ -1721,7 +1731,7 @@ impl AppStreamCatalog {
     }
 }
 
-const RUNTIME_CACHE_SCHEMA: u32 = 7;
+const RUNTIME_CACHE_SCHEMA: u32 = 8;
 
 #[derive(Serialize, Deserialize)]
 struct CachedAppStreamCatalog {
@@ -1771,6 +1781,8 @@ pub(crate) fn build_appstream_catalog_index(
     curated_names: Vec<String>,
     overlays_json: &str,
     native_badge: &str,
+    nix_catalog_path: &str,
+    nix_scopes: Vec<String>,
     cache_path: &str,
     cache_key: &str,
     force_rebuild: bool,
@@ -1778,6 +1790,7 @@ pub(crate) fn build_appstream_catalog_index(
     py.allow_threads(|| {
     let homebrew_enabled = serde_json::from_str::<Value>(category_config_json).ok()
         .and_then(|v|v.get("homebrew_enabled").and_then(Value::as_bool)).unwrap_or(false);
+    let nix_enabled = !nix_scopes.is_empty();
     // A warm cache is immediately usable even when its key is stale.  Normal UI
     // callers keep using that last complete snapshot while the refresh worker
     // rebuilds the new generation with force_rebuild=true.  Publication below is
@@ -1785,10 +1798,12 @@ pub(crate) fn build_appstream_catalog_index(
     if !force_rebuild {
         if let Some(mut payload) = load_binary_catalog_cache(cache_path) {
             if !homebrew_enabled { payload.entries.retain(|entry|entry.source != "homebrew"); }
+            if !nix_enabled { payload.entries.retain(|entry|entry.source != "nix"); }
             return Ok(AppStreamCatalog::from_entries(payload.entries, payload.key));
         }
     } else if let Some(mut payload) = load_binary_catalog_cache(cache_path) {
             if !homebrew_enabled { payload.entries.retain(|entry|entry.source != "homebrew"); }
+            if !nix_enabled { payload.entries.retain(|entry|entry.source != "nix"); }
         if payload.key == cache_key {
             return Ok(AppStreamCatalog::from_entries(payload.entries, payload.key));
         }
@@ -1814,6 +1829,10 @@ pub(crate) fn build_appstream_catalog_index(
     // the same AppStream ID as the rest of the catalog while retaining snap_name.
     reconcile_snap_common_ids_rs(&mut vals);
     apply_snap_identity_overlays_rs(&mut vals,&overlay_map);
+    // Nixpkgs is optional and host-local: its normalized snapshot is merged only
+    // while the subsystem is configured. Components participate in the normal
+    // source grouping so matching AppStream entries gain a Nix source option.
+    vals.extend(crate::nix::nix_components(nix_catalog_path, &nix_scopes));
     vals.retain(|m| (m.get("source").and_then(Value::as_str)!=Some("homebrew") || cfg.get("homebrew_enabled").and_then(Value::as_bool).unwrap_or(false)) && !omission_keys_rs(m).iter().any(|k|omit.contains(k)));
     let prefs:Value=serde_json::from_str(source_preferences_json).unwrap_or_else(|_|serde_json::json!({"default":"flatpak","apps":{}}));
     let locks=system_flatpak_locks.into_iter().map(|s|normalize_id(&s)).collect();

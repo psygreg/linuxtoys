@@ -2,7 +2,7 @@ import os
 
 from .gtk_common import Gdk, GLib, Gtk, load_scaled_pixbuf, widget_within
 from gi.repository import Pango
-from . import get_icon_path, compat, revert_helper, official_index, installed_packages
+from . import get_icon_path, compat, nix_metadata, revert_helper, official_index, installed_packages
 from .gtk_dialogs import run_message_dialog
 from .source_badges import badge_tooltip_text
 from .updater.update_dialog import scripts_blocked_by_version
@@ -402,6 +402,12 @@ class ItemWidgetFactory:
     ):
         """Attach Python state/callbacks to a card already constructed by Rust."""
         event_box.info = item_info
+
+        # Nix-only cards warm their app-page metadata as soon as they become
+        # visible. The fetch is queued/deduplicated and runs entirely off GTK,
+        # so opening the page later builds it complete in one pass.
+        if item_info.get("appstream_source") == "nix":
+            nix_metadata.prefetch(item_info)
 
         # The native card constructor receives remote artwork as icon_name.
         # Rebind its Gtk.Image through the same URL-aware loader used by app
@@ -1001,6 +1007,8 @@ class ItemWidgetFactory:
         # unrelated category cards behave like executable scripts.
         if info.get("is_homebrew_category"):
             self._activate_homebrew_category(widget, event)
+        elif info.get("is_nix_category"):
+            self._activate_nix_category(widget, event)
         elif info.get("is_aur_category"):
             self._activate_aur_category(info)
         elif info.get("is_script", False):
@@ -1012,6 +1020,8 @@ class ItemWidgetFactory:
         """Activate a category/subcategory without a source card (sidebar rows)."""
         if info.get("is_homebrew_category"):
             self._activate_homebrew_category(None, None)
+        elif info.get("is_nix_category"):
+            self._activate_nix_category(None, None)
         elif info.get("is_aur_category"):
             self._activate_aur_category(info)
         else:

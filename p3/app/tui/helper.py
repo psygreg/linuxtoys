@@ -51,6 +51,7 @@ _cache_lock = threading.Lock()
 SPECIALS_PREFIX = "specials://"
 SPECIALS_ROOT = "specials://root"
 HOMEBREW_PREFIX = "homebrew://"
+NIX_PREFIX = "nix://"
 APPIMAGE_PREFIX = "appimages://"
 APPIMAGE_ROOT = "appimages://root"
 
@@ -209,6 +210,10 @@ def is_specials_path(path: str) -> bool:
 
 def is_homebrew_path(path: str) -> bool:
     return path.startswith(HOMEBREW_PREFIX)
+
+
+def is_nix_path(path: str) -> bool:
+    return path.startswith(NIX_PREFIX)
 
 
 def is_appimage_path(path: str) -> bool:
@@ -380,6 +385,45 @@ def ensure_homebrew_context() -> bool:
     except Exception:
         return False
     return True
+
+
+def nix_category_info(trans=None) -> dict:
+    active_translations = trans or translations
+    return {
+        "name": active_translations.get("nix_category", "Nix Packages"),
+        "description": active_translations.get(
+            "nix_category_desc", "Packages from Nixpkgs."
+        ),
+        "icon": "nix.svg",
+        "path": "nix://catalog",
+        "type": "category",
+        "is_script": False,
+        "is_subcategory": False,
+        "is_nix_category": True,
+    }
+
+
+def nix_catalog_ready() -> bool:
+    from app import nix_catalog
+
+    return bool(
+        nix_catalog.enabled()
+        and nix_catalog.cached_path()
+        and nix_catalog.binary_snapshot_available()
+    )
+
+
+def get_nix_items():
+    """Return the lazy Rust-backed Nix category."""
+    from app import appstream_parser
+
+    return appstream_parser.get_nix_entries()
+
+
+def search_nix_items(query: str) -> list[dict]:
+    from app import appstream_parser
+
+    return _unwrap_entries(appstream_parser.search_nix_entries(query))
 
 
 class ScriptResult(Enum):

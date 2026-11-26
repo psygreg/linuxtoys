@@ -13,6 +13,9 @@ from . import (
     architecture,
     appstream_cache,
     homebrew_catalog,
+    nix_catalog,
+    nix_metadata,
+    nix_queue,
     appstream_logs,
     appstream_parser,
     aur_cache,
@@ -577,6 +580,19 @@ class AppWindow(
         self._homebrew_refresh_pending = False
         self._homebrew_watch_id = GLib.timeout_add_seconds(3, self._check_homebrew_source)
         self.connect("destroy", self._stop_homebrew_watch)
+        self._nix_source_fingerprint = nix_catalog.availability_fingerprint()
+        self._nix_refresh_running = False
+        self._nix_refresh_pending = False
+        self._nix_refresh_result = {"success": False}
+        self._nix_setup_prompted = False
+        self._nix_metadata_refreshing = False
+        self._nix_metadata_pending = False
+        self._nix_runtime_preparing = False
+        self._nix_watch_id = GLib.timeout_add_seconds(3, self._check_nix_source)
+        self.connect("destroy", self._stop_nix_watch)
+        self._nix_queue_was_pending = nix_queue.pending()
+        self._nix_queue_watch_id = GLib.timeout_add_seconds(3, self._check_nix_queue_state)
+        nix_queue.set_change_callback(self._on_nix_queue_changed)
         GLib.idle_add(self._start_file_watcher)
         GLib.idle_add(self._check_deepin_immutability_on_startup)
         GLib.idle_add(self._start_startup_recommendation_check)
@@ -945,6 +961,279 @@ class AppWindow(
     def _deferred_homebrew_refresh(self):
         self._refresh_homebrew_catalog()
         return False
+
+    # ---- Nix subsystem -------------------------------------------------
+
+    def _nix_category_info(self):
+        return {
+            "name": self.translations.get("nix_category", "Nix Packages"),
+            "description": self.translations.get(
+                "nix_category_desc", "Browse packages from Nixpkgs."
+            ),
+            "icon": "nix.svg", "path": "nix://catalog", "type": "category",
+            "is_script": False, "is_subcategory": False, "is_nix_category": True,
+        }
+
+    def _stop_nix_watch(self, _window):
+        if self._nix_watch_id is not None:
+            GLib.source_remove(self._nix_watch_id)
+            self._nix_watch_id = None
+        if getattr(self, "_nix_queue_watch_id", None) is not None:
+            GLib.source_remove(self._nix_queue_watch_id)
+            self._nix_queue_watch_id = None
+        nix_queue.set_change_callback(None)
+
+    def _check_nix_queue_state(self):
+        """Notice queue changes made by the apply script in a terminal."""
+        pending = nix_queue.pending()
+        if pending != self._nix_queue_was_pending:
+            self._nix_queue_was_pending = pending
+            self._on_appstream_queue_changed()
+        return True
+
+    def _on_nix_queue_changed(self):
+        """Queue writes can come from any worker; reconcile on the GTK thread."""
+        GLib.idle_add(self._on_appstream_queue_changed)
+        return False
+
+    def _check_nix_source(self):
+        fingerprint = nix_catalog.availability_fingerprint()
+        if fingerprint == self._nix_source_fingerprint:
+            return True
+        self._nix_source_fingerprint = fingerprint
+        current = self.current_category_info or {}
+        if not nix_catalog.enabled() and current.get("is_nix_category"):
+            self.show_categories_view()
+        self.load_categories()
+        return True
+
+    def _nix_setup_summary(self, status):
+        yes = self.translations.get("nix_setup_yes", "Enabled")
+        no = self.translations.get("nix_setup_no", "Not enabled")
+        installed = self.translations.get("nix_setup_installed", "Installed")
+        missing = self.translations.get("nix_setup_missing", "Not installed")
+        unavailable = self.translations.get("nix_setup_unavailable", "Not available")
+        return "\n".join((
+            f"• Flakes: {yes if status['flakes'] else no}",
+            f"• Unfree packages: {yes if status['unfree'] else no}",
+            f"• Home Manager: {installed if status['home_manager'] else missing}",
+            f"• NixOS system config: {yes if status['system'] else unavailable}",
+        ))
+
+    def _activate_nix_category(self, widget=None, event=None):
+        if not nix_catalog.enabled():
+            self._check_nix_source()
+            return
+        status = nix_catalog.setup_status()
+        missing = nix_catalog.setup_missing(status)
+        if missing and (not status["ready"] or not self._nix_setup_prompted):
+            message = self.translations.get(
+                "nix_setup_message",
+                "LinuxToys can manage Nix packages through a declarative module. "
+                "The following items need attention:",
+            )
+            buttons = [
+                (
+                    self.translations.get("cancel_btn_label", "Cancel"),
+                    Gtk.ResponseType.CANCEL,
+                )
+            ]
+            if status["ready"]:
+                buttons.insert(
+                    0,
+                    (
+                        self.translations.get("nix_setup_continue", "Continue anyway"),
+                        Gtk.ResponseType.NO,
+                    ),
+                )
+            buttons.append(
+                (
+                    self.translations.get("nix_setup_configure", "Set up Nix"),
+                    Gtk.ResponseType.YES,
+                    "suggested-action",
+                )
+            )
+            response = gtk_dialogs.run_message_dialog(
+                self,
+                title=self.translations.get("nix_setup_title", "Set up Nix packages"),
+                secondary_text=message + "\n\n" + self._nix_setup_summary(status),
+                message_type=Gtk.MessageType.INFO,
+                buttons=buttons,
+                default_response=Gtk.ResponseType.YES if not status["ready"] else Gtk.ResponseType.NO,
+            )
+            if response == Gtk.ResponseType.YES:
+                info = nix_catalog.materialize_setup()
+                self._nix_setup_prompted = True
+                self.open_term_view([info], auto_run=True)
+                return
+            if not status["ready"]:
+                return
+            self._nix_setup_prompted = True
+
+        category_info = self._nix_category_info()
+        if nix_catalog.binary_snapshot_available():
+            self._open_aur_category_view(category_info, loading=False)
+            if nix_catalog.needs_refresh():
+                self._refresh_nix_catalog()
+            elif nix_metadata.index_needs_refresh():
+                self._refresh_nix_metadata()
+            return
+
+        self._open_aur_category_view(category_info, loading=True)
+        page = self.scripts_view
+        flowbox = self.scripts_flowbox
+        self._refresh_nix_catalog()
+
+        def finish_loading():
+            if self.main_stack.get_visible_child() is not page:
+                return False
+            if self._nix_refresh_running or self._nix_refresh_pending:
+                return True
+            spinner = getattr(page, "_linuxtoys_aur_spinner", None)
+            if spinner is not None:
+                spinner.stop()
+                spinner.hide()
+            content = getattr(page, "_linuxtoys_category_content", None)
+            if content is not None:
+                content.set_sensitive(True)
+            if self._nix_refresh_result.get("success"):
+                self._load_scripts_into_flowbox(flowbox, category_info, defer_initial=True)
+            else:
+                gtk_dialogs.run_message_dialog(
+                    self,
+                    title="Nix",
+                    secondary_text=self.translations.get(
+                        "nix_catalog_unavailable",
+                        "Nix package metadata is unavailable. Try again later.",
+                    ),
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons=[("OK", Gtk.ResponseType.OK)],
+                    default_response=Gtk.ResponseType.OK,
+                )
+            return False
+
+        GLib.timeout_add(100, finish_loading)
+
+    def _refresh_nix_catalog(self, force=False):
+        if self._nix_refresh_running:
+            self._nix_refresh_pending = True
+            return
+        if not nix_catalog.enabled():
+            return
+        self._nix_refresh_pending = False
+        self._nix_refresh_running = True
+        self._nix_refresh_result = {"success": False}
+        if force:
+            self._nix_refresh_pending = False
+
+        def worker():
+            result = {"success": False}
+            try:
+                path = nix_catalog.load_or_refresh(force=force)
+                result["success"] = bool(
+                    path and nix_catalog.binary_snapshot_available()
+                )
+                # The shared AppStream runtime index is prepared after the
+                # category is usable; it is not part of the loading gate.
+            except Exception as error:
+                logger.warning("Nix catalog refresh failed: %s", error)
+                result["error"] = str(error)
+
+            def finish():
+                self._nix_refresh_result = result
+                self._nix_refresh_running = False
+                current = nix_catalog.availability_fingerprint()
+                self._nix_source_fingerprint = current
+                page = self.scripts_view
+                category = self.current_category_info or {}
+                if (
+                    category.get("is_nix_category")
+                    and self.main_stack.get_visible_child() is page
+                ):
+                    spinner = getattr(page, "_linuxtoys_aur_spinner", None)
+                    if spinner is not None:
+                        spinner.stop()
+                        spinner.hide()
+                    content = getattr(page, "_linuxtoys_category_content", None)
+                    if content is not None:
+                        content.set_sensitive(True)
+                    if result.get("success"):
+                        self._load_scripts_into_flowbox(
+                            self.scripts_flowbox, category, defer_initial=True
+                        )
+                        if nix_metadata.index_needs_refresh():
+                            self._refresh_nix_metadata()
+                        self._prepare_nix_runtime_cache()
+                if self._nix_refresh_pending:
+                    self._refresh_nix_catalog()
+                return False
+
+            GLib.idle_add(finish)
+
+        threading.Thread(
+            target=worker, daemon=True, name="linuxtoys-nix-catalog"
+        ).start()
+
+    def _prepare_nix_runtime_cache(self):
+        """Rebuild the shared runtime index off GTK after a Nix snapshot load."""
+        if self._nix_runtime_preparing:
+            return
+        self._nix_runtime_preparing = True
+
+        def worker():
+            try:
+                appstream_parser.prepare_runtime_cache()
+            except Exception:
+                pass
+            finally:
+                self._nix_runtime_preparing = False
+
+        threading.Thread(
+            target=worker,
+            daemon=True,
+            name="linuxtoys-nix-runtime-cache",
+        ).start()
+
+    def _refresh_nix_metadata(self):
+        """Refresh the optional Nix Software card index in the background."""
+        if self._nix_refresh_running:
+            # The catalog worker refreshes the same index before publishing.
+            return
+        if self._nix_metadata_refreshing:
+            self._nix_metadata_pending = True
+            return
+        if not nix_catalog.enabled():
+            return
+        self._nix_metadata_refreshing = True
+        self._nix_metadata_pending = False
+
+        def worker():
+            changed = False
+            try:
+                changed = nix_metadata.refresh_index(force=False)
+            except Exception as error:
+                logger.warning("Nix metadata index refresh failed: %s", error)
+
+            def finish():
+                self._nix_metadata_refreshing = False
+                category = self.current_category_info or {}
+                if (
+                    changed
+                    and category.get("is_nix_category")
+                    and self.main_stack.get_visible_child() is self.scripts_view
+                ):
+                    self._load_scripts_into_flowbox(
+                        self.scripts_flowbox, category, defer_initial=True
+                    )
+                if self._nix_metadata_pending:
+                    self._refresh_nix_metadata()
+                return False
+
+            GLib.idle_add(finish)
+
+        threading.Thread(
+            target=worker, daemon=True, name="linuxtoys-nix-metadata-index"
+        ).start()
 
     def _maybe_enqueue_apt_appstream_refresh(self):
         """Bootstrap Debian-family AppStream metadata through the runner PTY.
@@ -1800,6 +2089,17 @@ class AppWindow(
 
     def _on_item_remove_clicked(self, button, info):
         """Use observed package state when AppStream was installed outside LinuxToys."""
+        if info.get("appstream_source") == "nix":
+            try:
+                nix_queue.add(info, action="remove")
+            except ValueError as error:
+                logger.warning("Could not queue Nix removal: %s", error)
+                return
+            app_page = self.main_stack.get_child_by_name("app_page")
+            if app_page is not None and hasattr(app_page, "refresh_install_state"):
+                app_page.refresh_install_state()
+            return
+
         if not info.get("is_appstream_entry") or self._appstream_registry_managed(info):
             return ItemWidgetFactory._on_item_remove_clicked(self, button, info)
 
@@ -1858,6 +2158,8 @@ class AppWindow(
 
     def _get_appstream_install_state(self, info):
         """Resolve AppStream page state from this session first, then the registry."""
+        if info.get("appstream_source") == "nix":
+            return nix_queue.install_state(info)
         appstream_id = str(info.get("appstream_id", "") or "").strip()
         if not appstream_id:
             return "available"
@@ -2088,6 +2390,7 @@ class AppWindow(
     def _on_appstream_queue_changed(self):
         """Refresh the session queue button and the queue view, if visible."""
         records = self._appstream_runner.snapshot()
+        nix_records = nix_queue.snapshot()
 
         # Always refresh the visible AppStream page before handling the empty
         # queue case. A successful removal retires its session record, so the
@@ -2106,7 +2409,7 @@ class AppWindow(
         self._refresh_installed_features_view()
 
         context = self.appstream_queue_button.get_style_context()
-        if not records:
+        if not records and not nix_records:
             context.remove_class("suggested-action")
             context.remove_class("appstream-queue-error")
             self.appstream_queue_button.hide()
@@ -2119,11 +2422,15 @@ class AppWindow(
         context.remove_class("suggested-action")
         context.remove_class("appstream-queue-error")
 
-        active = any(record["status"] in ("queued", "running") for record in records)
+        active = any(record["status"] in ("queued", "running") for record in records) or bool(nix_records)
         failed = any(record["status"] == "failed" for record in records)
         if active:
             context.add_class("suggested-action")
-            self.appstream_queue_button.set_tooltip_text("Application installations in progress")
+            self.appstream_queue_button.set_tooltip_text(
+                self.translations.get(
+                    "queue_tooltip_active", "Operations are waiting in the queue"
+                )
+            )
         elif failed:
             context.add_class("appstream-queue-error")
             self.appstream_queue_button.set_tooltip_text("One or more application installations failed")
@@ -2914,6 +3221,8 @@ class AppWindow(
         if homebrew_catalog.enabled():
             category_snapshot.append(self._homebrew_category_info())
         category_snapshot.append(self._appimage_category_info())
+        if nix_catalog.enabled():
+            category_snapshot.append(self._nix_category_info())
 
         # A language change only changes translated card metadata; the root category
         # structure and artwork normally remain identical. Rebind those native cards
@@ -3053,6 +3362,8 @@ class AppWindow(
             return self._appimage_category_items(category_info)
         if category_info.get("is_homebrew_category"):
             return appstream_parser.get_homebrew_entries()
+        if category_info.get("is_nix_category"):
+            return appstream_parser.get_nix_entries()
         if category_info.get("is_aur_category"):
             # Keep AUR as a lazy Rust-backed sequence. Converting this to list()
             # materializes tens of thousands of Python dictionaries at once.
@@ -3098,7 +3409,7 @@ class AppWindow(
         # Available/Installed split would enumerate the complete repository and
         # defeat paged browsing. Individual AUR cards still refresh their normal
         # installed/removable state after transactions.
-        if category_info.get("is_aur_category") or category_info.get("is_homebrew_category") or category_info.get("is_appimage_category"):
+        if category_info.get("is_aur_category") or category_info.get("is_homebrew_category") or category_info.get("is_nix_category") or category_info.get("is_appimage_category"):
             return False
         if (
             category_info.get("is_linuxtoys_specials")
@@ -3196,7 +3507,12 @@ class AppWindow(
         category_tab = getattr(flowbox, "_linuxtoys_category_tab", None)
         if category_info.get("is_homebrew_category") and category_tab == "installed":
             scripts = []
-        elif category_tab in ("available", "installed") and not category_info.get("is_homebrew_category"):
+        elif category_info.get("is_nix_category") and category_tab == "installed":
+            scripts = []
+        elif category_tab in ("available", "installed") and not (
+            category_info.get("is_homebrew_category")
+            or category_info.get("is_nix_category")
+        ):
             available, installed = self._partition_category_items(
                 category_info, scripts
             )
@@ -3867,6 +4183,24 @@ class AppWindow(
 
     def _run_single_script_install(self, info, close_app_page=False):
         """Run the normal single-entry confirmation and terminal-view flow."""
+        if info.get("appstream_source") == "nix":
+            try:
+                nix_queue.add(info, action="install")
+            except ValueError as error:
+                gtk_dialogs.run_message_dialog(
+                    self,
+                    title="Nix",
+                    secondary_text=str(error),
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons=[("OK", Gtk.ResponseType.OK)],
+                    default_response=Gtk.ResponseType.OK,
+                )
+                return
+            app_page = self.main_stack.get_child_by_name("app_page")
+            if app_page is not None and hasattr(app_page, "refresh_install_state"):
+                app_page.refresh_install_state()
+            return
+
         if info.get("appstream_source") == "homebrew":
             # Brew is already required for exposing the source; formula dependencies
             # are handled by Brew, and overlay dependencies by the queued runner.
@@ -5068,6 +5402,9 @@ class AppWindow(
 
         if self.current_category_info.get("is_homebrew_category"):
             return self._homebrew_category_info() if homebrew_catalog.enabled() else None
+
+        if self.current_category_info.get("is_nix_category"):
+            return self._nix_category_info() if nix_catalog.enabled() else None
 
         if (
             self.current_category_info.get("is_aur_category")

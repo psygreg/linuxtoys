@@ -70,6 +70,7 @@ source "$SCRIPT_DIR/libs/timefix.bash"
 [ -n "$MISC_OPS" ] && source "$SCRIPT_DIR/libs/misc.bash"
 { is_systemd && [ -n "$SYSD_OPS" ]; } && source "$SCRIPT_DIR/libs/sysd.bash"
 [ -n "$HELPERS_OPS" ] && source "$SCRIPT_DIR/libs/helpers.bash"
+[ -n "$NIX_OPS" ] && source "$SCRIPT_DIR/libs/nixsys.bash"
 [ -n "$OPTIMIZER_OPS" ] && source "$SCRIPT_DIR/libs/optimizers.bash"
 
 # GLib/libdbus clients (flatpak, gsettings, ...) connect to the session bus at

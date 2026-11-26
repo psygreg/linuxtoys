@@ -2,8 +2,8 @@
 
 import os
 
-from . import get_icon_path, gui_rs
-from .gtk_common import Gtk, resolve_symbolic_icon
+from . import get_icon_path, gui_rs, nix_catalog, nix_queue
+from .gtk_common import GLib, Gtk, resolve_symbolic_icon
 
 
 class AppStreamQueueView(Gtk.ScrolledWindow):
@@ -17,18 +17,148 @@ class AppStreamQueueView(Gtk.ScrolledWindow):
         self.content.set_margin_top(18)
         self.content.set_margin_bottom(18)
         self.add(self.content)
+
+        self._appstream_box = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL, spacing=10
+        )
+        self.content.pack_start(self._appstream_box, False, False, 0)
+
+        self._nix_section = Gtk.Box(
+            orientation=Gtk.Orientation.VERTICAL, spacing=8
+        )
+        self._nix_section.set_margin_top(10)
+        separator = Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL)
+        self._nix_section.pack_start(separator, False, False, 0)
+        self._nix_title = Gtk.Label()
+        self._nix_title.set_halign(Gtk.Align.START)
+        self._nix_title.set_markup(
+            f"<b>{GLib.markup_escape_text(self._translated('nix_queue_section', 'Nix packages'))}</b>"
+        )
+        self._nix_section.pack_start(self._nix_title, False, False, 0)
+        self._nix_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
+        self._nix_section.pack_start(self._nix_box, False, False, 0)
+        self._nix_actions = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        self._apply_button = Gtk.Button()
+        self._apply_button.set_halign(Gtk.Align.START)
+        self._set_apply_button_content()
+        self._apply_button.connect("clicked", self._apply_nix_operations)
+        self._nix_actions.pack_start(self._apply_button, False, False, 0)
+        self._nix_section.pack_start(self._nix_actions, False, False, 0)
+        self.content.pack_start(self._nix_section, False, False, 0)
+        self._nix_section.set_no_show_all(True)
         self.refresh()
+
+    def _translated(self, key, fallback):
+        return self.parent_window.translations.get(key, fallback)
+
+    def _set_apply_button_content(self):
+        child = self._apply_button.get_child()
+        if child is not None:
+            self._apply_button.remove(child)
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        box.pack_start(
+            Gtk.Image.new_from_icon_name(
+                resolve_symbolic_icon("system-run-symbolic"), Gtk.IconSize.BUTTON
+            ),
+            False,
+            False,
+            0,
+        )
+        box.pack_start(
+            Gtk.Label(
+                label=self._translated(
+                    "nix_apply_operations", "Apply Nix package operations"
+                )
+            ),
+            False,
+            False,
+            0,
+        )
+        self._apply_button.add(box)
+        self._apply_button.get_style_context().add_class("suggested-action")
+        self._apply_button.show_all()
 
     def refresh(self):
         records = list(self.parent_window._appstream_runner.snapshot())
         specs = [self._row_spec(record) for record in records]
-        rows = gui_rs.reconcile_list_rows(self.content, specs)
+        rows = gui_rs.reconcile_list_rows(self._appstream_box, specs)
 
         for record in records:
             row = rows[str(record["id"])]
             self._bind_action(row, record)
 
+        self._refresh_nix_section()
         self.show_all()
+        if not nix_queue.pending():
+            self._nix_section.hide()
+
+    def _refresh_nix_section(self):
+        operations = nix_queue.snapshot()
+        if not operations:
+            self._nix_section.set_no_show_all(True)
+            self._nix_section.hide()
+            gui_rs.reconcile_list_rows(self._nix_box, [])
+            return
+
+        self._nix_section.set_no_show_all(False)
+        specs = [self._nix_row_spec(record) for record in operations]
+        rows = gui_rs.reconcile_list_rows(self._nix_box, specs)
+        for record in operations:
+            row = rows.get(str(record["id"]))
+            if row is not None:
+                self._bind_nix_action(row, record)
+        self._apply_button.set_sensitive(True)
+        self._nix_section.show_all()
+
+    def _nix_row_spec(self, record):
+        scope = record.get("scope", "")
+        scope_label = (
+            self._translated("app_page_source_nix_system", "Nix (system)")
+            if scope == "system"
+            else self._translated(
+                "app_page_source_nix_home_manager", "Nix (home-manager)"
+            )
+        )
+        action = record.get("action", "install")
+        action_label = (
+            self._translated("nix_queue_remove", "Remove")
+            if action == "remove"
+            else self._translated("nix_queue_install", "Install")
+        )
+        icon_path = ""
+        icon_name = "nix.svg"
+        path = get_icon_path("nix.svg")
+        if path and os.path.isfile(path):
+            icon_path = path
+            icon_name = "application-x-executable"
+        return {
+            "key": str(record["id"]),
+            "name": record.get("name", record.get("attr", "")),
+            "secondary": f"{action_label} · {scope_label}",
+            "secondary_visible": True,
+            "icon_path": icon_path,
+            "icon_name": icon_name,
+            "status_icon": resolve_symbolic_icon("appointment-soon-symbolic"),
+            "spinner": False,
+            "action_kind": 1,
+            "destructive_action": False,
+            "action_tooltip": self._translated("cancel_btn_label", "Cancel"),
+        }
+
+    def _bind_nix_action(self, row, record):
+        action = gui_rs.card_child(row, "linuxtoys-list-row-action")
+        if action is None:
+            return
+        action.connect("clicked", self._remove_nix_operation, record["id"])
+
+    def _remove_nix_operation(self, _button, record_id):
+        nix_queue.remove(record_id)
+        self.refresh()
+
+    def _apply_nix_operations(self, _button):
+        info = nix_catalog.materialize_apply()
+        self._apply_button.set_sensitive(False)
+        self.parent_window.open_term_view([info], auto_run=True)
 
     def _bind_action(self, row, record):
         action = gui_rs.card_child(row, "linuxtoys-list-row-action")

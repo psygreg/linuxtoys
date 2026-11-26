@@ -13,7 +13,7 @@ from typing import Any
 from textual.css.query import NoMatches
 from textual.widgets import Input
 
-from app import aur_cache, homebrew_catalog, installed_packages
+from app import aur_cache, homebrew_catalog, nix_catalog, nix_metadata, nix_queue, installed_packages
 from app.compat import get_revert_capability, get_system_compat_keys, TRANSMAP_PATH
 from app.easy_cli import (
     _cleanup_tmp_noram_dirs,
@@ -64,18 +64,22 @@ from .helper import (
     appimage_relative,
     get_appimage_items,
     get_homebrew_items,
+    get_nix_items,
     get_scripts_for_category_cached,
     get_specials_items,
     is_appimage_path,
     is_homebrew_catalog_valid,
     is_homebrew_path,
+    is_nix_path,
     is_registered_entry,
     is_removable,
     is_specials_path,
+    nix_catalog_ready,
     refresh_homebrew_catalog,
     refresh_removable_state,
     search_appimage_items,
     search_homebrew_items,
+    search_nix_items,
     translations,
 )
 from .manifest_dialog import ManifestPlanDialog, ManifestReportDialog
@@ -274,6 +278,10 @@ class ScriptRunnerMixin:
             await self._open_homebrew_category(button)
             return
 
+        if is_nix_path(button.path):
+            await self._open_nix_category(button)
+            return
+
         if is_appimage_path(button.path):
             await self._open_appimage_category(button)
             return
@@ -288,6 +296,8 @@ class ScriptRunnerMixin:
             return get_specials_items(path)
         if is_homebrew_path(path):
             return get_homebrew_items()
+        if is_nix_path(path):
+            return get_nix_items()
         return get_scripts_for_category_cached(path)
 
     def _homebrew_view_active(self) -> bool:
@@ -485,6 +495,190 @@ class ScriptRunnerMixin:
         self._homebrew_source_fingerprint = fingerprint
         await self._sync_homebrew_availability()
         self._request_homebrew_refresh()
+
+    def _nix_view_active(self) -> bool:
+        return bool(self._nav_stack) and is_nix_path(self._nav_stack[-1][0])
+
+    async def _open_nix_category(self, button: InfoButton) -> None:
+        if not nix_catalog.enabled():
+            self.notify(
+                translations.get("nix_unavailable", "Nix is not available."),
+                severity="warning",
+            )
+            return
+        status = nix_catalog.setup_status()
+        if not status.get("ready"):
+            self.notify(
+                translations.get(
+                    "nix_setup_message",
+                    "Nix setup is required before packages can be managed.",
+                ),
+                title=translations.get("nix_setup_title", "Set up Nix packages"),
+                severity="information",
+                timeout=6,
+            )
+            self._start_nix_setup()
+            return
+        self._nav_stack.append((button.path, str(button.label)))
+        self._update_breadcrumb()
+        await self._render_items([])
+        if self._nix_view_active():
+            self._set_items_loading(True)
+        if nix_catalog_ready():
+            self._nix_awaiting_refresh = False
+            if nix_metadata.index_needs_refresh():
+                self._request_nix_metadata_refresh()
+            self._load_nix_items()
+        else:
+            self._nix_awaiting_refresh = True
+            self._request_nix_refresh()
+
+    def _load_nix_items(self) -> None:
+        self.run_worker(
+            self._load_nix_items_async(),
+            exclusive=True,
+            group="nix-items",
+        )
+
+    def _request_nix_metadata_refresh(self) -> None:
+        """Refresh card metadata without gating the category itself."""
+        if getattr(self, "_nix_metadata_refreshing", False):
+            return
+        self._nix_metadata_refreshing = True
+        app = self.app
+
+        def worker() -> None:
+            changed = False
+            try:
+                changed = nix_metadata.refresh_index()
+            except Exception:
+                pass
+            try:
+                app.call_from_thread(self._finish_nix_metadata_refresh, changed)
+            except Exception:
+                pass
+
+        threading.Thread(
+            target=worker, daemon=True, name="linuxtoys-nix-metadata"
+        ).start()
+
+    async def _finish_nix_metadata_refresh(self, changed: bool) -> None:
+        self._nix_metadata_refreshing = False
+        if changed and self._nix_view_active():
+            self._load_nix_items()
+
+    def _start_nix_setup(self) -> None:
+        """Run the interactive Nix setup script in the embedded terminal."""
+        info = nix_catalog.materialize_setup()
+        try:
+            command = script_command(info["path"], resolve_script_dir())
+        except Exception as exc:  # noqa: BLE001
+            self.notify(
+                f"✗ Could not prepare Nix setup: {exc}", severity="error"
+            )
+            return
+        if not self._ensure_terminal_free():
+            return
+        self._running_button = None
+        self._running_script_info = info
+        self._running_temp_path = info["path"]
+        self._running_dev_mode = False
+        self._running_is_uninstall = False
+        self._running_is_appstream = False
+        self._running_appstream_action = None
+        self._show_terminal()
+        terminal = self.query_one("#terminal", Terminal)
+        terminal.run_script(
+            command, env=self._script_env("Nix setup"), pause_on_exit=False
+        )
+
+    async def _load_nix_items_async(self) -> None:
+        await self._catalog_load_async(
+            view_active=self._nix_view_active,
+            fetch=get_nix_items,
+            unavailable_text=translations.get(
+                "nix_catalog_unavailable",
+                "Nix package metadata is unavailable. Try again later.",
+            ),
+            empty_text=translations.get(
+                "nix_no_items", "No Nix packages found."
+            ),
+        )
+
+    def _request_nix_refresh(self) -> None:
+        if self._nix_refresh_running:
+            return
+        self._nix_refresh_running = True
+        app = self.app
+
+        def worker() -> None:
+            result = {"success": False}
+            try:
+                path = nix_catalog.load_or_refresh()
+                result["success"] = bool(
+                    path and nix_catalog.binary_snapshot_available()
+                )
+                # Card metadata and the shared AppStream runtime index are
+                # prepared after the category is usable, not in this gate.
+            except Exception as exc:  # noqa: BLE001
+                result["error"] = str(exc)
+            try:
+                app.call_from_thread(self._finish_nix_refresh, result)
+            except Exception:
+                pass
+
+        threading.Thread(
+            target=worker, daemon=True, name="linuxtoys-nix-source"
+        ).start()
+
+    async def _finish_nix_refresh(self, result: dict) -> None:
+        self._nix_refresh_running = False
+        awaiting = self._nix_awaiting_refresh
+        self._nix_awaiting_refresh = False
+        if not self._nix_view_active():
+            return
+        if result.get("success"):
+            if nix_metadata.index_needs_refresh():
+                self._request_nix_metadata_refresh()
+            self._load_nix_items()
+        elif awaiting:
+            await self._show_items_message(
+                translations.get(
+                    "nix_catalog_unavailable",
+                    "Nix package metadata is unavailable. Try again later.",
+                )
+            )
+
+    def _schedule_nix_search(self, query: str) -> None:
+        if self._nix_search_timer:
+            self._nix_search_timer.stop()
+        self._nix_search_timer = self.set_timer(
+            0.2, partial(self._run_nix_search, query)
+        )
+
+    def _run_nix_search(self, query: str) -> None:
+        if not self._nix_view_active():
+            return
+        self.run_worker(
+            self._nix_search_async(query),
+            exclusive=True,
+            group="nix-items",
+        )
+
+    async def _nix_search_async(self, query: str) -> None:
+        await self._catalog_search_async(
+            query=query,
+            view_active=self._nix_view_active,
+            search=search_nix_items,
+            load=self._load_nix_items_async,
+            unavailable_text=translations.get(
+                "nix_catalog_unavailable",
+                "Nix package metadata is unavailable. Try again later.",
+            ),
+            empty_text=translations.get(
+                "nix_no_results", "No Nix packages found."
+            ),
+        )
 
     async def _sync_homebrew_availability(self) -> None:
         """Reconcile the UI with ``homebrew_catalog.enabled()``.
@@ -740,6 +934,27 @@ class ScriptRunnerMixin:
         cleanup_path: str | None = None
         started = False
         try:
+            if script_info.get("appstream_source") == "nix":
+                try:
+                    nix_queue.add(script_info, action="remove")
+                except ValueError as exc:
+                    self.notify(
+                        f"✗ Could not queue removal of '{button.label}': {exc}",
+                        severity="error",
+                    )
+                    return
+                apply_info = nix_catalog.materialize_apply()
+                apply_info["cleanup_path"] = apply_info["path"]
+                cleanup_path = apply_info.get("path")
+                command = await asyncio.to_thread(
+                    lambda: script_command(
+                        apply_info["path"], resolve_script_dir()
+                    )
+                )
+                started = self._start_uninstall(
+                    button, script_info, apply_info, command
+                )
+                return
             uninstall_entry = await asyncio.to_thread(
                 build_uninstall_script_entry, script_info, translations
             )
@@ -1436,6 +1651,10 @@ class AppstreamRunnerMixin:
         script_dir = resolve_script_dir()
         if entry.get("appstream_source") == "homebrew":
             raw_path = homebrew_catalog.materialize_install(entry)["path"]
+            return script_command(raw_path, script_dir), raw_path
+        if entry.get("appstream_source") == "nix":
+            nix_queue.add(entry, action="install")
+            raw_path = nix_catalog.materialize_apply()["path"]
             return script_command(raw_path, script_dir), raw_path
 
         raw_path = build_install_script(entry)

@@ -12,6 +12,10 @@ class SearchCtl:
         category = getattr(self, "current_category_info", None)
         return bool(category and category.get("is_homebrew_category"))
 
+    def _nix_search_mode_active(self):
+        category = getattr(self, "current_category_info", None)
+        return bool(category and category.get("is_nix_category"))
+
     def _appimage_search_mode_active(self):
         category = getattr(self, "current_category_info", None)
         return bool(category and category.get("is_appimage_category"))
@@ -105,7 +109,7 @@ class SearchCtl:
 
     def _on_search_activate(self, search_entry):
         query = search_entry.get_text().strip()
-        if not (self._aur_search_mode_active() or self._homebrew_search_mode_active() or self._appimage_search_mode_active()):
+        if not (self._aur_search_mode_active() or self._homebrew_search_mode_active() or self._nix_search_mode_active() or self._appimage_search_mode_active()):
             if self._try_smart_search_navigation(query):
                 return
 
@@ -215,6 +219,8 @@ class SearchCtl:
                 target.info = category
                 if category.get("is_aur_category"):
                     self._activate_aur_category(category)
+                elif category.get("is_nix_category"):
+                    self._activate_nix_category(category)
                 else:
                     self.on_category_clicked(target, None)
                 return True
@@ -229,6 +235,8 @@ class SearchCtl:
             self.search_results = self.search_engine.search_aur_only(query)
         elif self._homebrew_search_mode_active():
             self.search_results = self.search_engine.search_homebrew_only(query)
+        elif self._nix_search_mode_active():
+            self.search_results = self.search_engine.search_nix_only(query)
         elif self._appimage_search_mode_active():
             self.search_results = self.search_engine.search_appimage_only(query)
         else:

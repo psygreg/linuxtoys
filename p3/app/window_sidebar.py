@@ -14,7 +14,7 @@ import os
 import logging
 
 from .gtk_common import GLib, Gtk
-from . import get_icon_path, gui_rs, homebrew_catalog, parser
+from . import get_icon_path, gui_rs, homebrew_catalog, nix_catalog, parser
 
 SIDEBAR_EXCLUDED_VIEWS = frozenset({
     "app_page",
@@ -47,6 +47,8 @@ class SidebarCtl:
             return "synthetic:appimages:" + str(info.get("appimage_relative_category") or "root")
         if info.get("is_homebrew_category"):
             return "synthetic:homebrew"
+        if info.get("is_nix_category"):
+            return "synthetic:nix"
         if info.get("is_aur_category"):
             return "synthetic:aur"
         return f"synthetic:{info.get('id') or info.get('name', '')}"
@@ -129,6 +131,8 @@ class SidebarCtl:
                 continue
             if category.get("is_homebrew_category"):
                 continue  # appended separately while Homebrew is applicable
+            if category.get("is_nix_category"):
+                continue  # appended separately while Nix is applicable
             self._append_sidebar_entry(category, 0, entries, used_keys, ())
 
         # Synthetic categories, only while they are applicable.
@@ -139,6 +143,10 @@ class SidebarCtl:
         self._append_sidebar_entry(
             self._appimage_category_info(), 0, entries, used_keys, ()
         )
+        if nix_catalog.enabled():
+            self._append_sidebar_entry(
+                self._nix_category_info(), 0, entries, used_keys, ()
+            )
         return entries
 
     def _sidebar_subcategories(self, category, depth):
@@ -434,6 +442,8 @@ class SidebarCtl:
                 continue
             if category.get("is_homebrew_category"):
                 continue  # appended separately while Homebrew is applicable
+            if category.get("is_nix_category"):
+                continue  # appended separately while Nix is applicable
             absorb(
                 category,
                 0,
@@ -445,6 +455,9 @@ class SidebarCtl:
         absorb(self._appimage_category_info(), 0,
                self._sidebar_entry_key(self._appimage_category_info())
                in self._sidebar_expanded_keys)
+        if nix_catalog.enabled():
+            info = self._nix_category_info()
+            names[self._sidebar_entry_key(info)] = str(info.get("name", "") or "")
         return names
 
     @classmethod

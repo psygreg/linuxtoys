@@ -1,3 +1,5 @@
+#![recursion_limit = "256"]
+
 use pyo3::prelude::*;
 
 mod repo;
@@ -9,6 +11,7 @@ mod search;
 mod scripts;
 mod snap_ratings;
 mod aur;
+mod nix;
 
 #[pymodule]
 fn _catalog_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
@@ -43,5 +46,7 @@ fn _catalog_rs(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(aur::refresh_aur_archive, m)?)?;
     m.add_function(wrap_pyfunction!(aur::load_aur_catalog, m)?)?;
     m.add_class::<aur::AurCatalog>()?;
+    m.add_function(wrap_pyfunction!(nix::nix_snapshot_valid, m)?)?;
+    m.add_class::<nix::NixCatalog>()?;
     Ok(())
 }

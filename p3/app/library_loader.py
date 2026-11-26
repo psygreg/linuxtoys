@@ -43,6 +43,7 @@ LIBRARY_FLAGS = {
     "sysd.bash": "SYSD_OPS",
     "helpers.bash": "HELPERS_OPS",
     "optimizers.bash": "OPTIMIZER_OPS",
+    "nixsys.bash": "NIX_OPS",
 }
 
 LEGACY_SUMMONS = {

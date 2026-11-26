@@ -2896,6 +2896,15 @@ class JobManager:
                 except Exception as exc:
                     return 1, f"Could not prepare Homebrew install of '{job.name}': {exc}"
                 cleanup_paths.append(entry.get("path"))
+            elif source == "nix":
+                from . import nix_catalog, nix_queue
+                try:
+                    nix_queue.add(entry, action="install")
+                except Exception as exc:
+                    return 1, f"Could not queue Nix install of '{job.name}': {exc}"
+                apply_info = nix_catalog.materialize_apply()
+                cleanup_paths.append(apply_info.get("path"))
+                entry = apply_info
             elif source == "appimage":
                 return self._install_appimage(job, entry)
             elif source == "aur" or path_value.startswith("aur://"):
@@ -3150,6 +3159,20 @@ class JobManager:
         return 0, ""
 
     def _remove(self, job, entry):
+        if entry.get("appstream_source") == "nix":
+            from . import nix_catalog, nix_queue
+            try:
+                nix_queue.add(entry, action="remove")
+            except Exception as exc:
+                return 1, f"Could not queue Nix removal of '{job.name}': {exc}"
+            apply_info = nix_catalog.materialize_apply()
+            try:
+                return self._execute_script(job, apply_info)
+            finally:
+                try:
+                    os.remove(apply_info["path"])
+                except OSError:
+                    pass
         blockers = installed_packages.dependency_blockers(entry)
         if blockers:
             return 1, "Cannot remove '{}' yet — installed software still depends on it: {}".format(

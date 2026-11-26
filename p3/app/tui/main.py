@@ -44,7 +44,7 @@ from textual.widgets import (
     Static,
 )
 
-from app import homebrew_catalog
+from app import homebrew_catalog, nix_catalog
 from app.lang_utils import detect_system_language
 from app.registry_utils import parse_registry_file
 from app.updater import version_gate
@@ -63,9 +63,11 @@ from .helper import (
     homebrew_category_info,
     invalidate_search_caches,
     is_appimage_path,
+    is_nix_path,
     is_registered_entry,
     is_search_ready,
     make_widget_id,
+    nix_category_info,
     search_scripts_fast,
     translations,
     warm_search_and_category_index,
@@ -166,6 +168,9 @@ class HomeScreen(
         self._homebrew_refresh_running = False
         self._homebrew_awaiting_refresh = False
         self._homebrew_source_fingerprint = None
+        self._nix_refresh_running = False
+        self._nix_awaiting_refresh = False
+        self._nix_search_timer = None
         self._lazy_items = None
         self._lazy_loaded = 0
         self._registry_data = None
@@ -554,6 +559,11 @@ class HomeScreen(
                 self._schedule_homebrew_search(query)
             return
 
+        if self._nix_view_active():
+            if not self._nix_awaiting_refresh:
+                self._schedule_nix_search(query)
+            return
+
         if self._appimage_view_active():
             self._schedule_appimage_search(query)
             return
@@ -637,6 +647,8 @@ class HomeScreen(
         if homebrew_catalog.enabled():
             category_snapshot.append(homebrew_category_info())
         category_snapshot.append(appimage_category_info())
+        if nix_catalog.enabled():
+            category_snapshot.append(nix_category_info())
         return category_snapshot
 
     async def action_go_back(self) -> None:

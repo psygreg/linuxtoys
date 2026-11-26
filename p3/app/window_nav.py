@@ -1,10 +1,25 @@
+import logging
+import threading
+
 from .gtk_common import Gtk, GLib
 from .window_items import ItemWidgetFactory
 from .window_search import SearchCtl
 from .featured_scripts import FeaturedCtl
 from .local_scripts import LocalScriptsCtl
 from .updater.update_dialog import scripts_blocked_by_version
-from . import app_page, gtk_dialogs, repo_parser, term_view, skills_view, get_icon_path, header, gui_rs
+from . import (
+    app_page,
+    gtk_dialogs,
+    nix_metadata,
+    repo_parser,
+    term_view,
+    skills_view,
+    get_icon_path,
+    header,
+    gui_rs,
+)
+
+logger = logging.getLogger(__name__)
 
 class NavCtl:
     def _set_header_actions_sensitive(self, sensitive):
@@ -437,6 +452,8 @@ class NavCtl:
 
     def open_app_page(self, info, preserve_previous=False):
         """Open a repository entry's optional details page without altering checklist state."""
+        if nix_metadata.entry_has_nix(info):
+            info = nix_metadata.enrich(info)
         old_page = self.main_stack.get_child_by_name("app_page")
         visible_child = self.main_stack.get_visible_child()
         chaining_from_app_page = old_page is not None and visible_child is old_page
@@ -474,6 +491,80 @@ class NavCtl:
         self.back_button.show()
         self.header_bar.props.title = f"LinuxToys: {info.get('name', 'App')}"
         self.main_stack.set_visible_child_name("app_page")
+        if info.get("appstream_source") == "nix":
+            self._request_nix_app_metadata(page, info)
+
+    def _request_nix_app_metadata(self, page, info):
+        """Fetch one Nix package's detail metadata in the background."""
+        if not isinstance(info, dict) or info.get("appstream_source") != "nix":
+            return
+        if not isinstance(page.script_info, dict) or page.script_info.get(
+            "appstream_source"
+        ) != "nix":
+            return
+        if self.main_stack.get_child_by_name("app_page") is not page:
+            return
+        if not nix_metadata.detail_needs_refresh(info):
+            return
+        attr = nix_metadata.nix_attr(info)
+        if not attr:
+            return
+        key = (attr, nix_metadata.api_language())
+        pending = getattr(self, "_nix_detail_requests", None)
+        if pending is None:
+            pending = set()
+            self._nix_detail_requests = pending
+        if key in pending:
+            return
+        pending.add(key)
+
+        def worker():
+            enriched = None
+            try:
+                enriched = nix_metadata.fetch_detail(info)
+            except Exception as error:  # Never break the app page over metadata.
+                logger.warning("Nix metadata request failed: %s", error)
+            GLib.idle_add(
+                self._apply_nix_app_metadata, page, info, enriched, key
+            )
+
+        threading.Thread(
+            target=worker, daemon=True, name="linuxtoys-nix-metadata"
+        ).start()
+
+    def _apply_nix_app_metadata(self, page, original, enriched, key):
+        pending = getattr(self, "_nix_detail_requests", None)
+        if pending is not None:
+            pending.discard(key)
+        if not enriched:
+            return False
+        current = self.main_stack.get_child_by_name("app_page")
+        if current is None:
+            return False
+        if current.script_info.get("appstream_source") != "nix":
+            return False
+        if nix_metadata.nix_attr(current.script_info) != nix_metadata.nix_attr(original):
+            return False
+
+        selected = getattr(current, "_selected_install_info", {}) or {}
+        selected_key = (
+            current._source_key(selected)
+            if isinstance(selected, dict) and hasattr(current, "_source_key")
+            else ""
+        )
+        self.open_app_page(
+            nix_metadata.enrich(current.script_info), preserve_previous=True
+        )
+        new_page = self.main_stack.get_child_by_name("app_page")
+        if new_page is not None and selected_key:
+            for option in new_page.script_info.get("source_options") or ():
+                if (
+                    isinstance(option, dict)
+                    and new_page._source_key(option) == selected_key
+                ):
+                    new_page._on_source_selected(None, option)
+                    break
+        return False
 
     def close_app_page_for_install(self):
         """Remove the app page immediately before entering the terminal flow."""

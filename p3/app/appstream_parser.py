@@ -7,7 +7,7 @@ import json
 import re
 import threading
 
-from . import appstream_cache, repo_parser, homebrew_catalog
+from . import appstream_cache, repo_parser, homebrew_catalog, nix_catalog, nix_metadata
 from . import _catalog_rs as _catalog_rs
 from .compat import get_system_compat_keys
 from .lang_utils import detect_system_language
@@ -16,11 +16,12 @@ from .lang_utils import detect_system_language
 _CACHE_LOCK = threading.RLock()
 _RUNTIME_CACHE = {}  # cache-key -> Rust AppStreamCatalog
 _DERIVED_REFRESHING = set()
+_NIX_RUNTIME_CACHE = {}  # (path, scopes, stat) -> Rust NixCatalog
 
 # Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
 # catalog.json remains authoritative; this file is disposable and regenerated
 # whenever any input represented by the runtime cache key changes.
-RUNTIME_CACHE_SCHEMA = 29
+RUNTIME_CACHE_SCHEMA = 30
 RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries-rs.bin"
 
 # Most recent inputs used to build the live runtime catalog. This is process-local
@@ -597,6 +598,8 @@ CATALOG_REPOSITORY_URLS = {
     "appimage": "https://appimage.github.io/",
     "appimage-community": "https://appimage.github.io/",
     "aur": "https://aur.archlinux.org/",
+    "nix": "https://search.nixos.org/packages",
+    "nixpkgs": "https://search.nixos.org/packages",
 }
 
 # Fallback keyed by "appstream_source", for catalog sources whose website does
@@ -607,6 +610,7 @@ CATALOG_SOURCE_URLS = {
     "homebrew": "https://brew.sh/",
     "appimage": "https://appimage.github.io/",
     "aur": "https://aur.archlinux.org/",
+    "nix": "https://search.nixos.org/packages",
 }
 
 
@@ -673,6 +677,9 @@ def source_option_key(entry: dict) -> str:
     source = str(
         entry.get("appstream_source") or entry.get("source") or ""
     ).strip()
+    if source == "nix":
+        scope = str(entry.get("nix_scope", "") or "").strip()
+        return f"nix:{scope}"
     if source == "appimage":
         identity = _normalized_source_id(
             entry.get("appstream_id") or entry.get("id")
@@ -725,6 +732,11 @@ def source_option_label(entry: dict, flatpak_scopes=None) -> str:
         return "AUR"
     if source == "homebrew":
         return "Homebrew"
+    if source == "nix":
+        scope = str(entry.get("nix_scope", "") or "").strip()
+        if scope == "system":
+            return "Nix (system)"
+        return "Nix (home-manager)"
     if source == "appimage":
         package_names = _flatten_package_names(entry.get("package-name"))
         package = package_names[0] if package_names else ""
@@ -735,6 +747,7 @@ def source_option_label(entry: dict, flatpak_scopes=None) -> str:
 def clear_runtime_cache():
     with _CACHE_LOCK:
         _RUNTIME_CACHE.clear()
+        _NIX_RUNTIME_CACHE.clear()
 
 
 def _flatten_package_names(value):
@@ -951,6 +964,10 @@ def _runtime_catalog(
     appstream_overlays = repo_parser.load_appstream_overlays(scripts_dir)
     overlay_signature = tuple(sorted((key, repr(value)) for key, value in appstream_overlays.items()))
     lang_code = detect_system_language()
+    nix_path = nix_catalog.cached_path()
+    nix_path_value = os.fspath(nix_path) if nix_path else ""
+    nix_scopes = nix_catalog.scopes() if nix_path else []
+    nix_signature = nix_catalog.fingerprint() if nix_path else "unavailable"
     curated_signature = tuple(sorted((
         str(entry.get("name", "")), str(entry.get("type", "")),
         repr(entry.get("package-name")),
@@ -959,6 +976,9 @@ def _runtime_catalog(
     category_paths = tuple(sorted(str(path) for path in (category_paths or ())))
     cache_key = (
         homebrew_catalog.enabled(),
+        nix_path_value,
+        tuple(nix_scopes),
+        nix_signature,
         tuple(sorted(_system_flatpak_lock_ids())),
         tuple(sorted(_appstream_omit_keys())),
         scripts_dir,
@@ -1002,6 +1022,11 @@ def _runtime_catalog(
         "curated_names": sorted(curated_names),
         "overlays": appstream_overlays,
         "native_badge": _native_distro_badge(),
+        "nix": {
+            "path": nix_path_value,
+            "scopes": list(nix_scopes),
+            "fingerprint": nix_signature,
+        },
     }, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
     catalog = _catalog_rs.build_appstream_catalog_index(
@@ -1012,7 +1037,8 @@ def _runtime_catalog(
         sorted(get_system_compat_keys()), lang_code, sorted(curated_ids),
         sorted(curated_packages), sorted(curated_names),
         json.dumps(appstream_overlays, ensure_ascii=False, separators=(",", ":")),
-        _native_distro_badge(), os.fspath(RUNTIME_CACHE_PATH), rust_cache_key,
+        _native_distro_badge(), nix_path_value, list(nix_scopes),
+        os.fspath(RUNTIME_CACHE_PATH), rust_cache_key,
         force_rebuild,
     )
 
@@ -1029,7 +1055,8 @@ def _runtime_catalog(
             sorted(get_system_compat_keys()), lang_code, sorted(curated_ids),
             sorted(curated_packages), sorted(curated_names),
             json.dumps(appstream_overlays, ensure_ascii=False, separators=(",", ":")),
-            _native_distro_badge(), os.fspath(RUNTIME_CACHE_PATH), rust_cache_key,
+            _native_distro_badge(), nix_path_value, list(nix_scopes),
+            os.fspath(RUNTIME_CACHE_PATH), rust_cache_key,
             True,
         )
 
@@ -1112,7 +1139,9 @@ def find_entry_by_id(scripts_dir, appstream_id, curated_entries=None, category_p
     if not target:
         return None
 
-    return _runtime_catalog(scripts_dir, curated_entries, category_paths).find_by_id(target)
+    return _enrich_nix_match(
+        _runtime_catalog(scripts_dir, curated_entries, category_paths).find_by_id(target)
+    )
 
 
 def find_entry_by_name(scripts_dir, name, curated_entries=None, category_paths=None):
@@ -1125,7 +1154,9 @@ def find_entry_by_name(scripts_dir, name, curated_entries=None, category_paths=N
     if not target:
         return None
 
-    return _runtime_catalog(scripts_dir, curated_entries, category_paths).find_by_name(target)
+    return _enrich_nix_match(
+        _runtime_catalog(scripts_dir, curated_entries, category_paths).find_by_name(target)
+    )
 
 
 def get_entries_for_category(
@@ -1191,17 +1222,30 @@ def search_entries(scripts_dir, query, translated_new="new", translated_official
     replacement only after it is ready, so interactive searches never have to
     synchronously rebuild the AppStream search index.
     """
-    return list(
-        _runtime_catalog(
-            scripts_dir,
-            curated_entries,
-            category_paths,
-        ).search(
-            str(query or ""),
-            str(translated_new or ""),
-            str(translated_official or ""),
-        )
+    results = _runtime_catalog(
+        scripts_dir,
+        curated_entries,
+        category_paths,
+    ).search(
+        str(query or ""),
+        str(translated_new or ""),
+        str(translated_official or ""),
     )
+    return [
+        (
+            nix_metadata.enrich_index(info)
+            if nix_metadata.entry_has_nix(info)
+            else info,
+            score,
+        )
+        for info, score in results
+    ]
+
+
+def _enrich_nix_match(entry):
+    if entry is not None and nix_metadata.entry_has_nix(entry):
+        return nix_metadata.enrich_index(entry)
+    return entry
 
 
 def get_featured_descriptors(scripts_dir, curated_entries=None, category_paths=None):
@@ -1350,6 +1394,82 @@ def search_homebrew_entries(query):
     scripts_dir, curated_entries, category_paths = context
     return list(_runtime_catalog(scripts_dir, curated_entries, category_paths)
                 .search(str(query or ""), "new", "official", "homebrew"))
+
+
+def _nix_catalog_index():
+    """Return the Rust Nix catalog for the current snapshot and setup."""
+    path = nix_catalog.cached_path()
+    scopes = nix_catalog.scopes() if path else []
+    if not path or not scopes:
+        return None
+    key = (os.fspath(path), tuple(scopes), nix_catalog.fingerprint())
+    with _CACHE_LOCK:
+        cached = _NIX_RUNTIME_CACHE.get(key)
+        if cached is not None:
+            return cached
+    catalog = _catalog_rs.NixCatalog(os.fspath(path), list(scopes))
+    with _CACHE_LOCK:
+        _NIX_RUNTIME_CACHE.clear()
+        _NIX_RUNTIME_CACHE[key] = catalog
+    return catalog
+
+
+class NixEntriesView:
+    """Keep a generation alive and decode only requested category slices."""
+    def __init__(self, catalog):
+        self._catalog = catalog
+        self._length = int(len(catalog))
+
+    def __len__(self):
+        return self._length
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            start, stop, step = key.indices(self._length)
+            if step != 1:
+                return [self[index] for index in range(start, stop, step)]
+            if stop <= start:
+                return []
+            return [
+                nix_metadata.enrich_index(entry)
+                for entry in self._catalog.entry_slice(start, stop - start)
+            ]
+        import operator
+        index = operator.index(key)
+        if index < 0:
+            index += self._length
+        if not 0 <= index < self._length:
+            raise IndexError(index)
+        entry = self._catalog.entry_slice(index, 1)[0]
+        return nix_metadata.enrich_index(entry)
+
+
+def get_nix_entries():
+    """Browse every Nix package in the current setup."""
+    catalog = _nix_catalog_index()
+    if catalog is None:
+        return []
+    return NixEntriesView(catalog)
+
+
+def search_nix_entries(query):
+    """Search only the Nix catalog in Rust, converting only matches."""
+    catalog = _nix_catalog_index()
+    if catalog is None:
+        return []
+    return [
+        (nix_metadata.enrich_index(info), score)
+        for info, score in catalog.search(str(query or ""))
+    ]
+
+
+def find_nix_entry(attr):
+    """Resolve one Nix attribute for URI/app-page callers."""
+    catalog = _nix_catalog_index()
+    if catalog is None:
+        return None
+    entry = catalog.find_by_attr(str(attr or ""))
+    return nix_metadata.enrich(entry) if entry is not None else None
 
 
 def get_appimage_entries(relative_category=""):

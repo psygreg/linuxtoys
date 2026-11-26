@@ -13,13 +13,14 @@ import time
 from pathlib import Path
 
 from . import homebrew_catalog
+from . import nix_catalog
 from . import registry_utils
 from .compat import native_package_family, is_containerized, native_package_family
 from .atomic_io import atomic_write_text
 
 CACHE_ROOT = Path(os.path.expanduser("~/.cache/linuxtoys"))
 _LOCK = threading.RLock()
-_STATE = {"manager": None, "native": set(), "flatpak": {}, "snap": set(), "homebrew": set(), "loaded": False}
+_STATE = {"manager": None, "native": set(), "flatpak": {}, "snap": set(), "homebrew": set(), "nix": set(), "loaded": False}
 
 
 def _manager():
@@ -71,6 +72,7 @@ def load_previous():
         _STATE["flatpak"] = flatpak
         _STATE["snap"] = {value.casefold() for value in _read_lines("snap")}
         _STATE["homebrew"] = {v.casefold() for v in _read_lines("homebrew-installed")} if homebrew_catalog.enabled() else set()
+        _STATE["nix"] = {v.casefold() for v in _read_lines("nix-installed")} if nix_catalog.enabled() else set()
         _STATE["loaded"] = True
     return snapshot()
 
@@ -193,12 +195,14 @@ def refresh():
     flatpak = _collect_flatpak()
     snap = _collect_snap()
     homebrew = homebrew_catalog.installed_names()
+    nix = nix_catalog.installed_names() if nix_catalog.enabled() else set()
     if manager:
         _atomic_lines(manager, native)
     flatpak_lines = [f"{scope}\t{app_id}" for app_id, scopes in flatpak.items() for scope in scopes]
     _atomic_lines("flatpak", flatpak_lines)
     _atomic_lines("snap", snap)
     _atomic_lines("homebrew-installed", homebrew)
+    _atomic_lines("nix-installed", nix)
     with _LOCK:
         _STATE.update(
             manager=manager,
@@ -206,6 +210,7 @@ def refresh():
             flatpak={k: set(v) for k, v in flatpak.items()},
             snap=set(snap),
             homebrew=set(homebrew),
+            nix=set(nix),
             loaded=True,
         )
     return snapshot()
@@ -219,6 +224,7 @@ def snapshot():
             "flatpak": {key: set(value) for key, value in _STATE["flatpak"].items()},
             "snap": set(_STATE["snap"]),
             "homebrew": set(_STATE["homebrew"]) if homebrew_catalog.enabled() else set(),
+            "nix": set(_STATE["nix"]) if nix_catalog.enabled() else set(),
             "loaded": _STATE["loaded"],
         }
 
@@ -239,6 +245,15 @@ def match(info):
             package = str(info.get("homebrew_name") or info.get("package-name") or "").strip()
             if homebrew_catalog.enabled() and package.casefold() in _STATE["homebrew"]:
                 return {"source": "homebrew", "package": package}
+            return None
+        if source == "nix":
+            package = str(info.get("nix_name") or info.get("package-name") or "").strip()
+            if nix_catalog.enabled() and package.casefold() in _STATE["nix"]:
+                return {
+                    "source": "nix",
+                    "package": package,
+                    "scope": str(info.get("nix_scope") or "").strip(),
+                }
             return None
         if source == "snap":
             snap_name = str(info.get("snap_name") or info.get("package-name") or "").strip()
