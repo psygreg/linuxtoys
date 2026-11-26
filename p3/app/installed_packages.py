@@ -216,6 +216,21 @@ def refresh():
     return snapshot()
 
 
+def refresh_nix():
+    """Refresh only the declarative Nix snapshot.
+
+    Queued Nix operations rewrite the generated modules without touching the
+    native/Flatpak/Snap sources. Reading those modules back is cheap and lets
+    the GUI update removal controls as soon as an apply finishes, instead of
+    waiting for the next full installed-package refresh.
+    """
+    nix = nix_catalog.installed_names() if nix_catalog.enabled() else set()
+    _atomic_lines("nix-installed", nix)
+    with _LOCK:
+        _STATE["nix"] = {value.casefold() for value in nix}
+    return set(nix)
+
+
 def snapshot():
     with _LOCK:
         return {

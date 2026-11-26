@@ -991,6 +991,16 @@ class AppWindow(
         pending = nix_queue.pending()
         if pending != self._nix_queue_was_pending:
             self._nix_queue_was_pending = pending
+            if not pending:
+                # Applying the queue rewrites the declarative modules. Refresh
+                # their snapshot here so cards and Installed Features stop
+                # offering removal immediately, without a restart or a full
+                # package-manager probe.
+                try:
+                    installed_packages.refresh_nix()
+                except Exception as exc:
+                    logger.warning("Nix install-state refresh failed: %s", exc)
+                self._on_installed_packages_changed()
             self._on_appstream_queue_changed()
         return True
 
@@ -6009,6 +6019,13 @@ class AppWindow(
     def _refresh_removable_scripts(self, refresh_cache=True):
         """Refresh removable state and update existing cards in place."""
         if refresh_cache and self.script_cache.is_populated:
+            # A terminal-run Nix apply may not have reached the queue watcher
+            # yet. Pull the declarative module state before recomputing cards so
+            # a completed removal disappears as soon as the user returns.
+            try:
+                installed_packages.refresh_nix()
+            except Exception as exc:
+                logger.warning("Nix install-state refresh failed: %s", exc)
             self.script_cache.refresh_removable_cache()
         self._invalidate_featured_eligibility_cache()
 
