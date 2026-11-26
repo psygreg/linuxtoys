@@ -289,6 +289,63 @@ def index_available():
     return bool(_load_index())
 
 
+def index_identity_map():
+    """Return ``attr -> display name`` for indexed GUI applications.
+
+    The shared AppStream catalog uses this map to give Nix components their
+    real application name and to merge them with matching native, Flatpak or
+    Snap sources. Only packages the API knows as GUI applications participate:
+    command-line and library attributes often collide with unrelated app names
+    (``ark`` is the R kernel, not KDE Ark).
+    """
+    identities = {}
+    for attr, record in _load_index().items():
+        if not isinstance(record, dict):
+            continue
+        name = str(record.get("name") or "").strip()
+        if attr and name:
+            identities[str(attr)] = name
+    return identities
+
+
+def _identity_key(value):
+    return "".join(ch for ch in str(value or "").lower() if ch.isalnum())
+
+
+def index_merge_identities():
+    """Return ``attr -> (display name, mergeable)`` for catalog generation.
+
+    A display name shared by several Nix attributes is not an identity: two
+    different packages can both be called "Notes" or "Calculator". Those keep
+    their display name but are excluded from by-name merging so a source
+    selector can never install the wrong package.
+    """
+    identities = index_identity_map()
+    counts = {}
+    for name in identities.values():
+        key = _identity_key(name)
+        counts[key] = counts.get(key, 0) + 1
+    return {
+        attr: (name, counts[_identity_key(name)] == 1)
+        for attr, name in identities.items()
+    }
+
+
+def index_identity_fingerprint(identities=None):
+    """Stable digest of the identity map, used in catalog cache keys."""
+    if identities is None:
+        identities = index_identity_map()
+    payload = json.dumps(
+        identities,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(
+        payload.encode("utf-8", "surrogatepass")
+    ).hexdigest()
+
+
 def _normalize_index_row(row):
     if not isinstance(row, dict):
         return None

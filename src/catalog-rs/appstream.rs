@@ -353,6 +353,12 @@ fn appimage_standard_name_group_rs(name:&str,standard_names:&std::collections::H
     }
     None
 }
+fn standard_name_group_rs(name:&str,standard_names:&std::collections::HashMap<String,std::collections::HashSet<String>>)->Option<String>{
+    let normalized=normalized_app_name_rs(name);
+    if normalized.is_empty(){return None}
+    let groups=standard_names.get(&normalized)?;
+    if groups.len()==1{groups.iter().next().cloned()}else{None}
+}
 fn is_verified_flatpak_rs(item:&serde_json::Map<String,Value>)->bool{
     item.get("source").and_then(Value::as_str).unwrap_or("native")=="flatpak" && item.get("verified").and_then(Value::as_bool).unwrap_or(false)
 }
@@ -419,7 +425,7 @@ fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths
     if by_name_pass{
         for item in &components{
             let source=item.get("source").and_then(Value::as_str).unwrap_or("native");
-            if matches!(source,"appimage"|"homebrew"){continue}
+            if matches!(source,"appimage"|"homebrew"|"nix"){continue}
             let name=item.get("name").and_then(Value::as_str).unwrap_or("").trim();
             let normalized=normalized_app_name_rs(name);
             let group_name=name.to_lowercase();
@@ -438,6 +444,25 @@ fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths
                 Some(matched.map(|group|format!("name:{group}")).unwrap_or_else(||{
                     format!("appimage:{}",if id.is_empty(){name.clone()}else{id.clone()})
                 }))
+            }else if source=="nix"{
+                // Only GUI applications identified by the Nix Software API may
+                // join a by-name group. The raw nixpkgs attribute namespace is
+                // full of libraries and CLI tools whose names collide with
+                // unrelated applications (``ark``, ``boxes``, ``candle``...),
+                // so unidentified attributes get an isolated key.
+                let api_name=m.get("nix_api_name").and_then(Value::as_str).unwrap_or("");
+                if api_name.is_empty(){
+                    let attr=m.get("nix_name").and_then(Value::as_str).unwrap_or(name.as_str());
+                    Some(format!("nix:{attr}"))
+                }else{
+                    let canonical=m.get("name").and_then(Value::as_str).unwrap_or("");
+                    let attr=m.get("nix_name").and_then(Value::as_str).unwrap_or("");
+                    let pname=m.get("nix_pname").and_then(Value::as_str).unwrap_or("");
+                    let matched=standard_name_group_rs(canonical,&standard_names)
+                        .or_else(||standard_name_group_rs(attr,&standard_names))
+                        .or_else(||standard_name_group_rs(pname,&standard_names));
+                    Some(matched.map(|group|format!("name:{group}")).unwrap_or_else(||format!("name:{name}")))
+                }
             }else{Some(format!("name:{name}"))}
         }else if !id.is_empty(){Some(format!("id:{id}"))}
         else if !name.is_empty(){Some(format!("name:{name}"))}
@@ -1783,6 +1808,7 @@ pub(crate) fn build_appstream_catalog_index(
     native_badge: &str,
     nix_catalog_path: &str,
     nix_scopes: Vec<String>,
+    nix_api_names_json: &str,
     cache_path: &str,
     cache_key: &str,
     force_rebuild: bool,
@@ -1832,7 +1858,9 @@ pub(crate) fn build_appstream_catalog_index(
     // Nixpkgs is optional and host-local: its normalized snapshot is merged only
     // while the subsystem is configured. Components participate in the normal
     // source grouping so matching AppStream entries gain a Nix source option.
-    vals.extend(crate::nix::nix_components(nix_catalog_path, &nix_scopes));
+    let nix_identities: std::collections::HashMap<String, (String, bool)> =
+        serde_json::from_str(nix_api_names_json).unwrap_or_default();
+    vals.extend(crate::nix::nix_components(nix_catalog_path, &nix_scopes, &nix_identities));
     vals.retain(|m| (m.get("source").and_then(Value::as_str)!=Some("homebrew") || cfg.get("homebrew_enabled").and_then(Value::as_bool).unwrap_or(false)) && !omission_keys_rs(m).iter().any(|k|omit.contains(k)));
     let prefs:Value=serde_json::from_str(source_preferences_json).unwrap_or_else(|_|serde_json::json!({"default":"flatpak","apps":{}}));
     let locks=system_flatpak_locks.into_iter().map(|s|normalize_id(&s)).collect();
@@ -2106,6 +2134,60 @@ mod appimage_source_tests {
         ];
         let selected = collapse(entries, serde_json::json!({"default": "flatpak", "apps": {}}));
         assert_eq!(selected.len(),3,"{selected:?}");
+        assert!(selected.iter().all(|entry|entry.get("_source_alternatives").is_none()));
+    }
+
+    #[test]
+    fn nix_entries_merge_by_normalized_name() {
+        let entries = vec![
+            component("org.example.AddWater", "Add Water", "native", &["Utility"]),
+            serde_json::json!({
+                "id":"nix:addwater", "name":"Add Water", "summary":"Nix addwater",
+                "packages":["addwater"], "categories":[], "source":"nix",
+                "nix_name":"addwater", "nix_pname":"addwater", "nix_api_name":"Add Water",
+                "nix_scope":"home-manager"
+            }).as_object().unwrap().clone(),
+            serde_json::json!({
+                "id":"nix:addwater", "name":"Add Water", "summary":"Nix addwater",
+                "packages":["addwater"], "categories":[], "source":"nix",
+                "nix_name":"addwater", "nix_pname":"addwater", "nix_api_name":"Add Water",
+                "nix_scope":"system"
+            }).as_object().unwrap().clone(),
+        ];
+        let selected = collapse(entries, serde_json::json!({"default": "flatpak", "apps": {}}));
+        assert_eq!(selected.len(), 1, "{selected:?}");
+        assert_eq!(selected[0].get("source").and_then(Value::as_str), Some("native"));
+        let options = selected[0]
+            .get("_source_alternatives")
+            .and_then(Value::as_array)
+            .unwrap();
+        let keys: std::collections::HashSet<String> =
+            options.iter().filter_map(Value::as_object).map(source_option_key_rs).collect();
+        assert_eq!(keys.len(), 2, "{keys:?}");
+        assert!(keys.contains("nix:home-manager"));
+        assert!(keys.contains("nix:system"));
+    }
+
+    #[test]
+    fn nix_entries_without_api_identity_do_not_merge_by_normalized_name() {
+        let entries = vec![
+            component("dev.qwery.AddWater", "Add Water", "native", &["Utility"]),
+            serde_json::json!({
+                "id":"nix:addwater", "name":"addwater", "summary":"Nix addwater",
+                "packages":["addwater"], "categories":[], "source":"nix",
+                "nix_name":"addwater", "nix_pname":"addwater", "nix_api_name":"",
+                "nix_scope":"home-manager"
+            }).as_object().unwrap().clone(),
+            component("org.gnome.Boxes.desktop", "Boxes", "native", &["Utility"]),
+            serde_json::json!({
+                "id":"nix:boxes", "name":"boxes", "summary":"ASCII art boxes",
+                "packages":["boxes"], "categories":[], "source":"nix",
+                "nix_name":"boxes", "nix_pname":"boxes", "nix_api_name":"",
+                "nix_scope":"home-manager"
+            }).as_object().unwrap().clone(),
+        ];
+        let selected = collapse(entries, serde_json::json!({"default": "flatpak", "apps": {}}));
+        assert_eq!(selected.len(), 4, "{selected:?}");
         assert!(selected.iter().all(|entry|entry.get("_source_alternatives").is_none()));
     }
 

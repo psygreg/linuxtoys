@@ -21,7 +21,7 @@ _NIX_RUNTIME_CACHE = {}  # (path, scopes, stat) -> Rust NixCatalog
 # Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
 # catalog.json remains authoritative; this file is disposable and regenerated
 # whenever any input represented by the runtime cache key changes.
-RUNTIME_CACHE_SCHEMA = 30
+RUNTIME_CACHE_SCHEMA = 31
 RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries-rs.bin"
 
 # Most recent inputs used to build the live runtime catalog. This is process-local
@@ -968,6 +968,12 @@ def _runtime_catalog(
     nix_path_value = os.fspath(nix_path) if nix_path else ""
     nix_scopes = nix_catalog.scopes() if nix_path else []
     nix_signature = nix_catalog.fingerprint() if nix_path else "unavailable"
+    nix_identities = nix_metadata.index_merge_identities() if nix_path else {}
+    nix_identity_signature = (
+        nix_metadata.index_identity_fingerprint(nix_identities)
+        if nix_path
+        else "unavailable"
+    )
     curated_signature = tuple(sorted((
         str(entry.get("name", "")), str(entry.get("type", "")),
         repr(entry.get("package-name")),
@@ -979,6 +985,7 @@ def _runtime_catalog(
         nix_path_value,
         tuple(nix_scopes),
         nix_signature,
+        nix_identity_signature,
         tuple(sorted(_system_flatpak_lock_ids())),
         tuple(sorted(_appstream_omit_keys())),
         scripts_dir,
@@ -1026,6 +1033,7 @@ def _runtime_catalog(
             "path": nix_path_value,
             "scopes": list(nix_scopes),
             "fingerprint": nix_signature,
+            "identities": nix_identity_signature,
         },
     }, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
 
@@ -1038,6 +1046,7 @@ def _runtime_catalog(
         sorted(curated_packages), sorted(curated_names),
         json.dumps(appstream_overlays, ensure_ascii=False, separators=(",", ":")),
         _native_distro_badge(), nix_path_value, list(nix_scopes),
+        json.dumps(nix_identities, ensure_ascii=False, sort_keys=True, separators=(",", ":")),
         os.fspath(RUNTIME_CACHE_PATH), rust_cache_key,
         force_rebuild,
     )
@@ -1056,6 +1065,7 @@ def _runtime_catalog(
             sorted(curated_packages), sorted(curated_names),
             json.dumps(appstream_overlays, ensure_ascii=False, separators=(",", ":")),
             _native_distro_badge(), nix_path_value, list(nix_scopes),
+            json.dumps(nix_identities, ensure_ascii=False, sort_keys=True, separators=(",", ":")),
             os.fspath(RUNTIME_CACHE_PATH), rust_cache_key,
             True,
         )

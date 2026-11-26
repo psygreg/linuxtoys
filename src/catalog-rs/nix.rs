@@ -449,7 +449,11 @@ fn nix_entry_value(package: &NixPackage, scopes: &[String], active_scope: &str) 
 /// Raw components for the shared AppStream catalog pipeline. One component per
 /// available scope lets source grouping expose both `Nix (home-manager)` and
 /// `Nix (system)` for packages that also exist in another catalog.
-pub(crate) fn nix_components(path: &str, scopes: &[String]) -> Vec<serde_json::Map<String, Value>> {
+pub(crate) fn nix_components(
+    path: &str,
+    scopes: &[String],
+    api_identities: &std::collections::HashMap<String, (String, bool)>,
+) -> Vec<serde_json::Map<String, Value>> {
     if path.is_empty() || scopes.is_empty() {
         return Vec::new();
     }
@@ -458,6 +462,18 @@ pub(crate) fn nix_components(path: &str, scopes: &[String]) -> Vec<serde_json::M
     };
     let mut out = Vec::with_capacity(packages.len() * scopes.len());
     for package in &packages {
+        // The Nix Software API identifies which attributes are real GUI
+        // applications and supplies their display names. Attributes outside
+        // that set keep their raw name and never participate in the by-name
+        // merge in the shared catalog: several command-line/library packages
+        // share names with unrelated applications (e.g. ``ark`` is the R
+        // kernel, not KDE Ark). Ambiguous display names shared by several
+        // packages are excluded from merging as well.
+        let (api_name, mergeable) = api_identities
+            .get(&package.attr)
+            .map(|(name, merge)| (name.as_str(), *merge))
+            .unwrap_or(("", false));
+        let display_name = if api_name.is_empty() { &package.attr } else { api_name };
         for scope in scopes {
             let description_blocks = if package.description.is_empty() {
                 Value::Array(Vec::new())
@@ -469,7 +485,7 @@ pub(crate) fn nix_components(path: &str, scopes: &[String]) -> Vec<serde_json::M
                 "id": format!("nix:{}", package.attr),
                 "source": "nix",
                 "origin": "nixpkgs",
-                "name": package.attr,
+                "name": display_name,
                 "summary": package.description,
                 "description_blocks": description_blocks,
                 "packages": [package.attr],
@@ -484,6 +500,7 @@ pub(crate) fn nix_components(path: &str, scopes: &[String]) -> Vec<serde_json::M
                 "verified": false,
                 "nix_name": package.attr,
                 "nix_pname": package.pname,
+                "nix_api_name": if mergeable { api_name } else { "" },
                 "nix_version": package.version,
                 "nix_scope": scope,
             });

@@ -588,6 +588,7 @@ class AppWindow(
         self._nix_metadata_refreshing = False
         self._nix_metadata_pending = False
         self._nix_runtime_preparing = False
+        self._nix_runtime_pending = False
         self._nix_watch_id = GLib.timeout_add_seconds(3, self._check_nix_source)
         self.connect("destroy", self._stop_nix_watch)
         self._nix_queue_was_pending = nix_queue.pending()
@@ -1175,18 +1176,28 @@ class AppWindow(
         ).start()
 
     def _prepare_nix_runtime_cache(self):
-        """Rebuild the shared runtime index off GTK after a Nix snapshot load."""
+        """Rebuild the shared runtime index off GTK after a Nix snapshot change."""
         if self._nix_runtime_preparing:
+            self._nix_runtime_pending = True
             return
         self._nix_runtime_preparing = True
+        self._nix_runtime_pending = False
 
         def worker():
             try:
-                appstream_parser.prepare_runtime_cache()
-            except Exception:
-                pass
+                while True:
+                    try:
+                        appstream_parser.prepare_runtime_cache()
+                    except Exception:
+                        pass
+                    if not self._nix_runtime_pending:
+                        break
+                    self._nix_runtime_pending = False
             finally:
                 self._nix_runtime_preparing = False
+                if self._nix_runtime_pending:
+                    self._nix_runtime_pending = False
+                    self._prepare_nix_runtime_cache()
 
         threading.Thread(
             target=worker,
@@ -1225,6 +1236,10 @@ class AppWindow(
                     self._load_scripts_into_flowbox(
                         self.scripts_flowbox, category, defer_initial=True
                     )
+                if changed:
+                    # The shared catalog embeds display names from this index so
+                    # Nix sources can merge with matching AppStream entries.
+                    self._prepare_nix_runtime_cache()
                 if self._nix_metadata_pending:
                     self._refresh_nix_metadata()
                 return False
