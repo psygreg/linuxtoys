@@ -1480,6 +1480,24 @@ fn rank_browse_values(values: &mut [Value], known_popular: &[String]) {
     for (dst,src) in values.iter_mut().zip(structural_values){*dst=src;}
 }
 
+/// Whether an entry may appear in Featured.
+///
+/// Catalog sources keep their existing quality gate: only AppStream entries with
+/// an ODRS/Snap rating of at least 3.5 stars participate. Nixpkgs has no review
+/// feed, so Nix packages participate through the NixOS category distribution
+/// instead: only packages mapped from the Nix Software API onto a normal
+/// LinuxToys category qualify. The fallback ``nix`` pseudo-category stays out of
+/// Featured, exactly like the other source-specific categories.
+fn featured_entry_eligible(entry: &RuntimeAppStreamEntry) -> bool {
+    if entry.source == "homebrew" {
+        return false;
+    }
+    if entry.source == "nix" {
+        return !entry.category.is_empty() && entry.category != "nix";
+    }
+    entry.review_rating.is_some_and(|rating| rating >= 70.0)
+}
+
 #[pyclass]
 pub(crate) struct AppStreamCatalog {
     entries: Vec<RuntimeAppStreamEntry>,
@@ -1701,10 +1719,7 @@ impl AppStreamCatalog {
     fn featured_descriptors(&self, py: Python<'_>) -> PyResult<Vec<Py<PyAny>>> {
         let mut out = Vec::new();
         for (index, entry) in self.entries.iter().enumerate() {
-            if entry.source == "homebrew" { continue; }
-            let Some(rating) = entry.review_rating.filter(|rating| *rating >= 70.0) else {
-                continue;
-            };
+            if !featured_entry_eligible(entry) { continue; }
             let descriptor = serde_json::json!({
                 "_appstream_featured_index": index,
                 "id": entry.appstream_id,
@@ -1715,7 +1730,7 @@ impl AppStreamCatalog {
                 "category": entry.category,
                 "appstream_source": entry.source,
                 "package-name": entry.package_names,
-                "review_rating": rating,
+                "review_rating": entry.review_rating,
                 "review_subscore": entry.review_subscore,
                 "_category_review_score": entry.category_review_score,
                 "is_script": true,
@@ -2377,6 +2392,51 @@ mod appimage_source_tests {
             .collect();
         assert!(keys.contains(&"flatpak:user:user:flathub".to_string()), "{keys:?}");
         assert!(keys.contains(&"flatpak:system:default:flatpark".to_string()), "{keys:?}");
+    }
+}
+
+#[cfg(test)]
+mod featured_eligibility_tests {
+    use super::*;
+
+    fn entry(source: &str, category: &str, rating: Option<f64>) -> RuntimeAppStreamEntry {
+        RuntimeAppStreamEntry {
+            category: category.into(),
+            appstream_id: format!("{source}.example"),
+            name: "Example".into(),
+            canonical_name: "Example".into(),
+            source: source.into(),
+            package_names: vec!["example".into()],
+            search_packages: vec!["example".into()],
+            description_lower: String::new(),
+            developer_lower: String::new(),
+            is_new: false,
+            review_rating: rating,
+            review_subscore: None,
+            category_review_score: None,
+            homebrew_install_count: 0,
+            payload: Vec::new(),
+        }
+    }
+
+    #[test]
+    fn categorized_nix_packages_are_featured_without_reviews() {
+        assert!(featured_entry_eligible(&entry("nix", "media", None)));
+        assert!(featured_entry_eligible(&entry("nix", "devs/ides", None)));
+    }
+
+    #[test]
+    fn the_nix_fallback_category_stays_out_of_featured() {
+        assert!(!featured_entry_eligible(&entry("nix", "nix", None)));
+        assert!(!featured_entry_eligible(&entry("nix", "", None)));
+    }
+
+    #[test]
+    fn other_sources_keep_the_review_gate() {
+        assert!(featured_entry_eligible(&entry("flatpak", "media", Some(70.0))));
+        assert!(!featured_entry_eligible(&entry("flatpak", "media", Some(69.9))));
+        assert!(!featured_entry_eligible(&entry("native", "media", None)));
+        assert!(!featured_entry_eligible(&entry("homebrew", "homebrew", Some(100.0))));
     }
 }
 

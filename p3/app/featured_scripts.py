@@ -573,14 +573,31 @@ class FeaturedCtl:
         )
 
     @staticmethod
-    def _featured_rating_weight(script):
+    def _featured_nix_category(script):
+        """Return the normal LinuxToys category of a Nix Featured candidate.
+
+        Nixpkgs has no review feed, so Nix packages qualify through the NixOS
+        category distribution instead. Only packages mapped onto a normal
+        category participate; the fallback ``nix`` pseudo-category is ordered
+        separately and never contributes Featured cards.
+        """
+        if str(script.get("appstream_source", "") or "") != "nix":
+            return ""
+        category = str(script.get("category", "") or "").strip().strip("/")
+        return category if category and category != "nix" else ""
+
+    @classmethod
+    def _featured_rating_weight(cls, script):
         """Eligibility gate: AppStream entries must have at least 3.5 stars.
 
         The raw star average no longer affects Featured odds. Once eligible, the
-        Bayesian ODRS score is the sole review-quality weight.
+        Bayesian ODRS score is the sole review-quality weight. Nix packages are
+        eligible by category placement because nixpkgs has no review source.
         """
         if script.get("appstream_source") == "homebrew":
             return 0.0
+        if str(script.get("appstream_source", "") or "") == "nix":
+            return 1.0 if cls._featured_nix_category(script) else 0.0
         if not script.get("is_appstream_entry", False):
             return 1.0
 
@@ -593,6 +610,10 @@ class FeaturedCtl:
     @staticmethod
     def _featured_bayesian_weight(script):
         """Return a bounded 1..2 multiplier from the Bayesian ODRS score."""
+        if str(script.get("appstream_source", "") or "") == "nix":
+            # Nixpkgs has no ODRS population, so it must not inherit a review
+            # multiplier from a merged AppStream source.
+            return 1.0
         if not script.get("is_appstream_entry", False):
             return 1.0
         try:
@@ -673,6 +694,20 @@ class FeaturedCtl:
 
         native = installed_snapshot.get("native", set())
         flatpak = installed_snapshot.get("flatpak", {})
+        nix_installed = {
+            str(attr).casefold()
+            for attr in (installed_snapshot.get("nix") or ())
+            if str(attr).strip()
+        }
+
+        def nix_attr(script):
+            attr = str(script.get("nix_name") or "").strip()
+            if attr:
+                return attr
+            appstream_id = str(script.get("appstream_id") or "").strip()
+            if appstream_id.casefold().startswith("nix:"):
+                return appstream_id[4:]
+            return ""
 
         def appstream_is_removable(script):
             if script.get("name") in executed_names:
@@ -680,6 +715,10 @@ class FeaturedCtl:
 
             source = str(script.get("appstream_source", "") or "").strip()
             value = script.get("package-name") or ()
+
+            if source == "nix":
+                attr = nix_attr(script)
+                return bool(attr) and attr.casefold() in nix_installed
 
             if source == "flatpak":
                 # Runtime descriptors retain the package-name list. AppStream's
