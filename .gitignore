@@ -2,6 +2,7 @@
 solbuild
 .venv
 /target/
+/result
 _catalog_rs.abi3.so
 liblinuxtoys_gui.so
 

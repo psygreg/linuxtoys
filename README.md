@@ -24,6 +24,7 @@ LinuxToys is compatible with the following Linux distributions, provided they ar
 *   **Solus**
 *   **Deepin**
 *   **SteamOS**, **Bluefin Dakota**, **Gnome OS** and **KDE Linux**
+*   **NixOS** and NixOS derivatives (through the project flake)
 
 Support for non-systemd init systems is limited, and some features of the app cannot be offered for them. On ARM, LinuxToys offers native packages, Flatpak, Snap, and Homebrew catalogs, and curated scripts that have declared ARM64 support explicitly.
 
@@ -93,6 +94,40 @@ cd linuxtoys-bin
 makepkg -si
 ```
 
+#### NixOS (flake)
+
+The `install.sh` installer detects NixOS (and derivatives) and installs the project flake into the user's Nix profile. You can do the same directly:
+
+```bash
+nix profile install github:psygreg/linuxtoys
+```
+
+For a declarative NixOS configuration, add the flake as an input and either install the package:
+
+```nix
+{
+  inputs.linuxtoys.url = "github:psygreg/linuxtoys";
+
+  # in your NixOS configuration
+  environment.systemPackages = [
+    inputs.linuxtoys.packages.${pkgs.stdenv.hostPlatform.system}.default
+  ];
+}
+```
+
+or use the bundled module:
+
+```nix
+{
+  imports = [ inputs.linuxtoys.nixosModules.default ];
+  programs.linuxtoys.enable = true;
+}
+```
+
+`nix run github:psygreg/linuxtoys` runs it without installing. On Nix, LinuxToys is updated by `nix profile upgrade` or your NixOS rebuild; its self-updater and outdated-version gate stay inactive for Nix installs.
+
+The profile install is per-user. On NixOS, use the module or `environment.systemPackages` for desktop-menu integration; if you prefer the profile route, make sure `~/.nix-profile/share` is part of your session's `XDG_DATA_DIRS` (the automatic installer also mirrors the entry and icon into `~/.local/share`).
+
 ## SteamOS and usage without installation
 
 You may use the AppImage available at the latest release to use LinuxToys without requiring installation. For SteamOS, the automatic installer will integrate this AppImage using *Gear Lever*.
@@ -144,6 +179,15 @@ sudo zypper in -y bash git curl wget zenity libappstream5 python3 python3-gobjec
 sudo eopkg it -y git curl wget zenity appstream python3 python-gobject python-requests libvte rust python-devel pkg-config gtk3-devel patchelf
 ```
 > For Solus, you will have to install `maturin` using `pip` on the virtual environment you will set up in the next steps.
+
+**Nix / NixOS:**
+The repository flake provides Python, GTK3, VTE, AppStream, the Rust toolchain, maturin and the typelib/icon environment used by the app. After cloning the repository (next section), run from its root:
+
+```bash
+nix develop
+```
+
+Then continue with the build steps below from inside the development shell; the manual virtualenv setup is not needed there.
 
 ### Cloning and Running
 

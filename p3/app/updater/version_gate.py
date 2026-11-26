@@ -9,7 +9,7 @@ releases tighten the window quickly.
 The gate follows the self-update policy from ``update_helper`` and stays
 inactive where the app cannot update itself: developer mode, GregOS
 (updates arrive with the system image) and repository-owned installs
-(PPA/Copr/git checkout).
+(PPA/Copr/git checkout/Nix).
 
 Data path: a background thread fetches the published release list
 (GitHub first, Gitea fallback, mirroring ``_get_latest_version``) and

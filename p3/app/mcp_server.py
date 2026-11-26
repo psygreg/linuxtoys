@@ -6178,13 +6178,17 @@ def _exec_start():
     """ExecStart resolved for this installation kind.
 
     Points at the running app's own tree: AppImage installs re-execute the
-    AppImage itself (so the mount is fresh), everything else runs this
-    installation's linuxtoys.py directly — a dev checkout gets its own entry,
-    never the system package's.
+    AppImage itself (so the mount is fresh), a package that exports a launcher
+    runs it (Nix carries its interpreter and runtime environment in the
+    wrapper), and everything else runs this installation's linuxtoys.py
+    directly — a dev checkout gets its own entry, never the system package's.
     """
     appimage = os.environ.get("APPIMAGE")
     if appimage and os.path.isfile(appimage):
         return f"{appimage} --mcp"
+    launcher = os.environ.get("LINUXTOYS_LAUNCHER")
+    if launcher and os.path.isfile(launcher):
+        return f"{launcher} --mcp"
     script_dir = os.environ.get("SCRIPT_DIR") or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     entry = os.path.join(script_dir, "linuxtoys.py")
     python = sys.executable or "/usr/bin/python3"

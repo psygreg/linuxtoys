@@ -168,17 +168,34 @@ def _is_from_git(path=".") -> bool:
         return False
 
 
+def _is_from_nix_store(path=".") -> bool:
+    """Return whether *path* belongs to a Nix-built installation.
+
+    A flake/profile install lives under ``/nix/store`` and is updated by
+    ``nix profile upgrade`` (or a NixOS rebuild), never by install.sh.
+    """
+    try:
+        return os.path.realpath(path).startswith("/nix/store/")
+    except OSError:
+        return False
+
+
 def is_from_repository(path=None) -> bool:
     """Return whether the installation is owned by something other than
-    LinuxToys' self-updater (PPA, Copr or a git checkout).
+    LinuxToys' self-updater (PPA, Copr, a git checkout or a Nix install).
 
     The update dialog and the outdated-version script gate both stay
     inactive on such hosts, because their updates arrive from the system
-    package manager or the checkout itself instead of install.sh.
+    package manager, the checkout itself or Nix instead of install.sh.
     """
     if not path:
         path = os.path.dirname(__file__)
-    return _is_from_ppa() or _is_from_copr() or _is_from_git(path)
+    return (
+        _is_from_ppa()
+        or _is_from_copr()
+        or _is_from_nix_store(path)
+        or _is_from_git(path)
+    )
 
 
 def get_latest_release_version() -> str | None:

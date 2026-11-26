@@ -805,6 +805,78 @@ manjaro() {
     { pacman_transaction sudo pamac build linuxtoys-bin && info "LinuxToys installed or updated!"; } || error "Failed to build linuxtoys-bin from the AUR."
 }
 
+# NixOS and its derivatives do not manage packages through the distro package
+# managers the handlers above drive. The project's flake is the supported
+# installation method there: the package goes into the user's Nix profile,
+# while the system generation stays the user's declarative responsibility.
+# Releases made before the flake existed are handled by retrying from the
+# default branch, which carries it.
+osnix() {
+    command -v nix >/dev/null 2>&1 ||
+        error "Nix is required to install LinuxToys on NixOS."
+
+    local _ref _tag=""
+    _ref="github:psygreg/linuxtoys#linuxtoys"
+
+    # Prefer the same release install.sh would install elsewhere. Without
+    # curl (or a usable release API) the default branch still has the flake.
+    if command -v curl >/dev/null 2>&1; then
+        _tag=$(curl -fsSL "https://api.github.com/repos/psygreg/linuxtoys/releases/latest" 2>/dev/null |
+            grep -Pio '"tag_name":\s*"\K[^"]+' | head -n 1 || true)
+    fi
+    if [ -n "$_tag" ]; then
+        _ref="github:psygreg/linuxtoys/${_tag}#linuxtoys"
+    fi
+
+    if [ "${LINUXTOYS_REINSTALL:-0}" = "1" ]; then
+        _lt_note "Removing the existing LinuxToys Nix profile entry..."
+        nix --extra-experimental-features "nix-command flakes" \
+            profile remove linuxtoys >/dev/null 2>&1 || true
+    fi
+
+    _lt_note "Installing LinuxToys from the upstream Nix flake..."
+    if ! nix --extra-experimental-features "nix-command flakes" \
+        profile install "$_ref"; then
+        if [ -n "$_tag" ]; then
+            _lt_warn "Could not install release ${_tag}; trying the default branch (it carries the flake)."
+            _ref="github:psygreg/linuxtoys#linuxtoys"
+            nix --extra-experimental-features "nix-command flakes" \
+                profile install "$_ref" || error "Failed to install LinuxToys with Nix."
+        else
+            error "Failed to install LinuxToys with Nix."
+        fi
+    fi
+
+    # `nix profile install` is a no-op when the flake is already present, so
+    # ask for an explicit upgrade as well. It is harmless on a fresh install.
+    nix --extra-experimental-features "nix-command flakes" \
+        profile upgrade linuxtoys >/dev/null 2>&1 || true
+
+    # A user profile's share/ directory is not part of every desktop session's
+    # XDG_DATA_DIRS (NixOS user profiles are the common case), so mirror the
+    # package's desktop entry and icon into the user's local data directories.
+    # Exec points at the stable profile symlink, so upgrades do not leave a
+    # dangling store path behind.
+    local _profile="${NIX_PROFILE:-$HOME/.nix-profile}"
+    local _desktop="$_profile/share/applications/toys.linux.LinuxToys.desktop"
+    local _apps="$HOME/.local/share/applications"
+    if [ -f "$_desktop" ]; then
+        mkdir -p "$_apps" "$HOME/.local/share/icons/hicolor/scalable/apps"
+        sed "s|^Exec=.*|Exec=$_profile/bin/linuxtoys --gui %U|" \
+            "$_desktop" > "$_apps/toys.linux.LinuxToys.desktop"
+        chmod 644 "$_apps/toys.linux.LinuxToys.desktop"
+        if [ -f "$_profile/share/icons/hicolor/scalable/apps/linuxtoys.svg" ]; then
+            cp "$_profile/share/icons/hicolor/scalable/apps/linuxtoys.svg" \
+                "$HOME/.local/share/icons/hicolor/scalable/apps/linuxtoys.svg"
+            chmod 644 "$HOME/.local/share/icons/hicolor/scalable/apps/linuxtoys.svg"
+        fi
+        command -v update-desktop-database >/dev/null 2>&1 &&
+            update-desktop-database "$_apps" >/dev/null 2>&1 || true
+    fi
+
+    info "LinuxToys installed or updated!"
+}
+
 requires_appimage() {
     # rpm-ostree immutable systems use the AppImage route as well: the native
     # package would have to be layered with rpm-ostree, which the AppImage
@@ -830,6 +902,15 @@ requires_appimage() {
 # only the fallback when no known ID matches, mirroring os-release semantics.
 # Immutable hosts and Solus always take the AppImage route.
 _resolve_route() {
+    # NixOS manages packages declaratively, not through pacman/apt/dnf/zypper;
+    # its supported route is the project's flake. A Nix installation on any
+    # other host is a side installation and keeps that host's native route.
+    local _id_like="${ID_LIKE:-}"
+    if [ "${ID:-}" = nixos ] || [[ " ${_id_like,,} " == *" nixos "* ]]; then
+        _route_handler=osnix
+        _route_kind=""
+        return 0
+    fi
     if requires_appimage || [ "${ID:-}" = solus ]; then
         _route_handler=osappimage
         _route_kind=appimage
@@ -856,6 +937,24 @@ _resolve_route() {
 }
 
 installer() {
+	if [ -r /etc/os-release ]; then
+		. /etc/os-release
+	else
+		error "Unsupported operating system (no /etc/os-release)."
+	fi
+
+	# Resolve the route first: the NixOS route consumes no release asset and
+	# must not depend on the Python/curl release staging below (a minimal
+	# NixOS host has neither guaranteed).
+	_route_handler="" _route_kind=""
+	_resolve_route || error "Unsupported operating system."
+	_lt_repair=""
+
+	if [ "$_route_handler" = "osnix" ]; then
+		osnix
+		return 0
+	fi
+
 	printf "\e[0;36m[INFO]\e[m Fetching latest release from GitHub...\n"
 	_api=$(curl -fsSL "https://api.github.com/repos/psygreg/linuxtoys/releases/latest" 2>/dev/null)
 
@@ -870,20 +969,10 @@ installer() {
 
 	_tag_name=$(echo "${_api}" | grep -Pio '"tag_name":\s*"\K[^"]+')
 
-	if [ -r /etc/os-release ]; then
-		. /etc/os-release
-	else
-		error "Unsupported operating system (no /etc/os-release)."
-	fi
-
-	# Resolve the route, then the installed state: an installation already
-	# at this release's version is verified and repaired instead of
-	# blind-reinstalled (a same-version reinstall would silently keep any
-	# damage), and an intact one needs neither the architecture staging nor
-	# any download at all.
-	_route_handler="" _route_kind=""
-	_resolve_route || error "Unsupported operating system."
-	_lt_repair=""
+	# An installation already at this release's version is verified and
+	# repaired instead of blind-reinstalled (a same-version reinstall would
+	# silently keep any damage), and an intact one needs neither the
+	# architecture staging nor any download at all.
 	_lt_repair_gate
 
 	# Stage the release's own architecture validation, verify the host, and
