@@ -1543,20 +1543,50 @@ def cache_needs_refresh(now=None) -> bool:
     )
 
 
+_FLATPAK_PRIMARY_KEYS = frozenset(
+    {"ostree", "ublue", "steamos", "dakota", "gnomeos", "kde-linux"}
+)
+
+
+def _starter_seed_source(keys):
+    """Return the cold-start seed source for this host.
+
+    ``"flatpak"`` on immutable/Flatpak-first hosts, ``"nix"`` where Nixpkgs is
+    the native package source (NixOS and derivatives), and ``"native"``
+    everywhere else. The Nix seed is only selected while the subsystem is
+    actually usable, so a NixOS host without a working ``nix`` falls back to
+    the local AppStream metadata instead of publishing an empty seed.
+    """
+    if _FLATPAK_PRIMARY_KEYS.intersection(keys):
+        return "flatpak"
+    if "nixos" in keys:
+        try:
+            from . import nix_catalog
+
+            if nix_catalog.enabled():
+                return "nix"
+        except Exception:
+            pass
+    return "native"
+
+
 def _build_starter_catalog(status_callback=None):
     """Publish one usable local generation; leave enrichment due for refresh.
 
-    Called under _LOCK by refresh_cache(). No network refresh, metrics or
-    source fingerprinting belongs in this cold-start path — with one bounded
-    exception: the ODRS ratings fetch runs alongside the component load so
-    the starter catalog carries review ratings for Featured (featured
-    candidates require a rating). A slow or failed fetch publishes unrated
-    and the enrichment rebuild upgrades the catalog afterwards.
+    Called under _LOCK by refresh_cache(). Source fingerprinting and metrics
+    belong to the enrichment path, not this cold-start seed. Two bounded
+    exceptions run here: the ODRS ratings fetch alongside the component load
+    so the starter catalog carries review ratings for Featured (featured
+    candidates require a rating), and, on NixOS, the nixpkgs snapshot because
+    Nix packages are the host's native source. A slow or failed ratings fetch
+    publishes unrated; an unavailable Nix snapshot falls back to the local
+    native AppStream seed. The enrichment rebuild upgrades the catalog
+    afterwards.
     """
     from .compat import get_system_compat_keys
 
     keys = get_system_compat_keys()
-    flatpak_primary = bool({"ostree", "ublue", "steamos", "dakota", "gnomeos", "kde-linux"}.intersection(keys))
+    seed = _starter_seed_source(keys)
     generation = _catalog_rs.AppStreamGeneration(os.fspath(CATALOG_PATH))
 
     ratings_box = {"value": None, "done": False}
@@ -1574,9 +1604,24 @@ def _build_starter_catalog(status_callback=None):
     )
     ratings_thread.start()
 
-    if flatpak_primary:
+    if seed == "nix":
+        # Nixpkgs is NixOS' installable universe: the native AppStream data
+        # there only describes packages that are already installed. Seed the
+        # snapshot before publishing so the runtime catalog built from this
+        # starter already carries Nix packages. A failed first-boot fetch
+        # falls back to the local native seed below.
+        from . import nix_catalog
+
+        try:
+            seeded = nix_catalog.load_or_refresh() is not None
+        except Exception:
+            seeded = False
+        if not seeded:
+            seed = "native"
+
+    if seed == "flatpak":
         _load_flatpak_components(generation, starter=True)
-    else:
+    elif seed == "native":
         components = _load_appstream_components()
         for start in range(0, len(components), CHECKPOINT_EVERY):
             generation.add_native([
@@ -1585,8 +1630,9 @@ def _build_starter_catalog(status_callback=None):
             ])
 
     # Give the ratings fetch a short window — it usually completes during the
-    # component load. The starter must never wait on the network, so a slow
-    # fetch publishes unrated and the enrichment rebuild upgrades later.
+    # component load. A slow fetch publishes unrated and the enrichment rebuild
+    # upgrades later. The Nix seed above is the only cold-start step allowed to
+    # wait on the network, and only on NixOS where Nixpkgs is the native source.
     ratings_thread.join(3.0)
     ratings = ratings_box["value"]
     if ratings is not None:
@@ -1612,8 +1658,10 @@ def _build_starter_catalog(status_callback=None):
 def refresh_cache(force=False, status_callback=None, *, starter=False):
     """Refresh the AppStream cache synchronously.
 
-    ``starter`` publishes only the primary local source on a cold start. A
-    subsequent ordinary refresh constructs and publishes the full generation.
+    ``starter`` publishes only the host's primary seed source on a cold start:
+    native AppStream, local Flatpak AppStream, or the Nixpkgs snapshot on
+    NixOS. A subsequent ordinary refresh constructs and publishes the full
+    generation.
 
     Intended to run on a worker thread.  Returns a result dictionary containing
     ``changed``, ``count`` and, on failure, ``error``.  Existing completed data is

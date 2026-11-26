@@ -840,11 +840,12 @@ class LinuxToys(App):
         """Refresh the AppStream catalog on a background worker.
 
         Mirrors the GUI launch sequence: the catalog build never blocks
-        the first screen. A first launch publishes the local-only starter
-        catalog (network-free except a 3 s capped ratings fetch) so app
-        pages become usable quickly, and the full enrichment then runs
-        here, still off the UI thread. A slow or failed build only means
-        fewer catalog entries; nothing else waits on it.
+        the first screen. A first launch publishes the starter catalog from
+        the host's native package source (native AppStream, Flatpak, or the
+        Nixpkgs snapshot on NixOS) so app pages become usable quickly, and
+        the full enrichment then runs here, still off the UI thread. A slow
+        or failed build only means fewer catalog entries; nothing else waits
+        on it.
         """
         from app import appstream_cache
 

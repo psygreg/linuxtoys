@@ -431,12 +431,13 @@ def _refresh_cold_appstream_catalog():
 
     A nested call_script with an AppStream ID resolves against the last
     published catalog.json. On a fresh install that generation can be cold
-    (never built) or a native-only starter generation — Flatpak-primary hosts
-    excepted — so Flathub component ids such as it.mijorus.gearlever cannot
-    resolve, and a newly configured Flathub remote may not even have its local
-    AppStream database populated yet. refresh_cache() handles all of this
-    (including _refresh_missing_flatpak_appstream), so one synchronous refresh
-    makes CLI resolutions match what the AppStream UI already sees.
+    (never built) or a starter generation without Flathub — every non-Flatpak-
+    primary host, including NixOS, which seeds Nixpkgs instead — so Flathub
+    component ids such as it.mijorus.gearlever cannot resolve, and a newly
+    configured Flathub remote may not even have its local AppStream database
+    populated yet. refresh_cache() handles all of this (including
+    _refresh_missing_flatpak_appstream), so one synchronous refresh makes CLI
+    resolutions match what the AppStream UI already sees.
 
     Best effort: any failure leaves the previous generation untouched, and the
     caller falls back to the normal not-found behavior.
@@ -562,7 +563,7 @@ def materialize_appstream_by_target(target, script_dir):
     find_entry = _appstream_entry_finder(script_dir)
     entry = find_entry(target)
     if entry is None:
-        # The catalog can be cold or starter-only (native components only) on a
+        # The catalog can be cold or starter-only (no Flathub components) on a
         # fresh install. One synchronous refresh repopulates it — including the
         # local Flathub AppStream database — then the lookup is retried once.
         _refresh_cold_appstream_catalog()
