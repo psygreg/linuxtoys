@@ -1,11 +1,11 @@
 #!/bin/bash
 # name: Nix Packages
-# version: 1.0
+# version: 1.1
 # description: nixpkgs_desc
 # icon: nix.svg
-# compat: arch, debian, ubuntu, cachy, suse
+# compat: arch, cachy, fedora, debian, ubuntu, suse
 # repo: https://github.com/NixOS/nixpkgs
-# revert: arch, cachy
+# revert: arch, cachy, fedora
 # systemd: yes
 # architectures: x86_64, aarch64
 # requires-script-api: 1
@@ -27,6 +27,13 @@ if is_arch || is_cachy; then
 			echo -e 'export XDG_DATA_DIRS="$HOME/.nix-profile/share:$XDG_DATA_DIRS"' >> ~/.bash_profile;
 		}
 	}
+elif is_fedora; then
+	# Fedora 43+ ships Nix as official packages. Use the multiuser daemon
+	# setup recommended upstream; the packages provide the shell profile
+	# integration under /etc/profile.d for new login shells.
+	pkg_install nix nix-daemon || die "Failed to install Nix"
+	sysd_enable nix-daemon.service
+	sysd_start nix-daemon.service
 else
 	sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon && {
 		[ -f ~/.bashrc ] && { prep_edit ~/.bashrc && \
