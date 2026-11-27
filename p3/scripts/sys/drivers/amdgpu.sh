@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # name: AMD GPU Driver
 # version: 1.0
 # description: amdgpu_desc
@@ -105,6 +105,17 @@ if is_ubuntu; then
     pkg_fromfile "./$OUTDIR/$DEB"
 fi
 
-sudo amdgpu-install -y
+# The vendor installer drives apt/dnf itself. The shared wrapper supplies the
+# lock standby and the per-kernel DKMS recovery: a kernel the AMD module cannot
+# build for (e.g. a mainline kernel installed alongside the distro kernel) is
+# excluded for this driver version instead of aborting the whole transaction
+# and leaving amdgpu-dkms half-configured, which used to break every later apt
+# operation until the failing kernel was handled manually. The check keeps this
+# live-synced script usable on clients predating the wrapper.
+if declare -F pkg_vendor_transaction >/dev/null 2>&1; then
+    pkg_vendor_transaction sudo_ amdgpu-install -y || die "Failed to install the AMD GPU driver"
+else
+    sudo amdgpu-install -y || die "Failed to install the AMD GPU driver"
+fi
 _append_transmap "exec amdgpu-install"
 info "$rebootmsg"

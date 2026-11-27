@@ -239,10 +239,96 @@ _pkg_lock_refused () {
     esac
 }
 
+# Ubuntu 26.04+ ships framework.conf.d/autoinstall_all_kernels.conf, so DKMS
+# builds a module for every installed kernel. When a module cannot build for
+# one of them (for example a mainline kernel kept alongside the distro kernel),
+# that build fails the whole native package transaction and leaves the DKMS
+# package half-configured, which then breaks every later apt call. Exclude the
+# failed kernel for that exact module version through DKMS's per-kernel config
+# override, and let the caller replay the transaction; the kernel keeps using
+# its in-tree driver. The override is version-scoped, so a future module
+# release can still build for the kernel.
+#
+# Returns 0 only when at least one new kernel was excluded (a retry is useful).
+# A kernel whose override already exists is never retried again, so a DKMS
+# whose override path is ignored cannot loop the transaction.
+_dkms_recover_failed_kernels () {
+    local _log="$1"
+    local _conf_dir="${LINUXTOYS_DKMS_CONF_DIR:-/etc/dkms}"
+    local _module _version _kernel _conf _entry _rest _recovered=0
+    local -a _failures=()
+
+    # common.postinst prints the module/version it is configuring, while a
+    # kernel postinst autoinstall names it before each build. Track that name
+    # so every failure maps to the module actually being built, even when
+    # another module autoinstalled successfully in the same run. dkms reports
+    # each failed kernel as it happens and repeats the set in a summary line;
+    # both forms are collected, then de-duplicated.
+    mapfile -t _failures < <(
+        awk '
+            /^[[:space:]]*Loading new / {
+                line=$0
+                sub(/^[[:space:]]*Loading new /, "", line)
+                sub(/ DKMS files\.\.\..*$/, "", line)
+                sub(/\//, " ", line)
+                pair=line
+            }
+            /^[[:space:]]*Autoinstall of module / {
+                line=$0
+                sub(/^[[:space:]]*Autoinstall of module /, "", line)
+                sub(/ for kernel .*/, "", line)
+                sub(/\//, " ", line)
+                pair=line
+            }
+            /module build on kernel: / {
+                kernel=$0
+                sub(/.*module build on kernel: /, "", kernel)
+                sub(/[[:space:]].*$/, "", kernel)
+                if (pair != "" && kernel != "") print pair, kernel
+            }
+            /Builds for the following kernel/ {
+                line=$0
+                sub(/.*failed:[[:space:]]*/, "", line)
+                if (pair != "") {
+                    count=split(line, kernels, /[[:space:]]+/)
+                    for (i=1; i<=count; i++)
+                        if (kernels[i] != "") print pair, kernels[i]
+                }
+            }
+        ' "$_log" | sort -u
+    )
+    (( ${#_failures[@]} > 0 )) || return 1
+
+    for _entry in "${_failures[@]}"; do
+        _module="${_entry%% *}"
+        _rest="${_entry#* }"
+        _version="${_rest%% *}"
+        _kernel="${_rest#* }"
+        [[ -n "$_module" && -n "$_version" && -n "$_kernel" ]] || continue
+        [[ "$_module" =~ ^[A-Za-z0-9._+-]+$ && "$_version" =~ ^[A-Za-z0-9._+~-]+$ && "$_kernel" =~ ^[A-Za-z0-9._+~-]+$ ]] || continue
+        _conf="$_conf_dir/${_module}-${_version}-${_kernel}.conf"
+        [[ -e "$_conf" ]] && continue
+        prep_create "$_conf"
+        if [[ "$(id -u)" -eq 0 ]]; then
+            printf 'BUILD_EXCLUSIVE_KERNEL="^$"\n' > "$_conf" || return 1
+        else
+            printf 'BUILD_EXCLUSIVE_KERNEL="^$"\n' | sudo_ tee "$_conf" >/dev/null || return 1
+        fi
+        if [[ "$_kernel" == "$(uname -r)" ]]; then
+            printf '%s\n' "The ${_module} DKMS module cannot build for the running kernel ${_kernel}; leaving that kernel to its built-in driver." >&2
+        else
+            printf '%s\n' "Kernel ${_kernel} is not supported by the ${_module} DKMS module; skipping it for ${_module}/${_version}." >&2
+        fi
+        _recovered=1
+    done
+
+    (( _recovered == 1 ))
+}
+
 _pkg_transaction () (
     # Subshell keeps cleanup, locale and temporary state away from the caller's
     # traps, including a sourced background updater's installer cleanup trap.
-    local family="$1" timeout="$2" deadline log status attempt=0
+    local family="$1" timeout="$2" deadline log status attempt=0 dkms_recoveries=0
     shift 2
     case "$family" in apt|dnf|pacman|zypper) ;; *) return 2 ;; esac
     [[ "$timeout" =~ ^[0-9]+$ ]] || return 2
@@ -268,6 +354,12 @@ _pkg_transaction () (
         # Signals and authentication cancellation without a lock diagnostic
         # must never turn into another transaction.
         (( status < 128 )) || return "$status"
+        # A per-kernel DKMS build failure gets one replay per newly excluded
+        # kernel; unrelated failures keep the existing lock-retry verdict.
+        if (( dkms_recoveries < 8 )) && _dkms_recover_failed_kernels "$log"; then
+            dkms_recoveries=$((dkms_recoveries + 1))
+            continue
+        fi
         _pkg_lock_refused "$family" "$log" || return "$status"
         (( attempt < 2 )) || return "$status"
         (( SECONDS < deadline )) || return 124
@@ -341,6 +433,26 @@ apt_lock_standby () {
 # status on failure, at most two retries of diagnosed lock refusals.
 apt_transaction () {
     _pkg_transaction apt "$APT_BUSY_WAIT_TIMEOUT" "$@"
+}
+
+# Run a vendor installer that performs its own native transactions (for
+# example amdgpu-install) with the same lock standby and per-kernel DKMS
+# recovery as the native manager wrappers. The family only classifies lock
+# diagnostics; the installer still drives its own package manager.
+pkg_vendor_transaction () {
+    local _family _timeout
+    if is_debian || is_ubuntu; then
+        _family=apt; _timeout="$APT_BUSY_WAIT_TIMEOUT"
+    elif is_arch || is_cachy || is_manjaro; then
+        _family=pacman; _timeout="$PACMAN_BUSY_WAIT_TIMEOUT"
+    elif is_suse; then
+        _family=zypper; _timeout="$ZYPPER_BUSY_WAIT_TIMEOUT"
+    elif is_solus; then
+        _family=eopkg; _timeout="$EOPKG_BUSY_WAIT_TIMEOUT"
+    else
+        _family=dnf; _timeout="$DNF_BUSY_WAIT_TIMEOUT"
+    fi
+    _pkg_transaction "$_family" "$_timeout" "$@"
 }
 
 # One privileged metadata refresh for the managers whose cache the invoking
