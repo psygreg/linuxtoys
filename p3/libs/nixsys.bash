@@ -172,7 +172,7 @@ nix_gpu64_setup_ready() {
 
 _nix_gpu32_script() {
     local base="${SCRIPT_DIR:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)}"
-    printf '%s\n' "${base}/scripts/sys/nix-gpu32.sh"
+    printf '%s\n' "${base}/libs/nix-gpu32.bash"
 }
 
 # 32-bit Nix GPU support is an x86_64-only complement to the Home Manager

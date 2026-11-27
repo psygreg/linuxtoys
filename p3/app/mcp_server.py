@@ -4010,7 +4010,9 @@ def tool_schemas():
             "name": "nix_install_flake",
             "description": (
                 "Inspect and import an external Nix flake into Home Manager or "
-                "the NixOS system configuration. Call first with only "
+                "the NixOS system configuration. FlakeHub URLs and fh-style "
+                "owner/project/version references are accepted. Call first "
+                "with only "
                 "`reference`: the tool returns requires_selection listing "
                 "every discovered output (packages, Home Manager/NixOS "
                 "modules, overlays; apps/configurations are informational). "
@@ -4025,7 +4027,13 @@ def tool_schemas():
                 "properties": {
                     "reference": {
                         "type": "string",
-                        "description": "Flake reference: github:owner/repo, git+https://..., https://... or a local directory",
+                        "description": (
+                            "Flake reference: github:owner/repo, "
+                            "git+https://..., https://... (including "
+                            "https://flakehub.com/f/owner/repo/version), "
+                            "FlakeHub shorthand owner/repo/version, or a "
+                            "local directory"
+                        ),
                     },
                     "scope": {
                         "type": "string",
@@ -4057,7 +4065,11 @@ def tool_schemas():
                 "properties": {
                     "reference": {
                         "type": "string",
-                        "description": "Imported flake reference as shown by nix_list_flakes",
+                        "description": (
+                            "Imported flake reference as shown by "
+                            "nix_list_flakes; the original FlakeHub URL or "
+                            "owner/repo/version shorthand also matches"
+                        ),
                     },
                     **_job_tracking_schema(),
                 },

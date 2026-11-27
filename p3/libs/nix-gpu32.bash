@@ -12,6 +12,10 @@
 # disappears inside Nix buildFHSEnv wrappers (they bind /run but replace /usr).
 # It is bind-mounted read-only by a systemd service, and rebuilt when the host
 # driver files change.
+#
+# This is a standalone helper, not a sourceable library. It lives under libs/
+# (like gregos.bash) because it is an internal part of the Nix subsystem, not a
+# catalog entry.
 
 set -euo pipefail
 

@@ -11,6 +11,10 @@ Imported flakes are referenced by their locked URL through
 ``builtins.getFlake``. A locked flake reference keeps the user's configuration
 working under pure flake evaluation without rewriting their ``flake.nix``
 inputs; the generated module is imported into that configuration instead.
+
+FlakeHub is supported directly: public FlakeHub URLs are accepted, and the
+``fh`` CLI's ``owner/project[/version]`` shorthand is normalized to the
+equivalent ``https://flakehub.com/f/...`` URL before Nix sees it.
 """
 
 from __future__ import annotations
@@ -57,6 +61,15 @@ _REFERENCE_PREFIXES = (
     "git+file:",
     "https://",
     "path:",
+)
+# FlakeHub's `fh` CLI accepts `owner/project` and `owner/project/version`
+# references. They are not Nix flake schemes, so normalize them to the
+# equivalent public URL before invoking Nix.
+_FLAKEHUB_NAME = r"[A-Za-z0-9][A-Za-z0-9._-]*"
+_FLAKEHUB_VERSION = r"[A-Za-z0-9=*][A-Za-z0-9.*+=_-]*"
+_FLAKEHUB_SHORTHAND = re.compile(
+    rf"^(?P<owner>{_FLAKEHUB_NAME})/(?P<project>{_FLAKEHUB_NAME})"
+    rf"(?:/(?P<version>{_FLAKEHUB_VERSION}))?$"
 )
 _CONTROL = re.compile(r"[\x00-\x1f\x7f]")
 _MODULE_ATTRS = {
@@ -124,8 +137,25 @@ def _run_nix(arguments, timeout):
     return result.stdout
 
 
+def _flakehub_reference(value):
+    """Return the FlakeHub URL for an ``fh`` shorthand, or None."""
+    match = _FLAKEHUB_SHORTHAND.fullmatch(value)
+    if match is None:
+        return None
+    version = match.group("version") or "*"
+    return (
+        f"https://flakehub.com/f/{match.group('owner')}/"
+        f"{match.group('project')}/{version}"
+    )
+
+
 def validate_reference(reference):
-    """Validate and normalize a user-entered flake reference."""
+    """Validate and normalize a user-entered flake reference.
+
+    FlakeHub URLs are accepted directly, and the ``fh`` CLI's
+    ``owner/project[/version]`` shorthand is normalized to the equivalent
+    FlakeHub URL.
+    """
     value = str(reference or "").strip()
     if not value:
         raise FlakeError("A flake reference is required")
@@ -153,8 +183,13 @@ def validate_reference(reference):
         path = Path(value).expanduser()
         if path.is_dir():
             return "path:" + os.path.abspath(os.fspath(path))
+    flakehub = _flakehub_reference(value)
+    if flakehub is not None:
+        return flakehub
     raise FlakeError(
-        "Enter a flake URL (github:owner/repo, git+https://…) or a local directory"
+        "Enter a flake URL (github:owner/repo, "
+        "https://flakehub.com/f/owner/repo/*, owner/repo/1.2.3, "
+        "git+https://…) or a local directory"
     )
 
 
@@ -801,14 +836,20 @@ def record_ids_for_reference(reference, scope=None):
     value = str(reference or "").strip()
     if not value:
         return []
+    try:
+        normalized = validate_reference(value)
+    except FlakeError:
+        normalized = value
+    candidates = {value, normalized}
     return [
         record["id"]
         for record in imports(scope)
-        if value in (
+        if candidates
+        & {
             record.get("reference"),
             record.get("original_url"),
             record.get("url"),
-        )
+        }
     ]
 
 

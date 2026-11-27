@@ -56,9 +56,10 @@ class NixFlakeDialog(Gtk.Dialog):
         intro = Gtk.Label(
             label=self._t(
                 "nix_flake_import_intro",
-                "Import a flake from a URL or a local directory. LinuxToys "
-                "will inspect its outputs and merge the selected packages, "
-                "modules or overlays into the chosen Nix configuration.",
+                "Import a flake from a URL (including FlakeHub) or a local "
+                "directory. LinuxToys will inspect its outputs and merge the "
+                "selected packages, modules or overlays into the chosen Nix "
+                "configuration.",
             ),
             xalign=0,
         )
@@ -82,7 +83,8 @@ class NixFlakeDialog(Gtk.Dialog):
         self.reference_entry.set_placeholder_text(
             self._t(
                 "nix_flake_reference_placeholder",
-                "github:owner/repo, git+https://… or /path/to/flake",
+                "github:owner/repo, FlakeHub owner/repo/1.2.3, "
+                "https://… or /path/to/flake",
             )
         )
         self.reference_entry.connect("activate", self._on_read_clicked)

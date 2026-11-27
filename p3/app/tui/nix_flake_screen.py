@@ -92,7 +92,8 @@ class NixFlakeScreen(ModalScreen[dict | None]):
             yield Input(
                 placeholder=translations.get(
                     "nix_flake_reference_placeholder",
-                    "github:owner/repo, git+https://… or /path/to/flake",
+                    "github:owner/repo, FlakeHub owner/repo/1.2.3, "
+                    "https://… or /path/to/flake",
                 ),
                 id="nix-flake-reference",
             )

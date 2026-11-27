@@ -3,7 +3,8 @@
 This module is deliberately GUI-agnostic.  It validates browser-facing
 ``linuxtoys://`` install URIs and resolves their stable target IDs into the
 same script-info dictionaries consumed by the normal LinuxToys UI. Nix targets
-(``nix:<attr>`` and ``nix-flake:<reference>``) resolve even when the Nix
+(``nix:<attr>`` and ``nix-flake:<reference>``, including FlakeHub URLs and
+``owner/project/version`` shorthand) resolve even when the Nix
 subsystem is not enabled yet, and explicit source targets
 (``flathub:``, ``flatpark:``, ``snap:``, ``homebrew:``, ``aur:``,
 ``appimage:``) resolve before their catalog source is configured so the GUI can
