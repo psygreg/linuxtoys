@@ -748,10 +748,12 @@ class ItemWidgetFactory:
         if item_info.get("installed_nix_entry"):
             return True
         if item_info.get("appstream_source") == "homebrew":
-            return installed_packages.match(item_info) is not None
+            return installed_packages.installed_source(item_info) is not None
         # Use the search cache's pre-computed removable state whenever possible
         if self.script_cache.is_populated:
             return self.script_cache.is_script_removable(item_info)
+        if item_info.get("is_appstream_entry"):
+            return installed_packages.installed_source(item_info) is not None
 
         # Fallback to direct computation if the cache is not ready yet
         if item_info.get("is_repo_entry"):
@@ -872,6 +874,14 @@ class ItemWidgetFactory:
             if not self._show_reboot_warning_dialog():
                 return
 
+        # A merged AppStream card may be installed from a non-default source.
+        # Remove the source that actually owns the installation.
+        remove_info = item_info
+        if item_info.get("is_appstream_entry"):
+            remove_info = (
+                installed_packages.installed_source(item_info) or item_info
+            )
+
         # Provider features (Homebrew, Flathub, Snapcraft, Paru, Gear Lever)
         # stay listed as installed, but their removal is blocked while
         # anything installed through them still exists.
@@ -903,7 +913,7 @@ class ItemWidgetFactory:
             # Registry-managed AppStream removals run a generated uninstall
             # script: the outdated-version gate applies before confirmation.
             if scripts_blocked_by_version(
-                self, self.translations, removable_script_info=item_info
+                self, self.translations, removable_script_info=remove_info
             ):
                 return
 
@@ -929,7 +939,7 @@ class ItemWidgetFactory:
                 return
 
             remove_entry = revert_helper.build_uninstall_script_entry(
-                item_info, self.translations
+                remove_info, self.translations
             )
             if not remove_entry:
                 run_message_dialog(
@@ -947,9 +957,12 @@ class ItemWidgetFactory:
                 return
 
             self._appstream_runner.enqueue_removal(
-                item_info,
+                remove_info,
                 remove_entry,
-                record_id=item_info.get("_appstream_queue_record_id"),
+                record_id=(
+                    item_info.get("_appstream_queue_record_id")
+                    or remove_info.get("_appstream_queue_record_id")
+                ),
             )
             return
 

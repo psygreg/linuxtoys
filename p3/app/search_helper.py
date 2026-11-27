@@ -218,17 +218,25 @@ class ScriptCache:
             )
 
             if script_info.get("appstream_source") == "homebrew":
-                self._removable_cache[script_path] = installed_packages.match(script_info) is not None
+                self._removable_cache[script_path] = (
+                    installed_packages.installed_source(script_info, executed_names)
+                    is not None
+                )
                 continue
             if script_info.get("appstream_source") == "nix":
-                self._removable_cache[script_path] = installed_packages.match(script_info) is not None
+                self._removable_cache[script_path] = (
+                    installed_packages.installed_source(script_info, executed_names)
+                    is not None
+                )
                 continue
-            # AppStream entries can be installed outside LinuxToys. Their observed
-            # package state is therefore part of removability, not just Registry state.
+            # AppStream entries can be installed outside LinuxToys (or from a
+            # non-default source of a merged card). Their observed package state
+            # is therefore part of removability, not just Registry state.
             if script_info.get("is_appstream_entry"):
                 self._removable_cache[script_path] = (
                     registered
-                    or installed_packages.match(script_info) is not None
+                    or installed_packages.installed_source(script_info, executed_names)
+                    is not None
                 )
                 continue
 
@@ -279,9 +287,13 @@ class ScriptCache:
         script_path = script_info.get("path", "")
 
         if script_info.get("appstream_source") == "homebrew":
-            return installed_packages.match(script_info) is not None
+            return (
+                installed_packages.installed_source(script_info) is not None
+            )
         if script_info.get("appstream_source") == "nix":
-            return installed_packages.match(script_info) is not None
+            return (
+                installed_packages.installed_source(script_info) is not None
+            )
         if script_path in self._removable_cache:
             return self._removable_cache[script_path]
 
@@ -294,7 +306,8 @@ class ScriptCache:
         if script_info.get("is_appstream_entry"):
             return (
                 registered
-                or installed_packages.match(script_info) is not None
+                or installed_packages.installed_source(script_info, executed_names)
+                is not None
             )
 
         if script_info.get("is_repo_entry"):

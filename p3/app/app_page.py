@@ -95,7 +95,11 @@ class AppPageView(Gtk.Box):
         self.parent = parent
         self.translations = translations or {}
         self.on_install_callback = on_install_callback
-        self._selected_install_info = script_info
+        # A merged card can be installed from a source other than the default.
+        # Open on the installed source so removal/launch act on the real owner.
+        self._selected_install_info = (
+            installed_packages.installed_source(script_info) or script_info
+        )
         self._source_button = None
         self._install_button = None
         self._open_button = None

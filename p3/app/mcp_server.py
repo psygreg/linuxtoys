@@ -1981,7 +1981,11 @@ def _installed_state(entry):
         transactions.extend(registry_data.get(identity) or [])
     observed = None
     try:
-        observed = installed_packages.match(entry)
+        matched = installed_packages.match_any(entry)
+        if matched is not None:
+            observed = {
+                key: value for key, value in matched.items() if key != "info"
+            }
     except Exception:
         observed = None
     return {

@@ -2144,6 +2144,13 @@ class AppWindow(
 
     def _on_item_remove_clicked(self, button, info):
         """Use observed package state when AppStream was installed outside LinuxToys."""
+        original_record_id = info.get("_appstream_queue_record_id")
+        # Merged cards default to one source even when the user installed the
+        # app from another. Resolve the real owner before choosing a removal path.
+        if info.get("is_appstream_entry"):
+            installed_info = installed_packages.installed_source(info)
+            if installed_info is not None:
+                info = installed_info
         if info.get("appstream_source") == "nix-flake":
             # Imported flakes are declarative transactions like Nix packages,
             # but their reverse operation removes only the state record for
@@ -2164,7 +2171,7 @@ class AppWindow(
                     info.get("name"),
                 )
                 return
-            record_id = info.get("_appstream_queue_record_id")
+            record_id = original_record_id or info.get("_appstream_queue_record_id")
             self._appstream_runner.enqueue_removal(
                 info, remove_entry, record_id=record_id
             )
@@ -2188,7 +2195,7 @@ class AppWindow(
                     info, self.translations
                 )
             if remove_entry is not None:
-                record_id = info.get("_appstream_queue_record_id")
+                record_id = original_record_id or info.get("_appstream_queue_record_id")
                 self._appstream_runner.enqueue_removal(
                     info, remove_entry, record_id=record_id
                 )
@@ -2230,7 +2237,7 @@ class AppWindow(
             self, self.translations, removable_script_info=remove_info
         ):
             return
-        record_id = info.get("_appstream_queue_record_id")
+        record_id = original_record_id or info.get("_appstream_queue_record_id")
         self._appstream_runner.enqueue_removal(info, remove_info, record_id=record_id)
         app_page = self.main_stack.get_child_by_name("app_page")
         if app_page is not None and hasattr(app_page, "refresh_install_state"):
@@ -2241,6 +2248,9 @@ class AppWindow(
         """Resolve an installed AppStream entry to a desktop application."""
         if not info or not info.get("is_appstream_entry"):
             return None
+        installed_info = installed_packages.installed_source(info)
+        if installed_info is not None:
+            info = installed_info
         desktop_id = str(info.get("appstream_launchable", "") or "").strip()
         if not desktop_id:
             return None

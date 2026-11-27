@@ -1,4 +1,9 @@
-"""RAM + disk cache of user-installed packages for AppStream and Nix views."""
+"""RAM + disk cache of user-installed packages for AppStream and Nix views.
+
+The snapshot is also the authority for merged AppStream cards: an application
+counts as installed when any of its selectable sources is observed, and the
+matching source entry is exposed so the UI can select and remove it.
+"""
 
 from __future__ import annotations
 
@@ -385,6 +390,104 @@ def match(info):
             installed = [str(pkg) for pkg in packages if str(pkg) in _STATE["native"]]
             if installed:
                 return {"source": "native", "packages": installed, "manager": _STATE["manager"]}
+    return None
+
+
+def source_entries(info):
+    """Yield the entry itself and every selectable source option once each.
+
+    A merged AppStream card carries the default source in the top-level entry
+    and the other installable sources in ``source_options``. Installation state
+    belongs to the application, not only to the default source, so callers that
+    classify or act on one card should inspect every source.
+    """
+    if not isinstance(info, dict):
+        return
+    seen = set()
+    for candidate in [info, *(info.get("source_options") or ())]:
+        if not isinstance(candidate, dict):
+            continue
+        key = (
+            str(candidate.get("appstream_source") or "").strip(),
+            str(
+                candidate.get("id") or candidate.get("appstream_id") or ""
+            ).strip().casefold(),
+            str(candidate.get("package-name") or ""),
+            str(candidate.get("flatpak_scope") or "").strip(),
+            str(candidate.get("flatpak_installation") or "").strip(),
+            str(candidate.get("flatpak_remote") or "").strip(),
+            str(candidate.get("nix_scope") or "").strip(),
+        )
+        if key in seen:
+            continue
+        seen.add(key)
+        yield candidate
+
+
+def match_any(info):
+    """Return the first observed installation across all of an entry's sources.
+
+    The result carries the matched ``info`` source entry under ``"info"`` so
+    callers can select the source that actually owns the installation. When a
+    Flatpak app is present in both scopes, the source option matching the
+    observed scope wins.
+    """
+    first = None
+    for candidate in source_entries(info):
+        observed = match(candidate)
+        if observed is None:
+            continue
+        result = dict(observed)
+        result["info"] = candidate
+        if (
+            observed.get("source") == "flatpak"
+            and str(candidate.get("flatpak_scope") or "").strip()
+            and observed.get("scope")
+            == str(candidate.get("flatpak_scope") or "").strip()
+        ):
+            return result
+        if first is None:
+            first = result
+    return first
+
+
+def installed_source(info, executed_names=None):
+    """Return the source entry that currently owns this application's install.
+
+    Observed package state wins. Registry-only transactions (for example an
+    AppImage or a stale package snapshot) fall back to the executed identity of
+    each selectable source. Returns None when no source is installed.
+    """
+    observed = match_any(info)
+    if observed is not None:
+        return observed.get("info")
+    if not isinstance(info, dict):
+        return None
+    if executed_names is None:
+        try:
+            from .revert_helper import _get_executed_script_names
+
+            executed_names = _get_executed_script_names()
+        except Exception:
+            return None
+    if not executed_names:
+        return None
+    candidates = list(source_entries(info))
+    # Prefer a stable source identity over the display-name fallback so a
+    # registry transaction for a non-default source cannot make the default
+    # source look installed.
+    for candidate in candidates:
+        identities = {
+            str(candidate.get("registry_name") or "").strip(),
+            str(candidate.get("appstream_id") or "").strip(),
+        }
+        identities.discard("")
+        if any(identity in executed_names for identity in identities):
+            return candidate
+    for candidate in candidates:
+        name = str(candidate.get("name") or "").strip()
+        if name and name in executed_names:
+            return candidate
     return None
 
 
