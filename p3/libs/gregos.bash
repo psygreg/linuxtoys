@@ -8,7 +8,8 @@
 # revert: no
 # registry: no
 
-flatpak remove -y io.github.flattool.Warehouse org.kde.okular org.kde.gwenview org.kde.kcalc org.kde.haruna
+# Drop Bazzite's preinstalled Flatpaks that gregOS does not use.
+flatpak remove -y io.github.flattool.Warehouse org.kde.okular org.kde.gwenview org.kde.kcalc org.kde.haruna com.vysp3r.ProtonPlus com.github.Matoking.protontricks io.github.DenysMb.Kontainer
 
 # fix flatpak display on niri
 flatpak override --user socket=wayland
