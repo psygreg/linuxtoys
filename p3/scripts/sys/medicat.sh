@@ -12,7 +12,7 @@ source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 
 askpass
-pkg_install --ostreecheck dos2unix
+pkg_install --ostreecheck dos2unix aria2 parted
 prep_tmp_noram
 
 REPO="mon5termatt/medicat_installer"
