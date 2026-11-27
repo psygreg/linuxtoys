@@ -320,16 +320,30 @@ fn component_identity_rs(item:&serde_json::Map<String,Value>)->(String,String){
 fn normalized_app_name_rs(name:&str)->String{
     name.chars().flat_map(char::to_lowercase).filter(|ch|ch.is_alphanumeric()).collect()
 }
+fn canonical_app_name_rs(name:&str)->String{
+    // Catalog sources often append a generic descriptor to the same app name:
+    // Flathub calls it "Chromium Web Browser" while Snap and Nixpkgs call it
+    // "Chromium". Strip only trailing descriptor words so distinct qualifiers
+    // (for example "Ungoogled Chromium" or "Chromium B.S.U.") remain separate.
+    let words:Vec<&str>=name.split_whitespace().collect();
+    let mut end=words.len();
+    while end>1{
+        let word=normalized_app_name_rs(words[end-1]);
+        if matches!(word.as_str(),"web"|"browser"|"launcher"){end-=1}else{break}
+    }
+    let canonical=normalized_app_name_rs(&words[..end].join(" "));
+    if canonical.chars().count()>=4{canonical}else{normalized_app_name_rs(name)}
+}
 fn is_appimage_variant_suffix_rs(suffix:&str)->bool{
     !suffix.is_empty()&&(suffix.chars().all(|ch|ch.is_ascii_digit())||suffix.strip_prefix("asm").is_some_and(|digits|!digits.is_empty()&&digits.chars().all(|ch|ch.is_ascii_digit())))
 }
 fn appimage_name_aliases_rs(name:&str)->Vec<String>{
     let lowered=name.trim().to_lowercase();
-    let exact=normalized_app_name_rs(&lowered);
+    let exact=canonical_app_name_rs(&lowered);
     if exact.is_empty(){return Vec::new()}
     let mut aliases=vec![exact.clone()];
     let mut push_base=|base:&str|{
-        let base=normalized_app_name_rs(base);
+        let base=canonical_app_name_rs(base);
         if base.chars().count()>=4&&!aliases.contains(&base){aliases.push(base);}
     };
 
@@ -360,7 +374,7 @@ fn appimage_standard_name_group_rs(name:&str,standard_names:&std::collections::H
     None
 }
 fn standard_name_group_rs(name:&str,standard_names:&std::collections::HashMap<String,std::collections::HashSet<String>>)->Option<String>{
-    let normalized=normalized_app_name_rs(name);
+    let normalized=canonical_app_name_rs(name);
     if normalized.is_empty(){return None}
     let groups=standard_names.get(&normalized)?;
     if groups.len()==1{groups.iter().next().cloned()}else{None}
@@ -376,7 +390,7 @@ fn standard_name_aliases_rs(item:&serde_json::Map<String,Value>)->Vec<String>{
     let Some(id)=item.get("id").and_then(Value::as_str).map(str::trim).filter(|value|!value.is_empty()) else{return Vec::new()};
     let id=id.strip_suffix(".desktop").unwrap_or(id);
     let segment=id.rsplit('.').next().unwrap_or(id);
-    let normalized=normalized_app_name_rs(segment);
+    let normalized=canonical_app_name_rs(segment);
     if normalized.chars().count()<4{return Vec::new()}
     if matches!(normalized.as_str(),"desktop"|"app"|"application"|"client"|"launcher"|"manager"|"server"){return Vec::new()}
     vec![normalized]
@@ -423,9 +437,9 @@ fn group_category_rs(group:&[serde_json::Map<String,Value>],paths:&[String],cfg:
 fn gregos_category_prefers_nix_rs(category:&str)->bool{
     if category.split('/').any(|part|matches!(part,"game"|"games")){return true}
     // The GregOS package-manager preference covers the Developers root
-    // category plus the IDEs and Text Editors leaves. Deeper development
-    // subcategories (tools, AI agents) keep the normal source policy.
-    matches!(category.rsplit('/').next(),Some("devs"|"ides"|"txt"))
+    // category plus the IDEs, Text Editors and Browsers leaves. Deeper
+    // development subcategories (tools, AI agents) keep the normal policy.
+    matches!(category.rsplit('/').next(),Some("devs"|"ides"|"txt"|"browsers"))
 }
 fn preference_value_rs(v:&Value,host_os:&std::collections::HashSet<String>)->Option<String>{
     if let Some(s)=v.as_str(){return matches!(s,"native"|"flatpak"|"appimage").then(||s.to_string())}
@@ -459,8 +473,8 @@ fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths
             let source=item.get("source").and_then(Value::as_str).unwrap_or("native");
             if matches!(source,"appimage"|"homebrew"|"nix"){continue}
             let name=item.get("name").and_then(Value::as_str).unwrap_or("").trim();
-            let normalized=normalized_app_name_rs(name);
-            let group_name=name.to_lowercase();
+            let normalized=canonical_app_name_rs(name);
+            let group_name=if normalized.is_empty(){name.to_lowercase()}else{normalized.clone()};
             if !normalized.is_empty()&&!group_name.is_empty(){standard_names.entry(normalized).or_default().insert(group_name.clone());}
             if !group_name.is_empty(){
                 for alias in standard_name_aliases_rs(item){standard_names.entry(alias).or_default().insert(group_name.clone());}
@@ -471,6 +485,7 @@ fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths
         if m.get("source").and_then(Value::as_str)==Some("homebrew"){pass.push(m);continue}
         let source=m.get("source").and_then(Value::as_str).unwrap_or("native");
         let(id,name)=component_identity_rs(&m);
+        let canonical_name=canonical_app_name_rs(&name);
         let key=if by_name_pass{
             if name.is_empty(){None}
             else if source=="appimage"{
@@ -496,9 +511,13 @@ fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths
                     let matched=standard_name_group_rs(canonical,&standard_names)
                         .or_else(||standard_name_group_rs(attr,&standard_names))
                         .or_else(||standard_name_group_rs(pname,&standard_names));
-                    Some(matched.map(|group|format!("name:{group}")).unwrap_or_else(||format!("name:{name}")))
+                    let fallback=if canonical_name.is_empty(){name.clone()}else{canonical_name.clone()};
+                    Some(matched.map(|group|format!("name:{group}")).unwrap_or_else(||format!("name:{fallback}")))
                 }
-            }else{Some(format!("name:{name}"))}
+            }else{
+                let canonical=if canonical_name.is_empty(){name.clone()}else{canonical_name.clone()};
+                Some(format!("name:{canonical}"))
+            }
         }else if !id.is_empty(){Some(format!("id:{id}"))}
         else if !name.is_empty(){Some(format!("name:{name}"))}
         else{None};
@@ -2203,13 +2222,15 @@ mod appimage_source_tests {
             "/scripts/devs/ides".into(),
             "/scripts/devs/tools".into(),
             "/scripts/devs/txt".into(),
+            "/scripts/network".into(),
+            "/scripts/network/browsers".into(),
             "/scripts/utils".into(),
         ];
         let cfg = serde_json::json!({
-            "main": {"Game": ("game",), "Development": ("devs",), "Utility": ("utils",)},
-            "main_priority": ["Game", "Development", "Utility"],
-            "additional": {"IDE": ("ides",), "Tool": ("tools",), "TextEditor": ("txt",)},
-            "standalone_priority": ["IDE", "Tool", "TextEditor"]
+            "main": {"Game": ("game",), "Development": ("devs",), "Network": ("network",), "Utility": ("utils",)},
+            "main_priority": ["Game", "Development", "Network", "Utility"],
+            "additional": {"IDE": ("ides",), "Tool": ("tools",), "TextEditor": ("txt",), "WebBrowser": ("browsers",)},
+            "standalone_priority": ["IDE", "Tool", "TextEditor", "WebBrowser"]
         });
         let locks: std::collections::HashSet<String> = Default::default();
         let host_os: std::collections::HashSet<String> = Default::default();
@@ -2436,6 +2457,91 @@ mod appimage_source_tests {
             options.iter().filter_map(Value::as_object).map(source_option_key_rs).collect();
         assert_eq!(keys.len(), 1, "{keys:?}");
         assert!(keys.contains("nix:home-manager"));
+    }
+
+    #[test]
+    fn catalog_sources_merge_generic_name_variants_without_crossing_variants() {
+        let entries = vec![
+            serde_json::json!({
+                "id":"org.chromium.Chromium", "name":"Chromium Web Browser",
+                "summary":"The web browser from Chromium project",
+                "packages":["org.chromium.Chromium"], "categories":["Network","WebBrowser"],
+                "source":"flatpak", "origin":"flathub", "flatpak_remote":"flathub",
+                "flatpak_scope":"system", "flatpak_installation":"default", "verified":false
+            }).as_object().unwrap().clone(),
+            serde_json::json!({
+                "id":"chromium-browser.desktop", "name":"chromium",
+                "summary":"Chromium web browser", "packages":["chromium"],
+                "categories":["Office"], "source":"snap", "origin":"snapcraft",
+                "snap_name":"chromium", "snap_common_ids":["chromium-browser.desktop"]
+            }).as_object().unwrap().clone(),
+            nix_named_component("Chromium", "chromium", "system"),
+            serde_json::json!({
+                "id":"io.github.ungoogled_software.ungoogled_chromium",
+                "name":"Ungoogled Chromium", "summary":"Chromium without Google",
+                "packages":["io.github.ungoogled_software.ungoogled_chromium"],
+                "categories":["Network","WebBrowser"], "source":"flatpak",
+                "origin":"flathub", "flatpak_remote":"flathub",
+                "flatpak_scope":"system", "flatpak_installation":"default", "verified":false
+            }).as_object().unwrap().clone(),
+            nix_named_component("Ungoogled Chromium", "ungoogled-chromium", "system"),
+        ];
+        let selected = collapse_for_gregos(
+            entries,
+            serde_json::json!({"default": "flatpak", "apps": {}}),
+            false,
+        );
+        assert_eq!(selected.len(), 2, "{selected:?}");
+        let chromium = selected.iter()
+            .find(|entry| entry.get("id").and_then(Value::as_str) == Some("org.chromium.Chromium"))
+            .expect("Chromium group");
+        let chromium_sources: std::collections::HashSet<String> =
+            std::iter::once(source_option_key_rs(chromium))
+                .chain(
+                    chromium.get("_source_alternatives")
+                        .and_then(Value::as_array)
+                        .into_iter()
+                        .flatten()
+                        .filter_map(Value::as_object)
+                        .map(source_option_key_rs),
+                )
+                .collect();
+        assert_eq!(chromium_sources.len(), 3, "{chromium_sources:?}");
+        assert!(chromium_sources.contains("flatpak:system:default:flathub"));
+        assert!(chromium_sources.contains("snap"));
+        assert!(chromium_sources.contains("nix:system"));
+        let ungoogled = selected.iter()
+            .find(|entry| entry.get("name").and_then(Value::as_str) == Some("Ungoogled Chromium"))
+            .expect("Ungoogled Chromium group");
+        assert_ne!(
+            ungoogled.get("id").and_then(Value::as_str),
+            chromium.get("id").and_then(Value::as_str)
+        );
+    }
+
+    #[test]
+    fn gregos_prefers_nix_for_browsers() {
+        let entries = vec![
+            serde_json::json!({
+                "id":"org.chromium.Chromium", "name":"Chromium Web Browser",
+                "summary":"The web browser from Chromium project",
+                "packages":["org.chromium.Chromium"], "categories":["Network","WebBrowser"],
+                "source":"flatpak", "origin":"flathub", "flatpak_remote":"flathub",
+                "flatpak_scope":"system", "flatpak_installation":"default", "verified":true
+            }).as_object().unwrap().clone(),
+            nix_named_component("Chromium", "chromium", "home-manager"),
+        ];
+        let selected = collapse_for_gregos(
+            entries,
+            serde_json::json!({"default": "flatpak", "apps": {}}),
+            true,
+        );
+        assert_eq!(selected.len(), 1, "{selected:?}");
+        assert_eq!(selected[0].get("source").and_then(Value::as_str), Some("nix"));
+        assert_eq!(
+            selected[0].get("nix_category").and_then(Value::as_str),
+            Some("scripts/network/browsers")
+        );
     }
 
     #[test]

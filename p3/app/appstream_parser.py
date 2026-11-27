@@ -21,7 +21,7 @@ _NIX_RUNTIME_CACHE = {}  # (path, scopes, stat) -> Rust NixCatalog
 # Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
 # catalog.json remains authoritative; this file is disposable and regenerated
 # whenever any input represented by the runtime cache key changes.
-RUNTIME_CACHE_SCHEMA = 36
+RUNTIME_CACHE_SCHEMA = 37
 RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries-rs.bin"
 
 # Most recent inputs used to build the live runtime catalog. This is process-local
