@@ -36,12 +36,12 @@ def _enrich_nix_entries(entries):
     Nix-selected cards can live in any LinuxToys category (and in search and
     Featured results), not only in the standalone Nix category. Applying the
     cached index here keeps their icons, names and summaries consistent with
-    the app pages and the Nix catalog.
+    the app pages and the Nix catalog, and normalizes their Action Registry
+    identity even when the API index has no record for the attribute.
     """
     return [
         nix_metadata.enrich_index(info)
         if str(info.get("appstream_source") or "").strip() == "nix"
-        and nix_metadata.has_api_metadata(info)
         else info
         for info in entries
     ]

@@ -104,6 +104,19 @@ def nix_attr(info):
     return ""
 
 
+def _set_nix_registry_identity(info):
+    """Normalize a Nix source entry to the Action Registry identity.
+
+    Nix transactions are stored as ``Nix: <attr>`` (see
+    ``nix_registry.registry_name``), while catalog cards can carry
+    ``nix:<attr>`` or a merged AppStream component id. The TUI and the
+    removal builder match on the registry identity, so normalize it here.
+    """
+    attr = nix_attr(info)
+    if attr:
+        info["registry_name"] = f"Nix: {attr}"
+
+
 def entry_has_nix(info):
     """True when the entry is Nix itself or carries a Nix source option."""
     if not isinstance(info, dict):
@@ -886,14 +899,11 @@ def _enrich_entry(info, *, include_detail, language=None):
                 detail = payload
         if not record and not detail and not has_nix_options:
             result = dict(info)
-            attr = nix_attr(result)
-            if attr and not result.get("registry_name"):
-                result["registry_name"] = f"Nix: {attr}"
+            _set_nix_registry_identity(result)
             return result
         result = dict(info)
+        _set_nix_registry_identity(result)
         attr = nix_attr(result)
-        if attr and not result.get("registry_name"):
-            result["registry_name"] = f"Nix: {attr}"
         _apply_index(result, record)
         if detail is not None:
             _apply_detail(result, detail, language)
@@ -912,10 +922,9 @@ def _enrich_entry(info, *, include_detail, language=None):
                     include_detail=include_detail,
                     language=language,
                 )
-                attr = nix_attr(option)
-                if attr and not option.get("registry_name"):
+                if nix_attr(option):
                     option = dict(option)
-                    option["registry_name"] = f"Nix: {attr}"
+                    _set_nix_registry_identity(option)
             enriched_options.append(option)
         result["source_options"] = enriched_options
     return result
