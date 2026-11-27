@@ -278,7 +278,7 @@ fn adapt_appstream_maps_values(components:Vec<serde_json::Map<String,Value>>, ca
         let Some(category)=resolve_component_category_rs(&m,&category_paths,&cfg) else{continue};let packages:Vec<String>=m.get("packages").and_then(Value::as_array).into_iter().flatten().filter_map(Value::as_str).map(str::to_string).collect();if packages.is_empty(){continue}
         let (name,_)=localized(&m,"localized_names",lang,m.get("name").cloned().unwrap_or(Value::String(String::new())));let(summary,_)=localized(&m,"localized_summaries",lang,m.get("summary").cloned().unwrap_or(Value::String(String::new())));let(dev,_)=localized(&m,"localized_developers",lang,m.get("developer").cloned().unwrap_or(Value::String(String::new())));let(blocks,bloc)=localized(&m,"localized_descriptions",lang,m.get("description_blocks").cloned().unwrap_or_else(||Value::Array(vec![])));let shots=clean_screens(m.get("screenshots"));let source=m.get("source").and_then(Value::as_str).unwrap_or("native");let flat=source=="flatpak";let snap=source=="snap";let origin=m.get("origin").and_then(Value::as_str).unwrap_or("");let scope=m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("");let long=flatten_blocks(&blocks);
         let mut e=serde_json::Map::new();macro_rules! s { ($k:expr, $v:expr) => {{ let _ = e.insert($k.into(), Value::String($v.to_string())); }} }
-        s!("id",id);e.insert("name".into(),name);s!("appstream_canonical_name",m.get("name").and_then(Value::as_str).unwrap_or(id));e.insert("description".into(),summary);s!("description_tag","");e.insert("description_localized".into(),Value::Bool(has_localized(&m,"localized_summaries",lang)));s!("long_description",long);e.insert("long_description_blocks".into(),blocks);s!("long_description_locale",bloc);s!("long_description_tag","");s!("long_description_format",if snap{"markdown"}else{"appstream"});e.insert("screenshots".into(),shots.clone());
+        s!("id",id);e.insert("name".into(),name);s!("appstream_canonical_name",m.get("name").and_then(Value::as_str).unwrap_or(id));e.insert("description".into(),summary);s!("description_tag","");e.insert("description_localized".into(),Value::Bool(has_localized(&m,"localized_summaries",lang)));s!("long_description",long);e.insert("long_description_blocks".into(),blocks);s!("long_description_locale",bloc);s!("long_description_tag","");s!("long_description_format",m.get("metadata_description_format").and_then(Value::as_str).filter(|value|!value.is_empty()).unwrap_or(if snap{"markdown"}else{"appstream"}));e.insert("screenshots".into(),shots.clone());
         for(k,src)in [("homepage_url","homepage"),("donate","donation"),("donate_url","donation"),("license","license")]{s!(k,m.get(src).and_then(Value::as_str).unwrap_or(""));}e.insert("developer".into(),dev);let icon_value=if brew{"brewpkg.webp"}else if nix{let candidate=m.get("icon").and_then(Value::as_str).unwrap_or("");if source_icon_rank_rs(candidate)>1{candidate}else{"nix.svg"}}else{m.get("icon").and_then(Value::as_str).unwrap_or("application-x-executable")};s!("icon",icon_value);s!("category",category);s!("type",if flat{"flathub"}else if snap{"snap"}else if brew{"homebrew"}else if nix{"nix"}else if source=="appimage"{"appimage"}else{"native"});e.insert("package-name".into(),if flat||snap||brew||nix||source=="appimage"{Value::String(packages.first().cloned().unwrap_or_else(||id.into()))}else{Value::Array(packages.iter().cloned().map(Value::String).collect())});s!("repo",if origin.is_empty(){"appstream"}else{origin});for(k,v)in [("revert","yes"),("reboot","no")]{s!(k,v)}for k in ["is_script","is_repo_entry","is_appstream_entry"]{e.insert(k.into(),Value::Bool(true));}e.insert("is_subcategory".into(),Value::Bool(false));s!("appstream_id",id);s!("appstream_launchable",m.get("launchable").and_then(Value::as_str).unwrap_or(""));s!("appstream_source",source);s!("appstream_origin",origin);for k in ["flatpak_remote","flatpak_scope","flatpak_installation","flatpak_ref","flatpak_arch","flatpak_branch"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}for k in ["snap_name","snap_id","snap_channel","snap_confinement"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}e.insert("overrides".into(),if flat&&scope=="system"{serde_json::json!({"skip-user":true})}else{serde_json::json!({})});for k in ["review_rating","review_count"]{e.insert(k.into(),m.get(k).cloned().unwrap_or(Value::Null));}s!("appstream_version",m.get("version").and_then(Value::as_str).unwrap_or(""));s!("repo_app_id",id);e.insert("is_new".into(),Value::Bool(false));e.insert("is_verified".into(),Value::Bool(flat&&m.get("verified").and_then(Value::as_bool).unwrap_or(false)));s!("native_distro_badge",if flat||snap||brew||nix||source=="appimage"{""}else{native_badge});s!("appstream_badge",if flat{if origin=="flatpark"{"distros/flatpark.webp"}else{"distros/flathub.webp"}}else if snap{"snapbadge.webp"}else if brew{"brew.png"}else if nix{"nix.svg"}else if source=="appimage"{"appimages.webp"}else{""});e.insert("has_app_page".into(),Value::Bool(brew||nix||source=="appimage"||!long.is_empty()||shots.as_array().is_some_and(|a|!a.is_empty())));s!("path",format!("appstream://{source}/{id}"));
         if source=="appimage" {
             e.insert("appimage_links".into(),m.get("appimage_links").cloned().unwrap_or(Value::Array(vec![])));
@@ -379,6 +379,259 @@ fn standard_name_group_rs(name:&str,standard_names:&std::collections::HashMap<St
     let groups=standard_names.get(&normalized)?;
     if groups.len()==1{groups.iter().next().cloned()}else{None}
 }
+// Raw nixpkgs attributes carry no API identity. They may still join an
+// existing catalog entry when the attribute/pname names the same application,
+// the provider metadata proves the same vendor identity, and the package
+// description describes the same product. Any one signal alone is too weak:
+// ``ark``/``boxes``/``element`` all collide with unrelated CLI packages.
+const METADATA_GENERIC_WORDS:&[&str]=&[
+    "about","after","against","allows","also","always","another","application","applications","authors",
+    "available","based","because","before","being","better","between","built","collection","command",
+    "community","company","complete","computer","computers","contributors","corporation","create","cross",
+    "desktop","developers","development","different","directly","display","download","editing","editor",
+    "efficient","entire","environment","every","experience","feature","features","files","first","focus",
+    "focused","foundation","free","from","fully","function","functions","graphical","great","gmbh","have",
+    "includes","including","information","interface","language","laptop","latest","lightweight","linux",
+    "little","maintainers","makes","management","manager","many","modern","more","most","multiple","network",
+    "official","online","open","operating","other","package","performance","platform","powerful","previously",
+    "professional","program","programs","project","provide","provides","providing","quality","quick","really",
+    "release","released","releases","remember","running","runtime","screen","service","services","several",
+    "simple","simplest","small","software","solution","source","special","stable","standard","studio","support",
+    "supported","supports","system","systems","their","there","these","things","through","tools","using","users",
+    "various","version","versions","very","video","well","which","while","windows","without","working","written","your","yours",
+];
+const GROUP_IDENTITY_GENERIC_WORDS:&[&str]=&[
+    "the","and","team","project","software","community","foundation","contributors","developers",
+    "authors","maintainers","llc","ltd","inc","gmbh","corporation","company",
+];
+fn add_group_identity_token_rs(tokens:&mut std::collections::HashMap<String,std::collections::HashSet<String>>,group:&str,value:&str){
+    let token=normalized_app_name_rs(value);
+    if token.chars().count()<3{return}
+    if GROUP_IDENTITY_GENERIC_WORDS.contains(&token.as_str()){return}
+    tokens.entry(group.to_string()).or_default().insert(token);
+}
+fn add_group_identity_tokens_rs(tokens:&mut std::collections::HashMap<String,std::collections::HashSet<String>>,group:&str,item:&serde_json::Map<String,Value>){
+    // The reverse-DNS vendor segment and the developer name describe who makes
+    // the application. Snap names are deliberately excluded: store names are
+    // shared by CLI tools and applications alike (``ark``, ``bar``).
+    if let Some(developer)=item.get("developer").and_then(Value::as_str){
+        for word in developer.split(|character:char|!character.is_alphanumeric()){add_group_identity_token_rs(tokens,group,word);}
+    }
+    let Some(id)=item.get("id").and_then(Value::as_str).map(str::trim).filter(|value|!value.is_empty()) else{return};
+    let id=id.strip_suffix(".desktop").unwrap_or(id);
+    let parts:Vec<&str>=id.split('.').filter(|part|!part.is_empty()).collect();
+    if parts.len()>=2{add_group_identity_token_rs(tokens,group,parts[parts.len()-2]);}
+}
+fn raw_nix_identity_matches_rs(alias:&str,group:&str,tokens:&std::collections::HashMap<String,std::collections::HashSet<String>>)->bool{
+    let alias=normalized_app_name_rs(alias);
+    if alias.is_empty(){return false}
+    let Some(values)=tokens.get(group) else{return false};
+    values.iter().any(|token|token==&alias||(token.chars().count()>=4&&alias.starts_with(token)&&alias.len()>token.len()))
+}
+fn collect_metadata_words_rs(text:&str,words:&mut std::collections::HashSet<String>){
+    for word in text.split(|character:char|!character.is_alphanumeric()){
+        let word=word.to_lowercase();
+        if word.chars().count()<4||METADATA_GENERIC_WORDS.contains(&word.as_str()){continue}
+        words.insert(word);
+    }
+}
+fn component_summary_words_rs(item:&serde_json::Map<String,Value>)->std::collections::HashSet<String>{
+    let mut words=std::collections::HashSet::new();
+    if let Some(summary)=item.get("summary").and_then(Value::as_str){collect_metadata_words_rs(summary,&mut words);}
+    words
+}
+fn component_description_words_rs(item:&serde_json::Map<String,Value>)->std::collections::HashSet<String>{
+    let mut words=std::collections::HashSet::new();
+    let empty=Value::Null;
+    collect_metadata_words_rs(&flatten_blocks(item.get("description_blocks").unwrap_or(&empty)),&mut words);
+    words
+}
+fn raw_nix_description_matches_rs(
+    item:&serde_json::Map<String,Value>,
+    group:&str,
+    summary_words:Option<&std::collections::HashSet<String>>,
+    description_words:Option<&std::collections::HashSet<String>>,
+)->bool{
+    // The application's own name appears in both descriptions but proves
+    // nothing about the product (Todoist CLI vs the Todoist desktop app).
+    let summary_shared=component_summary_words_rs(item).iter().filter(|word|word.as_str()!=group&&summary_words.map(|words|words.contains(*word)).unwrap_or(false)).count();
+    if summary_shared>0{return true}
+    // Long descriptions are paraphrase-prone; require two shared content words
+    // so related-but-different projects (Solarus engine vs its launcher) or a
+    // single generic category word cannot attach the wrong package.
+    component_description_words_rs(item).iter().filter(|word|word.as_str()!=group&&description_words.map(|words|words.contains(*word)).unwrap_or(false)).count()>=2
+}
+fn raw_nix_group_rs(
+    item:&serde_json::Map<String,Value>,
+    display_names:&std::collections::HashSet<String>,
+    exact_display_names:&std::collections::HashSet<String>,
+    standard_names:&std::collections::HashMap<String,std::collections::HashSet<String>>,
+    identity_tokens:&std::collections::HashMap<String,std::collections::HashSet<String>>,
+    summary_words:&std::collections::HashMap<String,std::collections::HashSet<String>>,
+    description_words:&std::collections::HashMap<String,std::collections::HashSet<String>>,
+)->Option<String>{
+    let attr=item.get("nix_name").and_then(Value::as_str).unwrap_or("");
+    let pname=item.get("nix_pname").and_then(Value::as_str).unwrap_or("");
+    for alias in [attr,pname]{
+        if alias.is_empty(){continue}
+        // Require an actual display-name match. Final-id-segment aliases are
+        // useful for API-identified packages, but on raw attributes they would
+        // attach unrelated CLI tools to apps such as Delta Chat. The exact form
+        // also keeps a package from matching a differently-qualified app
+        // ("Solarus" engine vs "Solarus Launcher").
+        if !display_names.contains(&canonical_app_name_rs(alias)){continue}
+        if !exact_display_names.contains(&normalized_app_name_rs(alias)){continue}
+        let Some(group)=standard_name_group_rs(alias,standard_names) else{continue};
+        if !raw_nix_identity_matches_rs(alias,&group,identity_tokens){continue}
+        if !raw_nix_description_matches_rs(item,&group,summary_words.get(&group),description_words.get(&group)){continue}
+        return Some(group);
+    }
+    None
+}
+fn metadata_string_field_rs<'a>(item:&'a serde_json::Map<String,Value>,key:&str)->&'a str{
+    item.get(key).and_then(Value::as_str).map(str::trim).unwrap_or("")
+}
+fn metadata_text_len_rs(value:&str)->usize{value.chars().count()}
+fn metadata_array_len_rs(item:&serde_json::Map<String,Value>,key:&str)->usize{
+    item.get(key).and_then(Value::as_array).map(Vec::len).unwrap_or(0)
+}
+fn metadata_description_rs(item:&serde_json::Map<String,Value>)->String{
+    let empty=Value::Null;
+    flatten_blocks(item.get("description_blocks").unwrap_or(&empty))
+}
+fn source_metadata_score_rs(item:&serde_json::Map<String,Value>)->u32{
+    let mut score=0u32;
+    let summary=metadata_string_field_rs(item,"summary");
+    if !summary.is_empty(){score+=2+(metadata_text_len_rs(summary)/24).min(8) as u32;}
+    let description=metadata_description_rs(item);
+    if !description.is_empty(){score+=6+(metadata_text_len_rs(&description)/120).min(10) as u32;}
+    score+=(metadata_array_len_rs(item,"screenshots").min(4)*2) as u32;
+    let developer=metadata_string_field_rs(item,"developer");
+    if !developer.is_empty()&&developer!="Nixpkgs"{score+=4;}
+    let homepage=metadata_string_field_rs(item,"homepage");
+    if !homepage.is_empty()&&!homepage.contains("search.nixos.org"){score+=3;}
+    if !metadata_string_field_rs(item,"license").is_empty(){score+=2;}
+    if metadata_array_len_rs(item,"categories")>0{score+=2;}
+    if !metadata_string_field_rs(item,"donation").is_empty(){score+=1;}
+    if item.get("review_rating").map(|value|!value.is_null()).unwrap_or(false){score+=1;}
+    score+=source_icon_rank_rs(metadata_string_field_rs(item,"icon")) as u32;
+    score
+}
+fn metadata_source_rank_rs(item:&serde_json::Map<String,Value>)->u8{
+    match item.get("source").and_then(Value::as_str).unwrap_or("native"){
+        "flatpak"=>5,"native"=>4,"snap"=>3,"appimage"=>2,"nix"=>1,"homebrew"=>0,_=>0
+    }
+}
+fn metadata_similarity_rs(left:&serde_json::Map<String,Value>,right:&serde_json::Map<String,Value>,group:&str)->(usize,usize){
+    let left_summary=component_summary_words_rs(left);
+    let right_summary=component_summary_words_rs(right);
+    let left_description=component_description_words_rs(left);
+    let right_description=component_description_words_rs(right);
+    let summary_shared=left_summary.iter().filter(|word|word.as_str()!=group&&right_summary.contains(*word)).count();
+    let description_shared=left_description.iter().filter(|word|word.as_str()!=group&&right_description.contains(*word)).count();
+    (summary_shared,description_shared)
+}
+fn same_source_entry_rs(left:&serde_json::Map<String,Value>,right:&serde_json::Map<String,Value>)->bool{
+    left.get("id").and_then(Value::as_str)==right.get("id").and_then(Value::as_str)
+        &&source_option_key_rs(left)==source_option_key_rs(right)
+}
+struct MetadataCandidate<'a>{
+    item:&'a serde_json::Map<String,Value>,
+    score:u32,
+    source:u8,
+    verified:bool,
+    summary_shared:usize,
+    description_shared:usize,
+}
+fn metadata_candidates_rs<'a>(selected:&serde_json::Map<String,Value>,group:&'a [serde_json::Map<String,Value>])->Vec<MetadataCandidate<'a>>{
+    let group_name=canonical_app_name_rs(metadata_string_field_rs(selected,"name"));
+    let mut candidates=Vec::new();
+    for item in group{
+        if same_source_entry_rs(selected,item){continue}
+        let (summary_shared,description_shared)=metadata_similarity_rs(selected,item,&group_name);
+        candidates.push(MetadataCandidate{
+            item,
+            score:source_metadata_score_rs(item),
+            source:metadata_source_rank_rs(item),
+            verified:item.get("verified").and_then(Value::as_bool).unwrap_or(false),
+            summary_shared,
+            description_shared,
+        });
+    }
+    let has_similar=candidates.iter().any(|candidate|candidate.summary_shared>0||candidate.description_shared>0);
+    if has_similar{
+        candidates.retain(|candidate|candidate.summary_shared>0||candidate.description_shared>0);
+    }else if !component_summary_words_rs(selected).is_empty()||!component_description_words_rs(selected).is_empty(){
+        // Same-name groups can contain unrelated applications (a "Vice" air
+        // traffic simulator and the VICE Commodore emulator). Never borrow
+        // metadata or icons from a provider whose description does not
+        // describe the selected source; a brand-name match alone is not
+        // evidence.
+        candidates.clear();
+    }
+    candidates
+}
+fn best_metadata_source_rs<'a>(selected:&serde_json::Map<String,Value>,group:&'a [serde_json::Map<String,Value>])->Option<&'a serde_json::Map<String,Value>>{
+    let mut best:Option<MetadataCandidate<'a>>=None;
+    for candidate in metadata_candidates_rs(selected,group){
+        let replace=match &best{None=>true,Some(current)=>(candidate.score,candidate.source,candidate.verified)>(current.score,current.source,current.verified)};
+        if replace{best=Some(candidate);}
+    }
+    best.map(|candidate|candidate.item)
+}
+fn best_metadata_icon_rs(selected:&serde_json::Map<String,Value>,group:&[serde_json::Map<String,Value>])->Option<String>{
+    let selected_rank=source_icon_rank_rs(metadata_string_field_rs(selected,"icon"));
+    let mut best:Option<(u8,u8,u32,&str)>=None;
+    for candidate in metadata_candidates_rs(selected,group){
+        let icon=metadata_string_field_rs(candidate.item,"icon");
+        let rank=source_icon_rank_rs(icon);
+        if rank==0{continue}
+        let replace=match best{None=>true,Some((best_rank,best_source,best_score,_))=>(rank,candidate.source,candidate.score)>(best_rank,best_source,best_score)};
+        if replace{best=Some((rank,candidate.source,candidate.score,icon));}
+    }
+    best.filter(|(rank,_,_,_)|*rank>selected_rank).map(|(_,_,_,icon)|icon.to_string())
+}
+fn copy_source_metadata_rs(selected:&mut serde_json::Map<String,Value>,donor:&serde_json::Map<String,Value>){
+    let from_nix=selected.get("source").and_then(Value::as_str)==Some("nix");
+    let copy_string=|selected:&mut serde_json::Map<String,Value>,field:&str,localized:&str|{
+        if let Some(value)=donor.get(field){selected.insert(field.to_string(),value.clone());if !localized.is_empty(){if let Some(value)=donor.get(localized){selected.insert(localized.to_string(),value.clone());}}}
+    };
+    let donor_name=metadata_string_field_rs(donor,"name");
+    if !donor_name.is_empty()&&(from_nix||metadata_string_field_rs(selected,"name").is_empty()){copy_string(selected,"name","localized_names");}
+    let donor_summary=metadata_string_field_rs(donor,"summary");
+    let selected_summary_len=metadata_text_len_rs(metadata_string_field_rs(selected,"summary"));
+    if !donor_summary.is_empty()&&(from_nix||selected_summary_len==0||metadata_text_len_rs(donor_summary)>selected_summary_len){copy_string(selected,"summary","localized_summaries");}
+    let donor_description=metadata_description_rs(donor);
+    let selected_description_len=metadata_text_len_rs(&metadata_description_rs(selected));
+    if !donor_description.is_empty()&&(from_nix||selected_description_len==0||metadata_text_len_rs(&donor_description)>selected_description_len){
+        copy_string(selected,"description_blocks","localized_descriptions");
+        // The blocks now come from the donor, so render them with the donor's
+        // format instead of the selected source's native description format.
+        let format=if donor.get("source").and_then(Value::as_str)==Some("snap"){"markdown"}else{"appstream"};
+        selected.insert("metadata_description_format".into(),Value::String(format.into()));
+    }
+    if metadata_array_len_rs(donor,"screenshots")>metadata_array_len_rs(selected,"screenshots"){copy_string(selected,"screenshots","");}
+    let donor_developer=metadata_string_field_rs(donor,"developer");
+    let selected_developer=metadata_string_field_rs(selected,"developer");
+    let donor_is_nixpkgs=donor_developer=="Nixpkgs";
+    if !donor_developer.is_empty()&&!(donor_is_nixpkgs&&!from_nix)&&(from_nix||selected_developer.is_empty()||selected_developer=="Nixpkgs"||metadata_text_len_rs(donor_developer)>metadata_text_len_rs(selected_developer)){copy_string(selected,"developer","localized_developers");}
+    let donor_homepage=metadata_string_field_rs(donor,"homepage");
+    let selected_homepage=metadata_string_field_rs(selected,"homepage");
+    if !donor_homepage.is_empty()&&(from_nix||selected_homepage.is_empty()||selected_homepage.contains("search.nixos.org")){copy_string(selected,"homepage","");}
+    if !metadata_string_field_rs(donor,"license").is_empty()&&(from_nix||metadata_string_field_rs(selected,"license").is_empty()){copy_string(selected,"license","");}
+    if metadata_array_len_rs(donor,"categories")>0&&(from_nix||metadata_array_len_rs(selected,"categories")==0){copy_string(selected,"categories","");}
+    if !metadata_string_field_rs(donor,"donation").is_empty()&&(from_nix||metadata_string_field_rs(selected,"donation").is_empty()){copy_string(selected,"donation","");}
+    if selected.get("review_rating").map(|value|value.is_null()).unwrap_or(true){
+        for field in ["review_rating","review_count"]{
+            if donor.get(field).map(|value|!value.is_null()).unwrap_or(false){copy_string(selected,field,"");}
+        }
+    }
+}
+fn source_metadata_enriched_rs(selected:&serde_json::Map<String,Value>,group:&[serde_json::Map<String,Value>])->serde_json::Map<String,Value>{
+    let mut enriched=selected.clone();
+    if let Some(donor)=best_metadata_source_rs(selected,group){copy_source_metadata_rs(&mut enriched,donor);}
+    enriched
+}
 fn standard_name_aliases_rs(item:&serde_json::Map<String,Value>)->Vec<String>{
     // AppStream display names are often shortened while the reverse-DNS id
     // keeps the full application name (the Flathub id
@@ -406,7 +659,7 @@ fn locked_system_flatpak_rs(group:&[serde_json::Map<String,Value>],locks:&std::c
 fn expand_source_group_rs(group:&[serde_json::Map<String,Value>])->Vec<serde_json::Map<String,Value>>{
     let mut out=Vec::new();let mut seen=std::collections::HashSet::new();
     for item in group { let mut candidates=vec![item.clone()]; if let Some(a)=item.get("_source_alternatives").and_then(Value::as_array){candidates.extend(a.iter().filter_map(Value::as_object).cloned());}
-        for mut c in candidates {let k=source_option_key_rs(&c);if !seen.insert(k){continue}c.remove("_source_alternatives");c.remove("_source_recommended");out.push(c)} }
+        for mut c in candidates {let id=c.get("id").and_then(Value::as_str).unwrap_or("").to_string();if !seen.insert((source_option_key_rs(&c),id)){continue}c.remove("_source_alternatives");c.remove("_source_recommended");out.push(c)} }
     out
 }
 fn source_icon_rank_rs(value:&str)->u8{
@@ -418,6 +671,14 @@ fn source_icon_rank_rs(value:&str)->u8{
     if value.ends_with(".png")||value.ends_with(".svg")||value.ends_with(".webp")||value.ends_with(".jxl"){return 2}
     0
 }
+fn source_key_collisions_rs(group:&[serde_json::Map<String,Value>])->std::collections::HashSet<String>{
+    let mut ids=std::collections::HashMap::<String,std::collections::HashSet<String>>::new();
+    for item in group{
+        let Some(id)=item.get("id").and_then(Value::as_str).map(str::trim).filter(|value|!value.is_empty()) else{continue};
+        ids.entry(source_option_key_rs(item)).or_default().insert(id.to_string());
+    }
+    ids.into_iter().filter(|(_,values)|values.len()>1).map(|(key,_)|key).collect()
+}
 fn with_source_options_rs(selected:&serde_json::Map<String,Value>,group:&[serde_json::Map<String,Value>])->serde_json::Map<String,Value>{
     let flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).collect();
     let native:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").collect();
@@ -428,9 +689,32 @@ fn with_source_options_rs(selected:&serde_json::Map<String,Value>,group:&[serde_
     // which valid sources the app page is allowed to expose. Keep every source in
     // the selector even when the currently selected Flatpak is verified.
     let mut candidates:Vec<&serde_json::Map<String,Value>>=native.into_iter().chain(flat).chain(snap).chain(appimage).chain(nix).collect();
+    // A by-name group can contain two unrelated applications that share a
+    // display name and a source key (two "Vice" Flatpaks, for example). Keep
+    // only the selected identity and providers whose metadata describes it, so
+    // the source selector can never install the wrong same-name app.
+    if !source_key_collisions_rs(group).is_empty(){
+        let mut allowed=std::collections::HashSet::<String>::new();
+        if let Some(id)=selected.get("id").and_then(Value::as_str).map(str::trim).filter(|value|!value.is_empty()){allowed.insert(id.to_string());}
+        for candidate in metadata_candidates_rs(selected,group){
+            if let Some(id)=candidate.item.get("id").and_then(Value::as_str).map(str::trim).filter(|value|!value.is_empty()){allowed.insert(id.to_string());}
+        }
+        candidates.retain(|item|item.get("id").and_then(Value::as_str).map(|id|allowed.contains(id)).unwrap_or(false));
+    }
     let mut seen=std::collections::HashSet::new();candidates.retain(|m|seen.insert(source_option_key_rs(m)));if candidates.len()<2{return selected.clone()}
-    let sk=source_option_key_rs(selected);let selected_icon=selected.get("icon").and_then(Value::as_str).unwrap_or("");let mut best_icon=(source_icon_rank_rs(selected_icon),selected_icon.to_string());for item in &candidates{let Some(icon)=item.get("icon").and_then(Value::as_str) else{continue};let rank=source_icon_rank_rs(icon);if rank>best_icon.0{best_icon=(rank,icon.to_string());}}
-    let alts:Vec<Value>=candidates.into_iter().filter(|m|source_option_key_rs(m)!=sk).map(|m|Value::Object(m.clone())).collect();let mut r=selected.clone();if !alts.is_empty(){r.insert("_source_alternatives".into(),Value::Array(alts));r.insert("_source_recommended".into(),Value::String(sk));if best_icon.0>source_icon_rank_rs(selected_icon){r.insert("icon".into(),Value::String(best_icon.1));}}r
+    let sk=source_option_key_rs(selected);
+    // Descriptive metadata is application-level, not source-level. Every
+    // selectable source borrows it (and a usable icon) from the richest
+    // similar provider in the group, while install identity (id, packages,
+    // source, version) stays with the chosen source.
+    let alts:Vec<Value>=candidates.into_iter().filter(|m|source_option_key_rs(m)!=sk).map(|m|{
+        let mut enriched=source_metadata_enriched_rs(m,group);
+        if let Some(icon)=best_metadata_icon_rs(m,group){enriched.insert("icon".into(),Value::String(icon));}
+        Value::Object(enriched)
+    }).collect();
+    let mut r=source_metadata_enriched_rs(selected,group);
+    if let Some(icon)=best_metadata_icon_rs(selected,group){r.insert("icon".into(),Value::String(icon));}
+    if !alts.is_empty(){r.insert("_source_alternatives".into(),Value::Array(alts));r.insert("_source_recommended".into(),Value::String(sk));}r
 }
 fn group_prefers_dev_native_rs(group:&[serde_json::Map<String,Value>],paths:&[String],cfg:&Value,steamos:bool,suse:bool)->bool{
     !steamos&&group.iter().any(|m|resolve_component_category_rs(m,paths,cfg).is_some_and(|c|match c.rsplit('/').next(){
@@ -478,15 +762,37 @@ fn preference_rs(item:&serde_json::Map<String,Value>,prefs:&Value,host_os:&std::
 fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths:&[String],cfg:&Value,prefs:&Value,locks:&std::collections::HashSet<String>,host_os:&std::collections::HashSet<String>,prefer_native_host:bool,prefer_nix:bool,prefer_nix_gregos:bool,steamos:bool,suse:bool,by_name_pass:bool)->Vec<serde_json::Map<String,Value>>{
     let mut groups:std::collections::BTreeMap<String,Vec<serde_json::Map<String,Value>>>=std::collections::BTreeMap::new();let mut pass=Vec::new();
     let mut standard_names=std::collections::HashMap::<String,std::collections::HashSet<String>>::new();
+    let mut display_names=std::collections::HashSet::<String>::new();
+    let mut exact_display_names=std::collections::HashSet::<String>::new();
+    let mut identity_tokens=std::collections::HashMap::<String,std::collections::HashSet<String>>::new();
+    let mut summary_words=std::collections::HashMap::<String,std::collections::HashSet<String>>::new();
+    let mut description_words=std::collections::HashMap::<String,std::collections::HashSet<String>>::new();
     if by_name_pass{
+        let mut raw_nix_names=std::collections::HashSet::<String>::new();
+        for item in &components{
+            if item.get("source").and_then(Value::as_str)!=Some("nix"){continue}
+            if item.get("nix_api_name").and_then(Value::as_str).map(str::trim).filter(|value|!value.is_empty()).is_some(){continue}
+            for alias in [item.get("nix_name").and_then(Value::as_str).unwrap_or(""),item.get("nix_pname").and_then(Value::as_str).unwrap_or("")]{
+                let normalized=canonical_app_name_rs(alias);
+                if !normalized.is_empty(){raw_nix_names.insert(normalized);}
+            }
+        }
         for item in &components{
             let source=item.get("source").and_then(Value::as_str).unwrap_or("native");
             if matches!(source,"appimage"|"homebrew"|"nix"){continue}
             let name=item.get("name").and_then(Value::as_str).unwrap_or("").trim();
             let normalized=canonical_app_name_rs(name);
             let group_name=if normalized.is_empty(){name.to_lowercase()}else{normalized.clone()};
-            if !normalized.is_empty()&&!group_name.is_empty(){standard_names.entry(normalized).or_default().insert(group_name.clone());}
+            if !normalized.is_empty()&&!group_name.is_empty(){standard_names.entry(normalized.clone()).or_default().insert(group_name.clone());}
             if !group_name.is_empty(){
+                display_names.insert(normalized.clone());
+                let exact_name=normalized_app_name_rs(name);
+                if !exact_name.is_empty(){exact_display_names.insert(exact_name);}
+                add_group_identity_tokens_rs(&mut identity_tokens,&group_name,item);
+                if raw_nix_names.contains(&normalized){
+                    summary_words.entry(group_name.clone()).or_default().extend(component_summary_words_rs(item));
+                    description_words.entry(group_name.clone()).or_default().extend(component_description_words_rs(item));
+                }
                 for alias in standard_name_aliases_rs(item){standard_names.entry(alias).or_default().insert(group_name.clone());}
             }
         }
@@ -505,15 +811,21 @@ fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths
                     format!("appimage:{}",if id.is_empty(){name.clone()}else{id.clone()})
                 }))
             }else if source=="nix"{
-                // Only GUI applications identified by the Nix Software API may
-                // join a by-name group. The raw nixpkgs attribute namespace is
-                // full of libraries and CLI tools whose names collide with
-                // unrelated applications (``ark``, ``boxes``, ``candle``...),
-                // so unidentified attributes get an isolated key.
+                // API-identified GUI applications join their by-name group
+                // directly. Raw attributes may join too when the attribute or
+                // pname names the same application, the provider metadata
+                // proves the same vendor identity, and the package description
+                // describes the same product. That lets packages the API does
+                // not index (Brave) merge while CLI/library collisions
+                // (``ark``, ``boxes``, ``element``...) stay isolated.
                 let api_name=m.get("nix_api_name").and_then(Value::as_str).unwrap_or("");
                 if api_name.is_empty(){
-                    let attr=m.get("nix_name").and_then(Value::as_str).unwrap_or(name.as_str());
-                    Some(format!("nix:{attr}"))
+                    if let Some(group)=raw_nix_group_rs(&m,&display_names,&exact_display_names,&standard_names,&identity_tokens,&summary_words,&description_words){
+                        Some(format!("name:{group}"))
+                    }else{
+                        let attr=m.get("nix_name").and_then(Value::as_str).unwrap_or(name.as_str());
+                        Some(format!("nix:{attr}"))
+                    }
                 }else{
                     let canonical=m.get("name").and_then(Value::as_str).unwrap_or("");
                     let attr=m.get("nix_name").and_then(Value::as_str).unwrap_or("");
@@ -1860,7 +2172,7 @@ impl AppStreamCatalog {
     }
 }
 
-const RUNTIME_CACHE_SCHEMA: u32 = 8;
+const RUNTIME_CACHE_SCHEMA: u32 = 11;
 
 #[derive(Serialize, Deserialize)]
 struct CachedAppStreamCatalog {
@@ -2215,6 +2527,41 @@ mod appimage_source_tests {
             "summary": format!("Nix {attr}"), "packages": [attr],
             "categories": [], "source": "nix", "nix_name": attr,
             "nix_pname": attr, "nix_api_name": name, "nix_scope": scope
+        })
+        .as_object()
+        .unwrap()
+        .clone()
+    }
+
+    fn raw_nix_component(attr: &str, description: &str, scope: &str) -> serde_json::Map<String, Value> {
+        serde_json::json!({
+            "id": format!("nix:{attr}"), "name": attr,
+            "summary": description,
+            "description_blocks": [{"type": "paragraph", "spans": [{"text": description}]}],
+            "packages": [attr], "categories": [], "source": "nix",
+            "nix_name": attr, "nix_pname": attr, "nix_api_name": "",
+            "nix_scope": scope
+        })
+        .as_object()
+        .unwrap()
+        .clone()
+    }
+
+    fn brave_flatpak() -> serde_json::Map<String, Value> {
+        serde_json::json!({
+            "id": "com.brave.Browser", "name": "Brave",
+            "summary": "Privacy-focused web browser",
+            "description_blocks": [{"type": "paragraph", "spans": [{
+                "text": "Brave blocks ads and trackers to protect your privacy while browsing."
+            }]}],
+            "packages": ["com.brave.Browser"],
+            "categories": ["Network", "WebBrowser"], "source": "flatpak",
+            "origin": "flathub", "flatpak_remote": "flathub",
+            "flatpak_scope": "system", "flatpak_installation": "default",
+            "verified": true, "developer": "Brave Software",
+            "homepage": "https://brave.com", "license": "MPL-2.0",
+            "icon": "https://example.invalid/brave.png",
+            "screenshots": [{"images": [{"url": "https://example.invalid/brave-shot.png", "width": 1280, "height": 720}]}]
         })
         .as_object()
         .unwrap()
@@ -2747,26 +3094,294 @@ mod appimage_source_tests {
     }
 
     #[test]
-    fn nix_entries_without_api_identity_do_not_merge_by_normalized_name() {
+    fn raw_nix_entries_merge_when_identity_and_description_agree() {
+        let entries = vec![
+            brave_flatpak(),
+            raw_nix_component(
+                "brave",
+                "Privacy-oriented browser for Desktop and Laptop computers",
+                "home-manager",
+            ),
+        ];
+        let prefs = serde_json::json!({"default": "flatpak", "apps": {}});
+
+        // The default Flatpak selection gains the Nix source option.
+        let selected = collapse(entries.clone(), prefs.clone());
+        assert_eq!(selected.len(), 1, "{selected:?}");
+        assert_eq!(selected[0].get("id").and_then(Value::as_str), Some("com.brave.Browser"));
+        let options = selected[0]
+            .get("_source_alternatives")
+            .and_then(Value::as_array)
+            .unwrap();
+        let nix_option = options
+            .iter()
+            .filter_map(Value::as_object)
+            .find(|option| option.get("source").and_then(Value::as_str) == Some("nix"))
+            .expect("Nix source option");
+        assert_eq!(nix_option.get("name").and_then(Value::as_str), Some("Brave"));
+        assert_eq!(
+            nix_option.get("summary").and_then(Value::as_str),
+            Some("Privacy-focused web browser")
+        );
+        assert_eq!(nix_option.get("packages").and_then(Value::as_array).map(Vec::len), Some(1));
+        assert_eq!(nix_option["packages"][0], "brave");
+
+        // On NixOS the Nix source is selected, but the card/page metadata still
+        // comes from the richest provider (Flatpak here).
+        let selected = collapse_with_source_policy(entries, prefs, false, true);
+        assert_eq!(selected.len(), 1, "{selected:?}");
+        let entry = &selected[0];
+        assert_eq!(entry.get("source").and_then(Value::as_str), Some("nix"));
+        assert_eq!(entry.get("id").and_then(Value::as_str), Some("nix:brave"));
+        assert_eq!(entry.get("name").and_then(Value::as_str), Some("Brave"));
+        assert_eq!(
+            entry.get("summary").and_then(Value::as_str),
+            Some("Privacy-focused web browser")
+        );
+        assert_eq!(entry.get("developer").and_then(Value::as_str), Some("Brave Software"));
+        assert_eq!(entry.get("homepage").and_then(Value::as_str), Some("https://brave.com"));
+        assert_eq!(entry.get("license").and_then(Value::as_str), Some("MPL-2.0"));
+        assert_eq!(entry.get("icon").and_then(Value::as_str), Some("https://example.invalid/brave.png"));
+        assert_eq!(
+            entry.get("screenshots").and_then(Value::as_array).map(Vec::len),
+            Some(1)
+        );
+        assert_eq!(entry["packages"][0], "brave");
+        assert_eq!(entry.get("nix_name").and_then(Value::as_str), Some("brave"));
+        assert_eq!(
+            entry.get("metadata_description_format").and_then(Value::as_str),
+            Some("appstream")
+        );
+    }
+
+    #[test]
+    fn source_metadata_ignores_an_unrelated_same_name_provider() {
+        let entries = vec![
+            serde_json::json!({
+                "id": "io.github.mmp.Vice", "name": "Vice",
+                "summary": "Air Traffic Control Simulator",
+                "description_blocks": [{"type": "paragraph", "spans": [{
+                    "text": "Vice is an air traffic control simulator focused on TRACON scenarios and simulated traffic."
+                }]}],
+                "packages": ["io.github.mmp.Vice"], "categories": ["Game"],
+                "source": "flatpak", "origin": "flathub", "flatpak_remote": "flathub",
+                "flatpak_scope": "system", "flatpak_installation": "default",
+                "developer": "Matt Pharr", "verified": true,
+                "icon": "https://example.invalid/atc.png",
+                "screenshots": [{"images": [{"url": "https://example.invalid/atc.png", "width": 1, "height": 1}]}]
+            })
+            .as_object()
+            .unwrap()
+            .clone(),
+            serde_json::json!({
+                "id": "net.sf.VICE", "name": "VICE",
+                "summary": "Versatile Commodore Emulator",
+                "description_blocks": [{"type": "paragraph", "spans": [{
+                    "text": "VICE is a free and cross platform emulator for Commodore 8-bit computers."
+                }]}],
+                "packages": ["net.sf.VICE"], "categories": ["Game"],
+                "source": "flatpak", "origin": "flathub", "flatpak_remote": "flathub",
+                "flatpak_scope": "system", "flatpak_installation": "default",
+                "developer": "VICE", "verified": true,
+                "icon": "https://example.invalid/vice.png"
+            })
+            .as_object()
+            .unwrap()
+            .clone(),
+            raw_nix_component(
+                "vice",
+                "Emulators for a variety of 8-bit Commodore computers",
+                "home-manager",
+            ),
+        ];
+        let selected = collapse_with_source_policy(
+            entries,
+            serde_json::json!({"default": "flatpak", "apps": {}}),
+            false,
+            true,
+        );
+        let entry = selected
+            .iter()
+            .find(|entry| entry.get("source").and_then(Value::as_str) == Some("nix"))
+            .expect("Nix selection");
+        assert_eq!(entry.get("name").and_then(Value::as_str), Some("VICE"));
+        assert_eq!(
+            entry.get("developer").and_then(Value::as_str),
+            Some("VICE")
+        );
+        assert_eq!(
+            entry.get("icon").and_then(Value::as_str),
+            Some("https://example.invalid/vice.png")
+        );
+        assert!(
+            entry
+                .get("description_blocks")
+                .map(|value| value.to_string().contains("Commodore"))
+                .unwrap_or(false),
+            "{entry:?}"
+        );
+        let flatpak_options = entry
+            .get("_source_alternatives")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+            .filter_map(Value::as_object)
+            .filter(|option| option.get("source").and_then(Value::as_str) == Some("flatpak"))
+            .collect::<Vec<_>>();
+        assert_eq!(flatpak_options.len(), 1, "{entry:?}");
+        assert_eq!(
+            flatpak_options[0].get("id").and_then(Value::as_str),
+            Some("net.sf.VICE")
+        );
+    }
+
+    #[test]
+    fn raw_nix_entries_without_matching_identity_stay_isolated() {
         let entries = vec![
             component("dev.qwery.AddWater", "Add Water", "native", &["Utility"]),
-            serde_json::json!({
-                "id":"nix:addwater", "name":"addwater", "summary":"Nix addwater",
-                "packages":["addwater"], "categories":[], "source":"nix",
-                "nix_name":"addwater", "nix_pname":"addwater", "nix_api_name":"",
-                "nix_scope":"home-manager"
-            }).as_object().unwrap().clone(),
+            raw_nix_component(
+                "addwater",
+                "Command line tool for adding water",
+                "home-manager",
+            ),
             component("org.gnome.Boxes.desktop", "Boxes", "native", &["Utility"]),
+            raw_nix_component(
+                "boxes",
+                "Command line program which draws, removes, and repairs ASCII art boxes",
+                "home-manager",
+            ),
+            // Element proves identity by developer/vendor, but the package is
+            // the periodic-table CLI, not the Matrix messenger.
             serde_json::json!({
-                "id":"nix:boxes", "name":"boxes", "summary":"ASCII art boxes",
-                "packages":["boxes"], "categories":[], "source":"nix",
-                "nix_name":"boxes", "nix_pname":"boxes", "nix_api_name":"",
-                "nix_scope":"home-manager"
-            }).as_object().unwrap().clone(),
+                "id": "im.riot.Riot", "name": "Element", "summary": "Matrix chat client",
+                "description_blocks": [{"type": "paragraph", "spans": [{
+                    "text": "Secure collaboration and messaging for Matrix."
+                }]}],
+                "packages": ["im.riot.Riot"], "categories": ["Network"],
+                "source": "flatpak", "origin": "flathub", "flatpak_remote": "flathub",
+                "flatpak_scope": "system", "flatpak_installation": "default",
+                "developer": "Element Creations Ltd", "verified": true
+            })
+            .as_object()
+            .unwrap()
+            .clone(),
+            raw_nix_component(
+                "element",
+                "Periodic table on the command line",
+                "home-manager",
+            ),
+            // A shared brand word is not evidence: the nixpkgs package is the
+            // Todoist CLI, not the desktop application.
+            serde_json::json!({
+                "id": "com.todoist.Todoist", "name": "Todoist", "summary": "Planner Calendar",
+                "description_blocks": [{"type": "paragraph", "spans": [{
+                    "text": "Todoist is a simple yet powerful task planner and habit tracker."
+                }]}],
+                "packages": ["com.todoist.Todoist"], "categories": ["Utility"],
+                "source": "flatpak", "origin": "flathub", "flatpak_remote": "flathub",
+                "flatpak_scope": "system", "flatpak_installation": "default",
+                "developer": "Doist", "verified": true
+            })
+            .as_object()
+            .unwrap()
+            .clone(),
+            raw_nix_component("todoist", "Todoist CLI Client", "home-manager"),
+            // Different qualifier: the engine is not the launcher app.
+            serde_json::json!({
+                "id": "org.solarus_games.solarus.Launcher", "name": "Solarus Launcher",
+                "summary": "Launcher for Solarus video games",
+                "description_blocks": [{"type": "paragraph", "spans": [{
+                    "text": "Solarus Launcher is a game launcher and manager for games built on the Solarus engine."
+                }]}],
+                "packages": ["org.solarus_games.solarus.Launcher"], "categories": ["Game"],
+                "source": "flatpak", "origin": "flathub", "flatpak_remote": "flathub",
+                "flatpak_scope": "system", "flatpak_installation": "default",
+                "developer": "Solarus Labs", "verified": true
+            })
+            .as_object()
+            .unwrap()
+            .clone(),
+            raw_nix_component("solarus", "Zelda-like ARPG game engine", "home-manager"),
         ];
         let selected = collapse(entries, serde_json::json!({"default": "flatpak", "apps": {}}));
-        assert_eq!(selected.len(), 4, "{selected:?}");
-        assert!(selected.iter().all(|entry|entry.get("_source_alternatives").is_none()));
+        assert_eq!(selected.len(), 10, "{selected:?}");
+        assert!(selected.iter().all(|entry| entry.get("_source_alternatives").is_none()));
+    }
+
+    #[test]
+    fn raw_nix_entries_merge_through_a_shared_long_description() {
+        let entries = vec![
+            serde_json::json!({
+                "id": "io.github.rocket.editor", "name": "Rocket", "summary": "Rocket Editor",
+                "description_blocks": [{"type": "paragraph", "spans": [{
+                    "text": "Rocket is a sync-tracker, a tool for synchronizing music and visuals in demoscene productions."
+                }]}],
+                "packages": ["io.github.rocket.editor"], "categories": ["Development"],
+                "source": "flatpak", "origin": "flathub", "flatpak_remote": "flathub",
+                "flatpak_scope": "system", "flatpak_installation": "default",
+                "developer": "Rocket", "verified": true
+            })
+            .as_object()
+            .unwrap()
+            .clone(),
+            raw_nix_component(
+                "rocket",
+                "Tool for synchronizing music and visuals in demoscene productions",
+                "home-manager",
+            ),
+        ];
+        let selected = collapse(entries, serde_json::json!({"default": "flatpak", "apps": {}}));
+        assert_eq!(selected.len(), 1, "{selected:?}");
+        let options = selected[0]
+            .get("_source_alternatives")
+            .and_then(Value::as_array)
+            .unwrap();
+        assert!(options.iter().any(|option| {
+            option.get("appstream_source").and_then(Value::as_str) == Some("nix")
+                || option.get("source").and_then(Value::as_str) == Some("nix")
+        }));
+    }
+
+    #[test]
+    fn source_metadata_borrows_the_richest_provider_for_any_selected_source() {
+        let entries = vec![
+            {
+                let mut native = component("org.example.App", "App", "native", &["Utility"]);
+                native.insert(
+                    "description_blocks".into(),
+                    serde_json::json!([{"type": "paragraph", "spans": [{
+                        "text": "A privacy-focused web browser that blocks ads and trackers."
+                    }]}]),
+                );
+                native
+            },
+            {
+                let mut flatpak = brave_flatpak();
+                flatpak.insert("id".into(), Value::String("org.example.App".into()));
+                flatpak.insert("name".into(), Value::String("App".into()));
+                flatpak.insert("verified".into(), Value::Bool(false));
+                flatpak.insert(
+                    "packages".into(),
+                    serde_json::json!(["org.example.App"]),
+                );
+                flatpak
+            },
+        ];
+        let selected = collapse(
+            entries,
+            serde_json::json!({"default": "native", "apps": {}}),
+        );
+        assert_eq!(selected.len(), 1, "{selected:?}");
+        let entry = &selected[0];
+        assert_eq!(entry.get("source").and_then(Value::as_str), Some("native"));
+        assert_eq!(
+            entry.get("summary").and_then(Value::as_str),
+            Some("Privacy-focused web browser")
+        );
+        assert_eq!(entry.get("developer").and_then(Value::as_str), Some("Brave Software"));
+        assert_eq!(entry.get("icon").and_then(Value::as_str), Some("https://example.invalid/brave.png"));
+        assert!(entry.get("description_blocks").is_some());
+        assert_eq!(entry.get("homepage").and_then(Value::as_str), Some("https://brave.com"));
     }
 
     #[test]

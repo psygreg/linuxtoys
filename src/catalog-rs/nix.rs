@@ -528,11 +528,11 @@ pub(crate) fn nix_components(
     for package in &packages {
         // The Nix Software API identifies which attributes are real GUI
         // applications and supplies their display names. Attributes outside
-        // that set keep their raw name and never participate in the by-name
-        // merge in the shared catalog: several command-line/library packages
-        // share names with unrelated applications (e.g. ``ark`` is the R
-        // kernel, not KDE Ark). Ambiguous display names shared by several
-        // packages are excluded from merging as well.
+        // that set keep their raw name and are not API-mergeable on their own;
+        // the shared catalog may still join one when attribute/pname, provider
+        // identity and description all agree (see appstream.rs). Ambiguous
+        // display names shared by several packages are excluded from merging
+        // as well.
         let (api_name, mergeable) = api_identities
             .get(&package.attr)
             .map(|(name, merge)| (name.as_str(), *merge))
