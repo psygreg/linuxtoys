@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Импортлох дор хаяж нэг гаралт сонгоно уу.",
   "nix_queue_section": "Nix багцууд",
   "nix_apply_operations": "Nix багцын үйлдлүүдийг хэрэгжүүлэх",
+  "nix_apply_operations_desc": "Home Manager болон/эсвэл NixOS системийн профайлыг дахин бүтээх.",
   "nix_queue_install": "Суулгах",
   "nix_queue_remove": "Устгах",
   "nix_added_to_queue": "Дараалалд нэмэгдсэн",

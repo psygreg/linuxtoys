@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Import qilish uchun kamida bitta chiqishni tanlang.",
   "nix_queue_section": "Nix paketlari",
   "nix_apply_operations": "Nix paket operatsiyalarini qo'llang",
+  "nix_apply_operations_desc": "Home Manager va/yoki NixOS tizim profilini qayta quring.",
   "nix_queue_install": "O'rnatish",
   "nix_queue_remove": "Olib tashlash",
   "nix_added_to_queue": "Navbatga qo'shildi",

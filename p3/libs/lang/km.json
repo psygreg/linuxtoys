@@ -638,6 +638,7 @@
   "nix_flake_select_output": "ជ្រើសរើសយ៉ាងហោចណាស់លទ្ធផលមួយដើម្បីនាំចូល។",
   "nix_queue_section": "កញ្ចប់ Nix",
   "nix_apply_operations": "អនុវត្តប្រតិបត្តិការកញ្ចប់ Nix",
+  "nix_apply_operations_desc": "សាងសង់ទម្រង់ Home Manager និង/ឬទម្រង់ប្រព័ន្ធ NixOS ឡើងវិញ។",
   "nix_queue_install": "ដំឡើង",
   "nix_queue_remove": "លុប",
   "nix_added_to_queue": "បានបន្ថែមទៅជួរ",

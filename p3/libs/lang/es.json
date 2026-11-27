@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Selecciona al menos una salida para importar.",
   "nix_queue_section": "Paquetes de Nix",
   "nix_apply_operations": "Aplicar operaciones de paquetes de Nix",
+  "nix_apply_operations_desc": "Reconstruir el perfil de Home Manager y/o del sistema NixOS.",
   "nix_queue_install": "Instalar",
   "nix_queue_remove": "Eliminar",
   "nix_added_to_queue": "Añadido a la cola",

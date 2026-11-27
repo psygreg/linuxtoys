@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Chọn ít nhất một đầu ra để nhập.",
   "nix_queue_section": "Gói Nix",
   "nix_apply_operations": "Áp dụng thao tác gói Nix",
+  "nix_apply_operations_desc": "Xây dựng lại hồ sơ Home Manager và/hoặc hệ thống NixOS.",
   "nix_queue_install": "Cài đặt",
   "nix_queue_remove": "Xóa",
   "nix_added_to_queue": "Đã thêm vào hàng đợi",

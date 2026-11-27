@@ -638,6 +638,7 @@
   "nix_flake_select_output": "აირჩიეთ მინიმუმ ერთი გამოსავალი იმპორტისთვის.",
   "nix_queue_section": "Nix პაკეტები",
   "nix_apply_operations": "Nix პაკეტის ოპერაციების გამოყენება",
+  "nix_apply_operations_desc": "ხელახლა ააგეთ Home Manager-ის და/ან NixOS სისტემის პროფილი.",
   "nix_queue_install": "დაყენება",
   "nix_queue_remove": "წაშლა",
   "nix_added_to_queue": "დამატებულია რიგში",

@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Wähle mindestens eine Ausgabe zum Importieren aus.",
   "nix_queue_section": "Nix-Pakete",
   "nix_apply_operations": "Nix-Paketvorgänge anwenden",
+  "nix_apply_operations_desc": "Home-Manager- und/oder NixOS-Systemprofil neu erstellen.",
   "nix_queue_install": "Installieren",
   "nix_queue_remove": "Entfernen",
   "nix_added_to_queue": "Zur Warteschlange hinzugefügt",

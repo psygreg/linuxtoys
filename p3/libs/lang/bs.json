@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Odaberite barem jedan izlaz za uvoz.",
   "nix_queue_section": "Nix paketi",
   "nix_apply_operations": "Primijeni operacije Nix paketa",
+  "nix_apply_operations_desc": "Ponovo izgradite Home Manager i/ili sistemski profil NixOS-a.",
   "nix_queue_install": "Instaliraj",
   "nix_queue_remove": "Ukloni",
   "nix_added_to_queue": "Dodano u red čekanja",

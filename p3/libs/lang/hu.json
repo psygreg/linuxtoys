@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Válasszon ki legalább egy importálandó kimenetet.",
   "nix_queue_section": "Nix-csomagok",
   "nix_apply_operations": "Nix-csomagműveletek alkalmazása",
+  "nix_apply_operations_desc": "Építse újra a Home Manager és/vagy a NixOS rendszerprofilját.",
   "nix_queue_install": "Telepítés",
   "nix_queue_remove": "Eltávolítás",
   "nix_added_to_queue": "Hozzáadva a várólistához",

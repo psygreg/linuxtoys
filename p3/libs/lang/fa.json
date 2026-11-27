@@ -638,6 +638,7 @@
   "nix_flake_select_output": "حداقل یک خروجی را برای درون‌ریزی انتخاب کنید.",
   "nix_queue_section": "بسته‌های Nix",
   "nix_apply_operations": "اعمال عملیات بسته Nix",
+  "nix_apply_operations_desc": "پروفایل Home Manager و/یا سیستم NixOS را دوباره بسازید.",
   "nix_queue_install": "نصب",
   "nix_queue_remove": "حذف",
   "nix_added_to_queue": "به صف اضافه شد",

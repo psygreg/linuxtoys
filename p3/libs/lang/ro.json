@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Selectează cel puțin o ieșire pentru import.",
   "nix_queue_section": "Pachete Nix",
   "nix_apply_operations": "Aplicați operațiunile pentru pachetele Nix",
+  "nix_apply_operations_desc": "Reconstruiți profilul Home Manager și/sau profilul de sistem NixOS.",
   "nix_queue_install": "Instalează",
   "nix_queue_remove": "Elimină",
   "nix_added_to_queue": "Adăugat în coadă",

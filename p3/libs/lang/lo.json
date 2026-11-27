@@ -638,6 +638,7 @@
   "nix_flake_select_output": "ເລືອກຢ່າງໜ້ອຍໜຶ່ງຜົນລັບເພື່ອນຳເຂົ້າ.",
   "nix_queue_section": "ແພັກເກັດ Nix",
   "nix_apply_operations": "ນຳໃຊ້ການດຳເນີນງານແພັກເກັດ Nix",
+  "nix_apply_operations_desc": "ສ້າງໂປຣໄຟລ໌ Home Manager ແລະ/ຫຼືລະບົບ NixOS ຄືນໃໝ່.",
   "nix_queue_install": "ຕິດຕັ້ງ",
   "nix_queue_remove": "ລຶບ",
   "nix_added_to_queue": "ໄດ້ເພີ່ມເຂົ້າໃນຄິວແລ້ວ",

@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Välj minst en utdata att importera.",
   "nix_queue_section": "Nix-paket",
   "nix_apply_operations": "Tillämpa Nix-paketåtgärder",
+  "nix_apply_operations_desc": "Bygg om Home Manager- och/eller NixOS-systemprofilen.",
   "nix_queue_install": "Installera",
   "nix_queue_remove": "Ta bort",
   "nix_added_to_queue": "Tillagd i kön",

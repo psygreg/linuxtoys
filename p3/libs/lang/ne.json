@@ -638,6 +638,7 @@
   "nix_flake_select_output": "आयात गर्न कम्तीमा एउटा आउटपुट चयन गर्नुहोस्।",
   "nix_queue_section": "Nix प्याकेजहरू",
   "nix_apply_operations": "Nix प्याकेज सञ्चालनहरू लागू गर्नुहोस्",
+  "nix_apply_operations_desc": "Home Manager र/वा NixOS प्रणाली प्रोफाइल पुनः निर्माण गर्नुहोस्।",
   "nix_queue_install": "स्थापना गर्नुहोस्",
   "nix_queue_remove": "हटाउनुहोस्",
   "nix_added_to_queue": "लाइनमा राखियो",

@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Pasirinkite bent vieną importuojamą išvestį.",
   "nix_queue_section": "Nix paketai",
   "nix_apply_operations": "Atlikti Nix paketo operacijas",
+  "nix_apply_operations_desc": "Iš naujo sukurkite Home Manager ir (arba) NixOS sistemos profilį.",
   "nix_queue_install": "Įdiegti",
   "nix_queue_remove": "Pašalinti",
   "nix_added_to_queue": "Įtraukta į eilę",

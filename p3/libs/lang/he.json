@@ -638,6 +638,7 @@
   "nix_flake_select_output": "בחר לפחות פלט אחד לייבוא.",
   "nix_queue_section": "חבילות Nix",
   "nix_apply_operations": "החלת פעולות חבילת Nix",
+  "nix_apply_operations_desc": "בנה מחדש את פרופיל Home Manager ו/או פרופיל מערכת NixOS.",
   "nix_queue_install": "התקן",
   "nix_queue_remove": "הסר",
   "nix_added_to_queue": "נוסף לתור",

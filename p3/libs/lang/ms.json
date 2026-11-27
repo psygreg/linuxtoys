@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Pilih sekurang-kurangnya satu output untuk diimport.",
   "nix_queue_section": "Pakej Nix",
   "nix_apply_operations": "Gunakan operasi pakej Nix",
+  "nix_apply_operations_desc": "Bina semula profil Home Manager dan/atau sistem NixOS.",
   "nix_queue_install": "Pasang",
   "nix_queue_remove": "Alih Keluar",
   "nix_added_to_queue": "Ditambah ke baris gilir",

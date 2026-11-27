@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Roghnaigh aschur amháin ar a laghad le hiompórtáil.",
   "nix_queue_section": "Pacáistí Nix",
   "nix_apply_operations": "Cuir oibríochtaí pacáiste Nix i bhfeidhm",
+  "nix_apply_operations_desc": "Atóg an próifíl Home Manager agus/nó an próifíl chórais NixOS.",
   "nix_queue_install": "Suiteáil",
   "nix_queue_remove": "Bain",
   "nix_added_to_queue": "Curtha leis an scuaine",

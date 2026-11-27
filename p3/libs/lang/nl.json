@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Selecteer ten minste één uitvoer om te importeren.",
   "nix_queue_section": "Nix-pakketten",
   "nix_apply_operations": "Nix-pakketbewerkingen toepassen",
+  "nix_apply_operations_desc": "Bouw het Home Manager- en/of NixOS-systeemprofiel opnieuw.",
   "nix_queue_install": "Installeren",
   "nix_queue_remove": "Verwijderen",
   "nix_added_to_queue": "Toegevoegd aan wachtrij",

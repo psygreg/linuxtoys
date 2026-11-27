@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Chagua angalau matokeo moja ya kuingiza.",
   "nix_queue_section": "Vifurushi vya Nix",
   "nix_apply_operations": "Tekeleza shughuli za vifurushi vya Nix",
+  "nix_apply_operations_desc": "Jenga upya wasifu wa Home Manager na/au mfumo wa NixOS.",
   "nix_queue_install": "Sakinisha",
   "nix_queue_remove": "Ondoa",
   "nix_added_to_queue": "Imeongezwa kwenye foleni",

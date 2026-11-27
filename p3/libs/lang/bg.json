@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Изберете поне един изход за импортиране.",
   "nix_queue_section": "Пакети Nix",
   "nix_apply_operations": "Прилагане на операции с пакети Nix",
+  "nix_apply_operations_desc": "Изградете отново профила на Home Manager и/или системния профил на NixOS.",
   "nix_queue_install": "Инсталирай",
   "nix_queue_remove": "Премахни",
   "nix_added_to_queue": "Добавено към опашката",

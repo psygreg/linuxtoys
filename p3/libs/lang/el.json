@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Επιλέξτε τουλάχιστον μία έξοδο για εισαγωγή.",
   "nix_queue_section": "Πακέτα Nix",
   "nix_apply_operations": "Εφαρμογή λειτουργιών πακέτου Nix",
+  "nix_apply_operations_desc": "Επαναδημιουργήστε το προφίλ του Home Manager ή/και του συστήματος NixOS.",
   "nix_queue_install": "Εγκατάσταση",
   "nix_queue_remove": "Αφαίρεση",
   "nix_added_to_queue": "Προστέθηκε στην ουρά",

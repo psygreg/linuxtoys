@@ -638,6 +638,7 @@
   "nix_flake_select_output": "இறக்குமதி செய்ய குறைந்தது ஒரு வெளியீட்டைத் தேர்ந்தெடுக்கவும்.",
   "nix_queue_section": "Nix தொகுப்புகள்",
   "nix_apply_operations": "Nix தொகுப்பு செயல்பாடுகளைப் பயன்படுத்தவும்",
+  "nix_apply_operations_desc": "Home Manager மற்றும்/அல்லது NixOS கணினி சுயவிவரத்தை மீண்டும் உருவாக்கவும்.",
   "nix_queue_install": "நிறுவு",
   "nix_queue_remove": "அகற்று",
   "nix_added_to_queue": "வரிசையில் சேர்க்கப்பட்டது",

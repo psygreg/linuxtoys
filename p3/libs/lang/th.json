@@ -638,6 +638,7 @@
   "nix_flake_select_output": "เลือกอย่างน้อยหนึ่งเอาต์พุตเพื่อนำเข้า",
   "nix_queue_section": "แพ็กเกจ Nix",
   "nix_apply_operations": "ใช้การดำเนินการแพ็กเกจ Nix",
+  "nix_apply_operations_desc": "สร้างโปรไฟล์ Home Manager และ/หรือระบบ NixOS ใหม่",
   "nix_queue_install": "ติดตั้ง",
   "nix_queue_remove": "ลบ",
   "nix_added_to_queue": "เพิ่มเข้าคิวแล้ว",

@@ -638,6 +638,7 @@
   "nix_flake_select_output": "İçe aktarmak için en az bir çıktı seçin.",
   "nix_queue_section": "Nix paketleri",
   "nix_apply_operations": "Nix paket işlemlerini uygula",
+  "nix_apply_operations_desc": "Home Manager ve/veya NixOS sistem profilini yeniden oluşturun.",
   "nix_queue_install": "Yükle",
   "nix_queue_remove": "Kaldır",
   "nix_added_to_queue": "Kuyruğa eklendi",

@@ -638,6 +638,7 @@
   "nix_flake_select_output": "आयात करने के लिए कम से कम एक आउटपुट चुनें।",
   "nix_queue_section": "Nix पैकेज",
   "nix_apply_operations": "Nix पैकेज ऑपरेशन लागू करें",
+  "nix_apply_operations_desc": "Home Manager और/या NixOS सिस्टम प्रोफ़ाइल को पुनः बनाएँ।",
   "nix_queue_install": "इंस्टॉल करें",
   "nix_queue_remove": "हटाएं",
   "nix_added_to_queue": "क्यू में जोड़ा गया",

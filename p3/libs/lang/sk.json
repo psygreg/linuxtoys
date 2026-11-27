@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Vyberte aspoň jeden výstup na import.",
   "nix_queue_section": "Balíky Nix",
   "nix_apply_operations": "Použiť operácie s balíkmi Nix",
+  "nix_apply_operations_desc": "Znovu zostavte profil Home Manager a/alebo systémový profil NixOS.",
   "nix_queue_install": "Inštalovať",
   "nix_queue_remove": "Odstrániť",
   "nix_added_to_queue": "Pridané do frontu",

@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Выберите хотя бы один выход для импорта.",
   "nix_queue_section": "Пакеты Nix",
   "nix_apply_operations": "Применить операции с пакетами Nix",
+  "nix_apply_operations_desc": "Пересоберите профиль Home Manager и/или системный профиль NixOS.",
   "nix_queue_install": "Установить",
   "nix_queue_remove": "Удалить",
   "nix_added_to_queue": "Добавлено в очередь",

@@ -638,6 +638,7 @@
   "nix_flake_select_output": "আমদানি করার জন্য অন্তত একটি আউটপুট নির্বাচন করুন।",
   "nix_queue_section": "Nix প্যাকেজগুলি",
   "nix_apply_operations": "Nix প্যাকেজ অপারেশনগুলি প্রয়োগ করুন",
+  "nix_apply_operations_desc": "Home Manager এবং/অথবা NixOS সিস্টেম প্রোফাইল পুনরায় তৈরি করুন।",
   "nix_queue_install": "ইনস্টল করুন",
   "nix_queue_remove": "সরান",
   "nix_added_to_queue": "সারিতে যোগ করা হয়েছে",

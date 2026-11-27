@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Valitse vähintään yksi tuotava tuloste.",
   "nix_queue_section": "Nix-paketit",
   "nix_apply_operations": "Suorita Nix-pakettitoiminnot",
+  "nix_apply_operations_desc": "Rakenna Home Managerin ja/tai NixOS-järjestelmän profiili uudelleen.",
   "nix_queue_install": "Asenna",
   "nix_queue_remove": "Poista",
   "nix_added_to_queue": "Lisätty jonoon",

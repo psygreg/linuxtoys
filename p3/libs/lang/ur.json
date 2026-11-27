@@ -638,6 +638,7 @@
   "nix_flake_select_output": "درآمد کرنے کے لیے کم از کم ایک آؤٹ پٹ منتخب کریں۔",
   "nix_queue_section": "Nix پیکیجز",
   "nix_apply_operations": "Nix پیکیج آپریشنز لاگو کریں",
+  "nix_apply_operations_desc": "Home Manager اور/یا NixOS سسٹم پروفائل کو دوبارہ بنائیں۔",
   "nix_queue_install": "انسٹال",
   "nix_queue_remove": "ہٹائیں",
   "nix_added_to_queue": "قطار میں شامل کر دیا گیا",

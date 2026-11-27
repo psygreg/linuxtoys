@@ -638,6 +638,7 @@
   "nix_flake_select_output": "インポートする出力を少なくとも1つ選択してください。",
   "nix_queue_section": "Nixパッケージ",
   "nix_apply_operations": "Nixパッケージ操作を適用",
+  "nix_apply_operations_desc": "Home Manager および/または NixOS システムプロファイルを再構築します。",
   "nix_queue_install": "インストール",
   "nix_queue_remove": "削除",
   "nix_added_to_queue": "キューに追加されました",

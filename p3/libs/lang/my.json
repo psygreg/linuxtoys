@@ -638,6 +638,7 @@
   "nix_flake_select_output": "တင်သွင်းရန် အနည်းဆုံး ထွက်ရှိမှုတစ်ခုကို ရွေးပါ။",
   "nix_queue_section": "Nix ပက်ကေ့ဂျ်များ",
   "nix_apply_operations": "Nix အထုပ် လုပ်ဆောင်ချက်များကို အသုံးချပါ",
+  "nix_apply_operations_desc": "Home Manager နှင့်/သို့မဟုတ် NixOS စနစ် ပရိုဖိုင်ကို ပြန်လည်တည်ဆောက်ပါ။",
   "nix_queue_install": "ထည့်သွင်းရန်",
   "nix_queue_remove": "ဖယ်ရှားရန်",
   "nix_added_to_queue": "တန်းစီမှုတွင် ထည့်ထားသည်",

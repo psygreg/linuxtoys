@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Барои ворид кардан ҳадди ақал як баромадро интихоб кунед.",
   "nix_queue_section": "Бастаҳои Nix",
   "nix_apply_operations": "Амалиётҳои бастаҳои Nix-ро татбиқ кунед",
+  "nix_apply_operations_desc": "Профили Home Manager ва/ё профили системавии NixOS-ро аз нав созед.",
   "nix_queue_install": "Насб кардан",
   "nix_queue_remove": "Хориҷ кардан",
   "nix_added_to_queue": "Ба навбат илова шуд",

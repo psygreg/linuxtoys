@@ -838,13 +838,30 @@ def materialize_subsystem_enable():
     return script
 
 
-def materialize_apply():
-    """Script that applies every queued Nix install/removal."""
-    return _materialize_script(
+def materialize_apply(translations=None):
+    """Script that applies every queued Nix install/removal.
+
+    The terminal viewer renders the run's title and short description, so the
+    script metadata carries localized text. The script header keeps the stable
+    English identity used by the execution registry.
+    """
+    if translations is None:
+        from .lang_utils import load_translations
+
+        translations = load_translations()
+    script = _materialize_script(
         "nix_apply_operations",
         "Apply Nix package operations",
         "Rebuild home-manager and/or the NixOS system profile.",
     )
+    script["name"] = translations.get(
+        "nix_apply_operations", script["name"]
+    )
+    script["description"] = translations.get(
+        "nix_apply_operations_desc", script["description"]
+    )
+    script["registry_name"] = "Apply Nix package operations"
+    return script
 
 
 # ---------------------------------------------------------------------------

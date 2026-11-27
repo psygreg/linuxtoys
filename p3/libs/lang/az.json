@@ -638,6 +638,7 @@
   "nix_flake_select_output": "İdxal etmək üçün ən azı bir çıxış seçin.",
   "nix_queue_section": "Nix paketləri",
   "nix_apply_operations": "Nix paket əməliyyatlarını tətbiq edin",
+  "nix_apply_operations_desc": "Home Manager və/və ya NixOS sistem profilini yenidən qurun.",
   "nix_queue_install": "Quraşdır",
   "nix_queue_remove": "Sil",
   "nix_added_to_queue": "Növbəyə əlavə edildi",

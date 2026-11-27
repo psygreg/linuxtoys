@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Veldu að minnsta kosti eitt úttak til að flytja inn.",
   "nix_queue_section": "Nix-pakkningar",
   "nix_apply_operations": "Beita aðgerðum Nix-pakka",
+  "nix_apply_operations_desc": "Endurbyggja Home Manager og/eða NixOS-kerfisprofil.",
   "nix_queue_install": "Setja upp",
   "nix_queue_remove": "Fjarlægja",
   "nix_added_to_queue": "Bætt við biðröð",

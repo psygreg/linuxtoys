@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Zgjidh të paktën një dalje për t'u importuar.",
   "nix_queue_section": "Paketat Nix",
   "nix_apply_operations": "Zbato operacionet e paketave Nix",
+  "nix_apply_operations_desc": "Rindërtoni profilin e Home Manager dhe/ose të sistemit NixOS.",
   "nix_queue_install": "Instalo",
   "nix_queue_remove": "Hiq",
   "nix_added_to_queue": "Shtuar në radhë",

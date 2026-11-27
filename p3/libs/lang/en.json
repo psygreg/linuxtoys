@@ -645,6 +645,7 @@
   "nix_flake_select_output": "Select at least one output to import.",
   "nix_queue_section": "Nix packages",
   "nix_apply_operations": "Apply Nix package operations",
+  "nix_apply_operations_desc": "Rebuild the Home Manager and/or NixOS system profile.",
   "nix_queue_install": "Install",
   "nix_queue_remove": "Remove",
   "nix_added_to_queue": "Added to queue",

@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Pumili ng kahit isang output na i-import.",
   "nix_queue_section": "Mga package ng Nix",
   "nix_apply_operations": "Ilapat ang mga operasyon ng package ng Nix",
+  "nix_apply_operations_desc": "Muling buuin ang profile ng Home Manager at/o ng system na NixOS.",
   "nix_queue_install": "I-install",
   "nix_queue_remove": "Alisin",
   "nix_added_to_queue": "Naidagdag sa pila",

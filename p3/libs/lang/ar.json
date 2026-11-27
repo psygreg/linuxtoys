@@ -638,6 +638,7 @@
   "nix_flake_select_output": "حدد مخرجًا واحدًا على الأقل للاستيراد.",
   "nix_queue_section": "حزم Nix",
   "nix_apply_operations": "تطبيق عمليات حزمة Nix",
+  "nix_apply_operations_desc": "أعد بناء ملف تعريف Home Manager و/أو نظام NixOS.",
   "nix_queue_install": "تثبيت",
   "nix_queue_remove": "إزالة",
   "nix_added_to_queue": "تمت الإضافة إلى قائمة الانتظار",

@@ -638,6 +638,7 @@
   "nix_flake_select_output": "请至少选择一个要导入的输出。",
   "nix_queue_section": "Nix 软件包",
   "nix_apply_operations": "应用 Nix 软件包操作",
+  "nix_apply_operations_desc": "重新构建 Home Manager 和/或 NixOS 系统配置。",
   "nix_queue_install": "安装",
   "nix_queue_remove": "移除",
   "nix_added_to_queue": "已加入队列",

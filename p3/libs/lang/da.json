@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Vælg mindst ét output at importere.",
   "nix_queue_section": "Nix-pakker",
   "nix_apply_operations": "Anvend Nix-pakkehandlinger",
+  "nix_apply_operations_desc": "Genopbyg Home Manager- og/eller NixOS-systemprofilen.",
   "nix_queue_install": "Installer",
   "nix_queue_remove": "Fjern",
   "nix_added_to_queue": "Føjet til køen",

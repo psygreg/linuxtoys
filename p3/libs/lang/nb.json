@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Velg minst én utdata å importere.",
   "nix_queue_section": "Nix pakker",
   "nix_apply_operations": "Bruk Nix pakkeoperasjoner",
+  "nix_apply_operations_desc": "Bygg Home Manager- og/eller NixOS-systemprofilen på nytt.",
   "nix_queue_install": "Installer",
   "nix_queue_remove": "Fjern",
   "nix_added_to_queue": "Lagt til i køen",

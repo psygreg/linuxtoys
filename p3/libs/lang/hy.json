@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Ընտրեք առնվազն մեկ ելք ներմուծելու համար։",
   "nix_queue_section": "Nix փաթեթներ",
   "nix_apply_operations": "Կիրառել Nix փաթեթի գործողությունները",
+  "nix_apply_operations_desc": "Վերակառուցեք Home Manager-ի և/կամ NixOS համակարգի պրոֆիլը։",
   "nix_queue_install": "Տեղադրել",
   "nix_queue_remove": "Հեռացնել",
   "nix_added_to_queue": "Ավելացվել է հերթին",

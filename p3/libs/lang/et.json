@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Vali imporditavaks vähemalt üks väljund.",
   "nix_queue_section": "Nix paketid",
   "nix_apply_operations": "Rakenda Nix paketi toiminguid",
+  "nix_apply_operations_desc": "Ehitage uuesti Home Manageri ja/või NixOS-i süsteemiprofiil.",
   "nix_queue_install": "Installi",
   "nix_queue_remove": "Eemalda",
   "nix_added_to_queue": "Lisatud järjekorda",

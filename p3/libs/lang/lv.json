@@ -638,6 +638,7 @@
   "nix_flake_select_output": "Atlasiet vismaz vienu izvadi importēšanai.",
   "nix_queue_section": "Nix pakotnes",
   "nix_apply_operations": "Lietot Nix pakotnes darbības",
+  "nix_apply_operations_desc": "Atkārtoti izveidojiet Home Manager un/vai NixOS sistēmas profilu.",
   "nix_queue_install": "Instalēt",
   "nix_queue_remove": "Noņemt",
   "nix_added_to_queue": "Pievienots rindai",

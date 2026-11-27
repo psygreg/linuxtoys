@@ -638,6 +638,7 @@
   "nix_flake_select_output": "ለማስገባት ቢያንስ አንድ ውጤት ይምረጡ።",
   "nix_queue_section": "Nix ጥቅሎች",
   "nix_apply_operations": "የNix ጥቅል ክዋኔዎችን ተግባራዊ ያድርጉ",
+  "nix_apply_operations_desc": "የHome Manager እና/ወይም የNixOS ስርዓት መገለጫን እንደገና ይገንቡ።",
   "nix_queue_install": "ጫን",
   "nix_queue_remove": "አስወግድ",
   "nix_added_to_queue": "ወደ ተራው ተጨምሯል",
