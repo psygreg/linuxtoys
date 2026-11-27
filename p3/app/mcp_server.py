@@ -3261,7 +3261,7 @@ class JobManager:
             return 1, (
                 "The Nix subsystem is only available on x86_64 and aarch64 hosts."
             )
-        if not nix_catalog.enabled():
+        if nix_catalog.nix_executable() is None:
             _needed, installer, error = manifest_helper.prepare_nix_installer(
                 _translations()
             )
@@ -3912,9 +3912,9 @@ def tool_schemas():
                 "support, unfree packages, Home Manager or the NixOS system "
                 "configuration, non-NixOS GPU integration, time zone "
                 "compatibility, and weekly Nix generation cleanup/store "
-                "optimisation. NixOS and its derivatives use their native Nix "
-                "and are enabled automatically; on those hosts this only "
-                "prepares any missing configuration. Ask the user before "
+                "optimisation. NixOS and its derivatives and GregOS use their "
+                "native Nix and are enabled automatically; on those hosts this "
+                "only prepares any missing configuration. Ask the user before "
                 "installing Nix or changing their Nix configuration. Blocks "
                 "until the job finishes by default; pass wait=false to queue "
                 "it and watch with get_job."
@@ -4928,7 +4928,7 @@ def _nix_subsystem_status():
     return {
         "available": nix_catalog.enabled(),
         "enabled": bool(nix_catalog.enabled() and status.get("ready")),
-        "auto_enabled": nix_catalog.is_nixos(),
+        "auto_enabled": nix_catalog.auto_enabled(),
         "setup_ready": bool(status.get("ready") and not missing),
         "missing": missing,
         "scopes": nix_catalog.scopes(),
@@ -4960,7 +4960,7 @@ def _tool_nix_enable_subsystem(wait=True, wait_seconds=None):
             "note": (
                 "The Nix subsystem is already enabled."
                 + (
-                    " NixOS/derivative hosts are enabled automatically."
+                    " NixOS/derivative and GregOS hosts are enabled automatically."
                     if current["auto_enabled"]
                     else ""
                 )

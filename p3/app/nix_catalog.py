@@ -131,12 +131,29 @@ def nix_executable():
     return None
 
 
+def auto_enabled():
+    """Hosts where the Nix subsystem is enabled without a manual opt-in.
+
+    NixOS and its derivatives ship Nix as their native package source, and
+    GregOS includes Nix, Home Manager and the host GPU integration in the
+    image. Those hosts keep the Nix catalog available even if the binary is
+    temporarily missing from the current PATH.
+    """
+    if is_nixos():
+        return True
+    try:
+        from .compat import is_gregos
+
+        return bool(is_gregos())
+    except Exception:
+        return False
+
+
 def enabled():
     # Presence is authoritative, exactly like Homebrew; the shared ISA policy
-    # must also support the host before the Nix subsystem is offered. NixOS and
-    # its derivatives need no opt-in: Nix is their native package source and
-    # nix_executable() also checks the system profile path.
-    return bool(linux_arch()) and nix_executable() is not None
+    # must also support the host before the Nix subsystem is offered. The
+    # native Nix hosts (NixOS/derivatives and GregOS) are enabled by default.
+    return bool(linux_arch()) and (nix_executable() is not None or auto_enabled())
 
 
 def home_manager_available():
@@ -677,8 +694,21 @@ _NIX_GC_MARKER = "systemd.user.services.nix-gc.Service.ExecStart"
 
 
 def maintenance_setup_required():
-    """Whether LinuxToys should manage non-NixOS Nix generation cleanup."""
-    return bool(enabled() and not is_nixos())
+    """Whether LinuxToys should manage non-NixOS Nix generation cleanup.
+
+    GregOS ships a Home Manager configuration with a weekly ``nix.gc`` job, so
+    the image already owns generation cleanup there.
+    """
+    if not enabled() or is_nixos():
+        return False
+    try:
+        from .compat import is_gregos
+
+        if is_gregos():
+            return False
+    except Exception:
+        pass
+    return True
 
 
 def maintenance_configured():
@@ -712,7 +742,7 @@ def setup_status():
     maintenance_required = maintenance_setup_required()
     maintenance = maintenance_configured() if maintenance_required else True
     return {
-        "nix": enabled(),
+        "nix": bool(nix_executable()),
         "flakes": flakes,
         "unfree": unfree,
         "home_manager": home_manager,
@@ -726,7 +756,7 @@ def setup_status():
         "maintenance_required": maintenance_required,
         "maintenance": maintenance,
         "backend": home_manager or system,
-        "ready": bool(enabled() and flakes and (home_manager or system)),
+        "ready": bool(nix_executable() and flakes and (home_manager or system)),
     }
 
 

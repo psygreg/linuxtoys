@@ -110,15 +110,6 @@
         ]
     },
     {
-        "name": "Heroic Games Launcher",
-        "description": "Launcher and manager for Epic Games Store, Amazon and GOG Galaxy.",
-        "description_tag": "hgl_desc",
-        "repo": "https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher",
-        "category": "game",
-        "icon": "heroic.svg",
-        "os": "!gregos"
-    },
-    {
         "name": "MangoJuice",
         "description": "A GTK-based tool to configure MangoHud, an overlay for monitoring FPS and other performance metrics. Also installs MangoHud.",
         "description_tag": "mgjuice_desc",

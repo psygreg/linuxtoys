@@ -365,6 +365,22 @@ fn standard_name_group_rs(name:&str,standard_names:&std::collections::HashMap<St
     let groups=standard_names.get(&normalized)?;
     if groups.len()==1{groups.iter().next().cloned()}else{None}
 }
+fn standard_name_aliases_rs(item:&serde_json::Map<String,Value>)->Vec<String>{
+    // AppStream display names are often shortened while the reverse-DNS id
+    // keeps the full application name (the Flathub id
+    // ``io.github.Faugus.faugus-launcher`` shows as "Faugus", while Nix calls
+    // the same app "Faugus Launcher"). Expose the final id segment as an
+    // additional matching alias so those entries still coalesce. Generic
+    // suffixes and very short ids are ignored so a shared namespace cannot
+    // create accidental merges.
+    let Some(id)=item.get("id").and_then(Value::as_str).map(str::trim).filter(|value|!value.is_empty()) else{return Vec::new()};
+    let id=id.strip_suffix(".desktop").unwrap_or(id);
+    let segment=id.rsplit('.').next().unwrap_or(id);
+    let normalized=normalized_app_name_rs(segment);
+    if normalized.chars().count()<4{return Vec::new()}
+    if matches!(normalized.as_str(),"desktop"|"app"|"application"|"client"|"launcher"|"manager"|"server"){return Vec::new()}
+    vec![normalized]
+}
 fn is_verified_flatpak_rs(item:&serde_json::Map<String,Value>)->bool{
     item.get("source").and_then(Value::as_str).unwrap_or("native")=="flatpak" && item.get("verified").and_then(Value::as_bool).unwrap_or(false)
 }
@@ -401,6 +417,16 @@ fn group_prefers_dev_native_rs(group:&[serde_json::Map<String,Value>],paths:&[St
         _=>false,
     }))
 }
+fn group_category_rs(group:&[serde_json::Map<String,Value>],paths:&[String],cfg:&Value)->Option<String>{
+    group.iter().find_map(|m|resolve_component_category_rs(m,paths,cfg))
+}
+fn gregos_category_prefers_nix_rs(category:&str)->bool{
+    if category.split('/').any(|part|matches!(part,"game"|"games")){return true}
+    // The GregOS package-manager preference covers the Developers root
+    // category plus the IDEs and Text Editors leaves. Deeper development
+    // subcategories (tools, AI agents) keep the normal source policy.
+    matches!(category.rsplit('/').next(),Some("devs"|"ides"|"txt"))
+}
 fn preference_value_rs(v:&Value,host_os:&std::collections::HashSet<String>)->Option<String>{
     if let Some(s)=v.as_str(){return matches!(s,"native"|"flatpak"|"appimage").then(||s.to_string())}
     if let Some(m)=v.as_object(){
@@ -425,7 +451,7 @@ fn explicit_group_preference_rs(group:&[serde_json::Map<String,Value>],prefs:&Va
 fn preference_rs(item:&serde_json::Map<String,Value>,prefs:&Value,host_os:&std::collections::HashSet<String>)->String{
     explicit_preference_rs(item,prefs,host_os).unwrap_or_else(||prefs.as_object().and_then(|o|o.get("default")).and_then(Value::as_str).filter(|s|matches!(*s,"native"|"flatpak"|"appimage")).unwrap_or("flatpak").to_string())
 }
-fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths:&[String],cfg:&Value,prefs:&Value,locks:&std::collections::HashSet<String>,host_os:&std::collections::HashSet<String>,prefer_native_host:bool,prefer_nix:bool,steamos:bool,suse:bool,by_name_pass:bool)->Vec<serde_json::Map<String,Value>>{
+fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths:&[String],cfg:&Value,prefs:&Value,locks:&std::collections::HashSet<String>,host_os:&std::collections::HashSet<String>,prefer_native_host:bool,prefer_nix:bool,prefer_nix_gregos:bool,steamos:bool,suse:bool,by_name_pass:bool)->Vec<serde_json::Map<String,Value>>{
     let mut groups:std::collections::BTreeMap<String,Vec<serde_json::Map<String,Value>>>=std::collections::BTreeMap::new();let mut pass=Vec::new();
     let mut standard_names=std::collections::HashMap::<String,std::collections::HashSet<String>>::new();
     if by_name_pass{
@@ -435,7 +461,10 @@ fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths
             let name=item.get("name").and_then(Value::as_str).unwrap_or("").trim();
             let normalized=normalized_app_name_rs(name);
             let group_name=name.to_lowercase();
-            if !normalized.is_empty()&&!group_name.is_empty(){standard_names.entry(normalized).or_default().insert(group_name);}
+            if !normalized.is_empty()&&!group_name.is_empty(){standard_names.entry(normalized).or_default().insert(group_name.clone());}
+            if !group_name.is_empty(){
+                for alias in standard_name_aliases_rs(item){standard_names.entry(alias).or_default().insert(group_name.clone());}
+            }
         }
     }
     for m in components {
@@ -488,12 +517,37 @@ fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths
         flat.sort_by_key(|m|(m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("")!="user",m.get("flatpak_installation").and_then(Value::as_str).unwrap_or("").to_string(),m.get("flatpak_remote").and_then(Value::as_str).unwrap_or("flathub")!="flathub",m.get("flatpak_remote").and_then(Value::as_str).unwrap_or("").to_string()));group=natives.iter().cloned().chain(flat.iter().cloned()).chain(snaps.iter().cloned()).chain(appimages.iter().cloned()).chain(nixes.iter().cloned()).collect();
         if natives.is_empty()&&snaps.is_empty()&&appimages.is_empty()&&nixes.is_empty()&&flat.len()>1{out.push(with_source_options_rs(&flat[0],&group));continue}let sources:std::collections::HashSet<_>=group.iter().map(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")).collect();if sources.len()<2{if !nixes.is_empty(){out.push(with_source_options_rs(&nixes[0],&group))}else if !appimages.is_empty(){out.extend(appimages)}else{out.extend(group)}continue}
         if let Some(pref)=explicit_group_preference_rs(&group,prefs,host_os){let mut selected:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")==pref).cloned().collect();if !selected.is_empty(){if matches!(pref.as_str(),"flatpak"|"appimage"){selected.truncate(1)}out.extend(selected.iter().map(|m|with_source_options_rs(m,&group)));continue}}
+        // On NixOS and its derivatives Nixpkgs is the native package source.
+        // Prefer it across every category, ahead of category-native policy and
+        // Flatpak verification. Explicit per-app preferences above still win.
+        if prefer_nix&&!nixes.is_empty(){
+            if let Some(category)=group_category_rs(&group,paths,cfg){
+                for nix in &mut nixes{nix.insert("nix_category".into(),Value::String(category.clone()));}
+            }
+            out.extend(nixes.iter().map(|m|with_source_options_rs(m,&group)));continue
+        }
+        // GregOS uses Nixpkgs as the host's user-level package source for
+        // gaming plus the Developers and Text Editors categories. Prefer Nix
+        // over category-native policy and verified Flatpak; explicit per-app
+        // preferences above still win.
+        if prefer_nix_gregos&&!nixes.is_empty(){
+            if let Some(category)=group_category_rs(&group,paths,cfg){
+                if gregos_category_prefers_nix_rs(&category){
+                    // The selected source becomes a Nix component, whose own
+                    // category hint is normally empty outside NixOS. Carry the
+                    // group's category so the card stays where the app belongs
+                    // instead of falling back to the standalone Nix category.
+                    for nix in &mut nixes{nix.insert("nix_category".into(),Value::String(category.clone()));}
+                    out.extend(nixes.iter().map(|m|with_source_options_rs(m,&group)));continue
+                }
+            }
+        }
         // Whole-category native policy is a default-source decision and outranks
         // Flatpak verification. Explicit per-app preferences above still win, and
         // with_source_options_rs keeps Flatpak/Snap available for manual switching.
         let category_prefers_native=!natives.is_empty()&&group_prefers_dev_native_rs(&group,paths,cfg,steamos,suse);
         if category_prefers_native{out.extend(natives.iter().map(|m|with_source_options_rs(m,&group)));continue}
-        if let Some(v)=flat.iter().find(|m|is_verified_flatpak_rs(m)){out.push(with_source_options_rs(v,&group));continue}if prefer_nix&&!nixes.is_empty(){out.extend(nixes.iter().map(|m|with_source_options_rs(m,&group)));continue}if prefer_native_host&&!natives.is_empty(){out.extend(natives.iter().map(|m|with_source_options_rs(m,&group)));continue}
+        if let Some(v)=flat.iter().find(|m|is_verified_flatpak_rs(m)){out.push(with_source_options_rs(v,&group));continue}if prefer_native_host&&!natives.is_empty(){out.extend(natives.iter().map(|m|with_source_options_rs(m,&group)));continue}
         let pref=preference_rs(&group[0],prefs,host_os);let mut selected:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")==pref).cloned().collect();if selected.is_empty(){selected=natives.clone()}if selected.is_empty(){selected=flat.clone()}if selected.is_empty(){selected=snaps.clone()}if selected.is_empty(){selected=appimages.clone()}if selected.first().and_then(|m|m.get("source")).and_then(Value::as_str)==Some("flatpak"){selected.truncate(1)}if selected.first().and_then(|m|m.get("source")).and_then(Value::as_str)==Some("snap"){selected.truncate(1)}out.extend(selected.iter().map(|m|with_source_options_rs(m,&group)));
     } out
 }
@@ -1899,10 +1953,11 @@ pub(crate) fn build_appstream_catalog_index(
     let compat:std::collections::HashSet<String>=compat_keys.into_iter().map(|s|s.to_lowercase()).collect();
     let prefer_native=compat.iter().any(|s|matches!(s.as_str(),"arch"|"cachy"|"solus"|"fedora"|"nixos"));
     let prefer_nix=compat.iter().any(|s| s.as_str()=="nixos");
+    let prefer_nix_gregos=compat.iter().any(|s| s.as_str()=="gregos");
     let steamos=compat.iter().any(|key| matches!(key.as_str(), "steamos"|"dakota"|"gnomeos"|"kde-linux"));
     let suse=compat.iter().any(|key| key.as_str()=="suse");
-    let first=collapse_source_groups_rs(vals,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,prefer_nix,steamos,suse,false);
-    let selected=collapse_source_groups_rs(first,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,prefer_nix,steamos,suse,true);
+    let first=collapse_source_groups_rs(vals,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,prefer_nix,prefer_nix_gregos,steamos,suse,false);
+    let selected=collapse_source_groups_rs(first,&category_paths,&cfg,&prefs,&locks,&host_os,prefer_native,prefer_nix,prefer_nix_gregos,steamos,suse,true);
     let entries=adapt_appstream_maps_values(selected,category_paths,category_config_json,lang,curated_ids,curated_packages,curated_names,overlays_json,native_badge);
 
     let runtime_entries: Vec<RuntimeAppStreamEntry> = entries.into_iter().filter_map(RuntimeAppStreamEntry::from_value).collect();
@@ -2107,8 +2162,8 @@ mod appimage_source_tests {
         let cfg = serde_json::json!({"main": {"Game": ("game",)}, "additional": {}});
         let locks: std::collections::HashSet<String> = Default::default();
         let host_os: std::collections::HashSet<String> = Default::default();
-        let first = collapse_source_groups_rs(entries, &paths, &cfg, &prefs, &locks, &host_os, false, false, false, false, false);
-        collapse_source_groups_rs(first, &paths, &cfg, &prefs, &locks, &host_os, false, false, false, false, true)
+        let first = collapse_source_groups_rs(entries, &paths, &cfg, &prefs, &locks, &host_os, false, false, false, false, false, false);
+        collapse_source_groups_rs(first, &paths, &cfg, &prefs, &locks, &host_os, false, false, false, false, false, true)
     }
 
     fn collapse_with_source_policy(
@@ -2121,8 +2176,45 @@ mod appimage_source_tests {
         let cfg = serde_json::json!({"main": {"Utility": ("utils",)}, "additional": {}});
         let locks: std::collections::HashSet<String> = Default::default();
         let host_os: std::collections::HashSet<String> = Default::default();
-        let first = collapse_source_groups_rs(entries, &paths, &cfg, &prefs, &locks, &host_os, prefer_native, prefer_nix, false, false, false);
-        collapse_source_groups_rs(first, &paths, &cfg, &prefs, &locks, &host_os, prefer_native, prefer_nix, false, false, true)
+        let first = collapse_source_groups_rs(entries, &paths, &cfg, &prefs, &locks, &host_os, prefer_native, prefer_nix, false, false, false, false);
+        collapse_source_groups_rs(first, &paths, &cfg, &prefs, &locks, &host_os, prefer_native, prefer_nix, false, false, false, true)
+    }
+
+    fn nix_named_component(name: &str, attr: &str, scope: &str) -> serde_json::Map<String, Value> {
+        serde_json::json!({
+            "id": format!("nix:{attr}"), "name": name,
+            "summary": format!("Nix {attr}"), "packages": [attr],
+            "categories": [], "source": "nix", "nix_name": attr,
+            "nix_pname": attr, "nix_api_name": name, "nix_scope": scope
+        })
+        .as_object()
+        .unwrap()
+        .clone()
+    }
+
+    fn collapse_for_gregos(
+        entries: Vec<serde_json::Map<String, Value>>,
+        prefs: Value,
+        prefer_nix_gregos: bool,
+    ) -> Vec<serde_json::Map<String, Value>> {
+        let paths: Vec<String> = vec![
+            "/scripts/game".into(),
+            "/scripts/devs".into(),
+            "/scripts/devs/ides".into(),
+            "/scripts/devs/tools".into(),
+            "/scripts/devs/txt".into(),
+            "/scripts/utils".into(),
+        ];
+        let cfg = serde_json::json!({
+            "main": {"Game": ("game",), "Development": ("devs",), "Utility": ("utils",)},
+            "main_priority": ["Game", "Development", "Utility"],
+            "additional": {"IDE": ("ides",), "Tool": ("tools",), "TextEditor": ("txt",)},
+            "standalone_priority": ["IDE", "Tool", "TextEditor"]
+        });
+        let locks: std::collections::HashSet<String> = Default::default();
+        let host_os: std::collections::HashSet<String> = Default::default();
+        let first = collapse_source_groups_rs(entries, &paths, &cfg, &prefs, &locks, &host_os, false, false, prefer_nix_gregos, false, false, false);
+        collapse_source_groups_rs(first, &paths, &cfg, &prefs, &locks, &host_os, false, false, prefer_nix_gregos, false, false, true)
     }
 
     #[test]
@@ -2171,10 +2263,12 @@ mod appimage_source_tests {
     }
 
     #[test]
-    fn nixos_prefers_the_nix_package_over_flatpak() {
+    fn nixos_prefers_the_nix_package_over_verified_flatpak() {
+        let mut flatpak = flatpak_component("org.distro.App", "flathub", "user", "user");
+        flatpak.insert("verified".into(), Value::Bool(true));
         let entries = vec![
             component("org.distro.App", "App", "native", &["Utility"]),
-            flatpak_component("org.distro.App", "flathub", "user", "user"),
+            flatpak,
             nix_component("system"),
         ];
         let prefs = serde_json::json!({"default": "flatpak", "apps": {}});
@@ -2186,6 +2280,28 @@ mod appimage_source_tests {
             selected[0].get("_source_recommended").and_then(Value::as_str),
             Some("nix:system")
         );
+    }
+
+    #[test]
+    fn nixos_prefers_nix_over_category_native_policy() {
+        let entries = vec![
+            component("org.example.IDE", "IDE", "native", &["Development", "IDE"]),
+            nix_named_component("IDE", "ide-app", "system"),
+        ];
+        let paths: Vec<String> = vec!["/scripts/devs".into(), "/scripts/devs/ides".into()];
+        let cfg = serde_json::json!({
+            "main": {"Development": ("devs",)},
+            "main_priority": ["Development"],
+            "additional": {"IDE": ("ides",)},
+            "standalone_priority": ["IDE"]
+        });
+        let prefs = serde_json::json!({"default": "flatpak", "apps": {}});
+        let locks: std::collections::HashSet<String> = Default::default();
+        let host_os: std::collections::HashSet<String> = Default::default();
+        let first = collapse_source_groups_rs(entries, &paths, &cfg, &prefs, &locks, &host_os, true, true, false, false, false, false);
+        let selected = collapse_source_groups_rs(first, &paths, &cfg, &prefs, &locks, &host_os, true, true, false, false, false, true);
+        assert_eq!(selected.len(), 1, "{selected:?}");
+        assert_eq!(selected[0]["source"], "nix");
     }
 
     #[test]
@@ -2286,6 +2402,128 @@ mod appimage_source_tests {
         assert_eq!(keys.len(), 2, "{keys:?}");
         assert!(keys.contains("nix:home-manager"));
         assert!(keys.contains("nix:system"));
+    }
+
+    #[test]
+    fn nix_entries_merge_with_appstream_id_when_display_name_is_shortened() {
+        let entries = vec![
+            serde_json::json!({
+                "id":"io.github.Faugus.faugus-launcher", "name":"Faugus",
+                "summary":"Faugus summary", "packages":["io.github.Faugus.faugus-launcher"],
+                "categories":["Game"], "source":"flatpak", "origin":"flathub",
+                "flatpak_remote":"flathub", "flatpak_scope":"user",
+                "flatpak_installation":"default", "verified":true
+            }).as_object().unwrap().clone(),
+            serde_json::json!({
+                "id":"nix:faugus-launcher", "name":"Faugus Launcher",
+                "summary":"Nix faugus-launcher", "packages":["faugus-launcher"],
+                "categories":[], "source":"nix", "nix_name":"faugus-launcher",
+                "nix_pname":"faugus-launcher", "nix_api_name":"Faugus Launcher",
+                "nix_scope":"home-manager"
+            }).as_object().unwrap().clone(),
+        ];
+        let selected = collapse(entries, serde_json::json!({"default": "flatpak", "apps": {}}));
+        assert_eq!(selected.len(), 1, "{selected:?}");
+        assert_eq!(
+            selected[0].get("source").and_then(Value::as_str),
+            Some("flatpak")
+        );
+        let options = selected[0]
+            .get("_source_alternatives")
+            .and_then(Value::as_array)
+            .unwrap();
+        let keys: std::collections::HashSet<String> =
+            options.iter().filter_map(Value::as_object).map(source_option_key_rs).collect();
+        assert_eq!(keys.len(), 1, "{keys:?}");
+        assert!(keys.contains("nix:home-manager"));
+    }
+
+    #[test]
+    fn gregos_prefers_nix_for_game_entries_only() {
+        let game_entries = vec![
+            component("org.example.Game", "Game", "native", &["Game"]),
+            serde_json::json!({
+                "id":"nix:game", "name":"Game", "summary":"Nix game",
+                "packages":["game"], "categories":[], "source":"nix",
+                "nix_name":"game", "nix_pname":"game", "nix_api_name":"Game",
+                "nix_scope":"home-manager"
+            }).as_object().unwrap().clone(),
+        ];
+        let selected = collapse_for_gregos(
+            game_entries,
+            serde_json::json!({"default": "flatpak", "apps": {}}),
+            true,
+        );
+        assert_eq!(selected.len(), 1, "{selected:?}");
+        assert_eq!(selected[0].get("source").and_then(Value::as_str), Some("nix"));
+        assert_eq!(
+            selected[0].get("nix_category").and_then(Value::as_str),
+            Some("scripts/game")
+        );
+
+        let utility_entries = vec![
+            flatpak_component("org.example.Tool", "flathub", "user", "default"),
+            serde_json::json!({
+                "id":"nix:app", "name":"App", "summary":"Nix app",
+                "packages":["app"], "categories":[], "source":"nix",
+                "nix_name":"app", "nix_pname":"app", "nix_api_name":"App",
+                "nix_scope":"home-manager"
+            }).as_object().unwrap().clone(),
+        ];
+        let selected = collapse_for_gregos(
+            utility_entries,
+            serde_json::json!({"default": "flatpak", "apps": {}}),
+            true,
+        );
+        assert_eq!(selected.len(), 1, "{selected:?}");
+        assert_eq!(
+            selected[0].get("source").and_then(Value::as_str),
+            Some("flatpak")
+        );
+    }
+
+    #[test]
+    fn gregos_prefers_nix_for_devs_ides_and_txt_entries() {
+        let entries = vec![
+            component("org.example.DevTool", "Dev Tool", "flatpak", &["Development"]),
+            nix_named_component("Dev Tool", "dev-tool", "home-manager"),
+            component(
+                "org.example.TextEditor",
+                "Text Editor",
+                "flatpak",
+                &["Development", "TextEditor"],
+            ),
+            nix_named_component("Text Editor", "text-editor", "home-manager"),
+            component(
+                "org.example.IDE",
+                "IDE",
+                "flatpak",
+                &["Development", "IDE"],
+            ),
+            nix_named_component("IDE", "ide", "home-manager"),
+            component(
+                "org.example.DevUtility",
+                "Dev Utility",
+                "flatpak",
+                &["Development", "Tool"],
+            ),
+            nix_named_component("Dev Utility", "dev-utility", "home-manager"),
+        ];
+        let selected = collapse_for_gregos(
+            entries,
+            serde_json::json!({"default": "flatpak", "apps": {}}),
+            true,
+        );
+        assert_eq!(selected.len(), 4, "{selected:?}");
+        let by_name: std::collections::HashMap<&str, &serde_json::Map<String, Value>> =
+            selected.iter().map(|entry| (entry["name"].as_str().unwrap(), entry)).collect();
+        assert_eq!(by_name["Dev Tool"]["source"], "nix");
+        assert_eq!(by_name["Dev Tool"]["nix_category"], "scripts/devs");
+        assert_eq!(by_name["Text Editor"]["source"], "nix");
+        assert_eq!(by_name["Text Editor"]["nix_category"], "scripts/devs/txt");
+        assert_eq!(by_name["IDE"]["source"], "nix");
+        assert_eq!(by_name["IDE"]["nix_category"], "scripts/devs/ides");
+        assert_eq!(by_name["Dev Utility"]["source"], "flatpak");
     }
 
     #[test]

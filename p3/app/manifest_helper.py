@@ -842,7 +842,7 @@ def export_registered_manifest(output_path=None, registry_data=None, translation
 def ensure_nix_snapshot():
     """Make the nixpkgs snapshot available for native-package conversion."""
     try:
-        if not nix_catalog.enabled():
+        if nix_catalog.nix_executable() is None:
             return False
         if nix_catalog.cached_path() is not None:
             return True
@@ -888,7 +888,7 @@ def prepare_nix_manifest_import(manifest_path, native_packages=(), translations=
         }
     bundle = nix_catalog.find_manifest_bundle(manifest_path)
     state = nix_catalog.read_manifest_bundle(manifest_path) if bundle else None
-    nix_ready = nix_catalog.enabled()
+    nix_ready = nix_catalog.nix_executable() is not None
     target_nixos = nix_catalog.is_nixos()
 
     home = list(state.get("home") or ()) if state else []
@@ -1025,7 +1025,7 @@ def prepare_nix_installer(translations=None):
         return True, None, (
             "The Nix subsystem is only available on x86_64 and aarch64 hosts."
         )
-    if nix_catalog.enabled():
+    if nix_catalog.nix_executable() is not None:
         return False, None, ""
     try:
         installer = find_script_by_id("nix", translations)

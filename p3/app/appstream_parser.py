@@ -21,7 +21,7 @@ _NIX_RUNTIME_CACHE = {}  # (path, scopes, stat) -> Rust NixCatalog
 # Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
 # catalog.json remains authoritative; this file is disposable and regenerated
 # whenever any input represented by the runtime cache key changes.
-RUNTIME_CACHE_SCHEMA = 33
+RUNTIME_CACHE_SCHEMA = 36
 RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries-rs.bin"
 
 # Most recent inputs used to build the live runtime catalog. This is process-local
@@ -99,10 +99,9 @@ APPSTREAM_OMIT = (
     "virtualbox",
     "virt-manager",
     "org.virt_manager.virt-manager",
-    "com.heroicgameslauncher.hgl",
-    "code",
-    "org.cutwire.Drift",
-    "org.cutwire.Prism",
+    # gregOS and NixOS use VS Code from Nix packages
+    {"!gregos": "code",
+     "!nixos": "code"},
     # KVM AppImage variant: only offered where the regular VirtualBox package
     # route is unavailable (immutable/SteamOS systems); omitted on the rest.
     {"!ostree": "appimage.community.virtualbox-kvm",
@@ -111,7 +110,6 @@ APPSTREAM_OMIT = (
     "appimage.community.Winboat",
     "homebrew.rust",
     {"gregos": "com.raggesilver.BlackBox"},
-    {"gregos": "io.snapcraft.steam"}
 )
 
 # AppStream uses the freedesktop.org Desktop Menu category registry. Keep Main

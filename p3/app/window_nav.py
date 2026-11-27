@@ -11,6 +11,7 @@ from . import (
     app_page,
     gtk_dialogs,
     nix_metadata,
+    nix_queue,
     repo_parser,
     term_view,
     skills_view,
@@ -725,6 +726,31 @@ class NavCtl:
         self.header_widget.hide()
         self.main_stack.set_visible_child_name("skills_seeker")
 
+    @staticmethod
+    def _terminal_prev_without_empty_queue(
+        prev, queue_child, queue_origin, queue_empty
+    ):
+        """Skip a queue view that became empty while the terminal was open.
+
+        Returning to an empty queue leaves the user on a dead-end screen. When
+        the terminal was opened from the queue and the queue has drained to
+        no records, use the view that opened the queue as the Back target.
+        Returns ``(prev, stale_queue_child)`` so the caller can retire the
+        empty queue child after the transition.
+        """
+        if (
+            not queue_empty
+            or prev is None
+            or queue_child is None
+            or prev.get("child") is not queue_child
+        ):
+            return prev, None
+        if not queue_origin or queue_origin.get("child") is None:
+            return prev, None
+        merged = dict(prev)
+        merged.update(queue_origin)
+        return merged, queue_child
+
     def on_back_button_clicked(self, widget):
         """Handles the back button click."""
 
@@ -875,6 +901,28 @@ class NavCtl:
             search_query = self.search_entry.get_text().strip()
             prev = getattr(self, "_term_prev", None)
 
+            # Applying the Nix queue clears its records while the terminal is
+            # open. Back must then return to the view that opened the queue,
+            # not to the now-empty queue screen.
+            queue_child = self.main_stack.get_child_by_name("appstream_queue")
+            queue_empty = False
+            if prev and queue_child is not None and prev.get("child") is queue_child:
+                try:
+                    queue_empty = (
+                        not self._appstream_runner.snapshot()
+                        and not nix_queue.snapshot()
+                    )
+                except Exception:
+                    queue_empty = False
+            prev, stale_queue_child = self._terminal_prev_without_empty_queue(
+                prev,
+                queue_child,
+                getattr(self, "_appstream_queue_prev", None),
+                queue_empty,
+            )
+            if stale_queue_child is not None:
+                self._appstream_queue_prev = None
+
             transition_delay = max(
                 1, int(self.main_stack.get_transition_duration())
             )
@@ -890,6 +938,10 @@ class NavCtl:
                 if child is not None:
                     gui_rs.stack_remove_child(
                         self.main_stack, child, destroy=True
+                    )
+                if stale_queue_child is not None:
+                    gui_rs.stack_remove_child(
+                        self.main_stack, stale_queue_child, destroy=True
                     )
                 return False
 
