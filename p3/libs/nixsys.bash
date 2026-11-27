@@ -24,6 +24,87 @@ _nix_state_dir() {
     printf '%s\n' "${XDG_CACHE_HOME:-$HOME/.cache}/linuxtoys/nix"
 }
 
+# Resolve the active Home Manager/NixOS paths once per shell process. The
+# Python resolver is the single authority: it checks explicit overrides, the
+# durable path record, conventional locations and (when needed) a bounded
+# discovery pass. Keeping it in Python prevents the app and the generated
+# terminal scripts from disagreeing about which configuration is active.
+_nix_paths_script() {
+    local base="${SCRIPT_DIR:-$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)}"
+    printf '%s\n' "${base}/app/nix_paths.py"
+}
+
+_nix_load_active_paths() {
+    [ "${_NIX_ACTIVE_PATHS_READY:-0}" = "1" ] && return 0
+    _NIX_ACTIVE_PATHS_READY=1
+    local script output
+    script=$(_nix_paths_script) || return 0
+    [ -r "$script" ] || return 0
+    command -v python3 >/dev/null 2>&1 || return 0
+    if output=$(python3 "$script" shell 2>/dev/null); then
+        [ -n "$output" ] && eval "$output"
+    fi
+    return 0
+}
+
+_nix_hm_paths_resolved() {
+    _nix_load_active_paths
+    [ -n "${_NIX_ACTIVE_HOME_SOURCE:-}" ] || return 0
+    [ "${_NIX_ACTIVE_HOME_RESOLVED:-0}" = "1" ]
+}
+
+_nix_system_paths_resolved() {
+    _nix_load_active_paths
+    [ -n "${_NIX_ACTIVE_SYSTEM_SOURCE:-}" ] || return 0
+    [ "${_NIX_ACTIVE_SYSTEM_RESOLVED:-0}" = "1" ]
+}
+
+_nix_paths_error() {
+    local scope="$1" script message
+    script=$(_nix_paths_script) || return 0
+    [ -r "$script" ] || return 0
+    command -v python3 >/dev/null 2>&1 || return 0
+    message=$(python3 "$script" message "$scope" 2>/dev/null) || return 0
+    [ -n "$message" ] && printf '%s\n' "$message" >&2
+}
+
+_nix_hm_flake_active() {
+    _nix_load_active_paths
+    if [ -n "${_NIX_ACTIVE_HOME_SOURCE:-}" ]; then
+        [ "${_NIX_ACTIVE_HOME_FLAKE:-0}" = "1" ]
+    else
+        [ -f "$(_nix_hm_dir)/flake.nix" ]
+    fi
+}
+
+_nix_system_flake_active() {
+    _nix_load_active_paths
+    if [ -n "${_NIX_ACTIVE_SYSTEM_SOURCE:-}" ]; then
+        [ "${_NIX_ACTIVE_SYSTEM_FLAKE:-0}" = "1" ]
+    else
+        [ -f "$(_nix_system_dir)/flake.nix" ]
+    fi
+}
+
+_nix_reload_active_paths() {
+    _NIX_ACTIVE_PATHS_READY=0
+    unset _NIX_ACTIVE_HOME_DIR _NIX_ACTIVE_HOME_CONFIG _NIX_ACTIVE_HOME_MODULE
+    unset _NIX_ACTIVE_HOME_FLAKE _NIX_ACTIVE_HOME_RESOLVED _NIX_ACTIVE_HOME_SOURCE
+    unset _NIX_ACTIVE_SYSTEM_DIR _NIX_ACTIVE_SYSTEM_CONFIG _NIX_ACTIVE_SYSTEM_MODULE
+    unset _NIX_ACTIVE_SYSTEM_FLAKE _NIX_ACTIVE_SYSTEM_RESOLVED _NIX_ACTIVE_SYSTEM_SOURCE
+    _nix_load_active_paths
+}
+
+_nix_record_generated_flake() {
+    local scope="$1" directory="$2" config="$3" module="$4" script
+    script=$(_nix_paths_script) || return 0
+    [ -r "$script" ] || return 0
+    command -v python3 >/dev/null 2>&1 || return 0
+    python3 "$script" record-flake "$scope" "$directory" "$config" "$module" \
+        >/dev/null 2>&1 || true
+    _nix_reload_active_paths
+}
+
 _nix_queue_file() {
     printf '%s\n' "${LINUXTOYS_NIX_QUEUE:-$(_nix_state_dir)/queue.json}"
 }
@@ -45,32 +126,95 @@ _nix_mark_feature() {
 }
 
 _nix_hm_dir() {
-    if [ -n "${LINUXTOYS_NIX_HM_DIR:-}" ]; then
-        printf '%s\n' "$LINUXTOYS_NIX_HM_DIR"
+    _nix_load_active_paths
+    if [ -n "${LINUXTOYS_NIX_HM_MODULE:-}" ]; then
+        dirname -- "$LINUXTOYS_NIX_HM_MODULE"
     elif [ -n "${HOME_MANAGER_CONFIG:-}" ]; then
-        dirname -- "$HOME_MANAGER_CONFIG"
+        if [ -f "$HOME_MANAGER_CONFIG" ]; then
+            dirname -- "$(readlink -f -- "$HOME_MANAGER_CONFIG" 2>/dev/null || printf '%s\n' "$HOME_MANAGER_CONFIG")"
+        else
+            dirname -- "$HOME_MANAGER_CONFIG"
+        fi
+    elif [ -n "${LINUXTOYS_NIX_HM_DIR:-}" ]; then
+        printf '%s\n' "$LINUXTOYS_NIX_HM_DIR"
+    elif [ -n "${_NIX_ACTIVE_HOME_DIR:-}" ]; then
+        printf '%s\n' "$_NIX_ACTIVE_HOME_DIR"
     else
         printf '%s\n' "${XDG_CONFIG_HOME:-$HOME/.config}/home-manager"
     fi
 }
 
 _nix_hm_config_file() {
-    if [ -n "${HOME_MANAGER_CONFIG:-}" ] && [ -f "$HOME_MANAGER_CONFIG" ]; then
+    _nix_load_active_paths
+    if [ -n "${_NIX_ACTIVE_HOME_CONFIG:-}" ] && [ -f "$_NIX_ACTIVE_HOME_CONFIG" ]; then
+        printf '%s\n' "$_NIX_ACTIVE_HOME_CONFIG"
+    elif [ -n "${HOME_MANAGER_CONFIG:-}" ] && [ -f "$HOME_MANAGER_CONFIG" ]; then
         printf '%s\n' "$HOME_MANAGER_CONFIG"
+    elif [ -n "${LINUXTOYS_NIX_HM_DIR:-}" ]; then
+        local candidate
+        for candidate in "$LINUXTOYS_NIX_HM_DIR/home.nix" \
+            "$LINUXTOYS_NIX_HM_DIR/default.nix"; do
+            if [ -f "$candidate" ]; then
+                printf '%s\n' "$candidate"
+                return 0
+            fi
+        done
     fi
     return 0
 }
 
 _nix_hm_module() {
-    printf '%s\n' "${LINUXTOYS_NIX_HM_MODULE:-$(_nix_hm_dir)/linuxtoys.nix}"
+    _nix_load_active_paths
+    if [ -n "${LINUXTOYS_NIX_HM_MODULE:-}" ]; then
+        printf '%s\n' "$LINUXTOYS_NIX_HM_MODULE"
+    elif [ -n "${_NIX_ACTIVE_HOME_MODULE:-}" ]; then
+        printf '%s\n' "$_NIX_ACTIVE_HOME_MODULE"
+    else
+        printf '%s\n' "$(_nix_hm_dir)/linuxtoys.nix"
+    fi
 }
 
 _nix_system_dir() {
-    printf '%s\n' "${LINUXTOYS_NIX_SYSTEM_DIR:-/etc/nixos}"
+    _nix_load_active_paths
+    if [ -n "${LINUXTOYS_NIX_SYSTEM_MODULE:-}" ]; then
+        dirname -- "$LINUXTOYS_NIX_SYSTEM_MODULE"
+    elif [ -n "${NIXOS_CONFIG:-}" ]; then
+        if [ -f "$NIXOS_CONFIG" ]; then
+            dirname -- "$(readlink -f -- "$NIXOS_CONFIG" 2>/dev/null || printf '%s\n' "$NIXOS_CONFIG")"
+        else
+            dirname -- "$NIXOS_CONFIG"
+        fi
+    elif [ -n "${LINUXTOYS_NIX_SYSTEM_DIR:-}" ]; then
+        printf '%s\n' "$LINUXTOYS_NIX_SYSTEM_DIR"
+    elif [ -n "${_NIX_ACTIVE_SYSTEM_DIR:-}" ]; then
+        printf '%s\n' "$_NIX_ACTIVE_SYSTEM_DIR"
+    else
+        printf '%s\n' "/etc/nixos"
+    fi
+}
+
+_nix_system_config_file() {
+    _nix_load_active_paths
+    if [ -n "${NIXOS_CONFIG:-}" ] && [ -f "$NIXOS_CONFIG" ]; then
+        printf '%s\n' "$NIXOS_CONFIG"
+    elif [ -n "${_NIX_ACTIVE_SYSTEM_CONFIG:-}" ] && [ -f "$_NIX_ACTIVE_SYSTEM_CONFIG" ]; then
+        printf '%s\n' "$_NIX_ACTIVE_SYSTEM_CONFIG"
+    elif [ -n "${LINUXTOYS_NIX_SYSTEM_DIR:-}" ] \
+        && [ -f "$LINUXTOYS_NIX_SYSTEM_DIR/configuration.nix" ]; then
+        printf '%s\n' "$LINUXTOYS_NIX_SYSTEM_DIR/configuration.nix"
+    fi
+    return 0
 }
 
 _nix_system_module() {
-    printf '%s\n' "${LINUXTOYS_NIX_SYSTEM_MODULE:-$(_nix_system_dir)/linuxtoys.nix}"
+    _nix_load_active_paths
+    if [ -n "${LINUXTOYS_NIX_SYSTEM_MODULE:-}" ]; then
+        printf '%s\n' "$LINUXTOYS_NIX_SYSTEM_MODULE"
+    elif [ -n "${_NIX_ACTIVE_SYSTEM_MODULE:-}" ]; then
+        printf '%s\n' "$_NIX_ACTIVE_SYSTEM_MODULE"
+    else
+        printf '%s\n' "$(_nix_system_dir)/linuxtoys.nix"
+    fi
 }
 
 _nix_module_for_scope() {
@@ -298,6 +442,7 @@ _nix_write_gpu_module() {
 
 _nix_ensure_gpu64_setup() {
     nix_home_manager_available || return 0
+    _nix_hm_paths_resolved || return 0
     if [ "${LINUXTOYS_NIX_DRY_RUN:-0}" = "1" ]; then
         printf 'Skipping 64-bit GPU setup (dry run).\n'
         return 0
@@ -681,6 +826,15 @@ _nix_ensure_maintenance() {
 _nix_write_module() {
     local scope="$1" target content flakes
     shift
+    if [ "$scope" = "system" ]; then
+        if ! _nix_system_paths_resolved; then
+            _nix_paths_error system
+            return 1
+        fi
+    elif ! _nix_hm_paths_resolved; then
+        _nix_paths_error home-manager
+        return 1
+    fi
     target=$(_nix_module_for_scope "$scope")
     flakes=$(_nix_flakes_module_path "$scope")
     if [ "$scope" != "system" ] && ! nix_is_nixos; then
@@ -772,6 +926,10 @@ EOF
 
 _nix_ensure_hm_config() {
     local directory module override
+    if ! _nix_hm_paths_resolved; then
+        _nix_paths_error home-manager
+        return 1
+    fi
     directory=$(_nix_hm_dir)
     module=$(_nix_hm_module)
     override=$(_nix_hm_config_file)
@@ -779,7 +937,7 @@ _nix_ensure_hm_config() {
     [ -f "$module" ] || _nix_write_module home-manager || return 1
     _nix_ensure_maintenance || return 1
 
-    if [ -f "$directory/flake.nix" ]; then
+    if _nix_hm_flake_active; then
         if [ -f "$directory/home.nix" ] \
             && grep -qE '(\./)?home\.nix([^[:alnum:]_.-]|$)' "$directory/flake.nix"; then
             _nix_patch_imports "$directory/home.nix" && return 0
@@ -821,23 +979,27 @@ _nix_ensure_hm_config() {
 
 _nix_ensure_system_config() {
     local directory module config
+    if ! _nix_system_paths_resolved; then
+        _nix_paths_error system
+        return 1
+    fi
     directory=$(_nix_system_dir)
     module=$(_nix_system_module)
-    config="$directory/configuration.nix"
+    config=$(_nix_system_config_file)
     [ -f "$module" ] || _nix_write_module system || return 1
 
-    if [ -f "$directory/flake.nix" ]; then
-        if [ -f "$config" ] \
+    if _nix_system_flake_active; then
+        if [ -n "$config" ] && [ -f "$config" ] \
             && grep -qE '(\./)?configuration\.nix([^[:alnum:]_.-]|$)' "$directory/flake.nix"; then
             _nix_patch_imports "$config" && return 0
         fi
         _nix_patch_imports "$directory/flake.nix" && return 0
-        if [ -f "$config" ]; then
+        if [ -n "$config" ] && [ -f "$config" ]; then
             _nix_patch_imports "$config" && return 0
         fi
         return 1
     fi
-    if [ -f "$config" ]; then
+    if [ -n "$config" ] && [ -f "$config" ]; then
         _nix_patch_imports "$config"
         return $?
     fi
@@ -922,7 +1084,7 @@ _nix_install_home_manager() {
 }
 
 nix_setup() {
-    local rc=0 answer
+    local rc=0 answer hm_backend=0 system_backend=0
     if ! nix_available; then
         printf 'Nix is not installed.\n' >&2
         return 1
@@ -967,7 +1129,8 @@ nix_setup() {
         printf '1\n' >"$(_nix_state_dir)/allow-unfree" 2>/dev/null || true
     fi
 
-    if ! nix_home_manager_available; then
+    if ! nix_home_manager_available \
+        && { ! nix_is_nixos || _nix_hm_paths_resolved; }; then
         if command -v question >/dev/null 2>&1; then
             question "Install Home Manager" \
                 "Home Manager gives user-level Nix installs their own profile and makes package changes reversible. It is recommended. Install it now?" \
@@ -977,28 +1140,43 @@ nix_setup() {
             _nix_install_home_manager || {
                 printf 'Home Manager could not be installed; system-level Nix remains available on NixOS.\n' >&2
             }
+            _nix_reload_active_paths
         fi
     fi
 
     if nix_home_manager_available; then
-        _nix_ensure_hm_config || {
-            printf 'Could not integrate the LinuxToys module into the Home Manager configuration.\n' >&2
-            rc=1
-        }
-        _nix_ensure_gpu_setup || {
-            printf 'Could not set up GPU acceleration for Nix packages.\n' >&2
-            rc=1
-        }
+        if _nix_hm_paths_resolved; then
+            if _nix_ensure_hm_config; then
+                hm_backend=1
+                _nix_ensure_gpu_setup || {
+                    printf 'Could not set up GPU acceleration for Nix packages.\n' >&2
+                    rc=1
+                }
+            else
+                printf 'Could not integrate the LinuxToys module into the Home Manager configuration.\n' >&2
+                rc=1
+            fi
+        fi
     fi
     if nix_system_available; then
-        _nix_ensure_system_config || {
-            printf 'Could not integrate the LinuxToys module into the NixOS configuration.\n' >&2
-            rc=1
-        }
+        if _nix_system_paths_resolved; then
+            if _nix_ensure_system_config; then
+                system_backend=1
+            else
+                printf 'Could not integrate the LinuxToys module into the NixOS configuration.\n' >&2
+                rc=1
+            fi
+        fi
     fi
 
-    if ! nix_home_manager_available && ! nix_system_available; then
-        printf 'Neither Home Manager nor a NixOS system configuration is available.\n' >&2
+    if [ "$hm_backend" -eq 0 ] && [ "$system_backend" -eq 0 ]; then
+        if nix_home_manager_available && ! _nix_hm_paths_resolved; then
+            _nix_paths_error home-manager
+        fi
+        if nix_system_available && ! _nix_system_paths_resolved; then
+            _nix_paths_error system
+        fi
+        printf 'Neither an active Home Manager environment nor a NixOS system configuration could be prepared.\n' >&2
         rc=1
     fi
     return "$rc"
@@ -1101,7 +1279,7 @@ nix_install_repo_flake() {
 # ---------------------------------------------------------------------------
 
 _nix_rebuild() {
-    local scope="$1" directory rc
+    local scope="$1" directory rc system_config hm_config
     local -a hm_command current
     _NIX_GPU_SETUP_ATTEMPTED=0
     if [ "${LINUXTOYS_NIX_DRY_RUN:-0}" = "1" ]; then
@@ -1109,27 +1287,40 @@ _nix_rebuild() {
         return 0
     fi
     if [ "$scope" = "system" ]; then
+        if ! _nix_system_paths_resolved; then
+            _nix_paths_error system
+            return 1
+        fi
         directory=$(_nix_system_dir)
+        system_config=$(_nix_system_config_file)
         # The generated LinuxToys module may import a flake module, so the
         # elevated rebuild needs flakes even when the user runs nixos-rebuild
         # without --flake.
         local nix_config="${NIX_CONFIG:+$NIX_CONFIG$'\n'}extra-experimental-features = nix-command flakes"
-        if [ -f "$directory/flake.nix" ]; then
+        if _nix_system_flake_active; then
             sudo_ env NIX_CONFIG="$nix_config" \
                 nixos-rebuild switch --flake "$directory"
-        else
+        elif [ -n "$system_config" ]; then
             sudo_ env NIX_CONFIG="$nix_config" \
-                nixos-rebuild switch
+                nixos-rebuild switch -I "nixos-config=$system_config"
+        else
+            printf 'No NixOS configuration found in %s.\n' "$directory" >&2
+            return 1
         fi
         return $?
     fi
 
+    if ! _nix_hm_paths_resolved; then
+        _nix_paths_error home-manager
+        return 1
+    fi
     directory=$(_nix_hm_dir)
+    hm_config=$(_nix_hm_config_file)
     export NIX_CONFIG="${NIX_CONFIG:+$NIX_CONFIG$'\n'}extra-experimental-features = nix-command flakes"
-    if [ -f "$directory/flake.nix" ]; then
+    if _nix_hm_flake_active; then
         hm_command=("$(_nix_hm_bin)" switch --flake "$directory")
-    elif [ -n "${HOME_MANAGER_CONFIG:-}" ] && [ -f "$HOME_MANAGER_CONFIG" ]; then
-        hm_command=("$(_nix_hm_bin)" switch -f "$HOME_MANAGER_CONFIG")
+    elif [ -n "$hm_config" ]; then
+        hm_command=("$(_nix_hm_bin)" switch -f "$hm_config")
     elif [ -f "$directory/home.nix" ]; then
         hm_command=("$(_nix_hm_bin)" switch -f "$directory/home.nix")
     elif [ -f "$directory/default.nix" ]; then
@@ -1200,11 +1391,12 @@ nix_update() {
     nix_available || return 0
     local rc=0 directory elevated hm_config
     if nix_system_available \
+        && _nix_system_paths_resolved \
         && { [ "$(id -u)" -eq 0 ] || [ "${UPD_SERVICE:-0}" != "1" ]; }; then
         directory=$(_nix_system_dir)
         elevated=""
         [ "$(id -u)" -ne 0 ] && elevated="sudo"
-        if [ -f "$directory/flake.nix" ]; then
+        if _nix_system_flake_active; then
             _nix_update_flake "$directory" "$elevated" || rc=1
         else
             _nix_update_channels "$elevated" || rc=1
@@ -1215,10 +1407,11 @@ nix_update() {
     hm_config=$(_nix_hm_config_file)
     directory=$(_nix_hm_dir)
     if nix_home_manager_available \
+        && _nix_hm_paths_resolved \
         && [ "$(id -u)" -ne 0 ] \
-        && { [ -f "$directory/flake.nix" ] || [ -n "$hm_config" ] \
+        && { _nix_hm_flake_active || [ -n "$hm_config" ] \
             || [ -f "$directory/home.nix" ] || [ -f "$directory/default.nix" ]; }; then
-        if [ -f "$directory/flake.nix" ]; then
+        if _nix_hm_flake_active; then
             _nix_update_flake "$directory" "" || rc=1
         else
             _nix_update_channels "" || rc=1
@@ -1346,6 +1539,8 @@ nix_import_flake_module() {
                 printf 'Could not create the NixOS flake configuration.\n' >&2
                 return 1
             fi
+            _nix_record_generated_flake system "$directory" \
+                "$(_nix_system_config_file)" "$(_nix_system_module)"
         else
             rm -f -- "$flake_source" 2>/dev/null || true
         fi
@@ -1370,6 +1565,8 @@ nix_import_flake_module() {
             printf 'Could not create the Home Manager flake configuration.\n' >&2
             return 1
         fi
+        _nix_record_generated_flake home-manager "$directory" \
+            "$(_nix_hm_config_file)" "$(_nix_hm_module)"
     else
         rm -f -- "$flake_source" 2>/dev/null || true
     fi
@@ -1439,6 +1636,7 @@ nix_remove_flakes() {
 }
 
 nix_subsystem_ensure() {
+    local hm_backend=0 system_backend=0
     nix_available || return 1
     export PATH="$HOME/.nix-profile/bin:$HOME/.local/state/nix/profile/bin:$PATH"
     if ! nix_flakes_enabled; then
@@ -1448,15 +1646,33 @@ nix_subsystem_ensure() {
         || printf 'Warning: could not create the /etc/zoneinfo compatibility link.\n' >&2
     mkdir -p -- "$(_nix_state_dir)" 2>/dev/null || true
     printf '1\n' >"$(_nix_state_dir)/allow-unfree" 2>/dev/null || true
-    if ! nix_home_manager_available; then
+    if ! nix_home_manager_available \
+        && { ! nix_is_nixos || _nix_hm_paths_resolved; }; then
         _nix_install_home_manager || return 1
+        _nix_reload_active_paths
     fi
-    _nix_ensure_hm_config || return 1
-    if nix_system_available; then
+    if nix_home_manager_available && _nix_hm_paths_resolved; then
+        _nix_ensure_hm_config || return 1
+        hm_backend=1
+    fi
+    if nix_system_available && _nix_system_paths_resolved; then
         _nix_ensure_system_config || return 1
+        system_backend=1
     fi
-    _nix_ensure_gpu_setup \
-        || printf 'Warning: could not set up GPU acceleration for Nix packages.\n' >&2
+    if [ "$hm_backend" -eq 0 ] && [ "$system_backend" -eq 0 ]; then
+        if nix_home_manager_available && ! _nix_hm_paths_resolved; then
+            _nix_paths_error home-manager
+        fi
+        if nix_system_available && ! _nix_system_paths_resolved; then
+            _nix_paths_error system
+        fi
+        printf 'Neither an active Home Manager environment nor a NixOS system configuration is available.\n' >&2
+        return 1
+    fi
+    if [ "$hm_backend" -eq 1 ]; then
+        _nix_ensure_gpu_setup \
+            || printf 'Warning: could not set up GPU acceleration for Nix packages.\n' >&2
+    fi
     return 0
 }
 
@@ -1465,6 +1681,11 @@ nix_remove_packages() {
     local -a current kept
     (($#)) || return 1
     for scope in home-manager system; do
+        if [ "$scope" = "system" ]; then
+            _nix_system_paths_resolved || continue
+        else
+            _nix_hm_paths_resolved || continue
+        fi
         mapfile -t current < <(_nix_module_read_packages "$scope")
         current_count=${#current[@]}
         (($current_count)) || continue
@@ -1525,6 +1746,15 @@ nix_import_manifest() {
             incoming+=("$attr")
         done < <(jq -r --arg scope "$json_key" '.[$scope][]? // empty' "$json")
         ((${#incoming[@]})) || continue
+        if [ "$scope" = "system" ] && ! _nix_system_paths_resolved; then
+            _nix_paths_error system
+            failed=1
+            continue
+        elif [ "$scope" != "system" ] && ! _nix_hm_paths_resolved; then
+            _nix_paths_error home-manager
+            failed=1
+            continue
+        fi
 
         mapfile -t current < <(_nix_module_read_packages "$scope")
         merged=("${current[@]}" "${incoming[@]}")

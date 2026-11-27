@@ -13,6 +13,10 @@ architecture policy (x86_64-linux or aarch64-linux), and unsupported hosts
 hide the subsystem instead of falling back to a foreign package set. The
 evaluated snapshot also carries nixpkgs' broken/deprecated metadata so those
 non-installable entries never reach the catalog.
+
+Active Home Manager and NixOS source paths are resolved by ``nix_paths`` so
+discovery, generated modules and rebuilds use the same non-default location
+and never create a second environment by accident.
 """
 
 from __future__ import annotations
@@ -28,7 +32,7 @@ import threading
 import time
 from pathlib import Path
 
-from . import _catalog_rs
+from . import _catalog_rs, nix_paths
 from .atomic_io import atomic_write_text
 
 _CACHE_ROOT = Path(
@@ -78,21 +82,34 @@ in
 builtins.listToAttrs (builtins.concatMap row names)
 """
 
-_HM_CONFIG_OVERRIDE = os.environ.get("HOME_MANAGER_CONFIG")
-HOME_CONFIG_DIR = (
-    Path(_HM_CONFIG_OVERRIDE).expanduser().parent
-    if _HM_CONFIG_OVERRIDE
-    else Path(os.environ.get("XDG_CONFIG_HOME") or os.path.expanduser("~/.config")) / "home-manager"
-)
-HOME_MODULE_PATH = Path(
-    os.environ.get(
-        "LINUXTOYS_NIX_HM_MODULE",
-        str(HOME_CONFIG_DIR / "linuxtoys.nix"),
-    )
-)
-SYSTEM_MODULE_PATH = Path(
-    os.environ.get("LINUXTOYS_NIX_SYSTEM_MODULE", "/etc/nixos/linuxtoys.nix")
-)
+
+def active_paths(refresh=False):
+    """Return the resolved Home Manager/NixOS paths from ``nix_paths``."""
+    return nix_paths.resolve(refresh=refresh)
+
+
+def home_config_dir() -> Path:
+    return Path(active_paths()["home"]["dir"])
+
+
+def home_config_file() -> Path | None:
+    value = active_paths()["home"]["config"]
+    return Path(value) if value else None
+
+
+def home_module_path() -> Path:
+    return Path(active_paths()["home"]["module"])
+
+
+def system_config_file() -> Path | None:
+    value = active_paths()["system"]["config"]
+    return Path(value) if value else None
+
+
+def system_module_path() -> Path:
+    return Path(active_paths()["system"]["module"])
+
+
 _ZONEINFO_LINK = Path("/etc/zoneinfo")
 _ZONEINFO_SOURCE = Path("/usr/share/zoneinfo")
 _ATTR_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_'-]*$")
@@ -198,16 +215,30 @@ def scopes():
     """Available install scopes, user-level first."""
     if not enabled():
         return []
+    paths = active_paths()
     result = []
-    if home_manager_available():
+    if home_manager_available() and paths["home"]["resolved"]:
         result.append("home-manager")
-    if is_nixos():
+    if is_nixos() and paths["system"]["resolved"]:
         result.append("system")
     return result
 
 
 def availability_fingerprint():
-    return (nix_executable(), home_manager_available(), is_nixos())
+    paths = active_paths()
+    return (
+        nix_executable(),
+        home_manager_available(),
+        is_nixos(),
+        paths["home"]["dir"],
+        paths["home"]["config"],
+        paths["home"]["module"],
+        paths["home"]["resolved"],
+        paths["system"]["dir"],
+        paths["system"]["config"],
+        paths["system"]["module"],
+        paths["system"]["resolved"],
+    )
 
 
 def catalog_metadata():
@@ -532,15 +563,19 @@ def _unfree_enabled():
     except OSError:
         pass
     candidates = [
-        HOME_MODULE_PATH,
-        SYSTEM_MODULE_PATH,
+        home_module_path(),
+        system_module_path(),
         Path(os.path.expanduser("~/.config/nixpkgs/config.nix")),
-        HOME_CONFIG_DIR / "home.nix",
-        HOME_CONFIG_DIR / "flake.nix",
+        home_config_dir() / "home.nix",
+        home_config_dir() / "flake.nix",
         Path("/etc/nixos/configuration.nix"),
     ]
-    if _HM_CONFIG_OVERRIDE:
-        candidates.append(Path(_HM_CONFIG_OVERRIDE).expanduser())
+    home_config = home_config_file()
+    if home_config is not None:
+        candidates.append(home_config)
+    system_config = system_config_file()
+    if system_config is not None:
+        candidates.append(system_config)
     pattern = re.compile(r"allowUnfree\s*=\s*true")
     for candidate in candidates:
         try:
@@ -571,14 +606,16 @@ def gpu_setup_required():
 
 
 def _gpu_config_paths():
+    home_dir = home_config_dir()
     paths = [
-        HOME_MODULE_PATH,
-        HOME_CONFIG_DIR / "home.nix",
-        HOME_CONFIG_DIR / "default.nix",
-        HOME_CONFIG_DIR / "flake.nix",
+        home_module_path(),
+        home_dir / "home.nix",
+        home_dir / "default.nix",
+        home_dir / "flake.nix",
     ]
-    if _HM_CONFIG_OVERRIDE:
-        paths.append(Path(_HM_CONFIG_OVERRIDE).expanduser())
+    home_config = home_config_file()
+    if home_config is not None:
+        paths.append(home_config)
     seen = set()
     for path in paths:
         key = os.fspath(path)
@@ -720,7 +757,7 @@ def maintenance_configured():
     if not script.is_file():
         return False
     try:
-        content = HOME_MODULE_PATH.read_text(
+        content = home_module_path().read_text(
             encoding="utf-8", errors="replace"
         )
     except OSError:
@@ -734,6 +771,11 @@ def setup_status():
     unfree = _unfree_enabled()
     home_manager = home_manager_available()
     system = is_nixos()
+    paths = active_paths()
+    home_path = paths["home"]
+    system_path = paths["system"]
+    home_backend = bool(home_manager and home_path["resolved"])
+    system_backend = bool(system and system_path["resolved"])
     gpu_required = gpu_setup_required()
     gpu32_required = gpu32_setup_required()
     gpu32 = gpu32_setup_ready() if gpu32_required else True
@@ -747,7 +789,15 @@ def setup_status():
         "flakes": flakes,
         "unfree": unfree,
         "home_manager": home_manager,
+        "home_manager_resolved": bool(home_path["resolved"]),
+        "home_manager_dir": home_path["dir"],
+        "home_manager_config": home_path["config"],
+        "home_manager_module": home_path["module"],
         "system": system,
+        "system_resolved": bool(system_path["resolved"]),
+        "system_dir": system_path["dir"],
+        "system_config": system_path["config"],
+        "system_module": system_path["module"],
         "gpu_required": gpu_required,
         "gpu": gpu,
         "gpu32_required": gpu32_required,
@@ -756,8 +806,10 @@ def setup_status():
         "zoneinfo": zoneinfo,
         "maintenance_required": maintenance_required,
         "maintenance": maintenance,
-        "backend": home_manager or system,
-        "ready": bool(nix_executable() and flakes and (home_manager or system)),
+        "backend": home_backend or system_backend,
+        "ready": bool(
+            nix_executable() and flakes and (home_backend or system_backend)
+        ),
     }
 
 
@@ -768,7 +820,15 @@ def setup_missing(status=None):
         missing.append("flakes")
     if not status["unfree"]:
         missing.append("unfree")
-    if not status["home_manager"] and not status["system"]:
+    home_backend = bool(
+        status["home_manager"]
+        and status.get("home_manager_resolved", status["home_manager"])
+    )
+    system_backend = bool(
+        status["system"]
+        and status.get("system_resolved", status["system"])
+    )
+    if not home_backend and not system_backend:
         missing.append("home-manager")
     if status.get("gpu_required") and not status.get("gpu"):
         missing.append("gpu")
@@ -780,7 +840,7 @@ def setup_missing(status=None):
 
 
 def module_path(scope):
-    return SYSTEM_MODULE_PATH if scope == "system" else HOME_MODULE_PATH
+    return system_module_path() if scope == "system" else home_module_path()
 
 
 def _module_packages(path):
@@ -793,7 +853,11 @@ def _module_packages(path):
 
 def installed_names(scope=None):
     """Observe the packages LinuxToys itself manages through its Nix modules."""
-    paths = [module_path(scope)] if scope else [HOME_MODULE_PATH, SYSTEM_MODULE_PATH]
+    paths = (
+        [module_path(scope)]
+        if scope
+        else [home_module_path(), system_module_path()]
+    )
     names = set()
     for path in paths:
         names.update(_module_packages(path))

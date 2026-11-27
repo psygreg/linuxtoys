@@ -4853,14 +4853,13 @@ def _nix_available_scopes():
             "host and a working nix executable). Use nix_enable_subsystem to "
             "install and prepare it."
         )
-    scopes = []
-    if nix_catalog.home_manager_available():
-        scopes.append("home-manager")
-    if nix_catalog.is_nixos():
-        scopes.append("system")
+    scopes = nix_catalog.scopes()
     if not scopes:
         raise ValueError(
-            "Neither Home Manager nor a NixOS system configuration is available."
+            "Neither an active Home Manager configuration nor a NixOS system "
+            "configuration is available. Set HOME_MANAGER_CONFIG/"
+            "LINUXTOYS_NIX_HM_DIR or NIXOS_CONFIG/"
+            "LINUXTOYS_NIX_SYSTEM_DIR, then retry."
         )
     return scopes
 

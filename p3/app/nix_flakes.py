@@ -577,8 +577,8 @@ def inspect(reference):
         "description": description,
         "system": system,
         "options": options,
-        "home_manager": nix_catalog.home_manager_available(),
-        "system_scope": nix_catalog.is_nixos(),
+        "home_manager": "home-manager" in nix_catalog.scopes(),
+        "system_scope": "system" in nix_catalog.scopes(),
         "apps": _clean_names(outputs.get("apps")),
         "home_configurations": _clean_names(outputs.get("homeConfigurations")),
         "nixos_configurations": _clean_names(outputs.get("nixosConfigurations")),
@@ -983,7 +983,7 @@ def _account():
     )
 
 
-def render_home_flake(system, username, home):
+def render_home_flake(system, username, home, module_name="home.nix"):
     return f"""{{ description = "Home Manager configuration managed by LinuxToys";
   inputs = {{
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -1000,21 +1000,21 @@ def render_home_flake(system, username, home):
     in {{
       homeConfigurations.${{username}} = home-manager.lib.homeManagerConfiguration {{
         pkgs = import nixpkgs {{ inherit system; config.allowUnfree = true; }};
-        modules = [ ./home.nix ];
+        modules = [ ./{module_name} ];
       }};
     }};
 }}
 """
 
 
-def render_system_flake(system, hostname):
+def render_system_flake(system, hostname, module_name="configuration.nix"):
     return f"""{{ description = "NixOS configuration managed by LinuxToys";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   outputs = {{ self, nixpkgs, ... }}:
     {{
       nixosConfigurations.{json.dumps(hostname)} = nixpkgs.lib.nixosSystem {{
         system = {json.dumps(system)};
-        modules = [ ./configuration.nix ];
+        modules = [ ./{module_name} ];
       }};
     }};
 }}
@@ -1119,25 +1119,46 @@ def materialize_default_install(reference, scope=None, name=None):
     """
     info = inspect(reference)
     if not scope:
-        scope = "system" if nix_catalog.is_nixos() else "home-manager"
+        available = nix_catalog.scopes()
+        if "system" in available and nix_catalog.is_nixos():
+            scope = "system"
+        elif "home-manager" in available:
+            scope = "home-manager"
+        elif available:
+            scope = available[0]
     if scope not in ("home-manager", "system"):
         raise FlakeError("Invalid flake install scope")
-    if scope == "home-manager" and not nix_catalog.home_manager_available():
+    if scope == "home-manager" and "home-manager" not in nix_catalog.scopes():
         raise FlakeError("Home Manager is not available")
-    if scope == "system" and not nix_catalog.is_nixos():
+    if scope == "system" and "system" not in nix_catalog.scopes():
         raise FlakeError("The system scope is only available on NixOS")
     keys = default_package_keys(info)
     add_import(info, scope, keys)
     return materialize_apply(scope, name=name)
 
 
+def _active_module_name(scope):
+    """Return the active configuration file name for a generated flake."""
+    entry = nix_catalog.active_paths()["system" if scope == "system" else "home"]
+    config = str(entry.get("config") or "").strip()
+    directory = str(entry.get("dir") or "").strip()
+    if config:
+        try:
+            return Path(config).resolve().relative_to(
+                Path(directory).resolve()
+            ).as_posix()
+        except (OSError, ValueError):
+            return Path(config).name
+    return "configuration.nix" if scope == "system" else "home.nix"
+
+
 def materialize_apply(scope, name=None):
     """Create a terminal script that publishes and rebuilds the flake module."""
     if scope not in ("home-manager", "system"):
         raise FlakeError("Invalid flake install scope")
-    if scope == "home-manager" and not nix_catalog.home_manager_available():
+    if scope == "home-manager" and "home-manager" not in nix_catalog.scopes():
         raise FlakeError("Home Manager is not available")
-    if scope == "system" and not nix_catalog.is_nixos():
+    if scope == "system" and "system" not in nix_catalog.scopes():
         raise FlakeError("The system scope is only available on NixOS")
     system = nix_catalog.linux_arch()
     if not system:
@@ -1147,10 +1168,11 @@ def materialize_apply(scope, name=None):
     display_name = _CONTROL.sub(" ", str(name or "")).strip() or "Import Nix flake"
     username, home, hostname = _account()
     module_text = render_module(scope)
+    module_name = _active_module_name(scope)
     flake_text = (
-        render_system_flake(system, hostname)
+        render_system_flake(system, hostname, module_name)
         if scope == "system"
-        else render_home_flake(system, username, home)
+        else render_home_flake(system, username, home, module_name)
     )
     module_fd, module_path = tempfile.mkstemp(
         prefix="linuxtoys-flake-module-", suffix=".nix"

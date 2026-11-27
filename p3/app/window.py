@@ -1035,21 +1035,26 @@ class AppWindow(
             ),
         ]
         if status.get("home_manager") or not status.get("system"):
-            rows.append(
-                (
-                    self.translations.get(
-                        "nix_setup_home_manager", "Home Manager"
-                    ),
-                    bool(status.get("home_manager")),
-                )
+            home_available = bool(status.get("home_manager"))
+            home_resolved = bool(
+                status.get("home_manager_resolved", home_available)
             )
+            if not (status.get("system") and home_available and not home_resolved):
+                rows.append(
+                    (
+                        self.translations.get(
+                            "nix_setup_home_manager", "Home Manager"
+                        ),
+                        home_available and home_resolved,
+                    )
+                )
         if status.get("system"):
             rows.append(
                 (
                     self.translations.get(
                         "nix_setup_system", "NixOS system configuration"
                     ),
-                    True,
+                    bool(status.get("system_resolved", True)),
                 )
             )
         if status.get("gpu_required"):
