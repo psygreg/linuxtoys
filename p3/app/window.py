@@ -586,7 +586,6 @@ class AppWindow(
         self._nix_refresh_running = False
         self._nix_refresh_pending = False
         self._nix_refresh_result = {"success": False}
-        self._nix_setup_prompted = False
         self._nix_metadata_refreshing = False
         self._nix_metadata_pending = False
         self._nix_runtime_preparing = False
@@ -1019,40 +1018,97 @@ class AppWindow(
         self.load_categories()
         return True
 
-    def _nix_setup_summary(self, status):
-        yes = self.translations.get("nix_setup_yes", "Enabled")
-        no = self.translations.get("nix_setup_no", "Not enabled")
-        installed = self.translations.get("nix_setup_installed", "Installed")
-        missing = self.translations.get("nix_setup_missing", "Not installed")
-        unavailable = self.translations.get("nix_setup_unavailable", "Not available")
-        lines = [
-            f"• Flakes: {yes if status['flakes'] else no}",
-            f"• Unfree packages: {yes if status['unfree'] else no}",
-            f"• Home Manager: {installed if status['home_manager'] else missing}",
-            f"• NixOS system config: {yes if status['system'] else unavailable}",
+    def _nix_setup_rows(self, status: dict) -> list[tuple[str, bool]]:
+        """Return ``(label, configured)`` rows for the setup summary.
+
+        Rows cover only checks that apply to this host, so the dialog never
+        claims a feature is missing when the host does not use it.
+        """
+        rows = [
+            (
+                self.translations.get("nix_setup_flakes", "Flakes"),
+                bool(status.get("flakes")),
+            ),
+            (
+                self.translations.get("nix_setup_unfree", "Unfree packages"),
+                bool(status.get("unfree")),
+            ),
         ]
+        if status.get("home_manager") or not status.get("system"):
+            rows.append(
+                (
+                    self.translations.get(
+                        "nix_setup_home_manager", "Home Manager"
+                    ),
+                    bool(status.get("home_manager")),
+                )
+            )
+        if status.get("system"):
+            rows.append(
+                (
+                    self.translations.get(
+                        "nix_setup_system", "NixOS system configuration"
+                    ),
+                    True,
+                )
+            )
         if status.get("gpu_required"):
-            gpu_label = self.translations.get(
-                "nix_setup_gpu", "GPU acceleration"
+            rows.append(
+                (
+                    self.translations.get(
+                        "nix_setup_gpu", "GPU acceleration"
+                    ),
+                    bool(status.get("gpu")),
+                )
             )
-            lines.append(f"• {gpu_label}: {yes if status.get('gpu') else no}")
         if status.get("zoneinfo_required"):
-            zoneinfo_label = self.translations.get(
-                "nix_setup_zoneinfo", "Time zone support"
-            )
-            lines.append(
-                f"• {zoneinfo_label}: "
-                f"{yes if status.get('zoneinfo') else no}"
+            rows.append(
+                (
+                    self.translations.get(
+                        "nix_setup_zoneinfo", "Time zone support"
+                    ),
+                    bool(status.get("zoneinfo")),
+                )
             )
         if status.get("maintenance_required"):
-            maintenance_label = self.translations.get(
-                "nix_setup_maintenance", "Weekly Nix cleanup"
+            rows.append(
+                (
+                    self.translations.get(
+                        "nix_setup_maintenance", "Weekly Nix cleanup"
+                    ),
+                    bool(status.get("maintenance")),
+                )
             )
-            lines.append(
-                f"• {maintenance_label}: "
-                f"{yes if status.get('maintenance') else no}"
+        return rows
+
+    def _nix_setup_summary(self, status: dict) -> str:
+        """Describe detected setup separately from what Nix setup will change."""
+        rows = self._nix_setup_rows(status)
+        detected = [label for label, ready in rows if ready]
+        pending = [label for label, ready in rows if not ready]
+        none = self.translations.get("nix_setup_none", "None")
+
+        def section(
+            title_key: str, default_title: str, entries: list[str]
+        ) -> str:
+            title = self.translations.get(title_key, default_title)
+            items = (
+                "\n".join(f"• {label}" for label in entries)
+                if entries
+                else f"• {none}"
             )
-        return "\n".join(lines)
+            return f"{title}\n{items}"
+
+        return "\n\n".join(
+            (
+                section("nix_setup_detected", "Already set up:", detected),
+                section(
+                    "nix_setup_pending",
+                    "Will be configured by the Nix setup:",
+                    pending,
+                ),
+            )
+        )
 
     def _activate_nix_category(self, widget=None, event=None):
         if not nix_catalog.enabled():
@@ -1060,11 +1116,14 @@ class AppWindow(
             return
         status = nix_catalog.setup_status()
         missing = nix_catalog.setup_missing(status)
-        if missing and (not status["ready"] or not self._nix_setup_prompted):
+        # Re-evaluate on every entry attempt: a setup run can fail or only
+        # partially satisfy the requirements, and the user must be prompted
+        # again instead of landing in a category whose module is incomplete.
+        if missing:
             message = self.translations.get(
-                "nix_setup_message",
-                "LinuxToys can manage Nix packages through a declarative module. "
-                "The following items need attention:",
+                "nix_setup_review",
+                "Review what is already set up and what the Nix setup will "
+                "configure:",
             )
             buttons = [
                 (
@@ -1097,12 +1156,15 @@ class AppWindow(
             )
             if response == Gtk.ResponseType.YES:
                 info = nix_catalog.materialize_setup()
-                self._nix_setup_prompted = True
                 self.open_term_view([info], auto_run=True)
                 return
-            if not status["ready"]:
+            # "Continue anyway" is only offered once the minimum requirements
+            # are met. Cancel, Escape and window close must return to the main
+            # menu: queueing operations against an unprepared subsystem can
+            # leave it in an unpredictable state.
+            if response != Gtk.ResponseType.NO or not status["ready"]:
+                self.show_categories_view()
                 return
-            self._nix_setup_prompted = True
 
         category_info = self._nix_category_info()
         try:
