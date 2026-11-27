@@ -53,18 +53,25 @@ _AUR_NAME = re.compile(r"[A-Za-z0-9@._+:-]+")
 # listing's 30 s.
 _METADATA_FETCH_TIMEOUT = 120
 
+# 32-bit x86 build labels: rpm names them i386..i686, apt/dpkg names its one
+# multiarch architecture i386. On x86_64 hosts both managers resolve such
+# builds for an explicit multilib request (name.i686 / name:i386) once the
+# 32-bit architecture is enabled, so the request is judged by metadata
+# availability, not by the bare-name native rule; on aarch64 hosts the same
+# request stays a policy refusal.
+_X86_32_LABELS = frozenset({"i386", "i486", "i586", "i686"})
+_APT_X86_32_LABELS = frozenset({"i386"})
+
 # rpm arch-qualified package names (name.arch): the suffix is the package's
 # own build label, and on rpm it doubles as the syntax for an explicit
 # multilib request. The suffix must be a known label (python3.12 does not
 # qualify; libstdc++.i686 does), and the x86-32 labels fold into one family:
 # on x86_64 hosts the dnf backend resolves and installs the 32-bit sibling
-# from the same repositories without any configuration, so the request is
-# judged by metadata availability, not by the bare-name native rule.
+# from the same repositories without any configuration.
 _RPM_ARCH_QUALIFIED = re.compile(
     r"^(?P<name>[A-Za-z0-9][A-Za-z0-9+._-]*?)\."
     r"(?P<arch>x86_64|i386|i486|i586|i686|aarch64|noarch)$"
 )
-_RPM_X86_32_LABELS = frozenset({"i386", "i486", "i586", "i686"})
 
 
 def _rpm_qualified_arch(package: str) -> str | None:
@@ -73,11 +80,25 @@ def _rpm_qualified_arch(package: str) -> str | None:
     return match.group("arch") if match else None
 
 
-def _rpm_arch_installable(qualified: str, host_arch: str) -> bool:
+def _apt_qualified_arch(package: str) -> str | None:
+    """Return apt's explicit multiarch label of an arch-qualified name, or None.
+
+    Only dpkg's i386 label qualifies: it is apt's multiarch syntax on x86_64
+    hosts (``libc6:i386``), the apt counterpart of rpm's ``name.i686``. Any
+    other suffix stays with the native-label gate, so foreign requests such as
+    ``foo:arm64`` on x86_64 keep the policy refusal.
+    """
+    if ":" not in package:
+        return None
+    label = package.rsplit(":", 1)[1].strip().lower()
+    return label if label in _APT_X86_32_LABELS else None
+
+
+def _arch_installable(qualified: str, host_arch: str) -> bool:
     """Whether an arch-qualified request can resolve for this host at all."""
     if qualified == "noarch":
         return True
-    if qualified in _RPM_X86_32_LABELS:
+    if qualified in _X86_32_LABELS:
         return host_arch == "x86_64"
     return qualified == host_arch
 
@@ -169,7 +190,23 @@ def _aur_candidate(package: str, machine: str) -> None:
 
 
 def apt_plan(packages: list[str]) -> None:
-    """Validate APT's complete simulated installation plan, including dependencies."""
+    """Validate APT's complete simulated installation plan, including dependencies.
+
+    A planned 32-bit x86 package is a legitimate multilib/deb multiarch
+    resolution on x86_64 hosts: apt only selects one when the i386 architecture
+    was enabled (`dpkg --add-architecture i386`) and the requested package (or
+    its dependency/recommendation) names it, and the host can execute 32-bit
+    code. Foreign non-x86 labels still refuse the whole plan. On aarch64 hosts
+    the same planned label stays refused.
+    """
+    arch = host()
+
+    def _require_planned(label: str) -> None:
+        token = canonical_package_architecture(label)
+        if arch.value == "x86_64" and token in _APT_X86_32_LABELS:
+            return
+        require_native([token], arch.value)
+
     try:
         result = subprocess.run(
             ["apt-get", "--simulate", "--no-remove", "install", *packages],
@@ -201,7 +238,7 @@ def apt_plan(packages: list[str]) -> None:
             continue
         package = line.split()[1]
         if ":" in package:
-            require_native([canonical_package_architecture(package.rsplit(":", 1)[1])])
+            _require_planned(package.rsplit(":", 1)[1])
         # Newer APT (e.g. Debian 13) appends an optional trailing reason group
         # after the closing paren: "... Debian:13.7/stable [amd64]) []".
         match = re.search(r"\[([^] ]+)\]\)(?:\s*\[[^]]*\])?\s*$", line)
@@ -210,7 +247,7 @@ def apt_plan(packages: list[str]) -> None:
                 f"APT did not identify the planned architecture for {package}"
             )
         if match[1] != "all":
-            require_native([canonical_package_architecture(match[1])])
+            _require_planned(match[1])
 
 
 def _apt_plan_diagnostics(error: subprocess.CalledProcessError) -> str:
@@ -351,7 +388,9 @@ def native_packages(packages: list[str], manager: str) -> None:
     foreign ISAs. Candidate listings may include foreign-ISA siblings of
     multilib/multiarch same-name packages the manager never selects for a
     bare name, so those require one native or arch-independent candidate;
-    explicit foreign requests are refused by the suffix check below.
+    an explicit foreign-suffix request is refused by the suffix check below
+    (the x86-32 multilib requests are the documented exception handled
+    further down).
 
     pacman's sync databases never cover the AUR: a target pacman cannot see is
     an AUR-only candidate on the pacman-driven arch family (SteamOS-family
@@ -385,6 +424,16 @@ def native_packages(packages: list[str], manager: str) -> None:
     foreign ISA (foo.aarch64 on x86_64) and the bare-name foreign-sibling
     rule keep the policy refusal.
 
+    apt's multiarch syntax (name:i386) is the same explicit-multilib
+    request once the calling script enabled the 32-bit architecture: on
+    x86_64 hosts the candidate listing and the simulated plan must accept
+    the i386 build the manager selects, while aarch64 hosts and non-x86
+    suffixes keep the policy refusal. APT's own plan may also include i386
+    packages as dependencies or recommendations of a bare native name (for
+    example Ubuntu's NVIDIA driver recommending the 32-bit userspace
+    libraries on a multiarch-enabled host); those are part of apt's
+    resolution on x86_64 and are accepted by the same rule.
+
     APT has no unprivileged metadata fetch, so the candidate listing itself
     never refuses an invisible name: absence from the listing (apt 2.x exits
     silently, apt 3.x reports "No packages found") defers to the simulated
@@ -401,17 +450,22 @@ def native_packages(packages: list[str], manager: str) -> None:
     preflight is judged again.
     """
     arch = host()
-    # rpm arch-qualified requests (dnf backend) skip the bare-name native
-    # rule here and are judged by metadata availability in the listing stage
-    # below; this mapping carries each request's label to its gate call.
+    # Explicit arch-qualified requests (rpm name.i686 on dnf, apt name:i386)
+    # skip the bare-name native rule here and are judged by metadata
+    # availability in the listing stage below; this mapping carries each
+    # request's label to its gate call.
     qualified_reqs: dict[str, str] = {}
     for package in packages:
         if package.startswith("-"):
             raise _PolicyRefusal("Package options are not package names")
-        rpm_arch = _rpm_qualified_arch(package) if manager == "dnf" else None
-        if rpm_arch is not None and _rpm_arch_installable(rpm_arch, arch.value):
-            qualified_reqs[package] = rpm_arch
-        if ":" in package:
+        qualified = None
+        if manager == "dnf":
+            qualified = _rpm_qualified_arch(package)
+        elif manager == "apt":
+            qualified = _apt_qualified_arch(package)
+        if qualified is not None and _arch_installable(qualified, arch.value):
+            qualified_reqs[package] = qualified
+        if ":" in package and package not in qualified_reqs:
             try:
                 require_native(
                     [canonical_package_architecture(package.rsplit(":", 1)[1])], arch.value
@@ -456,7 +510,9 @@ def native_packages(packages: list[str], manager: str) -> None:
                 # architecture the plan gate judges like any other payload.
                 unlisted.append(package)
                 continue
-            _require_native_candidate(package, fields, arch.value)
+            _require_native_candidate(
+                package, fields, arch.value, qualified_reqs.get(package)
+            )
         try:
             apt_plan(packages)
         except _AptPlanDiagnostic as error:
