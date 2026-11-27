@@ -18,10 +18,23 @@ bootloader_upd() {
             elif command -v sdboot-manage >/dev/null 2>&1 &&
                 sudo_ bootctl is-installed >/dev/null 2>&1; then
                 sudo_ sdboot-manage gen || die "Unable to update bootloader"
+            elif command -v bootctl >/dev/null 2>&1 && sudo_ bootctl is-installed >/dev/null 2>&1; then
+                # systemd-boot is what is actually installed in the ESP. Check it
+                # before grub-mkconfig: the grub package can be present (and even
+                # expose grub-mkconfig) on a system that boots with systemd-boot,
+                # and running its tool then fails with "Unable to update
+                # bootloader" for no good reason.
+                #
+                # Updating the systemd-boot EFI binary is also optional here: it
+                # only refreshes the loader itself, not the kernel entries, and
+                # older systemd versions exit non-zero when the installed binary
+                # is already current ("same boot loader version in place
+                # already"). Keep it graceful so a no-op update cannot abort the
+                # operation.
+                sudo_ bootctl update --graceful ||
+                    echo "Could not update the systemd-boot EFI binary; continuing." >&2
             elif command -v grub-mkconfig >/dev/null 2>&1; then
                 sudo_ grub-mkconfig -o /boot/grub/grub.cfg || die "Unable to update bootloader"
-            elif command -v bootctl >/dev/null 2>&1 && sudo_ bootctl is-installed >/dev/null 2>&1; then
-                sudo_ bootctl update || die "Unable to update bootloader"
             else
                 die "Unable to determine installed bootloader"
             fi
