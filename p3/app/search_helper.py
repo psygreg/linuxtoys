@@ -881,9 +881,14 @@ class SearchEngine:
             return []
         results = [SearchResult(info, "script", int(score))
                    for info, score in appstream_parser.search_nix_entries(query.strip().casefold())]
-        return self._group_results_by_category(results, max_results)
+        # This is the local filter inside the Nix Packages browser: keep its
+        # results in that catalog even when the API also gives each package an
+        # application category.
+        return self._group_results_by_category(results, max_results, force_nix_group=True)
 
-    def _group_results_by_category(self, results, max_results_per_category):
+    def _group_results_by_category(
+        self, results, max_results_per_category, force_nix_group=False
+    ):
         """
         Group search results by category and sort appropriately.
         Scripts without a proper category are kept as 'Uncategorized' without a header.
@@ -905,10 +910,22 @@ class SearchEngine:
             # ``sys/sysadm`` rather than translation keys, so translating the whole
             # string directly produces labels like "Sys/Sysadm".
             category_key = str(item_info.get("category", "") or "").strip().strip("/")
+            # A merged entry keeps the application's own category even when its
+            # selected/default source is Nix. Only uncategorized Nix packages
+            # (the standalone Nix Packages fallback) stay in the source group.
+            nix_category = (
+                category_key
+                if item_info.get("appstream_source") == "nix"
+                and category_key
+                and category_key != "nix"
+                else ""
+            )
             if item_info.get("appstream_source") == "homebrew":
                 category_name = "Homebrew"
                 category_path = "homebrew://catalog"
-            elif item_info.get("appstream_source") == "nix":
+            elif item_info.get("appstream_source") == "nix" and (
+                force_nix_group or not nix_category
+            ):
                 category_name = self.translations.get("nix_category", "Nix Packages")
                 category_path = "nix://catalog"
             elif item_info.get("is_aur_entry"):
@@ -968,9 +985,9 @@ class SearchEngine:
                     "category_path": category_path,
                     "best_match_score": 0,
                     "scripts": [],
-                    "is_aur_group": bool(item_info.get("is_aur_entry")),
-                    "is_homebrew_group": item_info.get("appstream_source") == "homebrew",
-                    "is_nix_group": item_info.get("appstream_source") == "nix",
+                    "is_aur_group": category_path == "aur://catalog",
+                    "is_homebrew_group": category_path == "homebrew://catalog",
+                    "is_nix_group": category_path == "nix://catalog",
                     "show_header": (
                         category_name
                         != self.translations.get(

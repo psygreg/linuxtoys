@@ -21,7 +21,7 @@ _NIX_RUNTIME_CACHE = {}  # (path, scopes, stat) -> Rust NixCatalog
 # Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
 # catalog.json remains authoritative; this file is disposable and regenerated
 # whenever any input represented by the runtime cache key changes.
-RUNTIME_CACHE_SCHEMA = 39
+RUNTIME_CACHE_SCHEMA = 48
 RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries-rs.bin"
 
 # Most recent inputs used to build the live runtime catalog. This is process-local
@@ -1202,6 +1202,22 @@ def find_entry_by_name(scripts_dir, name, curated_entries=None, category_paths=N
     )
 
 
+def find_entry_by_nix_attr(attr):
+    """Resolve the merged AppStream card whose sources include a Nix attribute."""
+    target = str(attr or "").strip()
+    if not target:
+        return None
+    with _CACHE_LOCK:
+        context = _LAST_LOAD_CONTEXT
+    if context is None:
+        return None
+    scripts_dir, curated_entries, category_paths = context
+    return _enrich_nix_match(
+        _runtime_catalog(scripts_dir, curated_entries, category_paths)
+        .find_by_nix_package(target)
+    )
+
+
 def get_entries_for_category(
     scripts_dir,
     category_path,
@@ -1396,9 +1412,18 @@ def get_installed_entries(
 
 class HomebrewEntriesView:
     """Keep a generation alive and decode only requested category slices."""
-    def __init__(self, catalog):
+    def __init__(self, catalog, excluded=()):
         self._catalog = catalog
-        self._length = int(catalog.category_entry_count("homebrew"))
+        self._excluded = tuple(sorted({
+            str(value).strip().casefold()
+            for value in (excluded or ())
+            if str(value).strip()
+        }))
+        self._length = int(
+            catalog.homebrew_filtered_entry_count(list(self._excluded))
+            if self._excluded
+            else catalog.category_entry_count("homebrew")
+        )
 
     def __len__(self):
         return self._length
@@ -1410,14 +1435,21 @@ class HomebrewEntriesView:
                 return [self[index] for index in range(start, stop, step)]
             if stop <= start:
                 return []
-            entries = self._catalog.category_entry_slice("homebrew", start, stop - start)
-            return entries
+            if self._excluded:
+                return self._catalog.homebrew_filtered_entry_slice(
+                    list(self._excluded), start, stop - start
+                )
+            return self._catalog.category_entry_slice("homebrew", start, stop - start)
         import operator
         index = operator.index(key)
         if index < 0:
             index += self._length
         if not 0 <= index < self._length:
             raise IndexError(index)
+        if self._excluded:
+            return self._catalog.homebrew_filtered_entry_slice(
+                list(self._excluded), index, 1
+            )[0]
         return self._catalog.category_entry_slice("homebrew", index, 1)[0]
 
 
@@ -1432,6 +1464,52 @@ def get_homebrew_entries():
     scripts_dir, curated_entries, category_paths = context
     catalog = _runtime_catalog(scripts_dir, curated_entries, category_paths)
     return HomebrewEntriesView(catalog)
+
+
+def _installed_homebrew_names():
+    """Return the current installed Homebrew formula names."""
+    if not homebrew_catalog.enabled():
+        return []
+    from . import installed_packages
+
+    return sorted(
+        {
+            str(value).strip()
+            for value in (installed_packages.snapshot().get("homebrew") or ())
+            if str(value).strip()
+        }
+    )
+
+
+def get_homebrew_available_entries():
+    """Browse Homebrew entries excluding the ones in the Installed tab."""
+    if not homebrew_catalog.enabled():
+        return []
+    with _CACHE_LOCK:
+        context = _LAST_LOAD_CONTEXT
+    if context is None:
+        return []
+    scripts_dir, curated_entries, category_paths = context
+    catalog = _runtime_catalog(scripts_dir, curated_entries, category_paths)
+    return HomebrewEntriesView(catalog, _installed_homebrew_names())
+
+
+def get_installed_homebrew_entries():
+    """Materialize only installed Homebrew formulae for the Installed tab."""
+    if not homebrew_catalog.enabled():
+        return []
+    with _CACHE_LOCK:
+        context = _LAST_LOAD_CONTEXT
+    if context is None:
+        return []
+    names = _installed_homebrew_names()
+    if not names:
+        return []
+    scripts_dir, curated_entries, category_paths = context
+    return list(
+        _runtime_catalog(scripts_dir, curated_entries, category_paths)
+        .installed_entries([], [], [], [], names)
+    )
 
 
 def search_homebrew_entries(query):
@@ -1489,9 +1567,18 @@ def _nix_catalog_index():
 
 class NixEntriesView:
     """Keep a generation alive and decode only requested category slices."""
-    def __init__(self, catalog):
+    def __init__(self, catalog, excluded=()):
         self._catalog = catalog
-        self._length = int(len(catalog))
+        self._excluded = tuple(sorted({
+            str(value).strip().casefold()
+            for value in (excluded or ())
+            if str(value).strip()
+        }))
+        self._length = int(
+            catalog.filtered_entry_count(list(self._excluded))
+            if self._excluded
+            else len(catalog)
+        )
 
     def __len__(self):
         return self._length
@@ -1503,17 +1590,25 @@ class NixEntriesView:
                 return [self[index] for index in range(start, stop, step)]
             if stop <= start:
                 return []
-            return [
-                nix_metadata.enrich_index(entry)
-                for entry in self._catalog.entry_slice(start, stop - start)
-            ]
+            if self._excluded:
+                entries = self._catalog.filtered_entry_slice(
+                    list(self._excluded), start, stop - start
+                )
+            else:
+                entries = self._catalog.entry_slice(start, stop - start)
+            return [nix_metadata.enrich_index(entry) for entry in entries]
         import operator
         index = operator.index(key)
         if index < 0:
             index += self._length
         if not 0 <= index < self._length:
             raise IndexError(index)
-        entry = self._catalog.entry_slice(index, 1)[0]
+        if self._excluded:
+            entry = self._catalog.filtered_entry_slice(
+                list(self._excluded), index, 1
+            )[0]
+        else:
+            entry = self._catalog.entry_slice(index, 1)[0]
         return nix_metadata.enrich_index(entry)
 
 
@@ -1523,6 +1618,23 @@ def get_nix_entries():
     if catalog is None:
         return []
     return NixEntriesView(catalog)
+
+
+def get_available_nix_entries():
+    """Browse Nix packages excluding the ones in the Installed tab."""
+    catalog = _nix_catalog_index()
+    if catalog is None:
+        return []
+    from . import installed_packages
+
+    installed = sorted(
+        {
+            str(value).strip()
+            for value in (installed_packages.snapshot().get("nix") or ())
+            if str(value).strip()
+        }
+    )
+    return NixEntriesView(catalog, installed)
 
 
 def search_nix_entries(query):

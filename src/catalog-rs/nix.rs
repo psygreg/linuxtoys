@@ -645,6 +645,48 @@ impl NixCatalog {
         Ok(out)
     }
 
+    fn filtered_entry_count(&self, excluded: Vec<String>) -> usize {
+        let excluded: std::collections::HashSet<String> = excluded
+            .into_iter()
+            .map(|value| value.trim().to_lowercase())
+            .filter(|value| !value.is_empty())
+            .collect();
+        self.packages
+            .iter()
+            .filter(|package| !excluded.contains(&package.attr.to_lowercase()))
+            .count()
+    }
+
+    fn filtered_entry_slice(
+        &self,
+        py: Python<'_>,
+        excluded: Vec<String>,
+        offset: usize,
+        limit: usize,
+    ) -> PyResult<Vec<Py<PyAny>>> {
+        let excluded: std::collections::HashSet<String> = excluded
+            .into_iter()
+            .map(|value| value.trim().to_lowercase())
+            .filter(|value| !value.is_empty())
+            .collect();
+        let mut out = Vec::with_capacity(limit);
+        let mut skipped = 0usize;
+        for package in &self.packages {
+            if excluded.contains(&package.attr.to_lowercase()) {
+                continue;
+            }
+            if skipped < offset {
+                skipped += 1;
+                continue;
+            }
+            if out.len() >= limit {
+                break;
+            }
+            out.push(json_to_py(py, &self.entry(package))?);
+        }
+        Ok(out)
+    }
+
     fn all_entries(&self, py: Python<'_>) -> PyResult<Vec<Py<PyAny>>> {
         let mut out = Vec::with_capacity(self.packages.len());
         for package in &self.packages {

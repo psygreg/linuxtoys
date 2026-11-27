@@ -323,10 +323,7 @@ class NavCtl:
                 installed_label=self.translations.get("app_page_installed", "Installed"),
             )
 
-            if not self._category_has_installed_items(category_info):
-                switcher = content_view._linuxtoys_category_switcher
-                switcher.set_no_show_all(True)
-                switcher.hide()
+            self._update_category_tabs_visibility(content_view, category_info)
 
         # Detach without destroying: the content is immediately reparented below.
         self.main_stack.remove(content_view)

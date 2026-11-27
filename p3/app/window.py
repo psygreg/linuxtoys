@@ -808,7 +808,6 @@ class AppWindow(
         category_info = self._homebrew_category_info()
         self._open_aur_category_view(category_info, loading=True)
         page = self.scripts_view
-        flowbox = self.scripts_flowbox
         self._refresh_homebrew_catalog()
 
         def finish_loading():
@@ -822,7 +821,7 @@ class AppWindow(
             state = appstream_cache.get_state().get("sources", {}).get("homebrew", {})
             if (state.get("complete") and homebrew_catalog.enabled()
                     and self._homebrew_refresh_result.get("success")):
-                self._load_scripts_into_flowbox(flowbox, category_info, defer_initial=True)
+                self._load_category_view_flowboxes(page, category_info)
             else:
                 gtk_dialogs.run_message_dialog(
                     self, title="Homebrew",
@@ -1122,7 +1121,6 @@ class AppWindow(
 
         self._open_aur_category_view(category_info, loading=True)
         page = self.scripts_view
-        flowbox = self.scripts_flowbox
         self._refresh_nix_catalog()
 
         def finish_loading():
@@ -1138,7 +1136,7 @@ class AppWindow(
             if content is not None:
                 content.set_sensitive(True)
             if self._nix_refresh_result.get("success"):
-                self._load_scripts_into_flowbox(flowbox, category_info, defer_initial=True)
+                self._load_category_view_flowboxes(page, category_info)
             else:
                 gtk_dialogs.run_message_dialog(
                     self,
@@ -1199,8 +1197,8 @@ class AppWindow(
                     if content is not None:
                         content.set_sensitive(True)
                     if result.get("success"):
-                        self._load_scripts_into_flowbox(
-                            self.scripts_flowbox, category, defer_initial=True
+                        self._load_category_view_flowboxes(
+                            page, category, defer_initial=True
                         )
                         if nix_metadata.index_needs_refresh():
                             self._refresh_nix_metadata()
@@ -1273,8 +1271,8 @@ class AppWindow(
                     and category.get("is_nix_category")
                     and self.main_stack.get_visible_child() is self.scripts_view
                 ):
-                    self._load_scripts_into_flowbox(
-                        self.scripts_flowbox, category, defer_initial=True
+                    self._load_category_view_flowboxes(
+                        self.scripts_view, category, defer_initial=True
                     )
                 if changed:
                     # The shared catalog embeds display names from this index so
@@ -3483,9 +3481,9 @@ class AppWindow(
         if category_info.get("is_appimage_category"):
             return self._appimage_category_items(category_info)
         if category_info.get("is_homebrew_category"):
-            return appstream_parser.get_homebrew_entries()
+            return appstream_parser.get_homebrew_available_entries()
         if category_info.get("is_nix_category"):
-            return appstream_parser.get_nix_entries()
+            return appstream_parser.get_available_nix_entries()
         if category_info.get("is_aur_category"):
             # Keep AUR as a lazy Rust-backed sequence. Converting this to list()
             # materializes tens of thousands of Python dictionaries at once.
@@ -3531,8 +3529,13 @@ class AppWindow(
         # Available/Installed split would enumerate the complete repository and
         # defeat paged browsing. Individual AUR cards still refresh their normal
         # installed/removable state after transactions.
-        if category_info.get("is_aur_category") or category_info.get("is_homebrew_category") or category_info.get("is_appimage_category"):
+        if category_info.get("is_aur_category"):
             return False
+        if category_info.get("is_homebrew_category"):
+            try:
+                return bool(appstream_parser.get_installed_homebrew_entries())
+            except Exception:
+                return False
         if category_info.get("is_nix_category"):
             try:
                 return bool(installed_packages.installed_nix_entries())
@@ -3633,7 +3636,7 @@ class AppWindow(
         scripts = self._category_items_for_display(category_info)
         category_tab = getattr(flowbox, "_linuxtoys_category_tab", None)
         if category_info.get("is_homebrew_category") and category_tab == "installed":
-            scripts = []
+            scripts = appstream_parser.get_installed_homebrew_entries()
         elif category_info.get("is_nix_category") and category_tab == "installed":
             scripts = installed_packages.installed_nix_entries()
         elif category_tab in ("available", "installed") and not (
@@ -4028,21 +4031,71 @@ class AppWindow(
             name="linuxtoys-aur-enable",
         ).start()
 
+    def _update_category_tabs_visibility(self, view, category_info):
+        """Show the Available/Installed switcher only while installed rows exist."""
+        switcher = getattr(view, "_linuxtoys_category_switcher", None)
+        if switcher is None:
+            return
+        tabs = getattr(view, "_linuxtoys_category_tabs", None)
+        try:
+            has_installed = self._category_has_installed_items(category_info)
+        except Exception:
+            has_installed = False
+        if has_installed:
+            switcher.set_no_show_all(False)
+            switcher.show_all()
+        else:
+            switcher.hide()
+            switcher.set_no_show_all(True)
+            if tabs is not None:
+                tabs.set_visible_child_name("available")
+
+    def _load_category_view_flowboxes(self, view, category_info, defer_initial=True):
+        """Populate both tabs of a tabbed category view, then refresh the switcher."""
+        available_flowbox = getattr(view, "_linuxtoys_available_flowbox", None)
+        if available_flowbox is None and self.scripts_view is view:
+            available_flowbox = self.scripts_flowbox
+        installed_flowbox = getattr(view, "_linuxtoys_installed_flowbox", None)
+        for flowbox in (available_flowbox, installed_flowbox):
+            if flowbox is not None:
+                self._load_scripts_into_flowbox(
+                    flowbox,
+                    category_info,
+                    defer_initial=defer_initial,
+                )
+        self._update_category_tabs_visibility(view, category_info)
+
     def _open_aur_category_view(self, category_info, *, loading=False):
-        """Open AUR through the same retained/deferred category-view machinery."""
+        """Open AUR/source categories through the shared category-view machinery."""
         self._retain_current_category_view()
 
         self.view_counter += 1
         new_view_name = f"scripts_{self.view_counter}"
-        new_flowbox = self.create_flowbox()
-
-        # AUR uses a single lazy/paged FlowBox rather than the normal
-        # Available/Installed category browser, but it should still use the same
-        # in-stack category-header layout as every other category page.
         content_name = f"{new_view_name}__content"
-        content_view = gui_rs.stack_add_scrolled_flowbox(
-            self.main_stack, new_flowbox, content_name
+        tabbed = bool(
+            category_info.get("is_homebrew_category")
+            or category_info.get("is_nix_category")
         )
+        if tabbed:
+            new_flowbox = self.create_flowbox()
+            new_flowbox._linuxtoys_category_tab = "available"
+            installed_flowbox = self.create_flowbox()
+            installed_flowbox._linuxtoys_category_tab = "installed"
+            content_view = gui_rs.stack_add_category_browser(
+                self.main_stack,
+                new_flowbox,
+                installed_flowbox,
+                content_name,
+                available_label=self.translations.get("category_available", "Available"),
+                installed_label=self.translations.get("app_page_installed", "Installed"),
+            )
+        else:
+            # AUR uses a single lazy/paged FlowBox rather than the normal
+            # Available/Installed category browser.
+            new_flowbox = self.create_flowbox()
+            content_view = gui_rs.stack_add_scrolled_flowbox(
+                self.main_stack, new_flowbox, content_name
+            )
         self.main_stack.remove(content_view)
 
         page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
@@ -4066,6 +4119,14 @@ class AppWindow(
         page._linuxtoys_category_header = category_header
         page._linuxtoys_category_content = content_view
         page._linuxtoys_category_info = category_info
+        for attr in (
+            "_linuxtoys_available_flowbox",
+            "_linuxtoys_installed_flowbox",
+            "_linuxtoys_category_switcher",
+            "_linuxtoys_category_tabs",
+        ):
+            if hasattr(content_view, attr):
+                setattr(page, attr, getattr(content_view, attr))
 
         gui_rs.stack_attach_child(
             self.main_stack, page, new_view_name, make_visible=False
@@ -4084,11 +4145,7 @@ class AppWindow(
 
         # Match normal category navigation: let the slide start with an attached
         # empty destination, then lazily materialize the first viewport.
-        self._load_scripts_into_flowbox(
-            new_flowbox,
-            category_info,
-            defer_initial=True,
-        )
+        self._load_category_view_flowboxes(page, category_info)
         return False
 
     def _show_aur_operation_failure(self, name, output):
@@ -6099,20 +6156,7 @@ class AppWindow(
             # The tab bar itself is conditional. The wrapper always exists so a
             # just-installed app can expose Installed without replacing the whole
             # category view, while removing the last installed app hides it again.
-            switcher = getattr(view, "_linuxtoys_category_switcher", None)
-            tabs = getattr(view, "_linuxtoys_category_tabs", None)
-            has_installed = self._category_has_installed_items(
-                self.current_category_info
-            )
-            if switcher is not None:
-                if has_installed:
-                    switcher.set_no_show_all(False)
-                    switcher.show_all()
-                else:
-                    switcher.hide()
-                    switcher.set_no_show_all(True)
-                    if tabs is not None:
-                        tabs.set_visible_child_name("available")
+            self._update_category_tabs_visibility(view, self.current_category_info)
             return
 
         self._refresh_flowbox_removable_states(flowbox)

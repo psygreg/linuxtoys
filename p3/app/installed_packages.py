@@ -19,6 +19,7 @@ from pathlib import Path
 
 from . import homebrew_catalog
 from . import nix_catalog
+from . import nix_metadata
 from . import registry_utils
 from .compat import native_package_family, is_containerized, native_package_family
 from .atomic_io import atomic_write_text
@@ -249,6 +250,84 @@ def snapshot():
         }
 
 
+def _merged_nix_metadata(item):
+    """Borrow card/app-page metadata from the merged AppStream entry for a Nix attr.
+
+    The Nix catalogue only knows Nix metadata, but the shared runtime catalogue
+    can identify this attribute as one source of a merged application (for
+    example Discord's Nix package alongside its Flatpak and Snap sources). The
+    installed card should present that application's name, icon and page while
+    keeping its Nix install identity and removal action.
+    """
+    attr = str(item.get("nix_name") or "").strip()
+    if not attr:
+        return item
+    try:
+        from . import appstream_parser
+
+        merged = appstream_parser.find_entry_by_nix_attr(attr)
+    except Exception:
+        merged = None
+    if not isinstance(merged, dict):
+        return item
+
+    options = [
+        dict(option)
+        for option in (merged.get("source_options") or ())
+        if isinstance(option, dict)
+    ]
+    nix_option = next(
+        (
+            option
+            for option in options
+            if str(option.get("appstream_source") or "").strip() == "nix"
+            and str(option.get("nix_name") or option.get("package-name") or "").strip()
+            == attr
+        ),
+        None,
+    )
+    if (
+        nix_option is None
+        and str(merged.get("appstream_source") or "").strip() == "nix"
+        and str(merged.get("nix_name") or merged.get("package-name") or "").strip()
+        == attr
+    ):
+        nix_option = dict(merged)
+    result = dict(nix_option) if nix_option is not None else dict(item)
+    if options:
+        result["source_options"] = options
+    if merged.get("recommended_source"):
+        result["recommended_source"] = merged["recommended_source"]
+
+    # Keep the installed package's own identity, scopes and registry action.
+    for key in (
+        "nix_name",
+        "nix_scope",
+        "nix_scopes",
+        "registry_name",
+        "installed_nix_entry",
+        "is_nix_package",
+    ):
+        if item.get(key) is not None:
+            result[key] = item[key]
+    appstream_id = str(item.get("appstream_id") or item.get("id") or "").strip()
+    if appstream_id:
+        result["appstream_id"] = appstream_id
+        result["id"] = appstream_id
+    result["appstream_source"] = "nix"
+    result["type"] = "nix"
+    result["repo"] = "nixpkgs"
+    result["package-name"] = attr
+    result["is_script"] = True
+    result["is_repo_entry"] = True
+    result["is_appstream_entry"] = True
+    result["has_app_page"] = True
+    result.setdefault("revert", "yes")
+    result.setdefault("reboot", "no")
+    result.setdefault("path", f"appstream://nix/{attr}")
+    return result
+
+
 def installed_nix_entries():
     """Installed Nix packages and imported flakes for the Installed tab.
 
@@ -348,6 +427,15 @@ def installed_nix_entries():
             continue
         if key:
             seen.add(key)
+        if str(item.get("appstream_source") or "").strip() == "nix":
+            # The Installed tab builds from registry/module records. First
+            # borrow the merged application's metadata (name, artwork, page),
+            # then apply the Nix API index on top where it has curated fields.
+            item = _merged_nix_metadata(item)
+            try:
+                item = nix_metadata.enrich_index(item)
+            except Exception:
+                pass
         result.append(item)
     result.sort(key=lambda item: str(item.get("name", "")).casefold())
     return result
@@ -458,6 +546,16 @@ def installed_source(info, executed_names=None):
     AppImage or a stale package snapshot) fall back to the executed identity of
     each selectable source. Returns None when no source is installed.
     """
+    if (
+        isinstance(info, dict)
+        and info.get("installed_nix_entry")
+        and info.get("is_nix_package")
+    ):
+        # This row was built from the installed Nix transaction and may carry
+        # other selectable sources borrowed from the merged app. Removing or
+        # opening it must keep acting on the Nix install, not on another source
+        # that happens to be installed too.
+        return info
     observed = match_any(info)
     if observed is not None:
         return observed.get("info")

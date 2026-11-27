@@ -576,7 +576,7 @@ class FeaturedCtl:
     def _featured_nix_category(script):
         """Return the normal LinuxToys category of a Nix Featured candidate.
 
-        Nixpkgs has no review feed, so Nix packages qualify through the NixOS
+        Nixpkgs has no review feed, so Nix packages qualify through the API
         category distribution instead. Only packages mapped onto a normal
         category participate; the fallback ``nix`` pseudo-category is ordered
         separately and never contributes Featured cards.

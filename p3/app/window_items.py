@@ -1040,10 +1040,13 @@ class ItemWidgetFactory:
         elif info.get("is_aur_category"):
             self._activate_aur_category(info)
         elif info.get("installed_nix_entry"):
-            # The Nix category's Installed tab is a management view: both
-            # packages and imported flakes open the standard removal flow
-            # (the card also carries the same remove button).
-            self._on_item_remove_clicked(None, info)
+            # Installed Nix packages open their normal app page (with the Nix
+            # source selected and the removal control there). Imported flakes
+            # have no app page, so their management action stays on the card.
+            if info.get("is_nix_package"):
+                self.open_app_page(info)
+            else:
+                self._on_item_remove_clicked(None, info)
         elif info.get("is_script", False):
             self.on_script_clicked(widget, event)
         else:

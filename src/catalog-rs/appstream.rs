@@ -265,6 +265,13 @@ fn resolve_component_category_rs(component:&serde_json::Map<String,Value>, paths
             let (exact, by) = category_index_maps(paths);
             if let Some(category) = first_category(&serde_json::json!([category]), &exact, &by) { return Some(category) }
         }
+        // Merged Nix cards borrow the group's AppStream categories while the
+        // install identity stays Nix. Honour those categories instead of
+        // dropping the card into the standalone Nix Packages group; raw/no-API
+        // packages keep that fallback.
+        if let Some(category)=resolve_category_rs(component.get("categories").unwrap_or(&Value::Null),paths,cfg){
+            return Some(category)
+        }
         return Some("nix".into());
     }
     resolve_category_rs(component.get("categories").unwrap_or(&Value::Null),paths,cfg)
@@ -402,25 +409,133 @@ const METADATA_GENERIC_WORDS:&[&str]=&[
 ];
 const GROUP_IDENTITY_GENERIC_WORDS:&[&str]=&[
     "the","and","team","project","software","community","foundation","contributors","developers",
-    "authors","maintainers","llc","ltd","inc","gmbh","corporation","company",
+    "authors","maintainers","llc","ltd","inc","gmbh","corporation","company","nixpkgs",
 ];
-fn add_group_identity_token_rs(tokens:&mut std::collections::HashMap<String,std::collections::HashSet<String>>,group:&str,value:&str){
+fn push_identity_token_rs(tokens:&mut std::collections::HashSet<String>,value:&str){
     let token=normalized_app_name_rs(value);
     if token.chars().count()<3{return}
     if GROUP_IDENTITY_GENERIC_WORDS.contains(&token.as_str()){return}
-    tokens.entry(group.to_string()).or_default().insert(token);
+    tokens.insert(token);
 }
-fn add_group_identity_tokens_rs(tokens:&mut std::collections::HashMap<String,std::collections::HashSet<String>>,group:&str,item:&serde_json::Map<String,Value>){
+fn entry_vendor_tokens_rs(item:&serde_json::Map<String,Value>)->std::collections::HashSet<String>{
     // The reverse-DNS vendor segment and the developer name describe who makes
-    // the application. Snap names are deliberately excluded: store names are
-    // shared by CLI tools and applications alike (``ark``, ``bar``).
+    // the application. Store names are deliberately excluded: they are shared
+    // by CLI tools and applications alike (``ark``, ``bar``). ``Nixpkgs`` is
+    // the packager, not the application vendor.
+    let source=item.get("source").and_then(Value::as_str).unwrap_or("native");
+    let mut tokens=std::collections::HashSet::new();
     if let Some(developer)=item.get("developer").and_then(Value::as_str){
-        for word in developer.split(|character:char|!character.is_alphanumeric()){add_group_identity_token_rs(tokens,group,word);}
+        let developer=developer.trim();
+        if !(source=="nix"&&developer=="Nixpkgs"){
+            for word in developer.split(|character:char|!character.is_alphanumeric()){push_identity_token_rs(&mut tokens,word);}
+        }
     }
-    let Some(id)=item.get("id").and_then(Value::as_str).map(str::trim).filter(|value|!value.is_empty()) else{return};
+    if matches!(source,"appimage"|"nix"){return tokens}
+    let Some(id)=item.get("id").and_then(Value::as_str).map(str::trim).filter(|value|!value.is_empty()) else{return tokens};
     let id=id.strip_suffix(".desktop").unwrap_or(id);
     let parts:Vec<&str>=id.split('.').filter(|part|!part.is_empty()).collect();
-    if parts.len()>=2{add_group_identity_token_rs(tokens,group,parts[parts.len()-2]);}
+    if parts.len()>=2{push_identity_token_rs(&mut tokens,parts[parts.len()-2]);}
+    tokens
+}
+fn entry_identity_tokens_rs(item:&serde_json::Map<String,Value>)->std::collections::HashSet<String>{
+    let source=item.get("source").and_then(Value::as_str).unwrap_or("native");
+    let mut tokens=entry_vendor_tokens_rs(item);
+    if source=="nix"{
+        // The nixpkgs attribute/pname is the package's catalog identity. It is
+        // an alias, not a vendor mark, so it only proves identity when it
+        // matches another entry's vendor or package-name alias.
+        for key in ["nix_name","nix_pname"]{
+            if let Some(value)=item.get(key).and_then(Value::as_str){push_identity_token_rs(&mut tokens,value);}
+        }
+        return tokens;
+    }
+    let Some(id)=item.get("id").and_then(Value::as_str).map(str::trim).filter(|value|!value.is_empty()) else{return tokens};
+    let id=id.strip_suffix(".desktop").unwrap_or(id);
+    let parts:Vec<&str>=id.split('.').filter(|part|!part.is_empty()).collect();
+    let (Some(segment),Some(name))=(parts.last(),item.get("name").and_then(Value::as_str)) else{return tokens};
+    // A package id often keeps the full application name while the display
+    // name is shortened ("Faugus" vs ``faugus-launcher``). Expose that longer
+    // form as a matching alias, but never when it merely repeats the display
+    // name: unrelated same-name apps (CutWire Prism, Prism Launcher) would
+    // otherwise share an identity token.
+    if normalized_app_name_rs(segment)!=normalized_app_name_rs(name){push_identity_token_rs(&mut tokens,segment);}
+    tokens
+}
+fn add_group_identity_tokens_rs(tokens:&mut std::collections::HashMap<String,std::collections::HashSet<String>>,group:&str,item:&serde_json::Map<String,Value>){
+    for token in entry_vendor_tokens_rs(item){tokens.entry(group.to_string()).or_default().insert(token);}
+}
+fn application_summary_matches_rs(left:&serde_json::Map<String,Value>,right:&serde_json::Map<String,Value>,group:&str)->bool{
+    let right_summary=component_summary_words_rs(right);
+    component_summary_words_rs(left).iter().any(|word|word.as_str()!=group&&right_summary.contains(word))
+}
+fn application_description_matches_rs(left:&serde_json::Map<String,Value>,right:&serde_json::Map<String,Value>,group:&str)->bool{
+    if application_summary_matches_rs(left,right,group){return true}
+    let right_description=component_description_words_rs(right);
+    component_description_words_rs(left).iter().filter(|word|word.as_str()!=group&&right_description.contains(*word)).count()>=2
+}
+fn same_application_entry_rs(left:&serde_json::Map<String,Value>,right:&serde_json::Map<String,Value>,group:&str)->bool{
+    let (left_id,left_name)=component_identity_rs(left);
+    let (right_id,right_name)=component_identity_rs(right);
+    if !left_id.is_empty()&&left_id==right_id{return true}
+    // Two components from the same selectable source are distinct catalog
+    // identities even when they share a name: a source option can only install
+    // one of them.
+    if !left_id.is_empty()&&!right_id.is_empty()&&source_option_key_rs(left)==source_option_key_rs(right){return false}
+    let left_vendors=entry_vendor_tokens_rs(left);
+    let right_vendors=entry_vendor_tokens_rs(right);
+    let vendor_match=left_vendors.iter().any(|token|right_vendors.contains(token));
+    let vendor_conflict=!left_vendors.is_empty()&&!right_vendors.is_empty()&&!vendor_match;
+    let left_tokens=entry_identity_tokens_rs(left);
+    let right_tokens=entry_identity_tokens_rs(right);
+    let identity_match=left_tokens.iter().any(|token|right_tokens.contains(token));
+    let description_match=application_description_matches_rs(left,right,group);
+    if vendor_conflict{
+        // Different vendors usually mean different products. Long descriptions
+        // of same-domain apps share too much incidental vocabulary ("audio",
+        // "real time", "control"), so a conflicting vendor needs a matching
+        // summary — a short product statement — before coalescing (a Snap
+        // publisher such as Canonical versus the upstream developer).
+        return application_summary_matches_rs(left,right,group);
+    }
+    let exact_name=!left_name.is_empty()&&normalized_app_name_rs(&left_name)==normalized_app_name_rs(&right_name);
+    let raw_nix=item_is_raw_nix(left)||item_is_raw_nix(right);
+    if raw_nix&&!identity_match&&!description_match{return false}
+    identity_match||description_match||exact_name
+}
+fn item_is_raw_nix(item:&serde_json::Map<String,Value>)->bool{
+    item.get("source").and_then(Value::as_str)==Some("nix")
+        &&item.get("nix_api_name").and_then(Value::as_str).map(str::trim).filter(|value|!value.is_empty()).is_none()
+}
+fn split_application_clusters_rs(entries:Vec<serde_json::Map<String,Value>>,group:&str)->Vec<Vec<serde_json::Map<String,Value>>>{
+    // Connected components, not complete linkage: a legitimate app can carry
+    // source-specific vendor labels (a Snap publisher such as Canonical versus
+    // the upstream developer), so two entries must still coalesce when a third
+    // source proves both describe the same product. Unrelated same-name apps
+    // stay in separate components because no evidence links them.
+    let mut parent:Vec<usize>=(0..entries.len()).collect();
+    fn root(parent:&mut [usize],mut index:usize)->usize{
+        while parent[index]!=index{
+            parent[index]=parent[parent[index]];
+            index=parent[index];
+        }
+        index
+    }
+    for left in 0..entries.len(){
+        for right in (left+1)..entries.len(){
+            if !same_application_entry_rs(&entries[left],&entries[right],group){continue}
+            let left_root=root(&mut parent,left);
+            let right_root=root(&mut parent,right);
+            if left_root!=right_root{parent[right_root]=left_root;}
+        }
+    }
+    let mut clusters:Vec<Vec<serde_json::Map<String,Value>>>=Vec::new();
+    let mut indexes=std::collections::HashMap::<usize,usize>::new();
+    for (index,entry) in entries.into_iter().enumerate(){
+        let cluster=root(&mut parent,index);
+        let slot=*indexes.entry(cluster).or_insert_with(||{clusters.push(Vec::new());clusters.len()-1});
+        clusters[slot].push(entry);
+    }
+    clusters
 }
 fn raw_nix_identity_matches_rs(alias:&str,group:&str,tokens:&std::collections::HashMap<String,std::collections::HashSet<String>>)->bool{
     let alias=normalized_app_name_rs(alias);
@@ -671,9 +786,10 @@ fn source_icon_rank_rs(value:&str)->u8{
     if value.ends_with(".png")||value.ends_with(".svg")||value.ends_with(".webp")||value.ends_with(".jxl"){return 2}
     0
 }
-fn source_key_collisions_rs(group:&[serde_json::Map<String,Value>])->std::collections::HashSet<String>{
+fn source_key_collisions_rs(group:&[serde_json::Map<String,Value>],include_nix:bool)->std::collections::HashSet<String>{
     let mut ids=std::collections::HashMap::<String,std::collections::HashSet<String>>::new();
     for item in group{
+        if !include_nix&&item.get("source").and_then(Value::as_str)==Some("nix"){continue}
         let Some(id)=item.get("id").and_then(Value::as_str).map(str::trim).filter(|value|!value.is_empty()) else{continue};
         ids.entry(source_option_key_rs(item)).or_default().insert(id.to_string());
     }
@@ -693,7 +809,7 @@ fn with_source_options_rs(selected:&serde_json::Map<String,Value>,group:&[serde_
     // display name and a source key (two "Vice" Flatpaks, for example). Keep
     // only the selected identity and providers whose metadata describes it, so
     // the source selector can never install the wrong same-name app.
-    if !source_key_collisions_rs(group).is_empty(){
+    if !source_key_collisions_rs(group,true).is_empty(){
         let mut allowed=std::collections::HashSet::<String>::new();
         if let Some(id)=selected.get("id").and_then(Value::as_str).map(str::trim).filter(|value|!value.is_empty()){allowed.insert(id.to_string());}
         for candidate in metadata_candidates_rs(selected,group){
@@ -845,6 +961,34 @@ fn collapse_source_groups_rs(components:Vec<serde_json::Map<String,Value>>,paths
         else{None};
         if let Some(key)=key{groups.entry(key).or_default().push(m)}else{pass.push(m)}
     }
+    // A canonical display name is not an application identity: several
+    // unrelated apps can share one, and generic trailing descriptors
+    // ("Prism Launcher" -> "Prism") widen the collision. A by-name group is
+    // ambiguous only when a store source key itself carries several component
+    // ids; such groups are split into application clusters using the same
+    // vendor/description evidence rules as the raw Nix merge, so unrelated
+    // same-name entries keep their own cards and source options.
+    let groups=if by_name_pass{
+        let mut split=std::collections::BTreeMap::new();
+        for (key,raw) in groups{
+            if let Some(group)=key.strip_prefix("name:"){
+                // Same-name sources normally are the same application. A
+                // store source key carrying two different component ids proves
+                // the name collides inside one catalog (two Flathub apps called
+                // "Prism"), so only then split the group by application
+                // evidence and attach the remaining sources to the matching
+                // identity. Nix keys are excluded: one nixpkgs pname can back
+                // several package variants (yt-dlp / yt-dlp-light) that the
+                // old grouping already treated as one app.
+                if source_key_collisions_rs(&raw,false).is_empty(){split.insert(key.clone(),raw);continue}
+                for (index,cluster) in split_application_clusters_rs(raw,group).into_iter().enumerate(){
+                    let cluster_key=if index==0{key.clone()}else{format!("{key}#{index}")};
+                    split.insert(cluster_key,cluster);
+                }
+            }else{split.insert(key,raw);}
+        }
+        split
+    }else{groups};
     let mut out=pass;
     for (_,raw) in groups {let mut group=if by_name_pass{expand_source_group_rs(&raw)}else{raw};if let Some(l)=locked_system_flatpak_rs(&group,locks){out.push(l);continue}
         let mut flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).cloned().collect();let natives:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").cloned().collect();let snaps:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("snap")).cloned().collect();let appimages:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("appimage")).cloned().collect();let mut nixes:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("nix")).cloned().collect();
@@ -1703,6 +1847,7 @@ struct RuntimeAppStreamEntry {
     source: String,
     package_names: Vec<String>,
     search_packages: Vec<String>,
+    nix_packages: Vec<String>,
     description_lower: String,
     developer_lower: String,
     is_new: bool,
@@ -1728,6 +1873,17 @@ impl RuntimeAppStreamEntry {
         if let Some(options) = value.get("source_options").and_then(Value::as_array) {
             for option in options { collect_search_packages(option.get("package-name"), &mut search_packages); }
         }
+        let mut nix_packages = Vec::new();
+        if source == "nix" {
+            collect_search_packages(value.get("package-name"), &mut nix_packages);
+        }
+        if let Some(options) = value.get("source_options").and_then(Value::as_array) {
+            for option in options {
+                if option.get("appstream_source").and_then(Value::as_str) == Some("nix") {
+                    collect_search_packages(option.get("package-name"), &mut nix_packages);
+                }
+            }
+        }
         let description_lower = value.get("description").and_then(Value::as_str).unwrap_or("").to_lowercase();
         let developer_lower = value.get("developer").and_then(Value::as_str).unwrap_or("").to_lowercase();
         let is_new = value.get("is_new").and_then(Value::as_bool).unwrap_or(false);
@@ -1738,7 +1894,7 @@ impl RuntimeAppStreamEntry {
         let payload = rmp_serde::to_vec_named(&value).ok()?;
         Some(Self {
             category, appstream_id, name, canonical_name, source, package_names,
-            search_packages, description_lower, developer_lower, is_new,
+            search_packages, nix_packages, description_lower, developer_lower, is_new,
             review_rating, review_subscore, category_review_score, homebrew_install_count, payload,
         })
     }
@@ -1802,6 +1958,50 @@ fn browse_is_curated(value: &serde_json::Map<String, Value>) -> bool {
 fn browse_is_known(value: &serde_json::Map<String, Value>, known: &std::collections::HashSet<String>) -> bool {
     browse_identity_values(value).iter().any(|v| known.contains(v))
 }
+fn browse_is_nix_distributed(value: &serde_json::Map<String, Value>) -> bool {
+    value.get("appstream_source").and_then(Value::as_str) == Some("nix")
+        && value
+            .get("category")
+            .and_then(Value::as_str)
+            .map(str::trim)
+            .is_some_and(|category| !category.is_empty() && category != "nix")
+}
+fn spread_browse_cohort_rs(base: Vec<Value>, cohort: Vec<Value>) -> Vec<Value> {
+    // Nixpkgs has no popularity/review feed, so its rows would otherwise sit
+    // in one block at the end of a category. Slot them evenly between the
+    // ranked rows, with a session-stable random jitter inside each slot so the
+    // spread stays even without looking like a fixed interleave.
+    if cohort.is_empty() { return base }
+    if base.is_empty() { return cohort }
+    let total = base.len().saturating_add(cohort.len());
+    let count = cohort.len();
+    let mut slots = Vec::with_capacity(count);
+    for (index, item) in cohort.iter().enumerate() {
+        let left = index.saturating_mul(total) / count;
+        let right = ((index + 1).saturating_mul(total) / count).saturating_sub(1).max(left);
+        let width = right.saturating_sub(left).saturating_add(1);
+        let key = browse_session_key(item.as_object().unwrap());
+        let jitter = if width > 1 {
+            (browse_unit(&key, "nix-category-spread") * (width as f64)) as usize
+        } else { 0 };
+        slots.push(left.saturating_add(jitter.min(width.saturating_sub(1))));
+    }
+    let mut base = base.into_iter();
+    let mut cohort = cohort.into_iter();
+    let mut out = Vec::with_capacity(total);
+    let mut slot_index = 0usize;
+    for position in 0..total {
+        if slot_index < slots.len() && slots[slot_index] == position {
+            if let Some(item) = cohort.next() { out.push(item); }
+            slot_index += 1;
+        } else if let Some(item) = base.next() {
+            out.push(item);
+        }
+    }
+    out.extend(base);
+    out.extend(cohort);
+    out
+}
 
 fn rank_browse_values(values: &mut [Value], known_popular: &[String]) {
     let known:std::collections::HashSet<String>=known_popular.iter().map(|s|s.trim().to_lowercase()).filter(|s|!s.is_empty()).collect();
@@ -1819,9 +2019,11 @@ fn rank_browse_values(values: &mut [Value], known_popular: &[String]) {
     let mut structural_values=Vec::new();
     let mut promoted_values=Vec::new();
     let mut ranked_values=Vec::new();
+    let mut nix_values=Vec::new();
     for v in values.iter().cloned(){
         let Some(m)=v.as_object()else{continue};
         if structural(m){structural_values.push(v)}
+        else if browse_is_nix_distributed(m){nix_values.push(v)}
         else if promoted(m){promoted_values.push(v)}
         else{ranked_values.push(v)}
     }
@@ -1850,6 +2052,10 @@ fn rank_browse_values(values: &mut [Value], known_popular: &[String]) {
         let ak=browse_session_key(a.as_object().unwrap());let bk=browse_session_key(b.as_object().unwrap());
         browse_unit(&ak,"promoted-order").total_cmp(&browse_unit(&bk,"promoted-order"))
     });
+    nix_values.sort_by(|a,b|{
+        let ak=browse_session_key(a.as_object().unwrap());let bk=browse_session_key(b.as_object().unwrap());
+        browse_unit(&ak,"nix-category-order").total_cmp(&browse_unit(&bk,"nix-category-order"))
+    });
 
     let total=ranked_values.len()+promoted_values.len();
     let count=promoted_values.len();
@@ -1871,7 +2077,7 @@ fn rank_browse_values(values: &mut [Value], known_popular: &[String]) {
         }
     }
 
-    structural_values.extend(ranked_values);
+    structural_values.extend(spread_browse_cohort_rs(ranked_values, nix_values));
     for (dst,src) in values.iter_mut().zip(structural_values){*dst=src;}
 }
 
@@ -1904,6 +2110,7 @@ pub(crate) struct AppStreamCatalog {
     by_flatpak_package: std::collections::HashMap<String, Vec<usize>>,
     by_snap_package: std::collections::HashMap<String, Vec<usize>>,
     by_homebrew_package: std::collections::HashMap<String, Vec<usize>>,
+    by_nix_package: std::collections::HashMap<String, Vec<usize>>,
     cache_key: String,
 }
 
@@ -1922,6 +2129,7 @@ impl AppStreamCatalog {
         let mut by_flatpak_package: std::collections::HashMap<String, Vec<usize>> = std::collections::HashMap::new();
         let mut by_snap_package: std::collections::HashMap<String, Vec<usize>> = std::collections::HashMap::new();
         let mut by_homebrew_package: std::collections::HashMap<String, Vec<usize>> = std::collections::HashMap::new();
+        let mut by_nix_package: std::collections::HashMap<String, Vec<usize>> = std::collections::HashMap::new();
         for (index, entry) in entries.iter().enumerate() {
             if !entry.category.is_empty() { by_category.entry(entry.category.clone()).or_default().push(index); }
             let id = normalize_id(&entry.appstream_id);
@@ -1943,12 +2151,15 @@ impl AppStreamCatalog {
             if let Some(target) = target {
                 for package in &entry.package_names { target.entry(package.clone()).or_default().push(index); }
             }
+            for package in &entry.nix_packages {
+                by_nix_package.entry(package.clone()).or_default().push(index);
+            }
         }
         if let Some(indices) = by_category.get_mut("homebrew") {
             indices.sort_by(|&a, &b| entries[b].homebrew_install_count.cmp(&entries[a].homebrew_install_count)
                 .then_with(|| entries[a].name.to_lowercase().cmp(&entries[b].name.to_lowercase())));
         }
-        Self { entries, by_category, by_id, by_name, by_removable_name, by_native_package, by_flatpak_package, by_snap_package, by_homebrew_package, cache_key }
+        Self { entries, by_category, by_id, by_name, by_removable_name, by_native_package, by_flatpak_package, by_snap_package, by_homebrew_package, by_nix_package, cache_key }
     }
 
     fn materialize_entry(&self, py: Python<'_>, index: usize) -> PyResult<Option<Py<PyAny>>> {
@@ -2047,6 +2258,66 @@ impl AppStreamCatalog {
         self.materialize_indices(py, &indices[start..end])
     }
 
+    fn homebrew_filtered_entry_count(&self, excluded: Vec<String>) -> usize {
+        let excluded: std::collections::HashSet<String> = excluded
+            .into_iter()
+            .map(|value| value.trim().to_lowercase())
+            .filter(|value| !value.is_empty())
+            .collect();
+        self.by_category
+            .get("homebrew")
+            .map_or(0, |indices| {
+                indices
+                    .iter()
+                    .filter(|&&index| {
+                        self.entries.get(index).is_some_and(|entry| {
+                            !entry.package_names.iter().any(|package| {
+                                excluded.contains(&package.trim().to_lowercase())
+                            })
+                        })
+                    })
+                    .count()
+            })
+    }
+
+    fn homebrew_filtered_entry_slice(
+        &self,
+        py: Python<'_>,
+        excluded: Vec<String>,
+        offset: usize,
+        limit: usize,
+    ) -> PyResult<Vec<Py<PyAny>>> {
+        let excluded: std::collections::HashSet<String> = excluded
+            .into_iter()
+            .map(|value| value.trim().to_lowercase())
+            .filter(|value| !value.is_empty())
+            .collect();
+        let Some(indices) = self.by_category.get("homebrew") else {
+            return Ok(Vec::new());
+        };
+        let mut out = Vec::with_capacity(limit);
+        let mut skipped = 0usize;
+        for &index in indices {
+            let Some(entry) = self.entries.get(index) else { continue };
+            if entry.package_names.iter().any(|package| {
+                excluded.contains(&package.trim().to_lowercase())
+            }) {
+                continue;
+            }
+            if skipped < offset {
+                skipped += 1;
+                continue;
+            }
+            if out.len() >= limit {
+                break;
+            }
+            if let Some(value) = self.materialize_entry(py, index)? {
+                out.push(value);
+            }
+        }
+        Ok(out)
+    }
+
     fn browse_entries_for_category(&self, py: Python<'_>, category: &str, structural: Vec<Py<PyAny>>, known_popular: Vec<String>) -> PyResult<Vec<Py<PyAny>>> {
         let mut values = Vec::with_capacity(structural.len() + self.by_category.get(category.trim_matches('/')).map_or(0, Vec::len));
         for item in structural {
@@ -2074,6 +2345,17 @@ impl AppStreamCatalog {
     fn find_by_name(&self, py: Python<'_>, name: &str) -> PyResult<Option<Py<PyAny>>> {
         let key = name.trim().to_lowercase();
         match self.by_name.get(&key).copied() {
+            Some(index) => self.materialize_entry(py, index),
+            None => Ok(None),
+        }
+    }
+
+    fn find_by_nix_package(&self, py: Python<'_>, attr: &str) -> PyResult<Option<Py<PyAny>>> {
+        let key = attr.trim().to_lowercase();
+        if key.is_empty() {
+            return Ok(None);
+        }
+        match self.by_nix_package.get(&key).and_then(|indices| indices.first()).copied() {
             Some(index) => self.materialize_entry(py, index),
             None => Ok(None),
         }
@@ -2172,7 +2454,7 @@ impl AppStreamCatalog {
     }
 }
 
-const RUNTIME_CACHE_SCHEMA: u32 = 11;
+const RUNTIME_CACHE_SCHEMA: u32 = 20;
 
 #[derive(Serialize, Deserialize)]
 struct CachedAppStreamCatalog {
@@ -2468,6 +2750,53 @@ mod category_resolution_tests {
             resolve_component_category_rs(&component, &paths(), &config()),
             Some("nix".into())
         );
+        // A merged Nix card can carry the group's AppStream categories while
+        // keeping its Nix install identity.
+        component.insert("categories".into(), serde_json::json!(["AudioVideo"]));
+        assert_eq!(
+            resolve_component_category_rs(&component, &paths(), &config()),
+            Some("media".into())
+        );
+    }
+
+    #[test]
+    fn nix_entries_are_spread_evenly_through_a_category() {
+        let mut values = Vec::new();
+        for index in 0..12 {
+            values.push(serde_json::json!({
+                "id": format!("org.example.App{index}"),
+                "name": format!("App {index}"),
+                "category": "utils",
+                "appstream_source": "flatpak",
+                "is_appstream_entry": true,
+                "review_rating": 90.0,
+                "review_count": 10 + index,
+            }));
+        }
+        for index in 0..4 {
+            values.push(serde_json::json!({
+                "id": format!("nix:nix-app-{index}"),
+                "name": format!("nix-app-{index}"),
+                "category": "utils",
+                "appstream_source": "nix",
+                "is_appstream_entry": true,
+            }));
+        }
+        rank_browse_values(&mut values, &[]);
+        let positions: Vec<usize> = values
+            .iter()
+            .enumerate()
+            .filter(|(_, value)| value.get("appstream_source").and_then(Value::as_str) == Some("nix"))
+            .map(|(index, _)| index)
+            .collect();
+        assert_eq!(positions.len(), 4, "{values:?}");
+        // Four cohort slots over sixteen rows must start in the first quarter
+        // and finish in the last quarter, rather than stacking at the bottom.
+        assert!(positions[0] < values.len() / 4, "{positions:?}");
+        assert!(
+            positions[3] >= values.len() * 3 / 4,
+            "{positions:?}"
+        );
     }
 }
 
@@ -2719,6 +3048,117 @@ mod appimage_source_tests {
 
         let prism = selected.iter().find(|entry|entry.get("id").and_then(Value::as_str)==Some("org.prismlauncher.PrismLauncher")).unwrap();
         assert_eq!(prism.get("_source_alternatives").and_then(Value::as_array).unwrap().len(),1);
+    }
+
+    #[test]
+    fn same_name_unrelated_applications_do_not_merge() {
+        let entries = vec![
+            serde_json::json!({
+                "id": "org.cutwire.Prism", "name": "Prism",
+                "summary": "Trigger and mix live visuals",
+                "description_blocks": [{"type": "paragraph", "spans": [{
+                    "text": "Prism is a beginner-friendly live visuals app for triggering clips and compositing overlays in real time."
+                }]}],
+                "packages": ["org.cutwire.Prism"], "categories": ["AudioVideo"],
+                "source": "flatpak", "origin": "flathub", "flatpak_remote": "flathub",
+                "flatpak_scope": "system", "flatpak_installation": "default",
+                "developer": "CutWire Studios", "verified": true
+            })
+            .as_object()
+            .unwrap()
+            .clone(),
+            serde_json::json!({
+                "id": "org.prismlauncher.PrismLauncher", "name": "Prism Launcher",
+                "summary": "Custom Minecraft Launcher to easily manage multiple Minecraft installations at once",
+                "description_blocks": [{"type": "paragraph", "spans": [{
+                    "text": "Prism Launcher is a custom launcher for Minecraft that focuses on predictability, long term stability and simplicity."
+                }]}],
+                "packages": ["org.prismlauncher.PrismLauncher"], "categories": ["Game"],
+                "source": "flatpak", "origin": "flathub", "flatpak_remote": "flathub",
+                "flatpak_scope": "system", "flatpak_installation": "default",
+                "developer": "Prism Launcher Contributors", "verified": true
+            })
+            .as_object()
+            .unwrap()
+            .clone(),
+            serde_json::json!({
+                "id": "appimage.community.prismlauncher", "name": "prismlauncher",
+                "summary": "A custom launcher for Minecraft that allows you to easily manage multiple installations of Minecraft at once.",
+                "packages": ["prismlauncher"], "categories": ["Game"],
+                "source": "appimage", "origin": "appimage-community",
+                "developer": "PrismLauncher"
+            })
+            .as_object()
+            .unwrap()
+            .clone(),
+            serde_json::json!({
+                "id": "io.github.Boof2015.Prism", "name": "Prism",
+                "summary": "Real-time audio analysis and metering",
+                "description_blocks": [{"type": "paragraph", "spans": [{
+                    "text": "Prism is an audio analyzer and meter rack for scopes, loudness metering and capture."
+                }]}],
+                "packages": ["io.github.Boof2015.Prism"], "categories": ["AudioVideo"],
+                "source": "flatpak", "origin": "flatpark", "flatpak_remote": "flatpark",
+                "flatpak_scope": "system", "flatpak_installation": "default",
+                "developer": "Boof2015", "verified": false
+            })
+            .as_object()
+            .unwrap()
+            .clone(),
+            serde_json::json!({
+                "id": "appimage.community.prism", "name": "Prism",
+                "summary": "Every model.",
+                "description_blocks": [{"type": "paragraph", "spans": [{
+                    "text": "A cross-platform AI desktop chat client for any provider."
+                }]}],
+                "packages": ["Prism"], "categories": ["Utility"],
+                "source": "appimage", "origin": "appimage-community",
+                "developer": "IterationLabz"
+            })
+            .as_object()
+            .unwrap()
+            .clone(),
+        ];
+        let selected = collapse(entries, serde_json::json!({"default": "flatpak", "apps": {}}));
+        assert_eq!(selected.len(), 4, "{selected:?}");
+
+        let boof = selected
+            .iter()
+            .find(|entry| entry.get("id").and_then(Value::as_str) == Some("io.github.Boof2015.Prism"))
+            .expect("Boof2015 Prism entry");
+        assert!(boof.get("_source_alternatives").is_none(), "{boof:?}");
+
+        let chat = selected
+            .iter()
+            .find(|entry| entry.get("id").and_then(Value::as_str) == Some("appimage.community.prism"))
+            .expect("IterationLabz Prism entry");
+        assert!(chat.get("_source_alternatives").is_none(), "{chat:?}");
+
+        let cutwire = selected
+            .iter()
+            .find(|entry| entry.get("id").and_then(Value::as_str) == Some("org.cutwire.Prism"))
+            .expect("CutWire Prism entry");
+        assert!(
+            cutwire.get("_source_alternatives").is_none(),
+            "{cutwire:?}"
+        );
+
+        let prism = selected
+            .iter()
+            .find(|entry| {
+                entry.get("id").and_then(Value::as_str)
+                    == Some("org.prismlauncher.PrismLauncher")
+            })
+            .expect("Prism Launcher entry");
+        let options = prism
+            .get("_source_alternatives")
+            .and_then(Value::as_array)
+            .expect("Prism Launcher AppImage option");
+        assert_eq!(options.len(), 1, "{options:?}");
+        assert_eq!(
+            options[0].get("id").and_then(Value::as_str),
+            Some("appimage.community.prismlauncher")
+        );
     }
 
     #[test]
@@ -3481,6 +3921,7 @@ mod featured_eligibility_tests {
             source: source.into(),
             package_names: vec!["example".into()],
             search_packages: vec!["example".into()],
+            nix_packages: Vec::new(),
             description_lower: String::new(),
             developer_lower: String::new(),
             is_new: false,

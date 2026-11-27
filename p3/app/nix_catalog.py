@@ -211,21 +211,22 @@ def availability_fingerprint():
 
 
 def catalog_metadata():
-    """Return the API category map and whether NixOS classification applies.
+    """Return the API category map used to distribute Nix packages.
 
-    Only NixOS hosts fold Nix packages into the normal LinuxToys categories.
-    Elsewhere unmatched Nix packages stay in their own catalog category.
+    Packages the Nix Software API places in a proper application category are
+    folded into the matching LinuxToys category on every host, not only on
+    NixOS. Unmatched packages still fall back to the standalone Nix Packages
+    category. The boolean is the Rust classification switch: it stays enabled
+    so the category map is always consulted, while host-wide source preference
+    is decided separately from the host compatibility keys.
     """
-    nixos = is_nixos()
-    if not nixos:
-        return {}, False
     try:
         from . import nix_metadata
 
         categories = nix_metadata.index_category_map()
     except Exception:
         categories = {}
-    return categories, nixos
+    return categories, True
 
 
 def _path_state(path):
