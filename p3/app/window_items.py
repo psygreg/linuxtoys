@@ -417,7 +417,16 @@ class ItemWidgetFactory:
         if icon_url.startswith(("https://", "http://")):
             native_icon = gui_rs.card_child(event_box, "linuxtoys-native-icon")
             if isinstance(native_icon, Gtk.Image):
-                gui_rs.set_image_source(native_icon, icon_name=icon_url, size=48)
+                # Preserve the size chosen by the native constructor: 38 px on
+                # ordinary cards and 64 px on large Featured cards. Remote
+                # artwork must not be re-bound with a different size or Snap,
+                # AppImage and Nix icons end up larger than local source icons.
+                icon_size = native_icon.get_pixel_size()
+                if icon_size <= 0:
+                    icon_size = 38
+                gui_rs.set_image_source(
+                    native_icon, icon_name=icon_url, size=icon_size
+                )
 
         # Match the Python card contract: hover styling belongs to the inset
         # painted surface, not the outer EventBox whose allocation also reserves

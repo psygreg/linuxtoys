@@ -279,7 +279,7 @@ fn adapt_appstream_maps_values(components:Vec<serde_json::Map<String,Value>>, ca
         let (name,_)=localized(&m,"localized_names",lang,m.get("name").cloned().unwrap_or(Value::String(String::new())));let(summary,_)=localized(&m,"localized_summaries",lang,m.get("summary").cloned().unwrap_or(Value::String(String::new())));let(dev,_)=localized(&m,"localized_developers",lang,m.get("developer").cloned().unwrap_or(Value::String(String::new())));let(blocks,bloc)=localized(&m,"localized_descriptions",lang,m.get("description_blocks").cloned().unwrap_or_else(||Value::Array(vec![])));let shots=clean_screens(m.get("screenshots"));let source=m.get("source").and_then(Value::as_str).unwrap_or("native");let flat=source=="flatpak";let snap=source=="snap";let origin=m.get("origin").and_then(Value::as_str).unwrap_or("");let scope=m.get("flatpak_scope").and_then(Value::as_str).unwrap_or("");let long=flatten_blocks(&blocks);
         let mut e=serde_json::Map::new();macro_rules! s { ($k:expr, $v:expr) => {{ let _ = e.insert($k.into(), Value::String($v.to_string())); }} }
         s!("id",id);e.insert("name".into(),name);s!("appstream_canonical_name",m.get("name").and_then(Value::as_str).unwrap_or(id));e.insert("description".into(),summary);s!("description_tag","");e.insert("description_localized".into(),Value::Bool(has_localized(&m,"localized_summaries",lang)));s!("long_description",long);e.insert("long_description_blocks".into(),blocks);s!("long_description_locale",bloc);s!("long_description_tag","");s!("long_description_format",if snap{"markdown"}else{"appstream"});e.insert("screenshots".into(),shots.clone());
-        for(k,src)in [("homepage_url","homepage"),("donate","donation"),("donate_url","donation"),("license","license")]{s!(k,m.get(src).and_then(Value::as_str).unwrap_or(""));}e.insert("developer".into(),dev);s!("icon",if brew{"brewpkg.webp"}else if nix{"nix.svg"}else{m.get("icon").and_then(Value::as_str).unwrap_or("application-x-executable")});s!("category",category);s!("type",if flat{"flathub"}else if snap{"snap"}else if brew{"homebrew"}else if nix{"nix"}else if source=="appimage"{"appimage"}else{"native"});e.insert("package-name".into(),if flat||snap||brew||nix||source=="appimage"{Value::String(packages.first().cloned().unwrap_or_else(||id.into()))}else{Value::Array(packages.iter().cloned().map(Value::String).collect())});s!("repo",if origin.is_empty(){"appstream"}else{origin});for(k,v)in [("revert","yes"),("reboot","no")]{s!(k,v)}for k in ["is_script","is_repo_entry","is_appstream_entry"]{e.insert(k.into(),Value::Bool(true));}e.insert("is_subcategory".into(),Value::Bool(false));s!("appstream_id",id);s!("appstream_launchable",m.get("launchable").and_then(Value::as_str).unwrap_or(""));s!("appstream_source",source);s!("appstream_origin",origin);for k in ["flatpak_remote","flatpak_scope","flatpak_installation","flatpak_ref","flatpak_arch","flatpak_branch"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}for k in ["snap_name","snap_id","snap_channel","snap_confinement"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}e.insert("overrides".into(),if flat&&scope=="system"{serde_json::json!({"skip-user":true})}else{serde_json::json!({})});for k in ["review_rating","review_count"]{e.insert(k.into(),m.get(k).cloned().unwrap_or(Value::Null));}s!("appstream_version",m.get("version").and_then(Value::as_str).unwrap_or(""));s!("repo_app_id",id);e.insert("is_new".into(),Value::Bool(false));e.insert("is_verified".into(),Value::Bool(flat&&m.get("verified").and_then(Value::as_bool).unwrap_or(false)));s!("native_distro_badge",if flat||snap||brew||nix||source=="appimage"{""}else{native_badge});s!("appstream_badge",if flat{if origin=="flatpark"{"distros/flatpark.webp"}else{"distros/flathub.webp"}}else if snap{"snapbadge.webp"}else if brew{"brew.png"}else if nix{"nix.svg"}else if source=="appimage"{"appimages.webp"}else{""});e.insert("has_app_page".into(),Value::Bool(brew||nix||source=="appimage"||!long.is_empty()||shots.as_array().is_some_and(|a|!a.is_empty())));s!("path",format!("appstream://{source}/{id}"));
+        for(k,src)in [("homepage_url","homepage"),("donate","donation"),("donate_url","donation"),("license","license")]{s!(k,m.get(src).and_then(Value::as_str).unwrap_or(""));}e.insert("developer".into(),dev);let icon_value=if brew{"brewpkg.webp"}else if nix{let candidate=m.get("icon").and_then(Value::as_str).unwrap_or("");if source_icon_rank_rs(candidate)>1{candidate}else{"nix.svg"}}else{m.get("icon").and_then(Value::as_str).unwrap_or("application-x-executable")};s!("icon",icon_value);s!("category",category);s!("type",if flat{"flathub"}else if snap{"snap"}else if brew{"homebrew"}else if nix{"nix"}else if source=="appimage"{"appimage"}else{"native"});e.insert("package-name".into(),if flat||snap||brew||nix||source=="appimage"{Value::String(packages.first().cloned().unwrap_or_else(||id.into()))}else{Value::Array(packages.iter().cloned().map(Value::String).collect())});s!("repo",if origin.is_empty(){"appstream"}else{origin});for(k,v)in [("revert","yes"),("reboot","no")]{s!(k,v)}for k in ["is_script","is_repo_entry","is_appstream_entry"]{e.insert(k.into(),Value::Bool(true));}e.insert("is_subcategory".into(),Value::Bool(false));s!("appstream_id",id);s!("appstream_launchable",m.get("launchable").and_then(Value::as_str).unwrap_or(""));s!("appstream_source",source);s!("appstream_origin",origin);for k in ["flatpak_remote","flatpak_scope","flatpak_installation","flatpak_ref","flatpak_arch","flatpak_branch"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}for k in ["snap_name","snap_id","snap_channel","snap_confinement"]{s!(k,m.get(k).and_then(Value::as_str).unwrap_or(""));}e.insert("overrides".into(),if flat&&scope=="system"{serde_json::json!({"skip-user":true})}else{serde_json::json!({})});for k in ["review_rating","review_count"]{e.insert(k.into(),m.get(k).cloned().unwrap_or(Value::Null));}s!("appstream_version",m.get("version").and_then(Value::as_str).unwrap_or(""));s!("repo_app_id",id);e.insert("is_new".into(),Value::Bool(false));e.insert("is_verified".into(),Value::Bool(flat&&m.get("verified").and_then(Value::as_bool).unwrap_or(false)));s!("native_distro_badge",if flat||snap||brew||nix||source=="appimage"{""}else{native_badge});s!("appstream_badge",if flat{if origin=="flatpark"{"distros/flatpark.webp"}else{"distros/flathub.webp"}}else if snap{"snapbadge.webp"}else if brew{"brew.png"}else if nix{"nix.svg"}else if source=="appimage"{"appimages.webp"}else{""});e.insert("has_app_page".into(),Value::Bool(brew||nix||source=="appimage"||!long.is_empty()||shots.as_array().is_some_and(|a|!a.is_empty())));s!("path",format!("appstream://{source}/{id}"));
         if source=="appimage" {
             e.insert("appimage_links".into(),m.get("appimage_links").cloned().unwrap_or(Value::Array(vec![])));
             e.insert("appimage_needs_resolution".into(),Value::Bool(true));
@@ -409,6 +409,15 @@ fn expand_source_group_rs(group:&[serde_json::Map<String,Value>])->Vec<serde_jso
         for mut c in candidates {let k=source_option_key_rs(&c);if !seen.insert(k){continue}c.remove("_source_alternatives");c.remove("_source_recommended");out.push(c)} }
     out
 }
+fn source_icon_rank_rs(value:&str)->u8{
+    let value=value.trim();
+    if value.is_empty()||value=="application-x-executable"{return 0}
+    if matches!(value,"nix.svg"|"brewpkg.webp"){return 1}
+    if value.starts_with("https://")||value.starts_with("http://")||value.starts_with("/v2/"){return 3}
+    if value.starts_with('/'){return if std::path::Path::new(value).is_file(){3}else{0}}
+    if value.ends_with(".png")||value.ends_with(".svg")||value.ends_with(".webp")||value.ends_with(".jxl"){return 2}
+    0
+}
 fn with_source_options_rs(selected:&serde_json::Map<String,Value>,group:&[serde_json::Map<String,Value>])->serde_json::Map<String,Value>{
     let flat:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str)==Some("flatpak")).collect();
     let native:Vec<_>=group.iter().filter(|m|m.get("source").and_then(Value::as_str).unwrap_or("native")=="native").collect();
@@ -420,7 +429,8 @@ fn with_source_options_rs(selected:&serde_json::Map<String,Value>,group:&[serde_
     // the selector even when the currently selected Flatpak is verified.
     let mut candidates:Vec<&serde_json::Map<String,Value>>=native.into_iter().chain(flat).chain(snap).chain(appimage).chain(nix).collect();
     let mut seen=std::collections::HashSet::new();candidates.retain(|m|seen.insert(source_option_key_rs(m)));if candidates.len()<2{return selected.clone()}
-    let sk=source_option_key_rs(selected);let alts:Vec<Value>=candidates.into_iter().filter(|m|source_option_key_rs(m)!=sk).map(|m|Value::Object(m.clone())).collect();let mut r=selected.clone();if !alts.is_empty(){r.insert("_source_alternatives".into(),Value::Array(alts));r.insert("_source_recommended".into(),Value::String(sk));}r
+    let sk=source_option_key_rs(selected);let selected_icon=selected.get("icon").and_then(Value::as_str).unwrap_or("");let mut best_icon=(source_icon_rank_rs(selected_icon),selected_icon.to_string());for item in &candidates{let Some(icon)=item.get("icon").and_then(Value::as_str) else{continue};let rank=source_icon_rank_rs(icon);if rank>best_icon.0{best_icon=(rank,icon.to_string());}}
+    let alts:Vec<Value>=candidates.into_iter().filter(|m|source_option_key_rs(m)!=sk).map(|m|Value::Object(m.clone())).collect();let mut r=selected.clone();if !alts.is_empty(){r.insert("_source_alternatives".into(),Value::Array(alts));r.insert("_source_recommended".into(),Value::String(sk));if best_icon.0>source_icon_rank_rs(selected_icon){r.insert("icon".into(),Value::String(best_icon.1));}}r
 }
 fn group_prefers_dev_native_rs(group:&[serde_json::Map<String,Value>],paths:&[String],cfg:&Value,steamos:bool,suse:bool)->bool{
     !steamos&&group.iter().any(|m|resolve_component_category_rs(m,paths,cfg).is_some_and(|c|match c.rsplit('/').next(){
@@ -2541,6 +2551,110 @@ mod appimage_source_tests {
         assert_eq!(
             selected[0].get("nix_category").and_then(Value::as_str),
             Some("scripts/network/browsers")
+        );
+    }
+
+    #[test]
+    fn source_icon_falls_back_to_an_alternate_source() {
+        let entries = vec![
+            serde_json::json!({
+                "id":"org.example.App", "name":"App", "summary":"App summary",
+                "packages":["org.example.App"], "categories":["Utility"],
+                "source":"flatpak", "origin":"flathub", "flatpak_remote":"flathub",
+                "flatpak_scope":"system", "flatpak_installation":"default",
+                "icon":"application-x-executable"
+            }).as_object().unwrap().clone(),
+            serde_json::json!({
+                "id":"io.snapcraft.app", "name":"App", "summary":"App summary",
+                "packages":["app"], "categories":["Utility"], "source":"snap",
+                "origin":"snapcraft", "snap_name":"app",
+                "icon":"https://example.invalid/app.png"
+            }).as_object().unwrap().clone(),
+        ];
+        let selected = collapse(entries, serde_json::json!({"default": "flatpak", "apps": {}}));
+        assert_eq!(selected.len(), 1, "{selected:?}");
+        assert_eq!(selected[0].get("source").and_then(Value::as_str), Some("flatpak"));
+        assert_eq!(
+            selected[0].get("icon").and_then(Value::as_str),
+            Some("https://example.invalid/app.png")
+        );
+    }
+
+    #[test]
+    fn source_icon_falls_back_from_a_generic_nix_icon() {
+        let entries = vec![
+            serde_json::json!({
+                "id":"org.example.App", "name":"App", "summary":"App summary",
+                "packages":["org.example.App"], "categories":["Game"],
+                "source":"flatpak", "origin":"flathub", "flatpak_remote":"flathub",
+                "flatpak_scope":"system", "flatpak_installation":"default",
+                "icon":"https://example.invalid/app.png"
+            }).as_object().unwrap().clone(),
+            {
+                let mut nix = nix_named_component("App", "app", "home-manager");
+                nix.insert("icon".into(), Value::String("nix.svg".into()));
+                nix
+            },
+        ];
+        let selected = collapse_for_gregos(
+            entries,
+            serde_json::json!({"default": "flatpak", "apps": {}}),
+            true,
+        );
+        assert_eq!(selected.len(), 1, "{selected:?}");
+        assert_eq!(selected[0].get("source").and_then(Value::as_str), Some("nix"));
+        assert_eq!(
+            selected[0].get("icon").and_then(Value::as_str),
+            Some("https://example.invalid/app.png")
+        );
+    }
+
+    #[test]
+    fn nix_adaptation_keeps_a_fallback_icon() {
+        let paths: Vec<String> = vec!["/scripts/utils".into()];
+        let cfg = serde_json::json!({
+            "main": {"Utility": ("utils",)},
+            "main_priority": ["Utility"],
+            "additional": {}
+        })
+        .to_string();
+        let mut fallback = nix_named_component("App", "app", "home-manager");
+        fallback.insert(
+            "icon".into(),
+            Value::String("https://example.invalid/app.png".into()),
+        );
+        let values = adapt_appstream_maps_values(
+            vec![fallback],
+            paths.clone(),
+            &cfg,
+            "en",
+            vec![],
+            vec![],
+            vec![],
+            "{}",
+            "",
+        );
+        assert_eq!(
+            values[0].get("icon").and_then(Value::as_str),
+            Some("https://example.invalid/app.png")
+        );
+
+        let mut generic = nix_named_component("Other", "other", "home-manager");
+        generic.insert("icon".into(), Value::String("nix.svg".into()));
+        let values = adapt_appstream_maps_values(
+            vec![generic],
+            paths,
+            &cfg,
+            "en",
+            vec![],
+            vec![],
+            vec![],
+            "{}",
+            "",
+        );
+        assert_eq!(
+            values[0].get("icon").and_then(Value::as_str),
+            Some("nix.svg")
         );
     }
 

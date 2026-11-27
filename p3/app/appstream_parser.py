@@ -21,13 +21,30 @@ _NIX_RUNTIME_CACHE = {}  # (path, scopes, stat) -> Rust NixCatalog
 # Persistent acceleration cache for the final LinuxToys-ready AppStream entries.
 # catalog.json remains authoritative; this file is disposable and regenerated
 # whenever any input represented by the runtime cache key changes.
-RUNTIME_CACHE_SCHEMA = 37
+RUNTIME_CACHE_SCHEMA = 38
 RUNTIME_CACHE_PATH = appstream_cache.CACHE_DIR / "runtime-entries-rs.bin"
 
 # Most recent inputs used to build the live runtime catalog. This is process-local
 # only; it lets the AppStream refresh worker prewarm a newly published catalog
 # before GTK is told to switch to it.
 _LAST_LOAD_CONTEXT = None
+
+
+def _enrich_nix_entries(entries):
+    """Decorate materialized entries with cached Nix Software metadata.
+
+    Nix-selected cards can live in any LinuxToys category (and in search and
+    Featured results), not only in the standalone Nix category. Applying the
+    cached index here keeps their icons, names and summaries consistent with
+    the app pages and the Nix catalog.
+    """
+    return [
+        nix_metadata.enrich_index(info)
+        if str(info.get("appstream_source") or "").strip() == "nix"
+        and nix_metadata.has_api_metadata(info)
+        else info
+        for info in entries
+    ]
 
 
 # Developer-facing source preference filter. Flatpak wins by default when the
@@ -1121,7 +1138,9 @@ def _runtime_catalog(
 
 def load_entries(scripts_dir, curated_entries=None, category_paths=None):
     """Compatibility API: materialize the complete Rust-owned catalog."""
-    return list(_runtime_catalog(scripts_dir, curated_entries, category_paths).all_entries())
+    return _enrich_nix_entries(
+        list(_runtime_catalog(scripts_dir, curated_entries, category_paths).all_entries())
+    )
 
 def prepare_runtime_cache():
     """Prebuild the derived cache for the currently published AppStream catalog.
@@ -1200,9 +1219,11 @@ def get_entries_for_category(
     if category == "." or category.startswith("../"):
         return []
 
-    return list(
-        _runtime_catalog(scripts_dir, curated_entries, category_paths)
-        .entries_for_category(category)
+    return _enrich_nix_entries(
+        list(
+            _runtime_catalog(scripts_dir, curated_entries, category_paths)
+            .entries_for_category(category)
+        )
     )
 
 
@@ -1229,12 +1250,14 @@ def get_browse_entries_for_category(
         return list(structural_items or ())
     if category == "." or category.startswith("../"):
         return list(structural_items or ())
-    return list(
-        _runtime_catalog(scripts_dir, curated_entries, category_paths)
-        .browse_entries_for_category(
-            category,
-            list(structural_items or ()),
-            sorted({str(value) for value in (known_popular or ()) if str(value).strip()}),
+    return _enrich_nix_entries(
+        list(
+            _runtime_catalog(scripts_dir, curated_entries, category_paths)
+            .browse_entries_for_category(
+                category,
+                list(structural_items or ()),
+                sorted({str(value) for value in (known_popular or ()) if str(value).strip()}),
+            )
         )
     )
 
@@ -1288,9 +1311,11 @@ def materialize_featured_entries(scripts_dir, indices, curated_entries=None, cat
     })
     if not clean_indices:
         return []
-    return list(
-        _runtime_catalog(scripts_dir, curated_entries, category_paths)
-        .materialize_featured(clean_indices)
+    return _enrich_nix_entries(
+        list(
+            _runtime_catalog(scripts_dir, curated_entries, category_paths)
+            .materialize_featured(clean_indices)
+        )
     )
 
 
@@ -1324,7 +1349,7 @@ def materialize_featured_entries_by_ids(
         entry = catalog.find_by_id(appstream_id.casefold())
         if entry is not None:
             result.append(entry)
-    return result
+    return _enrich_nix_entries(result)
 
 
 
@@ -1356,13 +1381,15 @@ def get_installed_entries(
     if homebrew_names is None:
         from . import installed_packages
         homebrew_names = installed_packages.snapshot().get("homebrew", ())
-    return list(
-        _runtime_catalog(scripts_dir, curated_entries, category_paths).installed_entries(
-            sorted({str(value) for value in (native_packages or ()) if str(value).strip()}),
-            sorted({str(value) for value in (flatpak_ids or ()) if str(value).strip()}),
-            sorted({str(value) for value in (executed_names or ()) if str(value).strip()}),
-            sorted({str(value) for value in (snap_names or ()) if str(value).strip()}),
-            sorted({str(value) for value in (homebrew_names or ()) if str(value).strip()}) if homebrew_catalog.enabled() else [],
+    return _enrich_nix_entries(
+        list(
+            _runtime_catalog(scripts_dir, curated_entries, category_paths).installed_entries(
+                sorted({str(value) for value in (native_packages or ()) if str(value).strip()}),
+                sorted({str(value) for value in (flatpak_ids or ()) if str(value).strip()}),
+                sorted({str(value) for value in (executed_names or ()) if str(value).strip()}),
+                sorted({str(value) for value in (snap_names or ()) if str(value).strip()}),
+                sorted({str(value) for value in (homebrew_names or ()) if str(value).strip()}) if homebrew_catalog.enabled() else [],
+            )
         )
     )
 
