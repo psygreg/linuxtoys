@@ -12,7 +12,6 @@
         "type": "bin",
         "package-name": "latencydevil",
         "desktop-shortcut": false,
-        "os": [ "!gregos" ],
         "overrides": {
             "post": "path_link \"$LINUXTOYS_BIN_DIR/latencydevil\""
         }

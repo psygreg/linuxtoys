@@ -57,4 +57,6 @@ fi
 
 call_script swapfile
 
+call_script LATENCYDEVIL
+
 pkg_flat net.nokyan.Resources
