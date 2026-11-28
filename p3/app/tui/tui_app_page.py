@@ -24,7 +24,7 @@ from textual.widgets import (
     TabPane,
 )
 
-from app import appstream_cache, nix_extensions, nix_queue
+from app import appstream_cache, installed_packages, nix_extensions, nix_queue
 from app.appstream_parser import repository_link
 
 __all__ = ["AppPageWidget", "FeaturedCard", "show_app_page", "hide_app_page"]
@@ -203,8 +203,9 @@ class AppPageWidget(Vertical):
     ``set_install_state``, ``set_translated_blocks``, ``set_user_rating``,
     ``refresh_extensions`` and the ``reset_*_button`` methods.
 
-    The initial source is ``recommended_source`` (or ``appstream_source``)
-    when ``source_options`` has it, otherwise the first option. Featured
+    The initial source is the source that owns an existing installation,
+    then ``recommended_source`` (or ``appstream_source``) when
+    ``source_options`` has it, otherwise the first option. Featured
     candidates exclude the current app and list the same category first.
 
     Args:
@@ -213,6 +214,9 @@ class AppPageWidget(Vertical):
             English defaults.
         featured: Candidate entries for the "Try These" grid.
         installed: Whether the app is currently installed.
+        selected_source: Source entry to preselect (for example the one a
+            just-finished transaction acted on). The installed source wins
+            when no explicit selection is given.
         system_language: Target language for description translation.
             Defaults to the ``LANG`` environment variable.
         id: Widget id.
@@ -340,6 +344,7 @@ class AppPageWidget(Vertical):
         translations: Mapping[str, str] | None = None,
         featured: Sequence[Mapping[str, Any]] | None = None,
         installed: bool = False,
+        selected_source: Mapping[str, Any] | None = None,
         system_language: str | None = None,
         id: str | None = "app-page",
         **kwargs: Any,
@@ -347,7 +352,13 @@ class AppPageWidget(Vertical):
         super().__init__(id=id, **kwargs)
         self.script_info = script_info
         self.translations = translations or {}
-        self._installed = installed
+        installed_info = None
+        if script_info.get("is_appstream_entry"):
+            try:
+                installed_info = installed_packages.installed_source(script_info)
+            except Exception:
+                installed_info = None
+        self._installed = bool(installed)
         self._system_language = _norm_lang(
             system_language
             if system_language is not None
@@ -361,15 +372,22 @@ class AppPageWidget(Vertical):
         ]
         self._selected: Mapping[str, Any] = script_info
         if self._source_options:
-            recommended = self._recommended_source()
-            self._selected = next(
-                (
-                    o
-                    for o in self._source_options
-                    if self._source_key(o) == recommended
-                ),
-                self._source_options[0],
-            )
+            target = selected_source or installed_info
+            matched = self._find_source(target) if target else None
+            if matched is not None:
+                self._selected = matched
+            else:
+                recommended = self._recommended_source()
+                self._selected = next(
+                    (
+                        o
+                        for o in self._source_options
+                        if self._source_key(o) == recommended
+                    ),
+                    self._source_options[0],
+                )
+        elif selected_source or installed_info:
+            self._selected = selected_source or installed_info
 
         self._blocks = (
             script_info.get("long_description_blocks")
@@ -436,6 +454,18 @@ class AppPageWidget(Vertical):
             str(entry.get("flatpak_installation", "") or "").strip(),
             str(entry.get("flatpak_remote", "") or "").strip(),
         )
+
+    def _find_source(
+        self, target: Mapping[str, Any] | None
+    ) -> Mapping[str, Any] | None:
+        """Return the source option matching ``target`` by stable source key."""
+        if not isinstance(target, Mapping):
+            return None
+        key = self._source_key(target)
+        for option in self._source_options:
+            if self._source_key(option) == key:
+                return option
+        return None
 
     def _has_multiple_flatpak_scopes(self) -> bool:
         scopes = {
@@ -1589,6 +1619,7 @@ async def show_app_page(
     translations: Mapping[str, str] | None = None,
     featured: Sequence[Mapping[str, Any]] | None = None,
     installed: bool = False,
+    selected_source: Mapping[str, Any] | None = None,
 ) -> AppPageWidget:
     """Esconde logo/menu/terminal do #menu-panel e monta a app page no lugar."""
     panel = host.query_one(MENU_PANEL)
@@ -1609,6 +1640,7 @@ async def show_app_page(
         translations=translations,
         featured=featured,
         installed=installed,
+        selected_source=selected_source,
     )
     page._previous_border_title = previous_title
 

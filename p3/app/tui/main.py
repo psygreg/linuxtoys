@@ -63,8 +63,8 @@ from .helper import (
     homebrew_category_info,
     invalidate_search_caches,
     is_appimage_path,
+    is_installed_entry,
     is_nix_path,
-    is_registered_entry,
     is_search_ready,
     make_widget_id,
     nix_category_info,
@@ -112,6 +112,16 @@ def _menu_items(translations) -> list:
                     )
                 ),
                 id="nix_flake",
+            )
+        )
+        items.append(
+            ListItem(
+                Label(
+                    translations.get(
+                        "nix_generations_title", "Nix generations"
+                    )
+                ),
+                id="nix_generations",
             )
         )
     items.extend([
@@ -327,7 +337,7 @@ class HomeScreen(
             item["path"],
             item["is_script"],
             is_new=item.get("is_new", False),
-            is_installed=is_registered_entry(item, registry_data),
+            is_installed=is_installed_entry(item, registry_data),
             is_repo_entry=item.get("is_repo_entry", False),
             is_appstream_entry=item.get("is_appstream_entry", False),
             has_app_page=item.get("has_app_page", False),

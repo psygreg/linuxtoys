@@ -13,7 +13,7 @@ from typing import Any
 from textual.css.query import NoMatches
 from textual.widgets import Input
 
-from app import aur_cache, homebrew_catalog, nix_catalog, nix_extensions, nix_flakes, nix_metadata, nix_queue, installed_packages
+from app import aur_cache, homebrew_catalog, nix_catalog, nix_extensions, nix_flakes, nix_generations, nix_metadata, nix_queue, installed_packages
 from app.compat import get_revert_capability, get_system_compat_keys, TRANSMAP_PATH
 from app.easy_cli import (
     _cleanup_tmp_noram_dirs,
@@ -70,6 +70,7 @@ from .helper import (
     is_appimage_path,
     is_homebrew_catalog_valid,
     is_homebrew_path,
+    is_installed_entry,
     is_nix_path,
     is_registered_entry,
     is_removable,
@@ -168,7 +169,9 @@ class ScriptRunnerMixin:
         registry_data, removable = await asyncio.to_thread(
             self._read_removal_state, button
         )
-        is_first_run = not is_registered_entry(
+        # Installed state is app-wide, not registry-only: an app installed from
+        # a non-default source is recorded under that source's identity.
+        is_first_run = not is_installed_entry(
             button.info or {"name": script_name}, registry_data
         )
 
@@ -260,6 +263,11 @@ class ScriptRunnerMixin:
             return
         if is_internal:
             self.run_script(button)
+            return
+        # AppStream/AUR entries need the source-aware external-removal path;
+        # the generic uninstall builder only understands Registry transactions.
+        if script_info.get("is_appstream_entry"):
+            self.run_appstream_uninstall(script_info)
             return
         self.run_uninstall(button, script_info)
 
@@ -830,6 +838,19 @@ class ScriptRunnerMixin:
         else:
             resolve_script_dir()
             temp_path = create_temp_file(script_info["path"])
+            # Generated one-shot scripts (flake removals, generation actions)
+            # mark their source path for cleanup. The terminal runs the copy,
+            # so the original can go away as soon as it has been copied.
+            cleanup_source = str(script_info.get("cleanup_path") or "")
+            if (
+                cleanup_source
+                and cleanup_source == script_info["path"]
+                and cleanup_source != temp_path
+            ):
+                try:
+                    os.remove(cleanup_source)
+                except OSError:
+                    pass
             try:
                 with open(TRANSMAP_PATH, "w"):
                     pass
@@ -1133,6 +1154,10 @@ class ScriptRunnerMixin:
         is_extension = self._is_extension_entry(script_info)
         script_name = script_info.get("name", "Script")
         registry_name = script_info.get("registry_name", script_name)
+        registry_disabled = (
+            str(script_info.get("registry", "") or "").strip().lower() == "no"
+        )
+        is_nix_action = bool(script_info.get("nix_action"))
 
         script_path = script_info.get("path", "")
         system_compat_keys = get_system_compat_keys()
@@ -1148,14 +1173,28 @@ class ScriptRunnerMixin:
         result = _classify_exit_code(exit_code)
 
         action_done = "removed" if is_uninstall else "installed"
-        action_verb = "remove" if is_uninstall else "install"
+        action_verb = (
+            "complete"
+            if is_nix_action
+            else ("remove" if is_uninstall else "install")
+        )
 
         if result is ScriptResult.SUCCESS:
-            if not dev_mode and not is_uninstall and not is_extension:
+            if (
+                not dev_mode
+                and not is_uninstall
+                and not is_extension
+                and not registry_disabled
+            ):
                 _save_script_to_registry(registry_name, TRANSMAP_PATH)
                 _cleanup_tmp_noram_dirs(TRANSMAP_PATH)
                 self._remove_transmap()
             self._cleanup_temp_file(temp_path, dev_mode)
+
+            if is_nix_action:
+                self.notify(f"✓ {script_name}")
+                self._finish_script_run()
+                return
 
             if is_appstream:
                 await self._refresh_app_page_after_run(
@@ -1203,7 +1242,7 @@ class ScriptRunnerMixin:
             elif is_appstream and not is_uninstall:
                 _save_script_to_registry(registry_name, TRANSMAP_PATH)
                 self._remove_transmap()
-            elif not dev_mode and not is_uninstall:
+            elif not dev_mode and not is_uninstall and not registry_disabled:
                 revert_info = {
                     "name": script_name,
                     "icon": "application-x-executable",
@@ -1491,6 +1530,7 @@ class ScriptRunnerMixin:
             translations=translations,
             featured=None,
             installed=not is_uninstall,
+            selected_source=script_info,
         )
 
     def _schedule_homebrew_search(self, query: str) -> None:
@@ -1854,10 +1894,17 @@ class AppstreamRunnerMixin:
 
         BLOCKING: runs in a thread.
 
-        Order: items that other packages depend on are blocked. An item
-        that is not in the LinuxToys registry but is found on the system
-        gets an external removal. Any other item gets the standard
-        uninstall entry."""
+        A merged card may be installed from a source other than the one the
+        page currently shows; resolve the source that owns the installation
+        before looking at dependencies or the registry. Order: items that other
+        packages depend on are blocked. An item that is not in the LinuxToys
+        registry but is found on the system gets an external removal. Any other
+        item gets the standard uninstall entry."""
+        entry = dict(entry)
+        if entry.get("is_appstream_entry"):
+            installed_info = installed_packages.installed_source(entry)
+            if installed_info is not None:
+                entry = dict(installed_info)
         blockers = installed_packages.dependency_blockers(entry)
         if blockers:
             return None, blockers
@@ -2294,6 +2341,112 @@ class ManifestRunnerMixin:
         except Exception as exc:  # noqa: BLE001
             self.notify(
                 f"✗ Could not update the Nix flake configuration: {exc}",
+                severity="error",
+            )
+            return
+        self._execute_script_info(script)
+
+    def on_nix_generations_chosen(self, selection: dict | None) -> None:
+        """Confirm and run a generation action returned by the TUI dialog."""
+        if not selection:
+            return
+        action = str(selection.get("action") or "")
+        scope = str(selection.get("scope") or "")
+        try:
+            generation = int(selection.get("generation") or 0)
+        except (TypeError, ValueError):
+            return
+        if (
+            action not in ("activate", "delete")
+            or scope not in nix_generations.SCOPES
+            or generation <= 0
+        ):
+            return
+        scope_name = translations.get(
+            "nix_generations_home"
+            if scope == nix_generations.HOME_SCOPE
+            else "nix_generations_system",
+            "Home Manager"
+            if scope == nix_generations.HOME_SCOPE
+            else "NixOS system",
+        )
+        if action == "activate":
+            title = translations.get(
+                "nix_generations_activate_confirm_title",
+                "Activate generation",
+            )
+            message = translations.get(
+                "nix_generations_activate_confirm_message",
+                "Activate generation {generation} ({scope})? The running "
+                "configuration will be replaced.",
+            ).format(generation=generation, scope=scope_name)
+            confirm_label = translations.get(
+                "nix_generations_activate", "Activate"
+            )
+        else:
+            title = translations.get(
+                "nix_generations_delete_confirm_title", "Delete generation"
+            )
+            message = translations.get(
+                "nix_generations_delete_confirm_message",
+                "Delete generation {generation} ({scope})? The generation "
+                "record is removed; Nix garbage collection frees the store "
+                "paths later.",
+            ).format(generation=generation, scope=scope_name)
+            confirm_label = translations.get(
+                "nix_generations_delete", "Delete"
+            )
+        self.app.push_screen(
+            RemoveScriptScreen(
+                scope_name,
+                message,
+                title=title,
+                confirm_label=confirm_label,
+            ),
+            callback=lambda confirmed: self._run_nix_generation_action(
+                selection, confirmed
+            ),
+        )
+
+    def _run_nix_generation_action(
+        self, selection: dict, confirmed: bool
+    ) -> None:
+        if not confirmed:
+            return
+        action = str(selection.get("action") or "")
+        scope = str(selection.get("scope") or "")
+        generation = int(selection.get("generation") or 0)
+        try:
+            if action == "activate":
+                script = nix_generations.materialize_switch(
+                    scope,
+                    generation,
+                    name=translations.get(
+                        "nix_generations_activate_action",
+                        "Activate Nix generation {generation}",
+                    ).format(generation=generation),
+                    description=translations.get(
+                        "nix_generations_activate_action_desc",
+                        "Activate this Nix generation and rebuild the running "
+                        "configuration from it.",
+                    ),
+                )
+            else:
+                script = nix_generations.materialize_delete(
+                    scope,
+                    generation,
+                    name=translations.get(
+                        "nix_generations_delete_action",
+                        "Delete Nix generation {generation}",
+                    ).format(generation=generation),
+                    description=translations.get(
+                        "nix_generations_delete_action_desc",
+                        "Delete this Nix generation record.",
+                    ),
+                )
+        except Exception as exc:  # noqa: BLE001
+            self.notify(
+                f"✗ Could not prepare the Nix generation action: {exc}",
                 severity="error",
             )
             return

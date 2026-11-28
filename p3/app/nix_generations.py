@@ -328,6 +328,8 @@ def _materialize(
         "revert": "no",
         "reboot": "no",
         "repo": "",
+        "registry": "no",
+        "nix_action": True,
     }
     if action == "delete":
         info["cleanup_path"] = script_path

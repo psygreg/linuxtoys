@@ -6,7 +6,7 @@ from collections.abc import Mapping
 from enum import Enum, auto
 from typing import Any
 
-from app import appstream_cache
+from app import appstream_cache, installed_packages
 from app.lang_utils import load_translations
 from app.search_helper import (
     CategoryCache,
@@ -95,6 +95,35 @@ def is_registered_entry(info: Mapping[str, Any], registry_data) -> bool:
         for candidate in candidates
         if candidate
     )
+
+
+def is_installed_entry(
+    info: Mapping[str, Any] | None, registry_data=None
+) -> bool:
+    """Whether one card is currently installed, across all of its sources.
+
+    Registry state alone is not enough for merged AppStream cards: an app
+    installed from a non-default source is recorded under that source's
+    identity, so the default source would look uninstalled. ``installed_source``
+    resolves the source that actually owns the installation.
+    """
+    if not isinstance(info, Mapping):
+        return False
+    if registry_data is None:
+        from app.registry_utils import parse_registry_file
+
+        registry_data = parse_registry_file()
+    if is_registered_entry(info, registry_data):
+        return True
+    if info.get("is_appstream_entry"):
+        try:
+            return (
+                installed_packages.installed_source(info, registry_data)
+                is not None
+            )
+        except Exception:
+            return False
+    return False
 
 
 def is_removable(

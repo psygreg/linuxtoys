@@ -5,6 +5,7 @@ from app.easy_cli import is_dev_mode_enabled
 from .about_helper import AboutWidget
 from .dialog_screen import LanguageSelectorDialog
 from .nix_flake_screen import NixFlakeScreen
+from .nix_generations_screen import NixGenerationsScreen
 from .helper import (
     invalidate_search_caches,
     translations,
@@ -58,6 +59,10 @@ class MenuSelectionMixin:
             ),
             "nix_flake": lambda: self.app.push_screen(
                 NixFlakeScreen(), callback=self.on_nix_flake_chosen
+            ),
+            "nix_generations": lambda: self.app.push_screen(
+                NixGenerationsScreen(),
+                callback=self.on_nix_generations_chosen,
             ),
             "update": self._trigger_update_check,
         }
