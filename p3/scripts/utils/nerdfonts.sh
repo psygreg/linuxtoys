@@ -1,6 +1,6 @@
 #!/bin/bash
 # name: Nerd Fonts
-# version: 1.1
+# version: 1.2
 # description: nerdfonts_desc
 # icon: nerdfonts.webp
 # repo: https://www.nerdfonts.com
@@ -37,6 +37,8 @@ fi
 
 [ ${#_selected_fonts[@]} -gt 0 ] || { zenwrn "No font selected"; exit 0; }
 
+echo "Selected Nerd Fonts: ${_selected_fonts[*]}"
+
 mkdir -p "${_work_dir}"
 
 for _font in "${_selected_fonts[@]}"; do
@@ -48,6 +50,7 @@ for _font in "${_selected_fonts[@]}"; do
 
 	mkdir -p "${_extract_dir}" || fatal "Failed to prepare ${_font} extraction directory"
 
+	echo "Downloading ${_font} Nerd Font..."
 	font_download "${_font_url}" "${_archive}"
 	tar -xJf "${_archive}" -C "${_extract_dir}" || fatal "Failed to extract ${_font}"
 
@@ -57,10 +60,13 @@ done
 
 # Every extracted file passes the data-kind architecture preflight again inside font_install.
 for _font in "${_selected_fonts[@]}"; do
-    mapfile -d '' -t _files < <(find "${_work_dir}/${_font}" -type f \( -name '*.ttf' -o -name '*.otf' \) -print0)
-    font_install "$_font" "${_files[@]}"
+	echo "Installing ${_font} Nerd Font..."
+	mapfile -d '' -t _files < <(find "${_work_dir}/${_font}" -type f \( -name '*.ttf' -o -name '*.otf' \) -print0)
+	font_install "$_font" "${_files[@]}"
+	echo "${_font} Nerd Font installed (${#_files[@]} files)."
 done
 
+echo "Refreshing font cache..."
 fc-cache -f "${_fonts_dir}" && {
 	zeninf "$msg018"
 } || {
