@@ -1266,7 +1266,19 @@ def run_update_check_cli(translations=None):
         
         if resp == 'y':
             try:
-                subprocess.run(['sh', '-c', 'curl -fsSL https://linux.toys/install.sh | bash'], check=True)
+                # The headless service has no controlling terminal: reuse the
+                # GUI's background updater, which pre-authenticates through the
+                # shared library and sources the installer in the same shell
+                # instead of losing sudo's authorization through a pipe.
+                if os.environ.get('UPD_SERVICE') == '1':
+                    from .updater.update_helper import run_background_update
+                    success, error = run_background_update()
+                    if success:
+                        print("✓ LinuxToys updated.")
+                    else:
+                        print(f"✗ An error occurred during the update process.\n{error}")
+                else:
+                    subprocess.run(['sh', '-c', 'curl -fsSL https://linux.toys/install.sh | bash'], check=True)
             except Exception as e:
                 print(f"✗ An error occurred during the update process.\n{str(e)}")
     else:

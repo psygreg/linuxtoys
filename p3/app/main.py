@@ -124,6 +124,9 @@ def run():
     if os.environ.get('UPD_SERVICE') == '1':
         # Set EASY_CLI mode for the script execution
         os.environ['EASY_CLI'] = '1'
+        print("\n" + "=" * 60)
+        print("Now running system update...")
+        print("=" * 60 + "\n")
 
         try:
             # Find and run sysup.sh script

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os
-import subprocess
 import sys
 from urllib.parse import unquote, urlparse
 
@@ -213,17 +212,11 @@ if __name__ == "__main__":
     if os.environ.get('EASY_CLI') == '1' and not tui_requested:
         from app.manifest_helper import run_update_check_cli
         run_update_check_cli()
-        # If running as UPD_SERVICE, run system update after app update completes
-        if os.environ.get('UPD_SERVICE') == '1':
-            print("\n" + "=" * 60)
-            print("Now running system update...")
-            print("=" * 60 + "\n")
-            try:
-                script_path = os.path.join(os.environ.get('SCRIPT_DIR', linuxtoys_dir), 'scripts', 'sysup.sh')
-                subprocess.run(['bash', script_path], check=False)
-            except Exception as e:
-                print(f"Error running system update: {e}")
-            sys.exit(0)
+        # UPD_SERVICE continues into main.run(), whose own branch runs sysup
+        # through the normal script pipeline (library flags, scripts source,
+        # architecture and script-API gates). Invoking the file with a bare
+        # `bash` here skipped that preamble, leaving sysup without the
+        # package/cleanup/Nix helpers it needs.
 
     cli_mode = os.environ.get('EASY_CLI') == '1'
     # --- DISPLAY CHECK FOR GUI MODE ---

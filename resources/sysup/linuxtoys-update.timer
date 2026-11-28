@@ -1,6 +1,5 @@
 [Unit]
 Description=LinuxToys Update Trigger
-Wants=linuxtoys-update-user.service
 
 [Timer]
 OnBootSec=15min

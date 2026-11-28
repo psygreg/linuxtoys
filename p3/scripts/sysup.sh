@@ -8,9 +8,51 @@
 # architectures: x86_64, aarch64
 # requires-script-api: 1
 
+# sysup is also launched directly by the headless updater service. The normal
+# script preamble scans the file and exports these flags; set them here as a
+# fallback so a direct launch still loads every helper library the update uses
+# instead of failing with "command not found" partway through.
+: "${FS_OPS:=1}"
+: "${PACKAGE_OPS:=1}"
+: "${MISC_OPS:=1}"
+: "${HELPERS_OPS:=1}"
+if [ -r "$SCRIPT_DIR/libs/nixsys.bash" ]; then
+    : "${NIX_OPS:=1}"
+fi
 source "$SCRIPT_DIR/libs/linuxtoys.lib"
 _lang_
 [ ! -n "$UPD_SERVICE" ] && sudo_rq
+
+# Synced scripts can be newer than the installed app's shell libraries. Keep the
+# NixOS probe available when sysinfo.bash predates is_nixos(), mirroring it.
+if ! declare -F is_nixos >/dev/null 2>&1; then
+    is_nixos() {
+        if [ -e /etc/NIXOS ] || [ -f /etc/nixos/configuration.nix ]; then
+            return 0
+        fi
+        local id="" id_like=""
+        if [ -r /etc/os-release ]; then
+            id=$(sed -n 's/^ID=//p' /etc/os-release | head -n1 | tr -d '"' | tr '[:upper:]' '[:lower:]')
+            id_like=$(sed -n 's/^ID_LIKE=//p' /etc/os-release | head -n1 | tr -d '"' | tr '[:upper:]' '[:lower:]')
+        fi
+        case "$id" in
+            nixos|nixos-*) return 0 ;;
+        esac
+        case " $id_like " in
+            *" nixos "*) return 0 ;;
+        esac
+        return 1
+    }
+fi
+
+# Nix updates are optional: helper availability and an actual Nix installation
+# are both checked by nix_update itself, so hosts without Nix (or with an older
+# app whose synced sysup is newer than its libraries) skip this step instead of
+# reporting a failed update.
+sysup_nix_update() {
+    declare -F nix_update >/dev/null 2>&1 || return 0
+    nix_update
+}
 
 needs_reboot() {
     if is_ostree || is_ublue || is_gregos; then
@@ -178,7 +220,7 @@ if [ "$UPD_SERVICE" = "1" ] && [ "$(id -u)" -ne 0 ]; then
     flatpak_update_installation --user ""
     brew_update
     bun_update
-    nix_update || warn "Failed to update Nix packages"
+    sysup_nix_update || warn "Failed to update Nix packages"
     cleanup_orphan_desktops
     echo "$sysup_completed"
     exit 0
@@ -204,7 +246,7 @@ nix_native_update_done=0
 if is_nixos; then
     # NixOS has no imperative distro package transaction: the system profile
     # and Home Manager are updated and rebuilt by the Nix subsystem.
-    nix_update || fatal "Failed to update the NixOS system"
+    sysup_nix_update || fatal "Failed to update the NixOS system"
     nix_native_update_done=1
 elif is_steamos; then
     # SteamOS-style immutables manage their packages through the OS image, so
@@ -241,6 +283,14 @@ elif is_fedora || is_rhel; then
     }
 elif is_debian || is_ubuntu; then
     interrupted_apt_guard
+    # Refresh the package lists before upgrading: a background service can run
+    # for days on the lists fetched at boot, and a LinuxToys release published
+    # from its repository would otherwise stay invisible to apt-get upgrade.
+    if [ "$UPD_SERVICE" = "1" ]; then
+        apt_transaction apt-get update || warn "Failed to refresh APT package lists"
+    else
+        apt_transaction sudo_ apt-get update || warn "Failed to refresh APT package lists"
+    fi
     if { [ "$UPD_SERVICE" = "1" ] && apt-get -s autoremove 2>/dev/null | grep -q '^Remv '; } || sudo_ apt-get -s autoremove 2>/dev/null | grep -q '^Remv '; then
         if [ "$UPD_SERVICE" = "1" ]; then
             apt_transaction apt-get autoremove -y || fatal "Failed to remove orphaned packages"
@@ -248,10 +298,13 @@ elif is_debian || is_ubuntu; then
             apt_transaction sudo_ apt-get autoremove -y || fatal "Failed to remove orphaned packages"
         fi
     fi
+    # --with-new-pkgs lets an upgraded LinuxToys release pull a newly added
+    # runtime dependency instead of being held back; upgrade still never
+    # removes installed packages.
     if [ "$UPD_SERVICE" = "1" ]; then
-        apt_transaction apt-get upgrade -y --allow-downgrades -o Acquire::http::Dl-Limit=2048 -o Acquire::https::Dl-Limit=2048 || fatal "Failed to upgrade packages"
+        apt_transaction apt-get upgrade -y --allow-downgrades --with-new-pkgs -o Acquire::http::Dl-Limit=2048 -o Acquire::https::Dl-Limit=2048 || fatal "Failed to upgrade packages"
     else
-        apt_transaction sudo_ apt-get upgrade -y --allow-downgrades || fatal "Failed to upgrade packages"
+        apt_transaction sudo_ apt-get upgrade -y --allow-downgrades --with-new-pkgs || fatal "Failed to upgrade packages"
     fi
     if is_ubuntu && [[ "$ID" == "ubuntu" ]] && release_upgrade; then
         if offer_release_upgrade; then
@@ -312,7 +365,7 @@ fi
 # and/or Home Manager on any distro that has it. Home Manager's GPU-driver
 # warning is captured by the rebuild helper and re-runs non-NixOS GPU setup.
 if [ "$nix_native_update_done" -eq 0 ]; then
-    nix_update || warn "Failed to update Nix packages"
+    sysup_nix_update || warn "Failed to update Nix packages"
 fi
 
 if command -v flatpak >/dev/null 2>&1; then
