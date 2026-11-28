@@ -4,11 +4,12 @@
 Lets AI agents interact with LinuxToys the way a user would: browse and
 search the catalog, read app pages (descriptions, screenshots, donation and
 purchase links), install and remove apps, enable the Nix subsystem, install
-and remove Nix packages and external flakes, clean up the leftover user data of uninstalled Flatpak
-apps (the app page's "Remove data" action), run the app's full system update
-(the menu card's "Update System"), change settings (automatic updates,
-automatic bug reports, language), translate descriptions, and read or export
-the Action Registry.
+and remove Nix packages and external flakes, discover and configure
+Home Manager (user-level) and NixOS (system-level) Nix services, clean up the
+leftover user data of uninstalled Flatpak apps (the app page's "Remove data"
+action), run the app's full system update (the menu card's "Update System"),
+change settings (automatic updates, automatic bug reports, language),
+translate descriptions, and read or export the Action Registry.
 
 Design:
 
@@ -2133,6 +2134,28 @@ def _app_details(entry):
             recommended = str(entry.get("recommended_source") or "").strip()
             if recommended:
                 details["recommended_source"] = recommended
+            try:
+                from . import nix_services
+
+                service = nix_services.service_for(entry)
+                if service is not None:
+                    details["nix_service"] = {
+                        "name": str(service.get("name") or ""),
+                        "scope": str(service.get("scope") or ""),
+                        "level": (
+                            "user"
+                            if service.get("scope") == "home-manager"
+                            else "system"
+                        ),
+                        "option_count": len(service.get("options") or ()),
+                        "note": (
+                            "This package maps to a Nix service. Use "
+                            "nix_get_service for its options and "
+                            "nix_install_service/nix_set_service_options to manage it."
+                        ),
+                    }
+            except Exception:
+                pass
 
     blocks = entry.get("long_description_blocks")
     if isinstance(blocks, list) and blocks:
@@ -2853,6 +2876,27 @@ class JobManager:
         )
         return job
 
+    def submit_nix_service(self, entry, operations, action=None):
+        """Queue Nix service operations and one declarative rebuild.
+
+        ``operations`` is a list of ``{scope, action, options}`` mappings. The
+        worker resolves/validates them against the current discovery cache at
+        execution time, so a queued job always uses the cache in effect when
+        it runs.
+        """
+        entry = dict(entry or {})
+        operations = [dict(item) for item in operations or ()]
+        kind = (
+            f"nix_service_{action}"
+            if action in ("install", "remove", "options")
+            else "nix_service_install"
+        )
+        job = Job(kind, str(entry.get("nix_name") or _stable_id(entry)))
+        job.name = str(entry.get("name") or entry.get("nix_name") or "Nix service")
+        self._register(job)
+        self._queue.put((job, {"entry": entry, "operations": operations}))
+        return job
+
     def submit_flatpak_data(self, entry):
         """Queue the leftover-data cleanup for one uninstalled Flatpak app.
 
@@ -2953,6 +2997,8 @@ class JobManager:
                 if job.kind not in (
                     "extension_install", "extension_remove",
                     "nix_extension_install", "nix_extension_remove",
+                    "nix_service_install", "nix_service_remove",
+                    "nix_service_options",
                     "nix_generation_activate", "nix_generation_delete",
                     "update", "flatpak_data_remove",
                 ):
@@ -2989,6 +3035,12 @@ class JobManager:
                 )
             elif job.kind in ("nix_extension_install", "nix_extension_remove"):
                 code, reason = self._run_nix_extension(job, entry)
+            elif job.kind in (
+                "nix_service_install",
+                "nix_service_remove",
+                "nix_service_options",
+            ):
+                code, reason = self._run_nix_service(job, entry)
             elif job.kind == "install":
                 code, reason = self._install(job, entry)
             elif job.kind == "system_update":
@@ -3310,6 +3362,48 @@ class JobManager:
         self._log(
             job,
             "Applying the Nix package queue (this rebuilds the profile)...",
+        )
+        return self._run_generated_script(job, apply_info)
+
+    def _run_nix_service(self, job, payload):
+        """Queue one or more Nix service operations and run the apply."""
+        from . import nix_catalog, nix_queue
+
+        payload = dict(payload or {})
+        entry = dict(payload.get("entry") or {})
+        operations = payload.get("operations") or [payload]
+        applied = False
+        for operation in operations:
+            operation = dict(operation or {})
+            action = str(operation.get("action") or "install").strip()
+            scope = str(operation.get("scope") or "").strip() or None
+            options = operation.get("options")
+            try:
+                if action == "options":
+                    record_id = nix_queue.set_service_options(
+                        entry, dict(options or {}), scope=scope
+                    )
+                else:
+                    record_id = nix_queue.add_service(
+                        entry,
+                        action="remove" if action == "remove" else "install",
+                        scope=scope,
+                        options=None if action == "remove" else options,
+                    )
+            except (OSError, ValueError) as exc:
+                return 1, f"Could not queue the Nix service operation: {exc}"
+            if record_id is not None:
+                applied = True
+        if not applied:
+            self._log(job, "No service option changes to save.")
+            return 0, ""
+        try:
+            apply_info = nix_catalog.materialize_apply()
+        except (OSError, ValueError) as exc:
+            return 1, f"Could not prepare the Nix service apply: {exc}"
+        self._log(
+            job,
+            "Applying the Nix package queue (this rebuilds the selected profile)...",
         )
         return self._run_generated_script(job, apply_info)
 
@@ -4078,10 +4172,12 @@ def tool_schemas():
                 "get_app_details exposes `nix_name` for Nix entries, and "
                 "'nix:<attr>' catalog IDs are also accepted. Scope defaults "
                 "to Home Manager when available, otherwise the NixOS system "
-                "configuration. The profile is rebuilt immediately; a system "
-                "rebuild asks for the password on the user's screen. Blocks "
-                "until the job finishes by default; pass wait=false to queue "
-                "it and watch with get_job."
+                "configuration. If the attribute maps to a Nix service, the "
+                "service is enabled at the matching level instead of installing "
+                "a bare package; use nix_get_service for its options. The "
+                "profile is rebuilt immediately; a system rebuild asks for the "
+                "password on the user's screen. Blocks until the job finishes "
+                "by default; pass wait=false to queue it and watch with get_job."
             ),
             "inputSchema": {
                 "type": "object",
@@ -4135,6 +4231,152 @@ def tool_schemas():
                 "nix_remove_package."
             ),
             "inputSchema": {"type": "object", "properties": {}},
+        },
+        {
+            "name": "nix_list_services",
+            "description": (
+                "List Nix services discoverable for LinuxToys-managed "
+                "packages, with their level and state. `home-manager` entries "
+                "are user-level services that work outside NixOS; `system` "
+                "entries are NixOS services. Use nix_get_service for the "
+                "editable options, then nix_install_service or "
+                "nix_set_service_options. The discovery cache is refreshed "
+                "when needed."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "scope": {
+                        "type": "string",
+                        "enum": ["home-manager", "system"],
+                        "description": "Only list this service level; omit for every level available on the host.",
+                    },
+                    "query": {
+                        "type": "string",
+                        "description": "Optional case-insensitive name/description filter.",
+                    },
+                },
+            },
+        },
+        {
+            "name": "nix_get_service",
+            "description": (
+                "Read one Nix service and its configurable options: type, "
+                "description, upstream default, current effective value, "
+                "choices and whether the value is a saved override. Options "
+                "marked stale are kept in the module for safety but are not "
+                "accepted by nix_set_service_options. The level is reported "
+                "as user (Home Manager) or system (NixOS). Install with "
+                "nix_install_service or change options with "
+                "nix_set_service_options."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "nixpkgs attribute / service name, e.g. syncthing or input-remapper",
+                    },
+                    "scope": {
+                        "type": "string",
+                        "enum": ["home-manager", "system"],
+                        "description": "Prefer this service level; omit to use the level matching the selected Nix source.",
+                    },
+                },
+                "required": ["name"],
+            },
+        },
+        {
+            "name": "nix_install_service",
+            "description": (
+                "Install and enable one Nix service through the declarative "
+                "queue, optionally with option overrides. Home Manager "
+                "services are user-level and work outside NixOS; NixOS "
+                "services are system-level and rebuild the system profile. "
+                "Values equal to upstream defaults are not stored. The profile "
+                "is rebuilt immediately; system rebuilds ask for the password "
+                "on the user's screen. Blocks until the job finishes by "
+                "default; pass wait=false to queue it and watch with get_job."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "nixpkgs attribute / service name, e.g. syncthing",
+                    },
+                    "scope": {
+                        "type": "string",
+                        "enum": ["home-manager", "system"],
+                        "description": "Service level; omit to use the only available level or the first available one.",
+                    },
+                    "options": {
+                        "type": "object",
+                        "description": "Option path -> value map, e.g. {\"tray.enable\": true}. Use nix_get_service to see paths, kinds and defaults.",
+                        "additionalProperties": True,
+                    },
+                    **_job_tracking_schema(),
+                },
+                "required": ["name"],
+            },
+        },
+        {
+            "name": "nix_remove_service",
+            "description": (
+                "Disable and remove one Nix service selection from Home "
+                "Manager and/or the NixOS system configuration, then rebuild "
+                "once. Other services, packages and imported flakes stay "
+                "applied. Blocks until the removal finishes by default; pass "
+                "wait=false to watch with get_job."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "nixpkgs attribute / service name, e.g. syncthing",
+                    },
+                    "scope": {
+                        "type": "string",
+                        "enum": ["home-manager", "system"],
+                        "description": "Remove only this level; omit to remove every installed/pending level.",
+                    },
+                    **_job_tracking_schema(),
+                },
+                "required": ["name"],
+            },
+        },
+        {
+            "name": "nix_set_service_options",
+            "description": (
+                "Set the option overrides for a Nix service and rebuild. This "
+                "queues the service for installation when it is not installed "
+                "yet. Only options returned by nix_get_service are accepted; "
+                "values equal to upstream defaults are dropped so the service "
+                "keeps tracking defaults. Blocks until the job finishes by "
+                "default; pass wait=false to watch with get_job."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "nixpkgs attribute / service name, e.g. syncthing",
+                    },
+                    "scope": {
+                        "type": "string",
+                        "enum": ["home-manager", "system"],
+                        "description": "Service level; omit to use the level matching the installed/selected service.",
+                    },
+                    "options": {
+                        "type": "object",
+                        "description": "Full option override map (paths from nix_get_service).",
+                        "additionalProperties": True,
+                    },
+                    **_job_tracking_schema(),
+                },
+                "required": ["name", "options"],
+            },
         },
         {
             "name": "nix_list_flakes",
@@ -5536,6 +5778,320 @@ def _tool_nix_list_packages():
     return {"packages": packages}
 
 
+def _ensure_nix_services():
+    """Return the service module after making sure discovery is usable."""
+    from . import nix_catalog, nix_services
+
+    if not nix_catalog.enabled():
+        raise ValueError(
+            "Nix is not available on this host (requires an x86_64/aarch64 "
+            "host and a working nix executable). Use nix_enable_subsystem to "
+            "install and prepare it."
+        )
+    if not nix_services.enabled():
+        raise ValueError(
+            "No Nix service level is available. Services need Home Manager "
+            "(user level) or a NixOS system configuration (system level). "
+            "Use nix_enable_subsystem to prepare the subsystem."
+        )
+    if not nix_services.cache_valid():
+        nix_services.load_or_refresh()
+    if not nix_services.cache_valid():
+        raise ValueError(
+            "Nix service discovery is not available yet. Refresh the Nix "
+            "category in the app or retry after the catalog metadata is "
+            "downloaded."
+        )
+    return nix_services
+
+
+def _nix_service_level(scope):
+    return "user" if scope == "home-manager" else "system"
+
+
+def _tool_nix_list_services(scope=None, query=None):
+    from . import nix_queue
+
+    nix_services = _ensure_nix_services()
+    available = nix_services.scopes()
+    requested = str(scope or "").strip()
+    if requested and requested not in available:
+        raise ValueError(
+            f"The {requested} service level is not available on this host "
+            f"(available: {', '.join(available)})."
+        )
+    target = str(query or "").strip().casefold()
+    services = nix_services.cached_services()
+    rows = []
+    for svc_scope in ([requested] if requested else available):
+        for name, service in sorted(services.get(svc_scope, {}).items()):
+            description = str(service.get("description") or "")
+            if target and target not in name.casefold() and target not in description.casefold():
+                continue
+            pending = nix_queue.pending_service_for(name, svc_scope)
+            rows.append(
+                {
+                    "app_id": f"nix:{name}",
+                    "nix_name": name,
+                    "name": name,
+                    "scope": svc_scope,
+                    "level": _nix_service_level(svc_scope),
+                    "description": description,
+                    "option_count": len(service.get("options") or ()),
+                    "installed": name
+                    in nix_services.installed_services(svc_scope),
+                    "pending_action": (
+                        str(pending[-1].get("action") or "") if pending else None
+                    ),
+                }
+            )
+    return {"services": rows, "scopes": available}
+
+
+def _tool_nix_get_service(name, scope=None):
+    from . import nix_queue
+
+    nix_services = _ensure_nix_services()
+    attr = str(name or "").strip()
+    if not attr:
+        raise ValueError("A Nix service name is required.")
+    requested = str(scope or "").strip()
+    if requested and requested not in nix_services.scopes():
+        raise ValueError(
+            f"The {requested} service level is not available on this host "
+            f"(available: {', '.join(nix_services.scopes())})."
+        )
+    service = nix_services.service_for_name(
+        attr, scope or _nix_service_scope_hint(attr)
+    )
+    if service is None:
+        available = sorted(nix_services.cached_services().keys())
+        raise ValueError(
+            f"No Nix service matches '{attr}'. Use nix_list_services to see "
+            f"the available service names (levels: {', '.join(available)})."
+        )
+    actual_scope = str(service.get("scope") or "")
+    state = nix_services.service_state(
+        {"nix_name": attr, "nix_scope": actual_scope}, actual_scope
+    )
+    if requested and actual_scope != requested:
+        raise ValueError(
+            f"'{attr}' is only available as a {actual_scope} service on this host."
+        )
+    if state is None:
+        raise ValueError(f"Could not read the state of '{attr}'.")
+    pending = state.get("pending") or {}
+    options = [
+        {
+            "path": option["path"],
+            "kind": option["kind"],
+            "description": option.get("description") or "",
+            "default": option.get("default"),
+            "choices": list(option.get("choices") or ()),
+            "value": option.get("value"),
+            "saved": bool(option.get("saved")),
+            "stale": bool(option.get("stale")),
+        }
+        for option in state.get("options") or ()
+    ]
+    return {
+        "app_id": f"nix:{attr}",
+        "nix_name": attr,
+        "name": attr,
+        "scope": actual_scope,
+        "level": _nix_service_level(actual_scope),
+        "description": str(service.get("description") or ""),
+        "installed": bool(state.get("installed")),
+        "status": str(state.get("status") or ""),
+        "pending_action": str(pending.get("action") or "") or None,
+        "available_scopes": sorted(
+            capability.get("scope")
+            for capability in nix_services.service_capabilities(attr).values()
+        ),
+        "installed_scopes": nix_services.installed_service_scopes(attr),
+        "options": options,
+    }
+
+
+def _nix_service_entry(service):
+    name = str(service.get("name") or "")
+    scope = str(service.get("scope") or "")
+    return {
+        "nix_name": name,
+        "name": name,
+        "nix_scope": scope,
+        "appstream_source": "nix",
+    }
+
+
+def _nix_service_scope_hint(attr):
+    """Prefer the level that already owns an installation/pending change."""
+    from . import nix_queue, nix_services
+
+    installed = nix_services.installed_service_scopes(attr)
+    if installed:
+        return installed[0]
+    for record in nix_queue.snapshot():
+        if (
+            record.get("kind") == "service"
+            and str(record.get("service") or record.get("attr") or "") == attr
+        ):
+            scope = str(record.get("scope") or "").strip()
+            if scope in ("home-manager", "system"):
+                return scope
+    return None
+
+
+def _tool_nix_install_service(
+    name,
+    options=None,
+    scope=None,
+    wait=True,
+    wait_seconds=None,
+):
+    nix_services = _ensure_nix_services()
+    attr = str(name or "").strip()
+    if not attr:
+        raise ValueError("A Nix service name is required.")
+    service = nix_services.service_for_name(
+        attr, scope or _nix_service_scope_hint(attr)
+    )
+    if service is None:
+        raise ValueError(
+            f"No Nix service matches '{attr}'. Use nix_list_services to see "
+            "the available service names."
+        )
+    actual_scope = str(service.get("scope") or "")
+    requested = str(scope or "").strip()
+    if requested and actual_scope != requested:
+        raise ValueError(
+            f"'{attr}' is only available as a {actual_scope} service on this host."
+        )
+    values = None if options is None else dict(options)
+    overrides = nix_services.overrides_from_values(service, values or {})
+    entry = _nix_service_entry(service)
+    job = JOBS.submit_nix_service(
+        entry,
+        [{"scope": actual_scope, "action": "install", "options": values}],
+        action="install",
+    )
+    return _job_submission_result(
+        job,
+        "The service is queued through the persistent Nix queue and the "
+        "selected profile is rebuilt declaratively. Other services, packages "
+        "and imported flakes stay applied. System rebuilds ask for the "
+        "password on the user's screen.",
+        wait=wait,
+        wait_seconds=wait_seconds,
+        app_id=f"nix:{attr}",
+        nix_name=attr,
+        scope=actual_scope,
+        level=_nix_service_level(actual_scope),
+        options=overrides,
+    )
+
+
+def _tool_nix_remove_service(name, scope=None, wait=True, wait_seconds=None):
+    from . import nix_queue
+
+    nix_services = _ensure_nix_services()
+    attr = str(name or "").strip()
+    if not attr:
+        raise ValueError("A Nix service name is required.")
+    available = nix_services.scopes()
+    requested = str(scope or "").strip()
+    if requested and requested not in available:
+        raise ValueError(
+            f"The {requested} service level is not available on this host "
+            f"(available: {', '.join(available)})."
+        )
+    capabilities = nix_services.service_capabilities(attr)
+    if requested:
+        installed = attr in nix_services.installed_services(requested)
+        pending = nix_queue.pending_service_for(attr, requested)
+        scopes_to_remove = (
+            [requested] if requested in capabilities or installed or pending else []
+        )
+    else:
+        scopes_to_remove = []
+        for candidate in available:
+            installed = attr in nix_services.installed_services(candidate)
+            pending = nix_queue.pending_service_for(attr, candidate)
+            if installed or pending:
+                scopes_to_remove.append(candidate)
+        if not scopes_to_remove:
+            scopes_to_remove = list(capabilities.keys())
+    if not scopes_to_remove:
+        raise ValueError(
+            f"No Nix service matches '{attr}' at the requested level. Use "
+            "nix_list_services to see available services."
+        )
+    entry = dict(_nix_service_entry(next(iter(capabilities.values())))) if capabilities else {
+        "nix_name": attr,
+        "name": attr,
+        "appstream_source": "nix",
+    }
+    job = JOBS.submit_nix_service(
+        entry,
+        [{"scope": item, "action": "remove"} for item in scopes_to_remove],
+        action="remove",
+    )
+    return _job_submission_result(
+        job,
+        "The service selections are dropped from their generated modules "
+        "and the affected profile(s) rebuild once; other selections stay.",
+        wait=wait,
+        wait_seconds=wait_seconds,
+        app_id=f"nix:{attr}",
+        nix_name=attr,
+        scopes=scopes_to_remove,
+    )
+
+
+def _tool_nix_set_service_options(
+    name, options, scope=None, wait=True, wait_seconds=None
+):
+    nix_services = _ensure_nix_services()
+    attr = str(name or "").strip()
+    if not attr:
+        raise ValueError("A Nix service name is required.")
+    service = nix_services.service_for_name(
+        attr, scope or _nix_service_scope_hint(attr)
+    )
+    if service is None:
+        raise ValueError(
+            f"No Nix service matches '{attr}'. Use nix_list_services to see "
+            "the available service names."
+        )
+    actual_scope = str(service.get("scope") or "")
+    requested = str(scope or "").strip()
+    if requested and actual_scope != requested:
+        raise ValueError(
+            f"'{attr}' is only available as a {actual_scope} service on this host."
+        )
+    values = dict(options or {})
+    overrides = nix_services.overrides_from_values(service, values)
+    entry = _nix_service_entry(service)
+    job = JOBS.submit_nix_service(
+        entry,
+        [{"scope": actual_scope, "action": "options", "options": values}],
+        action="options",
+    )
+    return _job_submission_result(
+        job,
+        "Only overrides that differ from upstream defaults are stored. The "
+        "service is queued for installation when it was not installed yet, "
+        "then the selected profile is rebuilt.",
+        wait=wait,
+        wait_seconds=wait_seconds,
+        app_id=f"nix:{attr}",
+        nix_name=attr,
+        scope=actual_scope,
+        level=_nix_service_level(actual_scope),
+        options=overrides,
+    )
+
+
 def _flake_state_payload(record):
     labels = []
     for option in record.get("options") or ():
@@ -6197,6 +6753,37 @@ def dispatch_tool(name, arguments):
         )
     if name == "nix_list_packages":
         return _tool_nix_list_packages()
+    if name == "nix_list_services":
+        return _tool_nix_list_services(
+            arguments.get("scope"), arguments.get("query")
+        )
+    if name == "nix_get_service":
+        return _tool_nix_get_service(
+            arguments.get("name"), arguments.get("scope")
+        )
+    if name == "nix_install_service":
+        return _tool_nix_install_service(
+            arguments.get("name"),
+            arguments.get("options"),
+            arguments.get("scope"),
+            _arg_bool(arguments.get("wait"), True),
+            arguments.get("wait_seconds"),
+        )
+    if name == "nix_remove_service":
+        return _tool_nix_remove_service(
+            arguments.get("name"),
+            arguments.get("scope"),
+            _arg_bool(arguments.get("wait"), True),
+            arguments.get("wait_seconds"),
+        )
+    if name == "nix_set_service_options":
+        return _tool_nix_set_service_options(
+            arguments.get("name"),
+            arguments.get("options"),
+            arguments.get("scope"),
+            _arg_bool(arguments.get("wait"), True),
+            arguments.get("wait_seconds"),
+        )
     if name == "nix_list_flakes":
         return _tool_nix_list_flakes()
     if name == "nix_install_flake":
@@ -6353,6 +6940,13 @@ def _initialize_result(requested_version):
             "first nix_install_flake call returns requires_selection — present "
             "the outputs to the user and re-call with the chosen keys. "
             "nix_list_packages and nix_list_flakes show what is installed. "
+            "Nix services are managed separately: nix_list_services lists "
+            "user-level Home Manager services and system-level NixOS services, "
+            "nix_get_service returns their options/defaults/current values, "
+            "and nix_install_service / nix_remove_service / "
+            "nix_set_service_options queue the change and rebuild the selected "
+            "profile. Home Manager services work outside NixOS; NixOS services "
+            "require a system configuration. "
             "Recorded Nix generations are managed with nix_list_generations "
             "(Home Manager and NixOS system) and nix_activate_generation / "
             "nix_delete_generation; confirm activation and deletion with the "

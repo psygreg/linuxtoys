@@ -632,7 +632,12 @@ def search_appstream_entries(query, translations=None, translated_new="new", tra
         )
     )
     target = str(query or "").strip().casefold()
+    from . import nix_services
+
     excluded = {name.casefold() for name in nix_extensions.catalog_wrappers()}
+    excluded.update(
+        name.casefold() for name in nix_services.unavailable_service_attrs()
+    )
     filtered = []
     seen = set()
     seen_ids = set()

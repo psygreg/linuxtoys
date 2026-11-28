@@ -13,7 +13,7 @@ from typing import Any
 from textual.css.query import NoMatches
 from textual.widgets import Input
 
-from app import aur_cache, homebrew_catalog, nix_catalog, nix_extensions, nix_flakes, nix_generations, nix_metadata, nix_queue, installed_packages
+from app import aur_cache, homebrew_catalog, nix_catalog, nix_extensions, nix_flakes, nix_generations, nix_metadata, nix_queue, nix_services, installed_packages
 from app.compat import get_revert_capability, get_system_compat_keys, TRANSMAP_PATH
 from app.easy_cli import (
     _cleanup_tmp_noram_dirs,
@@ -562,15 +562,17 @@ class ScriptRunnerMixin:
         )
 
     def _ensure_nix_extensions_ready(self) -> None:
-        """Fill the extension discovery cache before the first Nix listing."""
+        """Fill the extension/service discovery caches before the first listing."""
         if getattr(self, "_nix_extensions_checked", False):
             return
         self._nix_extensions_checked = True
         try:
-            if (
-                nix_extensions.cached_capabilities()
-                and not nix_extensions.cache_older_than_snapshot()
-            ):
+            extension_fresh = bool(nix_extensions.cached_capabilities()) and not nix_extensions.cache_older_than_snapshot()
+            service_fresh = (
+                nix_services.cache_valid()
+                and not nix_services.cache_older_than_snapshot()
+            )
+            if extension_fresh and service_fresh:
                 return
         except Exception:
             return
@@ -578,6 +580,8 @@ class ScriptRunnerMixin:
         def worker() -> None:
             before = {}
             after = {}
+            service_before = {}
+            service_after = {}
             try:
                 before = nix_extensions.cached_capabilities()
                 nix_extensions.load_or_refresh()
@@ -585,15 +589,22 @@ class ScriptRunnerMixin:
             except Exception:
                 pass
             try:
+                service_before = nix_services.cached_services()
+                nix_services.load_or_refresh()
+                service_after = nix_services.cached_services()
+            except Exception:
+                pass
+            try:
                 self.app.call_from_thread(
                     self._finish_nix_extensions_ready,
-                    bool(after) and after != before,
+                    (bool(after) and after != before)
+                    or service_after != service_before,
                 )
             except Exception:
                 pass
 
         threading.Thread(
-            target=worker, daemon=True, name="linuxtoys-nix-extensions"
+            target=worker, daemon=True, name="linuxtoys-nix-capabilities"
         ).start()
 
     def _finish_nix_extensions_ready(self, changed: bool) -> None:
@@ -2063,10 +2074,13 @@ class AppstreamRunnerMixin:
         )
 
     def _refresh_extensions_page(self) -> None:
-        """Refresh the extension list of the current app page, if any."""
+        """Refresh the extension/service lists of the current app page."""
         page = self._current_app_page()
         if page is not None:
             page.refresh_extensions()
+            refresh_services = getattr(page, "refresh_services", None)
+            if refresh_services is not None:
+                refresh_services()
 
     def cancel_appstream_extension(self, record_id: str) -> None:
         """Cancel a queued Nix extension operation by record id."""
@@ -2147,6 +2161,58 @@ class AppstreamRunnerMixin:
         self._running_appstream_action = (
             "extension_remove" if remove else "extension_install"
         )
+
+        terminal = self.query_one("#terminal", Terminal)
+        started = terminal.run_script(
+            script_command(script_path, resolve_script_dir()),
+            env=self._script_env(name),
+            pause_on_exit=False,
+        )
+        if not started:
+            self._finish_script_run()
+            self._refresh_extensions_page()
+
+    def save_nix_service_options(
+        self, info: Mapping[str, Any], values: Mapping[str, Any]
+    ) -> None:
+        """Queue one service option update and run the declarative apply."""
+        entry = dict(info)
+        name = str(entry.get("name") or entry.get("nix_name") or "Nix service")
+        try:
+            record_id = nix_queue.set_service_options(
+                entry, dict(values)
+            )
+        except (OSError, ValueError) as exc:
+            self.notify(f"✗ {exc}", severity="error")
+            self._refresh_extensions_page()
+            return
+        if record_id is None:
+            self.notify(
+                translations.get(
+                    "nix_service_no_changes", "No option changes to save."
+                ),
+                severity="information",
+            )
+            self._refresh_extensions_page()
+            return
+        try:
+            apply_info = nix_catalog.materialize_apply()
+            script_path = str(apply_info.get("path") or "")
+        except (OSError, ValueError) as exc:
+            self.notify(f"✗ {exc}", severity="error")
+            self._refresh_extensions_page()
+            return
+        if not self._ensure_terminal_free():
+            self._refresh_extensions_page()
+            return
+
+        self._running_button = None
+        self._running_script_info = entry
+        self._running_temp_path = script_path
+        self._running_dev_mode = False
+        self._running_is_uninstall = False
+        self._running_is_appstream = True
+        self._running_appstream_action = "service_install"
 
         terminal = self.query_one("#terminal", Terminal)
         started = terminal.run_script(

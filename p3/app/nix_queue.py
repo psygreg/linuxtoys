@@ -1,10 +1,10 @@
-"""Persistent queue for Nix package and extension operations.
+"""Persistent queue for Nix package, service and extension operations.
 
 Nix installs are declarative: selecting a package records an operation here and
 nothing is built until the user presses "Apply Nix package operations" on the
-queue view. Extension operations (plugins of a host package) use the same
-queue and are applied by the generated extension module. The queue survives
-restarts so a pending rebuild is never lost.
+queue view. Service operations (NixOS services with configurable options) and
+extension operations (plugins of a host package) use the same queue. The queue
+survives restarts so a pending rebuild is never lost.
 """
 
 from __future__ import annotations
@@ -103,6 +103,46 @@ def _read():
                 }
             )
             continue
+        if kind == "service":
+            service = str(
+                record.get("service") or record.get("attr") or ""
+            ).strip()
+            if not _ATTR_RE.fullmatch(service):
+                continue
+            raw_options = record.get("options")
+            options = {}
+            if isinstance(raw_options, dict):
+                for path, value in raw_options.items():
+                    path = str(path or "").strip()
+                    if not path or len(path) > 256:
+                        continue
+                    if not all(part for part in path.split(".")):
+                        continue
+                    if isinstance(value, (bool, int, float, str)):
+                        options[path] = value
+                    elif isinstance(value, list) and all(
+                        isinstance(item, str) for item in value
+                    ):
+                        options[path] = value
+            clean.append(
+                {
+                    "id": str(
+                        record.get("id")
+                        or f"nix-service:{service}:{scope}"
+                    ),
+                    "kind": "service",
+                    "service": service,
+                    "attr": service,
+                    "name": str(record.get("name") or service),
+                    "scope": scope,
+                    "action": action,
+                    "options": options,
+                    "version": str(record.get("version") or ""),
+                    "icon": str(record.get("icon") or "nix.svg"),
+                    "created": _created(record),
+                }
+            )
+            continue
         attr = str(record.get("attr") or "").strip()
         if not _ATTR_RE.fullmatch(attr):
             continue
@@ -142,9 +182,24 @@ def pending_for(attr, scope=None):
     return [
         record
         for record in snapshot()
-        if record.get("kind") != "extension"
+        if record.get("kind") == "package"
         and record.get("attr") == attr
         and (not scope or record.get("scope") == scope)
+    ]
+
+
+def pending_service_for(service, scope=None, action=None):
+    """Pending service operations for one service attribute."""
+    service = str(service or "").strip()
+    scope = str(scope or "").strip()
+    action = str(action or "").strip()
+    return [
+        record
+        for record in snapshot()
+        if record.get("kind") == "service"
+        and str(record.get("service") or record.get("attr") or "") == service
+        and (not scope or record.get("scope") == scope)
+        and (not action or record.get("action") == action)
     ]
 
 
@@ -163,8 +218,119 @@ def pending_extension_for(host, scope=None, action=None):
     ]
 
 
+def _service_capability(info, scope=None):
+    """Resolve a service capability, refreshing discovery once if needed."""
+    try:
+        from . import nix_services
+    except Exception:
+        return None
+    if not nix_services.enabled():
+        return None
+    requested = str(scope or "").strip()
+    name = str(
+        (info or {}).get("nix_name")
+        or (info or {}).get("package-name")
+        or ""
+    ).strip()
+    service = (
+        nix_services.service_for_name(name, requested)
+        if requested
+        else nix_services.service_for(info)
+    )
+    if service is not None:
+        return service
+    if not nix_services.cache_valid():
+        try:
+            nix_services.load_or_refresh()
+        except Exception:
+            return None
+        service = (
+            nix_services.service_for_name(name, requested)
+            if requested
+            else nix_services.service_for(info)
+        )
+    return service
+
+
+def _service_scopes(info):
+    """Levels where this attribute is installed, queued or (as a fallback) available."""
+    try:
+        from . import nix_services
+    except Exception:
+        return []
+    name = str(
+        (info or {}).get("nix_name")
+        or (info or {}).get("package-name")
+        or ""
+    ).strip()
+    if not name:
+        return []
+    scopes = []
+    for scope in nix_services.installed_service_scopes(name):
+        if scope not in scopes:
+            scopes.append(scope)
+    for record in snapshot():
+        if record.get("kind") != "service":
+            continue
+        if str(record.get("service") or record.get("attr") or "") != name:
+            continue
+        scope = str(record.get("scope") or "").strip()
+        if scope and scope not in scopes:
+            scopes.append(scope)
+    if scopes:
+        return scopes
+    for capability in nix_services.service_capabilities(name).values():
+        scope = str(capability.get("scope") or "").strip()
+        if scope and scope not in scopes:
+            scopes.append(scope)
+    return scopes
+
+
 def add(info, action="install", scope=None):
-    """Queue one package operation, replacing any opposite pending action."""
+    """Queue one package/service operation, replacing any opposite action."""
+    attr = str(info.get("nix_name") or info.get("package-name") or "").strip()
+    if not _ATTR_RE.fullmatch(attr):
+        raise ValueError("Invalid Nix package name")
+    action = str(action or "install").strip()
+    if action not in ("install", "remove"):
+        raise ValueError("Invalid Nix operation")
+    requested = str(scope or info.get("nix_scope") or "").strip()
+    if action == "remove":
+        service_scopes = _service_scopes(info)
+        if requested:
+            service_scopes = (
+                [requested] if requested in service_scopes else []
+            )
+        if service_scopes:
+            record_id = None
+            for service_scope in service_scopes:
+                record_id = add_service(
+                    info, action="remove", scope=service_scope
+                )
+            return record_id
+    service = _service_capability(info, requested or None)
+    if service is not None:
+        return add_service(
+            info, action=action, scope=service.get("scope") or requested
+        )
+    try:
+        from . import nix_services
+
+        if nix_services.service_unavailable_on_host(attr):
+            raise ValueError(
+                "This package is only available as a Nix service whose level "
+                "is not available on this host"
+            )
+    except ValueError:
+        raise
+    except Exception:
+        pass
+    # A catalog attribute backed by a service module must never be installed
+    # as a bare package: the package alone has no daemon/udev units.
+    return _add_package(info, action=action, scope=scope)
+
+
+def _add_package(info, action="install", scope=None):
     attr = str(info.get("nix_name") or info.get("package-name") or "").strip()
     if not _ATTR_RE.fullmatch(attr):
         raise ValueError("Invalid Nix package name")
@@ -204,7 +370,7 @@ def add(info, action="install", scope=None):
             record
             for record in payload["operations"]
             if not (
-                record.get("kind") != "extension"
+                record.get("kind") == "package"
                 and record.get("attr") == attr
                 and record.get("scope") == scope
             )
@@ -237,6 +403,165 @@ def add(info, action="install", scope=None):
         _write({"schema": SCHEMA, "operations": operations})
     _notify()
     return record_id
+
+
+def add_service(info, action="install", scope=None, options=None):
+    """Queue one Nix service install/removal with its option overrides.
+
+    The level comes from the resolved capability: Home Manager services are
+    user-level and work anywhere Home Manager is available; NixOS services are
+    system-level. ``options`` maps option paths to values; values equal to the
+    current defaults are not stored, so modules keep tracking upstream defaults
+    for untouched options.
+    """
+    name = str(
+        info.get("nix_name")
+        or info.get("service")
+        or info.get("package-name")
+        or ""
+    ).strip()
+    if not _ATTR_RE.fullmatch(name):
+        raise ValueError("Invalid Nix service name")
+    action = str(action or "install").strip()
+    if action not in ("install", "remove"):
+        raise ValueError("Invalid Nix service operation")
+
+    try:
+        from . import nix_services
+
+        if not nix_services.enabled():
+            raise ValueError(
+                "Nix services require Home Manager or a NixOS system configuration"
+            )
+        requested = str(scope or info.get("nix_scope") or "").strip()
+        service = nix_services.service_for_name(name, requested)
+        if service is None and action == "install":
+            service = _service_capability(info, requested or None)
+        service_scope = str((service or {}).get("scope") or requested).strip()
+        if not service_scope:
+            installed = nix_services.installed_service_scopes(name)
+            service_scope = installed[0] if installed else "home-manager"
+        if service_scope not in nix_services.scopes():
+            raise ValueError(
+                f"The {service_scope} service level is not available on this host"
+            )
+        if (
+            service is None
+            and action == "install"
+            and not nix_services.is_installed(info)
+        ):
+            raise ValueError(
+                "This service is not available in the current service revision"
+            )
+        overrides = (
+            nix_services.overrides_from_values(service or {}, options or {})
+            if service is not None
+            else {}
+        )
+    except ValueError:
+        raise
+    except Exception:
+        service = None
+        service_scope = str(scope or "home-manager").strip()
+        overrides = {}
+
+    display = str(info.get("name") or name).strip() or name
+    record_id = f"nix-service:{name}:{service_scope}"
+    with _LOCK:
+        payload = _read()
+        operations = [
+            record
+            for record in payload["operations"]
+            if not (
+                record.get("kind") == "service"
+                and str(record.get("service") or record.get("attr") or "") == name
+                and record.get("scope") == service_scope
+            )
+            and not (
+                record.get("kind") == "package"
+                and record.get("attr") == name
+                and record.get("scope") == service_scope
+            )
+        ]
+        if action == "install" and options is None:
+            # A plain Install action must not clear options the user already
+            # saved on a pending service record or on an installed service.
+            previous = [
+                record
+                for record in payload["operations"]
+                if record.get("kind") == "service"
+                and str(record.get("service") or record.get("attr") or "") == name
+                and record.get("scope") == service_scope
+                and record.get("action") == "install"
+            ]
+            if previous:
+                overrides = dict(previous[-1].get("options") or {})
+            else:
+                try:
+                    installed_state = nix_services.read_state(
+                        nix_services.module_path(service_scope)
+                    )
+                    overrides = dict(
+                        installed_state.get(name, {}).get("options") or {}
+                    )
+                except Exception:
+                    pass
+        operations.append(
+            {
+                "id": record_id,
+                "kind": "service",
+                "service": name,
+                "attr": name,
+                "name": display,
+                "scope": service_scope,
+                "action": action,
+                "options": dict(sorted(overrides.items())) if action == "install" else {},
+                "version": str(
+                    info.get("nix_version") or info.get("appstream_version") or ""
+                ),
+                "icon": str(info.get("icon") or "nix.svg"),
+                "created": int(time.time()),
+            }
+        )
+        _write({"schema": SCHEMA, "operations": operations})
+    _notify()
+    return record_id
+
+
+def set_service_options(info, values, scope=None):
+    """Queue a service option update, skipping a no-op when already installed."""
+    name = str(
+        info.get("nix_name")
+        or info.get("service")
+        or info.get("package-name")
+        or ""
+    ).strip()
+    if not _ATTR_RE.fullmatch(name):
+        raise ValueError("Invalid Nix service name")
+    try:
+        from . import nix_services
+    except Exception as error:
+        raise ValueError(f"Nix service metadata is unavailable: {error}") from error
+    service = _service_capability(info, scope)
+    if service is None:
+        raise ValueError(
+            "This service is not available in the current service revision"
+        )
+    service_scope = str(service.get("scope") or scope or "home-manager")
+    overrides = nix_services.overrides_from_values(service, values or {})
+    if (
+        not pending_service_for(name, service_scope)
+        and name in nix_services.installed_services(service_scope)
+    ):
+        installed = nix_services.read_state(
+            nix_services.module_path(service_scope)
+        )
+        current = installed.get(name, {}).get("options", {})
+        if dict(sorted(current.items())) == dict(sorted(overrides.items())):
+            return None
+    return add_service(
+        info, action="install", scope=service_scope, options=values
+    )
 
 
 def add_extension(info, action="install", scope=None):
@@ -352,6 +677,17 @@ def install_state(info):
     """Resolve the app-page state for a Nix source selection."""
     attr = str(info.get("nix_name") or info.get("package-name") or "").strip()
     scope = str(info.get("nix_scope") or "").strip()
+    # A service can live in either level; the page reflects whichever level
+    # actually owns the pending/installed selection.
+    if pending_service_for(attr):
+        return "nix_queued"
+    try:
+        from . import nix_services
+
+        if nix_services.is_installed(info):
+            return "installed"
+    except Exception:
+        pass
     records = pending_for(attr, scope or None)
     if records:
         return "nix_queued"

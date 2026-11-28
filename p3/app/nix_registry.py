@@ -1,4 +1,4 @@
-"""Action Registry integration for LinuxToys-managed Nix packages and flakes.
+"""Action Registry integration for LinuxToys-managed Nix packages, services and flakes.
 
 Nix installs are declarative and applied by ``nixsys.bash`` rather than by a
 materialized script, so they cannot rely on the usual transmap/terminal
@@ -8,6 +8,10 @@ module state into stable registry transactions and back.
 Package operation format:
 
     nix install <attr> <scope>
+
+Services use the same package identity (``Nix: <attr>``) because enabling a
+NixOS service also installs its package; removal routes through
+``nix_remove_packages``, which drops the service selection.
 
 Flake operation format:
 
@@ -561,6 +565,16 @@ def sync_from_modules():
         for scope in ("home-manager", "system")
         for attr in state.get(scope) or ()
     ]
+    try:
+        from . import nix_services
+
+        for scope in ("home-manager", "system"):
+            records.extend(
+                (service, scope)
+                for service in nix_services.installed_services(scope)
+            )
+    except Exception:
+        pass
     try:
         return sync(records)
     except Exception:

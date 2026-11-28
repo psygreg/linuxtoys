@@ -1,6 +1,6 @@
 ---
 name: linuxtoys-mcp
-description: Enable and drive the LinuxToys MCP server to manage Linux apps on the user's machine like a user would - search the catalog, read app pages (descriptions, screenshots, donation links), install and remove apps, install local package files (.deb, .rpm, .appimage and more, optionally downloaded from a URL), install and remove Flathub app extensions/addons, enable the Nix subsystem, install and remove Nix packages and external Nix flakes, clean up the leftover data of uninstalled Flatpak apps, run the app's full system update, handle questions/warnings raised by scripts (ask the user before the run; relay warnings), watch every job to completion in the submission call itself (submissions block until the run finishes and return its outcome; batches of jobs can run through subagents), check for and apply LinuxToys app updates, change LinuxToys settings, and translate descriptions. Use when the user asks to install or remove software through LinuxToys, asks to install a package file or app extension, asks to clean up leftovers of an uninstalled Flatpak app, asks to run a full system update, asks to update or check the version of LinuxToys itself, change its settings, or when configuring AI agent access to LinuxToys.
+description: Enable and drive the LinuxToys MCP server to manage Linux apps on the user's machine like a user would - search the catalog, read app pages (descriptions, screenshots, donation links), install and remove apps, install local package files (.deb, .rpm, .appimage and more, optionally downloaded from a URL), install and remove Flathub app extensions/addons, enable the Nix subsystem, install and remove Nix packages and external Nix flakes, discover and configure Home Manager (user-level) and NixOS (system-level) Nix services, clean up the leftover data of uninstalled Flatpak apps, run the app's full system update, handle questions/warnings raised by scripts (ask the user before the run; relay warnings), watch every job to completion in the submission call itself (submissions block until the run finishes and return its outcome; batches of jobs can run through subagents), check for and apply LinuxToys app updates, change LinuxToys settings, and translate descriptions. Use when the user asks to install or remove software through LinuxToys, asks to install a package file or app extension, asks to clean up leftovers of an uninstalled Flatpak app, asks to run a full system update, asks to update or check the version of LinuxToys itself, change its settings, or when configuring AI agent access to LinuxToys.
 ---
 
 # LinuxToys MCP
@@ -104,6 +104,11 @@ After connecting, call `server_info` once to confirm the session works.
 | `nix_install_package(name, scope?, wait?, wait_seconds?)` | Install one nixpkgs attribute through LinuxToys' declarative Nix module (never `nix-env`); `name` is the attribute (e.g. `ripgrep`) or a `nix:<attr>` catalog id. `scope` is `home-manager` (default when available) or `system` (NixOS only; password dialog appears on the user's screen). Watches the rebuild to completion |
 | `nix_remove_package(name, scope?, wait?, wait_seconds?)` | Remove one nixpkgs attribute from the managed module. Without `scope`, every scope recorded for the package is removed in one rebuild; other Nix packages and imported flakes stay applied |
 | `nix_list_packages()` | List Nix packages installed through LinuxToys with their attributes and scopes, for `nix_remove_package` |
+| `nix_list_services(scope?, query?)` | List discoverable Nix services with level (`user` for Home Manager, `system` for NixOS), description, option count and installed/pending state; `scope` limits the level and `query` filters names/descriptions |
+| `nix_get_service(name, scope?)` | Read one service's options: path, kind, description, upstream default, current effective value, enum choices and whether it is a saved override; reports the level and installed/pending status |
+| `nix_install_service(name, options?, scope?, wait?, wait_seconds?)` | Enable one service through the declarative queue with optional option overrides. Home Manager services are user-level and work outside NixOS; NixOS services are system-level. Watches the rebuild to completion |
+| `nix_remove_service(name, scope?, wait?, wait_seconds?)` | Disable/remove one service selection from its generated module(s) and rebuild once; without `scope` every installed/pending level is removed |
+| `nix_set_service_options(name, options, scope?, wait?, wait_seconds?)` | Replace a service's option overrides and rebuild; queues installation when the service is not installed yet. Only paths from `nix_get_service` are accepted |
 | `nix_install_flake(reference, scope?, outputs?, wait?, wait_seconds?)` | Import an external Nix flake. Accepts git references, FlakeHub URLs (`https://flakehub.com/f/owner/repo/version`) and the `fh` shorthand (`owner/repo/version`). Call first with only `reference`; the response is `requires_selection` with every discovered output (packages, Home Manager/NixOS modules, overlays; apps/configurations are informational). Present them to the user, then re-call with the chosen output keys in `outputs`. The flake is pinned in a locked wrapper and only the selected outputs are merged; other imported flakes stay applied. Watches the rebuild to completion |
 | `nix_remove_flake(reference, wait?, wait_seconds?)` | Remove every imported scope of one flake reference through its Action Registry transaction; only that flake's generated module code and state are removed. Get references from `nix_list_flakes`; watches the rebuild to completion |
 | `nix_list_flakes()` | List imported flakes with reference, description, scopes and selected outputs |
@@ -180,6 +185,18 @@ part of their configuration — and only proceed if they trust its source.
 one, rebuilding the affected scope(s). Home Manager is used by default when
 available; the system scope needs NixOS and a root password dialog on the
 user's screen.
+
+**Manage Nix services:** some catalog attributes map to a service module.
+Call `nix_list_services` (optionally filter with `query` or `scope`) and
+`nix_get_service(name, scope?)` to see the editable options and their
+current values. Home Manager services are **user-level** and work outside
+NixOS; NixOS services are **system-level** and need a system configuration.
+Install/enable with `nix_install_service` and pass only the options the
+user wants to change; untouched options keep tracking upstream defaults.
+Use `nix_set_service_options` to change an installed/queued service and
+`nix_remove_service` to disable it. Confirm service changes with the user
+first, especially system services, and expect the root password dialog for
+system rebuilds.
 
 **Manage Nix generations:** call `nix_list_generations` to see the recorded
 Home Manager and NixOS system generations (number, date, current marker).

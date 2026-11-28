@@ -622,12 +622,25 @@ def registered_nix_state(registry_data=None):
     home = set()
     system = set()
     names = {}
+    try:
+        from . import nix_services
+
+        service_names = {
+            scope: nix_services.installed_services(scope)
+            for scope in ("home-manager", "system")
+        }
+    except Exception:
+        service_names = {}
     for item in nix_registry.installed_packages(registry_data):
         attr = str(item.get("nix_name") or "").strip()
         if not attr:
             continue
         scopes = item.get("nix_scopes") or [item.get("nix_scope") or "home-manager"]
         for scope in scopes:
+            # Nix services are configuration modules, not replayable package
+            # attributes; the manifest's Nix bundle cannot express them yet.
+            if attr in service_names.get(scope, set()):
+                continue
             (system if scope == "system" else home).add(attr)
         names[attr] = str(item.get("name") or attr)
 

@@ -129,6 +129,9 @@ _GPU_BLOCK_ENABLE_RE = re.compile(
 _LOCK = threading.RLock()
 _VALIDATED_SNAPSHOT = None
 _FILTERED_EXTENSIONS = None
+_FILTERED_SERVICES = None
+_SERVICE_BACKUP_PATH = CACHE_DIR / "hidden-services.json"
+_SERVICE_BACKUP_SCHEMA = 1
 logger = logging.getLogger(__name__)
 
 
@@ -528,17 +531,30 @@ def load_or_refresh(force=False):
             # is missing (first run after an upgrade, for example).
             _warm_binary_snapshot(path)
     if path is not None:
-        # Extension discovery is much cheaper than the package snapshot but
-        # still a Nix evaluation. Refresh it alongside the catalog so app
-        # pages opened from any category already have their Extensions tab.
-        # Deliberately outside the catalog lock: a slow evaluation must not
-        # block catalog lookups on app-page/search workers.
+        # Extension/service discovery is much cheaper than the package
+        # snapshot but still a Nix evaluation. Refresh it alongside the
+        # catalog so app pages opened from any category already have their
+        # Extensions/Services tabs. Deliberately outside the catalog lock: a
+        # slow evaluation must not block catalog lookups on app-page/search
+        # workers.
         try:
             from . import nix_extensions
 
             nix_extensions.load_or_refresh()
         except Exception as error:
             logger.warning("Nix extension discovery failed: %s", error)
+        try:
+            from . import nix_services
+
+            nix_services.load_or_refresh()
+        except Exception as error:
+            logger.warning("Nix service discovery failed: %s", error)
+        try:
+            filter_unavailable_services()
+        except Exception as error:
+            logger.warning(
+                "Could not remove incompatible Nix service packages: %s", error
+            )
         if path is not None and not binary_snapshot_available():
             # Discovery may have filtered plugin/wrapper rows out of the raw
             # snapshot and invalidated the compact cache. Rebuild it before
@@ -881,10 +897,11 @@ def _module_packages(path):
 
 
 def installed_names(scope=None):
-    """Observe the packages LinuxToys itself manages through its Nix modules.
+    """Observe the packages and services LinuxToys itself manages in its Nix modules.
 
     A host package wrapped with extensions lives in the generated extension
-    module instead of the plain package list; it still counts as installed.
+    module instead of the plain package list; a NixOS service lives in the
+    generated service module. Both still count as installed.
     """
     paths = (
         [module_path(scope)]
@@ -903,6 +920,16 @@ def installed_names(scope=None):
         )
         for item in scopes_to_read:
             names.update(nix_extensions.installed_hosts(item))
+    except Exception:
+        pass
+    try:
+        from . import nix_services
+
+        service_scopes = (
+            [scope] if scope in ("home-manager", "system") else ["home-manager", "system"]
+        )
+        for item in service_scopes:
+            names.update(nix_services.installed_services(item))
     except Exception:
         pass
     return names
@@ -1243,6 +1270,162 @@ def filter_extension_packages(capabilities=None):
             removed,
         )
         return removed
+
+
+def _service_filter_token(stat, attrs):
+    return (stat.st_size, stat.st_mtime_ns, tuple(sorted(attrs)))
+
+
+def _read_service_backup(stat):
+    """Rows removed by the previous service filter, if the snapshot is the same."""
+    try:
+        payload = json.loads(_SERVICE_BACKUP_PATH.read_text(encoding="utf-8"))
+    except (OSError, ValueError, TypeError, UnicodeError):
+        return {}
+    if not isinstance(payload, dict) or payload.get("schema") != _SERVICE_BACKUP_SCHEMA:
+        return {}
+    snapshot = payload.get("snapshot")
+    if snapshot != [stat.st_size, stat.st_mtime_ns]:
+        return {}
+    removed = payload.get("removed")
+    if not isinstance(removed, dict):
+        return {}
+    return {
+        str(key): row
+        for key, row in removed.items()
+        if isinstance(row, dict) and key.startswith("legacyPackages.")
+    }
+
+
+def _write_service_backup(stat, removed):
+    if not removed:
+        try:
+            _SERVICE_BACKUP_PATH.unlink()
+        except OSError:
+            pass
+        return
+    atomic_write_text(
+        os.fspath(_SERVICE_BACKUP_PATH),
+        json.dumps(
+            {
+                "schema": _SERVICE_BACKUP_SCHEMA,
+                "snapshot": [stat.st_size, stat.st_mtime_ns],
+                "removed": removed,
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        + "\n",
+        mode=0o600,
+        fsync=True,
+    )
+
+
+def filter_unavailable_services(attrs=None):
+    """Remove (or restore) service packages this host cannot manage.
+
+    On non-NixOS systems a package whose only service capability is a NixOS
+    system module is not compatible: installing it as a plain package would
+    leave the daemon/units undefined. Removed rows are backed up beside the
+    snapshot so a package that later gains a Home Manager service (or becomes
+    installable after a subsystem change) reappears without waiting for the
+    full nixpkgs snapshot refresh.
+    """
+    global _FILTERED_SERVICES, _VALIDATED_SNAPSHOT
+    if not enabled():
+        return 0
+    if attrs is None:
+        try:
+            from . import nix_services
+
+            attrs = nix_services.unavailable_service_attrs()
+        except Exception:
+            return 0
+    wanted = {
+        str(attr or "").strip()
+        for attr in attrs or ()
+        if _ATTR_RE.fullmatch(str(attr or "").strip())
+    }
+    with _LOCK:
+        try:
+            stat = RAW_PATH.stat()
+        except OSError:
+            return 0
+        token = _service_filter_token(stat, wanted)
+        if _FILTERED_SERVICES == token:
+            return 0
+        try:
+            payload = json.loads(RAW_PATH.read_text(encoding="utf-8"))
+        except (OSError, ValueError, TypeError, UnicodeError):
+            return 0
+        if not isinstance(payload, dict):
+            return 0
+
+        previous = _read_service_backup(stat)
+        removed_rows = dict(previous)
+        changed = False
+        restored = 0
+        for key, row in previous.items():
+            _prefix, _separator, attr = key.rpartition(".")
+            if attr in wanted:
+                continue
+            removed_rows.pop(key, None)
+            if key not in payload:
+                payload[key] = row
+                changed = True
+                restored += 1
+
+        newly_removed = 0
+        for key in list(payload):
+            if key.startswith("_linuxtoys"):
+                continue
+            _prefix, _separator, attr = key.rpartition(".")
+            if attr and attr in wanted:
+                removed_rows[key] = payload.pop(key)
+                changed = True
+                newly_removed += 1
+
+        if not changed:
+            _FILTERED_SERVICES = token
+            return 0
+
+        if newly_removed or restored or wanted:
+            atomic_write_text(
+                os.fspath(RAW_PATH),
+                json.dumps(
+                    payload,
+                    ensure_ascii=False,
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+                + "\n",
+                mode=0o600,
+                fsync=True,
+            )
+            try:
+                RAW_PATH.with_suffix(".bin").unlink()
+            except OSError:
+                pass
+            _VALIDATED_SNAPSHOT = None
+        try:
+            filtered = RAW_PATH.stat()
+        except OSError:
+            _FILTERED_SERVICES = None
+            return newly_removed
+        _write_service_backup(filtered, removed_rows)
+        _FILTERED_SERVICES = _service_filter_token(filtered, wanted)
+        if newly_removed:
+            logger.info(
+                "Removed %s incompatible Nix service package(s) from the catalog snapshot",
+                newly_removed,
+            )
+        if restored:
+            logger.info(
+                "Restored %s compatible Nix service package(s) to the catalog snapshot",
+                restored,
+            )
+        return newly_removed
 
 
 def manifest_bundle_dir(manifest_path):

@@ -259,7 +259,7 @@ def _valid_index(payload):
     categories = payload.get("categories") if isinstance(payload, dict) else None
     return (
         isinstance(payload, dict)
-        and payload.get("schema") == 1
+        and payload.get("schema") == 2
         and isinstance(payload.get("packages"), dict)
         and isinstance(payload.get("updated"), (int, float))
         and (
@@ -421,6 +421,13 @@ def index_category_fingerprint(categories=None):
     ).hexdigest()
 
 
+def _module_display_name(value):
+    """Human-readable fallback name for a module row without AppStream meta."""
+    text = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", " ", str(value or ""))
+    parts = [part for part in re.split(r"[-_\s]+", text) if part]
+    return " ".join(part[:1].upper() + part[1:] for part in parts)
+
+
 def _normalize_index_row(row):
     if not isinstance(row, dict):
         return None
@@ -436,8 +443,17 @@ def _normalize_index_row(row):
         if isinstance(meta.get("translation"), dict)
         else {}
     )
-    name = _clean_text(translation.get("name"), 200)
-    summary = _clean_text(translation.get("summary"), 500)
+    # Service packages/modules frequently have no AppStream ``meta`` block,
+    # only a top-level pname/summary. They used to be dropped from the index;
+    # keep them now that services are first-class catalog entries.
+    raw_name = translation.get("name")
+    if not raw_name and row.get("is_module"):
+        raw_name = _module_display_name(row.get("pname") or attr)
+    name = _clean_text(raw_name, 200)
+    summary = _clean_text(
+        translation.get("summary") or row.get("summary"),
+        500,
+    )
     logo = _safe_asset_url(meta.get("logo_path"))
     if not (name or summary or logo):
         return None
@@ -446,6 +462,7 @@ def _normalize_index_row(row):
         "name": name,
         "summary": summary,
         "logo": logo,
+        "module": bool(row.get("is_module")),
     }
 
 
@@ -527,28 +544,53 @@ def refresh_index(force=False):
             return False
         previous = _read_index()
         packages = {}
-        for page in range(1, MAX_INDEX_PAGES + 1):
-            url = API_BASE + "/packages?" + urlencode(
-                [
-                    ("per_page", str(INDEX_PER_PAGE)),
-                    ("app_type[]", "gui"),
-                    ("page", str(page)),
-                ]
+        # GUI applications carry the AppStream metadata used for cards. Nix
+        # service modules (packages with options) are excluded by the GUI
+        # filter, so fetch them explicitly as well; they are first-class
+        # catalog entries now and must not disappear from the metadata index.
+        for sweep, filters in enumerate(
+            (
+                [("app_type[]", "gui")],
+                [("is_module", "true")],
             )
-            payload = _http_json(
-                url,
-                max_bytes=MAX_INDEX_BYTES,
-                language="en",
-            )
-            rows = payload.get("data") if isinstance(payload, dict) else None
-            if not isinstance(rows, list):
-                raise ValueError("Invalid Nix Software package list")
-            for row in rows:
-                record = _normalize_index_row(row)
-                if record is not None:
-                    packages[str(row.get("attr_path")).strip()] = record
-            if not rows or not _has_next_page(payload):
-                break
+        ):
+            try:
+                for page in range(1, MAX_INDEX_PAGES + 1):
+                    url = API_BASE + "/packages?" + urlencode(
+                        [
+                            ("per_page", str(INDEX_PER_PAGE)),
+                            *filters,
+                            ("page", str(page)),
+                        ]
+                    )
+                    payload = _http_json(
+                        url,
+                        max_bytes=MAX_INDEX_BYTES,
+                        language="en",
+                    )
+                    rows = (
+                        payload.get("data")
+                        if isinstance(payload, dict)
+                        else None
+                    )
+                    if not isinstance(rows, list):
+                        raise ValueError("Invalid Nix Software package list")
+                    for row in rows:
+                        record = _normalize_index_row(row)
+                        if record is not None:
+                            packages[str(row.get("attr_path")).strip()] = record
+                    if not rows or not _has_next_page(payload):
+                        break
+            except Exception as error:
+                if sweep == 0:
+                    raise
+                # Service modules are supplementary metadata; a transient
+                # failure must not throw away the GUI package index.
+                _LOGGER.warning(
+                    "Nix Software module index refresh failed; keeping GUI "
+                    "packages: %s",
+                    error,
+                )
         if not packages:
             raise ValueError("Empty Nix Software package index")
         previous_count = len(previous.get("packages", {})) if previous else 0
@@ -567,7 +609,7 @@ def refresh_index(force=False):
                 error,
             )
         value = {
-            "schema": 1,
+            "schema": 2,
             "updated": int(time.time()),
             "packages": packages,
             "categories": categories,

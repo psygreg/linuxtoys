@@ -19,6 +19,8 @@ from . import (
     gtk_dialogs,
     installed_packages,
     nix_extensions,
+    nix_services,
+    nix_services_view,
     _catalog_rs,
 )
 from .gtk_dialogs import run_message_dialog
@@ -141,6 +143,7 @@ class AppPageView(Gtk.Box):
         self._body_stack = None
         self._body_switcher = None
         self._extensions_view = None
+        self._services_view = None
         self.connect("destroy", self._on_destroy)
         self.header = InfosHead(self.translations, show_terminal_controls=False)
         self.header._update_header_labels(script_info)
@@ -1827,18 +1830,20 @@ class AppPageView(Gtk.Box):
         GLib.idle_add(self._schedule_featured_fill)
 
     def _on_body_visible_child_changed(self, stack, _pspec):
-        """Populate the Extensions tab only when the user actually opens it."""
+        """Populate the Extensions/Services tab only when the user opens it."""
+        child = stack.get_visible_child()
         extensions_view = self._extensions_view
-        if (
-            extensions_view is not None
-            and stack.get_visible_child() is extensions_view
-        ):
+        if extensions_view is not None and child is extensions_view:
             extensions_view.ensure_populated()
+        services_view = self._services_view
+        if services_view is not None and child is services_view:
+            services_view.ensure_populated()
 
     def _sync_extensions_tabs(self):
-        """Show Details/Extensions when the selected source has addons."""
+        """Show Details/Extensions/Services when the selected source has addons."""
         if self._body_holder is None:
             return
+        service = None
         if self._selected_install_info.get("appstream_source") == "nix":
             try:
                 extensions = nix_extensions.extensions_for(
@@ -1846,6 +1851,10 @@ class AppPageView(Gtk.Box):
                 )
             except Exception:
                 extensions = []
+            try:
+                service = nix_services.service_for(self._selected_install_info)
+            except Exception:
+                service = None
         else:
             extensions = appstream_cache.get_flatpak_extensions(
                 self._selected_install_info
@@ -1862,10 +1871,11 @@ class AppPageView(Gtk.Box):
             self._body_holder.remove(child)
             child.destroy()
 
-        if not extensions:
+        if not extensions and service is None:
             self._body_stack = None
             self._body_switcher = None
             self._extensions_view = None
+            self._services_view = None
             self._body_holder.pack_start(self._content_scroller, True, True, 0)
             self._body_holder.show_all()
             return
@@ -1880,13 +1890,24 @@ class AppPageView(Gtk.Box):
             self._content_scroller, "details",
             self.translations.get("app_page_details", "Details"),
         )
-        extensions_view = appstream_extensions.AppStreamExtensionsView(
-            self.parent, self._selected_install_info, extensions
-        )
-        stack.add_titled(
-            extensions_view, "extensions",
-            self.translations.get("app_page_extensions", "Extensions"),
-        )
+        extensions_view = None
+        if extensions:
+            extensions_view = appstream_extensions.AppStreamExtensionsView(
+                self.parent, self._selected_install_info, extensions
+            )
+            stack.add_titled(
+                extensions_view, "extensions",
+                self.translations.get("app_page_extensions", "Extensions"),
+            )
+        services_view = None
+        if service is not None:
+            services_view = nix_services_view.NixServicesView(
+                self.parent, self._selected_install_info
+            )
+            stack.add_titled(
+                services_view, "services",
+                self.translations.get("app_page_services", "Services"),
+            )
         switcher = _WidthNeutralStackSwitcher()
         switcher.set_stack(stack)
         switcher.set_halign(Gtk.Align.FILL)
@@ -1895,8 +1916,8 @@ class AppPageView(Gtk.Box):
         switcher.set_margin_bottom(2)
 
         # Gtk.StackSwitcher itself can expand while its internal toggle buttons
-        # keep their natural widths. Expand those too so Details/Extensions read
-        # as two equal-width tabs across the app page rather than centered buttons.
+        # keep their natural widths. Expand those too so Details/Extensions/
+        # Services read as equal-width tabs across the app page.
         for child in switcher.get_children():
             child.set_hexpand(True)
             child.set_halign(Gtk.Align.FILL)
@@ -1906,11 +1927,12 @@ class AppPageView(Gtk.Box):
         self._body_stack = stack
         self._body_switcher = switcher
         self._extensions_view = extensions_view
+        self._services_view = services_view
         stack.connect("notify::visible-child", self._on_body_visible_child_changed)
 
         # Realize/show both stack children first, then choose Details while
         # transitions are disabled. This prevents GTK from settling on the
-        # already-visible Extensions child during show_all().
+        # already-visible Extensions/Services child during show_all().
         self._body_holder.show_all()
         stack.set_visible_child(self._content_scroller)
 
@@ -2010,6 +2032,8 @@ class AppPageView(Gtk.Box):
         self._refresh_flatpak_data_state()
         if self._extensions_view is not None:
             self._extensions_view.refresh()
+        if self._services_view is not None:
+            self._services_view.refresh()
 
     @staticmethod
     def _flatpak_data_identity(info):

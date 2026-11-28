@@ -130,6 +130,10 @@ class AppStreamQueueView(Gtk.ScrolledWindow):
             host = str(record.get("host") or "").strip()
             if host:
                 secondary = f"{action_label} · {scope_label} · {host}"
+        elif record.get("kind") == "service":
+            service = str(record.get("service") or record.get("attr") or "").strip()
+            if service:
+                secondary = f"{action_label} · {scope_label} · {service}"
         icon_path = ""
         icon_name = "nix.svg"
         path = get_icon_path("nix.svg")

@@ -653,6 +653,13 @@ class HomeScreen(
         """Cancel a queued Nix extension operation."""
         self.cancel_appstream_extension(message.record_id)
 
+    @on(AppPageWidget.ServiceOptionsSaveRequested)
+    def _on_app_page_service_options_save_requested(
+        self, message: AppPageWidget.ServiceOptionsSaveRequested
+    ) -> None:
+        """Save the Services tab options and run the declarative apply."""
+        self.save_nix_service_options(message.info, message.values)
+
     def _execute_search_worker(self, query: str) -> None:
         # If cache is still warming on first keystroke, this ensures it finishes
         if not is_search_ready():
@@ -864,7 +871,7 @@ class LinuxToys(App):
         or failed build only means fewer catalog entries; nothing else waits
         on it.
         """
-        from app import appstream_cache, nix_extensions
+        from app import appstream_cache, nix_extensions, nix_services
 
         try:
             # Extension discovery also filters plugin/wrapper packages out of
@@ -873,6 +880,11 @@ class LinuxToys(App):
             nix_extensions.load_or_refresh()
         except Exception as e:  # noqa: BLE001
             self.log.error(f"nix extension discovery failed: {e}")
+
+        try:
+            nix_services.load_or_refresh()
+        except Exception as e:  # noqa: BLE001
+            self.log.error(f"nix service discovery failed: {e}")
 
         try:
             initial_build = not appstream_cache.CATALOG_PATH.is_file()

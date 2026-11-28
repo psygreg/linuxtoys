@@ -18,6 +18,7 @@ from . import (
     nix_metadata,
     nix_queue,
     nix_registry,
+    nix_services,
     appstream_logs,
     appstream_parser,
     aur_cache,
@@ -1021,17 +1022,22 @@ class AppWindow(
         return True
 
     def _ensure_nix_extensions_ready(self):
-        """Populate the extension cache once per session, off the GTK thread."""
+        """Populate the extension/service caches once per session, off the GTK thread."""
         if getattr(self, "_nix_extensions_checked", False):
             return
         if not nix_extensions.enabled():
             return
         self._nix_extensions_checked = True
         try:
-            if (
+            extension_fresh = (
                 nix_extensions.cached_capabilities()
                 and not nix_extensions.cache_older_than_snapshot()
-            ):
+            )
+            service_fresh = (
+                nix_services.cache_valid()
+                and not nix_services.cache_older_than_snapshot()
+            )
+            if extension_fresh and service_fresh:
                 return
         except Exception:
             return
@@ -1041,10 +1047,14 @@ class AppWindow(
                 nix_extensions.load_or_refresh()
             except Exception as error:
                 logger.warning("Nix extension discovery failed: %s", error)
+            try:
+                nix_services.load_or_refresh()
+            except Exception as error:
+                logger.warning("Nix service discovery failed: %s", error)
             GLib.idle_add(self._finish_nix_extensions_ready)
 
         threading.Thread(
-            target=worker, daemon=True, name="linuxtoys-nix-extensions"
+            target=worker, daemon=True, name="linuxtoys-nix-capabilities"
         ).start()
 
     def _finish_nix_extensions_ready(self):

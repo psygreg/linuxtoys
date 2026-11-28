@@ -1617,7 +1617,11 @@ def get_nix_entries():
     catalog = _nix_catalog_index()
     if catalog is None:
         return []
-    return NixEntriesView(catalog, nix_extensions.catalog_wrappers())
+    from . import nix_services
+
+    excluded = set(nix_extensions.catalog_wrappers())
+    excluded.update(nix_services.unavailable_service_attrs())
+    return NixEntriesView(catalog, excluded)
 
 
 def get_available_nix_entries():
@@ -1625,9 +1629,10 @@ def get_available_nix_entries():
     catalog = _nix_catalog_index()
     if catalog is None:
         return []
-    from . import installed_packages
+    from . import installed_packages, nix_services
 
     excluded = set(nix_extensions.catalog_wrappers())
+    excluded.update(nix_services.unavailable_service_attrs())
     excluded.update(
         str(value).strip()
         for value in (installed_packages.snapshot().get("nix") or ())
@@ -1640,13 +1645,19 @@ def search_nix_entries(query):
     """Search only the Nix catalog in Rust, converting only matches.
 
     Plugin packages are hidden from the catalog; a query matching an extension
-    name resolves to its host application instead.
+    name resolves to its host application instead. Packages whose only service
+    level is unavailable on this host are hidden too.
     """
     catalog = _nix_catalog_index()
     if catalog is None:
         return []
+    from . import nix_services
+
     target = str(query or "").casefold()
     excluded = {name.casefold() for name in nix_extensions.catalog_wrappers()}
+    excluded.update(
+        name.casefold() for name in nix_services.unavailable_service_attrs()
+    )
     results = []
     seen = set()
     seen_ids = set()

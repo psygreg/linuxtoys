@@ -406,6 +406,51 @@ def installed_nix_entries():
                 }
                 packages_by_attr[attr] = item
                 entries.append(item)
+        # Services are configuration modules, not package lines; keep a display
+        # fallback for hosts where the registry sync could not write.
+        try:
+            from . import nix_services
+
+            service_by_scope = {
+                scope: nix_services.installed_services(scope)
+                for scope in ("home-manager", "system")
+            }
+        except Exception:
+            service_by_scope = {}
+        for scope, service_names in service_by_scope.items():
+            for attr in service_names:
+                existing = packages_by_attr.get(attr)
+                if existing is not None:
+                    scopes = {
+                        str(value).strip()
+                        for value in (
+                            existing.get("nix_scopes")
+                            or (existing.get("nix_scope"),)
+                        )
+                        if str(value or "").strip()
+                    }
+                    scopes.add(scope)
+                    existing["nix_scopes"] = sorted(scopes)
+                    continue
+                item = {
+                    "name": attr,
+                    "appstream_source": "nix",
+                    "appstream_id": f"nix:{attr}",
+                    "nix_name": attr,
+                    "nix_scope": scope,
+                    "nix_scopes": [scope],
+                    "icon": "nix.svg",
+                    "repo": "nixpkgs",
+                    "description": "",
+                    "path": "",
+                    "is_script": True,
+                    "is_appstream_entry": True,
+                    "registry_name": nix_registry.registry_name(attr),
+                    "installed_nix_entry": True,
+                    "is_nix_package": True,
+                }
+                packages_by_attr[attr] = item
+                entries.append(item)
         for info in nix_registry.installed_flakes():
             item = dict(info)
             item["installed_nix_entry"] = True

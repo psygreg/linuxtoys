@@ -13,6 +13,7 @@ from . import (
     nix_extensions,
     nix_metadata,
     nix_queue,
+    nix_services,
     repo_parser,
     term_view,
     skills_view,
@@ -511,15 +512,24 @@ class NavCtl:
         def worker():
             before = {}
             after = {}
+            service_before = {}
+            service_after = {}
             try:
                 before = nix_extensions.cached_capabilities()
                 nix_extensions.load_or_refresh()
                 after = nix_extensions.cached_capabilities()
             except Exception as error:  # Never break the app page over plugins.
                 logger.warning("Nix extension discovery failed: %s", error)
+            try:
+                service_before = nix_services.cached_services()
+                nix_services.load_or_refresh()
+                service_after = nix_services.cached_services()
+            except Exception as error:  # Never break the app page over services.
+                logger.warning("Nix service discovery failed: %s", error)
             GLib.idle_add(
                 self._finish_nix_extensions_request,
-                bool(after) and after != before,
+                (bool(after) and after != before)
+                or service_after != service_before,
             )
 
         threading.Thread(

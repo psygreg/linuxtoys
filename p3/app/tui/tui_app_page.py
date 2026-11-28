@@ -16,15 +16,17 @@ from textual.message import Message
 from textual.widget import Widget
 from textual.widgets import (
     Button,
+    Input,
     Label,
     Rule,
     Select,
     Static,
+    Switch,
     TabbedContent,
     TabPane,
 )
 
-from app import appstream_cache, installed_packages, nix_extensions, nix_queue
+from app import appstream_cache, installed_packages, nix_extensions, nix_queue, nix_services
 from app.appstream_parser import repository_link
 
 __all__ = ["AppPageWidget", "FeaturedCard", "show_app_page", "hide_app_page"]
@@ -229,6 +231,8 @@ class AppPageWidget(Vertical):
     AppPageWidget #app-rating-confirm-text { width: 1fr; height: auto; }
     AppPageWidget .ext-row { height: auto; padding: 0 1; }
     AppPageWidget .ext-info { width: 1fr; height: auto; }
+    AppPageWidget .svc-note { color: $text-muted; height: auto; padding: 0 1; }
+    AppPageWidget .svc-status { height: auto; padding: 0 1; }
     """
 
     # app page messages for the host screen
@@ -337,6 +341,21 @@ class AppPageWidget(Vertical):
             super().__init__()
             self.job_id = job_id
 
+    class ServiceOptionsSaveRequested(Message):
+        """Posted when the Services tab save button is pressed.
+
+        Attributes:
+            info: Selected Nix source entry.
+            values: Collected option values keyed by option path.
+        """
+
+        def __init__(
+            self, info: Mapping[str, Any], values: Mapping[str, Any]
+        ) -> None:
+            super().__init__()
+            self.info = info
+            self.values = values
+
     def __init__(
         self,
         script_info: Mapping[str, Any],
@@ -408,6 +427,14 @@ class AppPageWidget(Vertical):
         self._extensions = self._load_extensions()
         self._extension_jobs: list[Mapping[str, Any]] = []
         self._extensions_populated = False
+
+        self._service = self._load_service()
+        self._service_state: Mapping[str, Any] | None = None
+        self._service_values: dict[str, Any] = {}
+        self._service_option_meta: dict[str, Mapping[str, Any]] = {}
+        self._service_original: dict[str, Any] = {}
+        self._service_dirty: set[str] = set()
+        self._services_populated = False
 
         current = _script_key(script_info)
         category = script_info.get("category")
@@ -692,7 +719,8 @@ class AppPageWidget(Vertical):
         yield self._rating_confirm_row()
 
         with TabbedContent(
-            id="app-tabs", classes="" if self._extensions else "no-ext"
+            id="app-tabs",
+            classes="" if self._extensions or self._service else "no-ext",
         ):
             with TabPane(
                 self._t("app_page_details", "Details"), id="tab-details"
@@ -700,6 +728,8 @@ class AppPageWidget(Vertical):
                 yield self._build_content()
             if self._extensions:
                 yield self._extensions_pane()
+            if self._service:
+                yield self._services_pane()
 
     def _primary_actions(self) -> list[Widget]:
         """Build the install and remove buttons and the source selector."""
@@ -887,6 +917,23 @@ class AppPageWidget(Vertical):
             for item in appstream_cache.get_flatpak_extensions(selected) or ()
         ]
 
+    def _load_service(self) -> Mapping[str, Any] | None:
+        """Load the NixOS service capability of the selected Nix source."""
+        selected = dict(self._selected)
+        if selected.get("appstream_source") != "nix":
+            return None
+        try:
+            return nix_services.service_for(selected)
+        except Exception:
+            return None
+
+    def _services_pane(self) -> TabPane:
+        return TabPane(
+            self._t("app_page_services", "Services"),
+            VerticalScroll(id="app-services"),
+            id="tab-services",
+        )
+
     def _extensions_pane(self) -> TabPane:
         return TabPane(
             self._t("app_page_extensions", "Extensions"),
@@ -1039,29 +1086,262 @@ class AppPageWidget(Vertical):
         await container.mount_all(rows)
 
     async def _sync_extensions_tabs(self) -> None:
-        """Show the Extensions tab only if the source has extensions.
+        """Show the Extensions/Services tabs only if the source has them.
 
-        Reloads the extensions, adds or removes the pane as needed, and
-        toggles the ``no-ext`` class that hides the tab bar. If the
-        Extensions tab is already active, it is populated again.
+        Reloads the capabilities, adds or removes panes as needed, and toggles
+        the ``no-ext`` class that hides the tab bar. If a tab is already
+        active, it is populated again.
         """
         self._extensions = self._load_extensions()
         self._extensions_populated = False
+        self._service = self._load_service()
+        self._services_populated = False
         tabs = self.query_one("#app-tabs", TabbedContent)
-        has_pane = bool(self.query("#tab-extensions"))
-        if self._extensions and not has_pane:
+        has_ext_pane = bool(self.query("#tab-extensions"))
+        if self._extensions and not has_ext_pane:
             await tabs.add_pane(self._extensions_pane())
-        elif not self._extensions and has_pane:
+        elif not self._extensions and has_ext_pane:
             await tabs.remove_pane("tab-extensions")
-        tabs.set_class(not self._extensions, "no-ext")
+        has_service_pane = bool(self.query("#tab-services"))
+        if self._service and not has_service_pane:
+            await tabs.add_pane(self._services_pane())
+        elif not self._service and has_service_pane:
+            await tabs.remove_pane("tab-services")
+        tabs.set_class(not self._extensions and not self._service, "no-ext")
         if self._extensions and tabs.active == "tab-extensions":
             self._populate_extensions()
+        elif self._service and tabs.active == "tab-services":
+            self._populate_services()
 
     def _populate_extensions(self) -> None:
         """Render the extension rows on the first tab activation."""
         if not self._extensions_populated:
             self._extensions_populated = True
             self._render_extensions()
+
+    def refresh_services(self) -> None:
+        """Refresh the Services tab after a queue or install-state change."""
+        if self._services_populated:
+            self._render_services()
+
+    def _populate_services(self) -> None:
+        """Render the service option rows on the first tab activation."""
+        if not self._services_populated:
+            self._services_populated = True
+            self._render_services()
+
+    def _service_status_text(self, state: Mapping[str, Any]) -> str:
+        status = str(state.get("status") or "")
+        if status == "installed":
+            text = self._t("app_page_installed", "Installed")
+        elif status == "removing":
+            text = self._t("nix_extension_remove_queued", "Waiting to remove")
+        elif status == "queued":
+            text = self._t("queued", "Waiting to install")
+        else:
+            text = self._t("nix_service_not_installed", "Not installed.")
+        level = (
+            self._t("nix_service_level_user", "User service (Home Manager)")
+            if state.get("scope") == "home-manager"
+            else self._t("nix_service_level_system", "System service (NixOS)")
+        )
+        return f"{text} · {level}"
+
+    @staticmethod
+    def _service_value_text(kind: str, value: Any) -> str:
+        if value is None:
+            return ""
+        if kind == "list":
+            return ", ".join(str(item) for item in value)
+        return str(value)
+
+    def _service_option_row(self, option: Mapping[str, Any]) -> Horizontal:
+        path = str(option.get("path") or "")
+        kind = str(option.get("kind") or "text")
+        value = option.get("value")
+        widget_id = path.replace(".", "-").replace("'", "-")
+        label = Text(path, style="bold")
+        description = str(option.get("description") or "").strip()
+        if description:
+            label.append("\n" + description, style="dim")
+        widget: Widget
+        if kind == "bool":
+            widget = Switch(value=bool(value), id=f"svc-bool-{widget_id}")
+        elif kind == "enum":
+            choices = [str(choice) for choice in option.get("choices") or ()]
+            current = "" if value is None else str(value)
+            if current and current not in choices:
+                choices.append(current)
+            widget = Select(
+                [(choice, choice) for choice in choices],
+                value=current if current in choices else _BLANK,
+                allow_blank=True,
+                id=f"svc-enum-{widget_id}",
+                classes="act-select",
+            )
+        else:
+            widget = Input(
+                value=self._service_value_text(kind, value),
+                id=f"svc-text-{widget_id}",
+            )
+        widget.svc_path = path  # type: ignore[attr-defined]
+        widget.svc_kind = kind  # type: ignore[attr-defined]
+        return Horizontal(
+            Static(label, classes="ext-info"), widget, classes="ext-row"
+        )
+
+    @work(exclusive=True, group="services")
+    async def _render_services(self) -> None:
+        """Rebuild the rows of the Services tab in a worker."""
+        selected = dict(self._selected)
+        state = await asyncio.to_thread(
+            nix_services.service_state, selected
+        )
+        if not self.is_mounted:
+            return
+        self._service_state = state
+        container = self.query_one("#app-services", VerticalScroll)
+        await container.remove_children()
+        if state is None:
+            await container.mount(
+                Static(
+                    self._t(
+                        "nix_service_unavailable",
+                        "This service is not available on this system.",
+                    ),
+                    classes="svc-note",
+                )
+            )
+            return
+        rows: list[Widget] = [
+            Static(self._service_status_text(state), classes="svc-status")
+        ]
+        options = list(state.get("options") or ())
+        self._service_values = {}
+        self._service_option_meta = {}
+        self._service_original = {}
+        self._service_dirty = set()
+        for option in options:
+            path = str(option["path"])
+            self._service_values[path] = option.get("value")
+            self._service_option_meta[path] = option
+            self._service_original[path] = option.get("value")
+            rows.append(self._service_option_row(option))
+        if not options:
+            rows.append(
+                Static(
+                    self._t(
+                        "nix_service_no_options",
+                        "This service has no configurable options.",
+                    ),
+                    classes="svc-note",
+                )
+            )
+        else:
+            rows.append(
+                Static(
+                    self._t(
+                        "nix_service_apply_note",
+                        "Changes take effect after applying the queued Nix operations.",
+                    ),
+                    classes="svc-note",
+                )
+            )
+        status = str(state.get("status") or "")
+        if options or status == "available":
+            label = (
+                self._t("nix_service_install", "Install service")
+                if status == "available" and not options
+                else self._t(
+                    "nix_service_save_options", "Save service options"
+                )
+            )
+            save = Button(
+                "💾 " + label,
+                id="app-service-save",
+                variant="success",
+            )
+            save.disabled = status == "removing"
+            rows.append(save)
+        await container.mount_all(rows)
+
+    def _keep_service_value(self, path: str, value: Any) -> bool:
+        """Keep untouched synthetic values only when they were already saved."""
+        option = self._service_option_meta.get(path) or {}
+        if option.get("stale"):
+            return False
+        if path in self._service_dirty:
+            return True
+        return not (
+            value == self._service_original.get(path)
+            and not option.get("saved")
+            and option.get("default") is None
+        )
+
+    def _collect_service_values(self) -> dict[str, Any]:
+        values: dict[str, Any] = {}
+        widgets: list[Widget] = []
+        widgets.extend(self.query("#app-services Switch"))
+        widgets.extend(self.query("#app-services Select"))
+        widgets.extend(self.query("#app-services Input"))
+        for widget in widgets:
+            path = getattr(widget, "svc_path", None)
+            kind = getattr(widget, "svc_kind", None)
+            if not path:
+                continue
+            if kind == "bool":
+                value = bool(widget.value)
+                if self._keep_service_value(path, value):
+                    values[path] = value
+            elif kind == "enum":
+                if widget.value is not _BLANK:
+                    value = str(widget.value)
+                    if self._keep_service_value(path, value):
+                        values[path] = value
+            else:
+                text = str(widget.value)
+                if kind == "int":
+                    if not text.strip():
+                        continue
+                    try:
+                        value = int(text.strip())
+                    except ValueError as error:
+                        raise ValueError(
+                            f"'{path}' must be a whole number"
+                        ) from error
+                    if self._keep_service_value(path, value):
+                        values[path] = value
+                elif kind == "float":
+                    if not text.strip():
+                        continue
+                    try:
+                        value = float(text.strip())
+                    except ValueError as error:
+                        raise ValueError(f"'{path}' must be a number") from error
+                    if self._keep_service_value(path, value):
+                        values[path] = value
+                elif kind == "list":
+                    value = [
+                        item.strip()
+                        for item in text.replace("\n", ",").split(",")
+                        if item.strip()
+                    ]
+                    if self._keep_service_value(path, value):
+                        values[path] = value
+                else:
+                    if self._keep_service_value(path, text):
+                        values[path] = text
+        return values
+
+    def _save_service_options(self) -> None:
+        try:
+            values = self._collect_service_values()
+        except (OSError, ValueError) as error:
+            self.notify(f"✗ {error}", severity="error")
+            return
+        self.post_message(
+            self.ServiceOptionsSaveRequested(dict(self._selected), values)
+        )
 
     def _extension_pressed(
         self,
@@ -1137,6 +1417,8 @@ class AppPageWidget(Vertical):
         def worker() -> None:
             before = {}
             after = {}
+            service_before = {}
+            service_after = {}
             try:
                 before = nix_extensions.cached_capabilities()
                 nix_extensions.load_or_refresh()
@@ -1144,15 +1426,22 @@ class AppPageWidget(Vertical):
             except Exception:
                 pass
             try:
+                service_before = nix_services.cached_services()
+                nix_services.load_or_refresh()
+                service_after = nix_services.cached_services()
+            except Exception:
+                pass
+            try:
                 self.app.call_from_thread(
                     self._finish_nix_extension_refresh,
-                    bool(after) and after != before,
+                    (bool(after) and after != before)
+                    or service_after != service_before,
                 )
             except Exception:
                 pass
 
         threading.Thread(
-            target=worker, daemon=True, name="linuxtoys-nix-extensions"
+            target=worker, daemon=True, name="linuxtoys-nix-capabilities"
         ).start()
 
     def _finish_nix_extension_refresh(self, needs_sync: bool) -> None:
@@ -1174,10 +1463,12 @@ class AppPageWidget(Vertical):
 
     @on(TabbedContent.TabActivated)
     def _tab_changed(self) -> None:
-        """Populate the Extensions tab when opened and re-layout the grid."""
+        """Populate the Extensions/Services tab when opened and re-layout."""
         tabs = self.query_one("#app-tabs", TabbedContent)
         if tabs.active == "tab-extensions":
             self._populate_extensions()
+        elif tabs.active == "tab-services":
+            self._populate_services()
         self._featured_signature = None
         self._schedule_featured()
 
@@ -1188,6 +1479,8 @@ class AppPageWidget(Vertical):
         self.query_one("#app-remove").display = installed
         self._refresh_rating()
         self._load_rating_state()
+        if self._service:
+            self.refresh_services()
 
     def set_user_rating(self, stars: int | None) -> None:
         """Set the rating already submitted by the user."""
@@ -1552,6 +1845,8 @@ class AppPageWidget(Vertical):
                 self.post_message(self.UrlRequested(url))
         elif bid == "app-translate":
             self._on_translate_pressed(event.button)
+        elif bid == "app-service-save":
+            self._save_service_options()
 
     def reset_install_button(self) -> None:
         try:
@@ -1601,6 +1896,14 @@ class AppPageWidget(Vertical):
             self._featured_signature = None
             self._schedule_featured()
             self.post_message(self.SourceChanged(self._selected))
+        elif sid.startswith("svc-enum-"):
+            path = getattr(event.select, "svc_path", None)
+            if path:
+                current = "" if event.value is _BLANK else str(event.value)
+                if current != (self._service_original.get(path) or ""):
+                    self._service_dirty.add(path)
+                if event.value is not _BLANK:
+                    self._service_values[path] = str(event.value)
         elif sid in ("app-purchase-select", "app-subscription-select"):
             if event.value is _BLANK:
                 return
@@ -1610,6 +1913,22 @@ class AppPageWidget(Vertical):
             url = self._purchase_options[kind][int(event.value)]["url"]
             event.select.clear()
             self.post_message(self.UrlRequested(url))
+
+    @on(Switch.Changed)
+    def _service_switch_changed(self, event: Switch.Changed) -> None:
+        path = getattr(event.switch, "svc_path", None)
+        if path:
+            if bool(event.value) != bool(self._service_original.get(path)):
+                self._service_dirty.add(path)
+            self._service_values[path] = bool(event.value)
+
+    @on(Input.Changed)
+    def _service_input_changed(self, event: Input.Changed) -> None:
+        path = getattr(event.input, "svc_path", None)
+        if path:
+            if str(event.value) != str(self._service_original.get(path) or ""):
+                self._service_dirty.add(path)
+            self._service_values[path] = str(event.value)
 
 
 async def show_app_page(
