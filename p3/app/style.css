@@ -206,3 +206,10 @@ button.linuxtoys-sidebar-row-current:hover,
 button.linuxtoys-sidebar-row-current:active {
     background-color: rgba(128, 128, 128, 0.30);
 }
+
+/* Nix generation manager: drop the theme's list padding so the first and
+   last generation rows sit flush with the notebook page edges. */
+.nix-generations-list {
+    padding-top: 0;
+    padding-bottom: 0;
+}

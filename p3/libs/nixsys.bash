@@ -3,7 +3,8 @@
 #
 # Packages are never installed with nix-env. LinuxToys owns one declarative
 # module per backend (home-manager and the NixOS system configuration) and
-# rebuilds only when the user applies queued operations.
+# rebuilds only when the user applies queued operations. nix-env is used only
+# to list, switch or delete recorded generation links.
 
 NIX_TOYS_BEGIN="# BEGIN LinuxToys managed packages"
 NIX_TOYS_END="# END LinuxToys managed packages"
@@ -237,6 +238,32 @@ _nix_hm_bin() {
     }
 }
 
+_nix_env_bin() {
+    command -v nix-env 2>/dev/null || {
+        local nix candidate
+        nix=$(_nix_bin) || return 1
+        candidate="$(dirname -- "$nix")/nix-env"
+        [ -x "$candidate" ] && { printf '%s\n' "$candidate"; return 0; }
+        for candidate in "$HOME/.nix-profile/bin/nix-env" \
+            "$HOME/.local/state/nix/profile/bin/nix-env" \
+            "/nix/var/nix/profiles/default/bin/nix-env" \
+            "/run/current-system/sw/bin/nix-env"; do
+            [ -x "$candidate" ] && { printf '%s\n' "$candidate"; return 0; }
+        done
+    }
+}
+
+# System generations are switched/deleted through sudo; prefer a binary inside
+# the system profile so a home-profile Nix remains reachable as root.
+_nix_system_env_bin() {
+    local candidate
+    for candidate in /run/current-system/sw/bin/nix-env \
+        /nix/var/nix/profiles/default/bin/nix-env; do
+        [ -x "$candidate" ] && { printf '%s\n' "$candidate"; return 0; }
+    done
+    _nix_env_bin
+}
+
 # ---------------------------------------------------------------------------
 # Discovery
 # ---------------------------------------------------------------------------
@@ -279,6 +306,102 @@ nix_is_nixos() {
 
 nix_system_available() {
     nix_is_nixos
+}
+
+# ---------------------------------------------------------------------------
+# Generations
+# ---------------------------------------------------------------------------
+
+_nix_generation_profile() {
+    case "$1" in
+        system) printf '%s\n' /nix/var/nix/profiles/system ;;
+        home-manager) printf '%s\n' "${XDG_STATE_HOME:-$HOME/.local/state}/nix/profiles/home-manager" ;;
+        *) return 1 ;;
+    esac
+}
+
+_nix_generation_link() {
+    local scope="$1" generation="$2" profile
+    [[ "$generation" =~ ^[1-9][0-9]*$ ]] || return 1
+    profile=$(_nix_generation_profile "$scope") || return 1
+    printf '%s\n' "${profile}-${generation}-link"
+}
+
+_nix_generation_is_current() {
+    local profile="$1" link="$2" profile_target link_target
+    profile_target=$(readlink -f -- "$profile" 2>/dev/null) || return 1
+    link_target=$(readlink -f -- "$link" 2>/dev/null) || return 1
+    [ -n "$profile_target" ] && [ "$profile_target" = "$link_target" ]
+}
+
+nix_generation_switch() {
+    local scope="$1" generation="$2" profile link nix_env
+    [[ "$scope" == "home-manager" || "$scope" == "system" ]] || {
+        printf 'Invalid Nix generation scope: %s\n' "$scope" >&2
+        return 1
+    }
+    [[ "$generation" =~ ^[1-9][0-9]*$ ]] || {
+        printf 'Invalid Nix generation: %s\n' "$generation" >&2
+        return 1
+    }
+    profile=$(_nix_generation_profile "$scope") || return 1
+    link=$(_nix_generation_link "$scope" "$generation") || return 1
+    [ -e "$link" ] || {
+        printf 'Nix generation %s no longer exists.\n' "$generation" >&2
+        return 1
+    }
+    if [ "$scope" = "system" ]; then
+        nix_env=$(_nix_system_env_bin) || {
+            printf 'nix-env is not available.\n' >&2
+            return 1
+        }
+        sudo_ "$nix_env" --profile "$profile" --switch-generation "$generation" \
+            || return $?
+        sudo_ "$profile/bin/switch-to-configuration" switch
+    else
+        nix_env=$(_nix_env_bin) || {
+            printf 'nix-env is not available.\n' >&2
+            return 1
+        }
+        "$nix_env" --profile "$profile" --switch-generation "$generation" \
+            || return $?
+        "$profile/activate"
+    fi
+}
+
+nix_generation_delete() {
+    local scope="$1" generation="$2" profile link nix_env
+    [[ "$scope" == "home-manager" || "$scope" == "system" ]] || {
+        printf 'Invalid Nix generation scope: %s\n' "$scope" >&2
+        return 1
+    }
+    [[ "$generation" =~ ^[1-9][0-9]*$ ]] || {
+        printf 'Invalid Nix generation: %s\n' "$generation" >&2
+        return 1
+    }
+    profile=$(_nix_generation_profile "$scope") || return 1
+    link=$(_nix_generation_link "$scope" "$generation") || return 1
+    [ -e "$link" ] || {
+        printf 'Nix generation %s no longer exists.\n' "$generation" >&2
+        return 1
+    }
+    if _nix_generation_is_current "$profile" "$link"; then
+        printf 'The current Nix generation cannot be deleted.\n' >&2
+        return 1
+    fi
+    if [ "$scope" = "system" ]; then
+        nix_env=$(_nix_system_env_bin) || {
+            printf 'nix-env is not available.\n' >&2
+            return 1
+        }
+        sudo_ "$nix_env" --profile "$profile" --delete-generations "$generation"
+    else
+        nix_env=$(_nix_env_bin) || {
+            printf 'nix-env is not available.\n' >&2
+            return 1
+        }
+        "$nix_env" --profile "$profile" --delete-generations "$generation"
+    fi
 }
 
 # Nix packages on a non-NixOS host load the host GPU stack through Home

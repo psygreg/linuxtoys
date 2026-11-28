@@ -3,6 +3,7 @@ from .gtk_dialogs import run_message_dialog
 from . import manifest_helper
 from . import nix_catalog
 from . import nix_flake_dialog
+from . import nix_generations_dialog
 from . import language_selector
 from . import about_helper
 from . import action_registry
@@ -103,6 +104,10 @@ class MenuButton(Gtk.MenuButton):
 		self.import_nix_flake.set_image(Gtk.Image.new_from_icon_name("application-x-executable", Gtk.IconSize.MENU))
 		self.import_nix_flake.connect("clicked", self.__on_import_nix_flake)
 
+		self.nix_generations = Gtk.ModelButton(label=_("nix_generations_title"))
+		self.nix_generations.set_image(Gtk.Image.new_from_icon_name("document-open-recent", Gtk.IconSize.MENU))
+		self.nix_generations.connect("clicked", self.__on_nix_generations)
+
 		self.language_select = Gtk.ModelButton(label=_("select_language"))
 		self.language_select.set_image(Gtk.Image.new_from_icon_name("preferences-desktop-locale", Gtk.IconSize.MENU))
 		self.language_select.connect("clicked", self.__on_language_select)
@@ -197,6 +202,7 @@ class MenuButton(Gtk.MenuButton):
 		vbox.pack_start(self.load_manifest, True, True, 0)
 		if nix_catalog.enabled():
 			vbox.pack_start(self.import_nix_flake, True, True, 0)
+			vbox.pack_start(self.nix_generations, True, True, 0)
 		vbox.pack_start(self.language_select, True, True, 0)
 		vbox.pack_start(self.about_item, True, True, 0)
 		vbox.pack_start(self.action_registry_item, True, True, 0)
@@ -229,6 +235,7 @@ class MenuButton(Gtk.MenuButton):
 		_ = create_translator()
 		self.load_manifest.set_label(_("load_manifest"))
 		self.import_nix_flake.set_label(_("import_nix_flake"))
+		self.nix_generations.set_label(_("nix_generations_title"))
 		self.language_select.set_label(_("select_language"))
 		self.about_item.set_label(_("about_title"))
 		self.action_registry_item.set_label(_("action_registry"))
@@ -378,6 +385,9 @@ class MenuButton(Gtk.MenuButton):
 
 	def __on_import_nix_flake(self, widget):
 		nix_flake_dialog.show_import_dialog(self.parent_window)
+
+	def __on_nix_generations(self, widget):
+		nix_generations_dialog.show_generations_dialog(self.parent_window)
 
 	def __on_language_select(self, widget):
 		"""Handle language selection menu item click"""
