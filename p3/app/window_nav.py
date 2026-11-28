@@ -10,6 +10,7 @@ from .updater.update_dialog import scripts_blocked_by_version
 from . import (
     app_page,
     gtk_dialogs,
+    nix_extensions,
     nix_metadata,
     nix_queue,
     repo_parser,
@@ -491,6 +492,55 @@ class NavCtl:
         self.main_stack.set_visible_child_name("app_page")
         if info.get("appstream_source") == "nix":
             self._request_nix_app_metadata(page, info)
+            self._request_nix_extensions(page, info)
+
+    def _request_nix_extensions(self, page, info):
+        """Refresh Nix extension discovery in the background for an app page."""
+        if not isinstance(info, dict) or info.get("appstream_source") != "nix":
+            return
+        if not isinstance(page.script_info, dict) or page.script_info.get(
+            "appstream_source"
+        ) != "nix":
+            return
+        if not nix_extensions.enabled():
+            return
+        if getattr(self, "_nix_extensions_refresh_running", False):
+            return
+        self._nix_extensions_refresh_running = True
+
+        def worker():
+            before = {}
+            after = {}
+            try:
+                before = nix_extensions.cached_capabilities()
+                nix_extensions.load_or_refresh()
+                after = nix_extensions.cached_capabilities()
+            except Exception as error:  # Never break the app page over plugins.
+                logger.warning("Nix extension discovery failed: %s", error)
+            GLib.idle_add(
+                self._finish_nix_extensions_request,
+                bool(after) and after != before,
+            )
+
+        threading.Thread(
+            target=worker, daemon=True, name="linuxtoys-nix-extensions"
+        ).start()
+
+    def _finish_nix_extensions_request(self, needs_sync):
+        self._nix_extensions_refresh_running = False
+        if not needs_sync:
+            return False
+        current = self.main_stack.get_child_by_name("app_page")
+        if current is None:
+            return False
+        if not isinstance(current.script_info, dict) or current.script_info.get(
+            "appstream_source"
+        ) != "nix":
+            return False
+        sync = getattr(current, "_sync_extensions_tabs", None)
+        if callable(sync):
+            sync()
+        return False
 
     def _request_nix_app_metadata(self, page, info):
         """Fetch one Nix package's detail metadata in the background."""

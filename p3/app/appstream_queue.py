@@ -125,6 +125,11 @@ class AppStreamQueueView(Gtk.ScrolledWindow):
             if action == "remove"
             else self._translated("nix_queue_install", "Install")
         )
+        secondary = f"{action_label} · {scope_label}"
+        if record.get("kind") == "extension":
+            host = str(record.get("host") or "").strip()
+            if host:
+                secondary = f"{action_label} · {scope_label} · {host}"
         icon_path = ""
         icon_name = "nix.svg"
         path = get_icon_path("nix.svg")
@@ -134,7 +139,7 @@ class AppStreamQueueView(Gtk.ScrolledWindow):
         return {
             "key": str(record["id"]),
             "name": record.get("name", record.get("attr", "")),
-            "secondary": f"{action_label} · {scope_label}",
+            "secondary": secondary,
             "secondary_visible": True,
             "icon_path": icon_path,
             "icon_name": icon_name,

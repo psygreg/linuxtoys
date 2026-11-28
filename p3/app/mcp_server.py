@@ -2148,16 +2148,24 @@ def _app_details(entry):
         details["description_locale"] = str(entry.get("long_description_locale") or "")
     if entry.get("summary"):
         details["summary"] = str(entry.get("summary"))
-    if str(entry.get("appstream_source") or "") == "flatpak":
-        # Flathub addon/extension components published next to the app catalog.
-        # Cheap signal so agents know list_app_extensions is worth calling.
+    if str(entry.get("appstream_source") or "") in ("flatpak", "nix"):
+        # Flathub addon components and Nix plugin wrappers. Cheap signal so
+        # agents know list_app_extensions is worth calling.
         try:
-            details["extensions_available"] = bool(
-                appstream_cache.get_flatpak_extensions(entry)
-            )
+            if str(entry.get("appstream_source") or "") == "nix":
+                from . import nix_extensions
+
+                details["extensions_available"] = bool(
+                    nix_extensions.extensions_for(entry)
+                )
+            else:
+                details["extensions_available"] = bool(
+                    appstream_cache.get_flatpak_extensions(entry)
+                )
         except Exception:
             details["extensions_available"] = False
 
+    if str(entry.get("appstream_source") or "") == "flatpak":
         # Leftover user data under ~/.var/app/<AppID> outlives its Flatpak
         # app; the same leftover the app page's "Remove data" button offers
         # to delete. The presence probe is a cheap lexists; removal goes
@@ -2431,16 +2439,33 @@ def inspect_local_package(path):
 # extension refs are not Action Registry transactions there either).
 
 
-def _flatpak_extension_records(app_id):
-    """(parent entry, extension list) for one app's Flathub addons, or ValueError."""
+def _app_extension_records(app_id):
+    """(parent entry, extension list) for one app's addons, or ValueError."""
     entry = _resolve_entry(app_id)
     if entry is None:
         raise ValueError(f"Unknown app id '{app_id}'. Use search_apps to list valid IDs.")
-    if str(entry.get("appstream_source") or "") != "flatpak":
-        name = str(entry.get("name") or app_id)
+    source = str(entry.get("appstream_source") or "")
+    name = str(entry.get("name") or app_id)
+    if source == "nix":
+        from . import nix_extensions
+
+        if not nix_extensions.enabled():
+            raise ValueError(
+                "The Nix subsystem is not available on this system."
+            )
+        records = nix_extensions.extensions_for(entry)
+        if not records:
+            raise ValueError(
+                f"'{name}' has no Nix extensions in the current nixpkgs "
+                "revision (or the extension metadata has not been downloaded "
+                "yet)."
+            )
+        return entry, records
+    if source != "flatpak":
         raise ValueError(
-            f"'{name}' has no Flathub extensions. Extensions exist only for apps "
-            "installed from a Flatpak source."
+            f"'{name}' has no Flatpak extensions. Extensions exist only for "
+            "apps installed from a Flatpak source or Nixpkgs packages with a "
+            "supported plugin wrapper."
         )
     if not shutil.which("flatpak"):
         raise ValueError("Flatpak is not available on this system.")
@@ -2448,14 +2473,16 @@ def _flatpak_extension_records(app_id):
 
 
 def _find_app_extension(extension_records, extension):
-    """Resolve one extension by component id or flatpak ref, or ValueError."""
+    """Resolve one extension by component id or package/ref name."""
     target = str(extension or "").strip().casefold()
     if not target:
-        raise ValueError("An extension component id (or flatpak ref) is required.")
+        raise ValueError("An extension component id (or package name) is required.")
     matches = [
         record for record in extension_records
         if str(record.get("id") or "").casefold() == target
         or str(record.get("flatpak_ref") or "").casefold() == target
+        or str(record.get("nix_ext_attr") or "").casefold() == target
+        or str(record.get("nix_ext_id") or "").casefold() == target
     ]
     if not matches:
         # Tolerate the compact ref form ("org.../x86_64/3-25.08") and the
@@ -2474,6 +2501,7 @@ def _find_app_extension(extension_records, extension):
                 matches = [
                     record for record in extension_records
                     if str(record.get("id") or "").casefold() == ref_parts[1].casefold()
+                    or str(record.get("nix_ext_attr") or "").casefold() == ref_parts[1].casefold()
                 ]
     if not matches:
         raise ValueError(
@@ -2481,29 +2509,73 @@ def _find_app_extension(extension_records, extension):
             "list_app_extensions to see the available ones."
         )
     if len(matches) > 1:
-        refs = ", ".join(sorted(str(item.get("flatpak_ref") or "") for item in matches))
+        names = ", ".join(
+            sorted(
+                str(
+                    item.get("flatpak_ref")
+                    or item.get("nix_ext_attr")
+                    or item.get("id")
+                    or ""
+                )
+                for item in matches
+            )
+        )
         raise ValueError(
-            f"'{extension}' matches {len(matches)} extensions ({refs}). Pass the full flatpak ref."
+            f"'{extension}' matches {len(matches)} extensions ({names}). Pass the full identifier."
         )
     return matches[0]
 
 
 def _extension_record_public(record, installed_refs):
+    kind = (
+        "nix"
+        if str(record.get("extension_kind") or "") == "nix"
+        else "flatpak"
+    )
     ref = str(record.get("flatpak_ref") or "")
-    return {
+    nix_attr = str(record.get("nix_ext_attr") or "")
+    installed = (
+        bool(nix_attr) and nix_attr in installed_refs
+        if kind == "nix"
+        else bool(ref) and ref in installed_refs
+    )
+    result = {
         "id": str(record.get("id") or ""),
-        "name": str(record.get("name") or record.get("id") or ref),
+        "name": str(
+            record.get("name")
+            or (nix_attr or ref)
+        ),
         "summary": str(record.get("summary") or ""),
-        "flatpak_ref": ref,
-        "installed": bool(ref) and ref in installed_refs,
-        "flatpak_scope": str(record.get("flatpak_scope") or ""),
-        "flatpak_remote": str(record.get("flatpak_remote") or ""),
+        "kind": kind,
+        "installed": installed,
     }
+    if kind == "nix":
+        result.update(
+            {
+                "nix_attr": nix_attr,
+                "nix_set": str(record.get("nix_ext_set") or ""),
+                "nix_scope": str(record.get("nix_ext_scope") or ""),
+                "version": str(record.get("version") or ""),
+            }
+        )
+    else:
+        result.update(
+            {
+                "flatpak_ref": ref,
+                "flatpak_scope": str(record.get("flatpak_scope") or ""),
+                "flatpak_remote": str(record.get("flatpak_remote") or ""),
+            }
+        )
+    return result
 
 
 def _installed_extension_refs(entry):
-    """Refs of this app's extensions currently installed (read-only flatpak)."""
+    """Installed extension identifiers for this app's source."""
     try:
+        if str(entry.get("appstream_source") or "") == "nix":
+            from . import nix_extensions
+
+            return nix_extensions.installed_extensions(entry)
         return appstream_cache.installed_flatpak_extension_refs(entry)
     except Exception:
         return set()
@@ -2739,19 +2811,46 @@ class JobManager:
         return job
 
     def submit_extension(self, entry, extension, remove=False):
-        """Queue a Flathub app extension install/uninstall.
+        """Queue an app extension install/uninstall.
 
-        ``extension`` is the catalog extension payload (self-sufficient: its
-        own flatpak_ref/remote/scope/installation). Mirrors the GUI's queue
-        runner: no transmap, no Action Registry state.
+        Flatpak payloads carry their own flatpak_ref/remote/scope and run
+        through ``flatpak``. Nix payloads carry host/plugin attributes and go
+        through the persistent Nix queue plus the declarative apply script.
         """
         extension = dict(extension or {})
+        if str(extension.get("extension_kind") or "") == "nix":
+            return self.submit_nix_extension(entry, extension, remove=remove)
         job = Job("extension_remove" if remove else "extension_install", _stable_id(entry))
         job.name = str(
             extension.get("name") or extension.get("flatpak_ref") or "Flatpak extension"
         )
         self._register(job)
         self._queue.put((job, extension))
+        return job
+
+    def submit_nix_extension(self, entry, extension, remove=False):
+        """Queue one Nix plugin operation and its declarative rebuild."""
+        extension = dict(extension or {})
+        job = Job(
+            "nix_extension_remove" if remove else "nix_extension_install",
+            _stable_id(entry),
+        )
+        job.name = str(
+            extension.get("name")
+            or extension.get("nix_ext_attr")
+            or "Nix extension"
+        )
+        self._register(job)
+        self._queue.put(
+            (
+                job,
+                {
+                    "entry": dict(entry or {}),
+                    "extension": extension,
+                    "remove": bool(remove),
+                },
+            )
+        )
         return job
 
     def submit_flatpak_data(self, entry):
@@ -2849,7 +2948,9 @@ class JobManager:
                 # in the GUI either: they are flatpak-side operations and
                 # the app's own update, not app scripts.
                 if job.kind not in (
-                    "extension_install", "extension_remove", "update", "flatpak_data_remove",
+                    "extension_install", "extension_remove",
+                    "nix_extension_install", "nix_extension_remove",
+                    "update", "flatpak_data_remove",
                 ):
                     antenna.add_script_to_history(str(job.name))
             except Exception:
@@ -2880,6 +2981,8 @@ class JobManager:
                 code, reason = self._run_extension(
                     job, entry, remove=job.kind == "extension_remove"
                 )
+            elif job.kind in ("nix_extension_install", "nix_extension_remove"):
+                code, reason = self._run_nix_extension(job, entry)
             elif job.kind == "install":
                 code, reason = self._install(job, entry)
             elif job.kind == "system_update":
@@ -3178,6 +3281,26 @@ class JobManager:
         return code, self._failure_reason(output) or (
             f"flatpak {action} exited with status {code}. See the job log for details."
         )
+
+    def _run_nix_extension(self, job, payload):
+        """Queue one Nix plugin operation and run the declarative apply."""
+        from . import nix_catalog, nix_queue
+
+        payload = dict(payload or {})
+        extension = dict(payload.get("extension") or {})
+        remove = bool(payload.get("remove"))
+        try:
+            nix_queue.add_extension(
+                extension, action="remove" if remove else "install"
+            )
+            apply_info = nix_catalog.materialize_apply()
+        except (OSError, ValueError) as exc:
+            return 1, f"Could not queue the Nix extension operation: {exc}"
+        self._log(
+            job,
+            "Applying the Nix package queue (this rebuilds the profile)...",
+        )
+        return self._run_generated_script(job, apply_info)
 
     def _remove_flatpak_data(self, job, entry):
         """Remove one uninstalled Flatpak app's leftover ~/.var/app/<AppID>.
@@ -3842,17 +3965,21 @@ def tool_schemas():
         {
             "name": "install_app_extension",
             "description": (
-                "Install one Flathub extension/addon of an app (VLC plugins, "
-                "Steam compatibility tools, ...). Identify it with "
-                "list_app_extensions. Blocks until the install finishes and "
-                "returns its final outcome by default; pass wait=false to "
-                "queue it and get a job id to watch with get_job."
+                "Install one extension/addon of an app: a Flathub addon (VLC "
+                "plugins, Steam compatibility tools, ...) or a Nix plugin from "
+                "a host package's supported plugin set (OBS Studio, GIMP, "
+                "DeaDBeeF, ...). Identify it with list_app_extensions. Flatpak "
+                "extensions install through flatpak; Nix extensions are queued "
+                "and applied by rebuilding the Home Manager/NixOS profile. "
+                "Blocks until the operation finishes and returns its final "
+                "outcome by default; pass wait=false to queue it and get a job "
+                "id to watch with get_job."
             ),
             "inputSchema": {
                 "type": "object",
                 "properties": {
                     "app_id": {"type": "string", "description": "Stable catalog ID of the app the extension belongs to"},
-                    "extension": {"type": "string", "description": "Extension component id (e.g. org.videolan.VLC.Plugin.bdj) or its full flatpak ref"},
+                    "extension": {"type": "string", "description": "Extension id, Nix plugin attribute or full flatpak ref"},
                     **_job_tracking_schema(),
                 },
                 "required": ["app_id", "extension"],
@@ -3861,16 +3988,17 @@ def tool_schemas():
         {
             "name": "remove_app_extension",
             "description": (
-                "Remove one installed Flathub extension/addon of an app. "
-                "Blocks until the removal finishes and returns its final "
-                "outcome by default; pass wait=false to queue it and get a "
-                "job id to watch with get_job."
+                "Remove one installed extension/addon of an app (Flatpak or "
+                "Nix). Removing a Nix plugin keeps its host application "
+                "installed. Blocks until the removal finishes and returns its "
+                "final outcome by default; pass wait=false to queue it and get "
+                "a job id to watch with get_job."
             ),
             "inputSchema": {
                 "type": "object",
                 "properties": {
                     "app_id": {"type": "string", "description": "Stable catalog ID of the app the extension belongs to"},
-                    "extension": {"type": "string", "description": "Extension component id or its full flatpak ref"},
+                    "extension": {"type": "string", "description": "Extension id, Nix plugin attribute or full flatpak ref"},
                     **_job_tracking_schema(),
                 },
                 "required": ["app_id", "extension"],
@@ -3879,9 +4007,9 @@ def tool_schemas():
         {
             "name": "list_app_extensions",
             "description": (
-                "List the Flathub extensions/addons of one app, each with its "
-                "installed state. Only apps whose get_app_details reports "
-                "extensions_available have them."
+                "List the extensions/addons of one app (Flathub addons or Nix "
+                "plugins), each with its installed state. Only apps whose "
+                "get_app_details reports extensions_available have them."
             ),
             "inputSchema": {
                 "type": "object",
@@ -4783,8 +4911,8 @@ def _tool_install_package_file(
 
 
 def _tool_list_app_extensions(app_id):
-    """Every Flathub extension of one app, with its installed state."""
-    entry, records = _flatpak_extension_records(app_id)
+    """Every Flatpak or Nix extension of one app, with its installed state."""
+    entry, records = _app_extension_records(app_id)
     installed = _installed_extension_refs(entry)
     return {
         "app": _app_details(entry),
@@ -4795,33 +4923,50 @@ def _tool_list_app_extensions(app_id):
 
 
 def _tool_install_app_extension(app_id, extension, wait=True, wait_seconds=None):
-    entry, records = _flatpak_extension_records(app_id)
+    entry, records = _app_extension_records(app_id)
     target = _find_app_extension(records, extension)
     job = JOBS.submit_extension(entry, target, remove=False)
+    if str(target.get("extension_kind") or "") == "nix":
+        message = (
+            "The Nix extension is queued and applied through the declarative "
+            "LinuxToys module, which rebuilds the Home Manager or NixOS "
+            "profile. Verify the installed state with list_app_extensions."
+        )
+    else:
+        message = (
+            "The extension runs through flatpak like a GUI extension install. "
+            "System-scope installs may show a password dialog on the user's "
+            "screen; verify the installed state with list_app_extensions."
+        )
     return _job_submission_result(
         job,
-        "The extension runs through flatpak like a GUI extension install. "
-        "System-scope installs may show a password dialog on the user's "
-        "screen; verify the installed state with list_app_extensions.",
+        message,
         wait=wait,
         wait_seconds=wait_seconds,
         app=_stable_id(entry),
-        extension=str(target.get("id") or target.get("flatpak_ref")),
+        extension=str(target.get("id") or target.get("flatpak_ref") or target.get("nix_ext_attr")),
     )
 
 
 def _tool_remove_app_extension(app_id, extension, wait=True, wait_seconds=None):
-    entry, records = _flatpak_extension_records(app_id)
+    entry, records = _app_extension_records(app_id)
     target = _find_app_extension(records, extension)
     job = JOBS.submit_extension(entry, target, remove=True)
+    message = (
+        "The Nix extension removal rewrites the extension module and rebuilds "
+        "the profile; the host application stays installed. Verify with "
+        "list_app_extensions."
+        if str(target.get("extension_kind") or "") == "nix"
+        else "Removal runs flatpak uninstall for that extension ref; verify the "
+        "installed state with list_app_extensions."
+    )
     return _job_submission_result(
         job,
-        "Removal runs flatpak uninstall for that extension ref; verify the "
-        "installed state with list_app_extensions.",
+        message,
         wait=wait,
         wait_seconds=wait_seconds,
         app=_stable_id(entry),
-        extension=str(target.get("id") or target.get("flatpak_ref")),
+        extension=str(target.get("id") or target.get("flatpak_ref") or target.get("nix_ext_attr")),
     )
 
 

@@ -18,6 +18,7 @@ from . import (
     gui_rs,
     gtk_dialogs,
     installed_packages,
+    nix_extensions,
     _catalog_rs,
 )
 from .gtk_dialogs import run_message_dialog
@@ -1835,10 +1836,20 @@ class AppPageView(Gtk.Box):
             extensions_view.ensure_populated()
 
     def _sync_extensions_tabs(self):
-        """Show Details/Extensions only when the selected Flatpak source has addons."""
+        """Show Details/Extensions when the selected source has addons."""
         if self._body_holder is None:
             return
-        extensions = appstream_cache.get_flatpak_extensions(self._selected_install_info)
+        if self._selected_install_info.get("appstream_source") == "nix":
+            try:
+                extensions = nix_extensions.extensions_for(
+                    self._selected_install_info
+                )
+            except Exception:
+                extensions = []
+        else:
+            extensions = appstream_cache.get_flatpak_extensions(
+                self._selected_install_info
+            )
         # _content_scroller is persistent across source changes. Detach it from
         # whichever temporary body container currently owns it before destroying
         # the old body hierarchy; otherwise the no-extensions layout destroys the

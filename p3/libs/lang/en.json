@@ -657,6 +657,7 @@
   "nix_queue_install": "Install",
   "nix_queue_remove": "Remove",
   "nix_added_to_queue": "Added to queue",
+  "nix_extension_remove_queued": "Waiting to remove",
   "app_page_source_nix_home_manager": "Nix (home-manager)",
   "app_page_source_nix_system": "Nix (system)",
   "badge_tooltip_nix": "Nixpkgs",

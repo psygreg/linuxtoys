@@ -7,7 +7,7 @@ import json
 import re
 import threading
 
-from . import appstream_cache, repo_parser, homebrew_catalog, nix_catalog, nix_metadata
+from . import appstream_cache, repo_parser, homebrew_catalog, nix_catalog, nix_extensions, nix_metadata
 from . import _catalog_rs as _catalog_rs
 from .compat import get_system_compat_keys
 from .lang_utils import detect_system_language
@@ -1617,7 +1617,7 @@ def get_nix_entries():
     catalog = _nix_catalog_index()
     if catalog is None:
         return []
-    return NixEntriesView(catalog)
+    return NixEntriesView(catalog, nix_extensions.catalog_wrappers())
 
 
 def get_available_nix_entries():
@@ -1627,25 +1627,60 @@ def get_available_nix_entries():
         return []
     from . import installed_packages
 
-    installed = sorted(
-        {
-            str(value).strip()
-            for value in (installed_packages.snapshot().get("nix") or ())
-            if str(value).strip()
-        }
+    excluded = set(nix_extensions.catalog_wrappers())
+    excluded.update(
+        str(value).strip()
+        for value in (installed_packages.snapshot().get("nix") or ())
+        if str(value).strip()
     )
-    return NixEntriesView(catalog, installed)
+    return NixEntriesView(catalog, sorted(excluded))
 
 
 def search_nix_entries(query):
-    """Search only the Nix catalog in Rust, converting only matches."""
+    """Search only the Nix catalog in Rust, converting only matches.
+
+    Plugin packages are hidden from the catalog; a query matching an extension
+    name resolves to its host application instead.
+    """
     catalog = _nix_catalog_index()
     if catalog is None:
         return []
-    return [
-        (nix_metadata.enrich_index(info), score)
-        for info, score in catalog.search(str(query or ""))
-    ]
+    target = str(query or "").casefold()
+    excluded = {name.casefold() for name in nix_extensions.catalog_wrappers()}
+    results = []
+    seen = set()
+    seen_ids = set()
+    for info, score in catalog.search(target):
+        attr = str(info.get("nix_name") or "").casefold()
+        if attr and attr in excluded:
+            continue
+        results.append((nix_metadata.enrich_index(info), score))
+        if attr:
+            seen.add(attr)
+        entry_id = str(info.get("appstream_id") or "")
+        if entry_id:
+            seen_ids.add(entry_id)
+    for host, score in nix_extensions.search_extensions(target):
+        key = host.casefold()
+        if key in seen:
+            continue
+        entry = catalog.find_by_attr(host)
+        if entry is None:
+            entry = find_appstream_entry_by_nix_attr(host)
+        if entry is None:
+            continue
+        entry_id = str(entry.get("appstream_id") or "")
+        if entry_id and entry_id in seen_ids:
+            continue
+        if str(entry.get("appstream_source") or "") == "nix":
+            entry = nix_metadata.enrich_index(entry)
+        else:
+            entry = nix_metadata.enrich(entry)
+        results.append((entry, score))
+        seen.add(key)
+        if entry_id:
+            seen_ids.add(entry_id)
+    return results
 
 
 def find_nix_entry(attr):
@@ -1655,6 +1690,29 @@ def find_nix_entry(attr):
         return None
     entry = catalog.find_by_attr(str(attr or ""))
     return nix_metadata.enrich(entry) if entry is not None else None
+
+
+def find_appstream_entry_by_nix_attr(attr):
+    """Return the shared catalog entry that owns one nixpkgs attribute.
+
+    This is how a plugin-name search resolves to the host application card
+    (merged AppStream entry when one exists) instead of the plugin package.
+    """
+    value = str(attr or "").strip()
+    if not value:
+        return None
+    with _CACHE_LOCK:
+        context = _LAST_LOAD_CONTEXT
+    if context is None:
+        return None
+    scripts_dir, curated_entries, category_paths = context
+    try:
+        entry = _runtime_catalog(
+            scripts_dir, curated_entries, category_paths
+        ).find_by_nix_package(value)
+    except Exception:
+        entry = None
+    return nix_metadata.enrich_index(entry) if entry is not None else None
 
 
 def get_appimage_entries(relative_category=""):

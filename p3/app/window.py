@@ -14,6 +14,7 @@ from . import (
     appstream_cache,
     homebrew_catalog,
     nix_catalog,
+    nix_extensions,
     nix_metadata,
     nix_queue,
     nix_registry,
@@ -1008,6 +1009,7 @@ class AppWindow(
         return False
 
     def _check_nix_source(self):
+        self._ensure_nix_extensions_ready()
         fingerprint = nix_catalog.availability_fingerprint()
         if fingerprint == self._nix_source_fingerprint:
             return True
@@ -1017,6 +1019,50 @@ class AppWindow(
             self.show_categories_view()
         self.load_categories()
         return True
+
+    def _ensure_nix_extensions_ready(self):
+        """Populate the extension cache once per session, off the GTK thread."""
+        if getattr(self, "_nix_extensions_checked", False):
+            return
+        if not nix_extensions.enabled():
+            return
+        self._nix_extensions_checked = True
+        try:
+            if (
+                nix_extensions.cached_capabilities()
+                and not nix_extensions.cache_older_than_snapshot()
+            ):
+                return
+        except Exception:
+            return
+
+        def worker():
+            try:
+                nix_extensions.load_or_refresh()
+            except Exception as error:
+                logger.warning("Nix extension discovery failed: %s", error)
+            GLib.idle_add(self._finish_nix_extensions_ready)
+
+        threading.Thread(
+            target=worker, daemon=True, name="linuxtoys-nix-extensions"
+        ).start()
+
+    def _finish_nix_extensions_ready(self):
+        self._check_nix_source()
+        current = self.current_category_info or {}
+        page = getattr(self, "scripts_view", None)
+        if (
+            current.get("is_nix_category")
+            and page is not None
+            and self.main_stack.get_visible_child() is page
+        ):
+            self._load_category_view_flowboxes(
+                page, current, defer_initial=True
+            )
+        app_page = self.main_stack.get_child_by_name("app_page")
+        if app_page is not None and hasattr(app_page, "refresh_install_state"):
+            app_page.refresh_install_state()
+        return False
 
     def _nix_setup_rows(self, status: dict) -> list[tuple[str, bool]]:
         """Return ``(label, configured)`` rows for the setup summary.
@@ -1180,7 +1226,11 @@ class AppWindow(
             pass
         if nix_catalog.binary_snapshot_available():
             self._open_aur_category_view(category_info, loading=False)
-            if nix_catalog.needs_refresh():
+            if (
+                nix_catalog.needs_refresh()
+                or not nix_extensions.cached_capabilities()
+                or nix_extensions.cache_older_than_snapshot()
+            ):
                 self._refresh_nix_catalog()
             elif nix_metadata.index_needs_refresh():
                 self._refresh_nix_metadata()

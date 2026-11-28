@@ -128,6 +128,7 @@ _GPU_BLOCK_ENABLE_RE = re.compile(
 )
 _LOCK = threading.RLock()
 _VALIDATED_SNAPSHOT = None
+_FILTERED_EXTENSIONS = None
 logger = logging.getLogger(__name__)
 
 
@@ -403,6 +404,25 @@ def _nix_snapshot_command(executable, system):
     ]
 
 
+def _warm_binary_snapshot(path):
+    """Build the compact Rust cache from a validated raw snapshot."""
+    try:
+        categories, nixos = catalog_metadata()
+        _catalog_rs.NixCatalog(
+            os.fspath(path),
+            scopes(),
+            json.dumps(
+                categories,
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            ),
+            nixos,
+        )
+    except Exception:
+        pass
+
+
 def load_or_refresh(force=False):
     """Fetch the nixpkgs package list only while Nix is present.
 
@@ -506,22 +526,25 @@ def load_or_refresh(force=False):
         if path is not None and not binary_snapshot_available():
             # The raw snapshot may already be fresh while the compact Rust cache
             # is missing (first run after an upgrade, for example).
-            try:
-                categories, nixos = catalog_metadata()
-                _catalog_rs.NixCatalog(
-                    os.fspath(path),
-                    scopes(),
-                    json.dumps(
-                        categories,
-                        ensure_ascii=False,
-                        sort_keys=True,
-                        separators=(",", ":"),
-                    ),
-                    nixos,
-                )
-            except Exception:
-                pass
-        return path
+            _warm_binary_snapshot(path)
+    if path is not None:
+        # Extension discovery is much cheaper than the package snapshot but
+        # still a Nix evaluation. Refresh it alongside the catalog so app
+        # pages opened from any category already have their Extensions tab.
+        # Deliberately outside the catalog lock: a slow evaluation must not
+        # block catalog lookups on app-page/search workers.
+        try:
+            from . import nix_extensions
+
+            nix_extensions.load_or_refresh()
+        except Exception as error:
+            logger.warning("Nix extension discovery failed: %s", error)
+        if path is not None and not binary_snapshot_available():
+            # Discovery may have filtered plugin/wrapper rows out of the raw
+            # snapshot and invalidated the compact cache. Rebuild it before
+            # callers check readiness, or the category would look unavailable.
+            _warm_binary_snapshot(path)
+    return path
 
 
 def _flakes_enabled():
@@ -858,7 +881,11 @@ def _module_packages(path):
 
 
 def installed_names(scope=None):
-    """Observe the packages LinuxToys itself manages through its Nix modules."""
+    """Observe the packages LinuxToys itself manages through its Nix modules.
+
+    A host package wrapped with extensions lives in the generated extension
+    module instead of the plain package list; it still counts as installed.
+    """
     paths = (
         [module_path(scope)]
         if scope
@@ -867,6 +894,17 @@ def installed_names(scope=None):
     names = set()
     for path in paths:
         names.update(_module_packages(path))
+    try:
+        from . import nix_extensions
+
+        scopes_to_read = (
+            [scope] if scope in ("home-manager", "system")
+            else ["home-manager", "system"]
+        )
+        for item in scopes_to_read:
+            names.update(nix_extensions.installed_hosts(item))
+    except Exception:
+        pass
     return names
 
 
@@ -1061,6 +1099,150 @@ def installed_packages():
         scope: sorted(installed_names(scope))
         for scope in ("home-manager", "system")
     }
+
+
+def _extension_filter_token(stat, wrappers, plugins):
+    return (
+        stat.st_size,
+        stat.st_mtime_ns,
+        tuple(sorted(wrappers)),
+        tuple(
+            sorted(
+                (
+                    attr,
+                    tuple(
+                        sorted(
+                            (
+                                str(plugin.get("pname") or ""),
+                                str(plugin.get("version") or ""),
+                                str(plugin.get("description") or ""),
+                            )
+                            for plugin in values
+                        )
+                    ),
+                )
+                for attr, values in plugins.items()
+            )
+        ),
+    )
+
+
+def filter_extension_packages(capabilities=None):
+    """Remove plugin packages and host wrappers from the snapshot catalog.
+
+    Members of a supported plugin set and every wrapper variant of its host
+    belong to that host's Extensions tab. They are implementation details, not
+    standalone applications, so they are removed from the package snapshot
+    after discovery. The Rust compact cache is invalidated; the next catalog
+    load rebuilds it from the filtered snapshot.
+
+    Returns the number of removed rows.
+    """
+    global _FILTERED_EXTENSIONS, _VALIDATED_SNAPSHOT
+    if not enabled():
+        return 0
+    if capabilities is None:
+        try:
+            from . import nix_extensions
+
+            capabilities = nix_extensions.cached_capabilities()
+        except Exception:
+            capabilities = {}
+    excluded_wrappers = set()
+    excluded_plugins = {}
+    for capability in (capabilities or {}).values():
+        if not isinstance(capability, dict):
+            continue
+        for name in capability.get("wrappers") or ():
+            value = str(name or "").strip()
+            if value:
+                excluded_wrappers.add(value)
+        for plugin in capability.get("plugins") or ():
+            if not isinstance(plugin, dict):
+                continue
+            attr = str(plugin.get("attr") or "").strip()
+            if attr:
+                excluded_plugins.setdefault(attr, []).append(plugin)
+    if not excluded_wrappers and not excluded_plugins:
+        return 0
+    with _LOCK:
+        try:
+            stat = RAW_PATH.stat()
+        except OSError:
+            return 0
+        token = _extension_filter_token(
+            stat, excluded_wrappers, excluded_plugins
+        )
+        if _FILTERED_EXTENSIONS == token:
+            return 0
+        try:
+            payload = json.loads(RAW_PATH.read_text(encoding="utf-8"))
+        except (OSError, ValueError, TypeError, UnicodeError):
+            return 0
+        if not isinstance(payload, dict):
+            return 0
+        removed = 0
+        for key in list(payload):
+            if key.startswith("_linuxtoys"):
+                continue
+            _prefix, _separator, attr = key.rpartition(".")
+            if not attr:
+                continue
+            row = payload[key]
+            if attr in excluded_wrappers:
+                del payload[key]
+                removed += 1
+                continue
+            plugins = excluded_plugins.get(attr)
+            if not plugins or not isinstance(row, dict):
+                continue
+            pname = str(row.get("pname") or "")
+            version = str(row.get("version") or "")
+            description = str(row.get("description") or "")
+            for plugin in plugins:
+                if pname != str(plugin.get("pname") or ""):
+                    continue
+                if plugin.get("version") and version != str(plugin["version"]):
+                    continue
+                if plugin.get("description") and description != str(
+                    plugin["description"]
+                ):
+                    continue
+                del payload[key]
+                removed += 1
+                break
+        if not removed:
+            _FILTERED_EXTENSIONS = token
+            return 0
+        atomic_write_text(
+            os.fspath(RAW_PATH),
+            json.dumps(
+                payload,
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+            + "\n",
+            mode=0o600,
+            fsync=True,
+        )
+        try:
+            RAW_PATH.with_suffix(".bin").unlink()
+        except OSError:
+            pass
+        _VALIDATED_SNAPSHOT = None
+        try:
+            filtered = RAW_PATH.stat()
+            _FILTERED_EXTENSIONS = _extension_filter_token(
+                filtered, excluded_wrappers, excluded_plugins
+            )
+        except OSError:
+            _FILTERED_EXTENSIONS = None
+        logger.info(
+            "Removed %s Nix extension package(s) from the catalog snapshot",
+            removed,
+        )
+        return removed
 
 
 def manifest_bundle_dir(manifest_path):

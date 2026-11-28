@@ -12,7 +12,7 @@ from .compat import (
     seed_script_file_cache,
 )
 from .lang_utils import detect_system_language
-from . import appstream_parser, aur_cache, git_scripts_manager, new_index, official_index, repo_parser
+from . import appstream_parser, aur_cache, git_scripts_manager, new_index, nix_extensions, official_index, repo_parser
 from . import _catalog_rs as _rs
 
 
@@ -618,12 +618,51 @@ def get_installed_appstream_entries(native_packages, flatpak_ids, executed_names
 
 
 def search_appstream_entries(query, translations=None, translated_new="new", translated_official="official"):
-    """Search the Rust-owned AppStream catalog without materializing unrelated entries."""
-    return appstream_parser.search_entries(
-        SCRIPTS_DIR, query, translated_new, translated_official,
-        curated_entries=_get_appstream_curated_entries(translations),
-        category_paths=_indexed_category_paths(),
+    """Search the Rust-owned AppStream catalog without materializing unrelated entries.
+
+    Plugin packages are excluded from the catalog. A query matching a Nix
+    extension name resolves to the host application card so the plugin can be
+    found and installed from that app's Extensions tab.
+    """
+    results = list(
+        appstream_parser.search_entries(
+            SCRIPTS_DIR, query, translated_new, translated_official,
+            curated_entries=_get_appstream_curated_entries(translations),
+            category_paths=_indexed_category_paths(),
+        )
     )
+    target = str(query or "").strip().casefold()
+    excluded = {name.casefold() for name in nix_extensions.catalog_wrappers()}
+    filtered = []
+    seen = set()
+    seen_ids = set()
+    for info, score in results:
+        attr = str(info.get("nix_name") or "").casefold()
+        if attr and attr in excluded:
+            continue
+        filtered.append((info, score))
+        if attr:
+            seen.add(attr)
+        entry_id = str(info.get("appstream_id") or "")
+        if entry_id:
+            seen_ids.add(entry_id)
+    for host, score in nix_extensions.search_extensions(target):
+        key = host.casefold()
+        if key in seen:
+            continue
+        entry = appstream_parser.find_appstream_entry_by_nix_attr(host)
+        if entry is None:
+            entry = appstream_parser.find_nix_entry(host)
+        if entry is None:
+            continue
+        entry_id = str(entry.get("appstream_id") or "")
+        if entry_id and entry_id in seen_ids:
+            continue
+        filtered.append((entry, score))
+        seen.add(key)
+        if entry_id:
+            seen_ids.add(entry_id)
+    return filtered
 
 
 def get_appstream_featured_descriptors(translations=None):

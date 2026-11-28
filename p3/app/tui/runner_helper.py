@@ -13,7 +13,7 @@ from typing import Any
 from textual.css.query import NoMatches
 from textual.widgets import Input
 
-from app import aur_cache, homebrew_catalog, nix_catalog, nix_flakes, nix_metadata, nix_queue, installed_packages
+from app import aur_cache, homebrew_catalog, nix_catalog, nix_extensions, nix_flakes, nix_metadata, nix_queue, installed_packages
 from app.compat import get_revert_capability, get_system_compat_keys, TRANSMAP_PATH
 from app.easy_cli import (
     _cleanup_tmp_noram_dirs,
@@ -546,11 +546,54 @@ class ScriptRunnerMixin:
             self._request_nix_refresh()
 
     def _load_nix_items(self) -> None:
+        self._ensure_nix_extensions_ready()
         self.run_worker(
             self._load_nix_items_async(),
             exclusive=True,
             group="nix-items",
         )
+
+    def _ensure_nix_extensions_ready(self) -> None:
+        """Fill the extension discovery cache before the first Nix listing."""
+        if getattr(self, "_nix_extensions_checked", False):
+            return
+        self._nix_extensions_checked = True
+        try:
+            if (
+                nix_extensions.cached_capabilities()
+                and not nix_extensions.cache_older_than_snapshot()
+            ):
+                return
+        except Exception:
+            return
+
+        def worker() -> None:
+            before = {}
+            after = {}
+            try:
+                before = nix_extensions.cached_capabilities()
+                nix_extensions.load_or_refresh()
+                after = nix_extensions.cached_capabilities()
+            except Exception:
+                pass
+            try:
+                self.app.call_from_thread(
+                    self._finish_nix_extensions_ready,
+                    bool(after) and after != before,
+                )
+            except Exception:
+                pass
+
+        threading.Thread(
+            target=worker, daemon=True, name="linuxtoys-nix-extensions"
+        ).start()
+
+    def _finish_nix_extensions_ready(self, changed: bool) -> None:
+        if not changed:
+            return
+        if self._nix_view_active():
+            self._load_nix_items()
+        self._refresh_extensions_page()
 
     def _request_nix_metadata_refresh(self) -> None:
         """Refresh card metadata without gating the category itself."""
@@ -1978,10 +2021,27 @@ class AppstreamRunnerMixin:
         if page is not None:
             page.refresh_extensions()
 
+    def cancel_appstream_extension(self, record_id: str) -> None:
+        """Cancel a queued Nix extension operation by record id."""
+        record_id = str(record_id or "").strip()
+        if not record_id:
+            return
+        for record in nix_queue.snapshot():
+            if (
+                str(record.get("id") or "") == record_id
+                and record.get("kind") == "extension"
+            ):
+                nix_queue.remove(record_id)
+                self._refresh_extensions_page()
+                return
+
     def run_appstream_extension(
         self, info: Mapping[str, Any], *, remove: bool
     ) -> None:
         entry = dict(info)
+        if str(entry.get("extension_kind") or "") == "nix":
+            self.run_nix_extension(entry, remove=remove)
+            return
         name = str(entry.get("name") or entry.get("flatpak_ref") or "")
         try:
             argv = build_flatpak_extension_command(entry, remove)
@@ -2006,6 +2066,46 @@ class AppstreamRunnerMixin:
         terminal = self.query_one("#terminal", Terminal)
         started = terminal.run_script(
             argv, env=self._script_env(name), pause_on_exit=False
+        )
+        if not started:
+            self._finish_script_run()
+            self._refresh_extensions_page()
+
+    def run_nix_extension(
+        self, info: Mapping[str, Any], *, remove: bool
+    ) -> None:
+        """Queue one Nix plugin operation and run the apply script."""
+        entry = dict(info)
+        name = str(entry.get("name") or entry.get("nix_ext_attr") or "")
+        try:
+            nix_queue.add_extension(
+                entry, action="remove" if remove else "install"
+            )
+            apply_info = nix_catalog.materialize_apply()
+            script_path = str(apply_info.get("path") or "")
+        except (OSError, ValueError) as exc:
+            self.notify(f"✗ {exc}", severity="warning")
+            self._refresh_extensions_page()
+            return
+        if not self._ensure_terminal_free():
+            self._refresh_extensions_page()
+            return
+
+        self._running_button = None
+        self._running_script_info = entry
+        self._running_temp_path = script_path
+        self._running_dev_mode = False
+        self._running_is_uninstall = remove
+        self._running_is_appstream = True
+        self._running_appstream_action = (
+            "extension_remove" if remove else "extension_install"
+        )
+
+        terminal = self.query_one("#terminal", Terminal)
+        started = terminal.run_script(
+            script_command(script_path, resolve_script_dir()),
+            env=self._script_env(name),
+            pause_on_exit=False,
         )
         if not started:
             self._finish_script_run()

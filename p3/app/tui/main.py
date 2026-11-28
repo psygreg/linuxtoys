@@ -636,6 +636,13 @@ class HomeScreen(
         """
         self.run_appstream_extension(message.info, remove=True)
 
+    @on(AppPageWidget.ExtensionCancelRequested)
+    def _on_app_page_extension_cancel_requested(
+        self, message: AppPageWidget.ExtensionCancelRequested
+    ) -> None:
+        """Cancel a queued Nix extension operation."""
+        self.cancel_appstream_extension(message.record_id)
+
     def _execute_search_worker(self, query: str) -> None:
         # If cache is still warming on first keystroke, this ensures it finishes
         if not is_search_ready():
@@ -847,7 +854,15 @@ class LinuxToys(App):
         or failed build only means fewer catalog entries; nothing else waits
         on it.
         """
-        from app import appstream_cache
+        from app import appstream_cache, nix_extensions
+
+        try:
+            # Extension discovery also filters plugin/wrapper packages out of
+            # the Nix snapshot; run it even when the AppStream refresh fails so
+            # the runtime index and global search see the cleaned catalog.
+            nix_extensions.load_or_refresh()
+        except Exception as e:  # noqa: BLE001
+            self.log.error(f"nix extension discovery failed: {e}")
 
         try:
             initial_build = not appstream_cache.CATALOG_PATH.is_file()

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import threading
 from collections.abc import Mapping, Sequence
 from typing import Any
 
@@ -23,7 +24,7 @@ from textual.widgets import (
     TabPane,
 )
 
-from app import appstream_cache
+from app import appstream_cache, nix_extensions, nix_queue
 from app.appstream_parser import repository_link
 
 __all__ = ["AppPageWidget", "FeaturedCard", "show_app_page", "hide_app_page"]
@@ -844,13 +845,16 @@ class AppPageWidget(Vertical):
         return VerticalScroll(*children, id="app-content")
 
     def _load_extensions(self) -> list[Mapping[str, Any]]:
-        """Mesma fonte da GUI: addons Flatpak da fonte selecionada."""
+        """Load addons from the selected source (Flatpak or Nix)."""
+        selected = dict(self._selected)
+        if selected.get("appstream_source") == "nix":
+            try:
+                return list(nix_extensions.extensions_for(selected))
+            except Exception:
+                return []
         return [
             dict(item)
-            for item in appstream_cache.get_flatpak_extensions(
-                dict(self._selected)
-            )
-            or ()
+            for item in appstream_cache.get_flatpak_extensions(selected) or ()
         ]
 
     def _extensions_pane(self) -> TabPane:
@@ -879,6 +883,8 @@ class AppPageWidget(Vertical):
                 if record.get("action") == "extension_remove"
                 else record["status"]
             )
+        elif record is not None and record.get("kind") == "extension":
+            state = "queued"
         return state, record
 
     def _extension_row(
@@ -922,6 +928,10 @@ class AppPageWidget(Vertical):
             ),
         }
         secondary, label, variant, action = views[state]
+        if state == "queued" and record and record.get("action") == "remove":
+            secondary = self._t(
+                "nix_extension_remove_queued", "Waiting to remove"
+            )
         name = str(info.get("name") or info.get("id") or ref)
         text = Text(name, style="bold")
         if secondary:
@@ -952,26 +962,45 @@ class AppPageWidget(Vertical):
     async def _render_extensions(self) -> None:
         """Rebuild the rows of the Extensions tab.
 
-        Worker. Reads the installed refs in a thread, matches job records
-        by ``info.flatpak_ref`` (the first record of each ref wins),
-        derives each state and replaces the rows. It is exclusive, so a
-        newer refresh cancels a stale one.
+        Worker. Installed extension state and queued jobs are read in a
+        thread. Flatpak uses the AppStream runner snapshot and the flatpak
+        runtime list; Nix uses the generated extension module and the
+        persistent Nix queue. It is exclusive, so a newer refresh cancels a
+        stale one.
         """
-        installed = await asyncio.to_thread(
-            appstream_cache.installed_flatpak_extension_refs,
-            dict(self._selected),
-        )
+        selected = dict(self._selected)
         jobs: dict[str, Mapping[str, Any]] = {}
-        for record in self._extension_jobs:
-            ref = str(
-                (record.get("info") or {}).get("flatpak_ref") or ""
-            ).strip()
-            if ref:
-                jobs.setdefault(ref, record)
+        if selected.get("appstream_source") == "nix":
+            installed = await asyncio.to_thread(
+                nix_extensions.installed_extensions, selected
+            )
+            host = str(selected.get("nix_name") or "").strip()
+            scope = str(selected.get("nix_scope") or "").strip()
+            for record in await asyncio.to_thread(nix_queue.snapshot):
+                if record.get("kind") != "extension":
+                    continue
+                if str(record.get("host") or "") != host:
+                    continue
+                if scope and str(record.get("scope") or "") != scope:
+                    continue
+                jobs.setdefault(str(record.get("extension") or ""), record)
+        else:
+            installed = await asyncio.to_thread(
+                appstream_cache.installed_flatpak_extension_refs, selected
+            )
+            for record in self._extension_jobs:
+                ref = str(
+                    (record.get("info") or {}).get("flatpak_ref") or ""
+                ).strip()
+                if ref:
+                    jobs.setdefault(ref, record)
 
         rows = []
         for info in self._extensions:
-            ref = str(info.get("flatpak_ref") or "").strip()
+            if str(info.get("extension_kind") or "") == "nix":
+                ref = str(info.get("nix_ext_attr") or "").strip()
+            else:
+                ref = str(info.get("flatpak_ref") or "").strip()
             if ref:
                 state, record = self._extension_state(ref, installed, jobs)
                 rows.append(self._extension_row(info, ref, state, record))
@@ -1026,10 +1055,11 @@ class AppPageWidget(Vertical):
         """
         button.disabled = True
         if action == "install":
+            payload = dict(info)
+            if str(info.get("extension_kind") or "") != "nix":
+                payload["is_flatpak_extension"] = True
             self.post_message(
-                self.ExtensionInstallRequested(
-                    {**info, "is_flatpak_extension": True}
-                )
+                self.ExtensionInstallRequested(payload)
             )
         elif action == "remove":
             done = record is not None and record.get("status") == "success"
@@ -1059,6 +1089,47 @@ class AppPageWidget(Vertical):
         self._load_rating_state()
         self.call_after_refresh(self._schedule_featured)
         self.call_after_refresh(self._focus_first)
+        self._request_nix_extension_refresh()
+
+    def _request_nix_extension_refresh(self) -> None:
+        """Fill a missing Nix Extensions tab from a background discovery pass."""
+        if str(self._selected.get("appstream_source") or "") != "nix":
+            return
+        if getattr(self, "_extension_refresh_running", False):
+            return
+        try:
+            if not nix_extensions.enabled():
+                return
+        except Exception:
+            return
+        self._extension_refresh_running = True
+
+        def worker() -> None:
+            before = {}
+            after = {}
+            try:
+                before = nix_extensions.cached_capabilities()
+                nix_extensions.load_or_refresh()
+                after = nix_extensions.cached_capabilities()
+            except Exception:
+                pass
+            try:
+                self.app.call_from_thread(
+                    self._finish_nix_extension_refresh,
+                    bool(after) and after != before,
+                )
+            except Exception:
+                pass
+
+        threading.Thread(
+            target=worker, daemon=True, name="linuxtoys-nix-extensions"
+        ).start()
+
+    def _finish_nix_extension_refresh(self, needs_sync: bool) -> None:
+        self._extension_refresh_running = False
+        if not needs_sync or not self.is_mounted:
+            return
+        self.run_worker(self._sync_extensions_tabs())
 
     def _focus_first(self) -> None:
         try:

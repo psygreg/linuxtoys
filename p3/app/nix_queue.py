@@ -1,8 +1,10 @@
-"""Persistent queue for Nix package operations.
+"""Persistent queue for Nix package and extension operations.
 
 Nix installs are declarative: selecting a package records an operation here and
 nothing is built until the user presses "Apply Nix package operations" on the
-queue view. The queue survives restarts so a pending rebuild is never lost.
+queue view. Extension operations (plugins of a host package) use the same
+queue and are applied by the generated extension module. The queue survives
+restarts so a pending rebuild is never lost.
 """
 
 from __future__ import annotations
@@ -27,7 +29,8 @@ QUEUE_PATH = Path(
         ),
     )
 )
-SCHEMA = 1
+SCHEMA = 2
+_VALID_SCOPES = ("home-manager", "system")
 _ATTR_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_'-]*$")
 _LOCK = threading.RLock()
 _CHANGE_CALLBACK = None
@@ -49,6 +52,13 @@ def _notify():
         pass
 
 
+def _created(record):
+    try:
+        return int(record.get("created") or 0)
+    except (TypeError, ValueError):
+        return 0
+
+
 def _read():
     try:
         payload = json.loads(QUEUE_PATH.read_text(encoding="utf-8"))
@@ -63,25 +73,50 @@ def _read():
     for record in operations:
         if not isinstance(record, dict):
             continue
-        attr = str(record.get("attr") or "").strip()
+        kind = str(record.get("kind") or "package").strip() or "package"
         scope = str(record.get("scope") or "").strip()
         action = str(record.get("action") or "").strip()
-        if not _ATTR_RE.fullmatch(attr):
-            continue
-        if scope not in ("home-manager", "system"):
+        if scope not in _VALID_SCOPES:
             continue
         if action not in ("install", "remove"):
+            continue
+        if kind == "extension":
+            host = str(record.get("host") or "").strip()
+            extension = str(record.get("extension") or "").strip()
+            if not _ATTR_RE.fullmatch(host) or not _ATTR_RE.fullmatch(extension):
+                continue
+            clean.append(
+                {
+                    "id": str(
+                        record.get("id")
+                        or f"nix-ext:{host}:{extension}:{scope}"
+                    ),
+                    "kind": "extension",
+                    "host": host,
+                    "extension": extension,
+                    "name": str(record.get("name") or extension),
+                    "scope": scope,
+                    "action": action,
+                    "version": str(record.get("version") or ""),
+                    "icon": str(record.get("icon") or "nix.svg"),
+                    "created": _created(record),
+                }
+            )
+            continue
+        attr = str(record.get("attr") or "").strip()
+        if not _ATTR_RE.fullmatch(attr):
             continue
         clean.append(
             {
                 "id": str(record.get("id") or f"nix:{attr}:{scope}"),
+                "kind": "package",
                 "attr": attr,
                 "name": str(record.get("name") or attr),
                 "scope": scope,
                 "action": action,
                 "version": str(record.get("version") or ""),
                 "icon": str(record.get("icon") or "nix.svg"),
-                "created": int(record.get("created") or 0),
+                "created": _created(record),
             }
         )
     return {"schema": SCHEMA, "operations": clean}
@@ -107,17 +142,34 @@ def pending_for(attr, scope=None):
     return [
         record
         for record in snapshot()
-        if record["attr"] == attr and (not scope or record["scope"] == scope)
+        if record.get("kind") != "extension"
+        and record.get("attr") == attr
+        and (not scope or record.get("scope") == scope)
+    ]
+
+
+def pending_extension_for(host, scope=None, action=None):
+    """Pending extension operations for one host."""
+    host = str(host or "").strip()
+    scope = str(scope or "").strip()
+    action = str(action or "").strip()
+    return [
+        record
+        for record in snapshot()
+        if record.get("kind") == "extension"
+        and record.get("host") == host
+        and (not scope or record.get("scope") == scope)
+        and (not action or record.get("action") == action)
     ]
 
 
 def add(info, action="install", scope=None):
-    """Queue one operation, replacing any opposite pending action."""
+    """Queue one package operation, replacing any opposite pending action."""
     attr = str(info.get("nix_name") or info.get("package-name") or "").strip()
     if not _ATTR_RE.fullmatch(attr):
         raise ValueError("Invalid Nix package name")
     scope = str(scope or info.get("nix_scope") or "home-manager").strip()
-    if scope not in ("home-manager", "system"):
+    if scope not in _VALID_SCOPES:
         raise ValueError("Invalid Nix install scope")
     action = str(action or "install").strip()
     if action not in ("install", "remove"):
@@ -151,16 +203,131 @@ def add(info, action="install", scope=None):
         operations = [
             record
             for record in payload["operations"]
-            if not (record["attr"] == attr and record["scope"] == scope)
+            if not (
+                record.get("kind") != "extension"
+                and record.get("attr") == attr
+                and record.get("scope") == scope
+            )
         ]
+        if action == "remove":
+            # Removing a host also retires its pending extension operations;
+            # the apply pass drops any installed selection as well.
+            operations = [
+                record
+                for record in operations
+                if not (
+                    record.get("kind") == "extension"
+                    and record.get("host") == attr
+                    and record.get("scope") == scope
+                )
+            ]
         operations.append(
             {
                 "id": record_id,
+                "kind": "package",
                 "attr": attr,
                 "name": name,
                 "scope": scope,
                 "action": action,
                 "version": str(info.get("nix_version") or info.get("appstream_version") or ""),
+                "icon": str(info.get("icon") or "nix.svg"),
+                "created": int(time.time()),
+            }
+        )
+        _write({"schema": SCHEMA, "operations": operations})
+    _notify()
+    return record_id
+
+
+def add_extension(info, action="install", scope=None):
+    """Queue one plugin install/removal for a Nix host package.
+
+    ``info`` is the extension payload produced by ``nix_extensions`` (or the
+    app-page row carrying the same fields). Installations are validated against
+    the current discovery cache; removals remain possible after a nixpkgs
+    update so a stale selection is never undeletable.
+    """
+    host = str(
+        info.get("nix_ext_host")
+        or info.get("parent_id")
+        or info.get("nix_name")
+        or ""
+    ).strip()
+    extension = str(
+        info.get("nix_ext_attr")
+        or info.get("extension")
+        or ""
+    ).strip()
+    if not _ATTR_RE.fullmatch(host):
+        raise ValueError("Invalid Nix extension host package")
+    if not _ATTR_RE.fullmatch(extension):
+        raise ValueError("Invalid Nix extension name")
+    action = str(action or "install").strip()
+    if action not in ("install", "remove"):
+        raise ValueError("Invalid Nix extension operation")
+    scope = str(
+        scope or info.get("nix_ext_scope") or info.get("nix_scope") or ""
+    ).strip()
+    if scope not in _VALID_SCOPES:
+        try:
+            from . import nix_catalog
+
+            available = nix_catalog.scopes()
+        except Exception:
+            available = []
+        if "home-manager" in available:
+            scope = "home-manager"
+        elif "system" in available:
+            scope = "system"
+        else:
+            raise ValueError("No Nix install scope is available")
+    if action == "install":
+        from . import nix_extensions
+
+        cap = nix_extensions.cached_capabilities().get(host)
+        if cap is None or extension not in {
+            item["attr"] for item in cap.get("plugins") or ()
+        }:
+            raise ValueError(
+                "This Nix extension is not available in the current nixpkgs revision"
+            )
+    name = str(info.get("name") or extension).strip() or extension
+    record_id = f"nix-ext:{host}:{extension}:{scope}"
+    with _LOCK:
+        payload = _read()
+        operations = [
+            record
+            for record in payload["operations"]
+            if not (
+                record.get("kind") == "extension"
+                and record.get("host") == host
+                and record.get("extension") == extension
+                and record.get("scope") == scope
+            )
+        ]
+        if action == "install":
+            # Installing an extension implies keeping its host installed, so a
+            # pending host removal queued earlier is superseded.
+            operations = [
+                record
+                for record in operations
+                if not (
+                    record.get("kind") != "extension"
+                    and record.get("attr") == host
+                    and record.get("scope") == scope
+                    and record.get("action") == "remove"
+                )
+            ]
+        operations.append(
+            {
+                "id": record_id,
+                "kind": "extension",
+                "host": host,
+                "extension": extension,
+                "name": name,
+                "scope": scope,
+                "action": action,
+                "version": str(info.get("version") or ""),
                 "icon": str(info.get("icon") or "nix.svg"),
                 "created": int(time.time()),
             }
@@ -187,6 +354,10 @@ def install_state(info):
     scope = str(info.get("nix_scope") or "").strip()
     records = pending_for(attr, scope or None)
     if records:
+        return "nix_queued"
+    # A queued plugin install will wrap (and therefore install) its host on
+    # apply, so the app page already counts it as queued.
+    if pending_extension_for(attr, scope or None, action="install"):
         return "nix_queued"
     from . import nix_catalog
 
