@@ -107,6 +107,9 @@ After connecting, call `server_info` once to confirm the session works.
 | `nix_install_flake(reference, scope?, outputs?, wait?, wait_seconds?)` | Import an external Nix flake. Accepts git references, FlakeHub URLs (`https://flakehub.com/f/owner/repo/version`) and the `fh` shorthand (`owner/repo/version`). Call first with only `reference`; the response is `requires_selection` with every discovered output (packages, Home Manager/NixOS modules, overlays; apps/configurations are informational). Present them to the user, then re-call with the chosen output keys in `outputs`. The flake is pinned in a locked wrapper and only the selected outputs are merged; other imported flakes stay applied. Watches the rebuild to completion |
 | `nix_remove_flake(reference, wait?, wait_seconds?)` | Remove every imported scope of one flake reference through its Action Registry transaction; only that flake's generated module code and state are removed. Get references from `nix_list_flakes`; watches the rebuild to completion |
 | `nix_list_flakes()` | List imported flakes with reference, description, scopes and selected outputs |
+| `nix_list_generations(scope?)` | List recorded Home Manager and NixOS system generations with number, date, current marker and store path; `scope` limits it to `home-manager` or `system` |
+| `nix_activate_generation(scope, generation, wait?, wait_seconds?)` | Activate (switch or roll back to) one recorded generation. Confirm with the user first: it replaces the running configuration, and a NixOS system switch also changes the boot entry and asks for the password on the user's screen. The current generation is a no-op |
+| `nix_delete_generation(scope, generation, wait?, wait_seconds?)` | Delete one recorded generation record after user confirmation; the current generation cannot be deleted and store paths remain until Nix garbage collection |
 | `get_job(job_id, tail_lines?, wait_seconds?)` | Re-attach to a queued job: state (`queued`/`running`/`success`/`error`), exit code, log tail (filled in while the script runs); `wait_seconds` (max 20) blocks until the job finishes; plus the script's dialog events: `warnings` (attention to relay), `live_prompts` (dialogs the user answered live), `error_detail` (fatal message on failure). Submissions already watch to completion — use this after a `wait: false` submission or a cut-off call |
 | `list_jobs()` | Recent jobs (find a job id here if a submission was cut off) |
 | `get_settings()` / `set_settings(...)` | Automatic updates, automatic bug reports, language |
@@ -177,6 +180,14 @@ part of their configuration — and only proceed if they trust its source.
 one, rebuilding the affected scope(s). Home Manager is used by default when
 available; the system scope needs NixOS and a root password dialog on the
 user's screen.
+
+**Manage Nix generations:** call `nix_list_generations` to see the recorded
+Home Manager and NixOS system generations (number, date, current marker).
+Show the relevant scope and generation to the user and confirm before
+`nix_activate_generation` (switch or roll back; a system activation also
+updates the boot entry and asks for the password on the user's screen) or
+`nix_delete_generation` (removes only the generation record, not its store
+path). The current generation cannot be deleted; activating it is a no-op.
 
 **Scripts that ask questions, warn or fail with dialogs:** script dialogs
 do not pop on your behalf, and the machine tells you about them:

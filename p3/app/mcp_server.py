@@ -2901,8 +2901,9 @@ class JobManager:
         """Whether the outdated-version gate governs this job kind.
 
         Only LinuxToys script logic is gated: plain scripts, repo scripts,
-        registry removals (which run generated uninstall scripts) and the
-        full system update (also a plain script run). AppStream, Snap/Flatpak,
+        registry removals (which run generated uninstall scripts), the full
+        system update (also a plain script run) and generated Nix flake or
+        generation actions. AppStream, Snap/Flatpak,
         AppImage, AUR and Homebrew instalments and local package files are
         package pipelines and stay ungated — the same split every other
         runner surface uses.
@@ -2912,6 +2913,8 @@ class JobManager:
             "system_update",
             "nix_flake_install",
             "nix_flake_remove",
+            "nix_generation_activate",
+            "nix_generation_delete",
         ):
             return True
         if kind != "install":
@@ -2950,6 +2953,7 @@ class JobManager:
                 if job.kind not in (
                     "extension_install", "extension_remove",
                     "nix_extension_install", "nix_extension_remove",
+                    "nix_generation_activate", "nix_generation_delete",
                     "update", "flatpak_data_remove",
                 ):
                     antenna.add_script_to_history(str(job.name))
@@ -2964,6 +2968,8 @@ class JobManager:
                 "system_update",
                 "nix_flake_install",
                 "nix_flake_remove",
+                "nix_generation_activate",
+                "nix_generation_delete",
             ) and self._gate_applies(job.kind, entry):
                 refusal = _version_gate_refusal()
                 if refusal:
@@ -2995,6 +3001,11 @@ class JobManager:
             elif job.kind == "flatpak_data_remove":
                 code, reason = self._remove_flatpak_data(job, entry)
             elif job.kind in ("nix_flake_install", "nix_flake_remove"):
+                code, reason = self._run_generated_script(job, entry)
+            elif job.kind in (
+                "nix_generation_activate",
+                "nix_generation_delete",
+            ):
                 code, reason = self._run_generated_script(job, entry)
             elif job.kind == "nix_subsystem_enable":
                 code, reason = self._run_nix_subsystem_enable(job)
@@ -3431,7 +3442,7 @@ class JobManager:
         return self._run_generated_script(job, script)
 
     def _run_generated_script(self, job, script_info):
-        """Run a materialized flake apply/removal script and delete it after."""
+        """Run a materialized generated script and delete its temp path after."""
         try:
             return self._execute_script(job, script_info)
         finally:
@@ -4202,6 +4213,85 @@ def tool_schemas():
                     **_job_tracking_schema(),
                 },
                 "required": ["reference"],
+            },
+        },
+        {
+            "name": "nix_list_generations",
+            "description": (
+                "List recorded Home Manager and NixOS system generations with "
+                "their number, date, current marker and store path. Use this "
+                "before nix_activate_generation or nix_delete_generation. "
+                "`scope` limits the list to 'home-manager' or 'system'; omit "
+                "it to list every available scope."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "scope": {
+                        "type": "string",
+                        "enum": ["home-manager", "system"],
+                        "description": "List only this generation scope; omit to list every available scope.",
+                    },
+                },
+            },
+        },
+        {
+            "name": "nix_activate_generation",
+            "description": (
+                "Activate (switch or roll back to) one recorded Home Manager "
+                "or NixOS system generation. Confirm with the user before "
+                "calling: this replaces the running configuration, and a "
+                "NixOS system switch also changes the boot entry and asks for "
+                "the password on the user's screen. Get the generation number "
+                "from nix_list_generations. The current generation is a no-op. "
+                "Blocks until the activation finishes by default; pass "
+                "wait=false to queue it and watch with get_job."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "scope": {
+                        "type": "string",
+                        "enum": ["home-manager", "system"],
+                        "description": "Generation scope returned by nix_list_generations.",
+                    },
+                    "generation": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "Generation number returned by nix_list_generations.",
+                    },
+                    **_job_tracking_schema(),
+                },
+                "required": ["scope", "generation"],
+            },
+        },
+        {
+            "name": "nix_delete_generation",
+            "description": (
+                "Delete one recorded Home Manager or NixOS system generation "
+                "record. Confirm with the user first: this cannot be undone "
+                "from LinuxToys, though store paths remain until Nix garbage "
+                "collection. The current generation cannot be deleted; "
+                "activate another generation first. Get the number from "
+                "nix_list_generations. Blocks until the deletion finishes by "
+                "default; pass wait=false to queue it and watch with get_job."
+            ),
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "scope": {
+                        "type": "string",
+                        "enum": ["home-manager", "system"],
+                        "description": "Generation scope returned by nix_list_generations.",
+                    },
+                    "generation": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "description": "Generation number returned by nix_list_generations.",
+                    },
+                    **_job_tracking_schema(),
+                },
+                "required": ["scope", "generation"],
             },
         },
         {
@@ -5080,6 +5170,228 @@ def _nix_package_payload(attr, scopes):
     }
 
 
+def _nix_generation_scopes(required=True):
+    """Return scopes that have recorded generations on this host."""
+    from . import nix_catalog, nix_generations
+
+    if not nix_catalog.enabled():
+        raise ValueError(
+            "Nix is not available on this host (requires an x86_64/aarch64 "
+            "host and a working nix executable). Use nix_enable_subsystem to "
+            "install and prepare it."
+        )
+    scopes = list(nix_generations.available_scopes())
+    if required and not scopes:
+        raise ValueError(
+            "No Home Manager or NixOS system generations were found on this "
+            "host. Set up Home Manager or a NixOS system configuration first."
+        )
+    return scopes
+
+
+def _nix_generation_scope(value, available=None):
+    available = list(
+        available if available is not None else _nix_generation_scopes()
+    )
+    requested = str(value or "").strip().casefold()
+    if not requested:
+        raise ValueError(
+            "A generation scope is required: 'home-manager' or 'system'."
+        )
+    if requested not in available:
+        raise ValueError(
+            f"Invalid or unavailable Nix generation scope '{value}'. Available: "
+            + (", ".join(available) or "none")
+        )
+    return requested
+
+
+def _nix_generation_number(value):
+    if isinstance(value, bool):
+        raise ValueError("A positive Nix generation number is required.")
+    try:
+        number = int(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("A positive Nix generation number is required.") from exc
+    if number <= 0:
+        raise ValueError("A positive Nix generation number is required.")
+    return number
+
+
+def _nix_generation_record(scope, generation):
+    from . import nix_generations
+
+    try:
+        records = nix_generations.list_scope(scope)
+    except Exception as exc:
+        raise ValueError(
+            f"Could not read the {scope} generations: {exc}"
+        ) from exc
+    for record in records:
+        if int(record.get("id") or 0) == generation:
+            return record
+    raise ValueError(
+        f"Nix generation {generation} was not found in the {scope} scope. Use "
+        "nix_list_generations to see the available generations."
+    )
+
+
+def _nix_generation_payload(scope, record):
+    return {
+        "scope": scope,
+        "generation": int(record.get("id") or 0),
+        "date": str(record.get("date") or ""),
+        "store_path": str(record.get("path") or ""),
+        "current": bool(record.get("current")),
+    }
+
+
+def _tool_nix_list_generations(scope=None):
+    """List Home Manager and NixOS system generations for rollback/deletion."""
+    from . import nix_generations
+
+    scopes = _nix_generation_scopes(required=False)
+    selected = (
+        [_nix_generation_scope(scope, scopes)] if scope else list(scopes)
+    )
+    data = nix_generations.scan()
+    generations = []
+    errors = {}
+    for item_scope in selected:
+        entry = data.get(item_scope) or {}
+        error = str(entry.get("error") or "")
+        if error:
+            errors[item_scope] = error
+            continue
+        for record in entry.get("generations") or ():
+            generations.append(_nix_generation_payload(item_scope, record))
+    payload = {"scopes": scopes, "generations": generations}
+    if errors:
+        payload["errors"] = errors
+    if not scopes:
+        payload["note"] = (
+            "No Home Manager or NixOS system generations were found on this "
+            "host."
+        )
+    elif not generations and not errors:
+        payload["note"] = "No generations are recorded for the selected scope."
+    elif not errors:
+        payload["note"] = (
+            "Use nix_activate_generation to switch/roll back to a generation, "
+            "or nix_delete_generation to remove a generation record. The "
+            "current generation can be activated only as a no-op and cannot "
+            "be deleted."
+        )
+    return payload
+
+
+def _tool_nix_activate_generation(
+    scope, generation, wait=True, wait_seconds=None
+):
+    """Switch the active generation and activate it on the running system."""
+    from . import nix_generations
+
+    available = _nix_generation_scopes()
+    scope = _nix_generation_scope(scope, available)
+    number = _nix_generation_number(generation)
+    record = _nix_generation_record(scope, number)
+    payload = _nix_generation_payload(scope, record)
+    payload["was_current"] = payload.pop("current")
+    if record.get("current"):
+        payload.update(
+            {
+                "activated": False,
+                "already_current": True,
+                "current": True,
+                "final": True,
+                "note": (
+                    "That generation is already current; no job was run."
+                ),
+            }
+        )
+        return payload
+    t = _translations()
+    script = nix_generations.materialize_switch(
+        scope,
+        number,
+        name=t.get(
+            "nix_generations_activate_action",
+            "Activate Nix generation {generation}",
+        ).format(generation=number),
+        description=t.get(
+            "nix_generations_activate_action_desc",
+            "Activate this Nix generation and rebuild the running "
+            "configuration from it.",
+        ),
+    )
+    job = JOBS.submit(
+        "nix_generation_activate",
+        f"nix-generation:{scope}:{number}",
+        entry=script,
+    )
+    payload["action"] = "activate"
+    result = _job_submission_result(
+        job,
+        "The generation profile link is switched first, then that "
+        "generation's activation runs. Home Manager generations activate "
+        "directly; a NixOS system switch asks for the password on the user's "
+        "screen and also updates the boot entry.",
+        wait=wait,
+        wait_seconds=wait_seconds,
+        **payload,
+    )
+    if result.get("state") == "success":
+        result["current"] = True
+    return result
+
+
+def _tool_nix_delete_generation(
+    scope, generation, wait=True, wait_seconds=None
+):
+    """Delete one recorded generation after the user confirms."""
+    from . import nix_generations
+
+    available = _nix_generation_scopes()
+    scope = _nix_generation_scope(scope, available)
+    number = _nix_generation_number(generation)
+    record = _nix_generation_record(scope, number)
+    payload = _nix_generation_payload(scope, record)
+    payload["was_current"] = payload.pop("current")
+    if record.get("current"):
+        raise ValueError(
+            "The current Nix generation cannot be deleted. Activate another "
+            "generation first, then delete the old record."
+        )
+    t = _translations()
+    script = nix_generations.materialize_delete(
+        scope,
+        number,
+        name=t.get(
+            "nix_generations_delete_action",
+            "Delete Nix generation {generation}",
+        ).format(generation=number),
+        description=t.get(
+            "nix_generations_delete_action_desc",
+            "Delete this Nix generation record.",
+        ),
+    )
+    job = JOBS.submit(
+        "nix_generation_delete",
+        f"nix-generation:{scope}:{number}",
+        entry=script,
+    )
+    payload["action"] = "delete"
+    return _job_submission_result(
+        job,
+        "Only the recorded generation is removed; its store paths remain until "
+        "Nix garbage collection, and the running system is untouched. This "
+        "cannot be undone from LinuxToys.",
+        wait=wait,
+        wait_seconds=wait_seconds,
+        **payload,
+    )
+
+
 def _nix_subsystem_status():
     from . import nix_catalog
 
@@ -5901,6 +6213,22 @@ def dispatch_tool(name, arguments):
             _arg_bool(arguments.get("wait"), True),
             arguments.get("wait_seconds"),
         )
+    if name == "nix_list_generations":
+        return _tool_nix_list_generations(arguments.get("scope"))
+    if name == "nix_activate_generation":
+        return _tool_nix_activate_generation(
+            arguments.get("scope"),
+            arguments.get("generation"),
+            _arg_bool(arguments.get("wait"), True),
+            arguments.get("wait_seconds"),
+        )
+    if name == "nix_delete_generation":
+        return _tool_nix_delete_generation(
+            arguments.get("scope"),
+            arguments.get("generation"),
+            _arg_bool(arguments.get("wait"), True),
+            arguments.get("wait_seconds"),
+        )
     if name == "remove_flatpak_data":
         return _tool_remove_flatpak_data(
             arguments.get("app_id"),
@@ -6025,6 +6353,10 @@ def _initialize_result(requested_version):
             "first nix_install_flake call returns requires_selection — present "
             "the outputs to the user and re-call with the chosen keys. "
             "nix_list_packages and nix_list_flakes show what is installed. "
+            "Recorded Nix generations are managed with nix_list_generations "
+            "(Home Manager and NixOS system) and nix_activate_generation / "
+            "nix_delete_generation; confirm activation and deletion with the "
+            "user first, and the current generation cannot be deleted. "
             "Flathub apps may offer "
             "extensions/addons: when get_app_details reports "
             "extensions_available, use list_app_extensions / "
