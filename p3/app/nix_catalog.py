@@ -762,7 +762,13 @@ def maintenance_configured():
         )
     except OSError:
         return False
-    return _NIX_GC_MARKER in content and bool(_NIX_PACKAGE_RE.search(content))
+    external = nix_paths.nix_user_conf_is_external()
+    if _NIX_GC_MARKER not in content:
+        return False
+    package_marker = bool(_NIX_PACKAGE_RE.search(content))
+    if external:
+        return not package_marker
+    return package_marker
 
 
 def setup_status():

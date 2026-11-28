@@ -132,6 +132,36 @@ def default_system_dir() -> Path:
     return Path("/etc/nixos")
 
 
+def user_nix_conf_path() -> Path:
+    return _xdg_config_home() / "nix" / "nix.conf"
+
+
+def nix_user_conf_is_external() -> bool:
+    """Whether the user's nix.conf predates Home Manager/LinuxToys management."""
+    config = user_nix_conf_path()
+    if not config.exists() and not config.is_symlink():
+        return False
+    text = _read_text(config)
+    if "# WARNING: this file is generated from the nix.settings option" in text:
+        return False
+    if config.is_symlink():
+        try:
+            target = config.resolve()
+        except OSError:
+            return True
+        if str(target).startswith("/nix/store/"):
+            return False
+        return True
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line == "extra-experimental-features = nix-command flakes":
+            continue
+        return True
+    return False
+
+
 def _expand(value) -> Path | None:
     text = str(value or "").strip()
     return Path(os.path.expanduser(text)) if text else None

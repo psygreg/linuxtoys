@@ -499,7 +499,7 @@ _nix_ensure_gpu32_tools() {
 }
 
 _nix_ensure_gpu32_setup() {
-    local mode="${1:-setup}" script
+    local mode="${1:-setup}" script helper rc=0
     nix_gpu32_supported || return 0
     if [ "${LINUXTOYS_NIX_DRY_RUN:-0}" = "1" ]; then
         printf 'Skipping 32-bit GPU setup (dry run).\n'
@@ -508,7 +508,22 @@ _nix_ensure_gpu32_setup() {
     script=$(_nix_gpu32_script)
     [ -r "$script" ] || return 1
     _nix_ensure_gpu32_tools || return 1
-    sudo_ bash "$script" "$mode" || return 1
+    # The helper runs elevated, but the installed tree may live below a
+    # user-private directory (for example an external disk under /run/media
+    # with mode 0700). Root cannot traverse that path, so stage a readable copy
+    # in the system temporary directory before invoking sudo; the helper then
+    # installs this copy into its root-owned system location.
+    helper=$(mktemp /tmp/linuxtoys-nix-gpu32.XXXXXX 2>/dev/null) \
+        || helper=$(mktemp /var/tmp/linuxtoys-nix-gpu32.XXXXXX 2>/dev/null) \
+        || helper=$(mktemp "${TMPDIR:-/tmp}/linuxtoys-nix-gpu32.XXXXXX") \
+        || return 1
+    if ! cp -- "$script" "$helper" || ! chmod 0755 "$helper"; then
+        rm -f -- "$helper"
+        return 1
+    fi
+    sudo_ bash "$helper" "$mode" || rc=$?
+    rm -f -- "$helper"
+    [ "$rc" -eq 0 ] || return "$rc"
     if [ "$mode" = "setup" ]; then
         declare -F _append_transmap >/dev/null 2>&1 \
             && _append_transmap "installed 32-bit Nix GPU bundle"
@@ -585,9 +600,13 @@ _nix_render_module() {
     local scope="$1"
     shift
     local allow_unfree="" flakes_import="" gpu_enable="" maintenance=""
-    local flatpak_enable="" appimage_enable=""
+    local flatpak_enable="" appimage_enable="" manage_nix_conf=1
     _nix_should_allow_unfree && allow_unfree="  nixpkgs.config.allowUnfree = true;"
     flakes_import="  imports = [ ./$(_nix_flakes_import_name "$scope") ];"
+    if [ "$scope" != "system" ] && ! nix_is_nixos \
+        && _nix_user_nix_conf_is_external; then
+        manage_nix_conf=0
+    fi
     if [ "$scope" = "system" ]; then
         _nix_feature_enabled flatpak && flatpak_enable="  services.flatpak.enable = true;"
         if _nix_feature_enabled appimage; then
@@ -602,7 +621,8 @@ EOF
         gpu_enable="  targets.genericLinux.gpu.enable = true;"
     fi
     if [ "$scope" != "system" ] && ! nix_is_nixos; then
-        maintenance=$(cat <<'EOF'
+        if [ "$manage_nix_conf" -eq 1 ]; then
+            maintenance=$(cat <<'EOF'
   # Home Manager only generates nix.conf when it knows which Nix package to
   # use. NixOS supplies one through the system module; standalone installs
   # must name it, or nix.settings below aborts the rebuild.
@@ -620,6 +640,22 @@ EOF
     "${config.home.homeDirectory}/.local/share/linuxtoys/nix-gc.sh";
 EOF
 )
+        else
+            # Keep the user's nix.conf intact. Required settings were merged
+            # into that file directly; nix.gc falls back to pkgs.nix.
+            maintenance=$(cat <<'EOF'
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 14d";
+  };
+  # LinuxToys replaces the stock nix-gc command so the newest three
+  # generations survive even when they are older than two weeks.
+  systemd.user.services.nix-gc.Service.ExecStart = lib.mkForce
+    "${config.home.homeDirectory}/.local/share/linuxtoys/nix-gc.sh";
+EOF
+)
+        fi
     fi
 
     if [ "$scope" = "system" ]; then
@@ -810,8 +846,17 @@ nix_maintenance_configured() {
     [ -f "$HOME/.local/share/linuxtoys/nix-gc.sh" ] \
         && grep -qF 'systemd.user.services.nix-gc.Service.ExecStart' \
             "$(_nix_hm_module)" 2>/dev/null \
-        && grep -qE '^[[:space:]]*nix\.package[[:space:]]*=' \
-            "$(_nix_hm_module)" 2>/dev/null
+        || return 1
+    if grep -qE '^[[:space:]]*nix\.package[[:space:]]*=' \
+        "$(_nix_hm_module)" 2>/dev/null; then
+        # Generated modules must not keep nix.settings ownership once the user
+        # has their own nix.conf; force a rewrite that merges instead.
+        ! _nix_user_nix_conf_is_external
+        return $?
+    fi
+    # With an external user nix.conf, Home Manager does not own nix.package;
+    # the required settings are merged into that file directly.
+    _nix_user_nix_conf_is_external
 }
 
 _nix_ensure_maintenance() {
@@ -834,6 +879,9 @@ _nix_write_module() {
     elif ! _nix_hm_paths_resolved; then
         _nix_paths_error home-manager
         return 1
+    fi
+    if [ "$scope" != "system" ] && ! nix_is_nixos; then
+        _nix_merge_user_nix_conf || return 1
     fi
     target=$(_nix_module_for_scope "$scope")
     flakes=$(_nix_flakes_module_path "$scope")
@@ -933,6 +981,9 @@ _nix_ensure_hm_config() {
     directory=$(_nix_hm_dir)
     module=$(_nix_hm_module)
     override=$(_nix_hm_config_file)
+    if ! nix_is_nixos; then
+        _nix_merge_user_nix_conf || return 1
+    fi
     mkdir -p -- "$directory" 2>/dev/null || true
     [ -f "$module" ] || _nix_write_module home-manager || return 1
     _nix_ensure_maintenance || return 1
@@ -1021,17 +1072,73 @@ _nix_user_nix_conf() {
     printf '%s\n' "${XDG_CONFIG_HOME:-$HOME/.config}/nix/nix.conf"
 }
 
+# True when the user's nix.conf is not one LinuxToys/Home Manager generated.
+# Home Manager owns ~/.config/nix/nix.conf only while it is generated from
+# nix.settings; an existing hand-written (or symlinked) file must be preserved
+# and have our required settings merged into it instead.
+_nix_user_nix_conf_is_external() {
+    local config line target
+    config=$(_nix_user_nix_conf)
+    [ -e "$config" ] || [ -L "$config" ] || return 1
+    grep -q '^# WARNING: this file is generated from the nix.settings option' \
+        "$config" 2>/dev/null && return 1
+    if [ -L "$config" ]; then
+        target=$(readlink -f -- "$config" 2>/dev/null) || target="$config"
+        case "$target" in
+            /nix/store/*) return 1 ;;
+            *) return 0 ;;
+        esac
+    fi
+    while IFS= read -r line || [ -n "$line" ]; do
+        line=${line#"${line%%[![:space:]]*}"}
+        line=${line%"${line##*[![:space:]]}"}
+        [ -z "$line" ] && continue
+        case "$line" in
+            \#*) continue ;;
+            "extra-experimental-features = nix-command flakes") continue ;;
+            *) return 0 ;;
+        esac
+    done <"$config"
+    return 1
+}
+
+_nix_append_user_nix_conf() {
+    local config="$1" line="$2"
+    {
+        [ -f "$config" ] && [ -n "$(tail -c1 "$config" 2>/dev/null)" ] && printf '\n'
+        printf '%s\n' "$line"
+    } >>"$config"
+}
+
+# Keep settings LinuxToys depends on in a pre-existing user nix.conf without
+# touching any of its other values. This is used instead of Home Manager's
+# nix.settings ownership whenever the file already contains user configuration.
+_nix_merge_user_nix_conf() {
+    local config
+    config=$(_nix_user_nix_conf)
+    _nix_user_nix_conf_is_external || return 0
+    mkdir -p -- "$(dirname -- "$config")" 2>/dev/null || return 1
+    if ! grep -qsE '^[[:space:]]*(extra-)?experimental-features[[:space:]]*=.*flakes' "$config" \
+        || ! grep -qsE '^[[:space:]]*(extra-)?experimental-features[[:space:]]*=.*nix-command' "$config"; then
+        _nix_append_user_nix_conf "$config" \
+            "extra-experimental-features = nix-command flakes" || return 1
+    fi
+    if ! grep -qsE '^[[:space:]]*auto-optimise-store[[:space:]]*=' "$config"; then
+        _nix_append_user_nix_conf "$config" "auto-optimise-store = true" || return 1
+    fi
+    return 0
+}
+
 _nix_enable_flakes() {
     local directory config
     directory="${XDG_CONFIG_HOME:-$HOME/.config}/nix"
     config="$directory/nix.conf"
     mkdir -p -- "$directory" || return 1
     if ! grep -qsE '^[[:space:]]*(extra-)?experimental-features[[:space:]]*=.*flakes' "$config" 2>/dev/null; then
-        {
-            [ -f "$config" ] && [ -n "$(tail -c1 "$config" 2>/dev/null)" ] && printf '\n'
-            printf 'extra-experimental-features = nix-command flakes\n'
-        } >>"$config" || return 1
+        _nix_append_user_nix_conf "$config" \
+            "extra-experimental-features = nix-command flakes" || return 1
     fi
+    _nix_merge_user_nix_conf || return 1
     nix_flakes_enabled
 }
 
@@ -1339,6 +1446,7 @@ _nix_rebuild() {
                 _nix_write_module home-manager "${current[@]}" || return 1
             fi
             _nix_stash_linux_toys_nix_conf || true
+            _nix_merge_user_nix_conf || true
         fi
     fi
     _nix_run_home_manager_switch "${hm_command[@]}"
